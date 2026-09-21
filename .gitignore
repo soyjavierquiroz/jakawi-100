@@ -22,5 +22,6 @@
 /app/storage/logs/*
 !/app/storage/logs/.gitignore
 /logs/
+/backups/
 /public_html/
 /.docker-data/

@@ -5,44 +5,44 @@ Updated: 2026-09-21
 Production:
 [https://jakawi.com](https://jakawi.com)
 
-Runtime production commit:
-`a37805421baf604b949114931b1a3d1f6660bfe7`
-
 Phase:
-PWA shell deployed / MVP product development
+Merchant/Benefit catalog deployed
 
 Working:
 
 - HTTPS
-- OpenLiteSpeed reverse proxy
-- Docker
-- Laravel
-- React/Inertia
+- PWA
 - authentication
 - PostgreSQL
-- login/register
-- health endpoint
-- installable PWA shell
-- manifest
-- service worker
-- Android/Chromium installation support
-- iOS Add to Home Screen guidance
+- Merchant model/admin
+- Benefit model/admin
+- public benefit catalog
+- benefit detail
+- persistent merchant/benefit images
+- admin authorization
+
+Manual QA:
+
+- Android PWA verified
+- iOS PWA physical-device verification pending
+
+Runtime production commit:
+`af97e4796ac41c59d114fed5a344584e927b2252`
 
 Next:
 
-1. Finish Merchant + Benefit vertical
-2. Membership
-3. Redemption
+1. Create/promote first JAKAWI admin
+2. Load first real merchant/benefit
+3. Membership
+4. Redemption
+5. Savings
 
-In development:
+Known technical debt:
 
-- Merchant + Benefit vertical
-- Public benefits catalog and detail pages
-- Minimal package-free admin for merchants and benefits
-- Persistent local public uploads through Docker named volume
+- replaced uploads may leave orphan files
+- no historical slug redirects
+- iOS PWA physical QA pending
 
 Technical note:
 
-Direct host typechecking is not the supported workflow because the host does not keep the dev/Wayfinder dependencies installed. The Docker build is the production validation path.
-
-Repository HEAD can move forward with documentation while the production runtime remains built from `a37805421baf604b949114931b1a3d1f6660bfe7`.
+Repository HEAD can move forward with documentation while the production runtime remains built from `af97e4796ac41c59d114fed5a344584e927b2252`.
