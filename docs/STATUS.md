@@ -6,10 +6,10 @@ Production:
 [https://jakawi.com](https://jakawi.com)
 
 Runtime production commit:
-`d62f6e6`
+`a37805421baf604b949114931b1a3d1f6660bfe7`
 
 Phase:
-Infrastructure complete / MVP bootstrap / PWA shell in development
+PWA shell deployed / MVP product development
 
 Working:
 
@@ -22,17 +22,21 @@ Working:
 - PostgreSQL
 - login/register
 - health endpoint
+- installable PWA shell
+- manifest
+- service worker
+- Android/Chromium installation support
+- iOS Add to Home Screen guidance
 
 Next:
 
-1. Complete PWA/mobile shell validation on `feature/pwa-shell`
-2. Merchant
-3. Benefit
-4. Membership
-5. Redemption
+1. Merchant
+2. Benefit
+3. Membership
+4. Redemption
 
-In development:
+Technical note:
 
-- PWA/mobile shell on `feature/pwa-shell`
+Direct host typechecking is not the supported workflow because the host does not keep the dev/Wayfinder dependencies installed. The Docker build is the production validation path.
 
-Repository HEAD can move forward with documentation while the production runtime remains built from `d62f6e6`.
+Repository HEAD can move forward with documentation while the production runtime remains built from `a37805421baf604b949114931b1a3d1f6660bfe7`.
