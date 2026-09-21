@@ -1,4 +1,6 @@
 /.env
+/.env.*
+/.ssh/
 /app/.env
 /app/vendor/
 /app/node_modules/
