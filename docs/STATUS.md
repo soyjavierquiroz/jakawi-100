@@ -6,11 +6,7 @@ Production:
 [https://jakawi.com](https://jakawi.com)
 
 Phase:
-Merchant/Benefit catalog deployed
-
-In development:
-
-- Membership v1
+Membership v1 deployed
 
 Working:
 
@@ -18,34 +14,38 @@ Working:
 - PWA
 - authentication
 - PostgreSQL
-- Merchant model/admin
-- Benefit model/admin
+- Merchant admin
+- Benefit admin
 - public benefit catalog
-- benefit detail
-- persistent merchant/benefit images
-- admin authorization
+- Membership lifecycle
+- admin membership activation
+- membership cancellation
+- Mi JAKAWI
+- benefit membership state
 
 Manual QA:
 
 - Android PWA verified
-- iOS PWA physical-device verification pending
+- iOS PWA physical QA pending
+- Membership manual production QA pending
 
 Runtime production commit:
-`af97e4796ac41c59d114fed5a344584e927b2252`
+`c37667795aa103a8a100e5ed00e2106538486cd1`
 
 Next:
 
-1. Create/promote first JAKAWI admin
-2. Load first real merchant/benefit
+1. Manually activate first real membership
+2. Validate Mi JAKAWI
 3. Redemption
 4. Savings
 
 Known technical debt:
 
+- Feature suite can show two unrelated 429 failures due rate limiter contamination
 - replaced uploads may leave orphan files
-- no historical slug redirects
+- historical slug redirects not implemented
 - iOS PWA physical QA pending
 
 Technical note:
 
-Repository HEAD can move forward with documentation while the production runtime remains built from `af97e4796ac41c59d114fed5a344584e927b2252`.
+Repository HEAD can move forward with documentation while the production runtime remains built from `c37667795aa103a8a100e5ed00e2106538486cd1`.
