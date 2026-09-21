@@ -1,0 +1,59 @@
+services:
+  web:
+    image: jakawi-web
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - jakawi
+
+  app:
+    image: jakawi-app
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: app
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - jakawi
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - jakawi_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - jakawi
+
+networks:
+  jakawi:
+    driver: bridge
+
+volumes:
+  jakawi_postgres_data:
