@@ -31,7 +31,13 @@ function formatDate(value?: string | null) {
     }).format(new Date(value));
 }
 
-export default function BenefitShow({ benefit }: { benefit: BenefitSummary }) {
+export default function BenefitShow({
+    benefit,
+    hasActiveMembership,
+}: {
+    benefit: BenefitSummary;
+    hasActiveMembership: boolean;
+}) {
     const { auth } = usePage().props;
     const savings = formatSavings(benefit.estimated_savings);
     const startsAt = formatDate(benefit.starts_at);
@@ -128,21 +134,49 @@ export default function BenefitShow({ benefit }: { benefit: BenefitSummary }) {
                             ) : null}
 
                             <div className="rounded-md border border-border bg-background p-4">
-                                <p className="text-sm font-semibold">
-                                    Necesitas JAKAWI para usar este beneficio
-                                </p>
-                                {auth.user ? (
-                                    <p className="mt-2 text-sm text-muted-foreground">
-                                        Tu membresía se habilitará en la siguiente etapa.
-                                    </p>
+                                {!auth.user ? (
+                                    <>
+                                        <p className="text-sm font-semibold">
+                                            Necesitas JAKAWI para usar este beneficio
+                                        </p>
+                                        <p className="mt-2 text-sm text-muted-foreground">
+                                            Crea tu cuenta para activar tu membresia.
+                                        </p>
+                                    </>
+                                ) : hasActiveMembership ? (
+                                    <>
+                                        <p className="text-sm font-semibold text-success">
+                                            Disponible con tu JAKAWI
+                                        </p>
+                                        <p className="mt-2 text-sm text-muted-foreground">
+                                            El canje estara disponible en la siguiente etapa.
+                                        </p>
+                                    </>
                                 ) : (
+                                    <>
+                                        <p className="text-sm font-semibold">
+                                            Necesitas una membresia activa para usar este beneficio
+                                        </p>
+                                        <p className="mt-2 text-sm text-muted-foreground">
+                                            Activa tu JAKAWI para acceder a beneficios.
+                                        </p>
+                                    </>
+                                )}
+                                {!auth.user ? (
                                     <Link
                                         href={register()}
                                         className="mt-4 inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
                                     >
                                         Crear cuenta
                                     </Link>
-                                )}
+                                ) : !hasActiveMembership ? (
+                                    <Link
+                                        href="/mi-jakawi"
+                                        className="mt-4 inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
+                                    >
+                                        Ver Mi JAKAWI
+                                    </Link>
+                                ) : null}
                             </div>
                         </div>
                     </div>

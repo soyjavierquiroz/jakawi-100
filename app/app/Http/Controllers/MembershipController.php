@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Membership;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class MembershipController extends Controller
+{
+    public function show(Request $request): Response
+    {
+        $membership = $request->user()->activeMembership()->first();
+
+        return Inertia::render('mi-jakawi', [
+            'membership' => $membership ? $this->serializeMembership($membership) : null,
+            'membershipConfig' => [
+                'price_bob' => config('jakawi.membership.price_bob'),
+                'duration_days' => config('jakawi.membership.duration_days'),
+            ],
+        ]);
+    }
+
+    /** @return array<string, mixed> */
+    private function serializeMembership(Membership $membership): array
+    {
+        return [
+            'id' => $membership->id,
+            'status' => $membership->status,
+            'starts_at' => $membership->starts_at?->toDateTimeString(),
+            'ends_at' => $membership->ends_at?->toDateTimeString(),
+            'days_remaining' => max(0, now()->startOfDay()->diffInDays($membership->ends_at->copy()->startOfDay(), false)),
+            'amount_paid' => $membership->amount_paid,
+        ];
+    }
+}

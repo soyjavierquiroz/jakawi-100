@@ -38,6 +38,7 @@ class PublicBenefitController extends Controller
         return Inertia::render('benefits/show', [
             'benefit' => $this->serializeBenefit($benefit, detailed: true),
             'canRegister' => ! $request->user(),
+            'hasActiveMembership' => (bool) $request->user()?->hasActiveMembership(),
         ]);
     }
 

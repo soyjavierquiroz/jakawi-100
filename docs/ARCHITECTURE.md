@@ -59,6 +59,16 @@ Internet HTTPS
 - Initial promotion uses `php artisan user:make-admin {email}`.
 - No roles, permissions package, merchant dashboard, analytics, or operational workflow beyond Merchant/Benefit CRUD is implemented yet.
 
+## Membership
+
+- Membership v1 is manual: a registered user becomes a member when an admin activates a membership from `/admin/memberships`.
+- Business constants live in `app/config/jakawi.php`: `jakawi.membership.price_bob` is `100` and `jakawi.membership.duration_days` is `365`.
+- `memberships` stores `user_id`, `status`, `starts_at`, `ends_at`, optional payment metadata, `activated_by`, optional notes, and timestamps.
+- Initial statuses are `active`, `expired`, and `cancelled`; the database does not enforce a rigid enum yet.
+- The source of truth for active membership is `status = active`, `starts_at <= now()`, and `ends_at >= now()`.
+- An expired date wins even if the stored status still says `active`. No scheduler marks expired rows yet.
+- Reusable logic is centralized in `Membership::active()`, `User::activeMembership()`, and `User::hasActiveMembership()`.
+
 ## Uploads
 
 - Merchant logos, merchant covers, and benefit images use Laravel's `public` storage disk.

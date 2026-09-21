@@ -15,6 +15,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     <Link className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" href="/admin/benefits">
                         Beneficios
                     </Link>
+                    <Link className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" href="/admin/memberships">
+                        Membresias
+                    </Link>
                     <Link className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" href="/">
                         Home
                     </Link>

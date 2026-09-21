@@ -8,6 +8,10 @@ Production:
 Phase:
 Merchant/Benefit catalog deployed
 
+In development:
+
+- Membership v1
+
 Working:
 
 - HTTPS
@@ -33,9 +37,8 @@ Next:
 
 1. Create/promote first JAKAWI admin
 2. Load first real merchant/benefit
-3. Membership
-4. Redemption
-5. Savings
+3. Redemption
+4. Savings
 
 Known technical debt:
 
