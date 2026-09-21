@@ -25,6 +25,14 @@ Internet HTTPS
 - vhost: `/usr/local/lsws/conf/vhosts/jakawi.com/vhost.conf`
 - backend: `127.0.0.1:8080`
 
+## Design System
+
+- `app/resources/css/theme.css` is the single source of truth for color.
+- React components must use semantic tokens instead of hardcoded brand colors.
+- Tailwind and shadcn consume the same token system through `app/resources/css/app.css`.
+- The current colors are provisional.
+- JAKAWI's full chromatic identity must be changeable from `theme.css`.
+
 ## Decisions
 
 - No microservices.

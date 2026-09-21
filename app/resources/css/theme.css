@@ -1,0 +1,78 @@
+:root {
+    --brand: oklch(0.205 0.025 145);
+    --brand-foreground: oklch(0.985 0 0);
+    --energy: oklch(0.72 0.18 75);
+    --energy-foreground: oklch(0.18 0.02 85);
+
+    --background: oklch(0.975 0.018 90);
+    --foreground: oklch(0.205 0.025 145);
+    --surface: oklch(1 0 0);
+    --surface-foreground: var(--foreground);
+    --muted: oklch(0.93 0.018 115);
+    --muted-foreground: oklch(0.43 0.025 145);
+    --border: oklch(0.82 0.025 120);
+
+    --success: oklch(0.58 0.15 145);
+    --success-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.72 0.16 75);
+    --warning-foreground: oklch(0.18 0.02 85);
+    --danger: oklch(0.58 0.22 28);
+    --danger-foreground: oklch(0.985 0 0);
+    --info: oklch(0.58 0.15 235);
+    --info-foreground: oklch(0.985 0 0);
+
+    --card: var(--surface);
+    --card-foreground: var(--surface-foreground);
+    --popover: var(--surface);
+    --popover-foreground: var(--surface-foreground);
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
+    --secondary: var(--muted);
+    --secondary-foreground: var(--foreground);
+    --accent: var(--energy);
+    --accent-foreground: var(--energy-foreground);
+    --destructive: var(--danger);
+    --destructive-foreground: var(--danger-foreground);
+    --input: var(--border);
+    --ring: var(--brand);
+
+    --chart-1: var(--brand);
+    --chart-2: var(--energy);
+    --chart-3: var(--success);
+    --chart-4: var(--warning);
+    --chart-5: var(--info);
+
+    --radius: 0.625rem;
+    --sidebar: var(--surface);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--brand);
+    --sidebar-primary-foreground: var(--brand-foreground);
+    --sidebar-accent: var(--muted);
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--brand);
+}
+
+.dark {
+    --brand: oklch(0.86 0.02 145);
+    --brand-foreground: oklch(0.205 0.025 145);
+    --energy: oklch(0.78 0.16 75);
+    --energy-foreground: oklch(0.18 0.02 85);
+
+    --background: oklch(0.145 0.015 145);
+    --foreground: oklch(0.985 0 0);
+    --surface: oklch(0.205 0.018 145);
+    --surface-foreground: var(--foreground);
+    --muted: oklch(0.28 0.018 145);
+    --muted-foreground: oklch(0.72 0.012 145);
+    --border: oklch(0.32 0.018 145);
+
+    --success: oklch(0.68 0.13 145);
+    --success-foreground: oklch(0.12 0.018 145);
+    --warning: oklch(0.78 0.16 75);
+    --warning-foreground: oklch(0.18 0.02 85);
+    --danger: oklch(0.68 0.2 28);
+    --danger-foreground: oklch(0.985 0 0);
+    --info: oklch(0.72 0.13 235);
+    --info-foreground: oklch(0.12 0.018 235);
+}

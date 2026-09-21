@@ -10,10 +10,10 @@ export default function Welcome() {
     return (
         <>
             <Head title="JAKAWI" />
-            <main className="flex min-h-screen items-center bg-[#f7f4ee] px-6 py-10 text-[#18201b]">
+            <main className="flex min-h-screen items-center bg-background px-6 py-10 text-foreground">
                 <section className="mx-auto flex w-full max-w-4xl flex-col gap-10">
                     <div className="space-y-5">
-                        <p className="text-sm font-semibold tracking-[0.28em] text-[#526455]">
+                        <p className="text-sm font-semibold tracking-[0.28em] text-muted-foreground">
                             JAKAWI
                         </p>
                         <div className="space-y-3">
@@ -22,7 +22,7 @@ export default function Welcome() {
                                 <br />
                                 Gasta menos.
                             </h1>
-                            <p className="max-w-md text-lg text-[#526455]">
+                            <p className="max-w-md text-lg text-muted-foreground">
                                 Tu ciudad tiene más para ti.
                             </p>
                         </div>
@@ -32,7 +32,7 @@ export default function Welcome() {
                         {auth.user ? (
                             <Link
                                 href={dashboard()}
-                                className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#18201b] px-6 text-sm font-semibold text-white transition hover:bg-[#2c3b30]"
+                                className="inline-flex min-h-12 items-center justify-center rounded-md bg-brand px-6 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
                             >
                                 Mi JAKAWI
                             </Link>
@@ -41,14 +41,14 @@ export default function Welcome() {
                                 {/* @chisel-registration */}
                                 <Link
                                     href={register()}
-                                    className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#18201b] px-6 text-sm font-semibold text-white transition hover:bg-[#2c3b30]"
+                                    className="inline-flex min-h-12 items-center justify-center rounded-md bg-brand px-6 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
                                 >
                                     Crear cuenta
                                 </Link>
                                 {/* @end-chisel-registration */}
                                 <Link
                                     href={login()}
-                                    className="inline-flex min-h-12 items-center justify-center rounded-md border border-[#bcc7b7] bg-white/70 px-6 text-sm font-semibold text-[#18201b] transition hover:bg-white"
+                                    className="inline-flex min-h-12 items-center justify-center rounded-md border border-border bg-surface/70 px-6 text-sm font-semibold text-foreground transition hover:bg-surface"
                                 >
                                     Entrar
                                 </Link>
