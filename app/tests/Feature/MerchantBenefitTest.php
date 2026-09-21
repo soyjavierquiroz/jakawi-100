@@ -138,6 +138,53 @@ class MerchantBenefitTest extends TestCase
         ]);
     }
 
+    public function test_editing_merchant_name_keeps_existing_slug(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $merchant = Merchant::factory()->create([
+            'name' => 'Original Merchant',
+            'slug' => 'original-merchant',
+        ]);
+
+        $this->actingAs($admin)->put("/admin/merchants/{$merchant->id}", [
+            'name' => 'Renamed Merchant',
+            'is_active' => true,
+            'is_featured' => false,
+            'sort_order' => 0,
+        ])->assertRedirect('/admin/merchants');
+
+        $this->assertDatabaseHas('merchants', [
+            'id' => $merchant->id,
+            'name' => 'Renamed Merchant',
+            'slug' => 'original-merchant',
+        ]);
+    }
+
+    public function test_editing_benefit_title_keeps_existing_slug(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $merchant = Merchant::factory()->create();
+        $benefit = Benefit::factory()->create([
+            'merchant_id' => $merchant->id,
+            'title' => '2x1 Hamburguesa Clasica',
+            'slug' => '2x1-hamburguesa-clasica',
+        ]);
+
+        $this->actingAs($admin)->put("/admin/benefits/{$benefit->id}", [
+            'merchant_id' => $merchant->id,
+            'title' => '2x1 Hamburguesa Premium',
+            'is_active' => true,
+            'is_featured' => false,
+            'sort_order' => 0,
+        ])->assertRedirect('/admin/benefits');
+
+        $this->assertDatabaseHas('benefits', [
+            'id' => $benefit->id,
+            'title' => '2x1 Hamburguesa Premium',
+            'slug' => '2x1-hamburguesa-clasica',
+        ]);
+    }
+
     public function test_duplicate_merchant_names_receive_unique_slugs(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);

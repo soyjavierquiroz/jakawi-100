@@ -53,7 +53,6 @@ class BenefitController extends Controller
     public function update(UpdateBenefitRequest $request, Benefit $benefit): RedirectResponse
     {
         $benefit->fill($this->validatedData($request->validated()));
-        $benefit->slug = Benefit::uniqueSlug($benefit->title, $benefit->id);
         $this->storeUpload($benefit, $request);
         $benefit->save();
 

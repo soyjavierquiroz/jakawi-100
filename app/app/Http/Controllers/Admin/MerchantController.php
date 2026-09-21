@@ -50,7 +50,6 @@ class MerchantController extends Controller
     public function update(UpdateMerchantRequest $request, Merchant $merchant): RedirectResponse
     {
         $merchant->fill($this->validatedData($request->validated()));
-        $merchant->slug = Merchant::uniqueSlug($merchant->name, $merchant->id);
         $this->storeUploads($merchant, $request);
         $merchant->save();
 
