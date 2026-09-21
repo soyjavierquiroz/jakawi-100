@@ -14,6 +14,7 @@ class RegistrationTest extends TestCase
     {
         parent::setUp();
 
+        $this->withoutVite();
         $this->skipUnlessFortifyHas(Features::registration());
     }
 
@@ -35,5 +36,21 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_registration_cannot_assign_administrator_privileges()
+    {
+        $this->post(route('register.store'), [
+            'name' => 'Test User',
+            'email' => 'not-an-admin@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'is_admin' => true,
+        ])->assertRedirect(route('dashboard', absolute: false));
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'not-an-admin@example.com',
+            'is_admin' => false,
+        ]);
     }
 }

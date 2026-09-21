@@ -6,6 +6,7 @@ use App\Models\Benefit;
 use App\Models\Merchant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class MerchantBenefitTest extends TestCase
@@ -45,6 +46,16 @@ class MerchantBenefitTest extends TestCase
         $this->get('/beneficios')->assertOk()->assertDontSee('Expired Benefit');
     }
 
+    public function test_future_benefit_does_not_appear_in_catalog(): void
+    {
+        Benefit::factory()->create([
+            'title' => 'Future Benefit',
+            'starts_at' => now()->addDay(),
+        ]);
+
+        $this->get('/beneficios')->assertOk()->assertDontSee('Future Benefit');
+    }
+
     public function test_inactive_merchant_hides_benefits(): void
     {
         $merchant = Merchant::factory()->inactive()->create();
@@ -63,6 +74,17 @@ class MerchantBenefitTest extends TestCase
         $this->get("/beneficios/{$benefit->slug}")
             ->assertOk()
             ->assertSee($benefit->title);
+    }
+
+    public function test_unavailable_benefits_are_not_publicly_visible_by_slug(): void
+    {
+        $inactive = Benefit::factory()->inactive()->create();
+        $expired = Benefit::factory()->expired()->create();
+        $future = Benefit::factory()->create(['starts_at' => now()->addDay()]);
+
+        foreach ([$inactive, $expired, $future] as $benefit) {
+            $this->get("/beneficios/{$benefit->slug}")->assertNotFound();
+        }
     }
 
     public function test_admin_requires_auth(): void
@@ -114,5 +136,50 @@ class MerchantBenefitTest extends TestCase
             'title' => 'Demo Benefit',
             'slug' => 'demo-benefit',
         ]);
+    }
+
+    public function test_duplicate_merchant_names_receive_unique_slugs(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs($admin)->post('/admin/merchants', ['name' => 'Demo Burger'])
+            ->assertRedirect('/admin/merchants');
+        $this->actingAs($admin)->post('/admin/merchants', ['name' => 'Demo Burger'])
+            ->assertRedirect('/admin/merchants');
+
+        $this->assertDatabaseHas('merchants', ['slug' => 'demo-burger']);
+        $this->assertDatabaseHas('merchants', ['slug' => 'demo-burger-2']);
+    }
+
+    public function test_duplicate_benefit_titles_receive_unique_slugs(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $merchant = Merchant::factory()->create();
+        $payload = ['merchant_id' => $merchant->id, 'title' => 'Demo Discount'];
+
+        $this->actingAs($admin)->post('/admin/benefits', $payload)
+            ->assertRedirect('/admin/benefits');
+        $this->actingAs($admin)->post('/admin/benefits', $payload)
+            ->assertRedirect('/admin/benefits');
+
+        $this->assertDatabaseHas('benefits', ['slug' => 'demo-discount']);
+        $this->assertDatabaseHas('benefits', ['slug' => 'demo-discount-2']);
+    }
+
+    public function test_admin_upload_validation_rejects_non_image_files(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $merchant = Merchant::factory()->create();
+
+        $this->actingAs($admin)->post('/admin/merchants', [
+            'name' => 'Invalid Upload Merchant',
+            'logo' => UploadedFile::fake()->create('payload.php', 10, 'application/x-php'),
+        ])->assertSessionHasErrors('logo');
+
+        $this->actingAs($admin)->post('/admin/benefits', [
+            'merchant_id' => $merchant->id,
+            'title' => 'Invalid Upload Benefit',
+            'image' => UploadedFile::fake()->create('payload.svg', 10, 'image/svg+xml'),
+        ])->assertSessionHasErrors('image');
     }
 }

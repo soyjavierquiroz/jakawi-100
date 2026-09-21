@@ -10,6 +10,13 @@ class ProfileUpdateTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutVite();
+    }
+
     public function test_profile_page_is_displayed()
     {
         $user = User::factory()->create();
@@ -41,6 +48,21 @@ class ProfileUpdateTest extends TestCase
         $this->assertSame('Test User', $user->name);
         $this->assertSame('test@example.com', $user->email);
         $this->assertNull($user->email_verified_at);
+    }
+
+    public function test_profile_update_cannot_assign_administrator_privileges()
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $this->actingAs($user)
+            ->patch(route('profile.update'), [
+                'name' => $user->name,
+                'email' => $user->email,
+                'is_admin' => true,
+            ])
+            ->assertRedirect(route('profile.edit'));
+
+        $this->assertFalse($user->refresh()->is_admin);
     }
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged()
