@@ -83,6 +83,19 @@ class MembershipTest extends TestCase
         $this->assertFalse($user->hasActiveMembership());
     }
 
+    public function test_future_membership_is_not_recognized(): void
+    {
+        $user = User::factory()->create();
+        Membership::query()->create([
+            'user_id' => $user->id,
+            'status' => Membership::STATUS_ACTIVE,
+            'starts_at' => now()->addDay(),
+            'ends_at' => now()->addDays(2),
+        ]);
+
+        $this->assertFalse($user->hasActiveMembership());
+    }
+
     public function test_guest_cannot_access_admin_memberships(): void
     {
         $this->get('/admin/memberships')->assertRedirect('/login');
@@ -92,6 +105,25 @@ class MembershipTest extends TestCase
     {
         $this->actingAs(User::factory()->create())
             ->get('/admin/memberships')
+            ->assertForbidden();
+    }
+
+    public function test_non_admin_cannot_activate_or_cancel_memberships(): void
+    {
+        $user = User::factory()->create();
+        $membership = Membership::query()->create([
+            'user_id' => User::factory()->create()->id,
+            'status' => Membership::STATUS_ACTIVE,
+            'starts_at' => now()->subDay(),
+            'ends_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($user)
+            ->post('/admin/memberships', ['user_id' => $membership->user_id])
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->patch("/admin/memberships/{$membership->id}/cancel")
             ->assertForbidden();
     }
 
@@ -117,7 +149,10 @@ class MembershipTest extends TestCase
         $membership = Membership::query()->where('user_id', $user->id)->firstOrFail();
 
         $this->assertSame(Membership::STATUS_ACTIVE, $membership->status);
-        $this->assertSame('100.00', $membership->amount_paid);
+        $this->assertSame(
+            number_format((float) config('jakawi.membership.price_bob'), 2, '.', ''),
+            $membership->amount_paid,
+        );
         $this->assertSame($admin->id, $membership->activated_by);
         $this->assertSame(
             config('jakawi.membership.duration_days'),
@@ -156,6 +191,44 @@ class MembershipTest extends TestCase
             'id' => $membership->id,
             'status' => Membership::STATUS_CANCELLED,
         ]);
+        $this->assertFalse($membership->user->hasActiveMembership());
+    }
+
+    public function test_cancelled_membership_allows_a_new_activation(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $user = User::factory()->create();
+        Membership::query()->create([
+            'user_id' => $user->id,
+            'status' => Membership::STATUS_CANCELLED,
+            'starts_at' => now()->subDay(),
+            'ends_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($admin)
+            ->post('/admin/memberships', ['user_id' => $user->id])
+            ->assertRedirect();
+
+        $this->assertSame(1, Membership::query()->where('user_id', $user->id)->active()->count());
+        $this->assertSame(2, Membership::query()->where('user_id', $user->id)->count());
+    }
+
+    public function test_user_only_sees_their_own_active_membership(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $membership = Membership::query()->create([
+            'user_id' => $otherUser->id,
+            'status' => Membership::STATUS_ACTIVE,
+            'starts_at' => now()->subDay(),
+            'ends_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($user)
+            ->get('/mi-jakawi?user_id='.$otherUser->id)
+            ->assertInertia(fn (Assert $page) => $page->where('membership', null));
+
+        $this->assertDatabaseHas('memberships', ['id' => $membership->id]);
     }
 
     public function test_benefit_detail_available_for_active_member(): void
@@ -181,5 +254,27 @@ class MembershipTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get("/beneficios/{$benefit->slug}")
             ->assertInertia(fn (Assert $page) => $page->where('hasActiveMembership', false));
+    }
+
+    public function test_benefit_detail_unavailable_for_expired_or_cancelled_memberships(): void
+    {
+        $benefit = Benefit::factory()->create();
+
+        foreach ([
+            [Membership::STATUS_ACTIVE, now()->subYear(), now()->subDay()],
+            [Membership::STATUS_CANCELLED, now()->subDay(), now()->addDay()],
+        ] as [$status, $startsAt, $endsAt]) {
+            $user = User::factory()->create();
+            Membership::query()->create([
+                'user_id' => $user->id,
+                'status' => $status,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+            ]);
+
+            $this->actingAs($user)
+                ->get("/beneficios/{$benefit->slug}")
+                ->assertInertia(fn (Assert $page) => $page->where('hasActiveMembership', false));
+        }
     }
 }

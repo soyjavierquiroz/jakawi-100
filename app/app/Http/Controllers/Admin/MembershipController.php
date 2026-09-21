@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,27 +46,37 @@ class MembershipController extends Controller
 
     public function store(ActivateMembershipRequest $request): RedirectResponse
     {
-        $user = User::query()->findOrFail($request->integer('user_id'));
+        $created = DB::transaction(function () use ($request): bool {
+            $user = User::query()
+                ->lockForUpdate()
+                ->findOrFail($request->integer('user_id'));
 
-        if ($user->hasActiveMembership()) {
+            if ($user->hasActiveMembership()) {
+                return false;
+            }
+
+            $startsAt = now();
+
+            Membership::query()->create([
+                'user_id' => $user->id,
+                'status' => Membership::STATUS_ACTIVE,
+                'starts_at' => $startsAt,
+                'ends_at' => $startsAt->copy()->addDays((int) config('jakawi.membership.duration_days')),
+                'amount_paid' => $request->filled('amount_paid')
+                    ? $request->input('amount_paid')
+                    : config('jakawi.membership.price_bob'),
+                'payment_method' => $request->input('payment_method'),
+                'payment_reference' => $request->input('payment_reference'),
+                'notes' => $request->input('notes'),
+                'activated_by' => $request->user()->id,
+            ]);
+
+            return true;
+        });
+
+        if (! $created) {
             return back()->with('error', 'Este usuario ya tiene una membresia activa.');
         }
-
-        $startsAt = now();
-
-        Membership::query()->create([
-            'user_id' => $user->id,
-            'status' => Membership::STATUS_ACTIVE,
-            'starts_at' => $startsAt,
-            'ends_at' => $startsAt->copy()->addDays((int) config('jakawi.membership.duration_days')),
-            'amount_paid' => $request->filled('amount_paid')
-                ? $request->input('amount_paid')
-                : config('jakawi.membership.price_bob'),
-            'payment_method' => $request->input('payment_method'),
-            'payment_reference' => $request->input('payment_reference'),
-            'notes' => $request->input('notes'),
-            'activated_by' => $request->user()->id,
-        ]);
 
         return back()->with('success', 'Membresia activada.');
     }
