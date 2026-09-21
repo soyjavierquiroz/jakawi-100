@@ -10,14 +10,14 @@ export default function Welcome() {
     return (
         <>
             <Head title="JAKAWI" />
-            <main className="flex min-h-screen items-center bg-background px-6 py-10 text-foreground">
+            <main className="flex min-h-screen items-center bg-background px-5 py-10 pb-28 text-foreground sm:px-6 sm:pb-10">
                 <section className="mx-auto flex w-full max-w-4xl flex-col gap-10">
                     <div className="space-y-5">
-                        <p className="text-sm font-semibold tracking-[0.28em] text-muted-foreground">
+                        <p className="text-sm font-semibold tracking-[0.24em] text-muted-foreground sm:tracking-[0.28em]">
                             JAKAWI
                         </p>
                         <div className="space-y-3">
-                            <h1 className="text-5xl font-semibold leading-none sm:text-7xl">
+                            <h1 className="text-4xl leading-none font-semibold min-[375px]:text-5xl sm:text-7xl">
                                 Vive más.
                                 <br />
                                 Gasta menos.

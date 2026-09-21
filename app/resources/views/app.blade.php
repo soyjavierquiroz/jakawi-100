@@ -2,7 +2,11 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-title" content="JAKAWI">
+        <meta name="application-name" content="JAKAWI">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
@@ -30,8 +34,10 @@
             }
         </style>
 
+        <link rel="manifest" href="/manifest.webmanifest">
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        {{-- Temporary application icon until final JAKAWI mark is approved. --}}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         @fonts

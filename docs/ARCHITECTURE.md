@@ -33,10 +33,20 @@ Internet HTTPS
 - The current colors are provisional.
 - JAKAWI's full chromatic identity must be changeable from `theme.css`.
 
+## PWA
+
+- JAKAWI is a mobile-first web app with a minimal installable PWA shell.
+- `app/public/manifest.webmanifest` declares the standalone app experience.
+- `app/public/sw.js` registers a conservative service worker for PWA capability.
+- PWA icons in `app/public/icons/` and `app/public/apple-touch-icon.png` are temporary application icons until the final JAKAWI mark is approved.
+- Installation requires explicit user action through the browser or platform UI.
+- Android/Chromium can use the install prompt when the browser exposes it.
+- iOS receives Add to Home Screen guidance when Safari is not already standalone.
+- The PWA is not offline-first yet; no offline database, push notifications, background sync, or persistent authenticated page caching are implemented.
+
 ## Decisions
 
 - No microservices.
 - No Kubernetes.
 - No native app yet.
 - Mobile-first.
-- PWA will be the next layer.

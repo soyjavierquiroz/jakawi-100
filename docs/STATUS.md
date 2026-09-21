@@ -9,7 +9,7 @@ Runtime production commit:
 `d62f6e6`
 
 Phase:
-Infrastructure complete / MVP bootstrap
+Infrastructure complete / MVP bootstrap / PWA shell in development
 
 Working:
 
@@ -25,10 +25,14 @@ Working:
 
 Next:
 
-1. PWA/mobile shell
+1. Complete PWA/mobile shell validation on `feature/pwa-shell`
 2. Merchant
 3. Benefit
 4. Membership
 5. Redemption
+
+In development:
+
+- PWA/mobile shell on `feature/pwa-shell`
 
 Repository HEAD can move forward with documentation while the production runtime remains built from `d62f6e6`.
