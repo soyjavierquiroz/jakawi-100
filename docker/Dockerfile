@@ -51,6 +51,7 @@ ENV APP_ENV=production \
     APP_DEBUG=false
 
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
 COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
 
 RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
