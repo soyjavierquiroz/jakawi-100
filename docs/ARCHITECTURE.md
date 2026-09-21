@@ -44,9 +44,31 @@ Internet HTTPS
 - iOS receives Add to Home Screen guidance when Safari is not already standalone.
 - The PWA is not offline-first yet; no offline database, push notifications, background sync, or persistent authenticated page caching are implemented.
 
+## Merchant + Benefit Vertical
+
+- `merchants` stores the public commerce profile and activation state.
+- `benefits` stores offers linked to one merchant.
+- Public benefit availability is server-side: the benefit must be active, within its optional date window, and attached to an active merchant.
+- Public routes expose a catalog at `/beneficios` and benefit detail pages by slug.
+
+## Admin
+
+- The first admin surface is intentionally simple and package-free.
+- Users have an `is_admin` boolean.
+- `/admin` routes require authentication and the server-side `admin` middleware.
+- Initial promotion uses `php artisan user:make-admin {email}`.
+- No roles, permissions package, merchant dashboard, analytics, or operational workflow beyond Merchant/Benefit CRUD is implemented yet.
+
+## Uploads
+
+- Merchant logos, merchant covers, and benefit images use Laravel's `public` storage disk.
+- The database stores only file paths.
+- Docker Compose mounts `jakawi_public_uploads` into both the PHP app container and the nginx web container so uploaded files survive container recreation and are served from `/storage`.
+
 ## Decisions
 
 - No microservices.
 - No Kubernetes.
 - No native app yet.
 - Mobile-first.
+- Admin is intentionally minimal until product workflows prove what is needed.

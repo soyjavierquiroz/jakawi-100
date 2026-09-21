@@ -3,6 +3,7 @@ export type User = {
     name: string;
     email: string;
     avatar?: string;
+    is_admin?: boolean;
     email_verified_at: string | null;
     /* @chisel-2fa */
     two_factor_enabled?: boolean;

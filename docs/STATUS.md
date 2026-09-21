@@ -30,10 +30,16 @@ Working:
 
 Next:
 
-1. Merchant
-2. Benefit
-3. Membership
-4. Redemption
+1. Finish Merchant + Benefit vertical
+2. Membership
+3. Redemption
+
+In development:
+
+- Merchant + Benefit vertical
+- Public benefits catalog and detail pages
+- Minimal package-free admin for merchants and benefits
+- Persistent local public uploads through Docker named volume
 
 Technical note:
 

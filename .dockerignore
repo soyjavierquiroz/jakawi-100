@@ -6,4 +6,5 @@ app/.env
 app/vendor
 app/node_modules
 app/public/build
+app/bootstrap/cache/*.php
 app/storage/logs

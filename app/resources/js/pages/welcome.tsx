@@ -1,17 +1,23 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import BenefitCard from '@/components/benefit-card';
 import { dashboard, login } from '@/routes';
+import type { BenefitSummary } from '@/types';
 /* @chisel-registration */
 import { register } from '@/routes';
 /* @end-chisel-registration */
 
-export default function Welcome() {
+export default function Welcome({
+    featuredBenefits = [],
+}: {
+    featuredBenefits?: BenefitSummary[];
+}) {
     const { auth } = usePage().props;
 
     return (
         <>
             <Head title="JAKAWI" />
-            <main className="flex min-h-screen items-center bg-background px-5 py-10 pb-28 text-foreground sm:px-6 sm:pb-10">
-                <section className="mx-auto flex w-full max-w-4xl flex-col gap-10">
+            <main className="min-h-screen bg-background px-5 py-10 pb-28 text-foreground sm:px-6 sm:pb-10">
+                <section className="mx-auto flex w-full max-w-4xl flex-col gap-10 pt-12 sm:pt-20">
                     <div className="space-y-5">
                         <p className="text-sm font-semibold tracking-[0.24em] text-muted-foreground sm:tracking-[0.28em]">
                             JAKAWI
@@ -55,6 +61,35 @@ export default function Welcome() {
                             </>
                         )}
                     </nav>
+
+                    {featuredBenefits.length ? (
+                        <section className="flex flex-col gap-4 pt-6">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                                <div className="space-y-1">
+                                    <h2 className="text-2xl font-semibold">
+                                        Beneficios destacados
+                                    </h2>
+                                    <p className="text-sm text-muted-foreground">
+                                        Primeras oportunidades disponibles en JAKAWI.
+                                    </p>
+                                </div>
+                                <Link
+                                    href="/beneficios"
+                                    className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:bg-muted sm:self-auto"
+                                >
+                                    Ver todos los beneficios
+                                </Link>
+                            </div>
+                            <div className="grid gap-4 sm:grid-cols-3">
+                                {featuredBenefits.map((benefit) => (
+                                    <BenefitCard
+                                        key={benefit.id}
+                                        benefit={benefit}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    ) : null}
                 </section>
             </main>
         </>

@@ -11,6 +11,8 @@ services:
     depends_on:
       app:
         condition: service_healthy
+    volumes:
+      - jakawi_public_uploads:/var/www/html/public/storage
     networks:
       - jakawi
 
@@ -26,6 +28,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - jakawi_public_uploads:/var/www/html/storage/app/public
     healthcheck:
       test: ["CMD-SHELL", "php-fpm -t >/dev/null 2>&1 || exit 1"]
       interval: 30s
@@ -57,3 +61,4 @@ networks:
 
 volumes:
   jakawi_postgres_data:
+  jakawi_public_uploads:
