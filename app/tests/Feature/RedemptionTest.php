@@ -146,6 +146,31 @@ class RedemptionTest extends TestCase
         $this->actingAs($user)->post("/beneficios/{$unlimited->slug}/canjear")->assertRedirect();
     }
 
+    public function test_confirmation_limit_is_revalidated_across_multiple_redemptions_for_same_member_and_benefit(): void
+    {
+        $user = $this->member();
+        $benefit = $this->benefit(['redemption_limit_per_member' => 2]);
+
+        Redemption::query()->create($this->redemptionPayload($user, $benefit, [
+            'status' => Redemption::STATUS_CONFIRMED,
+            'confirmed_at' => now(),
+        ]));
+        Redemption::query()->create($this->redemptionPayload($user, $benefit, [
+            'status' => Redemption::STATUS_CANCELLED,
+        ]));
+        $second = Redemption::query()->create($this->redemptionPayload($user, $benefit));
+        $third = Redemption::query()->create($this->redemptionPayload($user, $benefit));
+
+        $this->post('/validar', ['code' => $second->code, 'pin' => '123456'])
+            ->assertSessionHas('success');
+
+        $this->post('/validar', ['code' => $third->code, 'pin' => '123456'])
+            ->assertSessionHas('error');
+
+        $this->assertSame(2, Redemption::query()->where('user_id', $user->id)->where('benefit_id', $benefit->id)->confirmed()->count());
+        $this->assertSame(Redemption::STATUS_PENDING, $third->refresh()->status);
+    }
+
     public function test_only_owner_can_view_redemption_page(): void
     {
         $user = $this->member();

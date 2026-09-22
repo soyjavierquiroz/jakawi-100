@@ -25,7 +25,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'benefit_id', 'status']);
-            $table->index(['code', 'status']);
+            $table->index(['user_id', 'status']);
+            $table->index(['benefit_id', 'status']);
         });
     }
 
