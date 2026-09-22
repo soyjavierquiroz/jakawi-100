@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Benefit;
 use App\Models\Merchant;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class ClearDemoCatalog extends Command
 {
@@ -16,8 +17,11 @@ class ClearDemoCatalog extends Command
     {
         $benefits = Benefit::query()->where('slug', 'like', 'demo-%')->delete();
         $merchants = Merchant::query()->where('slug', 'like', 'demo-%')->delete();
+        $disk = Storage::disk(config('jakawi.demo_catalog.images.disk'));
+        $disk->deleteDirectory('demo/merchants');
+        $disk->deleteDirectory('demo/benefits');
 
-        $this->info("Deleted {$benefits} demo benefits and {$merchants} demo merchants.");
+        $this->info("Deleted {$benefits} demo benefits and {$merchants} demo merchants, plus demo images.");
 
         return self::SUCCESS;
     }
