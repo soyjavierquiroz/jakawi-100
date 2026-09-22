@@ -20,4 +20,13 @@ return [
         'code_ttl_minutes' => 10,
     ],
     'redemption_statuses' => ['pending', 'confirmed', 'expired', 'cancelled'],
+    'analytics' => [
+        'enabled' => true,
+        'visitor_cookie' => env('JAKAWI_ANALYTICS_VISITOR_COOKIE', 'jakawi_visitor_id'),
+        'events' => [
+            'home_view', 'partner_view', 'location_view', 'benefit_view', 'experience_view',
+            'redeem_started', 'redeem_confirmed', 'experience_reserve_click', 'maps_click', 'whatsapp_click',
+        ],
+        'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],
+    ],
 ];
