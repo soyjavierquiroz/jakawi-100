@@ -45,7 +45,7 @@ Updated: 2026-09-22
 
 ## V2.4: Experience foundation
 
-- Complete on `feature/v2-experience` pending review and merge.
+- Complete and merged into `main`.
 - Experiences are standalone discoverable content, distinct from Benefits, and
   support draft/published/paused/archived editorial publication.
 - They support zero or more Partner relationships with explicit roles, and zero
