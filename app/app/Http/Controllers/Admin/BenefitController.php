@@ -78,6 +78,7 @@ class BenefitController extends Controller
             ...$data,
             'is_active' => (bool) ($data['is_active'] ?? false),
             'is_featured' => (bool) ($data['is_featured'] ?? false),
+            'redemption_limit_per_member' => $data['redemption_limit_per_member'] ?? null,
             'sort_order' => $data['sort_order'] ?? 0,
         ];
     }

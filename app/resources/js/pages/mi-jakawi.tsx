@@ -14,6 +14,19 @@ type MembershipConfig = {
     duration_days: number;
 };
 
+type RedemptionStats = {
+    count: number;
+    savings_total: string;
+};
+
+type RecentRedemption = {
+    public_id: string;
+    merchant_name: string;
+    benefit_title: string;
+    savings_amount?: string | null;
+    confirmed_at: string;
+};
+
 function formatDate(value: string) {
     return new Intl.DateTimeFormat('es-BO', {
         dateStyle: 'medium',
@@ -23,9 +36,13 @@ function formatDate(value: string) {
 export default function MiJakawi({
     membership,
     membershipConfig,
+    redemptionStats,
+    recentRedemptions,
 }: {
     membership: Membership | null;
     membershipConfig: MembershipConfig;
+    redemptionStats: RedemptionStats;
+    recentRedemptions: RecentRedemption[];
 }) {
     return (
         <>
@@ -80,6 +97,33 @@ export default function MiJakawi({
                                     </dd>
                                 </div>
                             </dl>
+                        </div>
+                    ) : null}
+
+                    {membership ? (
+                        <div className="rounded-md border border-border bg-surface p-5">
+                            <h2 className="text-xl font-semibold">Canjes</h2>
+                            <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">Canjes realizados</dt>
+                                    <dd className="mt-1 text-2xl font-semibold">{redemptionStats.count}</dd>
+                                </div>
+                                <div>
+                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">Ahorro estimado con JAKAWI</dt>
+                                    <dd className="mt-1 text-2xl font-semibold">Bs {Number(redemptionStats.savings_total).toFixed(2)}</dd>
+                                </div>
+                            </dl>
+                            {recentRedemptions.length > 0 ? (
+                                <div className="mt-5 divide-y divide-border">
+                                    {recentRedemptions.map((redemption) => (
+                                        <div key={redemption.public_id} className="py-3 text-sm">
+                                            <p className="font-semibold">{redemption.benefit_title}</p>
+                                            <p className="text-muted-foreground">{redemption.merchant_name} · {formatDate(redemption.confirmed_at)}</p>
+                                            {redemption.savings_amount ? <p className="mt-1">Ahorro estimado: Bs {Number(redemption.savings_amount).toFixed(2)}</p> : null}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : null}
                         </div>
                     ) : (
                         <div className="rounded-md border border-border bg-surface p-5">

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Merchant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /** @extends Factory<Merchant> */
@@ -37,5 +38,10 @@ class MerchantFactory extends Factory
     public function inactive(): static
     {
         return $this->state(fn () => ['is_active' => false]);
+    }
+
+    public function withRedemptionPin(string $pin = '123456'): static
+    {
+        return $this->state(fn () => ['redemption_pin_hash' => Hash::make($pin)]);
     }
 }

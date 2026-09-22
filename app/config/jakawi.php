@@ -5,4 +5,7 @@ return [
         'price_bob' => 100,
         'duration_days' => 365,
     ],
+    'redemption' => [
+        'code_ttl_minutes' => 10,
+    ],
 ];

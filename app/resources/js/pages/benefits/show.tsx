@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { register } from '@/routes';
 import type { BenefitSummary } from '@/types';
@@ -14,10 +14,10 @@ function formatSavings(value: BenefitSummary['estimated_savings']) {
         return null;
     }
 
-    return new Intl.NumberFormat('es-MX', {
+    return new Intl.NumberFormat('es-BO', {
         style: 'currency',
-        currency: 'MXN',
-        maximumFractionDigits: 0,
+        currency: 'BOB',
+        maximumFractionDigits: 2,
     }).format(amount);
 }
 
@@ -34,9 +34,15 @@ function formatDate(value?: string | null) {
 export default function BenefitShow({
     benefit,
     hasActiveMembership,
+    redemptionAvailability,
 }: {
     benefit: BenefitSummary;
     hasActiveMembership: boolean;
+    redemptionAvailability: {
+        can_redeem: boolean;
+        limit_reached: boolean;
+        temporarily_unavailable: boolean;
+    };
 }) {
     const { auth } = usePage().props;
     const savings = formatSavings(benefit.estimated_savings);
@@ -145,12 +151,13 @@ export default function BenefitShow({
                                     </>
                                 ) : hasActiveMembership ? (
                                     <>
-                                        <p className="text-sm font-semibold text-success">
-                                            Disponible con tu JAKAWI
-                                        </p>
-                                        <p className="mt-2 text-sm text-muted-foreground">
-                                            El canje estara disponible en la siguiente etapa.
-                                        </p>
+                                        {redemptionAvailability.limit_reached ? (
+                                            <p className="text-sm font-semibold">Ya utilizaste este beneficio.</p>
+                                        ) : redemptionAvailability.temporarily_unavailable ? (
+                                            <p className="text-sm font-semibold">Canje temporalmente no disponible.</p>
+                                        ) : (
+                                            <p className="text-sm font-semibold text-success">Disponible con tu JAKAWI</p>
+                                        )}
                                     </>
                                 ) : (
                                     <>
@@ -176,6 +183,14 @@ export default function BenefitShow({
                                     >
                                         Ver Mi JAKAWI
                                     </Link>
+                                ) : redemptionAvailability.can_redeem ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => router.post(`/beneficios/${benefit.slug}/canjear`)}
+                                        className="mt-4 inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
+                                    >
+                                        Usar beneficio
+                                    </button>
                                 ) : null}
                             </div>
                         </div>

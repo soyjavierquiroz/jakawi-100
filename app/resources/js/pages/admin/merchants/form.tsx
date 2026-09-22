@@ -18,6 +18,7 @@ type Merchant = {
     is_active: boolean;
     is_featured: boolean;
     sort_order: number;
+    has_redemption_pin?: boolean;
 } | null;
 
 export default function MerchantForm({ merchant }: { merchant: Merchant }) {
@@ -33,6 +34,7 @@ export default function MerchantForm({ merchant }: { merchant: Merchant }) {
         whatsapp: merchant?.whatsapp ?? '',
         logo: null as File | null,
         cover: null as File | null,
+        redemption_pin: '',
         is_active: merchant?.is_active ?? true,
         is_featured: merchant?.is_featured ?? false,
         sort_order: merchant?.sort_order ?? 0,
@@ -69,7 +71,11 @@ export default function MerchantForm({ merchant }: { merchant: Merchant }) {
                     <Field label="WhatsApp"><Input value={form.data.whatsapp} onChange={(e) => form.setData('whatsapp', e.target.value)} /></Field>
                     <Field label="Logo"><Input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => form.setData('logo', e.target.files?.[0] ?? null)} /></Field>
                     <Field label="Cover"><Input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => form.setData('cover', e.target.files?.[0] ?? null)} /></Field>
+                    <Field label="Redemption PIN"><Input inputMode="numeric" maxLength={6} value={form.data.redemption_pin} onChange={(e) => form.setData('redemption_pin', e.target.value)} /></Field>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                    {merchant?.has_redemption_pin ? 'PIN configurado' : 'PIN no configurado'}
+                </p>
                 <Field label="Descripción corta"><Input value={form.data.short_description} onChange={(e) => form.setData('short_description', e.target.value)} /></Field>
                 <Field label="Dirección"><Input value={form.data.address} onChange={(e) => form.setData('address', e.target.value)} /></Field>
                 <Field label="Descripción"><textarea className="min-h-28 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50" value={form.data.description} onChange={(e) => form.setData('description', e.target.value)} /></Field>

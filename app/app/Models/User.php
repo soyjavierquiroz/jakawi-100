@@ -42,6 +42,12 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Membership::class);
     }
 
+    /** @return HasMany<Redemption> */
+    public function redemptions(): HasMany
+    {
+        return $this->hasMany(Redemption::class);
+    }
+
     /** @return HasOne<Membership> */
     public function activeMembership(): HasOne
     {

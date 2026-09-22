@@ -15,6 +15,7 @@ type Benefit = {
     terms?: string | null;
     benefit_type?: string | null;
     estimated_savings?: string | number | null;
+    redemption_limit_per_member?: number | null;
     is_active: boolean;
     is_featured: boolean;
     starts_at?: string | null;
@@ -38,6 +39,7 @@ export default function BenefitForm({
         terms: benefit?.terms ?? '',
         benefit_type: benefit?.benefit_type ?? '',
         estimated_savings: benefit?.estimated_savings ?? '',
+        redemption_limit_per_member: (benefit?.redemption_limit_per_member ?? 1) as number | null,
         image: null as File | null,
         is_active: benefit?.is_active ?? true,
         is_featured: benefit?.is_featured ?? false,
@@ -79,6 +81,7 @@ export default function BenefitForm({
                     <Field label="Título"><Input value={form.data.title} onChange={(e) => form.setData('title', e.target.value)} required /></Field>
                     <Field label="Tipo"><Input placeholder="2x1, discount, free_item..." value={form.data.benefit_type} onChange={(e) => form.setData('benefit_type', e.target.value)} /></Field>
                     <Field label="Ahorro estimado"><Input type="number" min="0" step="0.01" value={form.data.estimated_savings} onChange={(e) => form.setData('estimated_savings', e.target.value)} /></Field>
+                    <Field label="Límite de canjes por miembro"><Input type="number" min="1" value={form.data.redemption_limit_per_member ?? ''} onChange={(e) => form.setData('redemption_limit_per_member', e.target.value === '' ? null : Number(e.target.value))} placeholder="Sin límite" /></Field>
                     <Field label="Inicio"><Input type="datetime-local" value={form.data.starts_at} onChange={(e) => form.setData('starts_at', e.target.value)} /></Field>
                     <Field label="Fin"><Input type="datetime-local" value={form.data.ends_at} onChange={(e) => form.setData('ends_at', e.target.value)} /></Field>
                     <Field label="Orden"><Input type="number" min="0" value={form.data.sort_order} onChange={(e) => form.setData('sort_order', Number(e.target.value))} /></Field>

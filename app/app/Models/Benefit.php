@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
     'image_path',
     'is_active',
     'is_featured',
+    'redemption_limit_per_member',
     'starts_at',
     'ends_at',
     'sort_order',
@@ -83,6 +84,7 @@ class Benefit extends Model
             'estimated_savings' => 'decimal:2',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'redemption_limit_per_member' => 'integer',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
         ];

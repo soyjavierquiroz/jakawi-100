@@ -6,7 +6,7 @@ Production:
 [https://jakawi.com](https://jakawi.com)
 
 Phase:
-Membership v1 deployed
+Redemption v1 in development
 
 Working:
 
@@ -23,6 +23,14 @@ Working:
 - Mi JAKAWI
 - benefit membership state
 
+In development:
+
+- Redemption lifecycle
+- member redemption code page
+- public merchant validator
+- Mi JAKAWI redemption savings
+- admin redemption traceability
+
 Manual QA:
 
 - Android PWA verified
@@ -36,8 +44,8 @@ Next:
 
 1. Manually activate first real membership
 2. Validate Mi JAKAWI
-3. Redemption
-4. Savings
+3. Complete Redemption v1 QA
+4. Decide production migration/deploy window
 
 Known technical debt:
 

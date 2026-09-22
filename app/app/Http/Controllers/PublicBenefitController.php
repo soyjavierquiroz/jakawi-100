@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Benefit;
+use App\Models\Redemption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -35,10 +36,19 @@ class PublicBenefitController extends Controller
 
         $benefit->load('merchant');
 
+        $user = $request->user();
+        $hasActiveMembership = (bool) $user?->hasActiveMembership();
+        $limitReached = $user ? $this->limitReached($user->id, $benefit) : false;
+
         return Inertia::render('benefits/show', [
             'benefit' => $this->serializeBenefit($benefit, detailed: true),
             'canRegister' => ! $request->user(),
-            'hasActiveMembership' => (bool) $request->user()?->hasActiveMembership(),
+            'hasActiveMembership' => $hasActiveMembership,
+            'redemptionAvailability' => [
+                'can_redeem' => $hasActiveMembership && (bool) $benefit->merchant->redemption_pin_hash && ! $limitReached,
+                'limit_reached' => $limitReached,
+                'temporarily_unavailable' => $hasActiveMembership && ! $benefit->merchant->redemption_pin_hash,
+            ],
         ]);
     }
 
@@ -72,5 +82,18 @@ class PublicBenefitController extends Controller
         }
 
         return $data;
+    }
+
+    private function limitReached(int $userId, Benefit $benefit): bool
+    {
+        if ($benefit->redemption_limit_per_member === null) {
+            return false;
+        }
+
+        return Redemption::query()
+            ->where('user_id', $userId)
+            ->where('benefit_id', $benefit->id)
+            ->confirmed()
+            ->count() >= $benefit->redemption_limit_per_member;
     }
 }

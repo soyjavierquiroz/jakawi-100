@@ -17,6 +17,7 @@ export type BenefitSummary = {
     estimated_savings?: string | number | null;
     image_url?: string | null;
     is_featured?: boolean;
+    redemption_limit_per_member?: number | null;
     starts_at?: string | null;
     ends_at?: string | null;
     merchant: MerchantSummary;

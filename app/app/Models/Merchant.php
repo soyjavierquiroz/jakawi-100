@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\MerchantFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,7 @@ use Illuminate\Support\Str;
     'is_featured',
     'sort_order',
 ])]
+#[Hidden(['redemption_pin_hash'])]
 class Merchant extends Model
 {
     /** @use HasFactory<MerchantFactory> */
