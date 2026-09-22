@@ -31,7 +31,7 @@ if [[ "${1:-}" == "clean" ]]; then
     exit 0
 fi
 
-"${compose[@]}" up -d db-test app-test
+"${compose[@]}" up -d --build db-test app-test
 
 # Check the actual container configuration before executing any Laravel command.
 actual_env="$("${compose[@]}" exec -T app-test printenv APP_ENV)"
