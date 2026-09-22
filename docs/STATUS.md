@@ -6,7 +6,7 @@ Production:
 [https://jakawi.com](https://jakawi.com)
 
 Phase:
-Redemption v1 deployed
+Redemption v1 hotfix deployed
 
 Working:
 
@@ -24,6 +24,9 @@ Working:
 - redemption limits
 - estimated savings snapshots
 - admin redemption history
+- redemption runtime 500 fixed
+- authenticated navigation includes Beneficios
+- admin users have Admin navigation link
 
 Manual QA:
 
@@ -34,13 +37,12 @@ Manual QA:
 - iOS PWA physical QA pending
 
 Runtime production commit:
-`ee0369b0cdc5cba556eb3c2ff085e27b8c99f53c`
+`6a4acd114fc9e892728ef493eb57da5deaab16f7`
 
 Next:
 
-1. Configure PIN on real merchant
-2. Perform first real redemption
-3. Validate savings in Mi JAKAWI
+1. Perform manual production redemption QA
+2. Validate savings in Mi JAKAWI
 
 Known technical debt:
 
@@ -52,4 +54,4 @@ Known technical debt:
 
 Technical note:
 
-Repository HEAD can move forward with documentation while the production runtime remains built from `ee0369b0cdc5cba556eb3c2ff085e27b8c99f53c`.
+Repository HEAD can move forward with documentation while the production runtime remains built from `6a4acd114fc9e892728ef493eb57da5deaab16f7`.
