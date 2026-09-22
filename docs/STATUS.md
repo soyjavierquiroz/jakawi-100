@@ -41,7 +41,18 @@ Demo catalog images:
 - deterministic local SVG assets
 - no external image dependencies
 - demo assets stored under public demo paths
-- visual QA pending
+- visual QA PASS
+
+Catalog onboarding:
+
+- bulk CSV importer deployed
+- dry-run by default
+- transactional apply
+- idempotent merchant/benefit import by slug
+- existing PINs/uploads preserved
+- demo slugs rejected
+- production template available
+- no real catalog CSV applied yet
 
 Manual QA:
 
@@ -51,18 +62,20 @@ Manual QA:
 - Savings PASS
 - MVP experience PASS
 - populated catalog PASS
-- demo image visual QA pending
+- demo image visual QA PASS
 - Android PWA PASS
 - iOS physical PWA QA pending
 
 Runtime production commit:
-`3721843253709652cfca9221a84dad15057468f4`
+`65e60ccc8d250fd717a175304316fe2a1e6a8618`
 
 Next:
 
-1. Visual QA demo images on mobile
-2. Fix only obvious visual issues
-3. Prepare real merchant onboarding/content
+1. Prepare first real merchant CSV
+2. Run dry-run
+3. Correct validation errors
+4. Apply first real merchant batch
+5. Upload/adjust real merchant images and PINs as needed
 
 Known technical debt:
 
@@ -74,4 +87,4 @@ Known technical debt:
 
 Technical note:
 
-Repository HEAD can move forward with documentation while the production runtime remains built from `3721843253709652cfca9221a84dad15057468f4`.
+Repository HEAD can move forward with documentation while the production runtime remains built from `65e60ccc8d250fd717a175304316fe2a1e6a8618`.
