@@ -47,6 +47,40 @@ docker compose exec app \
 php artisan jakawi:clear-demo-catalog
 ```
 
+## Real Catalog CSV Import
+
+The importer accepts a UTF-8, comma-separated CSV with one benefit per row.
+Merchant fields may be repeated for its benefits. See
+`docs/examples/catalog-import-example.csv` for a fictional example.
+
+Generate a template:
+
+```bash
+docker compose exec app \
+php artisan jakawi:catalog-import-template
+```
+
+Always run the dry run first; it validates the whole CSV and reports creates and
+updates without writing to the database:
+
+```bash
+docker compose exec app \
+php artisan jakawi:import-catalog \
+storage/app/imports/catalog.csv
+```
+
+Only apply after a clean dry run:
+
+```bash
+docker compose exec app \
+php artisan jakawi:import-catalog \
+storage/app/imports/catalog.csv \
+--apply
+```
+
+The import is transactional, rejects `demo-` slugs, and never imports PINs or
+images. Existing merchant PINs and uploaded image paths are preserved.
+
 ## Disk Checks
 
 ```bash
