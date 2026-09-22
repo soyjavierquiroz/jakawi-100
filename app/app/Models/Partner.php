@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Partner extends Model
 {
@@ -30,6 +31,14 @@ class Partner extends Model
     public function benefits(): HasMany
     {
         return $this->hasMany(Benefit::class);
+    }
+
+    /** @return BelongsToMany<Experience, $this> */
+    public function experiences(): BelongsToMany
+    {
+        return $this->belongsToMany(Experience::class)
+            ->withPivot(['role', 'sort_order'])
+            ->orderByPivot('sort_order');
     }
 
     /** @param Builder<Partner> $query */
