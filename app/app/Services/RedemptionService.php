@@ -16,6 +16,8 @@ class RedemptionService
 {
     private const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
+    public function __construct(private readonly AnalyticsTracker $analytics) {}
+
     public function start(User $user, Benefit $benefit, Location $location): Redemption
     {
         // The user lock serializes both pending idempotency and per-member limits.
@@ -46,7 +48,10 @@ class RedemptionService
                 $redemption->update(['status' => Redemption::STATUS_EXPIRED]);
             }
 
-            return $this->createRedemption($lockedUser, $membership, $benefit, $location, $now);
+            $redemption = $this->createRedemption($lockedUser, $membership, $benefit, $location, $now);
+            $this->analytics->redemptionStarted($redemption);
+
+            return $redemption;
         });
     }
 
@@ -84,8 +89,10 @@ class RedemptionService
             $this->assertLimitAvailable($user, $benefit);
 
             $redemption->update(['status' => Redemption::STATUS_CONFIRMED, 'confirmed_at' => now()]);
+            $redemption = $redemption->refresh();
+            $this->analytics->redemptionConfirmed($redemption);
 
-            return $redemption->refresh();
+            return $redemption;
         });
 
         if ($result === null) {
