@@ -1,7 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BadgeCheck, BookOpen, FolderGit2, Gift, LayoutGrid, Shield } from 'lucide-react';
+import { BadgeCheck, Gift, House, Shield } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -18,9 +17,9 @@ import type { NavItem } from '@/types';
 
 const mainNavItems = (isAdmin: boolean): NavItem[] => [
     {
-        title: 'Dashboard',
+        title: 'Inicio',
         href: dashboard(),
-        icon: LayoutGrid,
+        icon: House,
     },
     {
         title: 'Beneficios',
@@ -32,24 +31,15 @@ const mainNavItems = (isAdmin: boolean): NavItem[] => [
         href: '/mi-jakawi',
         icon: BadgeCheck,
     },
-    ...(isAdmin ? [{
-        title: 'Admin',
-        href: '/admin',
-        icon: Shield,
-    }] : []),
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
+    ...(isAdmin
+        ? [
+              {
+                  title: 'Admin',
+                  href: '/admin',
+                  icon: Shield,
+              },
+          ]
+        : []),
 ];
 
 export function AppSidebar() {
@@ -74,7 +64,6 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

@@ -1,27 +1,78 @@
-import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { dashboard } from '@/routes';
 
-export default function Dashboard() {
+type Membership = { id: number; ends_at: string };
+
+type RedemptionStats = { count: number; savings_total: string };
+
+export default function Dashboard({
+    membership,
+    redemptionStats,
+}: {
+    membership: Membership | null;
+    redemptionStats: RedemptionStats;
+}) {
+    const { auth } = usePage().props;
+    const firstName = auth.user?.name.trim().split(/\s+/)[0] || 'bienvenido';
+
     return (
         <>
-            <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+            <Head title="Inicio" />
+            <main className="min-h-full bg-background px-4 py-6 text-foreground sm:px-6 sm:py-10">
+                <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+                    <div className="space-y-2">
+                        <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+                            Inicio
+                        </p>
+                        <h1 className="text-3xl font-semibold sm:text-4xl">
+                            Hola, {firstName}
+                        </h1>
+                        <p className="text-base text-muted-foreground">
+                            {membership
+                                ? 'Tu JAKAWI está activo.'
+                                : 'Activa tu membresía para disfrutar tus beneficios.'}
+                        </p>
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
-            </div>
+
+                    <Link
+                        href="/beneficios"
+                        className="inline-flex min-h-12 items-center justify-center rounded-md bg-brand px-5 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90 sm:w-fit"
+                    >
+                        Explorar beneficios
+                    </Link>
+
+                    {membership ? (
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <div className="rounded-md border border-border bg-surface p-4">
+                                <p className="text-sm text-muted-foreground">
+                                    Canjes realizados
+                                </p>
+                                <p className="mt-1 text-2xl font-semibold">
+                                    {redemptionStats.count}
+                                </p>
+                            </div>
+                            <div className="rounded-md border border-border bg-surface p-4">
+                                <p className="text-sm text-muted-foreground">
+                                    Ahorro estimado
+                                </p>
+                                <p className="mt-1 text-2xl font-semibold">
+                                    Bs{' '}
+                                    {Number(
+                                        redemptionStats.savings_total,
+                                    ).toFixed(2)}
+                                </p>
+                            </div>
+                        </div>
+                    ) : null}
+
+                    <Link
+                        href="/mi-jakawi"
+                        className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-5 text-sm font-semibold text-foreground transition hover:bg-muted sm:w-fit"
+                    >
+                        Ver Mi JAKAWI
+                    </Link>
+                </section>
+            </main>
         </>
     );
 }
@@ -29,7 +80,7 @@ export default function Dashboard() {
 Dashboard.layout = {
     breadcrumbs: [
         {
-            title: 'Dashboard',
+            title: 'Inicio',
             href: dashboard(),
         },
     ],

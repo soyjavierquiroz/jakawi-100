@@ -53,17 +53,17 @@ export default function MiJakawi({
                         <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
                             Mi JAKAWI
                         </p>
-                        <h1 className="mt-2 text-3xl font-semibold">
-                            Membresia
+                        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">
+                            Tu membresía
                         </h1>
                     </div>
 
                     {membership ? (
                         <div className="rounded-md border border-border bg-surface p-5">
                             <p className="text-xl font-semibold text-success">
-                                Tu JAKAWI esta activo
+                                Tu JAKAWI está activo
                             </p>
-                            <dl className="mt-5 grid gap-4">
+                            <dl className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <dt className="text-xs font-semibold text-muted-foreground uppercase">
                                         Miembro desde
@@ -82,7 +82,7 @@ export default function MiJakawi({
                                 </div>
                                 <div>
                                     <dt className="text-xs font-semibold text-muted-foreground uppercase">
-                                        Dias restantes
+                                        Días restantes
                                     </dt>
                                     <dd className="mt-1 text-base font-medium">
                                         {membership.days_remaining}
@@ -93,7 +93,8 @@ export default function MiJakawi({
                                         Membresia
                                     </dt>
                                     <dd className="mt-1 text-base font-medium">
-                                        Bs{membershipConfig.price_bob} / {membershipConfig.duration_days} dias
+                                        Bs {membershipConfig.price_bob} /{' '}
+                                        {membershipConfig.duration_days} días
                                     </dd>
                                 </div>
                             </dl>
@@ -102,36 +103,71 @@ export default function MiJakawi({
 
                     {membership ? (
                         <div className="rounded-md border border-border bg-surface p-5">
-                            <h2 className="text-xl font-semibold">Canjes</h2>
+                            <h2 className="text-xl font-semibold">
+                                Tu actividad
+                            </h2>
                             <dl className="mt-4 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">Canjes realizados</dt>
-                                    <dd className="mt-1 text-2xl font-semibold">{redemptionStats.count}</dd>
+                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                        Canjes realizados
+                                    </dt>
+                                    <dd className="mt-1 text-2xl font-semibold">
+                                        {redemptionStats.count}
+                                    </dd>
                                 </div>
                                 <div>
-                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">Ahorro estimado con JAKAWI</dt>
-                                    <dd className="mt-1 text-2xl font-semibold">Bs {Number(redemptionStats.savings_total).toFixed(2)}</dd>
+                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                        Ahorro estimado con JAKAWI
+                                    </dt>
+                                    <dd className="mt-1 text-2xl font-semibold">
+                                        Bs{' '}
+                                        {Number(
+                                            redemptionStats.savings_total,
+                                        ).toFixed(2)}
+                                    </dd>
                                 </div>
                             </dl>
                             {recentRedemptions.length > 0 ? (
-                                <div className="mt-5 divide-y divide-border">
-                                    {recentRedemptions.map((redemption) => (
-                                        <div key={redemption.public_id} className="py-3 text-sm">
-                                            <p className="font-semibold">{redemption.benefit_title}</p>
-                                            <p className="text-muted-foreground">{redemption.merchant_name} · {formatDate(redemption.confirmed_at)}</p>
-                                            {redemption.savings_amount ? <p className="mt-1">Ahorro estimado: Bs {Number(redemption.savings_amount).toFixed(2)}</p> : null}
-                                        </div>
-                                    ))}
+                                <div className="mt-5">
+                                    <h3 className="text-sm font-semibold">
+                                        Últimos canjes
+                                    </h3>
+                                    <div className="mt-2 divide-y divide-border">
+                                        {recentRedemptions.map((redemption) => (
+                                            <div
+                                                key={redemption.public_id}
+                                                className="py-3 text-sm"
+                                            >
+                                                <p className="font-semibold">
+                                                    {redemption.benefit_title}
+                                                </p>
+                                                <p className="text-muted-foreground">
+                                                    {redemption.merchant_name} ·{' '}
+                                                    {formatDate(
+                                                        redemption.confirmed_at,
+                                                    )}
+                                                </p>
+                                                {redemption.savings_amount ? (
+                                                    <p className="mt-1">
+                                                        Ahorro estimado: Bs{' '}
+                                                        {Number(
+                                                            redemption.savings_amount,
+                                                        ).toFixed(2)}
+                                                    </p>
+                                                ) : null}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             ) : null}
                         </div>
                     ) : (
                         <div className="rounded-md border border-border bg-surface p-5">
                             <p className="text-xl font-semibold">
-                                Tu JAKAWI aun no esta activo.
+                                Tu JAKAWI aún no está activo.
                             </p>
                             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                                Activa tu membresia para usar beneficios.
+                                Activa tu membresía para usar beneficios.
                             </p>
                             <dl className="mt-5 grid gap-4">
                                 <div>
@@ -144,10 +180,10 @@ export default function MiJakawi({
                                 </div>
                                 <div>
                                     <dt className="text-xs font-semibold text-muted-foreground uppercase">
-                                        Duracion
+                                        Duración
                                     </dt>
                                     <dd className="mt-1 text-base font-medium">
-                                        {membershipConfig.duration_days} dias
+                                        {membershipConfig.duration_days} días
                                     </dd>
                                 </div>
                             </dl>

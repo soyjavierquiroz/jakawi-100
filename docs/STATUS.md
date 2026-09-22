@@ -6,7 +6,7 @@ Production:
 [https://jakawi.com](https://jakawi.com)
 
 Phase:
-Redemption v1 validator hotfix deployed
+Catalog, Membership, Redemption and Savings v1 in production
 
 Working:
 
@@ -24,26 +24,26 @@ Working:
 - redemption limits
 - estimated savings snapshots
 - admin redemption history
-- redemption creation runtime 500 fixed
-- redemption validator 500 fixed
-- authenticated navigation includes Beneficios
-- admin users have Admin navigation link
+- redemption creation and validator runtime fixes
 
 Manual QA:
 
-- Android PWA PASS
 - Merchant/Benefit PASS
 - Membership PASS
-- Redemption production QA PENDING
-- iOS PWA physical QA pending
+- Redemption PASS
+- Redemption idempotency PASS
+- redemption limit PASS
+- Savings PASS
+- Android PWA PASS
+- iOS physical PWA QA pending
 
 Runtime production commit:
 `9c573655a347d5917db251279988cca143a884ea`
 
 Next:
 
-1. Perform manual production redemption QA
-2. Validate savings in Mi JAKAWI
+1. Perform iOS physical PWA QA
+2. Continue with small MVP experience polish (not deployed yet)
 
 Known technical debt:
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BenefitController as AdminBenefitController;
 use App\Http\Controllers\Admin\MembershipController as AdminMembershipController;
 use App\Http\Controllers\Admin\MerchantController;
 use App\Http\Controllers\Admin\RedemptionController as AdminRedemptionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PublicBenefitController;
@@ -19,7 +20,7 @@ Route::get('validar', [RedemptionValidationController::class, 'create'])->name('
 Route::post('validar', [RedemptionValidationController::class, 'store'])->middleware('throttle:redemption-validator')->name('redemptions.validate.store');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
     Route::post('beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'store'])->name('redemptions.store');
     Route::get('canjes/{redemption}', [RedemptionController::class, 'show'])->name('redemptions.show');
