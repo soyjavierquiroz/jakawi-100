@@ -198,10 +198,13 @@ class RedemptionTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_validator_confirms_with_correct_pin_and_is_idempotent(): void
+    public function test_validator_confirms_with_correct_pin_snapshot_and_is_idempotent(): void
     {
         $user = $this->member();
-        $benefit = $this->benefit();
+        $benefit = $this->benefit([
+            'estimated_savings' => '25.50',
+            'redemption_limit_per_member' => 1,
+        ]);
         $redemption = Redemption::query()->create($this->redemptionPayload($user, $benefit));
 
         $this->post('/validar', ['code' => $redemption->code, 'pin' => '000000'])
@@ -215,11 +218,15 @@ class RedemptionTest extends TestCase
         $this->post('/validar', ['code' => strtolower($redemption->code), 'pin' => '123456'])
             ->assertSessionHas('success');
         $this->assertDatabaseHas('redemptions', ['id' => $redemption->id, 'status' => Redemption::STATUS_CONFIRMED]);
-        $this->assertNotNull($redemption->refresh()->confirmed_at);
+        $this->assertSame('25.50', $redemption->refresh()->savings_amount);
+        $this->assertNotNull($redemption->confirmed_at);
+        $confirmedAt = $redemption->confirmed_at;
 
         $this->post('/validar', ['code' => $redemption->code, 'pin' => '123456'])
             ->assertSessionHas('success', 'Este canje ya fue confirmado.');
         $this->assertSame(1, Redemption::query()->confirmed()->count());
+        $this->assertSame($confirmedAt->toDateTimeString(), $redemption->refresh()->confirmed_at->toDateTimeString());
+        $this->assertSame('25.50', $redemption->savings_amount);
     }
 
     public function test_validator_rejects_expired_or_changed_state(): void

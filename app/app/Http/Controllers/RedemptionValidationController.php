@@ -95,6 +95,7 @@ class RedemptionValidationController extends Controller
             ->whereKeyNot($redemption->id)
             ->confirmed()
             ->lockForUpdate()
+            ->get()
             ->count() >= $redemption->benefit->redemption_limit_per_member;
     }
 }
