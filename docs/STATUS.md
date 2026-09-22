@@ -57,3 +57,21 @@ Updated: 2026-09-22
   Sessions. Session capacity remains optional informational metadata.
 - Production remains offline and in maintenance; no production writes, UI,
   importer, demo, Analytics, or deployment was added.
+
+## V2.5: Analytics foundation
+
+- `analytics_events` records the configured first-party event taxonomy with
+  nullable live-domain references and no analytics snapshots.
+- A random UUID visitor cookie is first-party, HttpOnly, SameSite=Lax, and is
+  available in its creation request. Authenticated events can retain both user
+  and visitor IDs without fingerprinting or identity stitching.
+- The central tracker only permits configured events and tightly whitelisted
+  metadata. It does not record request details or unnecessary PII.
+- Redemption pending creation and confirmation produce transactional,
+  idempotent lifecycle events. Confirmed Redemptions—not analytics—remain the
+  source of truth for savings and ROI.
+- View/contact/reservation tracking APIs are ready for V2.6 controller/UI
+  wiring; no UI, generic ingestion endpoint, dashboard, queue, aggregate,
+  importer, demo, Booking, or deployment was added.
+- Production remains offline and in maintenance; no production writes were
+  made.

@@ -109,8 +109,43 @@ Location supports online, to-be-confirmed, or informal meeting-point sessions;
 `venue_label` supplies simple context. Session records never duplicate address,
 map, or coordinate data.
 
-No DB enums, PostGIS, Maps API, public routes, Admin UI, Booking, checkout,
-payments, or Analytics are part of this foundation.
+No DB enums, PostGIS, Maps API, public routes, Admin UI, Booking, checkout, or
+payments are part of this foundation.
+
+### First-party analytics
+
+`AnalyticsEvent` is an append-only behavioural record with an allowed event
+name from `jakawi.analytics.events`, nullable foreign keys to the live domain,
+small nullable JSON metadata, and `occurred_at`. Foreign keys use
+`nullOnDelete`, so event history remains meaningful without duplicating domain
+snapshots. Analytics deliberately has no aggregate tables, queues, dashboards,
+external services, or public generic ingestion endpoint.
+
+The first-party `jakawi_visitor_id` cookie is a random UUID, HttpOnly,
+SameSite=Lax, and lasts 365 days (with Secure enabled under HTTPS production
+configuration). The visitor ID is available during the request that creates it.
+Authenticated events may hold both `user_id` and `visitor_id`; no identity
+stitching or fingerprinting is performed.
+
+`AnalyticsTracker` is the single normal application interface for events. Its
+configured taxonomy is `home_view`, `partner_view`, `location_view`,
+`benefit_view`, `experience_view`, `redeem_started`, `redeem_confirmed`,
+`experience_reserve_click`, `maps_click`, and `whatsapp_click`. Metadata is
+whitelisted: reservation method for experience reservation clicks, and a small
+configured source for maps clicks. It never receives or records request bodies,
+query strings, IP addresses, user agents, email, phone/WhatsApp, names,
+addresses, PINs, redemption codes, payment references, or destinations.
+
+Redemption lifecycle events are written in the same database transactions as
+the actual pending creation and pending-to-confirmed transition. Reusing a
+valid pending Redemption does not produce a second `redeem_started`; an
+idempotent re-confirmation does not produce a second `redeem_confirmed`.
+Analytics is the source of truth for observed behaviour only. Redemption,
+especially confirmed Redemption records and their snapshots, remains the source
+of truth for canjes and savings/ROI.
+
+V2.6 will wire the view and click methods to explicit UI/controllers. There is
+no Analytics UI or public event endpoint in V2.5.
 
 ## Test and production isolation
 
