@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Safe, isolated entry point for every JAKAWI test and test-database command.
+set -euo pipefail
+
+readonly project_name="jakawi-test"
+readonly expected_env="testing"
+readonly expected_host="db-test"
+readonly expected_database="jakawi_test"
+readonly refusal_message="REFUSING DESTRUCTIVE TEST: database is not isolated."
+
+refuse() {
+    printf '%s\n' "$refusal_message" >&2
+    exit 78
+}
+
+# Do this before Docker/Laravel. It deliberately rejects accidentally exported
+# production DB_* variables, including a simulation such as DB_HOST=db.
+[[ "${APP_ENV:-$expected_env}" == "$expected_env" ]] || refuse
+[[ "${DB_HOST:-$expected_host}" == "$expected_host" ]] || refuse
+[[ "${DB_DATABASE:-$expected_database}" == "$expected_database" ]] || refuse
+
+compose=(docker compose --project-name "$project_name" -f compose.yaml -f compose.test.yaml)
+
+if [[ "${1:-}" == "down" ]]; then
+    "${compose[@]}" down --remove-orphans
+    exit 0
+fi
+
+if [[ "${1:-}" == "clean" ]]; then
+    "${compose[@]}" down --volumes --remove-orphans
+    exit 0
+fi
+
+"${compose[@]}" up -d db-test app-test
+
+# Check the actual container configuration before executing any Laravel command.
+actual_env="$("${compose[@]}" exec -T app-test printenv APP_ENV)"
+actual_host="$("${compose[@]}" exec -T app-test printenv DB_HOST)"
+actual_database="$("${compose[@]}" exec -T app-test printenv DB_DATABASE)"
+[[ "$actual_env" == "$expected_env" ]] || refuse
+[[ "$actual_host" == "$expected_host" ]] || refuse
+[[ "$actual_database" == "$expected_database" ]] || refuse
+
+if [[ "$#" -eq 0 ]]; then
+    set -- php artisan test
+fi
+
+"${compose[@]}" exec -T app-test "$@"

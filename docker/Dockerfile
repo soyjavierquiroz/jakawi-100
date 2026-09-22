@@ -63,6 +63,22 @@ USER www-data
 
 CMD ["php-fpm"]
 
+# Test image: it starts from the same built application as production, then adds
+# development dependencies required by Laravel's test runner. It is only used by
+# the isolated app-test Compose service.
+FROM build AS test
+
+RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+
+RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && find storage bootstrap/cache -type d -exec chmod 775 {} + \
+    && find storage bootstrap/cache -type f -exec chmod 664 {} +
+
+USER www-data
+
+CMD ["php-fpm"]
+
 FROM nginx:1.27-alpine AS web
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf

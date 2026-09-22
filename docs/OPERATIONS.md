@@ -1,5 +1,42 @@
 # Operations
 
+## Production and Testing Safety
+
+### Production
+
+All production Laravel commands pass through the production app container:
+
+```bash
+docker compose exec app php artisan <command>
+```
+
+Production is currently in maintenance and its `web` and `app` services must
+remain stopped. Do not run `artisan up`, migrations, `migrate:fresh`,
+`pg_restore`, or destructive tests against production.
+
+### Testing
+
+All tests and test database commands use the isolated wrapper, never host PHP
+or Composer:
+
+```bash
+./bin/jakawi-test
+./bin/jakawi-test php artisan test
+./bin/jakawi-test php artisan migrate:fresh --seed
+```
+
+The wrapper uses Compose project `jakawi-test`, `app-test`, `db-test`, and the
+database `jakawi_test`. It rejects a command unless `APP_ENV=testing`,
+`DB_HOST=db-test`, and `DB_DATABASE=jakawi_test`. `--env=testing` on the
+production app container is not isolation.
+
+To stop only testing containers use `./bin/jakawi-test down`. To remove the
+isolated test containers and its test volume use `./bin/jakawi-test clean`.
+Neither command addresses production services or volumes.
+
+Never run `migrate:fresh`, `db:wipe`, or destructive tests against the
+production app container. Never run `php artisan` or `composer` on the host.
+
 ## Service Status
 
 ```bash

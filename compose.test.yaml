@@ -1,0 +1,57 @@
+services:
+  db-test:
+    image: postgres:16-alpine
+    restart: "no"
+    environment:
+      POSTGRES_DB: jakawi_test
+      POSTGRES_USER: jakawi_test_user
+      POSTGRES_PASSWORD: jakawi_test_password
+    volumes:
+      - jakawi_test_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - jakawi
+
+  app-test:
+    image: jakawi-app-test
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: test
+    restart: "no"
+    environment:
+      APP_ENV: testing
+      APP_DEBUG: "true"
+      APP_KEY: base64:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+      APP_URL: http://app-test
+      DB_CONNECTION: pgsql
+      DB_HOST: db-test
+      DB_PORT: "5432"
+      DB_DATABASE: jakawi_test
+      DB_USERNAME: jakawi_test_user
+      DB_PASSWORD: jakawi_test_password
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+    depends_on:
+      db-test:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - jakawi
+
+volumes:
+  # With --project-name jakawi-test this is named jakawi-test_jakawi_test_pgdata.
+  # It is never the production jakawi_postgres_data volume.
+  jakawi_test_pgdata:
