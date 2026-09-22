@@ -29,6 +29,24 @@ docker compose exec app php artisan about
 docker compose exec app php artisan migrate:status
 ```
 
+## Fictional QA Demo Catalog
+
+The demo catalog contains **FICTIONAL QA DATA** only. It is idempotent and does
+not configure redemption PINs, so it supports catalog navigation without
+enabling redemptions.
+
+```bash
+docker compose exec app \
+php artisan jakawi:seed-demo-catalog
+```
+
+To remove only records whose slugs start with `demo-`:
+
+```bash
+docker compose exec app \
+php artisan jakawi:clear-demo-catalog
+```
+
 ## Disk Checks
 
 ```bash
