@@ -33,25 +33,36 @@ Working:
 - demo merchants intentionally have no redemption PIN
 - fictional QA data only
 
+Demo catalog images:
+
+- 12 generated merchant logos
+- 12 generated merchant covers
+- 30 generated benefit images
+- deterministic local SVG assets
+- no external image dependencies
+- demo assets stored under public demo paths
+- visual QA pending
+
 Manual QA:
 
 - Catalog PASS
 - Membership PASS
 - Redemption PASS
 - Savings PASS
-- MVP experience deployed
-- demo catalog visual QA pending
+- MVP experience PASS
+- populated catalog PASS
+- demo image visual QA pending
 - Android PWA PASS
 - iOS physical PWA QA pending
 
 Runtime production commit:
-`8501199de1a6dde1842da51bb72116d35503391d`
+`3721843253709652cfca9221a84dad15057468f4`
 
 Next:
 
-1. Visual QA with populated catalog
-2. Fix only obvious UX problems
-3. Prepare first real merchant batch
+1. Visual QA demo images on mobile
+2. Fix only obvious visual issues
+3. Prepare real merchant onboarding/content
 
 Known technical debt:
 
@@ -63,4 +74,4 @@ Known technical debt:
 
 Technical note:
 
-Repository HEAD can move forward with documentation while the production runtime remains built from `8501199de1a6dde1842da51bb72116d35503391d`.
+Repository HEAD can move forward with documentation while the production runtime remains built from `3721843253709652cfca9221a84dad15057468f4`.
