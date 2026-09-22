@@ -82,8 +82,35 @@ are renamed or deleted. Per-member Benefit limits count only confirmed
 redemptions. Confirmed savings are derived from those snapshots; a Membership
 can calculate its remaining payback and whether its paid amount has been met.
 
-No DB enums, PostGIS, Maps API, public routes, Admin UI, Experiences, or
-Analytics are part of this foundation.
+### Experience
+
+An Experience is content a member discovers and lives; it is not a Benefit.
+Benefits are redeemed in JAKAWI, whereas the MVP reservation for an Experience
+remains external metadata (WhatsApp, URL, phone, another external destination,
+or no destination). There is no internal Booking, payment, checkout, capacity
+availability, or reservation record in this domain.
+
+An Experience has zero or more Partners through `experience_partner`. The
+relationship carries an editorial role (`organizer`, `host`, `venue`,
+`sponsor`, `participant`, `creator`, `provider`, or `other`) and sort order. A
+Partner can carry multiple legitimate roles, and an Experience may have none,
+such as content organized directly by JAKAWI.
+
+An Experience has zero or more Sessions. A Session has a required start, an
+optional end after its start, a `scheduled` or `cancelled` status, and optional
+informational capacity. `upcoming` means scheduled with `starts_at >= now`;
+published Experiences appear in the upcoming scope only if they have one.
+Sessions are not required for an Experience to be published.
+
+`Location` represents a reusable place. A Session may reference a Partner
+Location, an independent Location, a Location belonging to an unrelated
+Partner, or no Location at all. No ownership cross-check is imposed. A null
+Location supports online, to-be-confirmed, or informal meeting-point sessions;
+`venue_label` supplies simple context. Session records never duplicate address,
+map, or coordinate data.
+
+No DB enums, PostGIS, Maps API, public routes, Admin UI, Booking, checkout,
+payments, or Analytics are part of this foundation.
 
 ## Test and production isolation
 

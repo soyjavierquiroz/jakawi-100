@@ -42,3 +42,18 @@ Updated: 2026-09-22
   ROI is derived from confirmed savings only.
 - Production remains offline and in maintenance. No UI, HTTP workflow,
   Experience, Analytics, importer, demo, or deployment was added.
+
+## V2.4: Experience foundation
+
+- Complete on `feature/v2-experience` pending review and merge.
+- Experiences are standalone discoverable content, distinct from Benefits, and
+  support draft/published/paused/archived editorial publication.
+- They support zero or more Partner relationships with explicit roles, and zero
+  or more scheduled/cancelled Sessions with optional reusable Locations.
+- Reservation is explicit external metadata only (WhatsApp, URL, phone,
+  external, or none). There is no internal Booking, payment, checkout, or
+  capacity availability behavior.
+- Upcoming discovery is limited to published Experiences with future scheduled
+  Sessions. Session capacity remains optional informational metadata.
+- Production remains offline and in maintenance; no production writes, UI,
+  importer, demo, Analytics, or deployment was added.
