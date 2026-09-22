@@ -53,6 +53,23 @@ class User extends Authenticatable implements PasskeyUser
         return $this->activeMembership()->exists();
     }
 
+    /** @return HasMany<Redemption> */
+    public function redemptions(): HasMany
+    {
+        return $this->hasMany(Redemption::class);
+    }
+
+    /** @return HasMany<Redemption> */
+    public function confirmedRedemptions(): HasMany
+    {
+        return $this->redemptions()->where('status', Redemption::STATUS_CONFIRMED);
+    }
+
+    public function confirmedSavings(): string
+    {
+        return (string) $this->confirmedRedemptions()->sum('savings_amount');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

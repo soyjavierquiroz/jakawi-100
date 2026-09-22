@@ -11,4 +11,9 @@ return [
         'price_bob' => 100,
         'duration_days' => 365,
     ],
+    'membership_statuses' => ['active', 'cancelled'],
+    'redemption' => [
+        'code_ttl_minutes' => 10,
+    ],
+    'redemption_statuses' => ['pending', 'confirmed', 'expired', 'cancelled'],
 ];

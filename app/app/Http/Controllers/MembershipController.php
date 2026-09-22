@@ -12,6 +12,7 @@ class MembershipController extends Controller
     public function show(Request $request): Response
     {
         $membership = $request->user()->activeMembership()->first();
+
         return Inertia::render('mi-jakawi', [
             'membership' => $membership ? $this->serializeMembership($membership) : null,
             'membershipConfig' => [

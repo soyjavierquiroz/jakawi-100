@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('status')->index();
             $table->timestamp('starts_at')->index();
             $table->timestamp('ends_at')->index();
-            $table->decimal('amount_paid', 10, 2)->nullable();
+            $table->decimal('amount_paid', 10, 2);
             $table->string('payment_method')->nullable();
             $table->string('payment_reference')->nullable();
             $table->foreignId('activated_by')->nullable()->constrained('users')->nullOnDelete();

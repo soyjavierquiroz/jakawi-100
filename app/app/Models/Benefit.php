@@ -62,6 +62,16 @@ class Benefit extends Model
             && ($this->ends_at === null || $this->ends_at->gte(now()));
     }
 
+    public function isAvailableAt(Location $location): bool
+    {
+        if (! $this->isAvailable() || ! $location->isPublished() || $location->partner_id !== $this->partner_id) {
+            return false;
+        }
+
+        return $this->applies_to_all_locations
+            || $this->locations()->whereKey($location->getKey())->exists();
+    }
+
     /** @return Builder<Location> */
     public function availableLocations(): Builder
     {
