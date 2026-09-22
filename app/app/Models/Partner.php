@@ -26,6 +26,12 @@ class Partner extends Model
         return $this->hasMany(Location::class);
     }
 
+    /** @return HasMany<Benefit, $this> */
+    public function benefits(): HasMany
+    {
+        return $this->hasMany(Benefit::class);
+    }
+
     /** @param Builder<Partner> $query */
     public function scopePublished(Builder $query): void
     {

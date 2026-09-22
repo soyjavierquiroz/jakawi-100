@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Hash;
 use InvalidArgumentException;
 
@@ -29,6 +30,12 @@ class Location extends Model
     public function partner(): BelongsTo
     {
         return $this->belongsTo(Partner::class);
+    }
+
+    /** @return BelongsToMany<Benefit, $this> */
+    public function benefits(): BelongsToMany
+    {
+        return $this->belongsToMany(Benefit::class);
     }
 
     /** @param Builder<Location> $query */
