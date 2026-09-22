@@ -6,7 +6,7 @@ Production:
 [https://jakawi.com](https://jakawi.com)
 
 Phase:
-Catalog, Membership, Redemption and Savings v1 in production
+Catalog, Membership, Redemption, Savings and MVP experience in production
 
 Working:
 
@@ -25,25 +25,33 @@ Working:
 - estimated savings snapshots
 - admin redemption history
 - redemption creation and validator runtime fixes
+- MVP experience polish
+- Demo catalog loaded: 12 fictional merchants and 30 fictional benefits
+- 5 featured fictional benefits
+- idempotent demo dataset with all records prefixed `demo-`
+- safe demo catalog clear command available
+- demo merchants intentionally have no redemption PIN
+- fictional QA data only
 
 Manual QA:
 
-- Merchant/Benefit PASS
+- Catalog PASS
 - Membership PASS
 - Redemption PASS
-- Redemption idempotency PASS
-- redemption limit PASS
 - Savings PASS
+- MVP experience deployed
+- demo catalog visual QA pending
 - Android PWA PASS
 - iOS physical PWA QA pending
 
 Runtime production commit:
-`9c573655a347d5917db251279988cca143a884ea`
+`8501199de1a6dde1842da51bb72116d35503391d`
 
 Next:
 
-1. Perform iOS physical PWA QA
-2. Continue with small MVP experience polish (not deployed yet)
+1. Visual QA with populated catalog
+2. Fix only obvious UX problems
+3. Prepare first real merchant batch
 
 Known technical debt:
 
@@ -55,4 +63,4 @@ Known technical debt:
 
 Technical note:
 
-Repository HEAD can move forward with documentation while the production runtime remains built from `9c573655a347d5917db251279988cca143a884ea`.
+Repository HEAD can move forward with documentation while the production runtime remains built from `8501199de1a6dde1842da51bb72116d35503391d`.
