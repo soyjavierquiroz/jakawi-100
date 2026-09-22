@@ -43,8 +43,27 @@ JSON; the MVP structure uses weekday keys and zero or more time ranges:
 {"monday":[["09:00","13:00"],["14:00","20:00"]],"sunday":[]}
 ```
 
-No DB enums, PostGIS, Maps API, public routes, Admin UI, Benefits, Experiences,
-or Redemption workflow are part of V2.1.
+### Benefit
+
+A Benefit is an offer or advantage a member may use. It belongs to exactly one
+Partner and carries editorial copy, a configured category and benefit type,
+optional estimated savings as `decimal(10,2)`, optional per-member redemption
+limit, publication state, and optional availability dates. The limit is only a
+declared policy in V2.2; enforcement arrives with Redemption.
+
+Publication means `status = published`. Availability additionally requires a
+published Partner and a date window containing the current time. Status never
+changes automatically when a date window expires.
+
+A Benefit either dynamically applies to every published Location of its Partner
+(including locations created later), or to explicit published Location records.
+Explicit associations are validated to belong to the same Partner. Independent
+Locations do not participate in Benefits; they are reserved for future
+Experience work. An all-locations Benefit remains published even if its Partner
+has no published Locations, in which case it resolves to no available locations.
+
+No DB enums, PostGIS, Maps API, public routes, Admin UI, Experiences, or
+Redemption workflow are part of this foundation.
 
 ## Test and production isolation
 
