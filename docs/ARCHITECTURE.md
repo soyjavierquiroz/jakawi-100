@@ -62,8 +62,28 @@ Locations do not participate in Benefits; they are reserved for future
 Experience work. An all-locations Benefit remains published even if its Partner
 has no published Locations, in which case it resolves to no available locations.
 
+### Membership and Redemption
+
+A Membership grants a User time-bounded access. It is active only when its
+status is `active` and its start/end dates contain now; expiry is derived from
+dates rather than persisted as a status. Activation and cancellation are
+transactional and retain the full payment and activation history.
+
+A Redemption represents one Benefit used at one specific Partner Location. It
+is started only with an active Membership, an available Benefit, a published
+eligible Location, and that Location's configured redemption PIN. The temporary
+six-character code has a configured ten-minute TTL. Confirmation revalidates
+all of those conditions and checks the current Location PIN—Partners never own
+or validate a redemption PIN.
+
+Redemption stores partner name, location name, benefit title, and estimated
+savings snapshots at start. Those facts remain historical if the live records
+are renamed or deleted. Per-member Benefit limits count only confirmed
+redemptions. Confirmed savings are derived from those snapshots; a Membership
+can calculate its remaining payback and whether its paid amount has been met.
+
 No DB enums, PostGIS, Maps API, public routes, Admin UI, Experiences, or
-Redemption workflow are part of this foundation.
+Analytics are part of this foundation.
 
 ## Test and production isolation
 
