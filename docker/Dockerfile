@@ -68,9 +68,14 @@ CMD ["php-fpm"]
 # the isolated app-test Compose service.
 FROM build AS test
 
-RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts \
+    && cp .env.example .env \
+    && composer dump-autoload --optimize
 
 RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && touch .phpunit.result.cache \
+    && chown www-data:www-data .phpunit.result.cache \
+    && chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data storage bootstrap/cache \
     && find storage bootstrap/cache -type d -exec chmod 775 {} + \
     && find storage bootstrap/cache -type f -exec chmod 664 {} +

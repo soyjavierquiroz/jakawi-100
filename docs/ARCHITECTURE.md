@@ -1,103 +1,54 @@
 # Architecture
 
-JAKAWI is a Laravel monolith with an Inertia, React, and TypeScript frontend. The application stores data in PostgreSQL and runs in Docker.
-
-TLS terminates at OpenLiteSpeed. OpenLiteSpeed listens on ports 80 and 443, then proxies the application to the Docker nginx service on `127.0.0.1:8080`.
+JAKAWI is a Laravel monolith with an Inertia, React, and TypeScript frontend.
+It stores data in PostgreSQL and runs in Docker. TLS terminates at OpenLiteSpeed,
+which proxies to Docker nginx on `127.0.0.1:8080`.
 
 ```text
-Internet HTTPS
--> OpenLiteSpeed
--> 127.0.0.1:8080
--> nginx Docker
--> Laravel/PHP-FPM
--> PostgreSQL
+Internet HTTPS -> OpenLiteSpeed -> nginx Docker -> Laravel/PHP-FPM -> PostgreSQL
 ```
 
-## Network
+## V2 domain foundation
 
-- `80/443`: OpenLiteSpeed
-- `127.0.0.1:8080`: nginx Docker
-- `9000`: internal PHP-FPM
-- `5432`: internal PostgreSQL
+V2 has no legacy compatibility layer. It starts from a fresh schema and does
+not retain `Merchant`, `merchants`, or `merchant_id` as active domain concepts.
 
-## OpenLiteSpeed
+### Partner
 
-- vhost: `/usr/local/lsws/conf/vhosts/jakawi.com/vhost.conf`
-- backend: `127.0.0.1:8080`
+A Partner is the person or organization that provides value. It carries the
+brand, legal, category, and brand-level contact information. Its administrative
+fields (`legal_name`, `tax_id`, contact fields, and `internal_notes`) are not
+automatically exposed by a public representation.
 
-## Design System
+`Partner` has many `Location` records. Its publication state is one of
+`draft`, `published`, `paused`, or `archived`; only `published` is public-ready.
 
-- `app/resources/css/theme.css` is the single source of truth for color.
-- React components must use semantic tokens instead of hardcoded brand colors.
-- Tailwind and shadcn consume the same token system through `app/resources/css/app.css`.
-- The current colors are provisional.
-- JAKAWI's full chromatic identity must be changeable from `theme.css`.
+### Location
 
-## PWA
+A Location is where something operates or occurs. It contains location-specific
+contact data, address and optional coordinates, operating hours, and a
+location-only redemption PIN hash. A Location may belong to a Partner, or may
+stand alone (for example an external venue, meeting point, or future Experience
+location).
 
-- JAKAWI is a mobile-first web app with a minimal installable PWA shell.
-- `app/public/manifest.webmanifest` declares the standalone app experience.
-- `app/public/sw.js` registers a conservative service worker for PWA capability.
-- PWA icons in `app/public/icons/` and `app/public/apple-touch-icon.png` are temporary application icons until the final JAKAWI mark is approved.
-- Installation requires explicit user action through the browser or platform UI.
-- Android/Chromium can use the install prompt when the browser exposes it.
-- iOS receives Add to Home Screen guidance when Safari is not already standalone.
-- The PWA is not offline-first yet; no offline database, push notifications, background sync, or persistent authenticated page caching are implemented.
+Partner is not Location. A missing location phone or WhatsApp never falls back
+to the Partner contact; brand contact and the real contact at a place remain
+distinct.
 
-## Merchant + Benefit Vertical
+Coordinates are nullable `decimal(10,7)`. Application validation bounds
+latitude to `-90..90` and longitude to `-180..180`. `opening_hours` is nullable
+JSON; the MVP structure uses weekday keys and zero or more time ranges:
 
-- `merchants` stores the public commerce profile and activation state.
-- `benefits` stores offers linked to one merchant.
-- Public benefit availability is server-side: the benefit must be active, within its optional date window, and attached to an active merchant.
-- Public routes expose a catalog at `/beneficios` and benefit detail pages by slug.
+```json
+{"monday":[["09:00","13:00"],["14:00","20:00"]],"sunday":[]}
+```
 
-## Admin
+No DB enums, PostGIS, Maps API, public routes, Admin UI, Benefits, Experiences,
+or Redemption workflow are part of V2.1.
 
-- The first admin surface is intentionally simple and package-free.
-- Users have an `is_admin` boolean.
-- `/admin` routes require authentication and the server-side `admin` middleware.
-- Initial promotion uses `php artisan user:make-admin {email}`.
-- No roles, permissions package, merchant dashboard, analytics, or operational workflow beyond Merchant/Benefit CRUD is implemented yet.
+## Test and production isolation
 
-## Membership
-
-- Membership v1 is manual: a registered user becomes a member when an admin activates a membership from `/admin/memberships`.
-- Business constants live in `app/config/jakawi.php`: `jakawi.membership.price_bob` is `100` and `jakawi.membership.duration_days` is `365`.
-- `memberships` stores `user_id`, `status`, `starts_at`, `ends_at`, optional payment metadata, `activated_by`, optional notes, and timestamps.
-- Initial statuses are `active`, `expired`, and `cancelled`; the database does not enforce a rigid enum yet.
-- The source of truth for active membership is `status = active`, `starts_at <= now()`, and `ends_at >= now()`.
-- An expired date wins even if the stored status still says `active`. No scheduler marks expired rows yet.
-- Reusable logic is centralized in `Membership::active()`, `User::activeMembership()`, and `User::hasActiveMembership()`.
-
-## Redemption
-
-- Redemption v1 is the first transactional member-to-merchant flow: an active member creates a temporary code for an available benefit, the merchant validates that code with its 6 digit PIN at `/validar`, and the redemption is confirmed.
-- Business constants live in `app/config/jakawi.php`: `jakawi.redemption.code_ttl_minutes` is `10`.
-- Merchant redemption PINs are stored only as `redemption_pin_hash` using Laravel hashing. The hash is hidden on the model and admin edit screens expose only whether a PIN is configured.
-- `benefits.redemption_limit_per_member` controls confirmed redemption limits: `1` means once per member, `2` means twice, and `null` means unlimited. Pending or expired redemptions do not consume the limit.
-- `redemptions.public_id` is the public route identifier for member pages. Numeric IDs are not used in public redemption URLs.
-- `redemptions.code` is a unique 6 character uppercase code generated server-side with a non-ambiguous alphabet. Codes are not sequential.
-- `merchant_name`, `benefit_title`, and `savings_amount` are snapshots captured when the code is created. `savings_amount` copies the benefit's `estimated_savings`; if that value is null, no savings amount is invented.
-- `merchant_id` and `benefit_id` are nullable with `nullOnDelete` so deleting a merchant or benefit does not destroy redemption history. Snapshots keep the historical display usable.
-- `membership_id` records the membership that authorized code creation. It follows the existing membership ownership convention and cascades if the owning user is deleted through membership deletion.
-- `user_id` follows the existing user-owned data convention and cascades on user deletion.
-- Statuses are `pending`, `confirmed`, `expired`, and `cancelled`. For MVP, expiration is derived from `expires_at`; expired pending rows may be marked `expired` during validation without a scheduler.
-- Creation is idempotent for double clicks: the server locks the user row, revalidates active membership, benefit availability, merchant PIN presence, confirmed redemption limit, and reuses an existing valid pending redemption for the same user and benefit.
-- Confirmation is idempotent for repeated valid submits: the redemption row is locked, already-confirmed rows are not duplicated, and `savings_amount` is not changed at confirmation time.
-- Confirmation revalidates pending state, expiration, active membership, current benefit availability, active merchant, merchant PIN, and confirmed redemption limit. These rules live server-side; React only reflects state.
-- The public validator route is rate limited separately at 20 attempts per minute per IP and uses a generic failure message for incorrect code/PIN combinations.
-- `/mi-jakawi` savings use only confirmed redemptions, sum non-null snapshot `savings_amount`, and show recent confirmed redemptions using snapshots.
-
-## Uploads
-
-- Merchant logos, merchant covers, and benefit images use Laravel's `public` storage disk.
-- The database stores only file paths.
-- Docker Compose mounts `jakawi_public_uploads` into both the PHP app container and the nginx web container so uploaded files survive container recreation and are served from `/storage`.
-
-## Decisions
-
-- No microservices.
-- No Kubernetes.
-- No native app yet.
-- Mobile-first.
-- Admin is intentionally minimal until product workflows prove what is needed.
+All tests and test database commands go through `./bin/jakawi-test`. It uses
+the isolated `app-test` and `db-test` Docker services and database
+`jakawi_test`; it refuses production-shaped database settings. Production stays
+offline in maintenance while V2 is rebuilt.
