@@ -93,12 +93,13 @@ class RedemptionTest extends TestCase
         $user = $this->member();
         $benefit = $this->benefit(['estimated_savings' => '25.50']);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post("/beneficios/{$benefit->slug}/canjear")
             ->assertRedirect();
 
         $redemption = Redemption::query()->firstOrFail();
 
+        $response->assertRedirect("/canjes/{$redemption->public_id}");
         $this->assertNotNull($redemption->public_id);
         $this->assertMatchesRegularExpression('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $redemption->code);
         $this->assertSame(Redemption::STATUS_PENDING, $redemption->status);
@@ -106,6 +107,18 @@ class RedemptionTest extends TestCase
         $this->assertTrue($redemption->expires_at->between(now()->addMinutes(16), now()->addMinutes(18)));
         $this->assertSame($benefit->title, $redemption->benefit_title);
         $this->assertSame($benefit->merchant->name, $redemption->merchant_name);
+
+        $this->actingAs($user)
+            ->get("/canjes/{$redemption->public_id}")
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('redemptions/show')
+                ->where('redemption.public_id', $redemption->public_id)
+                ->where('redemption.code', $redemption->code));
+
+        $this->actingAs(User::factory()->create())
+            ->get("/canjes/{$redemption->public_id}")
+            ->assertForbidden();
     }
 
     public function test_existing_valid_pending_is_reused_and_expired_pending_allows_new_code(): void

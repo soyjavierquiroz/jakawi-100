@@ -91,6 +91,7 @@ class RedemptionController extends Controller
             ->where('benefit_id', $benefit->id)
             ->confirmed()
             ->lockForUpdate()
+            ->get()
             ->count() >= $benefit->redemption_limit_per_member;
     }
 
