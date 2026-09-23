@@ -14,17 +14,40 @@ class AnalyticsEvent extends Model
     protected $guarded = [];
 
     /** @return BelongsTo<User, $this> */
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     /** @return BelongsTo<Partner, $this> */
-    public function partner(): BelongsTo { return $this->belongsTo(Partner::class); }
+    public function partner(): BelongsTo
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
     /** @return BelongsTo<Location, $this> */
-    public function location(): BelongsTo { return $this->belongsTo(Location::class); }
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class);
+    }
+
     /** @return BelongsTo<Benefit, $this> */
-    public function benefit(): BelongsTo { return $this->belongsTo(Benefit::class); }
+    public function benefit(): BelongsTo
+    {
+        return $this->belongsTo(Benefit::class);
+    }
+
     /** @return BelongsTo<Experience, $this> */
-    public function experience(): BelongsTo { return $this->belongsTo(Experience::class); }
+    public function experience(): BelongsTo
+    {
+        return $this->belongsTo(Experience::class);
+    }
+
     /** @return BelongsTo<Redemption, $this> */
-    public function redemption(): BelongsTo { return $this->belongsTo(Redemption::class); }
+    public function redemption(): BelongsTo
+    {
+        return $this->belongsTo(Redemption::class);
+    }
 
     protected function casts(): array
     {

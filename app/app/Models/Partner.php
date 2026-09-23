@@ -6,13 +6,18 @@ use Database\Factories\PartnerFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Partner extends Model
 {
     /** @use HasFactory<PartnerFactory> */
     use HasFactory;
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     protected $fillable = [
         'slug', 'name', 'entity_type', 'partner_type', 'legal_name', 'tax_id',

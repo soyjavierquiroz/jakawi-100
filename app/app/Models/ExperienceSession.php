@@ -33,9 +33,20 @@ class ExperienceSession extends Model
         $query->where('status', 'scheduled')->where('starts_at', '>=', now())->orderBy('starts_at');
     }
 
-    public function isScheduled(): bool { return $this->status === 'scheduled'; }
-    public function isCancelled(): bool { return $this->status === 'cancelled'; }
-    public function isUpcoming(): bool { return $this->isScheduled() && $this->starts_at->gte(now()); }
+    public function isScheduled(): bool
+    {
+        return $this->status === 'scheduled';
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === 'cancelled';
+    }
+
+    public function isUpcoming(): bool
+    {
+        return $this->isScheduled() && $this->starts_at->gte(now());
+    }
 
     protected function casts(): array
     {

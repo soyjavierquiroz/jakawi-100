@@ -21,10 +21,33 @@ class ExperienceSessionFactory extends Factory
         ];
     }
 
-    public function scheduled(): static { return $this->state(fn () => ['status' => 'scheduled']); }
-    public function cancelled(): static { return $this->state(fn () => ['status' => 'cancelled']); }
-    public function upcoming(): static { return $this->scheduled()->state(fn () => ['starts_at' => now()->addDay()]); }
-    public function past(): static { return $this->scheduled()->state(fn () => ['starts_at' => now()->subDay()]); }
-    public function withLocation(?Location $location = null): static { return $this->for($location ?? Location::factory(), 'location'); }
-    public function withoutLocation(): static { return $this->state(fn () => ['location_id' => null]); }
+    public function scheduled(): static
+    {
+        return $this->state(fn () => ['status' => 'scheduled']);
+    }
+
+    public function cancelled(): static
+    {
+        return $this->state(fn () => ['status' => 'cancelled']);
+    }
+
+    public function upcoming(): static
+    {
+        return $this->scheduled()->state(fn () => ['starts_at' => now()->addDay()]);
+    }
+
+    public function past(): static
+    {
+        return $this->scheduled()->state(fn () => ['starts_at' => now()->subDay()]);
+    }
+
+    public function withLocation(?Location $location = null): static
+    {
+        return $this->for($location ?? Location::factory(), 'location');
+    }
+
+    public function withoutLocation(): static
+    {
+        return $this->state(fn () => ['location_id' => null]);
+    }
 }

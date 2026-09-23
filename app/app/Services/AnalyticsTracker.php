@@ -76,8 +76,8 @@ class AnalyticsTracker
      * Low-level entry point retained for application code that needs a configured event.
      * Metadata is strictly whitelisted per event; request details are never captured.
      *
-     * @param array<string, int|string|null> $context
-     * @param array<string, string> $metadata
+     * @param  array<string, int|string|null>  $context
+     * @param  array<string, string>  $metadata
      */
     public function record(string $event, array $context = [], array $metadata = []): ?AnalyticsEvent
     {

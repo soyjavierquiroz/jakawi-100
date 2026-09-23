@@ -16,6 +16,11 @@ class Benefit extends Model
     /** @use HasFactory<BenefitFactory> */
     use HasFactory;
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected $fillable = [
         'partner_id', 'slug', 'title', 'short_description', 'description', 'terms', 'category',
         'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'status', 'featured',

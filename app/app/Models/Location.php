@@ -16,6 +16,11 @@ class Location extends Model
     /** @use HasFactory<LocationFactory> */
     use HasFactory;
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected $fillable = [
         'partner_id', 'slug', 'name', 'location_type', 'status', 'is_primary', 'country_code',
         'region', 'city', 'zone', 'address', 'address_reference', 'latitude', 'longitude',

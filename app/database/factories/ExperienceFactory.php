@@ -27,9 +27,28 @@ class ExperienceFactory extends Factory
         ];
     }
 
-    public function draft(): static { return $this->state(fn () => ['status' => 'draft']); }
-    public function published(): static { return $this->state(fn () => ['status' => 'published', 'published_at' => now()]); }
-    public function featured(): static { return $this->state(fn () => ['featured' => true]); }
-    public function withExternalReservation(): static { return $this->state(fn () => ['reservation_method' => 'external', 'reservation_url' => 'https://example.test/reserve']); }
-    public function withWhatsAppReservation(): static { return $this->state(fn () => ['reservation_method' => 'whatsapp', 'reservation_whatsapp' => '+59170000000']); }
+    public function draft(): static
+    {
+        return $this->state(fn () => ['status' => 'draft']);
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn () => ['status' => 'published', 'published_at' => now()]);
+    }
+
+    public function featured(): static
+    {
+        return $this->state(fn () => ['featured' => true]);
+    }
+
+    public function withExternalReservation(): static
+    {
+        return $this->state(fn () => ['reservation_method' => 'external', 'reservation_url' => 'https://example.test/reserve']);
+    }
+
+    public function withWhatsAppReservation(): static
+    {
+        return $this->state(fn () => ['reservation_method' => 'whatsapp', 'reservation_whatsapp' => '+59170000000']);
+    }
 }

@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\AnalyticsTracker;
 use App\Services\MembershipService;
 use App\Services\RedemptionService;
+use Carbon\CarbonInterface;
 use DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class AnalyticsTest extends TestCase
 
         $event = AnalyticsEvent::create(['event_name' => 'home_view', 'metadata' => ['source' => 'location_detail'], 'occurred_at' => now()]);
         $this->assertSame(['source' => 'location_detail'], $event->metadata);
-        $this->assertInstanceOf(\Carbon\CarbonInterface::class, $event->occurred_at);
+        $this->assertInstanceOf(CarbonInterface::class, $event->occurred_at);
     }
 
     public function test_domain_deletion_nulls_analytics_foreign_keys_without_deleting_event(): void
@@ -104,7 +105,8 @@ class AnalyticsTest extends TestCase
         $request = Request::create('/');
         $response = $middleware->handle($request, function (Request $request): Response {
             $this->assertTrue(Str::isUuid($request->attributes->get(EnsureVisitorId::ATTRIBUTE)));
-            return new Response();
+
+            return new Response;
         });
         $cookie = $response->headers->getCookies()[0];
         $this->assertTrue(Str::isUuid($cookie->getValue()));
@@ -114,12 +116,12 @@ class AnalyticsTest extends TestCase
 
         $existing = '22222222-2222-4222-8222-222222222222';
         $request = Request::create('/', 'GET', [], [config('jakawi.analytics.visitor_cookie') => $existing]);
-        $response = $middleware->handle($request, fn () => new Response());
+        $response = $middleware->handle($request, fn () => new Response);
         $this->assertSame($existing, $request->attributes->get(EnsureVisitorId::ATTRIBUTE));
         $this->assertCount(0, $response->headers->getCookies());
 
         $request = Request::create('/', 'GET', [], [config('jakawi.analytics.visitor_cookie') => 'not-a-uuid']);
-        $middleware->handle($request, fn () => new Response());
+        $middleware->handle($request, fn () => new Response);
         $this->assertTrue(Str::isUuid($request->attributes->get(EnsureVisitorId::ATTRIBUTE)));
     }
 
@@ -182,6 +184,7 @@ class AnalyticsTest extends TestCase
         $benefit = Benefit::factory()->published()->forPartner($partner)->create();
         $experience = Experience::factory()->published()->create();
         $experience->syncPartnersWithRoles([['partner_id' => $partner->id, 'role' => 'organizer']]);
+
         return [$partner, $location, $benefit, $experience];
     }
 
@@ -191,6 +194,7 @@ class AnalyticsTest extends TestCase
         $request->attributes->set(EnsureVisitorId::ATTRIBUTE, $visitorId);
         $request->setUserResolver(fn () => $user);
         $this->app->instance(Request::class, $request);
+
         return app(AnalyticsTracker::class);
     }
 
@@ -204,6 +208,7 @@ class AnalyticsTest extends TestCase
         $benefit = Benefit::factory()->published()->forPartner($partner)->create(['applies_to_all_locations' => true]);
         $user = User::factory()->create();
         app(MembershipService::class)->activate($user, User::factory()->create());
+
         return [$user, $benefit, $location];
     }
 }

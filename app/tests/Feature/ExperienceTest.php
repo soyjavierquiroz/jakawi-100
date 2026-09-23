@@ -55,7 +55,9 @@ class ExperienceTest extends TestCase
     public function test_multi_partner_roles_allow_zero_partners_and_multiple_roles_per_partner(): void
     {
         $experience = Experience::factory()->create();
-        $a = Partner::factory()->create(); $b = Partner::factory()->create(); $c = Partner::factory()->create();
+        $a = Partner::factory()->create();
+        $b = Partner::factory()->create();
+        $c = Partner::factory()->create();
         $this->assertCount(0, $experience->partners);
         $experience->syncPartnersWithRoles([
             ['partner_id' => $a->id, 'role' => 'organizer'], ['partner_id' => $a->id, 'role' => 'provider'],
@@ -74,13 +76,16 @@ class ExperienceTest extends TestCase
         $future = ExperienceSession::factory()->for($experience)->upcoming()->create(['ends_at' => now()->addDays(2), 'capacity' => 20]);
         $past = ExperienceSession::factory()->for($experience)->past()->create();
         $cancelled = ExperienceSession::factory()->for($experience)->cancelled()->create(['starts_at' => now()->addDay()]);
-        $this->assertTrue($future->isUpcoming()); $this->assertFalse($past->isUpcoming()); $this->assertFalse($cancelled->isUpcoming());
+        $this->assertTrue($future->isUpcoming());
+        $this->assertFalse($past->isUpcoming());
+        $this->assertFalse($cancelled->isUpcoming());
         $this->assertSame([$future->id], $experience->upcomingSessions()->pluck('id')->all());
         $this->assertSame([$experience->id], Experience::upcoming()->pluck('id')->all());
         $valid = Validator::make(['experience_id' => $experience->id, 'starts_at' => now(), 'ends_at' => now()->addHour(), 'capacity' => null, 'status' => 'scheduled'], ExperienceRules::session());
         $positiveCapacity = Validator::make(['experience_id' => $experience->id, 'starts_at' => now(), 'capacity' => 20, 'status' => 'scheduled'], ExperienceRules::session());
         $invalid = Validator::make(['experience_id' => $experience->id, 'starts_at' => now(), 'ends_at' => now(), 'capacity' => 0, 'status' => 'invalid'], ExperienceRules::session());
-        $this->assertTrue($valid->passes()); $this->assertTrue($invalid->fails());
+        $this->assertTrue($valid->passes());
+        $this->assertTrue($invalid->fails());
         $this->assertTrue($positiveCapacity->passes());
         Carbon::setTestNow();
     }
@@ -93,7 +98,8 @@ class ExperienceTest extends TestCase
         $early = ExperienceSession::factory()->for($published)->create(['starts_at' => now()->addDay()]);
         ExperienceSession::factory()->for($published)->create(['starts_at' => now()->subDay()]);
         ExperienceSession::factory()->for($published)->cancelled()->create(['starts_at' => now()->addDay()]);
-        $draft = Experience::factory()->draft()->create(); ExperienceSession::factory()->for($draft)->upcoming()->create();
+        $draft = Experience::factory()->draft()->create();
+        ExperienceSession::factory()->for($draft)->upcoming()->create();
         $this->assertSame([$early->id, $late->id], $published->upcomingSessions()->pluck('id')->all());
         $this->assertSame([$published->id], Experience::upcoming()->pluck('id')->all());
         Carbon::setTestNow();
@@ -102,7 +108,8 @@ class ExperienceTest extends TestCase
     public function test_session_location_may_be_partner_owned_independent_or_unrelated_or_null(): void
     {
         $experience = Experience::factory()->create();
-        $partner = Partner::factory()->create(); $experience->syncPartnersWithRoles([['partner_id' => $partner->id, 'role' => 'organizer']]);
+        $partner = Partner::factory()->create();
+        $experience->syncPartnersWithRoles([['partner_id' => $partner->id, 'role' => 'organizer']]);
         $owned = Location::factory()->withPartner($partner)->create();
         $independent = Location::factory()->withoutPartner()->create();
         $unrelated = Location::factory()->withPartner(Partner::factory()->create())->create();

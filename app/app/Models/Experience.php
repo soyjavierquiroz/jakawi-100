@@ -16,6 +16,11 @@ class Experience extends Model
     /** @use HasFactory<ExperienceFactory> */
     use HasFactory;
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected $fillable = [
         'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type',
         'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method',
@@ -63,7 +68,7 @@ class Experience extends Model
     /**
      * Replace partner-role assignments. A partner may legitimately appear once per role.
      *
-     * @param iterable<array{partner_id:int|numeric-string,role:string,sort_order?:int}> $assignments
+     * @param  iterable<array{partner_id:int|numeric-string,role:string,sort_order?:int}>  $assignments
      */
     public function syncPartnersWithRoles(iterable $assignments): void
     {
