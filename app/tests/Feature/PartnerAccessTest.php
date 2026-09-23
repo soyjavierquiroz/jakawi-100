@@ -22,7 +22,10 @@ class PartnerAccessTest extends TestCase
         $partnerUser = $this->partnerUser($partner, 'manager');
 
         $this->actingAs($partnerUser)->get('/partner')->assertOk()->assertSee($partner->name);
-        $this->actingAs(User::factory()->create())->get('/partner')->assertForbidden();
+
+        $member = User::factory()->create();
+        $this->actingAs($member)->get('/partner')->assertForbidden();
+        $this->actingAs($member)->get('/partner/reservas')->assertForbidden();
     }
 
     public function test_partner_cannot_validate_another_partners_redemption(): void

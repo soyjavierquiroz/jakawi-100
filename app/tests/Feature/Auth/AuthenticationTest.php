@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Partner;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
@@ -29,7 +30,25 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect('/mi-jakawi');
+    }
+
+    public function test_partner_user_authenticates_and_is_redirected_to_the_partner_portal(): void
+    {
+        $partner = Partner::factory()->published()->create();
+        $user = User::factory()->create();
+        $user->partners()->attach($partner, ['role' => 'manager']);
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect('/partner');
+        $this->get('/partner')->assertOk();
+        $this->get('/partner/reservas')->assertOk();
+        $this->get('/validar')->assertOk();
     }
 
     public function test_users_with_two_factor_enabled_are_redirected_to_two_factor_challenge()

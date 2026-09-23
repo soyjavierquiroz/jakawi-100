@@ -36,7 +36,7 @@ services:
       DB_USERNAME: jakawi_test_user
       DB_PASSWORD: jakawi_test_password
       CACHE_STORE: array
-      SESSION_DRIVER: array
+      SESSION_DRIVER: file
       SESSION_SECURE_COOKIE: "true"
       QUEUE_CONNECTION: sync
       MAIL_MAILER: array
