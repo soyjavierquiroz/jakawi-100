@@ -15,7 +15,7 @@ function formatSavings(value: BenefitSummary['estimated_savings']) {
 
     return new Intl.NumberFormat('es-MX', {
         style: 'currency',
-        currency: 'MXN',
+        currency: 'BOB',
         maximumFractionDigits: 0,
     }).format(amount);
 }
@@ -42,7 +42,7 @@ export default function BenefitCard({ benefit }: { benefit: BenefitSummary }) {
             <div className="flex min-h-56 flex-col gap-3 p-4">
                 <div className="space-y-1">
                     <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                        {benefit.merchant.name}
+                        {benefit.partner?.name ?? 'JAKAWI'}
                     </p>
                     <h2 className="text-lg leading-tight font-semibold text-foreground">
                         {benefit.title}

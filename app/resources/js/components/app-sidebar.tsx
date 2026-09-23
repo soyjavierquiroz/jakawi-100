@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BadgeCheck, Gift, House, Shield } from 'lucide-react';
+import { BadgeCheck, Gift, House, Shield, Sparkles } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -12,13 +12,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
 const mainNavItems = (isAdmin: boolean): NavItem[] => [
     {
         title: 'Inicio',
-        href: dashboard(),
+        href: '/',
         icon: House,
     },
     {
@@ -26,6 +25,7 @@ const mainNavItems = (isAdmin: boolean): NavItem[] => [
         href: '/beneficios',
         icon: Gift,
     },
+    { title: 'Experiencias', href: '/experiencias', icon: Sparkles },
     {
         title: 'Mi JAKAWI',
         href: '/mi-jakawi',
@@ -51,7 +51,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

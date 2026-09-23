@@ -21,7 +21,7 @@ type RedemptionStats = {
 
 type RecentRedemption = {
     public_id: string;
-    merchant_name: string;
+    partner_name: string;
     benefit_title: string;
     savings_amount?: string | null;
     confirmed_at: string;
@@ -142,7 +142,7 @@ export default function MiJakawi({
                                                     {redemption.benefit_title}
                                                 </p>
                                                 <p className="text-muted-foreground">
-                                                    {redemption.merchant_name} ·{' '}
+                                                    {redemption.partner_name} ·{' '}
                                                     {formatDate(
                                                         redemption.confirmed_at,
                                                     )}

@@ -1,4 +1,4 @@
-export type MerchantSummary = {
+export type PartnerSummary = {
     id?: number;
     name: string;
     category?: string | null;
@@ -20,5 +20,5 @@ export type BenefitSummary = {
     redemption_limit_per_member?: number | null;
     starts_at?: string | null;
     ends_at?: string | null;
-    merchant: MerchantSummary;
+    partner?: PartnerSummary | null;
 };

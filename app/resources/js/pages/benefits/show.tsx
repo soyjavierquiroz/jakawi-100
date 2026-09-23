@@ -34,23 +34,16 @@ function formatDate(value?: string | null) {
 export default function BenefitShow({
     benefit,
     hasActiveMembership,
-    redemptionAvailability,
+    locations = [],
 }: {
     benefit: BenefitSummary;
     hasActiveMembership: boolean;
-    redemptionAvailability: {
-        can_redeem: boolean;
-        limit_reached: boolean;
-        temporarily_unavailable: boolean;
-    };
+    locations?: { id: number; name: string; zone?: string | null; address?: string | null; slug: string; whatsapp?: string | null; maps_url?: string | null }[];
 }) {
     const { auth } = usePage().props;
     const savings = formatSavings(benefit.estimated_savings);
     const startsAt = formatDate(benefit.starts_at);
     const endsAt = formatDate(benefit.ends_at);
-    const address = [benefit.merchant.address, benefit.merchant.city]
-        .filter(Boolean)
-        .join(', ');
 
     return (
         <>
@@ -82,7 +75,7 @@ export default function BenefitShow({
                         <div className="space-y-6 p-4 sm:p-6">
                             <div className="space-y-3">
                                 <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                                    {benefit.merchant.name}
+                                    {benefit.partner?.name}
                                 </p>
                                 <h1 className="text-3xl leading-tight font-semibold sm:text-5xl">
                                     {benefit.title}
@@ -116,16 +109,6 @@ export default function BenefitShow({
                                         </dd>
                                     </div>
                                 ) : null}
-                                {address ? (
-                                    <div className="rounded-md border border-border bg-background p-4 sm:col-span-2">
-                                        <dt className="text-xs font-semibold text-muted-foreground uppercase">
-                                            Dirección
-                                        </dt>
-                                        <dd className="mt-1 text-sm text-foreground">
-                                            {address}
-                                        </dd>
-                                    </div>
-                                ) : null}
                             </dl>
 
                             {benefit.terms ? (
@@ -151,13 +134,7 @@ export default function BenefitShow({
                                     </>
                                 ) : hasActiveMembership ? (
                                     <>
-                                        {redemptionAvailability.limit_reached ? (
-                                            <p className="text-sm font-semibold">Ya utilizaste este beneficio.</p>
-                                        ) : redemptionAvailability.temporarily_unavailable ? (
-                                            <p className="text-sm font-semibold">Canje temporalmente no disponible.</p>
-                                        ) : (
-                                            <p className="text-sm font-semibold text-success">Disponible con tu JAKAWI</p>
-                                        )}
+                                        {locations.length ? <p className="text-sm font-semibold text-success">Disponible con tu JAKAWI</p> : <p className="text-sm font-semibold">Actualmente no hay una ubicación disponible para este beneficio.</p>}
                                     </>
                                 ) : (
                                     <>
@@ -183,16 +160,17 @@ export default function BenefitShow({
                                     >
                                         Ver Mi JAKAWI
                                     </Link>
-                                ) : redemptionAvailability.can_redeem ? (
+                                ) : locations.length ? (
                                     <button
                                         type="button"
-                                        onClick={() => router.post(`/beneficios/${benefit.slug}/canjear`)}
+                                        onClick={() => router.post(`/beneficios/${benefit.slug}/canjear`, { location_id: locations[0].id })}
                                         className="mt-4 inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
                                     >
                                         Usar beneficio
                                     </button>
                                 ) : null}
                             </div>
+                            {locations.length ? <section className="space-y-2"><h2 className="text-lg font-semibold">Ubicaciones disponibles</h2>{locations.map((location) => <div key={location.id} className="rounded-md border border-border p-3 text-sm"><strong>{location.name}</strong>{location.address ? <p>{location.address}</p> : null}<div className="mt-2 flex gap-3">{location.maps_url ? <a href={`/lugares/${location.slug}/mapa`}>Cómo llegar</a> : null}{location.whatsapp ? <a href={`/lugares/${location.slug}/whatsapp`}>WhatsApp</a> : null}</div></div>)}</section> : null}
                         </div>
                     </div>
                 </section>

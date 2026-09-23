@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BadgeCheck, Gift, House, Menu, Shield } from 'lucide-react';
+import { BadgeCheck, Gift, House, Menu, Shield, Sparkles } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -27,7 +27,6 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
-import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -37,7 +36,7 @@ type Props = {
 const mainNavItems = (isAdmin: boolean): NavItem[] => [
     {
         title: 'Inicio',
-        href: dashboard(),
+        href: '/',
         icon: House,
     },
     {
@@ -45,6 +44,7 @@ const mainNavItems = (isAdmin: boolean): NavItem[] => [
         href: '/beneficios',
         icon: Gift,
     },
+    { title: 'Experiencias', href: '/experiencias', icon: Sparkles },
     {
         title: 'Mi JAKAWI',
         href: '/mi-jakawi',
@@ -120,7 +120,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
 
                     <Link
-                        href={dashboard()}
+                            href="/"
                         prefetch
                         className="flex items-center space-x-2"
                     >
