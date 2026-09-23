@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\AnalyticsEvent;
 use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Models\ExperienceSession;
@@ -23,7 +24,7 @@ class ExperienceReservationTest extends TestCase
         $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertRedirect();
         $this->assertDatabaseCount('experience_reservations', 1);
         $this->assertDatabaseHas('experience_reservations', ['user_id' => $user->id, 'status' => 'pending', 'party_size' => 1]);
-        $this->assertSame(1, \App\Models\AnalyticsEvent::where('event_name', 'experience_reserve_click')->count());
+        $this->assertSame(1, AnalyticsEvent::where('event_name', 'experience_reserve_click')->count());
     }
 
     public function test_party_size_persists_and_existing_active_reservation_keeps_its_original_size(): void
@@ -68,10 +69,13 @@ class ExperienceReservationTest extends TestCase
     {
         [$member, $experience, $session, $partner] = $this->reservable(true);
         $reservation = ExperienceReservation::create(['user_id' => $member->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'pending']);
-        $manager = User::factory()->create(); $manager->partners()->attach($partner, ['role' => 'manager']);
-        $other = Partner::factory()->published()->create(); $intruder = User::factory()->create(); $intruder->partners()->attach($other, ['role' => 'manager']);
-        $this->actingAs($intruder)->post("/partner/reservas/{$reservation->public_id}/confirmed")->assertForbidden();
-        $this->actingAs($manager)->post("/partner/reservas/{$reservation->public_id}/confirmed")->assertRedirect();
+        $manager = User::factory()->create();
+        $manager->partners()->attach($partner, ['role' => 'manager']);
+        $other = Partner::factory()->published()->create();
+        $intruder = User::factory()->create();
+        $intruder->partners()->attach($other, ['role' => 'manager']);
+        $this->actingAs($intruder)->post("/partner/{$other->slug}/reservas/{$reservation->public_id}/confirmed")->assertForbidden();
+        $this->actingAs($manager)->post("/partner/{$partner->slug}/reservas/{$reservation->public_id}/confirmed")->assertRedirect();
         $this->assertDatabaseHas('experience_reservations', ['id' => $reservation->id, 'status' => 'confirmed', 'responded_by_user_id' => $manager->id]);
         $this->actingAs($member)->post("/reservas/{$reservation->public_id}/cancelar")->assertRedirect();
         $this->assertDatabaseHas('experience_reservations', ['id' => $reservation->id, 'status' => 'cancelled']);
@@ -88,7 +92,7 @@ class ExperienceReservationTest extends TestCase
         ExperienceReservation::create(['user_id' => User::factory()->create()->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 3]);
         ExperienceReservation::create(['user_id' => User::factory()->create()->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 1]);
 
-        $this->actingAs($manager)->get('/partner/reservas')->assertOk()->assertInertia(fn (Assert $page) => $page
+        $this->actingAs($manager)->get('/partner/'.$partner->slug.'/reservas')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('pending.0.member_name', 'Miembro Visible')
             ->where('pending.0.party_size', 2)
             ->where('pending.0.confirmed_attendee_count', 4)
@@ -105,7 +109,7 @@ class ExperienceReservationTest extends TestCase
         $manager->partners()->attach($otherPartner, ['role' => 'manager']);
         ExperienceReservation::create(['user_id' => $member->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'pending', 'party_size' => 2]);
 
-        $this->actingAs($manager)->get('/partner/reservas')->assertOk()->assertInertia(fn (Assert $page) => $page->has('pending', 0));
+        $this->actingAs($manager)->get('/partner/'.$otherPartner->slug.'/reservas')->assertOk()->assertInertia(fn (Assert $page) => $page->has('pending', 0));
     }
 
     private function reservable(bool $membership = false): array
@@ -115,7 +119,10 @@ class ExperienceReservationTest extends TestCase
         $experience->syncPartnersWithRoles([['partner_id' => $partner->id, 'role' => 'organizer']]);
         $session = ExperienceSession::factory()->for($experience)->upcoming()->create(['reservation_partner_id' => $partner->id]);
         $user = User::factory()->create();
-        if ($membership) app(MembershipService::class)->activate($user, User::factory()->create());
+        if ($membership) {
+            app(MembershipService::class)->activate($user, User::factory()->create());
+        }
+
         return [$user, $experience, $session, $partner];
     }
 }

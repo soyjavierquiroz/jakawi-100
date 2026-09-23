@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Benefit;
 use App\Models\Location;
+use App\Models\Partner;
 use App\Models\Redemption;
 use App\Services\RedemptionService;
 use DomainException;
@@ -32,23 +33,23 @@ class RedemptionController extends Controller
         return Inertia::render('redemptions/show', ['redemption' => $redemption->only(['public_id', 'code', 'partner_name', 'location_name', 'benefit_title', 'status', 'expires_at', 'confirmed_at', 'savings_amount'])]);
     }
 
-    public function form(): Response
+    public function form(Partner $partner): Response
     {
-        return Inertia::render('redemptions/validate');
+        return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug'])]);
     }
 
-    public function confirm(Request $r, RedemptionService $service): Response
+    public function confirm(Request $r, Partner $partner, RedemptionService $service): Response
     {
         $data = $r->validate(['code' => ['required', 'string', 'size:6'], 'pin' => ['required', 'digits:6']]);
-        $redemption = Redemption::query()->where('code', strtoupper($data['code']))->first();
-        abort_unless($redemption !== null && $r->user()->managesPartner($redemption->partner_id), 403);
+        $redemption = Redemption::query()->where('code', strtoupper($data['code']))->where('partner_id', $partner->id)->first();
+        abort_unless($redemption !== null, 403);
 
         try {
             $x = $service->confirm(strtoupper($data['code']), $data['pin']);
 
-            return Inertia::render('redemptions/validate', ['result' => $x->only(['benefit_title', 'partner_name', 'location_name', 'status'])]);
+            return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug']), 'result' => $x->only(['benefit_title', 'partner_name', 'location_name', 'status'])]);
         } catch (DomainException $e) {
-            return Inertia::render('redemptions/validate', ['error' => 'No fue posible validar este canje.']);
+            return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug']), 'error' => 'No fue posible validar este canje.']);
         }
     }
 }

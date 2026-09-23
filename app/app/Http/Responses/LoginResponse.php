@@ -10,13 +10,16 @@ class LoginResponse implements LoginResponseContract
     public function toResponse($request)
     {
         if ($request->session()->pull('partner_login')) {
-            if (! $request->user()?->is_admin && ! $request->user()?->partners()->where('status', 'published')->exists()) {
+            $partners = $request->user()?->partners()->orderBy('name')->get(['partners.id', 'partners.slug']);
+            if ($partners === null || $partners->isEmpty()) {
                 auth()->logout();
 
                 return redirect()->route('partner.login')->with('status', 'Tu cuenta no tiene acceso al Portal Partner.');
             }
 
-            return redirect()->intended('/partner');
+            return redirect()->intended($partners->count() === 1
+                ? route('partner.portal.show', $partners->first())
+                : route('partner.index'));
         }
 
         return $request->wantsJson()

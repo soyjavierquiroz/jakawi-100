@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\PartnerLoginController;
 use App\Http\Controllers\PartnerPortalController;
+use App\Http\Controllers\PartnerReservationController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RedemptionController;
-use App\Http\Controllers\ExperienceReservationController;
-use App\Http\Controllers\PartnerReservationController;
-use App\Http\Controllers\PartnerLoginController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -25,10 +26,13 @@ Route::get('/partner/login', [PartnerLoginController::class, 'create'])->middlew
 Route::post('/partner/login', [PartnerLoginController::class, 'store'])->middleware('guest')->name('partner.login.store');
 Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner', [PartnerPortalController::class, 'index'])->name('partner.index');
-    Route::get('/partner/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');
-    Route::post('/partner/reservas/{reservation:public_id}/{status}', [PartnerReservationController::class, 'respond'])->whereIn('status', ['confirmed', 'rejected'])->name('partner.reservations.respond');
-    Route::get('/validar', [RedemptionController::class, 'form'])->name('redemptions.validate');
-    Route::post('/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1');
+    Route::get('/partner/reservas', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'partner.reservations.index'));
+    Route::get('/validar', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'redemptions.validate'));
+    Route::get('/partner/{partner:slug}', [PartnerPortalController::class, 'show'])->name('partner.portal.show');
+    Route::get('/partner/{partner:slug}/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');
+    Route::post('/partner/{partner:slug}/reservas/{reservation:public_id}/{status}', [PartnerReservationController::class, 'respond'])->withoutScopedBindings()->whereIn('status', ['confirmed', 'rejected'])->name('partner.reservations.respond');
+    Route::get('/partner/{partner:slug}/validar', [RedemptionController::class, 'form'])->name('redemptions.validate');
+    Route::post('/partner/{partner:slug}/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

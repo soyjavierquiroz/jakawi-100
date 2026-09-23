@@ -21,11 +21,13 @@ class PartnerAccessTest extends TestCase
         $partner = Partner::factory()->create();
         $partnerUser = $this->partnerUser($partner, 'manager');
 
-        $this->actingAs($partnerUser)->get('/partner')->assertOk()->assertSee($partner->name);
+        $this->actingAs($partnerUser)->get('/partner/'.$partner->slug)->assertOk()->assertSee($partner->name);
+        $this->actingAs($partnerUser)->get('/admin')->assertForbidden();
 
         $member = User::factory()->create();
         $this->actingAs($member)->get('/partner')->assertForbidden();
         $this->actingAs($member)->get('/partner/reservas')->assertForbidden();
+        $this->actingAs($member)->get('/validar')->assertForbidden();
     }
 
     public function test_partner_cannot_validate_another_partners_redemption(): void
@@ -36,23 +38,38 @@ class PartnerAccessTest extends TestCase
         $redemption = $this->redemptionFor($partnerB);
 
         $this->actingAs($validatorA)
-            ->post('/validar', ['code' => $redemption->code, 'pin' => '123456'])
+            ->post('/partner/'.$partnerA->slug.'/validar', ['code' => $redemption->code, 'pin' => '123456'])
             ->assertForbidden();
 
         $this->assertSame(Redemption::STATUS_PENDING, $redemption->fresh()->status);
     }
 
-    public function test_admin_retains_partner_portal_and_validation_access(): void
+    public function test_admin_without_partner_relation_cannot_access_partner_portal_or_validation(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
-        $redemption = $this->redemptionFor(Partner::factory()->published()->create());
+        $partner = Partner::factory()->published()->create();
+        $redemption = $this->redemptionFor($partner);
 
-        $this->actingAs($admin)->get('/partner')->assertOk();
+        $this->actingAs($admin)->get('/admin')->assertOk();
+        $this->actingAs($admin)->get('/partner')->assertForbidden();
         $this->actingAs($admin)
-            ->post('/validar', ['code' => $redemption->code, 'pin' => '123456'])
-            ->assertOk();
+            ->post('/partner/'.$partner->slug.'/validar', ['code' => $redemption->code, 'pin' => '123456'])
+            ->assertForbidden();
 
-        $this->assertSame(Redemption::STATUS_CONFIRMED, $redemption->fresh()->status);
+        $this->assertSame(Redemption::STATUS_PENDING, $redemption->fresh()->status);
+    }
+
+    public function test_multi_partner_user_can_only_open_related_partner_context(): void
+    {
+        $partnerA = Partner::factory()->create();
+        $partnerB = Partner::factory()->create();
+        $partnerC = Partner::factory()->create();
+        $user = $this->partnerUser($partnerA, 'manager');
+        $user->partners()->attach($partnerB, ['role' => 'staff']);
+
+        $this->actingAs($user)->get('/partner')->assertOk()->assertSee($partnerA->name)->assertSee($partnerB->name);
+        $this->actingAs($user)->get('/partner/'.$partnerA->slug.'/reservas')->assertOk();
+        $this->actingAs($user)->get('/partner/'.$partnerC->slug)->assertForbidden();
     }
 
     private function partnerUser(Partner $partner, string $role): User

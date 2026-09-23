@@ -46,9 +46,9 @@ class AuthenticationTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $response->assertRedirect('/partner');
-        $this->get('/partner')->assertOk();
-        $this->get('/partner/reservas')->assertOk();
-        $this->get('/validar')->assertOk();
+        $this->get('/partner/'.$partner->slug)->assertOk();
+        $this->get('/partner/'.$partner->slug.'/reservas')->assertOk();
+        $this->get('/partner/'.$partner->slug.'/validar')->assertOk();
     }
 
     public function test_users_with_two_factor_enabled_are_redirected_to_two_factor_challenge()

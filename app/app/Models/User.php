@@ -87,7 +87,7 @@ class User extends Authenticatable implements PasskeyUser
 
     public function managesPartner(?int $partnerId): bool
     {
-        return $this->is_admin || ($partnerId !== null && $this->partners()->whereKey($partnerId)->exists());
+        return $partnerId !== null && $this->partners()->whereKey($partnerId)->exists();
     }
 
     /**

@@ -70,17 +70,18 @@ class RedemptionHttpTest extends TestCase
     {
         [$member, $benefit, $location] = $this->redeemable();
         $validator = $this->validatorFor($benefit->partner);
-        $this->get('/validar')->assertRedirect('/login');
-        $this->actingAs($validator)->get('/validar')->assertOk();
+        $endpoint = '/partner/'.$benefit->partner->slug.'/validar';
+        $this->get($endpoint)->assertRedirect('/login');
+        $this->actingAs($validator)->get($endpoint)->assertOk();
         $this->actingAs($member)->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id]);
         $redemption = Redemption::sole();
-        $this->actingAs($validator)->post('/validar', ['code' => $redemption->code, 'pin' => '000000'])->assertOk();
+        $this->actingAs($validator)->post($endpoint, ['code' => $redemption->code, 'pin' => '000000'])->assertOk();
         $this->assertSame('pending', $redemption->fresh()->status);
         $this->assertDatabaseMissing('analytics_events', ['event_name' => 'redeem_confirmed']);
-        $this->actingAs($validator)->post('/validar', ['code' => $redemption->code, 'pin' => '123456'])->assertOk();
+        $this->actingAs($validator)->post($endpoint, ['code' => $redemption->code, 'pin' => '123456'])->assertOk();
         $this->assertSame('confirmed', $redemption->fresh()->status);
         $this->assertNotNull($redemption->fresh()->confirmed_at);
-        $this->actingAs($validator)->post('/validar', ['code' => $redemption->code, 'pin' => '123456'])->assertOk();
+        $this->actingAs($validator)->post($endpoint, ['code' => $redemption->code, 'pin' => '123456'])->assertOk();
         $this->assertSame(1, AnalyticsEvent::where('event_name', 'redeem_confirmed')->count());
         $this->assertDatabaseMissing('analytics_events', ['event_name' => 'redeem_confirmed', 'metadata' => json_encode(['code' => $redemption->code])]);
     }
@@ -89,26 +90,29 @@ class RedemptionHttpTest extends TestCase
     {
         [$member, $benefit, $location] = $this->redeemable(['redemption_limit_per_member' => 1]);
         $validator = $this->validatorFor($benefit->partner);
+        $endpoint = '/partner/'.$benefit->partner->slug.'/validar';
         $this->actingAs($member)->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id]);
         $redemption = Redemption::sole();
         $redemption->update(['expires_at' => now()->subSecond()]);
-        $this->actingAs($validator)->post('/validar', ['code' => $redemption->code, 'pin' => '123456'])->assertOk();
+        $this->actingAs($validator)->post($endpoint, ['code' => $redemption->code, 'pin' => '123456'])->assertOk();
         $this->assertSame('expired', $redemption->fresh()->status);
         $this->actingAs($member)->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id]);
         $fresh = Redemption::latest('id')->firstOrFail();
-        $this->actingAs($validator)->post('/validar', ['code' => $fresh->code, 'pin' => '123456'])->assertOk();
+        $this->actingAs($validator)->post($endpoint, ['code' => $fresh->code, 'pin' => '123456'])->assertOk();
         $this->actingAs($member)->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id])->assertSessionHasErrors('redemption');
         $this->assertSame(2, Redemption::count());
     }
 
     public function test_validation_endpoint_is_throttled_after_twenty_requests(): void
     {
-        $validator = $this->validatorFor(Partner::factory()->create());
+        $partner = Partner::factory()->create();
+        $validator = $this->validatorFor($partner);
+        $endpoint = '/partner/'.$partner->slug.'/validar';
         for ($attempt = 0; $attempt < 20; $attempt++) {
-            $this->actingAs($validator)->post('/validar', ['code' => 'ABCDEF', 'pin' => '123456'])->assertForbidden();
+            $this->actingAs($validator)->post($endpoint, ['code' => 'ABCDEF', 'pin' => '123456'])->assertForbidden();
         }
 
-        $this->actingAs($validator)->post('/validar', ['code' => 'ABCDEF', 'pin' => '123456'])->assertStatus(429);
+        $this->actingAs($validator)->post($endpoint, ['code' => 'ABCDEF', 'pin' => '123456'])->assertStatus(429);
     }
 
     /** @return array{User, Benefit, Location} */

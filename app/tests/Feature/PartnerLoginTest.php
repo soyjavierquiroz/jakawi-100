@@ -25,7 +25,7 @@ class PartnerLoginTest extends TestCase
         $user->partners()->attach($partner, ['role' => 'manager']);
 
         $this->post('/partner/login', ['email' => $user->email, 'password' => 'password'])
-            ->assertRedirect('/partner');
+            ->assertRedirect('/partner/'.$partner->slug);
 
         $this->assertAuthenticatedAs($user);
     }
@@ -36,9 +36,9 @@ class PartnerLoginTest extends TestCase
         $user = User::factory()->create();
         $user->partners()->attach($partner, ['role' => 'manager']);
 
-        $this->withSession(['url.intended' => '/partner/reservas'])
+        $this->withSession(['url.intended' => '/partner/'.$partner->slug.'/reservas'])
             ->post('/partner/login', ['email' => $user->email, 'password' => 'password'])
-            ->assertRedirect('/partner/reservas');
+            ->assertRedirect('/partner/'.$partner->slug.'/reservas');
     }
 
     public function test_member_cannot_use_partner_login(): void

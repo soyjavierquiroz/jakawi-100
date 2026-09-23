@@ -7,7 +7,7 @@ type Partner = {
     role: 'owner' | 'manager' | 'staff';
 };
 
-export default function PartnerIndex({ partners, pendingReservations }: { partners: Partner[]; pendingReservations: number }) {
+export default function PartnerIndex({ partners }: { partners: Partner[] }) {
     return (
         <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6">
             <Head title="Portal Partner" />
@@ -21,19 +21,13 @@ export default function PartnerIndex({ partners, pendingReservations }: { partne
                     <ul className="mt-3 divide-y divide-border">
                         {partners.map((partner) => (
                             <li key={partner.id} className="flex items-center justify-between py-3">
-                                <span className="font-medium">{partner.name}</span>
+                                <Link href={`/partner/${partner.slug}`} className="font-medium">{partner.name}</Link>
                                 <span className="text-sm text-muted-foreground">{partner.role}</span>
                             </li>
                         ))}
                     </ul>
                 </div>
-                <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                    <Link href="/partner/reservas" className="rounded-md border border-border p-4 hover:bg-muted">Reservas {pendingReservations ? `(${pendingReservations} pendientes)` : ''}</Link>
-                    <Link href="/validar" className="rounded-md border border-border p-4 hover:bg-muted">
-                        Validar canje
-                    </Link>
-                    <Link href="/logout" method="post" as="button" className="rounded-md border border-border p-4 text-left hover:bg-muted">Cerrar sesión</Link>
-                </div>
+                <Link href="/" className="mt-4 inline-block text-sm underline">Ver JAKAWI</Link>
             </section>
         </main>
     );
