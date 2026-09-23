@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\CatalogV2TemplateCommand;
+use App\Models\Benefit;
 use App\Models\Experience;
 use App\Models\ExperienceSession;
-use App\Models\{Benefit, Location, Partner};
+use App\Models\Location;
+use App\Models\Partner;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -63,11 +65,16 @@ class CatalogImporterV2Test extends TestCase
     {
         $dir = $this->package();
         $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir, '--apply' => true])->assertSuccessful();
-        $partner = Partner::firstOrFail(); $location = Location::firstOrFail(); $benefit = Benefit::firstOrFail(); $experience = Experience::firstOrFail(); $session = ExperienceSession::firstOrFail();
+        $partner = Partner::firstOrFail();
+        $location = Location::firstOrFail();
+        $benefit = Benefit::firstOrFail();
+        $experience = Experience::firstOrFail();
+        $session = ExperienceSession::firstOrFail();
         $ids = [$partner->id, $location->id, $benefit->id, $experience->id, $session->id];
         $partner->update(['logo_path' => 'logo.jpg', 'cover_path' => 'cover.jpg']);
         $location->forceFill(['redemption_pin_hash' => 'unchanged-hash', 'image_path' => 'location.jpg', 'manager_name' => 'Manager', 'manager_phone' => '+59170000000', 'manager_email' => 'manager@example.test'])->save();
-        $benefit->update(['image_path' => 'benefit.jpg']); $experience->update(['image_path' => 'experience.jpg', 'cover_path' => 'experience-cover.jpg']);
+        $benefit->update(['image_path' => 'benefit.jpg']);
+        $experience->update(['image_path' => 'experience.jpg', 'cover_path' => 'experience-cover.jpg']);
         $this->writeCsv($dir, 'partners.csv', [['p-one', 'Partner', 'organization', 'business', '', '', 'Updated', 'food', '', '', '', '', '', '', '', '', '', '', 'published', 'true', '', '0', '']]);
         $this->writeCsv($dir, 'locations.csv', [['loc-one', 'p-one', 'Location', 'branch', 'published', 'true', 'BO', '', '', '', 'Updated address', '', '-17.3', '-66.1', '', '', '', '', '', '', '', '', '', 'America/La_Paz', '{"mon":[]}', '0', '']]);
         $this->writeCsv($dir, 'benefits.csv', [['b-one', 'p-one', 'Benefit', '', '', '', 'food', 'percentage', '20.00', '2', 'published', 'false', '', '', 'false', 'loc-one', '0', '']]);
@@ -76,10 +83,15 @@ class CatalogImporterV2Test extends TestCase
         $this->writeCsv($dir, 'experience_sessions.csv', [['e-one', 'session-a', '', '2026-10-02 12:00:00', '2026-10-02 13:00:00', '20', 'scheduled', 'New room']]);
         $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir, '--apply' => true])->assertSuccessful();
         $this->assertSame($ids, [Partner::firstOrFail()->id, Location::firstOrFail()->id, Benefit::firstOrFail()->id, Experience::firstOrFail()->id, ExperienceSession::firstOrFail()->id]);
-        $this->assertSame('Updated', Partner::firstOrFail()->description); $this->assertSame('Updated address', Location::firstOrFail()->address); $this->assertSame('20.00', Benefit::firstOrFail()->estimated_savings); $this->assertSame('15.00', Experience::firstOrFail()->member_price); $this->assertSame(20, ExperienceSession::firstOrFail()->capacity);
+        $this->assertSame('Updated', Partner::firstOrFail()->description);
+        $this->assertSame('Updated address', Location::firstOrFail()->address);
+        $this->assertSame('20.00', Benefit::firstOrFail()->estimated_savings);
+        $this->assertSame('15.00', Experience::firstOrFail()->member_price);
+        $this->assertSame(20, ExperienceSession::firstOrFail()->capacity);
         $this->assertDatabaseHas('partners', ['id' => $ids[0], 'logo_path' => 'logo.jpg', 'cover_path' => 'cover.jpg']);
         $this->assertDatabaseHas('locations', ['id' => $ids[1], 'redemption_pin_hash' => 'unchanged-hash', 'image_path' => 'location.jpg', 'manager_name' => 'Manager']);
-        $this->assertDatabaseHas('benefits', ['id' => $ids[2], 'image_path' => 'benefit.jpg']); $this->assertDatabaseHas('experiences', ['id' => $ids[3], 'image_path' => 'experience.jpg', 'cover_path' => 'experience-cover.jpg']);
+        $this->assertDatabaseHas('benefits', ['id' => $ids[2], 'image_path' => 'benefit.jpg']);
+        $this->assertDatabaseHas('experiences', ['id' => $ids[3], 'image_path' => 'experience.jpg', 'cover_path' => 'experience-cover.jpg']);
     }
 
     public function test_invalid_input_reports_file_row_field_and_never_writes(): void
@@ -87,6 +99,40 @@ class CatalogImporterV2Test extends TestCase
         $dir = $this->package();
         $this->writeCsv($dir, 'partners.csv', [['demo-partner', 'Partner', 'invalid', 'bad', '', '', '', 'bad', '', '', '', '', '', '', '', '', '', '', 'bad', 'yes', '', '0', '']]);
         $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir, '--apply' => true])->expectsOutputToContain('partners.csv row 2 [entity_type]')->expectsOutputToContain('IMPORT FAILED')->expectsOutputToContain('0 writes')->assertFailed();
+        $this->assertDatabaseCount('partners', 0);
+    }
+
+    public function test_validation_matrix_rejects_structural_boolean_reference_and_benefit_scope_errors(): void
+    {
+        $cases = [
+            ['partners.csv', 'featured', 'yes'], ['locations.csv', 'is_primary', '-1'], ['benefits.csv', 'applies_to_all_locations', 'abc'],
+            ['benefits.csv', 'location_slugs', 'loc-one', 'applies_to_all_locations', 'true'], ['benefits.csv', 'location_slugs', 'unknown'],
+            ['experience_sessions.csv', 'reference_key', ''], ['experience_sessions.csv', 'status', 'invalid'],
+        ];
+        foreach ($cases as $case) {
+            $dir = $this->package();
+            $file = $case[0];
+            $headers = CatalogV2TemplateCommand::HEADERS[$file];
+            $row = $this->csvRow($dir, $file);
+            $row[array_search($case[1], $headers, true)] = $case[2];
+            if (isset($case[3])) {
+                $row[array_search($case[3], $headers, true)] = $case[4];
+            }
+            $this->writeCsv($dir, $file, [$row]);
+            $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir, '--apply' => true])->expectsOutputToContain('IMPORT FAILED')->expectsOutputToContain('0 writes')->assertFailed();
+            $this->assertDatabaseCount('partners', 0);
+        }
+    }
+
+    public function test_csv_headers_duplicates_and_missing_files_fail_before_writes(): void
+    {
+        $dir = $this->package();
+        unlink($dir.'/locations.csv');
+        $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir])->expectsOutputToContain('locations.csv row 0 [file]')->assertFailed();
+        $this->assertDatabaseCount('partners', 0);
+        $dir = $this->package();
+        file_put_contents($dir.'/partners.csv', "slug,name,slug\n");
+        $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir])->expectsOutputToContain('header')->assertFailed();
         $this->assertDatabaseCount('partners', 0);
     }
 
@@ -120,5 +166,16 @@ class CatalogImporterV2Test extends TestCase
         mkdir($dir);
 
         return $dir;
+    }
+
+    /** @return list<string> */
+    private function csvRow(string $dir, string $file): array
+    {
+        $handle = fopen($dir.'/'.$file, 'r');
+        fgetcsv($handle);
+        $row = fgetcsv($handle);
+        fclose($handle);
+
+        return $row;
     }
 }
