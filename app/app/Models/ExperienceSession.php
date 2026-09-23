@@ -13,7 +13,7 @@ class ExperienceSession extends Model
     /** @use HasFactory<ExperienceSessionFactory> */
     use HasFactory;
 
-    protected $fillable = ['experience_id', 'location_id', 'starts_at', 'ends_at', 'capacity', 'status', 'venue_label'];
+    protected $fillable = ['experience_id', 'reference_key', 'location_id', 'starts_at', 'ends_at', 'capacity', 'status', 'venue_label'];
 
     /** @return BelongsTo<Experience, $this> */
     public function experience(): BelongsTo

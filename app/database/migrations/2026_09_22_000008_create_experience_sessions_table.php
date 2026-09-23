@@ -11,12 +11,14 @@ return new class extends Migration
         Schema::create('experience_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('experience_id')->constrained()->cascadeOnDelete();
+            $table->string('reference_key')->nullable();
             $table->foreignId('location_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamp('starts_at')->index();
             $table->timestamp('ends_at')->nullable();
             $table->unsignedInteger('capacity')->nullable();
             $table->string('status')->index();
             $table->string('venue_label')->nullable();
+            $table->unique(['experience_id', 'reference_key']);
             $table->timestamps();
         });
     }
