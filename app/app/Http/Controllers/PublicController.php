@@ -61,7 +61,7 @@ class PublicController extends Controller
         $analytics->benefitViewed($benefit);
         $locations = $benefit->availableLocations()->get();
 
-        return Inertia::render('benefits/show', ['benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn ($l) => $this->location($l)), 'hasActiveMembership' => $request->user()?->activeMembership()->exists() ?? false]);
+        return Inertia::render('benefits/show', ['benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))), 'hasActiveMembership' => $request->user()?->activeMembership()->exists() ?? false]);
     }
 
     public function experiences(Request $request): Response
