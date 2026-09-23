@@ -25,7 +25,11 @@ Updated: 2026-09-23
 
 ## Next
 
-V2.7: Importer + Demo. Production is not deployed.
+V2.7C: Visual QA. Production is not deployed.
+
+# V2.7B Demo Catalog V2
+
+Deterministic fictional QA catalog with local SVG demo media, seeded and cleared through dedicated commands. It does not use or relax the importer V2 `demo-*` protection. Not deployed.
 # V2.7A Catalog Importer V2
 
 Catalog Importer V2 provides validated, transactional, idempotent supply CSV imports with dry-run by default. It has not been deployed to production.

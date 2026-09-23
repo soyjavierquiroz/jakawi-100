@@ -32,6 +32,17 @@ producción no proporciona aislamiento.
 Para detener sólo los servicios de test: `./bin/jakawi-test down`. Para borrar
 sólo su volumen aislado: `./bin/jakawi-test clean`.
 
+## Demo Catalog V2
+
+El catálogo ficticio de QA es independiente del importer V2, que continúa rechazando slugs `demo-*`.
+
+```bash
+./bin/jakawi-test php artisan jakawi:seed-demo-catalog
+./bin/jakawi-test php artisan jakawi:clear-demo-catalog
+```
+
+El seed es idempotente. Genera SVG locales determinísticos bajo `demo/partners`, `demo/locations`, `demo/benefits` y `demo/experiences`; son placeholders ficticios, no uploads. Clear elimina sólo el namespace demo. El PIN `123456` es exclusivamente demo, queda hasheado y nunca debe reutilizarse en producción.
+
 ## Validation and proxy
 
 `POST /validar` está limitado a 20 solicitudes por minuto por IP mediante
