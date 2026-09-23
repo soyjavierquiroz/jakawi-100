@@ -9,6 +9,7 @@ use App\Models\Partner;
 use App\Models\User;
 use App\Services\MembershipService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ExperienceReservationTest extends TestCase
@@ -21,8 +22,28 @@ class ExperienceReservationTest extends TestCase
         $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertRedirect();
         $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertRedirect();
         $this->assertDatabaseCount('experience_reservations', 1);
-        $this->assertDatabaseHas('experience_reservations', ['user_id' => $user->id, 'status' => 'pending']);
+        $this->assertDatabaseHas('experience_reservations', ['user_id' => $user->id, 'status' => 'pending', 'party_size' => 1]);
         $this->assertSame(1, \App\Models\AnalyticsEvent::where('event_name', 'experience_reserve_click')->count());
+    }
+
+    public function test_party_size_persists_and_existing_active_reservation_keeps_its_original_size(): void
+    {
+        [$user, $experience, $session] = $this->reservable(true);
+
+        $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id, 'party_size' => 2])->assertRedirect();
+        $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id, 'party_size' => 4])->assertRedirect();
+
+        $this->assertDatabaseCount('experience_reservations', 1);
+        $this->assertDatabaseHas('experience_reservations', ['user_id' => $user->id, 'party_size' => 2]);
+    }
+
+    public function test_party_size_must_be_between_one_and_ten(): void
+    {
+        [$user, $experience, $session] = $this->reservable(true);
+
+        $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id, 'party_size' => 0])->assertSessionHasErrors('party_size');
+        $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id, 'party_size' => 11])->assertSessionHasErrors('party_size');
+        $this->assertDatabaseCount('experience_reservations', 0);
     }
 
     public function test_guest_and_member_without_membership_cannot_request(): void
@@ -55,6 +76,36 @@ class ExperienceReservationTest extends TestCase
         $this->actingAs($member)->post("/reservas/{$reservation->public_id}/cancelar")->assertRedirect();
         $this->assertDatabaseHas('experience_reservations', ['id' => $reservation->id, 'status' => 'cancelled']);
         $this->actingAs(User::factory()->create())->get('/partner/reservas')->assertForbidden();
+    }
+
+    public function test_partner_view_shows_only_member_name_party_size_and_confirmed_attendee_totals(): void
+    {
+        [$member, $experience, $session, $partner] = $this->reservable(true);
+        $member->update(['name' => 'Miembro Visible']);
+        $manager = User::factory()->create();
+        $manager->partners()->attach($partner, ['role' => 'manager']);
+        ExperienceReservation::create(['user_id' => $member->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'pending', 'party_size' => 2]);
+        ExperienceReservation::create(['user_id' => User::factory()->create()->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 3]);
+        ExperienceReservation::create(['user_id' => User::factory()->create()->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 1]);
+
+        $this->actingAs($manager)->get('/partner/reservas')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('pending.0.member_name', 'Miembro Visible')
+            ->where('pending.0.party_size', 2)
+            ->where('pending.0.confirmed_attendee_count', 4)
+            ->missing('pending.0.email')
+            ->missing('pending.0.member_email')
+        );
+    }
+
+    public function test_partner_cannot_view_another_partners_member_data(): void
+    {
+        [$member, $experience, $session, $partner] = $this->reservable(true);
+        $otherPartner = Partner::factory()->published()->create();
+        $manager = User::factory()->create();
+        $manager->partners()->attach($otherPartner, ['role' => 'manager']);
+        ExperienceReservation::create(['user_id' => $member->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'pending', 'party_size' => 2]);
+
+        $this->actingAs($manager)->get('/partner/reservas')->assertOk()->assertInertia(fn (Assert $page) => $page->has('pending', 0));
     }
 
     private function reservable(bool $membership = false): array

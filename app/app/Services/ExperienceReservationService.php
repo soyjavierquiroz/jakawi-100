@@ -11,9 +11,9 @@ use Illuminate\Validation\ValidationException;
 
 class ExperienceReservationService
 {
-    public function request(User $user, Experience $experience, int $sessionId): ExperienceReservation
+    public function request(User $user, Experience $experience, int $sessionId, int $partySize = 1): ExperienceReservation
     {
-        return DB::transaction(function () use ($user, $experience, $sessionId): ExperienceReservation {
+        return DB::transaction(function () use ($user, $experience, $sessionId, $partySize): ExperienceReservation {
             $session = ExperienceSession::query()->lockForUpdate()->with('reservationPartner')->findOrFail($sessionId);
             if (! $user->hasActiveMembership() || ! $experience->isPublished() || $experience->reservation_method !== 'jakawi'
                 || $session->experience_id !== $experience->id || ! $session->isUpcoming()
@@ -30,7 +30,7 @@ class ExperienceReservationService
 
             return ExperienceReservation::create([
                 'user_id' => $user->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id,
-                'partner_id' => $session->reservation_partner_id, 'status' => ExperienceReservation::STATUS_PENDING,
+                'partner_id' => $session->reservation_partner_id, 'status' => ExperienceReservation::STATUS_PENDING, 'party_size' => $partySize,
             ]);
         });
     }
