@@ -72,7 +72,10 @@ function ActivateForm({
     }
 
     return (
-        <form onSubmit={submit} className="grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
+        <form
+            onSubmit={submit}
+            className="grid gap-3 border-t border-border pt-4 sm:grid-cols-2"
+        >
             <label className="grid gap-1 text-sm">
                 <span className="font-medium">Amount paid</span>
                 <input
@@ -81,16 +84,24 @@ function ActivateForm({
                     min="0"
                     step="0.01"
                     value={data.amount_paid}
-                    onChange={(event) => setData('amount_paid', event.target.value)}
+                    onChange={(event) =>
+                        setData('amount_paid', event.target.value)
+                    }
                 />
-                {errors.amount_paid ? <span className="text-xs text-destructive">{errors.amount_paid}</span> : null}
+                {errors.amount_paid ? (
+                    <span className="text-xs text-destructive">
+                        {errors.amount_paid}
+                    </span>
+                ) : null}
             </label>
             <label className="grid gap-1 text-sm">
                 <span className="font-medium">Payment method</span>
                 <select
                     className="min-h-10 rounded-md border border-border bg-background px-3"
                     value={data.payment_method}
-                    onChange={(event) => setData('payment_method', event.target.value)}
+                    onChange={(event) =>
+                        setData('payment_method', event.target.value)
+                    }
                 >
                     {paymentMethods.map((method) => (
                         <option key={method} value={method}>
@@ -104,7 +115,9 @@ function ActivateForm({
                 <input
                     className="min-h-10 rounded-md border border-border bg-background px-3"
                     value={data.payment_reference}
-                    onChange={(event) => setData('payment_reference', event.target.value)}
+                    onChange={(event) =>
+                        setData('payment_reference', event.target.value)
+                    }
                 />
             </label>
             <label className="grid gap-1 text-sm sm:col-span-2">
@@ -140,17 +153,22 @@ export default function AdminMembershipsIndex({
     const { flash } = usePage().props as { flash?: Flash };
 
     function cancelMembership(id: number) {
-        router.patch(`/admin/memberships/${id}/cancel`, {}, { preserveScroll: true });
+        router.patch(
+            `/admin/memberships/${id}/cancel`,
+            {},
+            { preserveScroll: true },
+        );
     }
 
     return (
-        <AdminLayout>
+        <AdminLayout title="Membresias">
             <Head title="Membresias" />
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <h1 className="text-3xl font-semibold">Membresias</h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Bs{membershipConfig.price_bob} / {membershipConfig.duration_days} dias
+                        Bs{membershipConfig.price_bob} /{' '}
+                        {membershipConfig.duration_days} dias
                     </p>
                 </div>
                 <form className="flex gap-2" method="get">
@@ -160,7 +178,10 @@ export default function AdminMembershipsIndex({
                         name="search"
                         placeholder="Buscar name/email"
                     />
-                    <button className="rounded-md border border-border px-3 text-sm font-medium" type="submit">
+                    <button
+                        className="rounded-md border border-border px-3 text-sm font-medium"
+                        type="submit"
+                    >
                         Buscar
                     </button>
                 </form>
@@ -179,21 +200,33 @@ export default function AdminMembershipsIndex({
 
             <div className="grid gap-4">
                 {users.data.map((user) => (
-                    <div key={user.id} className="rounded-md border border-border bg-surface p-4">
+                    <div
+                        key={user.id}
+                        className="rounded-md border border-border bg-surface p-4"
+                    >
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                             <div>
                                 <p className="font-semibold">{user.name}</p>
-                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    {user.email}
+                                </p>
                             </div>
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="rounded-md border border-border px-2 py-1 text-xs font-medium text-muted-foreground">
-                                    {user.membership?.is_active ? 'active' : (user.membership?.status ?? 'inactive')}
+                                    {user.membership?.is_active
+                                        ? 'active'
+                                        : (user.membership?.status ??
+                                          'inactive')}
                                 </span>
                                 {user.membership?.is_active ? (
                                     <button
                                         className="min-h-9 rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
                                         type="button"
-                                        onClick={() => cancelMembership(user.membership!.id)}
+                                        onClick={() =>
+                                            cancelMembership(
+                                                user.membership!.id,
+                                            )
+                                        }
                                     >
                                         Cancelar
                                     </button>
@@ -203,20 +236,38 @@ export default function AdminMembershipsIndex({
 
                         <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
                             <div>
-                                <dt className="text-xs font-semibold text-muted-foreground uppercase">Inicio</dt>
-                                <dd className="mt-1">{formatDate(user.membership?.starts_at)}</dd>
+                                <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                    Inicio
+                                </dt>
+                                <dd className="mt-1">
+                                    {formatDate(user.membership?.starts_at)}
+                                </dd>
                             </div>
                             <div>
-                                <dt className="text-xs font-semibold text-muted-foreground uppercase">Vencimiento</dt>
-                                <dd className="mt-1">{formatDate(user.membership?.ends_at)}</dd>
+                                <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                    Vencimiento
+                                </dt>
+                                <dd className="mt-1">
+                                    {formatDate(user.membership?.ends_at)}
+                                </dd>
                             </div>
                             <div>
-                                <dt className="text-xs font-semibold text-muted-foreground uppercase">Amount paid</dt>
-                                <dd className="mt-1">{user.membership?.amount_paid ? `Bs${user.membership.amount_paid}` : 'Sin pago'}</dd>
+                                <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                    Amount paid
+                                </dt>
+                                <dd className="mt-1">
+                                    {user.membership?.amount_paid
+                                        ? `Bs${user.membership.amount_paid}`
+                                        : 'Sin pago'}
+                                </dd>
                             </div>
                         </dl>
 
-                        <ActivateForm user={user} membershipConfig={membershipConfig} paymentMethods={paymentMethods} />
+                        <ActivateForm
+                            user={user}
+                            membershipConfig={membershipConfig}
+                            paymentMethods={paymentMethods}
+                        />
                     </div>
                 ))}
             </div>

@@ -38,7 +38,15 @@ export default function BenefitShow({
 }: {
     benefit: BenefitSummary;
     hasActiveMembership: boolean;
-    locations?: { id: number; name: string; zone?: string | null; address?: string | null; slug: string; whatsapp?: string | null; maps_url?: string | null }[];
+    locations?: {
+        id: number;
+        name: string;
+        zone?: string | null;
+        address?: string | null;
+        slug: string;
+        whatsapp?: string | null;
+        maps_url?: string | null;
+    }[];
 }) {
     const { auth } = usePage().props;
     const savings = formatSavings(benefit.estimated_savings);
@@ -104,7 +112,9 @@ export default function BenefitShow({
                                             Vigencia
                                         </dt>
                                         <dd className="mt-1 text-sm text-foreground">
-                                            {startsAt ? `Desde ${startsAt}` : 'Disponible ahora'}
+                                            {startsAt
+                                                ? `Desde ${startsAt}`
+                                                : 'Disponible ahora'}
                                             {endsAt ? ` hasta ${endsAt}` : ''}
                                         </dd>
                                     </div>
@@ -116,7 +126,7 @@ export default function BenefitShow({
                                     <h2 className="text-lg font-semibold">
                                         Condiciones
                                     </h2>
-                                    <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground">
+                                    <p className="text-sm leading-6 whitespace-pre-line text-muted-foreground">
                                         {benefit.terms}
                                     </p>
                                 </section>
@@ -126,23 +136,36 @@ export default function BenefitShow({
                                 {!auth.user ? (
                                     <>
                                         <p className="text-sm font-semibold">
-                                            Necesitas JAKAWI para usar este beneficio
+                                            Necesitas JAKAWI para usar este
+                                            beneficio
                                         </p>
                                         <p className="mt-2 text-sm text-muted-foreground">
-                                            Crea tu cuenta para activar tu membresia.
+                                            Crea tu cuenta para activar tu
+                                            membresia.
                                         </p>
                                     </>
                                 ) : hasActiveMembership ? (
                                     <>
-                                        {locations.length ? <p className="text-sm font-semibold text-success">Disponible con tu JAKAWI</p> : <p className="text-sm font-semibold">Actualmente no hay una ubicación disponible para este beneficio.</p>}
+                                        {locations.length ? (
+                                            <p className="text-sm font-semibold text-success">
+                                                Disponible con tu JAKAWI
+                                            </p>
+                                        ) : (
+                                            <p className="text-sm font-semibold">
+                                                Actualmente no hay una ubicación
+                                                disponible para este beneficio.
+                                            </p>
+                                        )}
                                     </>
                                 ) : (
                                     <>
                                         <p className="text-sm font-semibold">
-                                            Necesitas una membresia activa para usar este beneficio
+                                            Necesitas una membresia activa para
+                                            usar este beneficio
                                         </p>
                                         <p className="mt-2 text-sm text-muted-foreground">
-                                            Activa tu JAKAWI para acceder a beneficios.
+                                            Activa tu JAKAWI para acceder a
+                                            beneficios.
                                         </p>
                                     </>
                                 )}
@@ -163,14 +186,55 @@ export default function BenefitShow({
                                 ) : locations.length ? (
                                     <button
                                         type="button"
-                                        onClick={() => router.post(`/beneficios/${benefit.slug}/canjear`, { location_id: locations[0].id })}
+                                        onClick={() =>
+                                            router.post(
+                                                `/beneficios/${benefit.slug}/canjear`,
+                                                {
+                                                    location_id:
+                                                        locations[0].id,
+                                                },
+                                            )
+                                        }
                                         className="mt-4 inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
                                     >
                                         Usar beneficio
                                     </button>
                                 ) : null}
                             </div>
-                            {locations.length ? <section className="space-y-2"><h2 className="text-lg font-semibold">Ubicaciones disponibles</h2>{locations.map((location) => <div key={location.id} className="rounded-md border border-border p-3 text-sm"><strong>{location.name}</strong>{location.address ? <p>{location.address}</p> : null}<div className="mt-2 flex gap-3">{location.maps_url ? <a href={`/lugares/${location.slug}/mapa`}>Cómo llegar</a> : null}{location.whatsapp ? <a href={`/lugares/${location.slug}/whatsapp`}>WhatsApp</a> : null}</div></div>)}</section> : null}
+                            {locations.length ? (
+                                <section className="space-y-2">
+                                    <h2 className="text-lg font-semibold">
+                                        Ubicaciones disponibles
+                                    </h2>
+                                    {locations.map((location) => (
+                                        <div
+                                            key={location.id}
+                                            className="rounded-md border border-border p-3 text-sm"
+                                        >
+                                            <strong>{location.name}</strong>
+                                            {location.address ? (
+                                                <p>{location.address}</p>
+                                            ) : null}
+                                            <div className="mt-2 flex gap-3">
+                                                {location.maps_url ? (
+                                                    <a
+                                                        href={`/lugares/${location.slug}/mapa`}
+                                                    >
+                                                        Cómo llegar
+                                                    </a>
+                                                ) : null}
+                                                {location.whatsapp ? (
+                                                    <a
+                                                        href={`/lugares/${location.slug}/whatsapp`}
+                                                    >
+                                                        WhatsApp
+                                                    </a>
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </section>
+                            ) : null}
                         </div>
                     </div>
                 </section>

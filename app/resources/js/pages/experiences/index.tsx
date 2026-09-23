@@ -1,2 +1,28 @@
 import { Head, Link } from '@inertiajs/react';
-export default function ExperiencesIndex({ experiences=[] }: any) {return <main className="min-h-screen bg-background p-5 text-foreground"><Head title="Experiencias"/><Link href="/">JAKAWI</Link><h1 className="mt-6 text-4xl font-semibold">Experiencias</h1><div className="mt-6 grid gap-4 sm:grid-cols-2">{experiences.length ? experiences.map((x:any)=><Link className="rounded-md border border-border p-4" key={x.id} href={`/experiencias/${x.slug}`}><h2 className="text-xl font-semibold">{x.title}</h2><p>{x.short_description}</p></Link>) : <p className="text-muted-foreground">Todavía no hay experiencias próximas.</p>}</div></main>}
+export default function ExperiencesIndex({ experiences = [] }: any) {
+    return (
+        <main className="min-h-screen bg-background p-5 text-foreground">
+            <Head title="Experiencias" />
+            <Link href="/">JAKAWI</Link>
+            <h1 className="mt-6 text-4xl font-semibold">Experiencias</h1>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {experiences.length ? (
+                    experiences.map((x: any) => (
+                        <Link
+                            className="rounded-md border border-border p-4"
+                            key={x.id}
+                            href={`/experiencias/${x.slug}`}
+                        >
+                            <h2 className="text-xl font-semibold">{x.title}</h2>
+                            <p>{x.short_description}</p>
+                        </Link>
+                    ))
+                ) : (
+                    <p className="text-muted-foreground">
+                        Todavía no hay experiencias próximas.
+                    </p>
+                )}
+            </div>
+        </main>
+    );
+}

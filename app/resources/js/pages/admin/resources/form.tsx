@@ -2,18 +2,348 @@ import { Link, useForm } from '@inertiajs/react';
 import AdminLayout from '../layout';
 
 const fields: Record<string, string[]> = {
-    partners: ['name','slug','entity_type','partner_type','legal_name','tax_id','description','category','website','instagram','facebook','tiktok','phone','whatsapp','email','contact_name','contact_phone','contact_email','status','featured','internal_notes','sort_order','published_at'],
-    locations: ['partner_id','slug','name','location_type','status','is_primary','country_code','region','city','zone','address','address_reference','latitude','longitude','maps_url','google_place_id','phone','whatsapp','email','website','instagram','facebook','tiktok','timezone','opening_hours','manager_name','manager_phone','manager_email','sort_order','published_at'],
-    benefits: ['partner_id','slug','title','short_description','description','terms','category','benefit_type','estimated_savings','redemption_limit_per_member','status','featured','starts_at','ends_at','sort_order','published_at'],
-    experiences: ['slug','title','short_description','description','terms','category','experience_type','duration_minutes','regular_price','member_price','currency','reservation_method','reservation_url','reservation_whatsapp','reservation_phone','status','featured','sort_order','published_at'],
+    partners: [
+        'name',
+        'slug',
+        'entity_type',
+        'partner_type',
+        'legal_name',
+        'tax_id',
+        'description',
+        'category',
+        'website',
+        'instagram',
+        'facebook',
+        'tiktok',
+        'phone',
+        'whatsapp',
+        'email',
+        'contact_name',
+        'contact_phone',
+        'contact_email',
+        'status',
+        'featured',
+        'internal_notes',
+        'sort_order',
+        'published_at',
+    ],
+    locations: [
+        'partner_id',
+        'slug',
+        'name',
+        'location_type',
+        'status',
+        'is_primary',
+        'country_code',
+        'region',
+        'city',
+        'zone',
+        'address',
+        'address_reference',
+        'latitude',
+        'longitude',
+        'maps_url',
+        'google_place_id',
+        'phone',
+        'whatsapp',
+        'email',
+        'website',
+        'instagram',
+        'facebook',
+        'tiktok',
+        'timezone',
+        'opening_hours',
+        'manager_name',
+        'manager_phone',
+        'manager_email',
+        'sort_order',
+        'published_at',
+    ],
+    benefits: [
+        'partner_id',
+        'slug',
+        'title',
+        'short_description',
+        'description',
+        'terms',
+        'category',
+        'benefit_type',
+        'estimated_savings',
+        'redemption_limit_per_member',
+        'status',
+        'featured',
+        'starts_at',
+        'ends_at',
+        'sort_order',
+        'published_at',
+    ],
+    experiences: [
+        'slug',
+        'title',
+        'short_description',
+        'description',
+        'terms',
+        'category',
+        'experience_type',
+        'duration_minutes',
+        'regular_price',
+        'member_price',
+        'currency',
+        'reservation_method',
+        'reservation_url',
+        'reservation_whatsapp',
+        'reservation_phone',
+        'status',
+        'featured',
+        'sort_order',
+        'published_at',
+    ],
 };
-const defaults: Record<string, any> = { status:'draft', entity_type:'organization', partner_type:'business', location_type:'branch', reservation_method:'none', currency:'BOB', featured:false, is_primary:false, location_scope:'all', location_ids:[], partners:[], redemption_pin:'', image:null, cover:null, logo:null };
-export default function ResourceForm({title,resource,item,partners=[]}:any) {
- const form=useForm<any>({...defaults,...item}); const submit=(e:any)=>{e.preventDefault(); item?form.put(`/admin/${resource}/${item.id}`,{forceFormData:true}):form.post(`/admin/${resource}`,{forceFormData:true})};
- const options=(field:string)=>field==='status'?['draft','published','paused','archived']:field==='entity_type'?['organization','individual']:field==='partner_type'?['business','professional','creator','organizer','brand','other']:field==='location_type'?['branch','venue','meeting_point','online','mobile','other']:field==='reservation_method'?['none','whatsapp','url','phone','external']:[];
- return <AdminLayout title={title}><form onSubmit={submit} className="grid max-w-2xl gap-4">{fields[resource].map(field=> <label key={field} className="grid gap-1 text-sm">{field.replaceAll('_',' ')}{field==='partner_id'?<select value={form.data[field]||''} onChange={e=>form.setData(field,e.target.value||null)}><option value="">{resource==='locations'?'Independiente':'Selecciona Partner'}</option>{partners.map((p:any)=><option key={p.id} value={p.id}>{p.name}</option>)}</select>:options(field).length?<select value={form.data[field]??''} onChange={e=>form.setData(field,e.target.value)}>{options(field).map(x=><option key={x} value={x}>{x}</option>)}</select>:field==='featured'||field==='is_primary'?<input type="checkbox" checked={Boolean(form.data[field])} onChange={e=>form.setData(field,e.target.checked)}/>:['description','terms','internal_notes','opening_hours'].includes(field)?<textarea value={form.data[field]||''} onChange={e=>form.setData(field,e.target.value)}/>:<input type={field.includes('_at')?'datetime-local':field.includes('price')||field.includes('savings')||field==='latitude'||field==='longitude'||field==='sort_order'||field==='duration_minutes'||field==='redemption_limit_per_member'?'number':'text'} value={form.data[field]||''} onChange={e=>form.setData(field,e.target.value)}/>}</label>)}
- {resource==='locations'?<><label>PIN nuevo (6 dígitos)<input value={form.data.redemption_pin} onChange={e=>form.setData('redemption_pin',e.target.value)}/></label>{item?<p>PIN configurado: {item.has_redemption_pin?'Sí':'No'}</p>:null}</>:null}
- {resource==='benefits'?<label>Ubicaciones<select value={form.data.location_scope} onChange={e=>form.setData('location_scope',e.target.value)}><option value="all">Todas las Locations</option><option value="selected">Locations seleccionadas</option></select></label>:null}
- {resource==='partners'?<><label>Logo<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>form.setData('logo',e.target.files?.[0]||null)}/></label><label>Cover<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>form.setData('cover',e.target.files?.[0]||null)}/></label></>:null}
- {resource!=='partners'?<label>Imagen<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>form.setData('image',e.target.files?.[0]||null)}/></label>:null}{resource==='experiences'?<label>Cover<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>form.setData('cover',e.target.files?.[0]||null)}/></label>:null}<button className="rounded bg-brand p-3 text-brand-foreground" disabled={form.processing}>Guardar</button><Link href={`/admin/${resource}`}>Cancelar</Link></form></AdminLayout>;
+const defaults: Record<string, any> = {
+    status: 'draft',
+    entity_type: 'organization',
+    partner_type: 'business',
+    location_type: 'branch',
+    reservation_method: 'none',
+    currency: 'BOB',
+    featured: false,
+    is_primary: false,
+    location_scope: 'all',
+    location_ids: [],
+    partners: [],
+    redemption_pin: '',
+    image: null,
+    cover: null,
+    logo: null,
+};
+export default function ResourceForm({
+    title,
+    resource,
+    item,
+    partners = [],
+}: any) {
+    const form = useForm<any>({ ...defaults, ...item });
+    const submit = (e: any) => {
+        e.preventDefault();
+        if (item) {
+            form.put(`/admin/${resource}/${item.id}`, { forceFormData: true });
+        } else {
+            form.post(`/admin/${resource}`, { forceFormData: true });
+        }
+    };
+    const options = (field: string) =>
+        field === 'status'
+            ? ['draft', 'published', 'paused', 'archived']
+            : field === 'entity_type'
+              ? ['organization', 'individual']
+              : field === 'partner_type'
+                ? [
+                      'business',
+                      'professional',
+                      'creator',
+                      'organizer',
+                      'brand',
+                      'other',
+                  ]
+                : field === 'location_type'
+                  ? [
+                        'branch',
+                        'venue',
+                        'meeting_point',
+                        'online',
+                        'mobile',
+                        'other',
+                    ]
+                  : field === 'reservation_method'
+                    ? ['none', 'whatsapp', 'url', 'phone', 'external']
+                    : [];
+    return (
+        <AdminLayout title={title}>
+            <form onSubmit={submit} className="grid max-w-2xl gap-4">
+                {fields[resource].map((field) => (
+                    <label key={field} className="grid gap-1 text-sm">
+                        {field.replaceAll('_', ' ')}
+                        {field === 'partner_id' ? (
+                            <select
+                                value={form.data[field] || ''}
+                                onChange={(e) =>
+                                    form.setData(field, e.target.value || null)
+                                }
+                            >
+                                <option value="">
+                                    {resource === 'locations'
+                                        ? 'Independiente'
+                                        : 'Selecciona Partner'}
+                                </option>
+                                {partners.map((p: any) => (
+                                    <option key={p.id} value={p.id}>
+                                        {p.name}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : options(field).length ? (
+                            <select
+                                value={form.data[field] ?? ''}
+                                onChange={(e) =>
+                                    form.setData(field, e.target.value)
+                                }
+                            >
+                                {options(field).map((x) => (
+                                    <option key={x} value={x}>
+                                        {x}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : field === 'featured' || field === 'is_primary' ? (
+                            <input
+                                type="checkbox"
+                                checked={Boolean(form.data[field])}
+                                onChange={(e) =>
+                                    form.setData(field, e.target.checked)
+                                }
+                            />
+                        ) : [
+                              'description',
+                              'terms',
+                              'internal_notes',
+                              'opening_hours',
+                          ].includes(field) ? (
+                            <textarea
+                                value={form.data[field] || ''}
+                                onChange={(e) =>
+                                    form.setData(field, e.target.value)
+                                }
+                            />
+                        ) : (
+                            <input
+                                type={
+                                    field.includes('_at')
+                                        ? 'datetime-local'
+                                        : field.includes('price') ||
+                                            field.includes('savings') ||
+                                            field === 'latitude' ||
+                                            field === 'longitude' ||
+                                            field === 'sort_order' ||
+                                            field === 'duration_minutes' ||
+                                            field ===
+                                                'redemption_limit_per_member'
+                                          ? 'number'
+                                          : 'text'
+                                }
+                                value={form.data[field] || ''}
+                                onChange={(e) =>
+                                    form.setData(field, e.target.value)
+                                }
+                            />
+                        )}
+                    </label>
+                ))}
+                {resource === 'locations' ? (
+                    <>
+                        <label>
+                            PIN nuevo (6 dígitos)
+                            <input
+                                value={form.data.redemption_pin}
+                                onChange={(e) =>
+                                    form.setData(
+                                        'redemption_pin',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                        </label>
+                        {item ? (
+                            <p>
+                                PIN configurado:{' '}
+                                {item.has_redemption_pin ? 'Sí' : 'No'}
+                            </p>
+                        ) : null}
+                    </>
+                ) : null}
+                {resource === 'benefits' ? (
+                    <label>
+                        Ubicaciones
+                        <select
+                            value={form.data.location_scope}
+                            onChange={(e) =>
+                                form.setData('location_scope', e.target.value)
+                            }
+                        >
+                            <option value="all">Todas las Locations</option>
+                            <option value="selected">
+                                Locations seleccionadas
+                            </option>
+                        </select>
+                    </label>
+                ) : null}
+                {resource === 'partners' ? (
+                    <>
+                        <label>
+                            Logo
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={(e) =>
+                                    form.setData(
+                                        'logo',
+                                        e.target.files?.[0] || null,
+                                    )
+                                }
+                            />
+                        </label>
+                        <label>
+                            Cover
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={(e) =>
+                                    form.setData(
+                                        'cover',
+                                        e.target.files?.[0] || null,
+                                    )
+                                }
+                            />
+                        </label>
+                    </>
+                ) : null}
+                {resource !== 'partners' ? (
+                    <label>
+                        Imagen
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            onChange={(e) =>
+                                form.setData(
+                                    'image',
+                                    e.target.files?.[0] || null,
+                                )
+                            }
+                        />
+                    </label>
+                ) : null}
+                {resource === 'experiences' ? (
+                    <label>
+                        Cover
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            onChange={(e) =>
+                                form.setData(
+                                    'cover',
+                                    e.target.files?.[0] || null,
+                                )
+                            }
+                        />
+                    </label>
+                ) : null}
+                <button
+                    className="rounded bg-brand p-3 text-brand-foreground"
+                    disabled={form.processing}
+                >
+                    Guardar
+                </button>
+                <Link href={`/admin/${resource}`}>Cancelar</Link>
+            </form>
+        </AdminLayout>
+    );
 }

@@ -24,7 +24,8 @@ export default function BenefitsIndex({
                                 Beneficios
                             </h1>
                             <p className="max-w-xl text-base leading-7 text-muted-foreground">
-                                Comercios y experiencias seleccionadas para vivir más y gastar menos.
+                                Comercios y experiencias seleccionadas para
+                                vivir más y gastar menos.
                             </p>
                         </div>
                     </div>

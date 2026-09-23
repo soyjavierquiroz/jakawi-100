@@ -27,10 +27,15 @@ export default function Welcome({
                         </p>
                         <div className="space-y-3">
                             <h1 className="text-4xl leading-none font-semibold min-[375px]:text-5xl sm:text-7xl">
-                                {auth.user ? 'Aprovecha tu JAKAWI hoy' : 'La app para vivir más tu ciudad.'}
+                                {auth.user
+                                    ? 'Aprovecha tu JAKAWI hoy'
+                                    : 'La app para vivir más tu ciudad.'}
                             </h1>
                             <p className="max-w-xl text-lg leading-7 text-muted-foreground">
-                                Descubre lugares y experiencias, accede a beneficios por ser miembro y encuentra nuevas razones para salir, probar y volver. Vive más. Gasta menos.
+                                Descubre lugares y experiencias, accede a
+                                beneficios por ser miembro y encuentra nuevas
+                                razones para salir, probar y volver. Vive más.
+                                Gasta menos.
                             </p>
                         </div>
                     </div>
@@ -100,8 +105,35 @@ export default function Welcome({
                             </div>
                         </section>
                     ) : null}
-                    {featuredExperiences.length ? <section className="space-y-3"><h2 className="text-2xl font-semibold">Experiencias próximas</h2>{featuredExperiences.map((experience) => <Link className="block rounded-md border border-border p-4" key={experience.id} href={`/experiencias/${experience.slug}`}>{experience.title}</Link>)}</section> : null}
-                    {membershipSummary ? <section className="rounded-md border border-border bg-surface p-4"><p className="font-semibold">Has ahorrado Bs {membershipSummary.confirmed_savings}</p><p className="text-sm text-muted-foreground">{membershipSummary.has_paid_for_itself ? 'Tu JAKAWI ya se pagó solo.' : `Te faltan Bs ${membershipSummary.remaining_to_payback} para recuperar tu membresía.`}</p></section> : null}
+                    {featuredExperiences.length ? (
+                        <section className="space-y-3">
+                            <h2 className="text-2xl font-semibold">
+                                Experiencias próximas
+                            </h2>
+                            {featuredExperiences.map((experience) => (
+                                <Link
+                                    className="block rounded-md border border-border p-4"
+                                    key={experience.id}
+                                    href={`/experiencias/${experience.slug}`}
+                                >
+                                    {experience.title}
+                                </Link>
+                            ))}
+                        </section>
+                    ) : null}
+                    {membershipSummary ? (
+                        <section className="rounded-md border border-border bg-surface p-4">
+                            <p className="font-semibold">
+                                Has ahorrado Bs{' '}
+                                {membershipSummary.confirmed_savings}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                {membershipSummary.has_paid_for_itself
+                                    ? 'Tu JAKAWI ya se pagó solo.'
+                                    : `Te faltan Bs ${membershipSummary.remaining_to_payback} para recuperar tu membresía.`}
+                            </p>
+                        </section>
+                    ) : null}
                 </section>
             </main>
         </>

@@ -1,2 +1,30 @@
 import { Head, Link } from '@inertiajs/react';
-export default function ExperienceShow({ experience }: any) {return <main className="min-h-screen bg-background p-5 text-foreground"><Head title={experience.title}/><Link href="/experiencias">Experiencias</Link><h1 className="mt-6 text-4xl font-semibold">{experience.title}</h1><p className="mt-3 whitespace-pre-line text-muted-foreground">{experience.description}</p>{experience.reservation_method ? <a className="mt-5 inline-block rounded-md bg-brand px-4 py-3 font-semibold text-brand-foreground" href={`/experiencias/${experience.slug}/reservar`}>Reservar</a> : null}<section className="mt-8"><h2 className="text-xl font-semibold">Próximas fechas</h2>{experience.sessions?.map((s:any)=><p key={s.id} className="py-2">{new Date(s.starts_at).toLocaleString('es-BO')} · {s.location?.name || s.venue_label}</p>)}</section></main>}
+export default function ExperienceShow({ experience }: any) {
+    return (
+        <main className="min-h-screen bg-background p-5 text-foreground">
+            <Head title={experience.title} />
+            <Link href="/experiencias">Experiencias</Link>
+            <h1 className="mt-6 text-4xl font-semibold">{experience.title}</h1>
+            <p className="mt-3 whitespace-pre-line text-muted-foreground">
+                {experience.description}
+            </p>
+            {experience.reservation_method ? (
+                <a
+                    className="mt-5 inline-block rounded-md bg-brand px-4 py-3 font-semibold text-brand-foreground"
+                    href={`/experiencias/${experience.slug}/reservar`}
+                >
+                    Reservar
+                </a>
+            ) : null}
+            <section className="mt-8">
+                <h2 className="text-xl font-semibold">Próximas fechas</h2>
+                {experience.sessions?.map((s: any) => (
+                    <p key={s.id} className="py-2">
+                        {new Date(s.starts_at).toLocaleString('es-BO')} ·{' '}
+                        {s.location?.name || s.venue_label}
+                    </p>
+                ))}
+            </section>
+        </main>
+    );
+}
