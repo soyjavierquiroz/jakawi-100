@@ -11,6 +11,8 @@ use Illuminate\Validation\ValidationException;
 
 class ExperienceReservationService
 {
+    public function __construct(private readonly ExperienceCheckInService $checkIns) {}
+
     public function request(User $user, Experience $experience, int $sessionId, int $partySize = 1): ExperienceReservation
     {
         return DB::transaction(function () use ($user, $experience, $sessionId, $partySize): ExperienceReservation {
@@ -30,7 +32,7 @@ class ExperienceReservationService
 
             return ExperienceReservation::create([
                 'user_id' => $user->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id,
-                'partner_id' => $session->reservation_partner_id, 'status' => ExperienceReservation::STATUS_PENDING, 'party_size' => $partySize,
+                'partner_id' => $session->reservation_partner_id, 'status' => ExperienceReservation::STATUS_PENDING, 'party_size' => $partySize, 'check_in_code' => $this->checkIns->code(),
             ]);
         });
     }

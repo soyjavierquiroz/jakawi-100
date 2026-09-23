@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Membership;
 use App\Models\ExperienceReservation;
+use App\Models\Membership;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,7 +25,7 @@ class MembershipController extends Controller
             ],
             'redemptionStats' => ['count' => $confirmed->count(), 'savings_total' => $membership?->confirmedSavings() ?? '0.00'],
             'recentRedemptions' => $confirmed->take(8)->map(fn ($redemption) => ['public_id' => $redemption->public_id, 'partner_name' => $redemption->partner_name, 'benefit_title' => $redemption->benefit_title, 'savings_amount' => $redemption->savings_amount, 'confirmed_at' => $redemption->confirmed_at]),
-            'reservations' => $reservations->map(fn ($r) => ['public_id' => $r->public_id, 'status' => $r->status, 'party_size' => $r->party_size, 'experience' => $r->experience->title, 'starts_at' => $r->session->starts_at, 'venue' => $r->session->location?->name ?? $r->session->venue_label, 'partner' => $r->partner->name, 'can_cancel' => in_array($r->status, ['pending', 'confirmed'], true) && $r->session->starts_at->isFuture()]),
+            'reservations' => $reservations->map(fn ($r) => ['public_id' => $r->public_id, 'status' => $r->status, 'party_size' => $r->party_size, 'experience' => $r->experience->title, 'starts_at' => $r->session->starts_at, 'venue' => $r->session->location?->name ?? $r->session->venue_label, 'partner' => $r->partner->name, 'checked_in_at' => $r->checked_in_at, 'check_in_code' => $r->status === ExperienceReservation::STATUS_CONFIRMED && ! $r->checked_in_at ? $r->check_in_code : null, 'qr_url' => $r->status === ExperienceReservation::STATUS_CONFIRMED && ! $r->checked_in_at ? URL::signedRoute('partner.checkins.scan', ['partner' => $r->partner->slug, 'reservation_public_id' => $r->public_id]) : null, 'can_cancel' => in_array($r->status, ['pending', 'confirmed'], true) && $r->session->starts_at->isFuture()]),
         ]);
     }
 

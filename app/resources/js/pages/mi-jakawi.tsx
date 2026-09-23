@@ -1,4 +1,6 @@
 import { Head, router } from '@inertiajs/react';
+import QRCode from 'qrcode';
+import { useEffect, useState } from 'react';
 
 type Membership = {
     id: number;
@@ -26,6 +28,12 @@ type RecentRedemption = {
     savings_amount?: string | null;
     confirmed_at: string;
 };
+
+function ReservationQr({ url }: { url: string }) {
+    const [src, setSrc] = useState('');
+    useEffect(() => { QRCode.toDataURL(url, { width: 280, margin: 1 }).then(setSrc); }, [url]);
+    return src ? <img className="mt-3 w-40" src={src} alt="QR de reserva" /> : null;
+}
 
 function formatDate(value: string) {
     return new Intl.DateTimeFormat('es-BO', {
@@ -191,7 +199,7 @@ export default function MiJakawi({
                             </dl>
                         </div>
                     )}
-                    {reservations.length > 0 ? <div className="rounded-md border border-border bg-surface p-5"><h2 className="text-xl font-semibold">Mis reservas</h2><div className="mt-3 divide-y divide-border">{reservations.map((reservation) => <div key={reservation.public_id} className="py-3 text-sm"><p className="font-semibold">{reservation.experience}</p><p className="text-muted-foreground">{formatDate(reservation.starts_at)} · {reservation.venue} · {reservation.partner}</p><p className="mt-1">{reservation.party_size === 1 ? '1 persona' : `${reservation.party_size} personas`} · {{pending: 'Pendiente', confirmed: 'Confirmada', rejected: 'Rechazada', cancelled: 'Cancelada'}[reservation.status as keyof Record<string, string>]}</p>{reservation.can_cancel ? <button className="mt-2 text-sm underline" onClick={() => router.post(`/reservas/${reservation.public_id}/cancelar`)}>Cancelar reserva</button> : null}</div>)}</div></div> : null}
+                    {reservations.length > 0 ? <div className="rounded-md border border-border bg-surface p-5"><h2 className="text-xl font-semibold">Mis reservas</h2><div className="mt-3 divide-y divide-border">{reservations.map((reservation) => <div key={reservation.public_id} className="py-3 text-sm"><p className="font-semibold">{reservation.experience}</p><p className="text-muted-foreground">{formatDate(reservation.starts_at)} · {reservation.venue} · {reservation.partner}</p><p className="mt-1">{reservation.party_size === 1 ? '1 persona' : `${reservation.party_size} personas`} · {reservation.checked_in_at ? 'Asistencia registrada' : {pending: 'Pendiente', confirmed: 'Reserva confirmada', rejected: 'Rechazada', cancelled: 'Cancelada'}[reservation.status as keyof Record<string, string>]}</p>{reservation.qr_url ? <><p className="mt-2 font-medium">Muéstralo al llegar</p><ReservationQr url={reservation.qr_url} /><p>Código: <strong>{reservation.check_in_code}</strong></p></> : null}{reservation.can_cancel ? <button className="mt-2 text-sm underline" onClick={() => router.post(`/reservas/${reservation.public_id}/cancelar`)}>Cancelar reserva</button> : null}</div>)}</div></div> : null}
                 </section>
             </main>
         </>

@@ -24,7 +24,7 @@ class PartnerReservationController extends Controller
             'party_size' => $r->party_size, 'requested_at' => $r->created_at, 'experience' => $r->experience->title,
             'partner' => $r->partner->name, 'partner_slug' => $partner->slug, 'starts_at' => $r->session->starts_at,
             'venue' => $r->session->location?->name ?? $r->session->venue_label, 'capacity' => $r->session->capacity,
-            'confirmed_attendee_count' => (int) ($confirmedTotals[$r->experience_session_id] ?? 0),
+            'confirmed_attendee_count' => (int) ($confirmedTotals[$r->experience_session_id] ?? 0), 'checked_in_at' => $r->checked_in_at,
         ]);
 
         return Inertia::render('partner/reservations', [
@@ -35,8 +35,9 @@ class PartnerReservationController extends Controller
         ]);
     }
 
-    public function respond(Request $request, Partner $partner, ExperienceReservation $reservation, ExperienceReservationService $service, string $status): RedirectResponse
+    public function respond(Request $request, Partner $partner, ExperienceReservationService $service, string $reservation_public_id, string $status): RedirectResponse
     {
+        $reservation = ExperienceReservation::where('public_id', $reservation_public_id)->firstOrFail();
         abort_unless($reservation->partner_id === $partner->id, 403);
         $service->respond($request->user(), $reservation, $status);
 

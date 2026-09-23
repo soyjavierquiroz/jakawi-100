@@ -1,4 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
+import QRCode from 'qrcode';
+import { useEffect, useState } from 'react';
 
 type Redemption = {
     public_id: string;
@@ -11,6 +13,7 @@ type Redemption = {
     savings_amount?: string | null;
     expires_at: string;
     confirmed_at?: string | null;
+    qr_url?: string | null;
 };
 
 function money(value?: string | null) {
@@ -33,6 +36,8 @@ export default function RedemptionShow({
     const confirmed = redemption.status === 'confirmed';
     const expired = redemption.status === 'expired' && !confirmed;
     const savings = money(redemption.savings_amount);
+    const [qr, setQr] = useState('');
+    useEffect(() => { if (redemption.qr_url) QRCode.toDataURL(redemption.qr_url, { width: 360, margin: 1 }).then(setQr); }, [redemption.qr_url]);
 
     return (
         <main className="min-h-screen bg-background px-4 py-6 text-foreground">
@@ -52,9 +57,10 @@ export default function RedemptionShow({
                     ) : null}
                     {!confirmed && !expired ? (
                         <p className="text-sm text-muted-foreground">
-                            Muestra este código al comercio.
+                            Muéstrale este QR al Partner.
                         </p>
                     ) : null}
+                    {qr ? <img src={qr} className="mx-auto mt-4 w-full max-w-[300px]" alt="QR de canje" /> : null}
                     <p className="mt-4 rounded-md bg-background px-4 py-5 text-center text-5xl font-bold tracking-[0.25em]">
                         {redemption.code}
                     </p>
@@ -102,7 +108,7 @@ export default function RedemptionShow({
                     </dl>
                     {!confirmed && !expired ? (
                         <p className="mt-5 text-sm text-muted-foreground">
-                            El comercio debe validarlo en jakawi.com/validar.
+                            También puedes usar el código: {redemption.code}
                         </p>
                     ) : null}
                 </div>
