@@ -1,0 +1,81 @@
+services:
+  db-preview:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: jakawi_preview
+      POSTGRES_USER: jakawi_preview_user
+      POSTGRES_PASSWORD: jakawi_preview_password
+    volumes:
+      - jakawi_preview_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - jakawi-preview
+
+  app-preview:
+    image: jakawi-app-preview
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: app
+    restart: unless-stopped
+    environment:
+      APP_ENV: preview
+      APP_DEBUG: "false"
+      APP_KEY: base64:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+      APP_URL: https://jakawi.com
+      DB_CONNECTION: pgsql
+      DB_HOST: db-preview
+      DB_PORT: "5432"
+      DB_DATABASE: jakawi_preview
+      DB_USERNAME: jakawi_preview_user
+      DB_PASSWORD: jakawi_preview_password
+      SESSION_DRIVER: file
+      SESSION_SECURE_COOKIE: "true"
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+    depends_on:
+      db-preview:
+        condition: service_healthy
+    volumes:
+      - jakawi_preview_public_uploads:/var/www/html/storage/app/public
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - jakawi-preview
+
+  web-preview:
+    image: jakawi-web-preview
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:80"
+    depends_on:
+      app-preview:
+        condition: service_healthy
+    volumes:
+      - ./docker/nginx/preview.conf:/etc/nginx/conf.d/default.conf:ro
+      - jakawi_preview_public_uploads:/var/www/html/public/storage
+    networks:
+      - jakawi-preview
+
+networks:
+  jakawi-preview:
+    driver: bridge
+
+volumes:
+  jakawi_preview_pgdata:
+  jakawi_preview_public_uploads:

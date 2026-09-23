@@ -7,6 +7,7 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\PartnerReservationController;
+use App\Http\Controllers\PartnerLoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -20,6 +21,8 @@ Route::get('/beneficios/{benefit:slug}', [PublicController::class, 'benefit'])->
 Route::get('/experiencias', [PublicController::class, 'experiences'])->name('experiences.index');
 Route::get('/experiencias/{experience:slug}', [PublicController::class, 'experience'])->name('experiences.show');
 Route::get('/experiencias/{experience:slug}/reservar', [PublicController::class, 'reserve'])->name('experiences.reserve');
+Route::get('/partner/login', [PartnerLoginController::class, 'create'])->middleware('guest')->name('partner.login');
+Route::post('/partner/login', [PartnerLoginController::class, 'store'])->middleware('guest')->name('partner.login.store');
 Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner', [PartnerPortalController::class, 'index'])->name('partner.index');
     Route::get('/partner/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');

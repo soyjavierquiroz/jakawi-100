@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, setLayoutProps } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -19,9 +19,17 @@ import PasskeyVerify from '@/components/passkey-verify';
 type Props = {
     status?: string;
     canResetPassword: boolean;
+    partnerPortal?: boolean;
 };
 
-export default function Login({ status, canResetPassword }: Props) {
+export default function Login({ status, canResetPassword, partnerPortal = false }: Props) {
+    setLayoutProps({
+        title: partnerPortal ? 'Portal Partner' : 'Log in to your account',
+        description: partnerPortal
+            ? 'Ingresa para gestionar reservas y validar beneficios.'
+            : 'Enter your email and password below to log in',
+    });
+
     return (
         <>
             <Head title="Log in" />
@@ -31,13 +39,18 @@ export default function Login({ status, canResetPassword }: Props) {
             {/* @end-chisel-passkeys */}
 
             <Form
-                {...store.form()}
+                {...(partnerPortal ? { action: '/partner/login', method: 'post' as const } : store.form())}
                 resetOnSuccess={['password']}
                 className="flex flex-col gap-6"
             >
                 {({ processing, errors }) => (
                     <>
                         <div className="grid gap-6">
+                            {partnerPortal && (
+                                <p className="text-sm text-muted-foreground">
+                                    Ingresa para gestionar reservas y validar beneficios.
+                                </p>
+                            )}
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email address</Label>
                                 <Input
@@ -100,10 +113,15 @@ export default function Login({ status, canResetPassword }: Props) {
 
                         {/* @chisel-registration */}
                         <div className="text-center text-sm text-muted-foreground">
-                            Don't have an account?{' '}
-                            <TextLink href={register()} tabIndex={5}>
-                                Sign up
-                            </TextLink>
+                            {partnerPortal ? (
+                                <TextLink href="/login" tabIndex={5}>Ingresar como miembro</TextLink>
+                            ) : <>
+                                ¿Eres Partner?{' '}
+                                <TextLink href="/partner/login" tabIndex={5}>Portal Partner</TextLink>
+                                {' · '}
+                                Don't have an account?{' '}
+                                <TextLink href={register()} tabIndex={5}>Sign up</TextLink>
+                            </>}
                         </div>
                         {/* @end-chisel-registration */}
                     </>

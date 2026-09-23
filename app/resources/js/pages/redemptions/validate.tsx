@@ -1,4 +1,4 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ export default function ValidateRedemption() {
     return (
         <main className="min-h-screen bg-background px-4 py-6 text-foreground">
             <Head title="Validar canje" />
+            <nav className="mx-auto mb-4 flex w-full max-w-sm gap-4 text-sm"><Link href="/partner">Portal Partner</Link><Link href="/partner/reservas">Reservas</Link><Link href="/logout" method="post" as="button">Cerrar sesión</Link></nav>
             <form
                 onSubmit={submit}
                 className="mx-auto flex w-full max-w-sm flex-col gap-4 rounded-md border border-border bg-surface p-5"

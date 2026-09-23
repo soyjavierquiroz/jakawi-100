@@ -32,7 +32,7 @@ export default function PartnerIndex({ partners, pendingReservations }: { partne
                     <Link href="/validar" className="rounded-md border border-border p-4 hover:bg-muted">
                         Validar canje
                     </Link>
-                    <div className="rounded-md border border-border p-4">Actividad reciente — próximamente</div>
+                    <Link href="/logout" method="post" as="button" className="rounded-md border border-border p-4 text-left hover:bg-muted">Cerrar sesión</Link>
                 </div>
             </section>
         </main>
