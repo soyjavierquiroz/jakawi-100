@@ -136,6 +136,39 @@ class CatalogImporterV2Test extends TestCase
         $this->assertDatabaseCount('partners', 0);
     }
 
+    public function test_numeric_date_geo_json_reservation_duplicate_and_reference_validation(): void
+    {
+        $invalid = [
+            ['benefits.csv', 'estimated_savings', 'abc'], ['experiences.csv', 'regular_price', '-1'], ['experiences.csv', 'member_price', '1.2.3'], ['benefits.csv', 'redemption_limit_per_member', '0'],
+            ['benefits.csv', 'ends_at', '2026-01-01', 'starts_at', '2026-01-01'], ['locations.csv', 'latitude', '91'], ['locations.csv', 'longitude', 'nope'], ['locations.csv', 'opening_hours', '{bad'],
+            ['experiences.csv', 'reservation_method', 'whatsapp', 'reservation_whatsapp', ''], ['experiences.csv', 'reservation_method', 'url', 'reservation_url', ''], ['experience_sessions.csv', 'starts_at', 'invalid'],
+        ];
+        foreach ($invalid as $case) {
+            $dir = $this->package();
+            $headers = CatalogV2TemplateCommand::HEADERS[$case[0]];
+            $row = $this->csvRow($dir, $case[0]);
+            $row[array_search($case[1], $headers, true)] = $case[2];
+            if (isset($case[3])) {
+                $row[array_search($case[3], $headers, true)] = $case[4];
+            } $this->writeCsv($dir, $case[0], [$row]);
+            $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir, '--apply' => true])->expectsOutputToContain('IMPORT FAILED')->expectsOutputToContain('0 writes')->assertFailed();
+            $this->assertDatabaseCount('partners', 0);
+        }
+    }
+
+    public function test_duplicate_slugs_demo_slugs_and_references_fail_before_writes(): void
+    {
+        foreach ([['partners.csv', 'slug', 'p-one'], ['locations.csv', 'slug', 'loc-one'], ['benefits.csv', 'slug', 'b-one'], ['experiences.csv', 'slug', 'e-one'], ['partners.csv', 'slug', 'demo-partner'], ['locations.csv', 'partner_slug', 'unknown'], ['benefits.csv', 'partner_slug', 'unknown'], ['experience_partners.csv', 'experience_slug', 'unknown'], ['experience_sessions.csv', 'location_slug', 'unknown']] as $case) {
+            $dir = $this->package();
+            $headers = CatalogV2TemplateCommand::HEADERS[$case[0]];
+            $row = $this->csvRow($dir, $case[0]);
+            $row[array_search($case[1], $headers, true)] = $case[2];
+            $this->writeCsv($dir, $case[0], [$row, $row]);
+            $this->artisan('jakawi:import-catalog-v2', ['directory' => $dir])->expectsOutputToContain('IMPORT FAILED')->assertFailed();
+            $this->assertDatabaseCount('partners', 0);
+        }
+    }
+
     private function package(): string
     {
         $dir = $this->directory();
