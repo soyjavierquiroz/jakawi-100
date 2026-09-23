@@ -40,6 +40,9 @@ class RedemptionController extends Controller
     public function confirm(Request $r, RedemptionService $service): Response
     {
         $data = $r->validate(['code' => ['required', 'string', 'size:6'], 'pin' => ['required', 'digits:6']]);
+        $redemption = Redemption::query()->where('code', strtoupper($data['code']))->first();
+        abort_unless($redemption !== null && $r->user()->managesPartner($redemption->partner_id), 403);
+
         try {
             $x = $service->confirm(strtoupper($data['code']), $data['pin']);
 

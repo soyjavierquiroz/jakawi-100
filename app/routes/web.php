@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\PartnerPortalController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RedemptionController;
 use Illuminate\Support\Facades\Route;
@@ -17,8 +18,11 @@ Route::get('/beneficios/{benefit:slug}', [PublicController::class, 'benefit'])->
 Route::get('/experiencias', [PublicController::class, 'experiences'])->name('experiences.index');
 Route::get('/experiencias/{experience:slug}', [PublicController::class, 'experience'])->name('experiences.show');
 Route::get('/experiencias/{experience:slug}/reservar', [PublicController::class, 'reserve'])->name('experiences.reserve');
-Route::get('/validar', [RedemptionController::class, 'form'])->name('redemptions.validate');
-Route::post('/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1');
+Route::middleware(['auth', 'verified', 'partner'])->group(function () {
+    Route::get('/partner', [PartnerPortalController::class, 'index'])->name('partner.index');
+    Route::get('/validar', [RedemptionController::class, 'form'])->name('redemptions.validate');
+    Route::post('/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');

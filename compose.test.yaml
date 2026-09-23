@@ -26,9 +26,9 @@ services:
     restart: "no"
     environment:
       APP_ENV: testing
-      APP_DEBUG: "true"
+      APP_DEBUG: "false"
       APP_KEY: base64:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
-      APP_URL: http://app-test
+      APP_URL: https://jakawi.com
       DB_CONNECTION: pgsql
       DB_HOST: db-test
       DB_PORT: "5432"
@@ -37,11 +37,14 @@ services:
       DB_PASSWORD: jakawi_test_password
       CACHE_STORE: array
       SESSION_DRIVER: array
+      SESSION_SECURE_COOKIE: "true"
       QUEUE_CONNECTION: sync
       MAIL_MAILER: array
     depends_on:
       db-test:
         condition: service_healthy
+    volumes:
+      - jakawi_test_public_uploads:/var/www/html/storage/app/public
     healthcheck:
       test: ["CMD-SHELL", "php-fpm -t >/dev/null 2>&1 || exit 1"]
       interval: 10s
@@ -51,7 +54,30 @@ services:
     networks:
       - jakawi
 
+  web-test:
+    image: jakawi-web-test
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: web
+    restart: "no"
+    ports:
+      - "127.0.0.1:8081:80"
+    depends_on:
+      app-test:
+        condition: service_healthy
+    volumes:
+      - ./docker/nginx/test.conf:/etc/nginx/conf.d/default.conf:ro
+      - jakawi_test_public_uploads:/var/www/html/public/storage
+    networks:
+      - jakawi
+
+networks:
+  jakawi:
+    driver: bridge
+
 volumes:
   # With --project-name jakawi-test this is named jakawi-test_jakawi_test_pgdata.
   # It is never the production jakawi_postgres_data volume.
   jakawi_test_pgdata:
+  jakawi_test_public_uploads:

@@ -92,4 +92,9 @@ class AdminV2Test extends TestCase
         $this->assertSame('cancelled', $membership->fresh()->status);
         $this->actingAs($admin)->get('/admin/redemptions')->assertOk();
     }
+
+    public function test_admin_can_view_locations_index(): void
+    {
+        $this->actingAs($this->admin())->get('/admin/locations')->assertOk();
+    }
 }

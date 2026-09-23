@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -68,6 +69,19 @@ class User extends Authenticatable implements PasskeyUser
     public function confirmedSavings(): string
     {
         return (string) $this->confirmedRedemptions()->sum('savings_amount');
+    }
+
+    /** @return BelongsToMany<Partner, $this> */
+    public function partners(): BelongsToMany
+    {
+        return $this->belongsToMany(Partner::class)
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function managesPartner(?int $partnerId): bool
+    {
+        return $this->is_admin || ($partnerId !== null && $this->partners()->whereKey($partnerId)->exists());
     }
 
     /**

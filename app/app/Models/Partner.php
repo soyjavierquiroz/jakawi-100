@@ -46,6 +46,14 @@ class Partner extends Model
             ->orderByPivot('sort_order');
     }
 
+    /** @return BelongsToMany<User, $this> */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
     /** @param Builder<Partner> $query */
     public function scopePublished(Builder $query): void
     {
