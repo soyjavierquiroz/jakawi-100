@@ -1,40 +1,26 @@
-# MVP
+# JAKAWI MVP
 
-## Immediate Objective
-
-- User / Member
-- Membership
-- Merchant
-- Benefit
-- Redemption
-
-## Central Flow
+JAKAWI es la app para vivir más tu ciudad.
 
 ```text
-Merchant
--> Benefit
--> Member
--> Redemption
--> Savings / Attribution
+DESCUBRIR -> DESEAR -> USAR / RESERVAR -> RECIBIR VALOR -> REGISTRAR -> VOLVER
 ```
 
-## Hypotheses To Prove
+## Construido ahora
 
-1. Personas pagan.
-2. Personas usan beneficios.
-3. Comercios valoran las visitas generadas.
+- Partners y Locations, incluyendo Locations independientes.
+- Benefits con alcance a todas o a Locations seleccionadas del Partner.
+- Experiences multi-Partner, Sessions y reserva externa.
+- Membership, Redemption con PIN por Location y ROI de ahorros confirmados.
+- Admin V2, catálogo público, Mi JAKAWI y validación de canjes.
+- Analytics first-party limitado a la taxonomía V2.6.
 
-## Not Prioritized Yet
+## No construido
 
-- JP avanzado
-- Quests
-- Loyalty avanzada
-- AI
-- microservices
-- native app
-- marketplace nacional
-- rewards complejos
+- Booking interno, pagos, puntos, rewards, referrals y capacidad decrementable.
+- Near-me avanzado, notificaciones, self-service de Partners y recomendaciones
+  de IA.
+- Analytics dashboard, importer y demo V2.
 
-## Principle
-
-Good enough is enough.
+La reserva de una Experience siempre redirige al canal externo configurado; no
+crea un registro interno de reserva.

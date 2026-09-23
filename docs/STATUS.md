@@ -1,77 +1,28 @@
 # JAKAWI Current Status
 
-Updated: 2026-09-22
+Updated: 2026-09-23
 
 ## Production
 
-- Production is offline and in maintenance during the V2 reconstruction.
-- `web` and `app` remain stopped. Production `db` may remain running.
-- No production migration, deployment, environment change, or write is part of
-  this work.
+- Offline and in maintenance, awaiting V2.7 and final cutover.
+- `app` and `web` are stopped; production DB may remain running.
+- V2.6 made no production migration, write, deployment, or environment change.
 
-## V2.1: Partner + Location foundation
+## Completed
 
-- Isolated test infrastructure is merged into `main`.
-- The V2 schema introduces `partners` and `locations` only for this domain.
-- Locations can be independent of Partners and own their contacts, coordinates,
-  hours, publication state, and redemption PIN hash.
-- The legacy Merchant domain and its schema are removed without compatibility
-  aliases or `merchant_id` fallbacks.
-- Benefits, Experiences, Redemption V2, Analytics, Admin UI, Public UI,
-  importer, demo data, and deployment are intentionally out of scope.
+- V2.1 — Partner and Location foundation, including independent Locations and
+  removal of Merchant runtime concepts.
+- V2.2 — Benefit foundation with publication/availability and all/selected
+  Partner Location scope.
+- V2.3 — Membership and location-aware Redemption foundation, snapshots,
+  idempotency, limits, and confirmed-only ROI.
+- V2.4 — Experiences, multi-Partner roles, Sessions, optional Locations, and
+  external-only reservation metadata.
+- V2.5 — First-party, privacy-constrained analytics foundation.
+- V2.6 — Admin and public UI, uploads, HTTP redemption/validation flow,
+  visitor cookie, analytics event wiring, privacy/access coverage, and final
+  fresh-install/regression quality audit.
 
-## V2.2: Benefit foundation
+## Next
 
-- Benefits belong to Partners and can apply dynamically to all published Partner
-  Locations or to validated selected Partner Locations.
-- Publication and availability are central model rules: availability requires a
-  published Benefit, a published Partner, and a valid optional date window.
-- Production remains offline in maintenance; this work uses only the isolated
-  test database.
-
-## V2.3: Membership + Redemption foundation
-
-- Membership activation, cancellation, active lookup, and historical payment
-  fields are transactional. Active access is derived from `active` plus dates.
-- Location-aware Redemptions use secure six-character temporary codes, a
-  config-driven ten-minute TTL, pending-start idempotency, and idempotent
-  confirmation.
-- Confirmation always revalidates membership, benefit, partner, location,
-  benefit/location association, per-member limit, and the current Location PIN.
-- Redemption snapshots preserve partner, location, benefit, and savings facts;
-  ROI is derived from confirmed savings only.
-- Production remains offline and in maintenance. No UI, HTTP workflow,
-  Experience, Analytics, importer, demo, or deployment was added.
-
-## V2.4: Experience foundation
-
-- Complete and merged into `main`.
-- Experiences are standalone discoverable content, distinct from Benefits, and
-  support draft/published/paused/archived editorial publication.
-- They support zero or more Partner relationships with explicit roles, and zero
-  or more scheduled/cancelled Sessions with optional reusable Locations.
-- Reservation is explicit external metadata only (WhatsApp, URL, phone,
-  external, or none). There is no internal Booking, payment, checkout, or
-  capacity availability behavior.
-- Upcoming discovery is limited to published Experiences with future scheduled
-  Sessions. Session capacity remains optional informational metadata.
-- Production remains offline and in maintenance; no production writes, UI,
-  importer, demo, Analytics, or deployment was added.
-
-## V2.5: Analytics foundation
-
-- `analytics_events` records the configured first-party event taxonomy with
-  nullable live-domain references and no analytics snapshots.
-- A random UUID visitor cookie is first-party, HttpOnly, SameSite=Lax, and is
-  available in its creation request. Authenticated events can retain both user
-  and visitor IDs without fingerprinting or identity stitching.
-- The central tracker only permits configured events and tightly whitelisted
-  metadata. It does not record request details or unnecessary PII.
-- Redemption pending creation and confirmation produce transactional,
-  idempotent lifecycle events. Confirmed Redemptions—not analytics—remain the
-  source of truth for savings and ROI.
-- View/contact/reservation tracking APIs are ready for V2.6 controller/UI
-  wiring; no UI, generic ingestion endpoint, dashboard, queue, aggregate,
-  importer, demo, Booking, or deployment was added.
-- Production remains offline and in maintenance; no production writes were
-  made.
+V2.7: Importer + Demo. Production is not deployed.
