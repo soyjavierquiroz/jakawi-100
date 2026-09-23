@@ -54,3 +54,8 @@ docker stats --no-stream
 ```
 
 Nunca recomendar borrar volúmenes como primer paso de diagnóstico.
+# Catalog Importer V2
+
+`php artisan jakawi:catalog-v2-template DIRECTORY` creates the six required UTF-8 CSV files. `php artisan jakawi:import-catalog-v2 DIRECTORY` validates and previews a plan; dry-run is the default. `--apply` writes to the configured database in one transaction, so a failure leaves no partial catalog.
+
+The importer handles supply only: Partners, Locations, Benefits, Experiences, Experience Partners and Experience Sessions. It never imports PINs, media, members, memberships or redemptions. `demo-*` slugs are reserved. Sessions require the non-public operational `reference_key`, making `(experience, reference_key)` idempotent; Admin-created sessions may leave it null.

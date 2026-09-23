@@ -76,3 +76,6 @@ All Laravel test and test-database commands use `./bin/jakawi-test`. It uses
 the physically separate `app-test` and `db-test` services and `jakawi_test`.
 Production remains offline in maintenance while V2 is prepared; its app and web
 services are not used for testing.
+# Catalog Importer V2
+
+The V2 importer requires exact CSV headers, validates every record and cross-file reference before planning or writing, and upserts catalog entities by slug. Sessions are identified by `experience_id + reference_key`. Fields absent from the CSV format—media, a Location PIN hash and manager details—are intentionally preserved. Benefit scope and listed Experience-partner groups are authoritative; Sessions are incremental, never destructive syncs.
