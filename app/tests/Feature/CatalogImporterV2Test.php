@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\CatalogV2TemplateCommand;
-use App\Models\{ExperienceSession, Partner};
+use App\Models\Experience;
+use App\Models\ExperienceSession;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -48,11 +50,11 @@ class CatalogImporterV2Test extends TestCase
 
     public function test_reference_key_is_nullable_but_unique_per_experience_when_present(): void
     {
-        $experience = \App\Models\Experience::factory()->create();
+        $experience = Experience::factory()->create();
         ExperienceSession::factory()->create(['experience_id' => $experience->id, 'reference_key' => null]);
         ExperienceSession::factory()->create(['experience_id' => $experience->id, 'reference_key' => null]);
         ExperienceSession::factory()->create(['experience_id' => $experience->id, 'reference_key' => 'same']);
-        $this->expectException(\Illuminate\Database\UniqueConstraintViolationException::class);
+        $this->expectException(UniqueConstraintViolationException::class);
         ExperienceSession::factory()->create(['experience_id' => $experience->id, 'reference_key' => 'same']);
     }
 
@@ -60,19 +62,31 @@ class CatalogImporterV2Test extends TestCase
     {
         $dir = $this->directory();
         $this->artisan('jakawi:catalog-v2-template', ['directory' => $dir])->assertSuccessful();
-        $this->writeCsv($dir, 'partners.csv', [['p-one','Partner','organization','business','','','','food','','','','','','','','','','','published','true','','0','']]);
-        $this->writeCsv($dir, 'locations.csv', [['loc-one','p-one','Location','branch','published','true','BO','','','','Address','','-17.3','-66.1','','','','','','','','','','America/La_Paz','{"mon":[]}','0','']]);
-        $this->writeCsv($dir, 'benefits.csv', [['b-one','p-one','Benefit','','','','food','percentage','10.00','','published','false','','','false','loc-one','0','']]);
-        $this->writeCsv($dir, 'experiences.csv', [['e-one','Experience','','','','experiences','workshop','60','20.00','10.00','BOB','none','','','','published','false','0','']]);
-        $this->writeCsv($dir, 'experience_partners.csv', [['e-one','p-one','host','0']]);
-        $this->writeCsv($dir, 'experience_sessions.csv', [['e-one','session-a','loc-one','2026-10-01 12:00:00','2026-10-01 13:00:00','10','scheduled','Room']]);
+        $this->writeCsv($dir, 'partners.csv', [['p-one', 'Partner', 'organization', 'business', '', '', '', 'food', '', '', '', '', '', '', '', '', '', '', 'published', 'true', '', '0', '']]);
+        $this->writeCsv($dir, 'locations.csv', [['loc-one', 'p-one', 'Location', 'branch', 'published', 'true', 'BO', '', '', '', 'Address', '', '-17.3', '-66.1', '', '', '', '', '', '', '', '', '', 'America/La_Paz', '{"mon":[]}', '0', '']]);
+        $this->writeCsv($dir, 'benefits.csv', [['b-one', 'p-one', 'Benefit', '', '', '', 'food', 'percentage', '10.00', '', 'published', 'false', '', '', 'false', 'loc-one', '0', '']]);
+        $this->writeCsv($dir, 'experiences.csv', [['e-one', 'Experience', '', '', '', 'experiences', 'workshop', '60', '20.00', '10.00', 'BOB', 'none', '', '', '', 'published', 'false', '0', '']]);
+        $this->writeCsv($dir, 'experience_partners.csv', [['e-one', 'p-one', 'host', '0']]);
+        $this->writeCsv($dir, 'experience_sessions.csv', [['e-one', 'session-a', 'loc-one', '2026-10-01 12:00:00', '2026-10-01 13:00:00', '10', 'scheduled', 'Room']]);
+
         return $dir;
     }
 
     /** @param list<list<string>> $rows */
     private function writeCsv(string $dir, string $file, array $rows): void
     {
-        $handle = fopen($dir.'/'.$file, 'w'); fputcsv($handle, CatalogV2TemplateCommand::HEADERS[$file]); foreach ($rows as $row) fputcsv($handle, $row); fclose($handle);
+        $handle = fopen($dir.'/'.$file, 'w');
+        fputcsv($handle, CatalogV2TemplateCommand::HEADERS[$file]);
+        foreach ($rows as $row) {
+            fputcsv($handle, $row);
+        } fclose($handle);
     }
-    private function directory(): string { $dir = sys_get_temp_dir().'/jakawi-catalog-'.uniqid(); mkdir($dir); return $dir; }
+
+    private function directory(): string
+    {
+        $dir = sys_get_temp_dir().'/jakawi-catalog-'.uniqid();
+        mkdir($dir);
+
+        return $dir;
+    }
 }
