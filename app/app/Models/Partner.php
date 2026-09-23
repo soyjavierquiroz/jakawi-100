@@ -54,6 +54,12 @@ class Partner extends Model
             ->withTimestamps();
     }
 
+    /** @return HasMany<ExperienceReservation, $this> */
+    public function experienceReservations(): HasMany
+    {
+        return $this->hasMany(ExperienceReservation::class);
+    }
+
     /** @param Builder<Partner> $query */
     public function scopePublished(Builder $query): void
     {

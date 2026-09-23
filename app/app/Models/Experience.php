@@ -42,6 +42,12 @@ class Experience extends Model
         return $this->hasMany(ExperienceSession::class);
     }
 
+    /** @return HasMany<ExperienceReservation, $this> */
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(ExperienceReservation::class);
+    }
+
     /** @return HasMany<ExperienceSession, $this> */
     public function upcomingSessions(): HasMany
     {

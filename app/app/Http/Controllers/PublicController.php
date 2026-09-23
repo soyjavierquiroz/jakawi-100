@@ -74,13 +74,14 @@ class PublicController extends Controller
         return Inertia::render('experiences/index', ['experiences' => $query->get()->map(fn ($e) => $this->experienceData($e))]);
     }
 
-    public function experience(Experience $experience, AnalyticsTracker $analytics): Response
+    public function experience(Request $request, Experience $experience, AnalyticsTracker $analytics): Response
     {
         abort_unless($experience->isPublished(), 404);
         $analytics->experienceViewed($experience);
-        $experience->load('partners', 'sessions.location');
+        $experience->load('partners', 'sessions.location', 'sessions.reservationPartner');
+        $reservations = $request->user() ? $request->user()->experienceReservations()->where('experience_id', $experience->id)->get()->keyBy('experience_session_id') : collect();
 
-        return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true)]);
+        return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $request->user()?->hasActiveMembership() ?? false]);
     }
 
     public function map(Location $location, AnalyticsTracker $analytics): RedirectResponse
@@ -134,9 +135,9 @@ class PublicController extends Controller
         return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null, 'image_url' => $b->image_path ? \Storage::url($b->image_path) : null];
     }
 
-    private function experienceData(Experience $e, bool $detail = false): array
+    private function experienceData(Experience $e, bool $detail = false, $reservations = null): array
     {
-        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + ['image_url' => $e->image_path ? \Storage::url($e->image_path) : null, 'cover_url' => $e->cover_path ? \Storage::url($e->cover_path) : null, 'partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity']) + ['location' => $s->location ? $this->locationData($s->location) : null]) : []];
+        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + ['image_url' => $e->image_path ? \Storage::url($e->image_path) : null, 'cover_url' => $e->cover_path ? \Storage::url($e->cover_path) : null, 'partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status']), 'reservable' => $e->reservation_method === 'jakawi' && $s->isUpcoming() && $s->reservationPartner?->isPublished()]) : []];
     }
 
     private function membership(Membership $m): array

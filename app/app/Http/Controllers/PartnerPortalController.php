@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExperienceReservation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,6 +22,7 @@ class PartnerPortalController extends Controller
                 'slug' => $partner->slug,
                 'role' => $partner->pivot->role,
             ]),
+            'pendingReservations' => $request->user()->is_admin ? ExperienceReservation::where('status', 'pending')->count() : ExperienceReservation::where('status', 'pending')->whereIn('partner_id', $partners->pluck('id'))->count(),
         ]);
     }
 }

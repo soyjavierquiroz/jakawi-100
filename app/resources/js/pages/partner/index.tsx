@@ -7,7 +7,7 @@ type Partner = {
     role: 'owner' | 'manager' | 'staff';
 };
 
-export default function PartnerIndex({ partners }: { partners: Partner[] }) {
+export default function PartnerIndex({ partners, pendingReservations }: { partners: Partner[]; pendingReservations: number }) {
     return (
         <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6">
             <Head title="Portal Partner" />
@@ -28,7 +28,7 @@ export default function PartnerIndex({ partners }: { partners: Partner[] }) {
                     </ul>
                 </div>
                 <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                    <div className="rounded-md border border-border p-4">Reservas — próximamente</div>
+                    <Link href="/partner/reservas" className="rounded-md border border-border p-4 hover:bg-muted">Reservas {pendingReservations ? `(${pendingReservations} pendientes)` : ''}</Link>
                     <Link href="/validar" className="rounded-md border border-border p-4 hover:bg-muted">
                         Validar canje
                     </Link>

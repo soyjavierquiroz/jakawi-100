@@ -5,6 +5,8 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PartnerPortalController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RedemptionController;
+use App\Http\Controllers\ExperienceReservationController;
+use App\Http\Controllers\PartnerReservationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -20,6 +22,8 @@ Route::get('/experiencias/{experience:slug}', [PublicController::class, 'experie
 Route::get('/experiencias/{experience:slug}/reservar', [PublicController::class, 'reserve'])->name('experiences.reserve');
 Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner', [PartnerPortalController::class, 'index'])->name('partner.index');
+    Route::get('/partner/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');
+    Route::post('/partner/reservas/{reservation:public_id}/{status}', [PartnerReservationController::class, 'respond'])->whereIn('status', ['confirmed', 'rejected'])->name('partner.reservations.respond');
     Route::get('/validar', [RedemptionController::class, 'form'])->name('redemptions.validate');
     Route::post('/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1');
 });
@@ -27,6 +31,8 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
+    Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->name('experiences.reservations.store');
+    Route::post('/reservas/{reservation:public_id}/cancelar', [ExperienceReservationController::class, 'cancel'])->name('experiences.reservations.cancel');
     Route::post('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'start'])->name('redemptions.start');
     Route::get('/canjes/{redemption:public_id}', [RedemptionController::class, 'show'])->name('redemptions.show');
 });

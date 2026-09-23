@@ -13,7 +13,7 @@ class ExperienceSession extends Model
     /** @use HasFactory<ExperienceSessionFactory> */
     use HasFactory;
 
-    protected $fillable = ['experience_id', 'reference_key', 'location_id', 'starts_at', 'ends_at', 'capacity', 'status', 'venue_label'];
+    protected $fillable = ['experience_id', 'reference_key', 'location_id', 'reservation_partner_id', 'starts_at', 'ends_at', 'capacity', 'status', 'venue_label'];
 
     /** @return BelongsTo<Experience, $this> */
     public function experience(): BelongsTo
@@ -25,6 +25,12 @@ class ExperienceSession extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
+    }
+
+    /** @return BelongsTo<Partner, $this> */
+    public function reservationPartner(): BelongsTo
+    {
+        return $this->belongsTo(Partner::class, 'reservation_partner_id');
     }
 
     /** @param Builder<ExperienceSession> $query */

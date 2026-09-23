@@ -135,7 +135,8 @@ class AdminController extends Controller
 
     public function sessions(Request $request, Experience $experience)
     {
-        $data = $request->validate(['starts_at' => 'required|date', 'ends_at' => 'nullable|date', 'location_id' => 'nullable|exists:locations,id', 'capacity' => 'nullable|integer|min:1', 'status' => 'required|in:scheduled,cancelled', 'venue_label' => 'nullable|string']);
+        $data = $request->validate(['starts_at' => 'required|date', 'ends_at' => 'nullable|date', 'location_id' => 'nullable|exists:locations,id', 'reservation_partner_id' => 'nullable|exists:partners,id', 'capacity' => 'nullable|integer|min:1', 'status' => 'required|in:scheduled,cancelled', 'venue_label' => 'nullable|string']);
+        abort_if(isset($data['reservation_partner_id']) && ! $experience->partners()->whereKey($data['reservation_partner_id'])->exists(), 422);
         $experience->sessions()->create($data);
 
         return back();
@@ -144,7 +145,8 @@ class AdminController extends Controller
     public function updateSession(Request $request, Experience $experience, ExperienceSession $session)
     {
         abort_unless($session->experience_id === $experience->id, 404);
-        $data = $request->validate(['starts_at' => 'required|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_id' => 'nullable|exists:locations,id', 'capacity' => 'nullable|integer|min:1', 'status' => 'required|in:scheduled,cancelled', 'venue_label' => 'nullable|string']);
+        $data = $request->validate(['starts_at' => 'required|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_id' => 'nullable|exists:locations,id', 'reservation_partner_id' => 'nullable|exists:partners,id', 'capacity' => 'nullable|integer|min:1', 'status' => 'required|in:scheduled,cancelled', 'venue_label' => 'nullable|string']);
+        abort_if(isset($data['reservation_partner_id']) && ! $experience->partners()->whereKey($data['reservation_partner_id'])->exists(), 422);
         $session->update($data);
 
         return back();
@@ -213,7 +215,7 @@ class AdminController extends Controller
 
     private function experienceRules(?Experience $e): array
     {
-        return array_merge($this->base('experiences', $e), ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'experience_type' => 'nullable|in:event,workshop,class,tour,tasting,wellness,outdoor,cultural,social,other', 'duration_minutes' => 'nullable|integer|min:1', 'regular_price' => 'nullable|numeric|min:0', 'member_price' => 'nullable|numeric|min:0', 'currency' => 'nullable|string|size:3', 'reservation_method' => 'required|in:whatsapp,url,phone,external,none', 'reservation_url' => 'nullable|url', 'reservation_whatsapp' => 'nullable|string', 'reservation_phone' => 'nullable|string', 'featured' => 'boolean', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'partners' => 'array', 'partners.*.partner_id' => 'required|exists:partners,id', 'partners.*.role' => 'required|in:organizer,host,venue,sponsor,participant,creator,provider,other', 'partners.*.sort_order' => 'nullable|integer', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:5120']);
+        return array_merge($this->base('experiences', $e), ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'experience_type' => 'nullable|in:event,workshop,class,tour,tasting,wellness,outdoor,cultural,social,other', 'duration_minutes' => 'nullable|integer|min:1', 'regular_price' => 'nullable|numeric|min:0', 'member_price' => 'nullable|numeric|min:0', 'currency' => 'nullable|string|size:3', 'reservation_method' => 'required|in:whatsapp,url,phone,external,jakawi,none', 'reservation_url' => 'nullable|url', 'reservation_whatsapp' => 'nullable|string', 'reservation_phone' => 'nullable|string', 'featured' => 'boolean', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'partners' => 'array', 'partners.*.partner_id' => 'required|exists:partners,id', 'partners.*.role' => 'required|in:organizer,host,venue,sponsor,participant,creator,provider,other', 'partners.*.sort_order' => 'nullable|integer', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:5120']);
     }
 
     private function base(string $table, ?object $model): array

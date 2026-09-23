@@ -155,7 +155,7 @@ export default function ResourceForm({
                         'other',
                     ]
                   : field === 'reservation_method'
-                    ? ['none', 'whatsapp', 'url', 'phone', 'external']
+                    ? ['none', 'whatsapp', 'url', 'phone', 'external', 'jakawi']
                     : [];
     return (
         <AdminLayout title={title}>
