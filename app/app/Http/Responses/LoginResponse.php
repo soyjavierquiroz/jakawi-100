@@ -9,7 +9,7 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
-        if ($request->boolean('partner_login')) {
+        if ($request->session()->pull('partner_login')) {
             if (! $request->user()?->is_admin && ! $request->user()?->partners()->where('status', 'published')->exists()) {
                 auth()->logout();
 

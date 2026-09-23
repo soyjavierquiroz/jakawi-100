@@ -61,8 +61,6 @@ services:
       dockerfile: docker/Dockerfile
       target: web
     restart: "no"
-    ports:
-      - "127.0.0.1:8081:80"
     depends_on:
       app-test:
         condition: service_healthy

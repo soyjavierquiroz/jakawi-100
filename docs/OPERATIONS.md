@@ -32,6 +32,26 @@ producción no proporciona aislamiento.
 Para detener sólo los servicios de test: `./bin/jakawi-test down`. Para borrar
 sólo su volumen aislado: `./bin/jakawi-test clean`.
 
+## Human preview isolated
+
+El preview humano usa un proyecto Compose y PostgreSQL distintos de los tests:
+`jakawi-preview`, servicios `app-preview`/`db-preview`, y base
+`jakawi_preview`. Es el único stack que expone `127.0.0.1:8081`; PostgreSQL no
+expone ningún puerto del host. Nunca se combina este archivo con
+`compose.test.yaml`.
+
+```bash
+docker compose --project-name jakawi-preview -f compose.preview.yaml up -d --build
+docker compose --project-name jakawi-preview -f compose.preview.yaml exec app-preview php artisan migrate:fresh
+docker compose --project-name jakawi-preview -f compose.preview.yaml exec app-preview php artisan jakawi:seed-demo-catalog
+docker compose --project-name jakawi-preview -f compose.preview.yaml exec \
+  -e JAKAWI_QA_PARTNER_PASSWORD='…' -e JAKAWI_QA_JAVIER_PASSWORD='…' \
+  app-preview php artisan preview:seed-qa
+```
+
+`preview:seed-qa` se niega a ejecutarse si la base no es `jakawi_preview` y las
+contraseñas QA se proporcionan sólo al entorno de ejecución, nunca al repo.
+
 ## Demo Catalog V2
 
 El catálogo ficticio de QA es independiente del importer V2, que continúa rechazando slugs `demo-*`.

@@ -32,16 +32,22 @@ class SeedPreviewQaCommand extends Command
         }
 
         $partner = Partner::where('slug', 'demo-altura-nube')->firstOrFail();
-        $partnerUser = User::updateOrCreate(
-            ['email' => 'qa.partner.demo@jakawi.test'],
-            ['name' => 'Partner QA', 'email_verified_at' => now(), 'password' => Hash::make($partnerPassword), 'is_admin' => false],
-        );
+        $partnerUser = User::firstOrNew(['email' => 'qa.partner.demo@jakawi.test']);
+        $partnerUser->forceFill([
+            'name' => 'Partner QA',
+            'email_verified_at' => now(),
+            'password' => Hash::make($partnerPassword),
+            'is_admin' => false,
+        ])->save();
         $partnerUser->partners()->syncWithoutDetaching([$partner->id => ['role' => 'manager']]);
 
-        $javier = User::updateOrCreate(
-            ['email' => 'javierquiroztv@gmail.com'],
-            ['name' => 'Javier QA', 'email_verified_at' => now(), 'password' => Hash::make($javierPassword), 'is_admin' => true],
-        );
+        $javier = User::firstOrNew(['email' => 'javierquiroztv@gmail.com']);
+        $javier->forceFill([
+            'name' => 'Javier QA',
+            'email_verified_at' => now(),
+            'password' => Hash::make($javierPassword),
+            'is_admin' => true,
+        ])->save();
         Membership::where('user_id', $javier->id)->delete();
         Membership::create([
             'user_id' => $javier->id,

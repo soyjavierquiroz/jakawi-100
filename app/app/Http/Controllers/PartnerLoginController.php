@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Laravel\Fortify\Features;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Requests\LoginRequest;
-use Laravel\Fortify\Features;
 
 class PartnerLoginController extends Controller
 {
@@ -21,9 +21,7 @@ class PartnerLoginController extends Controller
 
     public function store(LoginRequest $request, AuthenticatedSessionController $sessions)
     {
-        // Keep this on the request instead of the session: a failed partner
-        // login must not change the destination of a later normal login.
-        $request->merge(['partner_login' => true]);
+        $request->session()->put('partner_login', true);
 
         return $sessions->store($request);
     }
