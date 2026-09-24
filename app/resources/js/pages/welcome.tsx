@@ -9,10 +9,12 @@ export default function Welcome({
     featuredBenefits = [],
     featuredExperiences = [],
     membershipSummary,
+    isPersonalizedHome = false,
 }: {
     featuredBenefits?: BenefitSummary[];
     featuredExperiences?: any[];
     membershipSummary?: any;
+    isPersonalizedHome?: boolean;
 }) {
     const { auth } = usePage().props;
 
@@ -80,12 +82,9 @@ export default function Welcome({
                         <section className="flex flex-col gap-4 pt-6">
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                                 <div className="space-y-1">
-                                    <h2 className="text-2xl font-semibold">
-                                        Beneficios destacados
-                                    </h2>
+                                    <h2 className="text-2xl font-semibold">{isPersonalizedHome ? 'Beneficios para ti' : 'Beneficios destacados'}</h2>
                                     <p className="text-sm text-muted-foreground">
-                                        Primeras oportunidades disponibles en
-                                        JAKAWI.
+                                        {isPersonalizedHome ? 'Según tus intereses.' : 'Primeras oportunidades disponibles en JAKAWI.'}
                                     </p>
                                 </div>
                                 <Link
@@ -107,9 +106,8 @@ export default function Welcome({
                     ) : null}
                     {featuredExperiences.length ? (
                         <section className="space-y-3">
-                            <h2 className="text-2xl font-semibold">
-                                Experiencias próximas
-                            </h2>
+                            <h2 className="text-2xl font-semibold">{isPersonalizedHome ? 'Experiencias para ti' : 'Experiencias próximas'}</h2>
+                            {isPersonalizedHome ? <p className="text-sm text-muted-foreground">Según tus intereses.</p> : null}
                             {featuredExperiences.map((experience) => (
                                 <Link
                                     className="block rounded-md border border-border p-4"

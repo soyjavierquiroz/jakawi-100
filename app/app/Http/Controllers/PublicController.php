@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
 use App\Services\AnalyticsTracker;
+use App\Services\HomePersonalizationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,15 +17,25 @@ use Inertia\Response;
 
 class PublicController extends Controller
 {
-    public function home(Request $request, AnalyticsTracker $analytics): Response
+    public function home(Request $request, AnalyticsTracker $analytics, HomePersonalizationService $personalization): Response
     {
         $analytics->homeViewed();
         $membership = $request->user()?->activeMembership()->first();
+        $interests = $personalization->interestsFor($request->user());
+        $benefits = Benefit::available()->with('partner')->orderByDesc('featured')->orderBy('sort_order')->get();
+        $experiences = Experience::upcoming()->with(['sessions' => fn ($query) => $query->upcoming()->with('location')])
+            ->orderByDesc('featured')->orderBy('sort_order')->get();
+
+        if ($interests !== []) {
+            $benefits = $personalization->rankBenefits($benefits, $interests);
+            $experiences = $personalization->rankExperiences($experiences, $interests);
+        }
 
         return Inertia::render('welcome', [
-            'featuredBenefits' => Benefit::available()->with('partner')->orderByDesc('featured')->orderBy('sort_order')->take(3)->get()->map(fn (Benefit $b) => $this->benefitData($b)),
-            'featuredExperiences' => Experience::upcoming()->with('sessions.location')->orderByDesc('featured')->orderBy('sort_order')->take(3)->get()->map(fn (Experience $e) => $this->experienceData($e)),
+            'featuredBenefits' => $benefits->take(3)->map(fn (Benefit $b) => $this->benefitData($b)),
+            'featuredExperiences' => $experiences->take(3)->map(fn (Experience $e) => $this->experienceData($e)),
             'membershipSummary' => $membership ? $this->membership($membership) : null,
+            'isPersonalizedHome' => $interests !== [],
         ]);
     }
 
