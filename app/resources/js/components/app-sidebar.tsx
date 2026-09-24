@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 
-const mainNavItems = (isAdmin: boolean): NavItem[] => [
+const mainNavItems = (isAdmin: boolean, isPartnerOnly: boolean): NavItem[] => [
     {
         title: 'Inicio',
         href: '/',
@@ -26,11 +26,11 @@ const mainNavItems = (isAdmin: boolean): NavItem[] => [
         icon: Gift,
     },
     { title: 'Experiencias', href: '/experiencias', icon: Sparkles },
-    {
+    ...(!isPartnerOnly ? [{
         title: 'Mi JAKAWI',
         href: '/mi-jakawi',
         icon: BadgeCheck,
-    },
+    }] : []),
     ...(isAdmin
         ? [
               {
@@ -60,7 +60,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems(Boolean(auth.user?.is_admin))} />
+                <NavMain items={mainNavItems(Boolean(auth.user?.is_admin), Boolean(auth.user?.is_partner_only))} />
             </SidebarContent>
 
             <SidebarFooter>

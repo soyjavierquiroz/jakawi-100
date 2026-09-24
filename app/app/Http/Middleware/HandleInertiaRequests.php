@@ -39,7 +39,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? $request->user()->toArray() + ['is_partner_only' => $request->user()->isPartnerOnly()] : null,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

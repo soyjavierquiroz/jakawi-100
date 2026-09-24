@@ -33,7 +33,7 @@ type Props = {
     breadcrumbs?: BreadcrumbItem[];
 };
 
-const mainNavItems = (isAdmin: boolean): NavItem[] => [
+const mainNavItems = (isAdmin: boolean, isPartnerOnly: boolean): NavItem[] => [
     {
         title: 'Inicio',
         href: '/',
@@ -45,11 +45,11 @@ const mainNavItems = (isAdmin: boolean): NavItem[] => [
         icon: Gift,
     },
     { title: 'Experiencias', href: '/experiencias', icon: Sparkles },
-    {
+    ...(!isPartnerOnly ? [{
         title: 'Mi JAKAWI',
         href: '/mi-jakawi',
         icon: BadgeCheck,
-    },
+    }] : []),
     ...(isAdmin
         ? [
               {
@@ -67,7 +67,7 @@ const activeItemStyles =
 export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage();
     const { auth } = page.props;
-    const navItems = mainNavItems(Boolean(auth.user?.is_admin));
+    const navItems = mainNavItems(Boolean(auth.user?.is_admin), Boolean(auth.user?.is_partner_only));
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 

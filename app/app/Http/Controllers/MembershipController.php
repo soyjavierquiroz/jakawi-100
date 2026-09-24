@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ExperienceReservation;
 use App\Models\Membership;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
@@ -11,8 +12,12 @@ use Inertia\Response;
 
 class MembershipController extends Controller
 {
-    public function show(Request $request): Response
+    public function show(Request $request): Response|RedirectResponse
     {
+        if ($request->user()->isPartnerOnly()) {
+            return to_route('partner.index');
+        }
+
         $membership = $request->user()->activeMembership()->first();
         $confirmed = $membership?->confirmedRedemptions()->latest('confirmed_at')->get() ?? collect();
         $reservations = $request->user()->experienceReservations()->with(['experience', 'session.location', 'partner'])->get()->sortBy(fn ($r) => [$r->session->starts_at->isPast(), $r->session->starts_at]);

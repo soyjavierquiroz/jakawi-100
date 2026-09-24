@@ -90,6 +90,11 @@ class User extends Authenticatable implements PasskeyUser
         return $partnerId !== null && $this->partners()->whereKey($partnerId)->exists();
     }
 
+    public function isPartnerOnly(): bool
+    {
+        return $this->partners()->exists() && ! $this->memberships()->exists();
+    }
+
     /**
      * Get the attributes that should be cast.
      *

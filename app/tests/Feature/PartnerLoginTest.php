@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Partner;
 use App\Models\User;
+use App\Services\MembershipService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -65,6 +66,27 @@ class PartnerLoginTest extends TestCase
 
         $member = User::factory()->create();
         $this->post('/login', ['email' => $member->email, 'password' => 'password'])->assertRedirect('/mi-jakawi');
+    }
+
+    public function test_partner_only_member_page_and_stale_intended_urls_use_the_right_context(): void
+    {
+        $partner = Partner::factory()->published()->create();
+        $partnerUser = User::factory()->create();
+        $partnerUser->partners()->attach($partner, ['role' => 'manager']);
+        $this->actingAs($partnerUser)->get('/mi-jakawi')->assertRedirect('/partner');
+        $this->post('/logout');
+
+        $admin = User::factory()->create(['is_admin' => true]);
+        $this->withSession(['url.intended' => '/partner/'.$partner->slug.'/reservas'])
+            ->post('/login', ['email' => $admin->email, 'password' => 'password'])->assertRedirect('/admin');
+        $this->actingAs($admin)->get('/partner')->assertForbidden();
+        $this->post('/logout');
+
+        $member = User::factory()->create();
+        app(MembershipService::class)->activate($member, User::factory()->create());
+        $this->withSession(['url.intended' => '/mi-jakawi'])
+            ->post('/login', ['email' => $member->email, 'password' => 'password'])->assertRedirect('/mi-jakawi');
+        $this->actingAs($member)->get('/mi-jakawi')->assertOk();
     }
 
     public function test_automated_tests_are_configured_for_the_isolated_database(): void
