@@ -22,7 +22,9 @@ class PartnerContentStudioTest extends TestCase
         $payload = ['title' => 'Promo propia', 'location_scope' => 'selected', 'location_ids' => [$location->id], 'status' => 'published', 'review_status' => 'approved', 'featured' => true];
         $this->actingAs($user)->post('/partner/'.$partner->slug.'/promociones', $payload)->assertRedirect();
         $benefit = Benefit::firstOrFail();
-        $this->assertSame('draft', $benefit->review_status); $this->assertSame('draft', $benefit->status); $this->assertFalse($benefit->featured);
+        $this->assertSame('draft', $benefit->review_status);
+        $this->assertSame('draft', $benefit->status);
+        $this->assertFalse($benefit->featured);
         $this->actingAs($user)->put('/partner/'.$partner->slug.'/promociones/'.$benefit->slug, array_replace($payload, ['location_ids' => [$foreign->id]]))->assertStatus(422);
         $this->actingAs($user)->post('/partner/'.$partner->slug.'/promociones/'.$benefit->slug.'/enviar')->assertRedirect();
         $this->assertSame('submitted', $benefit->fresh()->review_status);
@@ -32,7 +34,8 @@ class PartnerContentStudioTest extends TestCase
         $this->assertSame('changes_requested', $benefit->fresh()->review_status);
         $this->actingAs($user)->post('/partner/'.$partner->slug.'/promociones/'.$benefit->slug.'/enviar')->assertRedirect();
         $this->actingAs($admin)->post('/admin/review/benefits/'.$benefit->slug, ['action' => 'approve'])->assertRedirect();
-        $this->assertSame('approved', $benefit->fresh()->review_status); $this->assertSame('published', $benefit->fresh()->status);
+        $this->assertSame('approved', $benefit->fresh()->review_status);
+        $this->assertSame('published', $benefit->fresh()->status);
     }
 
     public function test_partner_experience_sessions_are_scoped_editable_and_reviewed(): void
@@ -45,7 +48,8 @@ class PartnerContentStudioTest extends TestCase
         $this->assertTrue($experience->partners()->wherePivot('role', 'organizer')->whereKey($partner->id)->exists());
         $sessionPayload = ['starts_at' => now()->addDay()->format('Y-m-d H:i:s'), 'capacity' => 10, 'location_id' => $location->id, 'venue_label' => 'Local'];
         $this->actingAs($user)->post('/partner/'.$partner->slug.'/experiencias/'.$experience->slug.'/sessions', $sessionPayload)->assertRedirect();
-        $session = ExperienceSession::firstOrFail(); $this->assertSame($partner->id, $session->reservation_partner_id);
+        $session = ExperienceSession::firstOrFail();
+        $this->assertSame($partner->id, $session->reservation_partner_id);
         $this->actingAs($user)->put('/partner/'.$partner->slug.'/experiencias/'.$experience->slug.'/sessions/'.$session->id, array_replace($sessionPayload, ['capacity' => 12]))->assertRedirect();
         $this->assertSame(12, $session->fresh()->capacity);
         $this->actingAs($user)->put('/partner/'.$partner->slug.'/experiencias/'.$experience->slug.'/sessions/'.$session->id, array_replace($sessionPayload, ['location_id' => $foreign->id]))->assertStatus(422);
@@ -53,14 +57,17 @@ class PartnerContentStudioTest extends TestCase
         $this->actingAs($user)->put('/partner/'.$partner->slug.'/experiencias/'.$experience->slug.'/sessions/'.$session->id, $sessionPayload)->assertForbidden();
         $admin = User::factory()->create(['is_admin' => true]);
         $this->actingAs($admin)->post('/admin/review/experiences/'.$experience->slug, ['action' => 'approve'])->assertRedirect();
-        $this->assertSame('published', $experience->fresh()->status); $this->assertSame('approved', $experience->fresh()->review_status);
+        $this->assertSame('published', $experience->fresh()->status);
+        $this->assertSame('approved', $experience->fresh()->review_status);
     }
 
     public function test_partner_cannot_access_other_partner_content_and_member_cannot_access_studio(): void
     {
-        [$a, $user] = $this->partner(); [$b] = $this->partner();
+        [$a, $user] = $this->partner();
+        [$b] = $this->partner();
         $benefit = Benefit::factory()->forPartner($b)->create(['review_status' => 'draft']);
-        $experience = Experience::factory()->create(['review_status' => 'draft']); $experience->partners()->attach($b, ['role' => 'organizer', 'sort_order' => 0]);
+        $experience = Experience::factory()->create(['review_status' => 'draft']);
+        $experience->partners()->attach($b, ['role' => 'organizer', 'sort_order' => 0]);
         $this->actingAs($user)->get('/partner/'.$a->slug.'/promociones/'.$benefit->slug.'/editar')->assertNotFound();
         $this->actingAs($user)->get('/partner/'.$a->slug.'/experiencias/'.$experience->slug.'/editar')->assertNotFound();
         $this->actingAs(User::factory()->create())->get('/partner/'.$a->slug.'/promociones')->assertForbidden();
@@ -69,7 +76,10 @@ class PartnerContentStudioTest extends TestCase
 
     private function partner(): array
     {
-        $partner = Partner::factory()->create(); $user = User::factory()->create(); $user->partners()->attach($partner, ['role' => 'manager']);
+        $partner = Partner::factory()->create();
+        $user = User::factory()->create();
+        $user->partners()->attach($partner, ['role' => 'manager']);
+
         return [$partner, $user, Location::factory()->withPartner($partner)->create()];
     }
 }
