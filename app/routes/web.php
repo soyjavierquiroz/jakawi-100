@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner/reservas', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'partner.reservations.index'));
     Route::get('/validar', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'redemptions.validate'));
     Route::get('/partner/{partner:slug}', [PartnerPortalController::class, 'show'])->name('partner.portal.show');
+    Route::get('/partner/{partner:slug}/rendimiento', [PartnerPortalController::class, 'performance'])->name('partner.performance');
     Route::get('/partner/{partner:slug}/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');
     Route::post('/partner/{partner:slug}/reservas/{reservation_public_id}/{status}', [PartnerReservationController::class, 'respond'])->whereIn('status', ['confirmed', 'rejected'])->name('partner.reservations.respond');
     Route::get('/partner/{partner:slug}/asistencias', [ExperienceCheckInController::class, 'form'])->name('partner.checkins.form');
