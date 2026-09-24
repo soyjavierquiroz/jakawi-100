@@ -28,10 +28,10 @@ class PartnerContentStudioTest extends TestCase
         $this->assertSame('submitted', $benefit->fresh()->review_status);
         $this->actingAs($user)->put('/partner/'.$partner->slug.'/promociones/'.$benefit->slug, $payload)->assertForbidden();
         $admin = User::factory()->create(['is_admin' => true]);
-        $this->actingAs($admin)->post('/admin/review/benefits/'.$benefit->id, ['action' => 'changes', 'notes' => 'Ajustar texto'])->assertRedirect();
+        $this->actingAs($admin)->post('/admin/review/benefits/'.$benefit->slug, ['action' => 'changes', 'notes' => 'Ajustar texto'])->assertRedirect();
         $this->assertSame('changes_requested', $benefit->fresh()->review_status);
         $this->actingAs($user)->post('/partner/'.$partner->slug.'/promociones/'.$benefit->slug.'/enviar')->assertRedirect();
-        $this->actingAs($admin)->post('/admin/review/benefits/'.$benefit->id, ['action' => 'approve'])->assertRedirect();
+        $this->actingAs($admin)->post('/admin/review/benefits/'.$benefit->slug, ['action' => 'approve'])->assertRedirect();
         $this->assertSame('approved', $benefit->fresh()->review_status); $this->assertSame('published', $benefit->fresh()->status);
     }
 
@@ -52,7 +52,7 @@ class PartnerContentStudioTest extends TestCase
         $this->actingAs($user)->post('/partner/'.$partner->slug.'/experiencias/'.$experience->slug.'/enviar')->assertRedirect();
         $this->actingAs($user)->put('/partner/'.$partner->slug.'/experiencias/'.$experience->slug.'/sessions/'.$session->id, $sessionPayload)->assertForbidden();
         $admin = User::factory()->create(['is_admin' => true]);
-        $this->actingAs($admin)->post('/admin/review/experiences/'.$experience->id, ['action' => 'approve'])->assertRedirect();
+        $this->actingAs($admin)->post('/admin/review/experiences/'.$experience->slug, ['action' => 'approve'])->assertRedirect();
         $this->assertSame('published', $experience->fresh()->status); $this->assertSame('approved', $experience->fresh()->review_status);
     }
 
