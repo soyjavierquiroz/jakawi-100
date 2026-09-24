@@ -71,6 +71,7 @@ class PartnerContentController extends Controller
         $experience->fill($data); $experience->slug ??= $this->slug(Experience::class, $data['title']); $experience->save();
         if (! $experience->partners()->whereKey($partner->id)->exists()) $experience->partners()->attach($partner->id, ['role' => 'organizer', 'sort_order' => 0]);
         if ($request->hasFile('image')) $experience->update(['image_path' => $request->file('image')->store('experiences/'.$experience->id, 'public')]);
+        if ($request->hasFile('cover')) $experience->update(['cover_path' => $request->file('cover')->store('experiences/'.$experience->id, 'public')]);
         return to_route('partner.experiences.edit', [$partner, $experience]);
     }
 
@@ -81,6 +82,17 @@ class PartnerContentController extends Controller
         $data = $request->validate(['starts_at' => 'required|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'capacity' => 'nullable|integer|min:1', 'venue_label' => 'nullable|string|max:255', 'location_id' => 'nullable|exists:locations,id']);
         abort_if(isset($data['location_id']) && ! Location::whereKey($data['location_id'])->where('partner_id', $partner->id)->exists(), 422);
         $experience->sessions()->create($data + ['status' => 'scheduled', 'reservation_partner_id' => $partner->id]);
+        return back();
+    }
+
+    public function updateSession(Request $request, Partner $partner, Experience $experience, ExperienceSession $session)
+    {
+        $this->ownedExperience($partner, $experience);
+        $this->editable($experience);
+        abort_unless($session->experience_id === $experience->id, 404);
+        $data = $request->validate(['starts_at' => 'required|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'capacity' => 'nullable|integer|min:1', 'venue_label' => 'nullable|string|max:255', 'location_id' => 'nullable|exists:locations,id']);
+        abort_if(isset($data['location_id']) && ! Location::whereKey($data['location_id'])->where('partner_id', $partner->id)->exists(), 422);
+        $session->update($data + ['reservation_partner_id' => $partner->id]);
         return back();
     }
 
@@ -97,5 +109,5 @@ class PartnerContentController extends Controller
     private function editable(?object $content): void { if ($content) abort_unless(in_array($content->review_status, ['draft', 'changes_requested', 'rejected'], true), 403); }
     private function slug(string $class, string $title): string { $base = Str::slug($title) ?: 'contenido'; $slug = $base; $n = 2; while ($class::where('slug', $slug)->exists()) $slug = $base.'-'.$n++; return $slug; }
     private function benefitRules(): array { return ['title'=>'required|string|max:255','short_description'=>'nullable|string','description'=>'nullable|string','terms'=>'nullable|string','category'=>'nullable|string','benefit_type'=>'nullable|string','estimated_savings'=>'nullable|numeric|min:0','redemption_limit_per_member'=>'nullable|integer|min:1','starts_at'=>'nullable|date','ends_at'=>'nullable|date|after_or_equal:starts_at','location_scope'=>'required|in:all,selected','location_ids'=>'array','location_ids.*'=>'integer','image'=>'nullable|image|max:5120']; }
-    private function experienceRules(): array { return ['title'=>'required|string|max:255','short_description'=>'nullable|string','description'=>'nullable|string','category'=>'nullable|string','experience_type'=>'nullable|string','duration_minutes'=>'nullable|integer|min:1','regular_price'=>'nullable|numeric|min:0','member_price'=>'nullable|numeric|min:0','reservation_method'=>'required|in:whatsapp,url,phone,external,jakawi,none','reservation_url'=>'nullable|url','reservation_whatsapp'=>'nullable|string','reservation_phone'=>'nullable|string','image'=>'nullable|image|max:5120']; }
+    private function experienceRules(): array { return ['title'=>'required|string|max:255','short_description'=>'nullable|string','description'=>'nullable|string','category'=>'nullable|string','experience_type'=>'nullable|string','duration_minutes'=>'nullable|integer|min:1','regular_price'=>'nullable|numeric|min:0','member_price'=>'nullable|numeric|min:0','reservation_method'=>'required|in:whatsapp,url,phone,external,jakawi,none','reservation_url'=>'nullable|url','reservation_whatsapp'=>'nullable|string','reservation_phone'=>'nullable|string','image'=>'nullable|image|max:5120','cover'=>'nullable|image|max:5120']; }
 }

@@ -67,7 +67,7 @@ class PartnerAccessTest extends TestCase
         $user = $this->partnerUser($partnerA, 'manager');
         $user->partners()->attach($partnerB, ['role' => 'staff']);
 
-        $this->actingAs($user)->get('/partner')->assertOk()->assertSee($partnerA->name)->assertSee($partnerB->name);
+        $this->actingAs($user)->get('/partner')->assertOk()->assertSee($partnerA->name, false)->assertSee($partnerB->name, false);
         $this->actingAs($user)->get('/partner/'.$partnerA->slug.'/reservas')->assertOk();
         $this->actingAs($user)->get('/partner/'.$partnerC->slug)->assertForbidden();
     }

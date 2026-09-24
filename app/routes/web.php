@@ -54,6 +54,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner/{partner:slug}/experiencias/{experience:slug}/editar', [PartnerContentController::class, 'experienceForm'])->name('partner.experiences.edit');
     Route::put('/partner/{partner:slug}/experiencias/{experience:slug}', [PartnerContentController::class, 'saveExperience'])->name('partner.experiences.update');
     Route::post('/partner/{partner:slug}/experiencias/{experience:slug}/sessions', [PartnerContentController::class, 'saveSession'])->name('partner.experiences.sessions.store');
+    Route::put('/partner/{partner:slug}/experiencias/{experience:slug}/sessions/{session}', [PartnerContentController::class, 'updateSession'])->name('partner.experiences.sessions.update');
     Route::post('/partner/{partner:slug}/experiencias/{experience:slug}/enviar', [PartnerContentController::class, 'submitExperience'])->name('partner.experiences.submit');
 });
 
