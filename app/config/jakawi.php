@@ -12,6 +12,13 @@ return [
     'experience_partner_roles' => ['organizer', 'host', 'venue', 'sponsor', 'participant', 'creator', 'provider', 'other'],
     'publication_statuses' => ['draft', 'published', 'paused', 'archived'],
     'categories' => ['food', 'cafe', 'fitness', 'wellness', 'beauty', 'entertainment', 'nightlife', 'shopping', 'services', 'experiences'],
+    'member_profile' => [
+        'interests' => ['food', 'cafe', 'fitness', 'wellness', 'beauty', 'entertainment', 'nightlife', 'shopping', 'services', 'experiences'],
+        'social_contexts' => ['solo', 'pareja', 'amigos', 'familia'],
+        'preferred_days' => ['entre_semana', 'fin_de_semana'],
+        'preferred_times' => ['manana', 'tarde', 'noche'],
+        'cities' => ['Cochabamba'],
+    ],
     'membership' => [
         'price_bob' => 100,
         'duration_days' => 365,

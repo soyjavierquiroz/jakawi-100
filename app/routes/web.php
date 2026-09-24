@@ -6,6 +6,7 @@ use App\Http\Controllers\PartnerContentController;
 use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\ExperienceCheckInController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\MemberProfileController;
 use App\Http\Controllers\PartnerLoginController;
 use App\Http\Controllers\PartnerPortalController;
 use App\Http\Controllers\PartnerReservationController;
@@ -62,6 +63,8 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
+    Route::get('mi-jakawi/perfil', [MemberProfileController::class, 'show'])->name('member.profile.show');
+    Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->name('member.profile.update');
     Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->name('experiences.reservations.store');
     Route::post('/reservas/{reservation:public_id}/cancelar', [ExperienceReservationController::class, 'cancel'])->name('experiences.reservations.cancel');
     Route::post('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'start'])->name('redemptions.start');

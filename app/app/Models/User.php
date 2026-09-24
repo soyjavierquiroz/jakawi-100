@@ -49,6 +49,12 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasOne(Membership::class)->active()->latest('starts_at');
     }
 
+    /** @return HasOne<UserProfile> */
+    public function profile(): HasOne
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
     public function hasActiveMembership(): bool
     {
         return $this->activeMembership()->exists();
