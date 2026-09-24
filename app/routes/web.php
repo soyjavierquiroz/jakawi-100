@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminContentReviewController;
+use App\Http\Controllers\PartnerContentController;
 use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\ExperienceCheckInController;
 use App\Http\Controllers\MembershipController;
@@ -40,6 +42,19 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::post('/partner/{partner:slug}/asistencias/{reservation_public_id}', [ExperienceCheckInController::class, 'confirm'])->name('partner.checkins.confirm');
     Route::get('/partner/{partner:slug}/validar', [RedemptionController::class, 'form'])->name('redemptions.validate');
     Route::post('/partner/{partner:slug}/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1');
+    Route::get('/partner/{partner:slug}/promociones', [PartnerContentController::class, 'benefits'])->name('partner.benefits.index');
+    Route::get('/partner/{partner:slug}/promociones/crear', [PartnerContentController::class, 'benefitForm'])->name('partner.benefits.create');
+    Route::post('/partner/{partner:slug}/promociones', [PartnerContentController::class, 'saveBenefit'])->name('partner.benefits.store');
+    Route::get('/partner/{partner:slug}/promociones/{benefit:slug}/editar', [PartnerContentController::class, 'benefitForm'])->name('partner.benefits.edit');
+    Route::put('/partner/{partner:slug}/promociones/{benefit:slug}', [PartnerContentController::class, 'saveBenefit'])->name('partner.benefits.update');
+    Route::post('/partner/{partner:slug}/promociones/{benefit:slug}/enviar', [PartnerContentController::class, 'submitBenefit'])->name('partner.benefits.submit');
+    Route::get('/partner/{partner:slug}/experiencias', [PartnerContentController::class, 'experiences'])->name('partner.experiences.index');
+    Route::get('/partner/{partner:slug}/experiencias/crear', [PartnerContentController::class, 'experienceForm'])->name('partner.experiences.create');
+    Route::post('/partner/{partner:slug}/experiencias', [PartnerContentController::class, 'saveExperience'])->name('partner.experiences.store');
+    Route::get('/partner/{partner:slug}/experiencias/{experience:slug}/editar', [PartnerContentController::class, 'experienceForm'])->name('partner.experiences.edit');
+    Route::put('/partner/{partner:slug}/experiencias/{experience:slug}', [PartnerContentController::class, 'saveExperience'])->name('partner.experiences.update');
+    Route::post('/partner/{partner:slug}/experiencias/{experience:slug}/sessions', [PartnerContentController::class, 'saveSession'])->name('partner.experiences.sessions.store');
+    Route::post('/partner/{partner:slug}/experiencias/{experience:slug}/enviar', [PartnerContentController::class, 'submitExperience'])->name('partner.experiences.submit');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -53,6 +68,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('review', [AdminContentReviewController::class, 'index'])->name('admin.review.index');
+    Route::post('review/benefits/{benefit}', [AdminContentReviewController::class, 'benefit'])->name('admin.review.benefit');
+    Route::post('review/experiences/{experience}', [AdminContentReviewController::class, 'experience'])->name('admin.review.experience');
     Route::get('partners', [AdminController::class, 'partners'])->name('admin.partners.index');
     Route::get('partners/create', [AdminController::class, 'partnerForm'])->name('admin.partners.create');
     Route::post('partners', [AdminController::class, 'savePartner'])->name('admin.partners.store');

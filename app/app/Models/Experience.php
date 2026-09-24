@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
@@ -25,7 +26,7 @@ class Experience extends Model
         'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type',
         'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method',
         'reservation_url', 'reservation_whatsapp', 'reservation_phone', 'status', 'featured',
-        'image_path', 'cover_path', 'sort_order', 'published_at',
+        'image_path', 'cover_path', 'sort_order', 'published_at', 'review_status', 'submitted_at', 'submitted_by_user_id', 'reviewed_at', 'reviewed_by_user_id', 'review_notes', 'created_by_user_id',
     ];
 
     /** @return BelongsToMany<Partner, $this> */
@@ -34,6 +35,11 @@ class Experience extends Model
         return $this->belongsToMany(Partner::class)
             ->withPivot(['role', 'sort_order'])
             ->orderByPivot('sort_order');
+    }
+
+    public function submittedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'submitted_by_user_id');
     }
 
     /** @return HasMany<ExperienceSession, $this> */
@@ -123,6 +129,7 @@ class Experience extends Model
             'regular_price' => 'decimal:2',
             'member_price' => 'decimal:2',
             'published_at' => 'datetime',
+            'submitted_at' => 'datetime', 'reviewed_at' => 'datetime',
         ];
     }
 }

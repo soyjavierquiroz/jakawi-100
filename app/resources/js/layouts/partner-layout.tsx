@@ -18,6 +18,8 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                             <p className="mt-1 text-xs text-muted-foreground">Portal Partner</p>
                             <nav className="mt-6 flex flex-col gap-3">
                                 <Link href={`/partner/${partner.slug}`}>Inicio</Link>
+                                <Link href={`/partner/${partner.slug}/promociones`}>Promociones</Link>
+                                <Link href={`/partner/${partner.slug}/experiencias`}>Experiencias</Link>
                                 <Link href={`/partner/${partner.slug}/reservas`}>Reservas</Link>
                                 <Link href={`/partner/${partner.slug}/validar`}>Validar</Link>
                                 <Link href={`/partner/${partner.slug}/asistencias`}>Registrar asistencia</Link>

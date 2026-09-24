@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExperienceReservation;
+use App\Models\Benefit;
+use App\Models\Experience;
 use App\Models\Partner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,6 +38,10 @@ class PartnerPortalController extends Controller
         return Inertia::render('partner/dashboard', [
             'partner' => $partner->only(['name', 'slug']),
             'pendingReservations' => ExperienceReservation::where('partner_id', $partner->id)->where('status', 'pending')->count(),
+            'benefitDrafts' => Benefit::where('partner_id', $partner->id)->where('review_status', 'draft')->count(),
+            'benefitSubmitted' => Benefit::where('partner_id', $partner->id)->where('review_status', 'submitted')->count(),
+            'experienceDrafts' => Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->where('review_status', 'draft')->count(),
+            'experienceSubmitted' => Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->where('review_status', 'submitted')->count(),
         ]);
     }
 

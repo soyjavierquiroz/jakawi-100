@@ -24,13 +24,18 @@ class Benefit extends Model
     protected $fillable = [
         'partner_id', 'slug', 'title', 'short_description', 'description', 'terms', 'category',
         'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'status', 'featured',
-        'starts_at', 'ends_at', 'applies_to_all_locations', 'image_path', 'sort_order', 'published_at',
+        'starts_at', 'ends_at', 'applies_to_all_locations', 'image_path', 'sort_order', 'published_at', 'review_status', 'submitted_at', 'submitted_by_user_id', 'reviewed_at', 'reviewed_by_user_id', 'review_notes', 'created_by_user_id',
     ];
 
     /** @return BelongsTo<Partner, $this> */
     public function partner(): BelongsTo
     {
         return $this->belongsTo(Partner::class);
+    }
+
+    public function submittedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'submitted_by_user_id');
     }
 
     /** @return BelongsToMany<Location, $this> */
@@ -134,6 +139,7 @@ class Benefit extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'published_at' => 'datetime',
+            'submitted_at' => 'datetime', 'reviewed_at' => 'datetime',
         ];
     }
 }
