@@ -12,7 +12,7 @@ class ThemePreferenceTest extends TestCase
 
     public function test_theme_preference_defaults_to_system(): void
     {
-        $this->assertSame('system', User::factory()->create()->theme_preference);
+        $this->assertSame('system', User::factory()->create()->fresh()->theme_preference);
     }
 
     public function test_authenticated_user_can_save_each_allowed_theme(): void
