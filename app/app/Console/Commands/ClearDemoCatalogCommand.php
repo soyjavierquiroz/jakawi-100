@@ -9,7 +9,7 @@ class ClearDemoCatalogCommand extends Command
 {
     protected $signature = 'jakawi:clear-demo-catalog';
 
-    protected $description = 'Remove only demo-* JAKAWI V2 catalog records and demo media';
+    protected $description = 'Remove only demo-* catalog, media, and Javier demo-linked QA activity';
 
     public function handle(DemoCatalogV2 $catalog): int
     {

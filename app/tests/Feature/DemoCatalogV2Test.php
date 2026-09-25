@@ -40,7 +40,7 @@ class DemoCatalogV2Test extends TestCase
         Storage::disk('public')->assertMissing('demo/partners/demo-altura-nube-logo.svg');
     }
 
-    private function assertCounts(int $partners = 13, int $locations = 18, int $benefits = 30, int $experiences = 8, int $sessions = 13): void
+    private function assertCounts(int $partners = 13, int $locations = 18, int $benefits = 30, int $experiences = 8, int $sessions = 14): void
     {
         $this->assertSame($partners, Partner::where('slug', 'like', 'demo-%')->count());
         $this->assertSame($locations, Location::where('slug', 'like', 'demo-%')->count());

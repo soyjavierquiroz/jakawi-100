@@ -4,16 +4,29 @@ namespace App\Services;
 
 use App\Models\Benefit;
 use App\Models\Experience;
+use App\Models\ExperienceReservation;
 use App\Models\ExperienceSession;
 use App\Models\Location;
+use App\Models\Membership;
 use App\Models\Partner;
+use App\Models\Redemption;
+use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /** Deterministic fictional catalog for local and QA environments only. */
 class DemoCatalogV2
 {
     public const PIN = '123456'; // Demo-only; never reuse as a production secret.
+
+    private const QA_MEMBERSHIP_NOTE = 'demo-qa:javier-prelaunch';
+
+    private const QA_PARTNER_EMAIL = 'qa.partner.demo@jakawi.test';
+
+    private const JAVIER_EMAIL = 'javierquiroztv@gmail.com';
 
     /** @return array<string, int> */
     public function seed(): array
@@ -22,7 +35,7 @@ class DemoCatalogV2
             $partners = [];
             foreach ($this->partners() as $order => $data) {
                 $slug = $data['slug'];
-                $paths = ['logo_path' => "demo/partners/{$slug}-logo.svg", 'cover_path' => "demo/partners/{$slug}-cover.svg"];
+                $paths = ['logo_path' => "demo/partners/{$slug}-logo.svg", 'cover_path' => $this->lifestylePath($data['category'])];
                 $partners[$slug] = Partner::updateOrCreate(['slug' => $slug], $data + $paths + ['sort_order' => $order + 1, 'status' => 'published', 'published_at' => now()]);
                 $this->image($paths['logo_path'], $data['name'], $data['category'], true);
                 $this->image($paths['cover_path'], $data['name'], $data['category']);
@@ -47,7 +60,7 @@ class DemoCatalogV2
                 $locationSlugs = $data['location_slugs'];
                 unset($data['partner_slug'], $data['location_slugs']);
                 $slug = $data['slug'];
-                $benefit = Benefit::updateOrCreate(['slug' => $slug], $data + ['partner_id' => $partner->id, 'image_path' => "demo/benefits/{$slug}.svg", 'sort_order' => $order + 1, 'status' => 'published', 'published_at' => now(), 'starts_at' => now()->subMonth(), 'ends_at' => now()->addMonths(6)]);
+                $benefit = Benefit::updateOrCreate(['slug' => $slug], $data + ['partner_id' => $partner->id, 'image_path' => $this->lifestylePath($data['category']), 'sort_order' => $order + 1, 'status' => 'published', 'published_at' => now(), 'starts_at' => now()->subMonth(), 'ends_at' => now()->addMonths(6)]);
                 $benefit->syncLocations(array_map(fn ($locationSlug) => $locations[$locationSlug], $locationSlugs));
                 $this->image($benefit->image_path, $benefit->title, $benefit->benefit_type);
             }
@@ -57,7 +70,7 @@ class DemoCatalogV2
                 $assignments = $data['partners'];
                 unset($data['partners']);
                 $slug = $data['slug'];
-                $experience = $experiences[$slug] = Experience::updateOrCreate(['slug' => $slug], $data + ['image_path' => "demo/experiences/{$slug}.svg", 'cover_path' => "demo/experiences/{$slug}-cover.svg", 'sort_order' => $order + 1, 'status' => 'published', 'published_at' => now()]);
+                $experience = $experiences[$slug] = Experience::updateOrCreate(['slug' => $slug], $data + ['image_path' => $this->lifestylePath($data['category']), 'cover_path' => $this->lifestylePath($data['category']), 'sort_order' => $order + 1, 'status' => 'published', 'published_at' => now()]);
                 $experience->syncPartnersWithRoles(array_map(fn ($item) => ['partner_id' => $partners[$item[0]]->id, 'role' => $item[1], 'sort_order' => $item[2]], $assignments));
                 $this->image($experience->image_path, $experience->title, $experience->experience_type);
                 $this->image($experience->cover_path, $experience->title, 'experiencia');
@@ -79,6 +92,7 @@ class DemoCatalogV2
     public function clear(): array
     {
         return DB::transaction(function (): array {
+            $this->clearQaActivity();
             $experiences = Experience::where('slug', 'like', 'demo-%')->get();
             $benefits = Benefit::where('slug', 'like', 'demo-%')->get();
             $locations = Location::where('slug', 'like', 'demo-%')->get();
@@ -99,10 +113,173 @@ class DemoCatalogV2
             $experiences->each->delete();
             $locations->each->delete();
             $partners->each->delete();
+            User::where('email', self::QA_PARTNER_EMAIL)->delete();
             Storage::disk('public')->delete($paths->all());
 
             return $this->counts();
         });
+    }
+
+    /**
+     * Seed the reversible consumer and partner data used to visually QA the demo catalog.
+     * The password is accepted at runtime only and is never persisted outside Laravel's hash.
+     *
+     * @return array<string, int|string>
+     */
+    public function seedQa(?string $partnerPassword = null): array
+    {
+        return DB::transaction(function () use ($partnerPassword): array {
+            $javier = User::where('email', self::JAVIER_EMAIL)->firstOrFail();
+            $javier->forceFill(['is_admin' => true])->save();
+            $javier->partners()->detach();
+
+            $this->clearQaActivity($javier);
+            $existingProfile = $javier->profile;
+            $profileSnapshot = base64_encode(json_encode([
+                'exists' => $existingProfile !== null,
+                'city' => $existingProfile?->city,
+                'interests' => $existingProfile?->interests,
+                'social_contexts' => $existingProfile?->social_contexts,
+                'preferred_days' => $existingProfile?->preferred_days,
+                'preferred_times' => $existingProfile?->preferred_times,
+                'profile_completed_at' => $existingProfile?->profile_completed_at?->toDateTimeString(),
+            ], JSON_THROW_ON_ERROR));
+            Membership::create([
+                'user_id' => $javier->id,
+                'status' => Membership::STATUS_ACTIVE,
+                'starts_at' => now()->subDay(),
+                'ends_at' => now()->addDays(364),
+                'amount_paid' => '100.00',
+                'payment_method' => 'qa',
+                'notes' => self::QA_MEMBERSHIP_NOTE.':'.$profileSnapshot,
+            ]);
+
+            $javier->profile()->updateOrCreate([], [
+                'city' => 'Cochabamba',
+                'interests' => ['food', 'cafe', 'experiences'],
+                'social_contexts' => ['friends'],
+                'preferred_days' => ['weekend'],
+                'preferred_times' => ['afternoon'],
+                'profile_completed_at' => now(),
+            ]);
+
+            $partner = Partner::where('slug', 'demo-altura-nube')->firstOrFail();
+            $partnerUser = User::where('email', self::QA_PARTNER_EMAIL)->first();
+            $partnerCreated = $partnerUser === null;
+            if ($partnerUser === null) {
+                if ($partnerPassword === null || $partnerPassword === '') {
+                    throw new \InvalidArgumentException('A runtime password is required to create the demo partner user.');
+                }
+                $partnerUser = User::create([
+                    'name' => 'QA Partner Demo',
+                    'email' => self::QA_PARTNER_EMAIL,
+                    'email_verified_at' => now(),
+                    'password' => Hash::make($partnerPassword),
+                    'is_admin' => false,
+                ]);
+            }
+            $partnerUser->partners()->sync([$partner->id => ['role' => 'manager']]);
+
+            $membership = Membership::where('user_id', $javier->id)->where('notes', 'like', self::QA_MEMBERSHIP_NOTE.'%')->sole();
+            $benefits = Benefit::whereIn('slug', ['demo-beneficio-01', 'demo-beneficio-04', 'demo-beneficio-05', 'demo-beneficio-07', 'demo-beneficio-10'])
+                ->with(['partner', 'locations'])
+                ->get()
+                ->keyBy('slug');
+
+            foreach ([
+                ['demo-beneficio-01', 'QAJ101', 44],
+                ['demo-beneficio-04', 'QAJ104', 31],
+                ['demo-beneficio-05', 'QAJ105', 23],
+                ['demo-beneficio-07', 'QAJ107', 16],
+                ['demo-beneficio-10', 'QAJ110', 8],
+            ] as [$slug, $code, $daysAgo]) {
+                $benefit = $benefits->get($slug);
+                if ($benefit === null) {
+                    throw new \LogicException("Demo benefit [{$slug}] is required for QA activity.");
+                }
+                $location = $benefit->applies_to_all_locations
+                    ? $benefit->availableLocations()->firstOrFail()
+                    : $benefit->locations->firstOrFail();
+                Redemption::create([
+                    'public_id' => (string) Str::ulid(),
+                    'code' => $code,
+                    'user_id' => $javier->id,
+                    'membership_id' => $membership->id,
+                    'partner_id' => $benefit->partner_id,
+                    'location_id' => $location->id,
+                    'benefit_id' => $benefit->id,
+                    'partner_name' => $benefit->partner->name,
+                    'location_name' => $location->name,
+                    'benefit_title' => $benefit->title,
+                    'status' => Redemption::STATUS_CONFIRMED,
+                    'savings_amount' => $benefit->estimated_savings,
+                    'expires_at' => now()->subDays($daysAgo)->addMinutes(10),
+                    'confirmed_at' => now()->subDays($daysAgo),
+                ]);
+            }
+
+            $sessions = ExperienceSession::whereIn('reference_key', ['demo-cata-01', 'demo-pausa-01', 'demo-pausa-00'])->get()->keyBy('reference_key');
+            foreach ([
+                ['demo-cata-01', ExperienceReservation::STATUS_CONFIRMED, 2, null],
+                ['demo-pausa-01', ExperienceReservation::STATUS_PENDING, 1, null],
+                ['demo-pausa-00', ExperienceReservation::STATUS_CONFIRMED, 3, now()->subDays(7)],
+            ] as [$referenceKey, $status, $partySize, $checkedInAt]) {
+                $session = $sessions->get($referenceKey);
+                if ($session === null) {
+                    throw new \LogicException("Demo session [{$referenceKey}] is required for QA activity.");
+                }
+                ExperienceReservation::create([
+                    'user_id' => $javier->id,
+                    'experience_id' => $session->experience_id,
+                    'experience_session_id' => $session->id,
+                    'partner_id' => $session->reservation_partner_id,
+                    'status' => $status,
+                    'party_size' => $partySize,
+                    'check_in_code' => strtoupper(Str::random(6)),
+                    'responded_at' => $status === ExperienceReservation::STATUS_CONFIRMED ? now()->subDays(3) : null,
+                    'responded_by_user_id' => $status === ExperienceReservation::STATUS_CONFIRMED ? $partnerUser->id : null,
+                    'checked_in_at' => $checkedInAt,
+                    'checked_in_by_user_id' => $checkedInAt ? $partnerUser->id : null,
+                ]);
+            }
+
+            return [
+                'partner_user_created' => (int) $partnerCreated,
+                'confirmed_redemptions' => 5,
+                'confirmed_savings' => (string) $membership->confirmedSavings(),
+                'reservations' => 3,
+            ];
+        });
+    }
+
+    /** @return array<string, int> */
+    public function clearQaActivity(?User $javier = null): array
+    {
+        $javier ??= User::where('email', self::JAVIER_EMAIL)->first();
+        if ($javier === null) {
+            return ['redemptions' => 0, 'reservations' => 0, 'memberships' => 0, 'partner_users' => 0];
+        }
+
+        $qaMemberships = Membership::where('user_id', $javier->id)->where('notes', 'like', self::QA_MEMBERSHIP_NOTE.'%')->get();
+        foreach ($qaMemberships as $membership) {
+            $snapshot = substr((string) $membership->notes, strlen(self::QA_MEMBERSHIP_NOTE) + 1);
+            $original = json_decode(base64_decode($snapshot, true) ?: '', true);
+            if (is_array($original) && array_key_exists('exists', $original)) {
+                if ($original['exists']) {
+                    $javier->profile()->updateOrCreate([], collect($original)->only(['city', 'interests', 'social_contexts', 'preferred_days', 'preferred_times', 'profile_completed_at'])->all());
+                } else {
+                    $javier->profile()->delete();
+                }
+            }
+        }
+
+        $demoBenefitIds = Benefit::where('slug', 'like', 'demo-%')->pluck('id');
+        $demoExperienceIds = Experience::where('slug', 'like', 'demo-%')->pluck('id');
+        $redemptions = Redemption::where('user_id', $javier->id)->where(fn ($query) => $query->whereIn('benefit_id', $demoBenefitIds)->orWhereIn('membership_id', $qaMemberships->pluck('id')))->delete();
+        $reservations = ExperienceReservation::where('user_id', $javier->id)->whereIn('experience_id', $demoExperienceIds)->delete();
+        $memberships = Membership::whereKey($qaMemberships->pluck('id'))->delete();
+
+        return ['redemptions' => $redemptions, 'reservations' => $reservations, 'memberships' => $memberships, 'partner_users' => 0];
     }
 
     /** @return array<string, int> */
@@ -115,6 +292,12 @@ class DemoCatalogV2
 
     private function image(string $path, string $title, string $category, bool $square = false): void
     {
+        $source = resource_path('demo-assets/'.$path);
+        if (is_file($source)) {
+            Storage::disk('public')->put($path, file_get_contents($source));
+
+            return;
+        }
         $seed = hexdec(substr(md5($path), 0, 6));
         $a = sprintf('#%06X', $seed & 0xFFFFFF);
         $b = sprintf('#%06X', ($seed * 13) & 0xFFFFFF);
@@ -123,6 +306,20 @@ class DemoCatalogV2
         $safeTitle = htmlspecialchars(mb_strtoupper(mb_substr($title, 0, 34)), ENT_XML1);
         $safeCategory = htmlspecialchars($category, ENT_XML1);
         Storage::disk('public')->put($path, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{$width}\" height=\"{$height}\" viewBox=\"0 0 {$width} {$height}\"><defs><linearGradient id=\"g\" x2=\"1\" y2=\"1\"><stop stop-color=\"{$a}\"/><stop offset=\"1\" stop-color=\"{$b}\"/></linearGradient></defs><rect width=\"100%\" height=\"100%\" fill=\"url(#g)\"/><circle cx=\"85%\" cy=\"18%\" r=\"150\" fill=\"white\" opacity=\".18\"/><path d=\"M0 500 Q300 320 600 500 T1200 430 V600 H0Z\" fill=\"white\" opacity=\".16\"/><text x=\"64\" y=\"260\" fill=\"white\" font-family=\"sans-serif\" font-size=\"42\" font-weight=\"700\">{$safeTitle}</text><text x=\"66\" y=\"310\" fill=\"white\" font-family=\"sans-serif\" font-size=\"21\" letter-spacing=\"4\">DEMO · {$safeCategory}</text></svg>");
+    }
+
+    private function lifestylePath(string $category): string
+    {
+        $asset = match ($category) {
+            'cafe' => 'cafe',
+            'food' => 'food',
+            'fitness' => 'fitness',
+            'wellness', 'beauty' => 'wellness',
+            'entertainment', 'nightlife' => 'nightlife',
+            default => 'culture',
+        };
+
+        return "demo/lifestyle/{$asset}.png";
     }
 
     /** @return list<array<string, mixed>> */
@@ -195,7 +392,9 @@ class DemoCatalogV2
         return array_map(function ($i) use ($titles, $partners, $scopes, $types) {
             $all = in_array($i, [0, 3, 6, 9, 12, 18, 21, 28], true);
 
-            return ['slug' => 'demo-beneficio-'.str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT), 'partner_slug' => $partners[$i], 'title' => $titles[$i], 'short_description' => 'Un beneficio para miembros JAKAWI en tu próxima visita.', 'description' => 'Disfruta este detalle pensado para descubrir el espacio con más calma y valor.', 'terms' => 'Válido para membresías activas. Sujeto a disponibilidad del lugar; no acumulable con otras promociones.', 'category' => in_array($partners[$i], ['demo-altura-nube', 'demo-miga-cometa'], 'true') ? 'cafe' : 'experiences', 'benefit_type' => $types[$i], 'estimated_savings' => [15, 20, 23, 25, 30, 35, 40, 50][$i % 8], 'redemption_limit_per_member' => $i % 9 === 0 ? null : ($i % 5 === 0 ? 2 : 1), 'featured' => in_array($i, [0, 3, 6, 12, 21, 26], true), 'applies_to_all_locations' => $all, 'location_slugs' => $all ? [] : [$scopes[$i]]];
+            $categories = ['demo-altura-nube' => 'cafe', 'demo-brasa-prisma' => 'food', 'demo-nomada-bocado' => 'food', 'demo-verde-paramo' => 'wellness', 'demo-casa-azafran' => 'food', 'demo-kintu-calma' => 'wellness', 'demo-distrito-pulso' => 'fitness', 'demo-luna-lateral' => 'beauty', 'demo-miga-cometa' => 'cafe', 'demo-andes-umbral' => 'experiences', 'demo-gelato-bruma' => 'food'];
+
+            return ['slug' => 'demo-beneficio-'.str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT), 'partner_slug' => $partners[$i], 'title' => $titles[$i], 'short_description' => 'Un beneficio para miembros JAKAWI en tu próxima visita.', 'description' => 'Disfruta este detalle pensado para descubrir el espacio con más calma y valor.', 'terms' => 'Válido para membresías activas. Sujeto a disponibilidad del lugar; no acumulable con otras promociones.', 'category' => $categories[$partners[$i]], 'benefit_type' => $types[$i], 'estimated_savings' => [15, 20, 23, 25, 30, 35, 40, 50][$i % 8], 'redemption_limit_per_member' => $i % 9 === 0 ? null : ($i % 5 === 0 ? 2 : 1), 'featured' => in_array($i, [0, 3, 6, 12, 21, 26], true), 'applies_to_all_locations' => $all, 'location_slugs' => $all ? [] : [$scopes[$i]]];
         }, range(0, 29));
     }
 
@@ -220,6 +419,7 @@ class DemoCatalogV2
         $at = fn ($days, $hour) => now()->startOfDay()->addDays($days)->setTime($hour, 0);
 
         return [
+            ['experience_slug' => 'demo-pausa-en-movimiento', 'reference_key' => 'demo-pausa-00', 'location_slug' => 'demo-distrito-pulso', 'reservation_partner_slug' => 'demo-distrito-pulso', 'starts_at' => $at(-7, 19), 'ends_at' => $at(-7, 20), 'capacity' => 20, 'venue_label' => 'Distrito Pulso'],
             ['experience_slug' => 'demo-sunset-jakawi', 'reference_key' => 'demo-sunset-01', 'location_slug' => 'demo-mirador-cobalto', 'starts_at' => $at(2, 17), 'ends_at' => $at(2, 20), 'capacity' => 45, 'venue_label' => 'Mirador Cobalto'], ['experience_slug' => 'demo-sunset-jakawi', 'reference_key' => 'demo-sunset-02', 'location_slug' => 'demo-mirador-cobalto', 'starts_at' => $at(23, 17), 'ends_at' => $at(23, 20), 'capacity' => 45, 'venue_label' => 'Mirador Cobalto'],
             ['experience_slug' => 'demo-cata-cafe-boliviano', 'reference_key' => 'demo-cata-01', 'location_slug' => 'demo-altura-nube-cala-cala', 'reservation_partner_slug' => 'demo-altura-nube', 'starts_at' => $at(5, 18), 'ends_at' => $at(5, 20), 'capacity' => 18, 'venue_label' => 'Altura Nube · Cala Cala'], ['experience_slug' => 'demo-cata-cafe-boliviano', 'reference_key' => 'demo-cata-02', 'location_slug' => 'demo-miga-cometa', 'reservation_partner_slug' => 'demo-altura-nube', 'starts_at' => $at(19, 10), 'ends_at' => $at(19, 12), 'capacity' => null, 'venue_label' => 'Miga Cometa'],
             ['experience_slug' => 'demo-arcilla-y-manos', 'reference_key' => 'demo-arcilla-01', 'location_slug' => 'demo-patio-orbita', 'starts_at' => $at(8, 15), 'ends_at' => $at(8, 18), 'capacity' => 14, 'venue_label' => 'Patio Órbita'], ['experience_slug' => 'demo-trekking-primera-luz', 'reference_key' => 'demo-trekking-01', 'location_slug' => 'demo-andes-umbral-punto', 'starts_at' => $at(7, 6), 'ends_at' => $at(7, 10), 'capacity' => 12, 'venue_label' => 'Punto Andes Umbral'], ['experience_slug' => 'demo-trekking-primera-luz', 'reference_key' => 'demo-trekking-02', 'starts_at' => $at(28, 6), 'ends_at' => $at(28, 10), 'capacity' => null, 'venue_label' => 'Punto por confirmar'],
