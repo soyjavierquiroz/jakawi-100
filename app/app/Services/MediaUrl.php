@@ -35,6 +35,10 @@ class MediaUrl
 
     private function decode(string $value): string
     {
+        if (ctype_xdigit($value) && strlen($value) % 2 === 0) {
+            return hex2bin($value) ?: $value;
+        }
+
         return base64_decode(strtr($value, '-_', '+/'), true) ?: $value;
     }
 }

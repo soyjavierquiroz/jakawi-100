@@ -68,7 +68,7 @@ return [
             'secret' => env('MEDIA_AWS_SECRET_ACCESS_KEY'),
             'region' => env('MEDIA_AWS_DEFAULT_REGION', 'us-east-1'),
             'bucket' => env('MEDIA_AWS_BUCKET', 'jakawi-media'),
-            'endpoint' => env('MEDIA_AWS_ENDPOINT'),
+            'endpoint' => env('MEDIA_AWS_ENDPOINT', env('MEDIA_AWS_URL')),
             'use_path_style_endpoint' => env('MEDIA_AWS_USE_PATH_STYLE_ENDPOINT', true),
             'visibility' => 'private',
             'throw' => true,
