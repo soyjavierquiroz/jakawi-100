@@ -35,7 +35,15 @@ const getStoredAppearance = (): Appearance => {
         return 'system';
     }
 
-    return (localStorage.getItem('appearance') as Appearance) || 'system';
+    try {
+        const appearance = window.localStorage.getItem('appearance');
+
+        return appearance === 'light' || appearance === 'dark' || appearance === 'system'
+            ? appearance
+            : 'system';
+    } catch {
+        return 'system';
+    }
 };
 
 const isDarkMode = (appearance: Appearance): boolean => {
@@ -99,7 +107,11 @@ export function useAppearance(): UseAppearanceReturn {
         currentAppearance = mode;
 
         // Store in localStorage for client-side persistence...
-        localStorage.setItem('appearance', mode);
+        try {
+            window.localStorage.setItem('appearance', mode);
+        } catch {
+            // Storage can be unavailable in private or embedded browsers.
+        }
 
         // Store in cookie for SSR...
         setCookie('appearance', mode);

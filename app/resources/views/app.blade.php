@@ -11,17 +11,20 @@
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {
-                const serverAppearance = '{{ $appearance ?? "system" }}';
-                const appearance = !{{ ($appearanceIsAuthenticated ?? false) ? 'true' : 'false' }} && serverAppearance === 'system'
-                    ? (localStorage.getItem('appearance') || 'system')
-                    : serverAppearance;
+                try {
+                    const serverAppearance = '{{ $appearance ?? "system" }}';
+                    let appearance = serverAppearance;
 
-                if (appearance === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (!{{ ($appearanceIsAuthenticated ?? false) ? 'true' : 'false' }} && serverAppearance === 'system') {
+                        const storedAppearance = window.localStorage.getItem('appearance');
+                        appearance = ['system', 'light', 'dark'].includes(storedAppearance) ? storedAppearance : 'system';
+                    }
 
-                    if (prefersDark) {
+                    if (appearance === 'dark' || (appearance === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)) {
                         document.documentElement.classList.add('dark');
                     }
+                } catch {
+                    document.documentElement.classList.remove('dark');
                 }
             })();
         </script>
