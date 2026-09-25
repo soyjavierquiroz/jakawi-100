@@ -21,7 +21,7 @@ class MemberProfileController extends Controller
         $profile = $request->user()->profile;
 
         return Inertia::render('member-profile', [
-            'user' => $request->user()->only('name'),
+            'user' => $request->user()->only('name', 'email'),
             'profile' => $this->serialize($profile),
             'options' => config('jakawi.member_profile'),
         ]);

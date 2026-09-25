@@ -1,35 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { CalendarDays, MapPin } from 'lucide-react';
 import { useState } from 'react';
-const labels: Record<string, string> = { pending: 'Reserva solicitada · Pendiente de confirmación', confirmed: 'Reserva confirmada', rejected: 'Solicitud rechazada', cancelled: 'Reserva cancelada' };
-const partyLabel = (size: number) => size === 1 ? 'Sólo tú' : `Tú + ${size - 1} acompañante${size === 2 ? '' : 's'}`;
-export default function ExperienceShow({ experience, hasActiveMembership }: any) {
-    const [partySizes, setPartySizes] = useState<Record<number, number>>({});
-    return (
-        <main className="min-h-screen bg-background p-5 text-foreground">
-            <Head title={experience.title} />
-            <Link href="/experiencias">Experiencias</Link>
-            <h1 className="mt-6 text-4xl font-semibold">{experience.title}</h1>
-            <p className="mt-3 whitespace-pre-line text-muted-foreground">
-                {experience.description}
-            </p>
-            {experience.reservation_method && experience.reservation_method !== 'jakawi' ? (
-                <a
-                    className="mt-5 inline-block rounded-md bg-brand px-4 py-3 font-semibold text-brand-foreground"
-                    href={`/experiencias/${experience.slug}/reservar`}
-                >
-                    Reservar
-                </a>
-            ) : null}
-            <section className="mt-8">
-                <h2 className="text-xl font-semibold">Próximas fechas</h2>
-                {experience.sessions?.filter((s: any) => new Date(s.starts_at) >= new Date() && s.status === 'scheduled').map((s: any) => (
-                    <div key={s.id} className="flex items-center justify-between gap-3 py-3">
-                        <p>{new Date(s.starts_at).toLocaleString('es-BO')} · {s.location?.name || s.venue_label}</p>
-                        {experience.reservation_method === 'jakawi' && s.reservation ? <span className="text-sm font-medium">{labels[s.reservation.status]} · {s.reservation.party_size === 1 ? '1 persona' : `${s.reservation.party_size} personas`}</span> : null}
-                        {experience.reservation_method === 'jakawi' && !s.reservation && s.reservable ? <div className="flex items-center gap-2"><label className="text-sm" htmlFor={`party-size-${s.id}`}>Número de personas</label><select id={`party-size-${s.id}`} className="rounded-md border border-border bg-background px-2 py-2 text-sm" value={partySizes[s.id] ?? 1} onChange={(event) => setPartySizes({ ...partySizes, [s.id]: Number(event.target.value) })}>{Array.from({ length: 10 }, (_, index) => index + 1).map((size) => <option key={size} value={size}>{size} · {partyLabel(size)}</option>)}</select><button className="rounded-md bg-brand px-3 py-2 text-sm font-semibold text-brand-foreground disabled:opacity-50" disabled={!hasActiveMembership} onClick={() => router.post(`/experiencias/${experience.slug}/reservas`, { experience_session_id: s.id, party_size: partySizes[s.id] ?? 1 })}>Solicitar reserva</button></div> : null}
-                    </div>
-                ))}
-            </section>
-        </main>
-    );
-}
+const labels: Record<string, string> = { pending: 'Solicitud pendiente', confirmed: 'Reserva confirmada', rejected: 'Solicitud rechazada', cancelled: 'Reserva cancelada' };
+export default function ExperienceShow({ experience, hasActiveMembership }: any) { const [partySizes, setPartySizes] = useState<Record<number, number>>({}); const sessions = experience.sessions?.filter((s: any) => new Date(s.starts_at) >= new Date() && s.status === 'scheduled') ?? []; const first = sessions[0]; return <main className="min-h-screen bg-background pb-12 text-foreground"><Head title={experience.title} /><section className="mx-auto max-w-3xl"><div className="relative aspect-[16/10] bg-surface-muted">{(experience.cover_url || experience.image_url) ? <img src={experience.cover_url || experience.image_url} alt={experience.title} className="h-full w-full object-cover" /> : null}<Link href="/explorar?type=experiences" className="absolute top-4 left-4 rounded-full bg-background/90 px-3 py-2 text-sm font-bold">← Explorar</Link></div><div className="px-5 py-7"><p className="text-xs font-bold tracking-wide text-brand uppercase">Experiencia JAKAWI</p><h1 className="mt-2 text-4xl font-extrabold tracking-tight">{experience.title}</h1>{first ? <div className="mt-5 flex flex-wrap gap-4 text-sm font-semibold"><span className="inline-flex items-center gap-2"><CalendarDays className="size-4 text-brand" />{new Date(first.starts_at).toLocaleString('es-BO', { dateStyle: 'medium', timeStyle: 'short' })}</span><span className="inline-flex items-center gap-2"><MapPin className="size-4 text-brand" />{first.location?.name || first.venue_label}</span></div> : null}{experience.short_description ? <p className="mt-5 text-lg leading-7 text-muted-foreground">{experience.short_description}</p> : null}{experience.description ? <section className="mt-8"><h2 className="text-xl font-bold">La experiencia</h2><p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{experience.description}</p></section> : null}{(experience.regular_price || experience.member_price) ? <section className="mt-8 rounded-2xl border border-border bg-surface p-5"><p className="text-xs font-bold tracking-wide text-muted-foreground uppercase">Precio</p>{experience.regular_price ? <p className="mt-2">Normal: Bs {experience.regular_price}</p> : null}{experience.member_price ? <p className="mt-1 text-lg font-bold text-brand">Miembro: Bs {experience.member_price}</p> : null}</section> : null}<section className="mt-8"><h2 className="text-xl font-bold">Fechas disponibles</h2><div className="mt-3 space-y-3">{sessions.map((s: any) => <div key={s.id} className="rounded-2xl border border-border bg-surface p-4"><p className="font-bold">{new Date(s.starts_at).toLocaleString('es-BO', { dateStyle: 'medium', timeStyle: 'short' })}</p><p className="mt-1 text-sm text-muted-foreground">{s.location?.name || s.venue_label}{s.capacity ? ` · ${s.capacity} cupos` : ''}</p>{experience.reservation_method === 'jakawi' && s.reservation ? <p className="mt-3 text-sm font-semibold text-success">{labels[s.reservation.status]}</p> : null}{experience.reservation_method === 'jakawi' && !s.reservation && s.reservable ? <div className="mt-4 flex gap-2"><select aria-label="Número de personas" value={partySizes[s.id] ?? 1} onChange={e => setPartySizes({ ...partySizes, [s.id]: Number(e.target.value) })} className="min-h-11 rounded-xl border border-border bg-background px-3">{Array.from({ length: 10 }, (_, i) => <option key={i + 1}>{i + 1}</option>)}</select><button disabled={!hasActiveMembership} onClick={() => router.post(`/experiencias/${experience.slug}/reservas`, { experience_session_id: s.id, party_size: partySizes[s.id] ?? 1 })} className="min-h-11 flex-1 rounded-xl bg-brand px-4 text-sm font-bold text-brand-foreground disabled:opacity-50">Reservar</button></div> : null}</div>)}</div></section>{experience.reservation_method && experience.reservation_method !== 'jakawi' ? <a href={`/experiencias/${experience.slug}/reservar`} className="mt-7 flex min-h-13 items-center justify-center rounded-2xl bg-brand px-4 font-bold text-brand-foreground">Reservar</a> : null}</div></section></main>; }

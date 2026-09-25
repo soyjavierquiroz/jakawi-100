@@ -109,13 +109,13 @@ export default function RedemptionShow({
                 </div>
                 <Link
                     className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground"
-                    href={
+                    href={confirmed ? '/explorar' : (
                         redemption.benefit_slug
                             ? `/beneficios/${redemption.benefit_slug}`
                             : '/beneficios'
-                    }
+                    )}
                 >
-                    Regresar al beneficio
+                    {confirmed ? 'Seguir descubriendo' : 'Regresar al beneficio'}
                 </Link>
             </section>
         </main>

@@ -64,7 +64,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
-    Route::redirect('perfil', '/settings/profile')->name('consumer.profile');
+    Route::get('perfil', [MemberProfileController::class, 'show'])->name('consumer.profile');
     Route::get('mi-jakawi/perfil', [MemberProfileController::class, 'show'])->name('member.profile.show');
     Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->name('member.profile.update');
     Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->name('experiences.reservations.store');

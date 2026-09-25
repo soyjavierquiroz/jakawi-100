@@ -1,5 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import AppearanceSelector from '@/components/appearance-selector';
+import MobileBottomNav from '@/components/mobile-bottom-nav';
 
 type Profile = {
     city: string | null;
@@ -71,7 +73,7 @@ export default function MemberProfile({
     profile,
     options,
 }: {
-    user: { name: string };
+    user: { name: string; email: string };
     profile: Profile;
     options: Options;
 }) {
@@ -115,23 +117,23 @@ export default function MemberProfile({
     return (
         <>
             <Head title="Tu perfil JAKAWI" />
-            <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6">
+            <main className="min-h-screen bg-background px-4 py-6 pb-28 text-foreground sm:px-6">
                 <form
                     onSubmit={submit}
                     className="mx-auto flex w-full max-w-xl flex-col gap-6"
                 >
                     <div>
                         <a
-                            href="/mi-jakawi"
+                            href="/"
                             className="text-sm font-medium underline"
                         >
-                            Mi JAKAWI
+                            Inicio
                         </a>
                         <p className="mt-5 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
                             Tu perfil JAKAWI
                         </p>
                         <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">
-                            Personaliza tu JAKAWI
+                            Tu perfil
                         </h1>
                         <p className="mt-3 leading-6 text-muted-foreground">
                             Cuéntanos qué te gusta para mostrarte lugares y
@@ -152,7 +154,7 @@ export default function MemberProfile({
                                 </div>
                             )}
                             <div>
-                                <p className="font-semibold">{user.name}</p>
+                                <p className="font-semibold">{user.name}</p><p className="text-sm text-muted-foreground">{user.email}</p>
                                 <label className="mt-1 block cursor-pointer text-sm underline">
                                     Agregar foto opcional
                                     <input
@@ -246,14 +248,16 @@ export default function MemberProfile({
                                 : 'Completa las cuatro secciones para terminar tu perfil.'}
                         </p>
                     </div>
+                    <section className="rounded-md border border-border bg-surface p-5"><p className="text-lg font-semibold">Apariencia</p><p className="mt-1 text-sm text-muted-foreground">Elige cómo se ve JAKAWI.</p><div className="mt-4"><AppearanceSelector /></div></section>
                     <button
                         className="rounded-md bg-foreground px-4 py-3 font-semibold text-background"
                         type="submit"
                     >
                         Guardar perfil
                     </button>
+                    <button type="button" onClick={() => router.post('/logout')} className="min-h-11 text-sm font-semibold text-muted-foreground underline">Cerrar sesión</button>
                 </form>
-            </main>
+            </main><MobileBottomNav />
         </>
     );
 }
