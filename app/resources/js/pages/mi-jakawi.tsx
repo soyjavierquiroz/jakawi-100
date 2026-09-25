@@ -1,7 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
-import MobileBottomNav from '@/components/mobile-bottom-nav';
 
 type Membership = {
     id: number;
@@ -284,7 +283,7 @@ export default function MiJakawi({
                         </div>
                     ) : null}
                 </section>
-            </main><MobileBottomNav />
+            </main>
         </>
     );
 }

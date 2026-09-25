@@ -1,7 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import AppearanceSelector from '@/components/appearance-selector';
-import MobileBottomNav from '@/components/mobile-bottom-nav';
 
 type Profile = {
     city: string | null;
@@ -257,7 +256,7 @@ export default function MemberProfile({
                     </button>
                     <button type="button" onClick={() => router.post('/logout')} className="min-h-11 text-sm font-semibold text-muted-foreground underline">Cerrar sesión</button>
                 </form>
-            </main><MobileBottomNav />
+            </main>
         </>
     );
 }

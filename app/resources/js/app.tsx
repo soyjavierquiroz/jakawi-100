@@ -7,6 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import PartnerLayout from '@/layouts/partner-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import ConsumerLayout from '@/layouts/consumer-layout';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -14,8 +15,8 @@ void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
-            case name === 'welcome':
-                return null;
+            case ['welcome', 'explore', 'benefits/index', 'benefits/show', 'experiences/index', 'experiences/show', 'mi-jakawi', 'member-profile', 'redemptions/show'].includes(name):
+                return ConsumerLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;
             case name.startsWith('partner/') || ['redemptions/validate', 'redemptions/scan'].includes(name):
