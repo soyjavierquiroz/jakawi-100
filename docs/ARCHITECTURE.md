@@ -8,7 +8,7 @@ Docker nginx and Laravel/PHP-FPM.
 Internet HTTPS -> OpenLiteSpeed -> nginx Docker -> Laravel/PHP-FPM -> PostgreSQL
 ```
 
-## V2.6 domain
+## V2 domain
 
 V2 starts from a fresh schema. There is no `Merchant`, `merchants`,
 `merchant_id`, Booking, or compatibility adapter in the runtime domain.
@@ -32,11 +32,16 @@ V2 starts from a fresh schema. There is no `Merchant`, `merchants`,
   snapshots. Pending codes are reusable until their ten-minute TTL; confirmation
   is idempotent and limits count confirmed Redemptions only. ROI uses confirmed
   savings only.
-- An `Experience` has zero or more Partners and zero or more
-  `ExperienceSession` records. A Session has an optional Location, which may be
-  Partner-owned, unrelated, independent, or null. Reservations are external
-  redirects only; there is no Booking, payment, capacity decrement, or internal
-  reservation record.
+- An `Experience` has zero or more Partners and `ExperienceSession` records.
+  A member can request one internal reservation per Session; the assigned
+  Partner confirms it and can record an idempotent check-in. There is no
+  Booking domain, payment, or capacity decrement.
+- Members have a profile with explicit interests and a progressive completion
+  state. Home editorial ordering may use those choices plus limited first-party
+  behavior; these scores are never exposed in Partner props.
+- Partner access is explicit through `partner_user`; Admin access does not
+  imply Partner access. The Partner portal provides Content Studio, reservation
+  confirmation/check-in, and scoped KPI views. Admin reviews submitted content.
 
 Public controllers expose only published/available records according to the
 domain rules. Partner legal/contact/internal fields and Location manager/PIN
@@ -75,7 +80,9 @@ the original filename; replacing an upload removes the prior managed file.
 All Laravel test and test-database commands use `./bin/jakawi-test`. It uses
 the physically separate `app-test` and `db-test` services and `jakawi_test`.
 Production remains offline in maintenance while V2 is prepared; its app and web
-services are not used for testing.
+services are not used for testing. Preview (`jakawi-preview` / `jakawi_preview`)
+and test (`jakawi-test` / `jakawi_test`) have distinct Compose volumes and no
+PostgreSQL host port.
 # Catalog Importer V2
 
 The V2 importer requires exact CSV headers, validates every record and cross-file reference before planning or writing, and upserts catalog entities by slug. Sessions are identified by `experience_id + reference_key`. Fields absent from the CSV format—media, a Location PIN hash and manager details—are intentionally preserved. Benefit scope and listed Experience-partner groups are authoritative; Sessions are incremental, never destructive syncs.

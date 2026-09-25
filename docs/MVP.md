@@ -10,17 +10,22 @@ DESCUBRIR -> DESEAR -> USAR / RESERVAR -> RECIBIR VALOR -> REGISTRAR -> VOLVER
 
 - Partners y Locations, incluyendo Locations independientes.
 - Benefits con alcance a todas o a Locations seleccionadas del Partner.
-- Experiences multi-Partner, Sessions y reserva externa.
+- Experiences multi-Partner, Sessions, solicitud de reserva, confirmación de
+  Partner y check-in con código/QR.
 - Membership, Redemption con PIN por Location y ROI de ahorros confirmados.
-- Admin V2, catálogo público, Mi JAKAWI y validación de canjes.
-- Analytics first-party limitado a la taxonomía V2.6.
+- Member: Membership, Benefits, Experiences, Perfil y personalización limitada.
+- Partner: Content Studio, reservas, validación/check-in y KPI con alcance
+  explícito al Partner asignado.
+- Admin: Partners, Locations, Benefits, Experiences, Memberships, Redemptions
+  y revisión de contenido.
+- Analytics first-party limitado y sin endpoint genérico de ingestión.
 
 ## No construido
 
-- Booking interno, pagos, puntos, rewards, referrals y capacidad decrementable.
+- Booking, pagos, puntos, rewards, referrals y capacidad decrementable.
 - Near-me avanzado, notificaciones, self-service de Partners y recomendaciones
   de IA.
-- Analytics dashboard, importer y demo V2.
+- Near-me, geofencing, push, IA y app nativa.
 
-La reserva de una Experience siempre redirige al canal externo configurado; no
-crea un registro interno de reserva.
+Las reservas son solicitudes internas simples para la operación Partner; no
+son Booking ni procesan pago.

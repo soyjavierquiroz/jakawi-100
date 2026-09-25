@@ -227,7 +227,7 @@ class ImportCatalogV2Command extends Command
                 $this->errorAt($f, $r['row'], $field, 'Required.');
             }
 
-return null;
+            return null;
         } try {
             return Carbon::parse($v);
         } catch (\Throwable) {
@@ -366,7 +366,7 @@ return null;
             }
         }
 
-return $class::updateOrCreate(['slug' => $data['slug']], $data);
+        return $class::updateOrCreate(['slug' => $data['slug']], $data);
     }
 
     private function errorAt(string $file, int $row, string $field, string $message): void

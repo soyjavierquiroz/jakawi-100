@@ -19,13 +19,17 @@ class ExperienceReservationController extends Controller
         ]);
         $before = ExperienceReservation::query()->where('user_id', $request->user()->id)->where('experience_session_id', $data['experience_session_id'])->whereIn('status', ['pending', 'confirmed'])->exists();
         $reservation = $service->request($request->user(), $experience, $data['experience_session_id'], $data['party_size'] ?? 1);
-        if (! $before && $reservation->wasRecentlyCreated) $analytics->experienceReserveClicked($experience, 'jakawi');
+        if (! $before && $reservation->wasRecentlyCreated) {
+            $analytics->experienceReserveClicked($experience, 'jakawi');
+        }
+
         return back();
     }
 
     public function cancel(Request $request, ExperienceReservation $reservation, ExperienceReservationService $service): RedirectResponse
     {
         $service->cancel($request->user(), $reservation);
+
         return back();
     }
 }

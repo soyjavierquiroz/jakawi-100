@@ -69,6 +69,7 @@ CMD ["php-fpm"]
 FROM build AS test
 
 RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts \
+    && npm ci \
     && cp .env.example .env \
     && composer dump-autoload --optimize
 

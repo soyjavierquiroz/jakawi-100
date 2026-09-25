@@ -19,7 +19,7 @@ class ExperienceCheckInController extends Controller
             return redirect()->guest(route('partner.login'));
         }
 
-return $this->screen($request, $partner, $this->reservation($reservation_public_id));
+        return $this->screen($request, $partner, $this->reservation($reservation_public_id));
     }
 
     public function form(Partner $partner): Response
@@ -45,7 +45,7 @@ return $this->screen($request, $partner, $this->reservation($reservation_public_
             $reservation = $reservation->fresh();
         }
 
-return $this->screen($request, $partner, $reservation);
+        return $this->screen($request, $partner, $reservation);
     }
 
     private function reservation(string $publicId): ExperienceReservation

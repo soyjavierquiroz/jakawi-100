@@ -151,7 +151,7 @@ class PartnerContentController extends Controller
             $slug = $base.'-'.$n++;
         }
 
-return $slug;
+        return $slug;
     }
 
     private function benefitRules(): array

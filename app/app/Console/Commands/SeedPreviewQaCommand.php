@@ -24,15 +24,17 @@ class SeedPreviewQaCommand extends Command
 
         $partnerPassword = env('JAKAWI_QA_PARTNER_PASSWORD');
         $javierPassword = env('JAKAWI_QA_JAVIER_PASSWORD');
+        $partnerEmail = env('JAKAWI_QA_PARTNER_EMAIL');
+        $javierEmail = env('JAKAWI_QA_JAVIER_EMAIL');
 
-        if (! $partnerPassword || ! $javierPassword) {
-            $this->error('Set JAKAWI_QA_PARTNER_PASSWORD and JAKAWI_QA_JAVIER_PASSWORD for this command.');
+        if (! $partnerPassword || ! $javierPassword || ! $partnerEmail || ! $javierEmail) {
+            $this->error('Set JAKAWI_QA_PARTNER_EMAIL, JAKAWI_QA_PARTNER_PASSWORD, JAKAWI_QA_JAVIER_EMAIL and JAKAWI_QA_JAVIER_PASSWORD for this command.');
 
             return self::FAILURE;
         }
 
         $partner = Partner::where('slug', 'demo-altura-nube')->firstOrFail();
-        $partnerUser = User::firstOrNew(['email' => 'qa.partner.demo@jakawi.test']);
+        $partnerUser = User::firstOrNew(['email' => $partnerEmail]);
         $partnerUser->forceFill([
             'name' => 'Partner QA',
             'email_verified_at' => now(),
@@ -41,7 +43,7 @@ class SeedPreviewQaCommand extends Command
         ])->save();
         $partnerUser->partners()->syncWithoutDetaching([$partner->id => ['role' => 'manager']]);
 
-        $javier = User::firstOrNew(['email' => 'javierquiroztv@gmail.com']);
+        $javier = User::firstOrNew(['email' => $javierEmail]);
         $javier->forceFill([
             'name' => 'Javier QA',
             'email_verified_at' => now(),

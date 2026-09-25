@@ -32,7 +32,8 @@ class QrCheckInTest extends TestCase
     {
         [$reservation, $partner, $manager] = $this->reservation();
         $other = Partner::factory()->published()->create();
-        $intruder = User::factory()->create(); $intruder->partners()->attach($other, ['role' => 'staff']);
+        $intruder = User::factory()->create();
+        $intruder->partners()->attach($other, ['role' => 'staff']);
         $this->actingAs($manager)->post('/partner/'.$partner->slug.'/asistencias', ['code' => $reservation->check_in_code])->assertOk();
         $this->actingAs($intruder)->get(URL::signedRoute('partner.checkins.scan', ['partner' => $other->slug, 'reservation_public_id' => $reservation->public_id]))->assertForbidden();
     }
@@ -45,7 +46,9 @@ class QrCheckInTest extends TestCase
         $session = ExperienceSession::factory()->for($experience)->upcoming()->create(['reservation_partner_id' => $partner->id]);
         $member = User::factory()->create();
         $reservation = ExperienceReservation::create(['user_id' => $member->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 2, 'check_in_code' => 'ABCDEF']);
-        $manager = User::factory()->create(); $manager->partners()->attach($partner, ['role' => 'staff']);
+        $manager = User::factory()->create();
+        $manager->partners()->attach($partner, ['role' => 'staff']);
+
         return [$reservation, $partner, $manager];
     }
 }

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('experience_sessions', function (Blueprint $table) {
@@ -27,9 +28,12 @@ return new class extends Migration {
             $table->index(['partner_id', 'status']);
         });
     }
+
     public function down(): void
     {
         Schema::dropIfExists('experience_reservations');
-        Schema::table('experience_sessions', function (Blueprint $table) { $table->dropConstrainedForeignId('reservation_partner_id'); });
+        Schema::table('experience_sessions', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('reservation_partner_id');
+        });
     }
 };

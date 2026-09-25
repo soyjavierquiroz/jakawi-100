@@ -1,12 +1,12 @@
 # JAKAWI Current Status
 
-Updated: 2026-09-23
+Updated: 2026-09-25
 
 ## Production
 
-- Offline and in maintenance, awaiting V2.7 and final cutover.
+- Offline and in maintenance, awaiting the approved V2 RC cutover.
 - `app` and `web` are stopped; production DB may remain running.
-- V2.6 made no production migration, write, deployment, or environment change.
+- V2 RC has made no production migration, write, deployment, or environment change.
 
 ## Completed
 
@@ -19,13 +19,14 @@ Updated: 2026-09-23
 - V2.4 — Experiences, multi-Partner roles, Sessions, optional Locations, and
   external-only reservation metadata.
 - V2.5 — First-party, privacy-constrained analytics foundation.
-- V2.6 — Admin and public UI, uploads, HTTP redemption/validation flow,
-  visitor cookie, analytics event wiring, privacy/access coverage, and final
-  fresh-install/regression quality audit.
+- V2 — Member membership/benefits/experiences/profile personalization;
+  Partner Content Studio, reservation confirmation/check-in and KPI; Admin
+  review; isolated preview/test operations and V2 Catalog Importer.
 
 ## Next
 
-V2.7C: Visual QA. Production is not deployed.
+Approved production cutover using the exact RC commit. It is not executed by
+this repository task.
 
 # V2.7B Demo Catalog V2
 

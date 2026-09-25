@@ -32,6 +32,13 @@ producción no proporciona aislamiento.
 Para detener sólo los servicios de test: `./bin/jakawi-test down`. Para borrar
 sólo su volumen aislado: `./bin/jakawi-test clean`.
 
+La comprobación de tipos reproducible se ejecuta también dentro de esa imagen
+PHP 8.4; genera Wayfinder antes de ejecutar TypeScript:
+
+```bash
+./bin/jakawi-test npm run types:check
+```
+
 ## Human preview isolated
 
 El preview humano usa un proyecto Compose y PostgreSQL distintos de los tests:
@@ -45,7 +52,8 @@ docker compose --project-name jakawi-preview -f compose.preview.yaml up -d --bui
 docker compose --project-name jakawi-preview -f compose.preview.yaml exec app-preview php artisan migrate:fresh
 docker compose --project-name jakawi-preview -f compose.preview.yaml exec app-preview php artisan jakawi:seed-demo-catalog
 docker compose --project-name jakawi-preview -f compose.preview.yaml exec \
-  -e JAKAWI_QA_PARTNER_PASSWORD='…' -e JAKAWI_QA_JAVIER_PASSWORD='…' \
+  -e JAKAWI_QA_PARTNER_EMAIL='…' -e JAKAWI_QA_PARTNER_PASSWORD='…' \
+  -e JAKAWI_QA_JAVIER_EMAIL='…' -e JAKAWI_QA_JAVIER_PASSWORD='…' \
   app-preview php artisan preview:seed-qa
 ```
 
@@ -75,6 +83,27 @@ OpenLiteSpeed temporalmente durante V2.6.
 El cutover fresco de producción todavía no se realizó. La prueba de instalación
 fresca se hace exclusivamente sobre el stack aislado; producción sigue offline
 hasta la preparación y cutover posteriores.
+
+## V2 RC production cutover checklist (do not execute without approval)
+
+1. Confirm maintenance and that production `app`/`web` are stopped; identify
+   the production Compose project, database and volume.
+2. Back up the current production database, even if it is believed empty, and
+   validate that the backup can be read.
+3. Deploy/tag the exact approved `release/v2-rc` commit. Confirm
+   `APP_ENV=production`, `APP_DEBUG=false`, production DB credentials,
+   `APP_URL`, session settings and all secrets.
+4. Build and start the production `app` and `web` images with Docker PHP 8.4.
+5. Only after explicit written approval, run
+   `php artisan migrate:fresh --force` against the verified production
+   container. Do not seed demo data.
+6. Create or normalize the real admin through a secure out-of-band process;
+   create the storage link and clear/cache configuration as required.
+7. Run health smoke checks, import the real catalog only with
+   `jakawi:import-catalog-v2 ... --apply`, then perform production QA.
+8. Keep maintenance until QA passes. Rollback means stop app/web, restore the
+   verified DB backup, deploy the previous known-good image, run its health
+   smoke, and record the decision. Never improvise a destructive rollback.
 
 ## Useful read-only checks
 

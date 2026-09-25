@@ -9,7 +9,7 @@
         "icons:pwa": "node scripts/generate-pwa-icons.mjs",
         "check": "vp check",
         "check:fix": "vp check --fix",
-        "types:check": "tsc --noEmit"
+        "types:check": "php artisan wayfinder:generate --with-form --no-interaction && tsc --noEmit"
     },
     "dependencies": {
         "@inertiajs/react": "^3.0.0",
