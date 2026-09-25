@@ -119,10 +119,14 @@ export function useAppearance(persistForAuthenticatedUser = false): UseAppearanc
         notify();
 
         if (persistForAuthenticatedUser) {
-            router.patch('/settings/appearance', { theme_preference: mode }, {
-                preserveScroll: true,
-                preserveState: true,
-            });
+            try {
+                router.patch('/settings/appearance', { theme_preference: mode }, {
+                    preserveScroll: true,
+                    preserveState: true,
+                });
+            } catch {
+                // Local theme application remains usable if persistence fails.
+            }
         }
     };
 
