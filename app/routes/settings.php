@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
+use App\Http\Controllers\ThemePreferenceController;
 /* @chisel-password-confirmation */
 use Illuminate\Auth\Middleware\RequirePassword;
 /* @end-chisel-password-confirmation */
@@ -12,6 +13,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('settings/appearance', [ThemePreferenceController::class, 'update'])->name('appearance.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

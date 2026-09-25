@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { router, usePage } from '@inertiajs/react';
 
 export type ResolvedAppearance = 'light' | 'dark';
 export type Appearance = ResolvedAppearance | 'system';
@@ -75,11 +76,6 @@ export function initializeTheme(): void {
         return;
     }
 
-    if (!localStorage.getItem('appearance')) {
-        localStorage.setItem('appearance', 'system');
-        setCookie('appearance', 'system');
-    }
-
     currentAppearance = getStoredAppearance();
     applyTheme(currentAppearance);
 
@@ -88,6 +84,7 @@ export function initializeTheme(): void {
 }
 
 export function useAppearance(): UseAppearanceReturn {
+    const { auth } = usePage().props;
     const appearance: Appearance = useSyncExternalStore(
         subscribe,
         () => currentAppearance,
@@ -109,6 +106,13 @@ export function useAppearance(): UseAppearanceReturn {
 
         applyTheme(mode);
         notify();
+
+        if (auth.user) {
+            router.patch('/settings/appearance', { theme_preference: mode }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }
     };
 
     return { appearance, resolvedAppearance, updateAppearance } as const;

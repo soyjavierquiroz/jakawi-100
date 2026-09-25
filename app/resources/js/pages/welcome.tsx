@@ -1,141 +1,19 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import BenefitCard from '@/components/benefit-card';
+import ExperienceCard from '@/components/experience-card';
+import MobileBottomNav from '@/components/mobile-bottom-nav';
 import type { BenefitSummary } from '@/types';
-/* @chisel-registration */
 import { register } from '@/routes';
-/* @end-chisel-registration */
-
-export default function Welcome({
-    featuredBenefits = [],
-    featuredExperiences = [],
-    membershipSummary,
-    isPersonalizedHome = false,
-    personalizationSubtitle,
-}: {
-    featuredBenefits?: BenefitSummary[];
-    featuredExperiences?: any[];
-    membershipSummary?: any;
-    isPersonalizedHome?: boolean;
-    personalizationSubtitle?: string | null;
-}) {
-    const { auth } = usePage().props;
-
-    return (
-        <>
-            <Head title="JAKAWI" />
-            <main className="min-h-screen bg-background px-5 py-10 pb-28 text-foreground sm:px-6 sm:pb-10">
-                <section className="mx-auto flex w-full max-w-4xl flex-col gap-10 pt-12 sm:pt-20">
-                    <div className="space-y-5">
-                        <p className="text-sm font-semibold tracking-[0.24em] text-muted-foreground sm:tracking-[0.28em]">
-                            JAKAWI
-                        </p>
-                        <div className="space-y-3">
-                            <h1 className="text-4xl leading-none font-semibold min-[375px]:text-5xl sm:text-7xl">
-                                {auth.user
-                                    ? 'Aprovecha tu JAKAWI hoy'
-                                    : 'La app para vivir más tu ciudad.'}
-                            </h1>
-                            <p className="max-w-xl text-lg leading-7 text-muted-foreground">
-                                Descubre lugares y experiencias, accede a
-                                beneficios por ser miembro y encuentra nuevas
-                                razones para salir, probar y volver. Vive más.
-                                Gasta menos.
-                            </p>
-                        </div>
-                    </div>
-
-                    <nav className="flex flex-col gap-3 sm:flex-row">
-                        {auth.user ? (
-                            <>
-                                <Link
-                                    href="/beneficios"
-                                    className="inline-flex min-h-12 items-center justify-center rounded-md bg-brand px-6 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
-                                >
-                                    Ver beneficios
-                                </Link>
-                                <Link
-                                    href="/mi-jakawi"
-                                    className="inline-flex min-h-12 items-center justify-center rounded-md border border-border bg-surface/70 px-6 text-sm font-semibold text-foreground transition hover:bg-surface"
-                                >
-                                    Mi JAKAWI
-                                </Link>
-                            </>
-                        ) : (
-                            <>
-                                <Link
-                                    href="/beneficios"
-                                    className="inline-flex min-h-12 items-center justify-center rounded-md bg-brand px-6 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
-                                >
-                                    Ver beneficios
-                                </Link>
-                                {/* @chisel-registration */}
-                                <Link
-                                    href={register()}
-                                    className="inline-flex min-h-12 items-center justify-center rounded-md border border-border bg-surface/70 px-6 text-sm font-semibold text-foreground transition hover:bg-surface"
-                                >
-                                    Crear cuenta
-                                </Link>
-                                {/* @end-chisel-registration */}
-                            </>
-                        )}
-                    </nav>
-
-                    {featuredBenefits.length ? (
-                        <section className="flex flex-col gap-4 pt-6">
-                            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                                <div className="space-y-1">
-                                    <h2 className="text-2xl font-semibold">{isPersonalizedHome ? 'Beneficios para ti' : 'Beneficios destacados'}</h2>
-                                    <p className="text-sm text-muted-foreground">
-                                        {isPersonalizedHome ? personalizationSubtitle : 'Primeras oportunidades disponibles en JAKAWI.'}
-                                    </p>
-                                </div>
-                                <Link
-                                    href="/beneficios"
-                                    className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:bg-muted sm:self-auto"
-                                >
-                                    Ver todos los beneficios
-                                </Link>
-                            </div>
-                            <div className="grid gap-4 sm:grid-cols-3">
-                                {featuredBenefits.map((benefit) => (
-                                    <BenefitCard
-                                        key={benefit.id}
-                                        benefit={benefit}
-                                    />
-                                ))}
-                            </div>
-                        </section>
-                    ) : null}
-                    {featuredExperiences.length ? (
-                        <section className="space-y-3">
-                            <h2 className="text-2xl font-semibold">{isPersonalizedHome ? 'Experiencias para ti' : 'Experiencias próximas'}</h2>
-                            {isPersonalizedHome ? <p className="text-sm text-muted-foreground">{personalizationSubtitle}</p> : null}
-                            {featuredExperiences.map((experience) => (
-                                <Link
-                                    className="block rounded-md border border-border p-4"
-                                    key={experience.id}
-                                    href={`/experiencias/${experience.slug}`}
-                                >
-                                    {experience.title}
-                                </Link>
-                            ))}
-                        </section>
-                    ) : null}
-                    {membershipSummary ? (
-                        <section className="rounded-md border border-border bg-surface p-4">
-                            <p className="font-semibold">
-                                Has ahorrado Bs{' '}
-                                {membershipSummary.confirmed_savings}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                                {membershipSummary.has_paid_for_itself
-                                    ? 'Tu JAKAWI ya se pagó solo.'
-                                    : `Te faltan Bs ${membershipSummary.remaining_to_payback} para recuperar tu membresía.`}
-                            </p>
-                        </section>
-                    ) : null}
-                </section>
-            </main>
-        </>
-    );
+type Experience = { id: number; slug: string; title: string; image_url?: string | null; category?: string | null; sessions?: Array<{ starts_at?: string; venue_label?: string | null; location?: { name?: string } | null }> };
+type MembershipSummary = { confirmed_savings: string; remaining_to_payback: string; has_paid_for_itself: boolean };
+function greeting(name?: string) { const hour = new Date().getHours(); return `${hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches'}${name ? `, ${name.split(' ')[0]}` : ''}`; }
+function SectionHeader({ title, subtitle, href }: { title: string; subtitle?: string | null; href: string }) { return <div className="flex items-end justify-between gap-3 px-4 sm:px-0"><div><h2 className="text-2xl font-bold tracking-tight">{title}</h2>{subtitle ? <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p> : null}</div><Link href={href} className="mb-0.5 shrink-0 text-sm font-bold text-brand">Ver todos</Link></div>; }
+export default function Welcome({ featuredBenefits = [], featuredExperiences = [], membershipSummary, isPersonalizedHome = false, personalizationSubtitle }: { featuredBenefits?: BenefitSummary[]; featuredExperiences?: Experience[]; membershipSummary?: MembershipSummary | null; isPersonalizedHome?: boolean; personalizationSubtitle?: string | null }) {
+ const { auth } = usePage().props; const name = auth.user?.name;
+ return <><Head title="JAKAWI" /><main className="min-h-screen overflow-hidden bg-background pb-28 text-foreground"><section className="mx-auto w-full max-w-5xl pt-[max(2rem,env(safe-area-inset-top))] sm:px-6"><header className="px-4 sm:px-0"><p className="text-sm font-medium text-muted-foreground">{greeting(name)}</p><h1 className="mt-3 max-w-xl text-[34px] leading-[1.02] font-extrabold tracking-tight sm:text-5xl">{auth.user ? <>Aprovecha tu <span className="text-brand">JAKAWI</span> hoy</> : <>Vive más.<br /><span className="text-brand">Gasta menos.</span></>}</h1><p className="mt-4 max-w-lg text-base leading-6 text-muted-foreground">{auth.user ? 'Planes, lugares y beneficios pensados para que salgas más.' : 'Descubre nuevas razones para salir, probar y volver a tu ciudad.'}</p><Link href={auth.user ? '/beneficios' : register()} className="mt-6 inline-flex min-h-13 items-center gap-2 rounded-2xl bg-action px-5 text-sm font-bold text-action-foreground transition active:scale-[.98]">{auth.user ? 'Ver beneficios' : 'Únete a JAKAWI'}<ArrowRight className="size-4" /></Link></header>
+ {membershipSummary ? <div className={`mx-4 mt-8 rounded-[20px] p-4 sm:mx-0 ${membershipSummary.has_paid_for_itself ? 'bg-success text-success-foreground' : 'bg-surface-muted text-foreground'}`}><p className="text-sm font-bold">{membershipSummary.has_paid_for_itself ? 'Tu JAKAWI ya se pagó solo' : `Te faltan Bs ${membershipSummary.remaining_to_payback} para que tu JAKAWI se pague solo`}</p><p className="mt-1 text-sm opacity-75">Has ahorrado Bs {membershipSummary.confirmed_savings}</p></div> : null}
+ {featuredBenefits.length ? <section className="mt-10"><SectionHeader title={isPersonalizedHome ? 'Beneficios para ti' : 'Beneficios destacados'} subtitle={personalizationSubtitle ?? 'Oportunidades para disfrutar más tu ciudad.'} href="/beneficios" /><div className="mt-4 flex gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:grid sm:grid-cols-3 sm:px-0">{featuredBenefits.map(benefit => <BenefitCard key={benefit.id} benefit={benefit} />)}</div></section> : null}
+ {featuredExperiences.length ? <section className="mt-10"><SectionHeader title={isPersonalizedHome ? 'Experiencias para ti' : 'Para vivir esta semana'} subtitle={isPersonalizedHome ? personalizationSubtitle : 'Momentos que no quieres dejar pasar.'} href="/experiencias" /><div className="mt-4 flex gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:grid sm:grid-cols-3 sm:px-0">{featuredExperiences.map(experience => <ExperienceCard key={experience.id} experience={experience} />)}</div></section> : null}
+ {!featuredBenefits.length && !featuredExperiences.length ? <section className="mx-4 mt-12 rounded-[22px] border border-border bg-surface p-7 text-center sm:mx-0"><Sparkles className="mx-auto size-7 text-brand" /><h2 className="mt-4 text-xl font-bold">Tu próxima salida empieza aquí</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Nuevos lugares están por llegar a JAKAWI.</p></section> : null}</section></main><MobileBottomNav /></>;
 }

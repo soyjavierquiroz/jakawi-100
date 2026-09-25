@@ -11,7 +11,10 @@
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {
-                const appearance = '{{ $appearance ?? "system" }}';
+                const serverAppearance = '{{ $appearance ?? "system" }}';
+                const appearance = !{{ ($appearanceIsAuthenticated ?? false) ? 'true' : 'false' }} && serverAppearance === 'system'
+                    ? (localStorage.getItem('appearance') || 'system')
+                    : serverAppearance;
 
                 if (appearance === 'system') {
                     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -26,11 +29,11 @@
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
         <style>
             html {
-                background-color: oklch(1 0 0);
+                background-color: #FFF8F2;
             }
 
             html.dark {
-                background-color: oklch(0.145 0 0);
+                background-color: #111111;
             }
         </style>
 

@@ -1,6 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
+import AppearanceSelector from '@/components/appearance-selector';
 
 type Membership = {
     id: number;
@@ -104,14 +105,21 @@ export default function MiJakawi({
                         </p>
                     </a>
 
+                    <section className="rounded-[20px] border border-border bg-surface p-5">
+                        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Apariencia</p>
+                        <h2 className="mt-2 text-xl font-bold">Elige cómo se ve JAKAWI</h2>
+                        <p className="mt-1 text-sm text-muted-foreground">Tu elección se aplica al instante.</p>
+                        <div className="mt-4"><AppearanceSelector /></div>
+                    </section>
+
                     {membership ? (
-                        <div className="rounded-md border border-border bg-surface p-5">
-                            <p className="text-xl font-semibold text-success">
+                        <div className="rounded-[22px] bg-foreground p-5 text-background">
+                            <p className="text-xl font-bold">
                                 Tu JAKAWI está activo
                             </p>
                             <dl className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                    <dt className="text-xs font-semibold text-background/65 uppercase">
                                         Miembro desde
                                     </dt>
                                     <dd className="mt-1 text-base font-medium">
@@ -119,7 +127,7 @@ export default function MiJakawi({
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                    <dt className="text-xs font-semibold text-background/65 uppercase">
                                         Activo hasta
                                     </dt>
                                     <dd className="mt-1 text-base font-medium">
@@ -127,7 +135,7 @@ export default function MiJakawi({
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                    <dt className="text-xs font-semibold text-background/65 uppercase">
                                         Días restantes
                                     </dt>
                                     <dd className="mt-1 text-base font-medium">
@@ -135,7 +143,7 @@ export default function MiJakawi({
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                                    <dt className="text-xs font-semibold text-background/65 uppercase">
                                         Membresia
                                     </dt>
                                     <dd className="mt-1 text-base font-medium">

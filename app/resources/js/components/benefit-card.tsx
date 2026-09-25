@@ -1,75 +1,10 @@
 import { Link } from '@inertiajs/react';
-import { ArrowRight } from 'lucide-react';
+import { LockKeyhole, MapPin } from 'lucide-react';
 import type { BenefitSummary } from '@/types';
 
-function formatSavings(value: BenefitSummary['estimated_savings']) {
-    if (value === null || value === undefined || value === '') {
-        return null;
-    }
-
-    const amount = Number(value);
-
-    if (Number.isNaN(amount)) {
-        return null;
-    }
-
-    return new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'BOB',
-        maximumFractionDigits: 0,
-    }).format(amount);
-}
-
 export default function BenefitCard({ benefit }: { benefit: BenefitSummary }) {
-    const savings = formatSavings(benefit.estimated_savings);
-
-    return (
-        <article className="overflow-hidden rounded-md border border-border bg-surface shadow-xs">
-            <div className="aspect-[16/10] bg-muted">
-                {benefit.image_url ? (
-                    <img
-                        src={benefit.image_url}
-                        alt=""
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                    />
-                ) : (
-                    <div className="flex h-full items-center justify-center px-4 text-sm font-medium text-muted-foreground">
-                        JAKAWI
-                    </div>
-                )}
-            </div>
-            <div className="flex min-h-56 flex-col gap-3 p-4">
-                <div className="space-y-1">
-                    <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                        {benefit.partner?.name ?? 'JAKAWI'}
-                    </p>
-                    <h2 className="text-lg leading-tight font-semibold text-foreground">
-                        {benefit.title}
-                    </h2>
-                </div>
-
-                {benefit.short_description ? (
-                    <p className="line-clamp-3 text-sm leading-6 text-muted-foreground">
-                        {benefit.short_description}
-                    </p>
-                ) : null}
-
-                <div className="mt-auto flex flex-col gap-3">
-                    {savings ? (
-                        <p className="text-sm font-semibold text-success">
-                            Ahorro estimado {savings}
-                        </p>
-                    ) : null}
-                    <Link
-                        href={`/beneficios/${benefit.slug}`}
-                        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
-                    >
-                        Ver beneficio
-                        <ArrowRight className="size-4" aria-hidden="true" />
-                    </Link>
-                </div>
-            </div>
-        </article>
-    );
+    return <Link href={`/beneficios/${benefit.slug}`} className="group block w-[78vw] max-w-80 shrink-0 overflow-hidden rounded-[22px] border border-border bg-surface-elevated transition duration-200 active:scale-[.98] sm:w-full">
+        <div className="aspect-[4/3] bg-surface-muted">{benefit.image_url ? <img src={benefit.image_url} alt={benefit.title} className="h-full w-full object-cover" loading="lazy" /> : <div className="flex h-full items-end bg-brand p-5 text-lg font-bold text-brand-foreground">Próximamente en JAKAWI</div>}</div>
+        <div className="space-y-3 p-4"><div><p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{benefit.partner?.name ?? 'JAKAWI'}</p><h3 className="mt-1 text-xl leading-tight font-bold">{benefit.title}</h3></div>{benefit.short_description ? <p className="line-clamp-2 text-sm text-muted-foreground">{benefit.short_description}</p> : null}<div className="flex items-center gap-2 text-xs font-semibold text-foreground-soft"><LockKeyhole className="size-3.5 text-brand" aria-hidden="true" /> Beneficio JAKAWI {benefit.partner?.name ? <><span aria-hidden="true">·</span><MapPin className="size-3.5" aria-hidden="true" /></> : null}</div></div>
+    </Link>;
 }

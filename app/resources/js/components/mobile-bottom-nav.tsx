@@ -1,0 +1,5 @@
+import { Link, usePage } from '@inertiajs/react';
+import { BadgeCheck, Gift, House, Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
+const items = [{ href: '/', label: 'Inicio', icon: House }, { href: '/beneficios', label: 'Beneficios', icon: Gift }, { href: '/experiencias', label: 'Vivir', icon: Sparkles }, { href: '/mi-jakawi', label: 'Mi JAKAWI', icon: BadgeCheck }];
+export default function MobileBottomNav() { const url = usePage().url; return <nav aria-label="Navegación principal" className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden"><div className="mx-auto grid max-w-lg grid-cols-4">{items.map(({ href, label, icon: Icon }) => { const active = href === '/' ? url === '/' : url.startsWith(href); return <Link key={href} href={href} className={cn('flex min-h-12 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold', active ? 'text-brand' : 'text-muted-foreground')}><Icon className="size-5" aria-hidden="true" />{label}</Link>; })}</div></nav>; }
