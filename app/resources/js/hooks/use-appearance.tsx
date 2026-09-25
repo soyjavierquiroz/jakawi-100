@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { router, usePage } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 
 export type ResolvedAppearance = 'light' | 'dark';
 export type Appearance = ResolvedAppearance | 'system';
@@ -91,8 +91,7 @@ export function initializeTheme(): void {
     mediaQuery()?.addEventListener('change', handleSystemThemeChange);
 }
 
-export function useAppearance(): UseAppearanceReturn {
-    const { auth } = usePage().props;
+export function useAppearance(persistForAuthenticatedUser = false): UseAppearanceReturn {
     const appearance: Appearance = useSyncExternalStore(
         subscribe,
         () => currentAppearance,
@@ -119,7 +118,7 @@ export function useAppearance(): UseAppearanceReturn {
         applyTheme(mode);
         notify();
 
-        if (auth.user) {
+        if (persistForAuthenticatedUser) {
             router.patch('/settings/appearance', { theme_preference: mode }, {
                 preserveScroll: true,
                 preserveState: true,

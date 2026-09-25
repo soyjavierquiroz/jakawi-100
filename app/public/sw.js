@@ -1,7 +1,7 @@
-const CACHE_VERSION = 'jakawi-pwa-shell-v1';
+const CACHE_VERSION = 'jakawi-pwa-shell-v2';
 
 self.addEventListener('install', () => {
-    self.skipWaiting();
+    void self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
