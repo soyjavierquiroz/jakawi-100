@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserProfile;
+use App\Services\MediaUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -42,7 +42,7 @@ class MemberProfileController extends Controller
             'preferred_days.*' => ['string', Rule::in($options['preferred_days'])],
             'preferred_times' => ['nullable', 'array', 'max:3'],
             'preferred_times.*' => ['string', Rule::in($options['preferred_times'])],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
         ]);
 
         $profile = $request->user()->profile()->firstOrCreate([]);
@@ -53,11 +53,7 @@ class MemberProfileController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
-            $oldAvatar = $profile->avatar_path;
-            $data['avatar_path'] = $request->file('avatar')->store('members/'.$request->user()->id.'/avatar', 'public');
-            if ($oldAvatar) {
-                Storage::disk('public')->delete($oldAvatar);
-            }
+            $data['avatar_path'] = app(MediaUploadService::class)->replace($request->file('avatar'), 'avatars', $request->user()->id, 'avatar', $profile->avatar_path);
         }
 
         unset($data['avatar']);
@@ -75,7 +71,7 @@ class MemberProfileController extends Controller
     {
         return [
             'city' => $profile?->city,
-            'avatar_url' => $profile?->avatar_path ? Storage::url($profile->avatar_path) : null,
+            'avatar_url' => app(\App\Services\MediaUrl::class)->url($profile?->avatar_path, 'avatar'),
             'interests' => $profile?->interests ?? [],
             'social_contexts' => $profile?->social_contexts ?? [],
             'preferred_days' => $profile?->preferred_days ?? [],

@@ -16,6 +16,9 @@ export type BenefitSummary = {
     benefit_type?: string | null;
     estimated_savings?: string | number | null;
     image_url?: string | null;
+    image_srcset?: Array<{ src: string; width: number }>;
+    hero_url?: string | null;
+    hero_srcset?: Array<{ src: string; width: number }>;
     is_featured?: boolean;
     redemption_limit_per_member?: number | null;
     starts_at?: string | null;

@@ -11,6 +11,7 @@ use App\Models\Partner;
 use App\Services\AnalyticsTracker;
 use App\Services\HomePersonalizationService;
 use App\Services\MemberAffinityService;
+use App\Services\MediaUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -166,22 +167,28 @@ class PublicController extends Controller
 
     private function partner(Partner $p): array
     {
-        return $p->only(['id', 'slug', 'name', 'description', 'category', 'website', 'instagram', 'facebook', 'tiktok', 'phone', 'whatsapp', 'email', 'featured']) + ['logo_url' => $p->logo_path ? \Storage::url($p->logo_path) : null, 'cover_url' => $p->cover_path ? \Storage::url($p->cover_path) : null];
+        return $p->only(['id', 'slug', 'name', 'description', 'category', 'website', 'instagram', 'facebook', 'tiktok', 'phone', 'whatsapp', 'email', 'featured']) + $this->image($p->logo_path, 'thumbnail', 'logo') + $this->image($p->cover_path, 'partner_cover', 'cover');
     }
 
     private function locationData(Location $l): array
     {
-        return $l->only(['id', 'slug', 'name', 'location_type', 'city', 'zone', 'address', 'address_reference', 'opening_hours', 'phone', 'whatsapp', 'website', 'instagram', 'facebook', 'tiktok', 'maps_url']) + ['partner' => $l->relationLoaded('partner') && $l->partner ? $this->partner($l->partner) : null, 'image_url' => $l->image_path ? \Storage::url($l->image_path) : null];
+        return $l->only(['id', 'slug', 'name', 'location_type', 'city', 'zone', 'address', 'address_reference', 'opening_hours', 'phone', 'whatsapp', 'website', 'instagram', 'facebook', 'tiktok', 'maps_url']) + ['partner' => $l->relationLoaded('partner') && $l->partner ? $this->partner($l->partner) : null] + $this->image($l->image_path, 'partner_cover');
     }
 
     private function benefitData(Benefit $b): array
     {
-        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null, 'image_url' => $b->image_path ? \Storage::url($b->image_path) : null];
+        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null] + $this->image($b->image_path, 'benefit_card') + $this->image($b->image_path, 'hero', 'hero');
     }
 
     private function experienceData(Experience $e, bool $detail = false, $reservations = null): array
     {
-        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + ['image_url' => $e->image_path ? \Storage::url($e->image_path) : null, 'cover_url' => $e->cover_path ? \Storage::url($e->cover_path) : null, 'partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size']), 'reservable' => $e->reservation_method === 'jakawi' && $s->isUpcoming() && $s->reservationPartner?->isPublished()]) : []];
+        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + $this->image($e->image_path, 'experience_card') + $this->image($e->image_path, 'hero', 'hero') + $this->image($e->cover_path, 'hero', 'cover') + ['partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size']), 'reservable' => $e->reservation_method === 'jakawi' && $s->isUpcoming() && $s->reservationPartner?->isPublished()]) : []];
+    }
+
+    private function image(?string $key, string $preset, string $name = 'image'): array
+    {
+        $media = app(MediaUrl::class);
+        return [$name.'_url' => $media->url($key, $preset), $name.'_srcset' => $media->srcset($key, $preset)];
     }
 
     private function membership(Membership $m): array

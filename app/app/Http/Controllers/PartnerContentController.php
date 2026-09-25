@@ -7,6 +7,7 @@ use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Location;
 use App\Models\Partner;
+use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -40,7 +41,7 @@ class PartnerContentController extends Controller
         $benefit->save();
         $benefit->syncLocations($ids);
         if ($request->hasFile('image')) {
-            $benefit->update(['image_path' => $request->file('image')->store('benefits/'.$benefit->id, 'public')]);
+            $benefit->update(['image_path' => app(MediaUploadService::class)->replace($request->file('image'), 'benefits', $benefit->id, 'cover', $benefit->image_path)]);
         }
 
         return to_route('partner.benefits.index', $partner);
@@ -80,10 +81,10 @@ class PartnerContentController extends Controller
             $experience->partners()->attach($partner->id, ['role' => 'organizer', 'sort_order' => 0]);
         }
         if ($request->hasFile('image')) {
-            $experience->update(['image_path' => $request->file('image')->store('experiences/'.$experience->id, 'public')]);
+            $experience->update(['image_path' => app(MediaUploadService::class)->replace($request->file('image'), 'experiences', $experience->id, 'cover', $experience->image_path)]);
         }
         if ($request->hasFile('cover')) {
-            $experience->update(['cover_path' => $request->file('cover')->store('experiences/'.$experience->id, 'public')]);
+            $experience->update(['cover_path' => app(MediaUploadService::class)->replace($request->file('cover'), 'experiences', $experience->id, 'cover', $experience->cover_path)]);
         }
 
         return to_route('partner.experiences.edit', [$partner, $experience]);
@@ -156,11 +157,11 @@ class PartnerContentController extends Controller
 
     private function benefitRules(): array
     {
-        return ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|string', 'benefit_type' => 'nullable|string', 'estimated_savings' => 'nullable|numeric|min:0', 'redemption_limit_per_member' => 'nullable|integer|min:1', 'starts_at' => 'nullable|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_scope' => 'required|in:all,selected', 'location_ids' => 'array', 'location_ids.*' => 'integer', 'image' => 'nullable|image|max:5120'];
+        return ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|string', 'benefit_type' => 'nullable|string', 'estimated_savings' => 'nullable|numeric|min:0', 'redemption_limit_per_member' => 'nullable|integer|min:1', 'starts_at' => 'nullable|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_scope' => 'required|in:all,selected', 'location_ids' => 'array', 'location_ids.*' => 'integer', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240'];
     }
 
     private function experienceRules(): array
     {
-        return ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'category' => 'nullable|string', 'experience_type' => 'nullable|string', 'duration_minutes' => 'nullable|integer|min:1', 'regular_price' => 'nullable|numeric|min:0', 'member_price' => 'nullable|numeric|min:0', 'reservation_method' => 'required|in:whatsapp,url,phone,external,jakawi,none', 'reservation_url' => 'nullable|url', 'reservation_whatsapp' => 'nullable|string', 'reservation_phone' => 'nullable|string', 'image' => 'nullable|image|max:5120', 'cover' => 'nullable|image|max:5120'];
+        return ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'category' => 'nullable|string', 'experience_type' => 'nullable|string', 'duration_minutes' => 'nullable|integer|min:1', 'regular_price' => 'nullable|numeric|min:0', 'member_price' => 'nullable|numeric|min:0', 'reservation_method' => 'required|in:whatsapp,url,phone,external,jakawi,none', 'reservation_url' => 'nullable|url', 'reservation_whatsapp' => 'nullable|string', 'reservation_phone' => 'nullable|string', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240'];
     }
 }

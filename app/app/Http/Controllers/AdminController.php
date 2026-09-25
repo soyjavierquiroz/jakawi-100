@@ -11,8 +11,8 @@ use App\Models\Partner;
 use App\Models\Redemption;
 use App\Models\User;
 use App\Services\MembershipService;
+use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -189,33 +189,32 @@ class AdminController extends Controller
     {
         if (! $request->hasFile($input)) {
             return;
-        } $old = $model->{$attribute};
-        $path = $request->file($input)->store($folder.'/'.$model->id, 'public');
+        }
+        $old = $model->{$attribute};
+        $slot = $input === 'logo' ? 'logo' : 'cover';
+        $path = app(MediaUploadService::class)->replace($request->file($input), $folder, $model->id, $slot, $old);
         $model->{$attribute} = $path;
         $model->save();
-        if ($old && str_starts_with($old, $folder.'/'.$model->id.'/')) {
-            Storage::disk('public')->delete($old);
-        }
     }
 
     private function partnerRules(?Partner $p): array
     {
-        return array_merge($this->base('partners', $p), ['name' => 'required|string|max:255', 'entity_type' => 'required|in:organization,individual', 'partner_type' => 'required|in:business,professional,creator,organizer,brand,other', 'legal_name' => 'nullable|string|max:255', 'tax_id' => 'nullable|string|max:255', 'description' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'contact_name' => 'nullable|string', 'contact_phone' => 'nullable|string', 'contact_email' => 'nullable|email', 'featured' => 'boolean', 'internal_notes' => 'nullable|string', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'logo' => 'nullable|image|mimes:jpeg,png,webp|max:5120', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:5120']);
+        return array_merge($this->base('partners', $p), ['name' => 'required|string|max:255', 'entity_type' => 'required|in:organization,individual', 'partner_type' => 'required|in:business,professional,creator,organizer,brand,other', 'legal_name' => 'nullable|string|max:255', 'tax_id' => 'nullable|string|max:255', 'description' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'contact_name' => 'nullable|string', 'contact_phone' => 'nullable|string', 'contact_email' => 'nullable|email', 'featured' => 'boolean', 'internal_notes' => 'nullable|string', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'logo' => 'nullable|image|mimes:jpeg,png,webp|max:10240', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function locationRules(?Location $l): array
     {
-        return array_merge($this->base('locations', $l), ['partner_id' => 'nullable|exists:partners,id', 'name' => 'required|string|max:255', 'location_type' => 'required|in:branch,venue,meeting_point,online,mobile,other', 'is_primary' => 'boolean', 'country_code' => 'nullable|string|size:2', 'region' => 'nullable|string', 'city' => 'nullable|string', 'zone' => 'nullable|string', 'address' => 'nullable|string', 'address_reference' => 'nullable|string', 'latitude' => 'nullable|numeric|between:-90,90', 'longitude' => 'nullable|numeric|between:-180,180', 'maps_url' => 'nullable|url', 'google_place_id' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'timezone' => 'nullable|string', 'opening_hours' => 'nullable|array', 'manager_name' => 'nullable|string', 'manager_phone' => 'nullable|string', 'manager_email' => 'nullable|email', 'redemption_pin' => 'nullable|digits:6', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120']);
+        return array_merge($this->base('locations', $l), ['partner_id' => 'nullable|exists:partners,id', 'name' => 'required|string|max:255', 'location_type' => 'required|in:branch,venue,meeting_point,online,mobile,other', 'is_primary' => 'boolean', 'country_code' => 'nullable|string|size:2', 'region' => 'nullable|string', 'city' => 'nullable|string', 'zone' => 'nullable|string', 'address' => 'nullable|string', 'address_reference' => 'nullable|string', 'latitude' => 'nullable|numeric|between:-90,90', 'longitude' => 'nullable|numeric|between:-180,180', 'maps_url' => 'nullable|url', 'google_place_id' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'timezone' => 'nullable|string', 'opening_hours' => 'nullable|array', 'manager_name' => 'nullable|string', 'manager_phone' => 'nullable|string', 'manager_email' => 'nullable|email', 'redemption_pin' => 'nullable|digits:6', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function benefitRules(?Benefit $b): array
     {
-        return array_merge($this->base('benefits', $b), ['partner_id' => 'required|exists:partners,id', 'title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'benefit_type' => 'nullable|in:percentage,fixed_amount,two_for_one,free_item,upgrade,exclusive_access,other', 'estimated_savings' => 'nullable|numeric|min:0', 'redemption_limit_per_member' => 'nullable|integer|min:1', 'featured' => 'boolean', 'starts_at' => 'nullable|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_scope' => 'required|in:all,selected', 'location_ids' => 'array', 'location_ids.*' => 'integer', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120']);
+        return array_merge($this->base('benefits', $b), ['partner_id' => 'required|exists:partners,id', 'title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'benefit_type' => 'nullable|in:percentage,fixed_amount,two_for_one,free_item,upgrade,exclusive_access,other', 'estimated_savings' => 'nullable|numeric|min:0', 'redemption_limit_per_member' => 'nullable|integer|min:1', 'featured' => 'boolean', 'starts_at' => 'nullable|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_scope' => 'required|in:all,selected', 'location_ids' => 'array', 'location_ids.*' => 'integer', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function experienceRules(?Experience $e): array
     {
-        return array_merge($this->base('experiences', $e), ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'experience_type' => 'nullable|in:event,workshop,class,tour,tasting,wellness,outdoor,cultural,social,other', 'duration_minutes' => 'nullable|integer|min:1', 'regular_price' => 'nullable|numeric|min:0', 'member_price' => 'nullable|numeric|min:0', 'currency' => 'nullable|string|size:3', 'reservation_method' => 'required|in:whatsapp,url,phone,external,jakawi,none', 'reservation_url' => 'nullable|url', 'reservation_whatsapp' => 'nullable|string', 'reservation_phone' => 'nullable|string', 'featured' => 'boolean', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'partners' => 'array', 'partners.*.partner_id' => 'required|exists:partners,id', 'partners.*.role' => 'required|in:organizer,host,venue,sponsor,participant,creator,provider,other', 'partners.*.sort_order' => 'nullable|integer', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:5120']);
+        return array_merge($this->base('experiences', $e), ['title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'experience_type' => 'nullable|in:event,workshop,class,tour,tasting,wellness,outdoor,cultural,social,other', 'duration_minutes' => 'nullable|integer|min:1', 'regular_price' => 'nullable|numeric|min:0', 'member_price' => 'nullable|numeric|min:0', 'currency' => 'nullable|string|size:3', 'reservation_method' => 'required|in:whatsapp,url,phone,external,jakawi,none', 'reservation_url' => 'nullable|url', 'reservation_whatsapp' => 'nullable|string', 'reservation_phone' => 'nullable|string', 'featured' => 'boolean', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'partners' => 'array', 'partners.*.partner_id' => 'required|exists:partners,id', 'partners.*.role' => 'required|in:organizer,host,venue,sponsor,participant,creator,provider,other', 'partners.*.sort_order' => 'nullable|integer', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function base(string $table, ?object $model): array
