@@ -21,12 +21,7 @@ function money(value?: string | null) {
     return `Bs ${Number(value).toFixed(2)}`;
 }
 
-function minutesLeft(value: string) {
-    return Math.max(
-        0,
-        Math.ceil((new Date(value).getTime() - Date.now()) / 60000),
-    );
-}
+function timeLeft(value: string) { const seconds = Math.max(0, Math.floor((new Date(value).getTime() - Date.now()) / 1000)); return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`; }
 
 export default function RedemptionShow({
     redemption,
@@ -37,18 +32,18 @@ export default function RedemptionShow({
     const expired = redemption.status === 'expired' && !confirmed;
     const savings = money(redemption.savings_amount);
     const [qr, setQr] = useState('');
+    const [, tick] = useState(0);
     useEffect(() => { if (redemption.qr_url) QRCode.toDataURL(redemption.qr_url, { width: 360, margin: 1 }).then(setQr); }, [redemption.qr_url]);
+    useEffect(() => { const timer = window.setInterval(() => tick(value => value + 1), 1000); return () => window.clearInterval(timer); }, []);
 
     return (
         <main className="min-h-screen bg-background px-4 py-6 text-foreground">
             <Head title="Tu código de canje" />
             <section className="mx-auto flex w-full max-w-md flex-col gap-5">
-                <h1 className="text-3xl font-semibold">Tu código de canje</h1>
+                <p className="text-sm font-bold tracking-wide text-brand uppercase">JAKAWI</p><h1 className="text-3xl font-extrabold">{confirmed ? 'CANJE CONFIRMADO' : 'MUESTRA ESTE CÓDIGO'}</h1>
                 <div className="rounded-md border border-border bg-surface p-5">
                     {confirmed ? (
-                        <p className="text-lg font-semibold text-success">
-                            Canje confirmado
-                        </p>
+                        <><p className="text-lg font-semibold text-success">✓ Valor recibido</p>{savings ? <><p className="mt-5 text-sm font-bold tracking-wide text-success uppercase">Ahorraste</p><p className="text-4xl font-extrabold text-success">{savings}</p></> : null}</>
                     ) : null}
                     {expired ? (
                         <p className="text-lg font-semibold">
@@ -81,7 +76,7 @@ export default function RedemptionShow({
                             <div>
                                 <dt className="font-semibold">Expira en</dt>
                                 <dd>
-                                    {minutesLeft(redemption.expires_at)} minutos
+                                    {timeLeft(redemption.expires_at)}
                                 </dd>
                             </div>
                         ) : null}

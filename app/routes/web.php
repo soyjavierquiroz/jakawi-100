@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
 Route::get('/partners/{partner:slug}', [PublicController::class, 'partners'])->name('partners.show');
 Route::get('/partners/{partner:slug}/whatsapp', [PublicController::class, 'partnerWhatsapp'])->name('partners.whatsapp');
 Route::get('/lugares/{location:slug}', [PublicController::class, 'location'])->name('locations.show');
@@ -63,6 +64,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
+    Route::redirect('perfil', '/settings/profile')->name('consumer.profile');
     Route::get('mi-jakawi/perfil', [MemberProfileController::class, 'show'])->name('member.profile.show');
     Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->name('member.profile.update');
     Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->name('experiences.reservations.store');

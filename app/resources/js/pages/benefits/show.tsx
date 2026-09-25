@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
 import { register } from '@/routes';
 import type { BenefitSummary } from '@/types';
 
@@ -52,6 +53,8 @@ export default function BenefitShow({
     const savings = formatSavings(benefit.estimated_savings);
     const startsAt = formatDate(benefit.starts_at);
     const endsAt = formatDate(benefit.ends_at);
+    const [confirming, setConfirming] = useState(false);
+    const [locationId, setLocationId] = useState<number | null>(locations[0]?.id ?? null);
 
     return (
         <>
@@ -186,15 +189,7 @@ export default function BenefitShow({
                                 ) : locations.length ? (
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            router.post(
-                                                `/beneficios/${benefit.slug}/canjear`,
-                                                {
-                                                    location_id:
-                                                        locations[0].id,
-                                                },
-                                            )
-                                        }
+                                        onClick={() => setConfirming(true)}
                                         className="mt-4 inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
                                     >
                                         Usar beneficio
@@ -239,6 +234,7 @@ export default function BenefitShow({
                     </div>
                 </section>
             </main>
+            {confirming ? <div role="dialog" aria-modal="true" aria-labelledby="activation-title" className="fixed inset-0 z-50 flex items-end bg-black/40 sm:items-center sm:justify-center"><div className="w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]"><p className="text-xs font-bold tracking-wide text-brand uppercase">JAKAWI</p><h2 id="activation-title" className="mt-2 text-2xl font-bold">Estás por utilizar</h2><p className="mt-4 font-semibold">{benefit.partner?.name}</p><p className="text-muted-foreground">{benefit.title}</p>{locations.length > 1 ? <label className="mt-5 block text-sm font-semibold">Sucursal<select value={locationId ?? ''} onChange={e => setLocationId(Number(e.target.value))} className="mt-2 min-h-11 w-full rounded-xl border border-border bg-background px-3">{locations.map(location => <option key={location.id} value={location.id}>{location.name}{location.zone ? ` · ${location.zone}` : ''}</option>)}</select></label> : <p className="mt-5 text-sm"><strong>Sucursal:</strong> {locations[0]?.name}</p>}<p className="mt-4 text-sm leading-6 text-muted-foreground">Actívalo únicamente cuando estés en el establecimiento.</p><div className="mt-6 grid grid-cols-2 gap-3"><button onClick={() => setConfirming(false)} className="min-h-12 rounded-xl border border-border text-sm font-bold">Cancelar</button><button onClick={() => locationId && router.post(`/beneficios/${benefit.slug}/canjear`, { location_id: locationId })} disabled={!locationId} className="min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50">Activar beneficio</button></div></div></div> : null}
         </>
     );
 }

@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
-import AppearanceSelector from '@/components/appearance-selector';
+import MobileBottomNav from '@/components/mobile-bottom-nav';
 
 type Membership = {
     id: number;
@@ -10,6 +10,9 @@ type Membership = {
     ends_at: string;
     days_remaining: number;
     amount_paid?: string | null;
+    confirmed_savings: string;
+    remaining_to_payback: string;
+    has_paid_for_itself: boolean;
 };
 
 type MembershipConfig = {
@@ -66,57 +69,18 @@ export default function MiJakawi({
     return (
         <>
             <Head title="Mi JAKAWI" />
-            <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6">
+            <main className="min-h-screen bg-background px-4 py-6 pb-28 text-foreground sm:px-6">
                 <section className="mx-auto flex w-full max-w-xl flex-col gap-5">
                     <div>
                         <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
                             Mi JAKAWI
                         </p>
-                        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">
-                            Tu membresía
-                        </h1>
+                        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">Tu valor JAKAWI</h1>
                     </div>
-
-                    <a
-                        href="/mi-jakawi/perfil"
-                        className="block rounded-md border border-border bg-surface p-5 transition-colors hover:bg-muted/50"
-                    >
-                        <p className="text-xl font-semibold">
-                            {profile.completed
-                                ? 'Perfil completo'
-                                : 'Personaliza tu JAKAWI'}
-                        </p>
-                        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                            Cuéntanos qué te gusta para mostrarte lugares y
-                            experiencias más relevantes.
-                        </p>
-                        <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
-                            <div
-                                className="h-full bg-foreground"
-                                style={{
-                                    width: `${profile.completion_percentage}%`,
-                                }}
-                            />
-                        </div>
-                        <p className="mt-2 text-sm font-medium">
-                            {profile.completed
-                                ? 'Tu perfil está completo'
-                                : `${profile.completion_percentage}% completo · Personalizar`}
-                        </p>
-                    </a>
-
-                    <section className="rounded-[20px] border border-border bg-surface p-5">
-                        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Apariencia</p>
-                        <h2 className="mt-2 text-xl font-bold">Elige cómo se ve JAKAWI</h2>
-                        <p className="mt-1 text-sm text-muted-foreground">Tu elección se aplica al instante.</p>
-                        <div className="mt-4"><AppearanceSelector /></div>
-                    </section>
 
                     {membership ? (
                         <div className="rounded-[22px] bg-foreground p-5 text-background">
-                            <p className="text-xl font-bold">
-                                Tu JAKAWI está activo
-                            </p>
+                            <p className="text-sm font-bold tracking-wide text-background/65 uppercase">JAKAWI</p><p className="mt-2 text-xl font-bold">Vive más. Gasta menos.</p><p className="mt-4 inline-flex rounded-full bg-success px-3 py-1 text-xs font-bold text-success-foreground">Activo</p>
                             <dl className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <dt className="text-xs font-semibold text-background/65 uppercase">
@@ -154,6 +118,8 @@ export default function MiJakawi({
                             </dl>
                         </div>
                     ) : null}
+
+                    {membership ? <section className={membership.has_paid_for_itself ? 'rounded-[22px] bg-success p-5 text-success-foreground' : 'rounded-[22px] border border-border bg-surface p-5'}><p className="text-xs font-bold tracking-wide uppercase">Tu ahorro JAKAWI</p>{membership.has_paid_for_itself ? <><h2 className="mt-2 text-2xl font-extrabold">✓ TU JAKAWI YA SE PAGÓ SOLO</h2><p className="mt-2">Pagaste Bs {membershipConfig.price_bob} · Ya ahorraste Bs {membership.confirmed_savings}</p></> : <><p className="mt-2 text-3xl font-extrabold">Bs {membership.confirmed_savings}</p><p className="mt-2 text-sm">Te faltan Bs {membership.remaining_to_payback} para que tu JAKAWI se pague solo.</p><div className="mt-4 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full bg-brand" style={{ width: `${Math.min(100, Math.max(0, Number(membership.confirmed_savings) / membershipConfig.price_bob * 100))}%` }} /></div></>}</section> : null}
 
                     {membership ? (
                         <div className="rounded-md border border-border bg-surface p-5">
@@ -318,7 +284,7 @@ export default function MiJakawi({
                         </div>
                     ) : null}
                 </section>
-            </main>
+            </main><MobileBottomNav />
         </>
     );
 }

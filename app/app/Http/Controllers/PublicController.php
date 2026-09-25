@@ -71,6 +71,33 @@ class PublicController extends Controller
         return Inertia::render('benefits/index', ['benefits' => $query->get()->map(fn ($b) => $this->benefitData($b)), 'category' => $request->query('category')]);
     }
 
+    public function explore(Request $request): Response
+    {
+        $term = trim((string) $request->query('q', ''));
+        $category = $request->query('category');
+        $type = $request->query('type');
+        $benefits = Benefit::available()->with('partner')->orderByDesc('featured')->orderBy('sort_order');
+        $experiences = Experience::upcoming()->with('sessions.location')->orderByDesc('featured')->orderBy('sort_order');
+
+        if ($category && $category !== 'todos') {
+            $benefits->where('category', $category);
+            $experiences->where('category', $category);
+        }
+        if ($term !== '') {
+            $like = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%';
+            $benefits->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partner', fn ($p) => $p->where('name', 'ilike', $like)));
+            $experiences->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partners', fn ($p) => $p->where('name', 'ilike', $like)));
+        }
+
+        return Inertia::render('explore', [
+            'query' => $term,
+            'category' => $category,
+            'type' => $type,
+            'benefits' => $type === 'experiences' ? [] : $benefits->get()->map(fn ($b) => $this->benefitData($b)),
+            'experiences' => $type === 'benefits' ? [] : $experiences->get()->map(fn ($e) => $this->experienceData($e)),
+        ]);
+    }
+
     public function benefit(Benefit $benefit, Request $request, AnalyticsTracker $analytics): Response
     {
         $benefit->load('partner');
