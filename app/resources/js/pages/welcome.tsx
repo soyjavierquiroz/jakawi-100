@@ -10,11 +10,13 @@ export default function Welcome({
     featuredExperiences = [],
     membershipSummary,
     isPersonalizedHome = false,
+    personalizationSubtitle,
 }: {
     featuredBenefits?: BenefitSummary[];
     featuredExperiences?: any[];
     membershipSummary?: any;
     isPersonalizedHome?: boolean;
+    personalizationSubtitle?: string | null;
 }) {
     const { auth } = usePage().props;
 
@@ -84,7 +86,7 @@ export default function Welcome({
                                 <div className="space-y-1">
                                     <h2 className="text-2xl font-semibold">{isPersonalizedHome ? 'Beneficios para ti' : 'Beneficios destacados'}</h2>
                                     <p className="text-sm text-muted-foreground">
-                                        {isPersonalizedHome ? 'Según tus intereses.' : 'Primeras oportunidades disponibles en JAKAWI.'}
+                                        {isPersonalizedHome ? personalizationSubtitle : 'Primeras oportunidades disponibles en JAKAWI.'}
                                     </p>
                                 </div>
                                 <Link
@@ -107,7 +109,7 @@ export default function Welcome({
                     {featuredExperiences.length ? (
                         <section className="space-y-3">
                             <h2 className="text-2xl font-semibold">{isPersonalizedHome ? 'Experiencias para ti' : 'Experiencias próximas'}</h2>
-                            {isPersonalizedHome ? <p className="text-sm text-muted-foreground">Según tus intereses.</p> : null}
+                            {isPersonalizedHome ? <p className="text-sm text-muted-foreground">{personalizationSubtitle}</p> : null}
                             {featuredExperiences.map((experience) => (
                                 <Link
                                     className="block rounded-md border border-border p-4"

@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 
 class HomePersonalizationService
 {
+    public function __construct(private readonly MemberAffinityService $affinity) {}
+
     /**
      * Only consumer accounts with explicit interests are eligible. This deliberately
      * does not inspect views, redemptions, reservations, or any other behaviour.
@@ -21,32 +23,30 @@ class HomePersonalizationService
             return [];
         }
 
-        $interests = $user->profile()->value('interests') ?? [];
-
         return array_values(array_intersect(
             config('jakawi.categories'),
-            array_filter($interests, 'is_string'),
+            array_filter($user->profile()->value('interests') ?? [], 'is_string'),
         ));
     }
 
     /** @param Collection<int, Benefit> $benefits @param array<int, string> $interests @return Collection<int, Benefit> */
-    public function rankBenefits(Collection $benefits, array $interests): Collection
+    public function rankBenefits(Collection $benefits, array $affinities): Collection
     {
-        return $benefits->sort($this->benefitComparator($interests))->values();
+        return $benefits->sort($this->benefitComparator($affinities))->values();
     }
 
     /** @param Collection<int, Experience> $experiences @param array<int, string> $interests @return Collection<int, Experience> */
-    public function rankExperiences(Collection $experiences, array $interests): Collection
+    public function rankExperiences(Collection $experiences, array $affinities, bool $hasGenericExperiencesInterest = false): Collection
     {
-        return $experiences->sort($this->experienceComparator($interests))->values();
+        return $experiences->sort($this->experienceComparator($affinities, $hasGenericExperiencesInterest))->values();
     }
 
     /** @param array<int, string> $interests */
-    private function benefitComparator(array $interests): callable
+    private function benefitComparator(array $affinities): callable
     {
-        return function (Benefit $left, Benefit $right) use ($interests): int {
-            $score = fn (Benefit $benefit): int => (in_array($benefit->category, $interests, true) ? 100 : 0)
-                + ($benefit->featured ? 20 : 0);
+        return function (Benefit $left, Benefit $right) use ($affinities): int {
+            $score = fn (Benefit $benefit): int => ($affinities[$benefit->category] ?? 0)
+                + ($benefit->featured ? config('personalization.weights.featured') : 0);
 
             return $this->compare(
                 $score($left),
@@ -60,12 +60,12 @@ class HomePersonalizationService
     }
 
     /** @param array<int, string> $interests */
-    private function experienceComparator(array $interests): callable
+    private function experienceComparator(array $affinities, bool $hasGenericExperiencesInterest): callable
     {
-        return function (Experience $left, Experience $right) use ($interests): int {
-            $score = fn (Experience $experience): int => (in_array($experience->category, array_diff($interests, ['experiences']), true) ? 100 : 0)
-                + (in_array('experiences', $interests, true) ? 25 : 0)
-                + ($experience->featured ? 20 : 0);
+        return function (Experience $left, Experience $right) use ($affinities, $hasGenericExperiencesInterest): int {
+            $score = fn (Experience $experience): int => ($affinities[$experience->category] ?? 0)
+                + ($hasGenericExperiencesInterest ? config('personalization.weights.generic_experiences_interest') : 0)
+                + ($experience->featured ? config('personalization.weights.featured') : 0);
 
             $scoreDifference = $score($right) <=> $score($left);
 
