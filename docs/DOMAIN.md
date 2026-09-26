@@ -53,3 +53,6 @@ Admin administra y revisa contenido mediante `user.is_admin`. Partner accede sol
 Benefit equivale a valor canjeable; Experience equivale a actividad para descubrir y, si hay sesión, reservar. Partner es quien provee/crea; Location es el sitio físico. No reintroducir `merchant`, `merchant_id` ni la arquitectura legacy Merchant.
 
 Payment QR compra una Membership y sólo se confirma desde backend confiable. Redemption QR valida el uso de un Benefit en Partner: son dominios distintos y no comparten estados, modelos ni servicios por usar el mismo medio visual.
+# Reward payouts
+
+`RewardPayout` agrupa recompensas cash para un beneficiario y guarda la solicitud, estado, referencia externa de pago, actor y fechas. El pivot conserva el historial de inclusiones; la solicitud toma un lock del beneficiario y excluye recompensas ligadas a payouts `requested`, por lo que una recompensa no puede estar en dos payouts abiertos. Estados V1: `requested`, `paid`, `rejected`.

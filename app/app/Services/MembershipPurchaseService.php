@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AuditLog;
 use App\Models\MembershipPurchase;
+use App\Models\RewardPayout;
 use App\Models\RewardTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -69,6 +70,9 @@ class MembershipPurchaseService
                 $purchase->conversion()->lockForUpdate()->firstOrFail()->update(['status' => 'refunded']);
                 $rewards = RewardTransaction::query()->where('conversion_id', $purchase->conversion_id)->lockForUpdate()->get();
                 foreach ($rewards as $reward) {
+                    $openPayout = $reward->payouts()->where('status', RewardPayout::STATUS_REQUESTED)->lockForUpdate()->first();
+                    abort_if($openPayout, 422, 'La comisión está reservada en una solicitud de pago. Rechace la solicitud antes de reembolsar la venta.');
+                    abort_if($reward->status === RewardTransaction::STATUS_PAID, 422, 'La comisión ya fue pagada; requiere un ajuste financiero posterior, no una reversión automática.');
                     $reward->update(['status' => RewardTransaction::STATUS_CANCELLED]);
                     AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'reward_cancelled', 'subject_type' => RewardTransaction::class, 'subject_id' => $reward->id, 'metadata' => ['purchase_id' => $purchase->id]]);
                 }

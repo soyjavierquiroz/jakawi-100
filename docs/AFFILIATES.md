@@ -59,3 +59,10 @@ El Affiliate sólo ve sus propios resultados y genera enlaces con
 manuales, editar reglas, modificar atribución ni cambiar estados financieros.
 Admin enrola, activa/desactiva, controla vigencia/código, reglas y PENDING →
 AVAILABLE. Esas acciones y los cambios de código/regla quedan en `AuditLog`.
+# Payouts V1
+
+Las comisiones `CASH` disponibles se solicitan completas desde el dashboard del afiliado. El mínimo `affiliate_minimum_payout` es persistente y configurable por Admin. La solicitud reserva exclusivamente esas recompensas en un payout; no incluye pendientes, canceladas ni ya pagadas.
+
+JAKAWI paga fuera de la plataforma. Después, un Admin registra una referencia/comprobante obligatoria y marca el payout como `PAID`, lo que marca las recompensas incluidas como `PAID`. Puede rechazar una solicitud con motivo obligatorio; las recompensas permanecen `AVAILABLE` para una solicitud posterior. No se recolectan datos bancarios en el onboarding.
+
+La tabla `reward_payouts` y su pivot con `reward_transactions` son el registro de pago; el ledger de recompensas conserva el origen económico. El diseño es reutilizable para Creator/Promoter en el futuro, aunque la UI actual es Affiliate. Transferencias automáticas, proveedores de payout y ajustes/clawbacks posteriores a un pago quedan fuera de V1.

@@ -56,3 +56,6 @@
 - AVIF.
 - Editor de crop más allá del avatar.
 - Marketplace abierto.
+# Affiliate payout V1
+
+Implementado: solicitudes de pago manuales, revisión admin, referencia externa, auditoría y reserva del ledger. Futuro: datos de pago bajo demanda, Creator/Promoter UI, payout provider y ajustes financieros para devoluciones después de pagos.

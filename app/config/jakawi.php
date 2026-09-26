@@ -26,6 +26,10 @@ return [
         'product_key' => 'jakawi_annual',
     ],
     'membership_statuses' => ['active', 'cancelled'],
+    'affiliate' => [
+        // The database setting is authoritative once an admin has configured it.
+        'minimum_payout' => env('JAKAWI_AFFILIATE_MINIMUM_PAYOUT', 0),
+    ],
     'redemption' => [
         'code_ttl_minutes' => 10,
     ],
@@ -37,6 +41,7 @@ return [
             'home_view', 'partner_view', 'location_view', 'benefit_view', 'experience_view',
             'redeem_started', 'redeem_confirmed', 'experience_reserve_click', 'maps_click', 'whatsapp_click',
             'anonymous_session_created', 'referral_link_opened', 'referral_shared', 'referral_code_entered', 'signup_completed',
+            'affiliate_payout_requested', 'affiliate_payout_completed',
         ],
         'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],
     ],
