@@ -6,6 +6,8 @@ use App\Models\Benefit;
 use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Models\Partner;
+use App\Models\RewardRule;
+use App\Models\RewardTransaction;
 use App\Services\PartnerKpiService;
 use App\Services\PartnerAcquisitionMetrics;
 use Illuminate\Http\RedirectResponse;
@@ -42,6 +44,7 @@ class PartnerPortalController extends Controller
         return Inertia::render('partner/dashboard', [
             'partner' => $partner->only(['name', 'slug']) + ($canViewAcquisition ? ['referral_code' => $partner->referral_code, 'referral_link' => $partner->referral_code ? route('referrals.open', $partner->referral_code) : null] : []),
             'acquisition' => $canViewAcquisition ? $acquisition->forPartner($partner) : null,
+            'rewards' => $canViewAcquisition ? collect([RewardTransaction::STATUS_PENDING, RewardTransaction::STATUS_AVAILABLE, RewardTransaction::STATUS_PAID])->mapWithKeys(fn ($status) => [$status => number_format((float) RewardTransaction::where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER)->where('beneficiary_id', $partner->id)->where('status', $status)->sum('amount'), 2, '.', '')])->all() : null,
             'pendingReservations' => ExperienceReservation::where('partner_id', $partner->id)->where('status', 'pending')->count(),
             'benefitDrafts' => Benefit::where('partner_id', $partner->id)->where('review_status', 'draft')->count(),
             'benefitSubmitted' => Benefit::where('partner_id', $partner->id)->where('review_status', 'submitted')->count(),

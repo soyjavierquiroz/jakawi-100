@@ -84,7 +84,7 @@ class AdminAffiliateController extends Controller
     public function show(User $user, AffiliateMetrics $metrics): Response
     {
         abort_unless($enrollment = $this->enrollment($user), 404);
-        $rule = app(RewardResolver::class)->ruleFor($user, $this->programType(), 'membership_purchased', config('jakawi.membership.product_key', 'jakawi_annual'));
+        $rule = app(RewardResolver::class)->ruleFor($user, RewardRule::BENEFICIARY_USER, $this->programType(), 'membership_purchased', config('jakawi.membership.product_key', 'jakawi_annual'));
         $conversions = Conversion::query()->where('type', 'membership_purchased')->whereHas('relationship', fn ($q) => $q->where('referrer_user_id', $user->id))->latest('occurred_at')->limit(10)->get(['id', 'order_reference', 'eligible_amount', 'currency', 'status', 'occurred_at']);
         $rewards = RewardTransaction::query()->where('beneficiary_user_id', $user->id)->with('rule')->latest()->limit(10)->get();
         $audit = AuditLog::query()->where(fn ($q) => $q->where('subject_type', User::class)->where('subject_id', $user->id)->orWhere('subject_type', ProgramEnrollment::class)->where('subject_id', $enrollment->id)->orWhere('subject_type', RewardRule::class)->whereIn('subject_id', RewardRule::where('beneficiary_user_id', $user->id)->pluck('id'))->orWhere('subject_type', RewardTransaction::class)->whereIn('subject_id', RewardTransaction::where('beneficiary_user_id', $user->id)->pluck('id')))->latest()->get();

@@ -59,3 +59,6 @@ Payment QR compra una Membership y sólo se confirma desde backend confiable. Re
 # Domain notes
 
 `Partner` is a domain entity and is not a User program participant. Partner acquisition attribution is marketing information, distinct from paid referral beneficiaries and rewards.
+# Reward beneficiaries
+
+Reward rules and transactions support an additive beneficiary subject (`USER` or `PARTNER`) while preserving legacy user foreign keys. Partner portal users authorize access only; they are never the financial beneficiary.
