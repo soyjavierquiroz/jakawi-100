@@ -1,6 +1,14 @@
 import { Head, router } from '@inertiajs/react';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import Cropper, { type Area } from 'react-easy-crop';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import AppearanceSelector from '@/components/appearance-selector';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 type Profile = {
     city: string | null;
@@ -41,6 +49,48 @@ const labels: Record<string, string> = {
     tarde: 'Tarde',
     noche: 'Noche',
 };
+
+const AVATAR_SIZE = 1024;
+
+async function cropAvatar(source: string, crop: Area): Promise<File> {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const element = new Image();
+        element.onload = () => resolve(element);
+        element.onerror = () => reject(new Error('No se pudo abrir la foto.'));
+        element.src = source;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = AVATAR_SIZE;
+    canvas.height = AVATAR_SIZE;
+    const context = canvas.getContext('2d');
+
+    if (!context) throw new Error('No se pudo preparar la foto.');
+
+    context.drawImage(
+        image,
+        crop.x,
+        crop.y,
+        crop.width,
+        crop.height,
+        0,
+        0,
+        AVATAR_SIZE,
+        AVATAR_SIZE,
+    );
+
+    const blob = await new Promise<Blob>((resolve, reject) =>
+        canvas.toBlob(
+            (result) =>
+                result
+                    ? resolve(result)
+                    : reject(new Error('No se pudo preparar la foto.')),
+            'image/jpeg',
+            0.88,
+        ),
+    );
+
+    return new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+}
 
 function Choices({
     values,
@@ -85,11 +135,22 @@ export default function MemberProfile({
         avatar: null as File | null,
     });
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+    const [cropSource, setCropSource] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [cropPixels, setCropPixels] = useState<Area | null>(null);
+    const [cropping, setCropping] = useState(false);
+    const galleryInput = useRef<HTMLInputElement>(null);
+    const cameraInput = useRef<HTMLInputElement>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [saving, setSaving] = useState(false);
-    useEffect(() => () => {
-        if (avatarPreview) URL.revokeObjectURL(avatarPreview);
-    }, [avatarPreview]);
+    useEffect(
+        () => () => {
+            if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+        },
+        [avatarPreview],
+    );
     const toggle = (
         field:
             | 'interests'
@@ -111,7 +172,10 @@ export default function MemberProfile({
             { ...form, _method: 'put' },
             {
                 forceFormData: true,
-                onStart: () => { setSaving(true); setErrors({}); },
+                onStart: () => {
+                    setSaving(true);
+                    setErrors({});
+                },
                 onError: (newErrors) => setErrors(newErrors),
                 onSuccess: () => {
                     setForm((current) => ({ ...current, avatar: null }));
@@ -122,13 +186,47 @@ export default function MemberProfile({
         );
     };
     const avatarChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const avatar = event.target.files?.[0] ?? null;
-        setForm((current) => ({ ...current, avatar }));
-        setErrors((current) => ({ ...current, avatar: '' }));
-        setAvatarPreview((current) => {
+        const image = event.target.files?.[0];
+        event.target.value = '';
+        if (!image) return;
+        setAvatarPickerOpen(false);
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+        setCropPixels(null);
+        setCropSource((current) => {
             if (current) URL.revokeObjectURL(current);
-            return avatar ? URL.createObjectURL(avatar) : null;
+            return URL.createObjectURL(image);
         });
+    };
+    const closeCropper = () => {
+        setCropSource((current) => {
+            if (current) URL.revokeObjectURL(current);
+            return null;
+        });
+        setCropping(false);
+    };
+    const useCroppedAvatar = async () => {
+        if (!cropSource || !cropPixels) return;
+        setCropping(true);
+        try {
+            const avatar = await cropAvatar(cropSource, cropPixels);
+            setForm((current) => ({ ...current, avatar }));
+            setErrors((current) => ({ ...current, avatar: '' }));
+            setAvatarPreview((current) => {
+                if (current) URL.revokeObjectURL(current);
+                return URL.createObjectURL(avatar);
+            });
+            closeCropper();
+        } catch (error) {
+            setErrors((current) => ({
+                ...current,
+                avatar:
+                    error instanceof Error
+                        ? error.message
+                        : 'No se pudo preparar la foto.',
+            }));
+            setCropping(false);
+        }
     };
     const complete = profile.completion_percentage === 100;
 
@@ -141,10 +239,7 @@ export default function MemberProfile({
                     className="mx-auto flex w-full max-w-xl flex-col gap-6"
                 >
                     <div>
-                        <a
-                            href="/"
-                            className="text-sm font-medium underline"
-                        >
+                        <a href="/" className="text-sm font-medium underline">
                             Inicio
                         </a>
                         <p className="mt-5 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
@@ -162,7 +257,11 @@ export default function MemberProfile({
                         <div className="flex items-center gap-4">
                             {avatarPreview || profile.avatar_url ? (
                                 <img
-                                    src={avatarPreview ?? profile.avatar_url ?? undefined}
+                                    src={
+                                        avatarPreview ??
+                                        profile.avatar_url ??
+                                        undefined
+                                    }
                                     className="h-16 w-16 rounded-full object-cover"
                                     alt="Tu avatar"
                                 />
@@ -172,18 +271,24 @@ export default function MemberProfile({
                                 </div>
                             )}
                             <div>
-                                <p className="font-semibold">{user.name}</p><p className="text-sm text-muted-foreground">{user.email}</p>
-                                <label className="mt-1 block cursor-pointer text-sm underline">
-                                    Agregar foto opcional
-                                    <input
-                                        className="sr-only"
-                                        type="file"
-                                        accept="image/jpeg,image/png,image/webp"
-                                        onChange={avatarChange}
-                                    />
-                                </label>
-                                {form.avatar ? <p className="mt-1 text-xs text-muted-foreground">{form.avatar.name}</p> : null}
-                                {errors.avatar || errors.image ? <p className="mt-1 text-sm text-destructive">{errors.avatar || errors.image}</p> : null}
+                                <p className="font-semibold">{user.name}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    {user.email}
+                                </p>
+                                <button
+                                    type="button"
+                                    className="mt-1 min-h-11 text-sm font-semibold underline"
+                                    onClick={() => setAvatarPickerOpen(true)}
+                                >
+                                    {avatarPreview || profile.avatar_url
+                                        ? 'Cambiar foto'
+                                        : 'Agregar foto opcional'}
+                                </button>
+                                {errors.avatar || errors.image ? (
+                                    <p className="mt-1 text-sm text-destructive">
+                                        {errors.avatar || errors.image}
+                                    </p>
+                                ) : null}
                             </div>
                         </div>
                         <label className="mt-5 block text-sm font-semibold">
@@ -268,7 +373,15 @@ export default function MemberProfile({
                                 : 'Completa las cuatro secciones para terminar tu perfil.'}
                         </p>
                     </div>
-                    <section className="rounded-md border border-border bg-surface p-5"><p className="text-lg font-semibold">Apariencia</p><p className="mt-1 text-sm text-muted-foreground">Elige cómo se ve JAKAWI.</p><div className="mt-4"><AppearanceSelector /></div></section>
+                    <section className="rounded-md border border-border bg-surface p-5">
+                        <p className="text-lg font-semibold">Apariencia</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                            Elige cómo se ve JAKAWI.
+                        </p>
+                        <div className="mt-4">
+                            <AppearanceSelector />
+                        </div>
+                    </section>
                     <button
                         className="rounded-md bg-foreground px-4 py-3 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
                         type="submit"
@@ -276,9 +389,128 @@ export default function MemberProfile({
                     >
                         {saving ? 'Guardando perfil…' : 'Guardar perfil'}
                     </button>
-                    <button type="button" onClick={() => router.post('/logout')} className="min-h-11 text-sm font-semibold text-muted-foreground underline">Cerrar sesión</button>
+                    <button
+                        type="button"
+                        onClick={() => router.post('/logout')}
+                        className="min-h-11 text-sm font-semibold text-muted-foreground underline"
+                    >
+                        Cerrar sesión
+                    </button>
                 </form>
             </main>
+            <input
+                ref={galleryInput}
+                className="sr-only"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={avatarChange}
+                data-test="avatar-gallery-input"
+            />
+            <input
+                ref={cameraInput}
+                className="sr-only"
+                type="file"
+                accept="image/*"
+                capture="user"
+                onChange={avatarChange}
+                data-test="avatar-camera-input"
+            />
+            <Dialog open={avatarPickerOpen} onOpenChange={setAvatarPickerOpen}>
+                <DialogContent className="max-w-sm p-5">
+                    <DialogHeader>
+                        <DialogTitle>Agregar foto</DialogTitle>
+                        <DialogDescription>
+                            Elige cómo quieres agregar tu foto de perfil.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-2">
+                        <button
+                            type="button"
+                            className="min-h-11 rounded-md border border-border px-4 text-left font-semibold"
+                            onClick={() => cameraInput.current?.click()}
+                        >
+                            Tomar foto
+                        </button>
+                        <button
+                            type="button"
+                            className="min-h-11 rounded-md border border-border px-4 text-left font-semibold"
+                            onClick={() => galleryInput.current?.click()}
+                        >
+                            Elegir de galería
+                        </button>
+                        <button
+                            type="button"
+                            className="min-h-11 px-4 text-left font-semibold text-muted-foreground"
+                            onClick={() => setAvatarPickerOpen(false)}
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+            <Dialog
+                open={cropSource !== null}
+                onOpenChange={(open) => !open && closeCropper()}
+            >
+                <DialogContent className="h-[100dvh] max-w-none gap-0 rounded-none border-0 p-0 sm:h-auto sm:max-w-xl sm:rounded-lg sm:border">
+                    <DialogHeader className="shrink-0 px-5 pt-6 sm:px-6">
+                        <DialogTitle>Encuadra tu foto</DialogTitle>
+                        <DialogDescription>
+                            Mueve y acerca la imagen hasta que te guste.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="relative mx-auto mt-5 h-[min(66vw,420px)] max-h-[52dvh] w-[min(66vw,420px)] max-w-[calc(100vw-3rem)] overflow-hidden rounded-full bg-muted sm:h-[420px] sm:w-[420px]">
+                        {cropSource ? (
+                            <Cropper
+                                image={cropSource}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={1}
+                                cropShape="round"
+                                showGrid={false}
+                                onCropChange={setCrop}
+                                onZoomChange={setZoom}
+                                onCropComplete={(_, pixels) =>
+                                    setCropPixels(pixels)
+                                }
+                            />
+                        ) : null}
+                    </div>
+                    <label className="mx-auto mt-6 block w-full max-w-sm px-5 text-sm font-semibold sm:px-6">
+                        Acercar
+                        <input
+                            className="mt-3 w-full accent-[var(--brand)]"
+                            type="range"
+                            min="1"
+                            max="3"
+                            step="0.05"
+                            value={zoom}
+                            onChange={(event) =>
+                                setZoom(Number(event.target.value))
+                            }
+                            aria-label="Acercar foto"
+                        />
+                    </label>
+                    <div className="mt-auto flex shrink-0 gap-3 p-5 sm:mt-6 sm:p-6">
+                        <button
+                            type="button"
+                            className="min-h-11 flex-1 rounded-md border border-border px-4 font-semibold"
+                            onClick={closeCropper}
+                            disabled={cropping}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="button"
+                            className="min-h-11 flex-1 rounded-md bg-brand px-4 font-bold text-white disabled:opacity-60"
+                            onClick={useCroppedAvatar}
+                            disabled={cropping || !cropPixels}
+                        >
+                            {cropping ? 'Preparando…' : 'USAR FOTO'}
+                        </button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
