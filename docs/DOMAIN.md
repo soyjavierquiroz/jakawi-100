@@ -36,7 +36,7 @@ erDiagram
 - **Redemption:** uso de un Benefit por un miembro con membresía activa; conserva snapshots operativos y de ahorro.
 - **AnalyticsEvent:** eventos first-party limitados, vinculables a usuario y entidades de catálogo.
 - **AttributionTouch / ReferralRelationship / Conversion:** evidencia de origen, primer referente válido y ventas idempotentes; véase [ATTRIBUTION.md](ATTRIBUTION.md).
-- **ProgramEnrollment / MembershipPurchase / RewardRule / RewardTransaction:** acceso de programa, transacción comercial neutral y ledger de recompensa; véase [MANUAL-SALES.md](MANUAL-SALES.md).
+- **ProgramEnrollment / MembershipPurchase / RewardRule / RewardTransaction:** acceso de programa, transacción comercial neutral y ledger de recompensa; véase [MANUAL-SALES.md](MANUAL-SALES.md). El futuro pago QR comparte esta compra comercial, no el dominio de QR de canje; véase [PAYMENTS.md](PAYMENTS.md).
 
 ## Ciclos y estados
 
@@ -51,3 +51,5 @@ Admin administra y revisa contenido mediante `user.is_admin`. Partner accede sol
 ## Distinciones que no se deben diluir
 
 Benefit equivale a valor canjeable; Experience equivale a actividad para descubrir y, si hay sesión, reservar. Partner es quien provee/crea; Location es el sitio físico. No reintroducir `merchant`, `merchant_id` ni la arquitectura legacy Merchant.
+
+Payment QR compra una Membership y sólo se confirma desde backend confiable. Redemption QR valida el uso de un Benefit en Partner: son dominios distintos y no comparten estados, modelos ni servicios por usar el mismo medio visual.

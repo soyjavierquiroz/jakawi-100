@@ -22,4 +22,4 @@ Sólo Admin puede reembolsar y debe indicar motivo. El reembolso conserva compra
 
 ## Operación y futuro QR
 
-Promotor dispone de Mis ventas, Nueva venta y detalle propio. Admin dispone de ventas, activación manual, reembolso y reglas básicas de recompensa. QR futuro sólo cambia la confirmación de pago: seguirá `MembershipPurchase → MembershipPurchaseService → Conversion → reward evaluation`.
+Promotor dispone de Mis ventas, Nueva venta y detalle propio. Admin dispone de ventas, activación manual, reembolso y reglas básicas de recompensa. QR futuro sólo cambia la confirmación de pago: seguirá `MembershipPurchase → MembershipPurchaseService → Conversion → reward evaluation`. La entidad ya tiene `payment_channel` y `status` de texto, suficientes para la fundación; no se añadieron columnas de proveedor ni migraciones sin contrato real. La forma de persistir una referencia externa queda pendiente. Véase [PAYMENTS.md](PAYMENTS.md).

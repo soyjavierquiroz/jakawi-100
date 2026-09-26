@@ -22,8 +22,9 @@
 
 - Implementar el módulo de pagos propio de JAKAWI para Bolivia, con QR como
   método principal previsto. Esta fase incluye la verificación server-side e
-  idempotente antes de activar una membresía; está diferida y no define aún
-  proveedor, banco ni integración.
+  idempotente antes de activar una membresía. La fundación de adaptador está
+  lista pero QR continúa deshabilitado: no define aún proveedor, banco ni
+  integración. Véase [PAYMENTS.md](PAYMENTS.md).
 - Retomar y desplegar el Paywall contextual preparado sólo cuando exista ese
   flujo de pago QR real.
 - Refinamiento a partir del uso real.

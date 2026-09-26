@@ -26,6 +26,13 @@ Una migración normal, si ha sido aprobada como parte del release, se ejecuta s�
 
 Después de cambiar `.env`, recrear cada servicio que consume ese entorno y comprobar la configuración efectiva dentro del contenedor. Esto es especialmente importante para `app` e `imgproxy`; editar el archivo no modifica un contenedor ya creado.
 
+## Pagos QR
+
+El release actual debe conservar `QR_PAYMENT_ENABLED=false` y
+`QR_PAYMENT_DRIVER=disabled`. `fake` sirve exclusivamente para pruebas y
+desarrollo; la aplicación rechaza esa configuración en producción. No hay QR
+visible, endpoint de pago ni webhook que operar aún. Véase [PAYMENTS.md](PAYMENTS.md).
+
 ## Pruebas aisladas
 
 Todas las pruebas y comandos contra base de test pasan por:

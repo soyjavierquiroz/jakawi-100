@@ -30,9 +30,11 @@ Paywall
   → volver al Benefit que originó el flujo
 ```
 
-Esto describe un límite de producto, no un contrato de API ni un esquema de
-base de datos. No existe todavía `membership_checkouts`, código de pagos, QR
-de pago, callback ni integración financiera.
+La fundación actual define sólo el contrato intercambiable
+`QrPaymentGateway`: crea una solicitud y traduce su estado a `pending`,
+`confirmed`, `failed` o `expired`. No existe todavía `membership_checkouts`,
+un proveedor, callback, endpoint productivo ni integración financiera. Véase
+[PAYMENTS.md](PAYMENTS.md).
 
 Manual Membership Sales V1 usa `MembershipPurchase` y una confirmación de efectivo para activar server-side, registrar la conversión y evaluar recompensa. El futuro QR reutilizará exactamente la misma compra, activación y conversión: sólo cambia cómo se confirma el pago. Véase [MANUAL-SALES.md](MANUAL-SALES.md).
 
