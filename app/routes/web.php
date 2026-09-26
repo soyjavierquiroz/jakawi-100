@@ -12,10 +12,12 @@ use App\Http\Controllers\PartnerPortalController;
 use App\Http\Controllers\PartnerReservationController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RedemptionController;
+use App\Http\Controllers\ReferralController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
 Route::get('/partners/{partner:slug}', [PublicController::class, 'partners'])->name('partners.show');
 Route::get('/partners/{partner:slug}/whatsapp', [PublicController::class, 'partnerWhatsapp'])->name('partners.whatsapp');
@@ -105,6 +107,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('memberships', [AdminController::class, 'activateMembership'])->name('admin.memberships.store');
     Route::delete('memberships/{membership}', [AdminController::class, 'cancelMembership'])->name('admin.memberships.cancel');
     Route::get('redemptions', [AdminController::class, 'redemptions'])->name('admin.redemptions.index');
+    Route::get('attribution', [AdminController::class, 'attribution'])->name('admin.attribution.index');
+    Route::put('attribution/settings', [AdminController::class, 'updateAttributionSettings'])->name('admin.attribution.settings.update');
 });
 
 require __DIR__.'/settings.php';

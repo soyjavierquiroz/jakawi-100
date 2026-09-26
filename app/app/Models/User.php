@@ -66,6 +66,15 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Redemption::class);
     }
 
+    /** @return HasMany<AttributionTouch> */
+    public function attributionTouches(): HasMany { return $this->hasMany(AttributionTouch::class); }
+
+    /** @return HasMany<ReferralRelationship> */
+    public function referralRelationships(): HasMany { return $this->hasMany(ReferralRelationship::class, 'referred_user_id'); }
+
+    /** @return HasMany<Conversion> */
+    public function conversions(): HasMany { return $this->hasMany(Conversion::class); }
+
     /** @return HasMany<ExperienceReservation> */
     public function experienceReservations(): HasMany
     {

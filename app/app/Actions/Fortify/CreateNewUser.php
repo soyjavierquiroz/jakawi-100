@@ -5,6 +5,11 @@ namespace App\Actions\Fortify;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
+use App\Services\AnalyticsTracker;
+use App\Services\AttributionService;
+use App\Services\ReferralCodeService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -22,12 +27,22 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
+            'referral_code' => ['nullable', 'string', 'max:64'],
         ])->validate();
-
-        return User::create([
+        /** @var Request $request */
+        $request = app(Request::class);
+        $user = DB::transaction(function () use ($input, $request): User {
+            $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
-        ]);
+            ]);
+            app(ReferralCodeService::class)->ensureFor($user);
+            app(AttributionService::class)->associateRegisteredUser($user, $request, $input['referral_code'] ?? null);
+            return $user;
+        });
+        if (filled($input['referral_code'] ?? null)) app(AnalyticsTracker::class)->record('referral_code_entered');
+        app(AnalyticsTracker::class)->record('signup_completed', ['user_id' => $user->id]);
+        return $user;
     }
 }

@@ -18,6 +18,7 @@ export default function AdminLayout({
                 <Link href="/admin/experiences">Experiencias</Link>
                 <Link href="/admin/memberships">Membresías</Link>
                 <Link href="/admin/redemptions">Canjes</Link>
+                <Link href="/admin/attribution">Atribución</Link>
             </nav>
             <h1 className="mt-8 text-3xl font-semibold">{title}</h1>
             <div className="mt-6">{children}</div>

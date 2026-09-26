@@ -1,0 +1,25 @@
+# Atribución, referidos y conversiones V1
+
+## Principios
+
+La atribución de marketing explica cómo llegó alguien (UTM y landing); el referente identifica quién lo trajo; una recompensa es un dominio posterior y no forma parte de esta versión. La evidencia se conserva antes del registro y el origen de una venta se congela al crear su conversión.
+
+## Identidad y contactos
+
+Se reutiliza el UUID first-party `jakawi_visitor_id` como `anonymous_id`: es aleatorio, opaco, no contiene PII y no usa IP, fingerprint ni user-agent. Cada `/r/{CODE}` registra un `attribution_touch`, incluyendo UTMs permitidas y la landing. Al registrarse, los touches anónimos se asocian al usuario sin destruir su `anonymous_id` histórico.
+
+## Códigos y ruta
+
+Los códigos son únicos, normalizados a mayúsculas ASCII y se generan sólo para nuevos usuarios registrados. Las rutas `/r/{CODE}` resuelven el código sin exponer datos del referente y sólo redirigen a Inicio, preservando únicamente UTMs controladas: no existe open redirect.
+
+## First Valid Referrer
+
+La política es primer referente válido durante la ventana global configurable (30 días por defecto). Un segundo código siempre queda como touch, pero no reemplaza una relación activa. Tras expirar, un nuevo touch válido puede crear la siguiente relación activa. Auto-referidos se bloquean y no se borran contactos históricos.
+
+## Códigos manuales y conversiones
+
+Registro ofrece un código opcional y aplica exactamente la misma política. `ConversionRecorder` es el único punto para registrar conversiones y exige `idempotency_key`; conserva referencias a la relación, el touch y un snapshot mínimo de referente/UTMs. Sirve para futuras ventas de membresía, QR, experiencias o productos, sin implementar ninguno de esos flujos aún.
+
+## Administración, privacidad y alcance
+
+Admin permite ajustar la ventana (con audit log) y buscar usuarios para ver referente, historial y conversiones. No existen reward rules, saldos, comisiones, payouts, árboles, dashboards de afiliado/creador, QR de pago ni activación manual nueva. La siguiente fase es Manual Membership Sales V1, que consumirá `ConversionRecorder` antes de introducir recompensas.
