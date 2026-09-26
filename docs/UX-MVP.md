@@ -40,7 +40,7 @@ La carga prioriza skeletons y los estados nunca dejan una pantalla vacía ni un 
 
 ## Flujos canónicos
 
-**A. Nuevo usuario → miembro.** Descubre en Inicio o Explorar, entiende el Beneficio y llega a Mi JAKAWI como cuenta gratuita. La conversión se prepara ahí; checkout/pagos pertenecen a un bloque posterior.
+**A. Nuevo usuario → miembro.** Descubre en Inicio o Explorar, entiende el Beneficio y llega a una conversión contextual que conserva ese Benefit; checkout/pagos pertenecen al siguiente bloque de implementación. El contrato y la secuencia están definidos en [CONVERSION.md](CONVERSION.md).
 
 **B. Canje.** Miembro activo abre Beneficio → confirma que está en el establecimiento → se crea o reutiliza el canje pendiente → muestra QR y código manual durante diez minutos → el establecimiento valida → recibe confirmación y ahorro real.
 
@@ -50,7 +50,7 @@ La carga prioriza skeletons y los estados nunca dejan una pantalla vacía ni un 
 
 ## Lo que no existe en este MVP
 
-No hay splash, onboarding, checkout, pagos, Guardados, mapa avanzado, referidos, puntos, IA, gamificación, motor nuevo de recomendaciones, nuevas reservas ni tablas nuevas. **JAKAWI Desbloqueos** es un experimento externo; no es una navegación ni feature del MVP.
+No hay splash, onboarding, checkout/pagos implementados, Guardados, mapa avanzado, referidos, puntos, IA, gamificación, motor nuevo de recomendaciones ni nuevas reservas. La próxima fase de checkout se rige por [CONVERSION.md](CONVERSION.md). **JAKAWI Desbloqueos** es un experimento externo; no es una navegación ni feature del MVP.
 
 ## Métricas y analytics
 

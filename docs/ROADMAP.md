@@ -10,6 +10,7 @@
 
 ## Siguiente
 
+- Implementar la conversión contextual de membresía en los slices de [CONVERSION.md](CONVERSION.md), incluido checkout externo y activación confirmada por servidor.
 - Refinamiento a partir del uso real.
 
 ## Diferido

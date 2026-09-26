@@ -29,6 +29,7 @@ Esto usa el proyecto Compose `jakawi-test` y la base `jakawi_test`, nunca la bas
 - [Dominio](docs/DOMAIN.md)
 - [Producto](docs/PRODUCT.md)
 - [Mapa UX MVP](docs/UX-MVP.md)
+- [Arquitectura de conversión MVP](docs/CONVERSION.md)
 - [Sistema de diseño](docs/DESIGN-SYSTEM.md)
 - [Media](docs/MEDIA.md)
 - [Operaciones](docs/OPERATIONS.md)
