@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Models\AnalyticsEvent;
 use App\Models\Benefit;
 use App\Models\Experience;
+use App\Models\ExperienceReservation;
 use App\Models\ExperienceSession;
 use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
+use App\Models\Redemption;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -118,5 +120,44 @@ class PublicV2HttpTest extends TestCase
         $membership = Membership::create(['user_id' => $user->id, 'amount_paid' => 100, 'starts_at' => now()->subDay(), 'ends_at' => now()->addDay(), 'status' => 'active']);
         $this->actingAs($user)->get('/mi-jakawi')->assertOk()->assertInertia(fn (Assert $page) => $page->where('membership.confirmed_savings', '0.00')->where('membership.remaining_to_payback', '100.00')->where('membership.has_paid_for_itself', false));
         $this->assertNotNull($membership);
+    }
+
+    public function test_mi_jakawi_uses_confirmed_redemptions_for_value_and_orders_real_activity(): void
+    {
+        config()->set('jakawi.membership.price_bob', 120);
+        config()->set('jakawi.membership.duration_days', 400);
+        $user = User::factory()->create();
+        $membership = Membership::create(['user_id' => $user->id, 'amount_paid' => 120, 'starts_at' => now()->subDay(), 'ends_at' => now()->addDay(), 'status' => 'active']);
+        $partner = Partner::factory()->create();
+        $experience = Experience::factory()->create();
+        $session = ExperienceSession::factory()->for($experience)->create();
+        Redemption::create(['public_id' => (string) str()->ulid(), 'code' => 'ABC123', 'user_id' => $user->id, 'membership_id' => $membership->id, 'partner_id' => $partner->id, 'location_id' => null, 'benefit_id' => null, 'partner_name' => 'Café Real', 'location_name' => 'Centro', 'benefit_title' => 'Café de cortesía', 'status' => 'confirmed', 'savings_amount' => 75, 'expires_at' => now(), 'confirmed_at' => now()->subDay()]);
+        Redemption::create(['public_id' => (string) str()->ulid(), 'code' => 'DEF456', 'user_id' => $user->id, 'membership_id' => $membership->id, 'partner_id' => $partner->id, 'location_id' => null, 'benefit_id' => null, 'partner_name' => 'No confirmado', 'location_name' => 'Centro', 'benefit_title' => 'No cuenta', 'status' => 'pending', 'savings_amount' => 99, 'expires_at' => now()->addMinutes(10)]);
+        ExperienceReservation::create(['user_id' => $user->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 1, 'checked_in_at' => now()]);
+
+        $this->actingAs($user)->get('/mi-jakawi')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('membership.confirmed_savings', '75.00')
+            ->where('membership.remaining_to_payback', '45.00')
+            ->where('membership.has_paid_for_itself', false)
+            ->where('membershipConfig.price_bob', 120)
+            ->where('membershipConfig.duration_days', 400)
+            ->where('valueStats.benefits_used', 1)
+            ->where('valueStats.experiences_lived', 1)
+            ->where('activity.0.type', 'experience')
+            ->where('activity.1.type', 'redemption')
+            ->missing('membership.founder_number'));
+    }
+
+    public function test_mi_jakawi_shows_expired_membership_history_and_payback(): void
+    {
+        $user = User::factory()->create();
+        $membership = Membership::create(['user_id' => $user->id, 'amount_paid' => 100, 'starts_at' => now()->subYear(), 'ends_at' => now()->subDay(), 'status' => 'active']);
+        Redemption::create(['public_id' => (string) str()->ulid(), 'code' => 'GHI789', 'user_id' => $user->id, 'membership_id' => $membership->id, 'partner_id' => null, 'location_id' => null, 'benefit_id' => null, 'partner_name' => 'Valor histórico', 'location_name' => 'Centro', 'benefit_title' => 'Beneficio recibido', 'status' => 'confirmed', 'savings_amount' => 100, 'expires_at' => now()->subDay(), 'confirmed_at' => now()->subDays(2)]);
+
+        $this->actingAs($user)->get('/mi-jakawi')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('membership.is_active', false)
+            ->where('membership.confirmed_savings', '100.00')
+            ->where('membership.has_paid_for_itself', true)
+            ->where('activity.0.title', 'Valor histórico'));
     }
 }

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExperienceReservation;
+use App\Models\Benefit;
 use App\Models\Membership;
-use App\Models\UserProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,9 +17,33 @@ class MembershipController extends Controller
             return to_route('partner.index');
         }
 
-        $membership = $request->user()->activeMembership()->first();
+        $membership = $request->user()->activeMembership()->first()
+            ?? $request->user()->memberships()
+                ->where('status', Membership::STATUS_ACTIVE)
+                ->where('ends_at', '<', now())
+                ->latest('ends_at')
+                ->first();
         $confirmed = $membership?->confirmedRedemptions()->latest('confirmed_at')->get() ?? collect();
-        $reservations = $request->user()->experienceReservations()->with(['experience', 'session.location', 'partner'])->get()->sortBy(fn ($r) => [$r->session->starts_at->isPast(), $r->session->starts_at]);
+        $checkIns = $request->user()->experienceReservations()
+            ->with(['experience', 'partner'])
+            ->whereNotNull('checked_in_at')
+            ->latest('checked_in_at')
+            ->get();
+
+        $activity = $confirmed->map(fn ($redemption) => [
+            'id' => 'redemption-'.$redemption->public_id,
+            'type' => 'redemption',
+            'title' => $redemption->partner_name,
+            'detail' => $redemption->benefit_title,
+            'savings_amount' => $redemption->savings_amount,
+            'happened_at' => $redemption->confirmed_at,
+        ])->concat($checkIns->map(fn ($reservation) => [
+            'id' => 'experience-'.$reservation->public_id,
+            'type' => 'experience',
+            'title' => $reservation->experience->title,
+            'detail' => $reservation->partner?->name,
+            'happened_at' => $reservation->checked_in_at,
+        ]))->sortByDesc('happened_at')->take(8)->values();
 
         return Inertia::render('mi-jakawi', [
             'membership' => $membership ? $this->serializeMembership($membership) : null,
@@ -29,10 +51,13 @@ class MembershipController extends Controller
                 'price_bob' => config('jakawi.membership.price_bob'),
                 'duration_days' => config('jakawi.membership.duration_days'),
             ],
-            'redemptionStats' => ['count' => $confirmed->count(), 'savings_total' => $membership?->confirmedSavings() ?? '0.00'],
-            'recentRedemptions' => $confirmed->take(8)->map(fn ($redemption) => ['public_id' => $redemption->public_id, 'partner_name' => $redemption->partner_name, 'benefit_title' => $redemption->benefit_title, 'savings_amount' => $redemption->savings_amount, 'confirmed_at' => $redemption->confirmed_at]),
-            'reservations' => $reservations->map(fn ($r) => ['public_id' => $r->public_id, 'status' => $r->status, 'party_size' => $r->party_size, 'experience' => $r->experience->title, 'starts_at' => $r->session->starts_at, 'venue' => $r->session->location?->name ?? $r->session->venue_label, 'partner' => $r->partner->name, 'checked_in_at' => $r->checked_in_at, 'check_in_code' => $r->status === ExperienceReservation::STATUS_CONFIRMED && ! $r->checked_in_at ? $r->check_in_code : null, 'qr_url' => $r->status === ExperienceReservation::STATUS_CONFIRMED && ! $r->checked_in_at ? URL::signedRoute('partner.checkins.scan', ['partner' => $r->partner->slug, 'reservation_public_id' => $r->public_id]) : null, 'can_cancel' => in_array($r->status, ['pending', 'confirmed'], true) && $r->session->starts_at->isFuture()]),
-            'profile' => $this->profileSummary($request->user()->profile),
+            'valueStats' => [
+                'benefits_used' => $confirmed->count(),
+                'experiences_lived' => $checkIns->count(),
+            ],
+            'activity' => $activity,
+            'featuredBenefits' => $membership ? [] : Benefit::query()->available()->with('partner:id,name')->orderByDesc('featured')->orderBy('sort_order')->limit(3)->get()
+                ->map(fn (Benefit $benefit) => ['slug' => $benefit->slug, 'title' => $benefit->title, 'partner_name' => $benefit->partner->name]),
         ]);
     }
 
@@ -42,6 +67,7 @@ class MembershipController extends Controller
         return [
             'id' => $membership->id,
             'status' => $membership->status,
+            'is_active' => $membership->isActive(),
             'starts_at' => $membership->starts_at?->toDateTimeString(),
             'ends_at' => $membership->ends_at?->toDateTimeString(),
             'days_remaining' => max(0, now()->startOfDay()->diffInDays($membership->ends_at->copy()->startOfDay(), false)),
@@ -52,11 +78,4 @@ class MembershipController extends Controller
         ];
     }
 
-    /** @return array{completion_percentage: int, completed: bool} */
-    private function profileSummary(?UserProfile $profile): array
-    {
-        $percentage = $profile?->completionPercentage() ?? 0;
-
-        return ['completion_percentage' => $percentage, 'completed' => $percentage === 100];
-    }
 }
