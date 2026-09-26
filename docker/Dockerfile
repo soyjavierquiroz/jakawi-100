@@ -41,6 +41,7 @@ RUN npm ci
 
 COPY app/ ./
 RUN php artisan route:clear \
+    && npm run types:check \
     && npm run build \
     && composer dump-autoload --no-dev --optimize \
     && rm -rf node_modules
