@@ -5,9 +5,9 @@
 - Attribution Foundation V1: **LIVE**. Conserva origen anónimo, UTM,
   referente válido y conversiones; no incluye recompensas ni comisiones.
 
-- System States MVP V1: implementado; pendiente de verificación de producción.
-  Cierra estados intencionales de vacío, indisponibilidad, expiración, error
-  contextual y carga en el Core y ventas manuales, sin sumar flujos de pago.
+- System States MVP V1: **LIVE**. Cierra estados intencionales de vacío,
+  indisponibilidad, expiración, error contextual y carga en el Core y ventas
+  manuales, sin sumar flujos de pago.
 
 - Pulido visual de la experiencia consumidora.
 - Cierre del Core según el [Mapa UX MVP](UX-MVP.md).
