@@ -14,7 +14,8 @@
 ## Siguiente
 
 - Manual Membership Sales V1: promotor crea cliente, pago efectivo, activación
-  server-side, conversión y luego reglas/transacciones de recompensa genéricas.
+  server-side, conversión y reglas/transacciones CASH genéricas. Preparado para
+  validación y despliegue manual.
 
 - Implementar el módulo de pagos propio de JAKAWI para Bolivia, con QR como
   método principal previsto. Esta fase incluye la verificación server-side e

@@ -20,6 +20,10 @@ La política es primer referente válido durante la ventana global configurable 
 
 Registro ofrece un código opcional y aplica exactamente la misma política. `ConversionRecorder` es el único punto para registrar conversiones y exige `idempotency_key`; conserva referencias a la relación, el touch y un snapshot mínimo de referente/UTMs. Sirve para futuras ventas de membresía, QR, experiencias o productos, sin implementar ninguno de esos flujos aún.
 
+## Ventas manuales
+
+Una venta manual de promotor conserva su atribución de marketing en el snapshot de `Conversion` y agrega el cobrador como `credited_seller_user_id`. No se modifica `ReferralRelationship` para pagar una comisión. Esto diferencia el origen de marketing del crédito comercial de una venta específica.
+
 ## Administración, privacidad y alcance
 
-Admin permite ajustar la ventana (con audit log) y buscar usuarios para ver referente, historial y conversiones. No existen reward rules, saldos, comisiones, payouts, árboles, dashboards de afiliado/creador, QR de pago ni activación manual nueva. La siguiente fase es Manual Membership Sales V1, que consumirá `ConversionRecorder` antes de introducir recompensas.
+Admin permite ajustar la ventana (con audit log) y buscar usuarios para ver referente, historial y conversiones. Manual Membership Sales V1 agrega reglas y transacciones CASH mínimas; no añade payouts, árboles, dashboards completos, campañas ni QR de pago.

@@ -20,6 +20,9 @@ erDiagram
   USER ||--o{ ATTRIBUTION_TOUCH : accumulates
   USER ||--o{ REFERRAL_RELATIONSHIP : referred
   USER ||--o{ CONVERSION : makes
+  USER ||--o{ PROGRAM_ENROLLMENT : joins
+  USER ||--o{ MEMBERSHIP_PURCHASE : benefits_from
+  CONVERSION ||--o{ REWARD_TRANSACTION : produces
 ```
 
 - **User / UserProfile:** identidad del consumidor y perfil de intereses, ciudad, contexto social, días/horarios preferidos, apariencia y avatar.
@@ -33,6 +36,7 @@ erDiagram
 - **Redemption:** uso de un Benefit por un miembro con membresía activa; conserva snapshots operativos y de ahorro.
 - **AnalyticsEvent:** eventos first-party limitados, vinculables a usuario y entidades de catálogo.
 - **AttributionTouch / ReferralRelationship / Conversion:** evidencia de origen, primer referente válido y ventas idempotentes; véase [ATTRIBUTION.md](ATTRIBUTION.md).
+- **ProgramEnrollment / MembershipPurchase / RewardRule / RewardTransaction:** acceso de programa, transacción comercial neutral y ledger de recompensa; véase [MANUAL-SALES.md](MANUAL-SALES.md).
 
 ## Ciclos y estados
 

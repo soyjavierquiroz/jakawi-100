@@ -34,7 +34,7 @@ Esto describe un límite de producto, no un contrato de API ni un esquema de
 base de datos. No existe todavía `membership_checkouts`, código de pagos, QR
 de pago, callback ni integración financiera.
 
-La fundación genérica `ConversionRecorder` ya registra ventas futuras de forma idempotente y guarda el snapshot de atribución; no activa membresías ni implementa pagos. Véase [ATTRIBUTION.md](ATTRIBUTION.md).
+Manual Membership Sales V1 usa `MembershipPurchase` y una confirmación de efectivo para activar server-side, registrar la conversión y evaluar recompensa. El futuro QR reutilizará exactamente la misma compra, activación y conversión: sólo cambia cómo se confirma el pago. Véase [MANUAL-SALES.md](MANUAL-SALES.md).
 
 ## Dos dominios QR distintos
 

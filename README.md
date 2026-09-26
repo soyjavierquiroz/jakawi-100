@@ -45,6 +45,7 @@ wayfinder:generate` con el PHP 8.1 del host.
 - [Mapa UX MVP](docs/UX-MVP.md)
 - [Arquitectura de conversión MVP](docs/CONVERSION.md)
 - [Atribución, referidos y conversiones V1](docs/ATTRIBUTION.md)
+- [Ventas manuales de membresía V1](docs/MANUAL-SALES.md)
 - [Sistema de diseño](docs/DESIGN-SYSTEM.md)
 - [Media](docs/MEDIA.md)
 - [Operaciones](docs/OPERATIONS.md)
