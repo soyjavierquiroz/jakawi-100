@@ -67,19 +67,34 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /** @return HasMany<AttributionTouch> */
-    public function attributionTouches(): HasMany { return $this->hasMany(AttributionTouch::class); }
+    public function attributionTouches(): HasMany
+    {
+        return $this->hasMany(AttributionTouch::class);
+    }
 
     /** @return HasMany<ReferralRelationship> */
-    public function referralRelationships(): HasMany { return $this->hasMany(ReferralRelationship::class, 'referred_user_id'); }
+    public function referralRelationships(): HasMany
+    {
+        return $this->hasMany(ReferralRelationship::class, 'referred_user_id');
+    }
 
     /** @return HasMany<Conversion> */
-    public function conversions(): HasMany { return $this->hasMany(Conversion::class); }
+    public function conversions(): HasMany
+    {
+        return $this->hasMany(Conversion::class);
+    }
 
     /** @return HasMany<ProgramEnrollment> */
-    public function programEnrollments(): HasMany { return $this->hasMany(ProgramEnrollment::class); }
+    public function programEnrollments(): HasMany
+    {
+        return $this->hasMany(ProgramEnrollment::class);
+    }
 
     /** @return HasMany<MembershipPurchase> */
-    public function recordedMembershipPurchases(): HasMany { return $this->hasMany(MembershipPurchase::class, 'recorded_by_user_id'); }
+    public function recordedMembershipPurchases(): HasMany
+    {
+        return $this->hasMany(MembershipPurchase::class, 'recorded_by_user_id');
+    }
 
     public function hasActiveProgram(string $programType): bool
     {

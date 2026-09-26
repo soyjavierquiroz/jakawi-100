@@ -20,11 +20,15 @@ class RewardResolver
             ->orderByRaw('CASE WHEN beneficiary_user_id IS NOT NULL THEN 0 WHEN participant_type IS NOT NULL THEN 1 ELSE 2 END')
             ->orderByDesc('priority')->orderBy('id')->first();
 
-        if (! $rule || ! $this->withinLimits($rule, $beneficiary)) return null;
+        if (! $rule || ! $this->withinLimits($rule, $beneficiary)) {
+            return null;
+        }
 
         $gross = (float) $conversion->eligible_amount;
         $amount = $rule->calculation_type === 'PERCENTAGE' ? round($gross * ((float) $rule->value / 100), 2) : (float) $rule->value;
-        if ($amount <= 0) return null;
+        if ($amount <= 0) {
+            return null;
+        }
 
         return RewardTransaction::firstOrCreate(['conversion_id' => $conversion->id, 'reward_rule_id' => $rule->id], [
             'beneficiary_user_id' => $beneficiary->id, 'reward_type' => RewardRule::TYPE_CASH,
@@ -35,7 +39,10 @@ class RewardResolver
 
     private function withinLimits(RewardRule $rule, User $beneficiary): bool
     {
-        if ($rule->maximum_rewards !== null && RewardTransaction::where('reward_rule_id', $rule->id)->count() >= $rule->maximum_rewards) return false;
+        if ($rule->maximum_rewards !== null && RewardTransaction::where('reward_rule_id', $rule->id)->count() >= $rule->maximum_rewards) {
+            return false;
+        }
+
         return $rule->maximum_per_user === null || RewardTransaction::where('reward_rule_id', $rule->id)->where('beneficiary_user_id', $beneficiary->id)->count() < $rule->maximum_per_user;
     }
 }

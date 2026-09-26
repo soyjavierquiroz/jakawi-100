@@ -47,7 +47,10 @@ class Membership extends Model
     }
 
     /** @return HasMany<MembershipPurchase, $this> */
-    public function purchases(): HasMany { return $this->hasMany(MembershipPurchase::class); }
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(MembershipPurchase::class);
+    }
 
     public function isActive(): bool
     {

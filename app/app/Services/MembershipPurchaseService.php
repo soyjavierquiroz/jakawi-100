@@ -16,7 +16,9 @@ class MembershipPurchaseService
     {
         return DB::transaction(function () use ($beneficiary, $recordedBy, $collector, $manualReference, $idempotencyKey): MembershipPurchase {
             $existing = MembershipPurchase::query()->where('idempotency_key', $idempotencyKey)->lockForUpdate()->first();
-            if ($existing) return $existing;
+            if ($existing) {
+                return $existing;
+            }
 
             $beneficiary = User::query()->lockForUpdate()->findOrFail($beneficiary->id);
             $purchase = MembershipPurchase::create([
@@ -41,7 +43,9 @@ class MembershipPurchaseService
                 ? app(RewardResolver::class)->createFor($conversion, $collector, ProgramEnrollment::TYPE_PROMOTER) : null;
             AuditLog::create(['actor_user_id' => $recordedBy->id, 'action' => 'membership_sale_created', 'subject_type' => MembershipPurchase::class, 'subject_id' => $purchase->id, 'metadata' => ['reference' => $purchase->reference, 'amount' => $purchase->amount]]);
             AuditLog::create(['actor_user_id' => $recordedBy->id, 'action' => 'membership_activated_from_purchase', 'subject_type' => get_class($membership), 'subject_id' => $membership->id, 'metadata' => ['purchase_id' => $purchase->id]]);
-            if ($reward) AuditLog::create(['actor_user_id' => $recordedBy->id, 'action' => 'reward_created', 'subject_type' => RewardTransaction::class, 'subject_id' => $reward->id, 'metadata' => ['purchase_id' => $purchase->id, 'amount' => $reward->amount]]);
+            if ($reward) {
+                AuditLog::create(['actor_user_id' => $recordedBy->id, 'action' => 'reward_created', 'subject_type' => RewardTransaction::class, 'subject_id' => $reward->id, 'metadata' => ['purchase_id' => $purchase->id, 'amount' => $reward->amount]]);
+            }
 
             return $purchase->refresh()->load(['beneficiary', 'membership', 'conversion', 'collectedBy']);
         });
@@ -51,23 +55,36 @@ class MembershipPurchaseService
     {
         return DB::transaction(function () use ($purchase, $admin, $reason): MembershipPurchase {
             $purchase = MembershipPurchase::query()->lockForUpdate()->findOrFail($purchase->id);
-            if ($purchase->status === MembershipPurchase::STATUS_REFUNDED) return $purchase;
-            if ($purchase->status !== MembershipPurchase::STATUS_CONFIRMED) abort(422, 'Only confirmed purchases can be refunded.');
-            if ($purchase->membership_id) app(MembershipService::class)->cancel($purchase->membership()->firstOrFail());
+            if ($purchase->status === MembershipPurchase::STATUS_REFUNDED) {
+                return $purchase;
+            }
+            if ($purchase->status !== MembershipPurchase::STATUS_CONFIRMED) {
+                abort(422, 'Only confirmed purchases can be refunded.');
+            }
+            if ($purchase->membership_id) {
+                app(MembershipService::class)->cancel($purchase->membership()->firstOrFail());
+            }
             if ($purchase->conversion_id) {
                 $purchase->conversion()->lockForUpdate()->firstOrFail()->update(['status' => 'refunded']);
                 $rewards = RewardTransaction::query()->where('conversion_id', $purchase->conversion_id)->lockForUpdate()->get();
-                foreach ($rewards as $reward) { $reward->update(['status' => RewardTransaction::STATUS_CANCELLED]); AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'reward_cancelled', 'subject_type' => RewardTransaction::class, 'subject_id' => $reward->id, 'metadata' => ['purchase_id' => $purchase->id]]); }
+                foreach ($rewards as $reward) {
+                    $reward->update(['status' => RewardTransaction::STATUS_CANCELLED]);
+                    AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'reward_cancelled', 'subject_type' => RewardTransaction::class, 'subject_id' => $reward->id, 'metadata' => ['purchase_id' => $purchase->id]]);
+                }
             }
             $purchase->update(['status' => MembershipPurchase::STATUS_REFUNDED, 'refunded_at' => now(), 'refunded_by_user_id' => $admin->id, 'refund_reason' => $reason]);
             AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'membership_sale_refunded', 'subject_type' => MembershipPurchase::class, 'subject_id' => $purchase->id, 'metadata' => ['before_status' => MembershipPurchase::STATUS_CONFIRMED, 'after_status' => MembershipPurchase::STATUS_REFUNDED, 'reason' => $reason]]);
+
             return $purchase->refresh();
         });
     }
 
     private function reference(): string
     {
-        do { $reference = 'MS-'.now()->format('Ymd').'-'.Str::upper(Str::random(8)); } while (MembershipPurchase::where('reference', $reference)->exists());
+        do {
+            $reference = 'MS-'.now()->format('Ymd').'-'.Str::upper(Str::random(8));
+        } while (MembershipPurchase::where('reference', $reference)->exists());
+
         return $reference;
     }
 }
