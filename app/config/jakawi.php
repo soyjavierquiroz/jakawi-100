@@ -42,6 +42,7 @@ return [
             'redeem_started', 'redeem_confirmed', 'experience_reserve_click', 'maps_click', 'whatsapp_click',
             'anonymous_session_created', 'referral_link_opened', 'referral_shared', 'referral_code_entered', 'signup_completed',
             'affiliate_payout_requested', 'affiliate_payout_completed',
+            'reward_created', 'reward_available', 'reward_cancelled',
         ],
         'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],
     ],

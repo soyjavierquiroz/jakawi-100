@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Benefit;
 use App\Models\Membership;
+use App\Models\Conversion;
+use App\Models\RewardTransaction;
+use App\Services\AnalyticsTracker;
+use App\Services\ReferralCodeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -45,6 +49,10 @@ class MembershipController extends Controller
             'happened_at' => $reservation->checked_in_at,
         ]))->sortByDesc('happened_at')->take(8)->values();
 
+        $user = $request->user();
+        $isActiveMember = $user->hasActiveMembership();
+        $jpRewards = RewardTransaction::query()->where('beneficiary_user_id', $user->id)->where('reward_type', 'JP');
+
         return Inertia::render('mi-jakawi', [
             'membership' => $membership ? $this->serializeMembership($membership) : null,
             'membershipConfig' => [
@@ -56,9 +64,27 @@ class MembershipController extends Controller
                 'experiences_lived' => $checkIns->count(),
             ],
             'activity' => $activity,
+            'memberReferral' => [
+                'eligible' => $isActiveMember,
+                'code' => $isActiveMember ? app(ReferralCodeService::class)->ensureFor($user) : null,
+                'link' => $isActiveMember ? route('referrals.open', app(ReferralCodeService::class)->ensureFor($user)) : null,
+                // "Amigos que se unieron" means referred users with a confirmed membership purchase.
+                'joined_count' => Conversion::query()->where('type', 'membership_purchased')->where('status', 'confirmed')->whereHas('relationship', fn ($query) => $query->where('referrer_user_id', $user->id))->count(),
+                // Lifetime earned excludes cancelled rewards; balance contains available JP only until burns exist.
+                'jp_earned' => (int) (clone $jpRewards)->where('status', '!=', RewardTransaction::STATUS_CANCELLED)->sum('amount'),
+                'jp_balance' => (int) (clone $jpRewards)->where('status', RewardTransaction::STATUS_AVAILABLE)->sum('amount'),
+            ],
             'featuredBenefits' => $membership ? [] : Benefit::query()->available()->with('partner:id,name')->orderByDesc('featured')->orderBy('sort_order')->limit(3)->get()
                 ->map(fn (Benefit $benefit) => ['slug' => $benefit->slug, 'title' => $benefit->title, 'partner_name' => $benefit->partner->name]),
         ]);
+    }
+
+    public function shared(Request $request, AnalyticsTracker $analytics)
+    {
+        abort_unless($request->user()->hasActiveMembership(), 403);
+        $analytics->record('referral_shared', ['user_id' => $request->user()->id]);
+
+        return response()->noContent();
     }
 
     /** @return array<string, mixed> */

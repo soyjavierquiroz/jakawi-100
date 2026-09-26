@@ -11,6 +11,8 @@ class RewardRule extends Model
 
     public const TYPE_CASH = 'CASH';
 
+    public const TYPE_JP = 'JP';
+
     protected $guarded = [];
 
     protected function casts(): array

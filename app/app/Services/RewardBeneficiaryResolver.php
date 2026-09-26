@@ -28,6 +28,9 @@ class RewardBeneficiaryResolver
         if ($relationship?->isValid() && $referrer?->hasActiveProgram(ProgramEnrollment::TYPE_AFFILIATE)) {
             return ['beneficiary' => $referrer, 'participant_type' => ProgramEnrollment::TYPE_AFFILIATE];
         }
+        if ($relationship?->isValid() && $referrer?->hasActiveMembership()) {
+            return ['beneficiary' => $referrer, 'participant_type' => 'MEMBER'];
+        }
 
         return null;
     }

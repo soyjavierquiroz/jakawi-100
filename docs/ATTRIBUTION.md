@@ -24,6 +24,8 @@ Registro ofrece un código opcional y aplica exactamente la misma política. `Co
 
 Una venta manual de promotor conserva su atribución de marketing en el snapshot de `Conversion` y agrega el cobrador como `credited_seller_user_id`. No se modifica `ReferralRelationship` para pagar una comisión. Esto diferencia el origen de marketing del crédito comercial de una venta específica.
 
+Para `membership_purchased` hay un solo beneficiario: Promoter vendedor activo, Creator activo, Affiliate activo y luego Member con Membership activa. El referido Member usa el mismo primer referente válido y código global; Partner es atribución de marketing en V1. Véase [MEMBER-REFERRALS.md](MEMBER-REFERRALS.md).
+
 ## Afiliados y recompensa de adquisición
 
 Affiliate usa la misma relación first-valid; no crea otra tabla de referidos.

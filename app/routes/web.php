@@ -74,6 +74,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
+    Route::post('mi-jakawi/referral-shared', [MembershipController::class, 'shared'])->name('mi-jakawi.referral-shared');
     Route::get('perfil', [MemberProfileController::class, 'show'])->name('consumer.profile');
     Route::get('mi-jakawi/perfil', [MemberProfileController::class, 'show'])->name('member.profile.show');
     Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->name('member.profile.update');

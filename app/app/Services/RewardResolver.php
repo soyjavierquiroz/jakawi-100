@@ -11,7 +11,8 @@ class RewardResolver
 {
     public function createFor(Conversion $conversion, User $beneficiary, string $participantType): ?RewardTransaction
     {
-        $rule = $this->ruleFor($beneficiary, $participantType, $conversion->type, $conversion->product_key);
+        $rewardType = $participantType === 'MEMBER' ? RewardRule::TYPE_JP : RewardRule::TYPE_CASH;
+        $rule = $this->ruleFor($beneficiary, $participantType, $conversion->type, $conversion->product_key, $rewardType);
 
         if (! $rule || ! $this->withinLimits($rule, $beneficiary)) {
             return null;
@@ -19,21 +20,25 @@ class RewardResolver
 
         $gross = (float) $conversion->eligible_amount;
         $amount = $rule->calculation_type === 'PERCENTAGE' ? round($gross * ((float) $rule->value / 100), 2) : (float) $rule->value;
+        if ($rewardType === RewardRule::TYPE_JP && ($rule->calculation_type !== 'FIXED' || floor($amount) !== $amount)) {
+            return null;
+        }
         if ($amount <= 0) {
             return null;
         }
 
         return RewardTransaction::firstOrCreate(['conversion_id' => $conversion->id, 'reward_rule_id' => $rule->id], [
-            'beneficiary_user_id' => $beneficiary->id, 'reward_type' => RewardRule::TYPE_CASH,
-            'amount' => number_format($amount, 2, '.', ''), 'currency' => $rule->currency ?? $conversion->currency,
-            'status' => RewardTransaction::STATUS_PENDING,
+            'beneficiary_user_id' => $beneficiary->id, 'reward_type' => $rewardType,
+            'amount' => number_format($amount, 2, '.', ''), 'currency' => $rewardType === RewardRule::TYPE_JP ? RewardRule::TYPE_JP : ($rule->currency ?? $conversion->currency),
+            'status' => $rewardType === RewardRule::TYPE_JP ? RewardTransaction::STATUS_AVAILABLE : RewardTransaction::STATUS_PENDING,
+            'available_at' => $rewardType === RewardRule::TYPE_JP ? now() : null,
         ]);
     }
 
-    public function ruleFor(User $beneficiary, string $participantType, string $event, ?string $productKey): ?RewardRule
+    public function ruleFor(User $beneficiary, string $participantType, string $event, ?string $productKey, string $rewardType = RewardRule::TYPE_CASH): ?RewardRule
     {
         return RewardRule::query()->where('status', RewardRule::STATUS_ACTIVE)->where('event', $event)
-            ->where('reward_type', RewardRule::TYPE_CASH)
+            ->where('reward_type', $rewardType)
             ->where(fn ($q) => $q->whereNull('product_key')->orWhere('product_key', $productKey))
             ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
             ->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at', '>=', now()))

@@ -34,7 +34,12 @@ class AdminRewardRuleController extends Controller
 
     private function data(Request $request): array
     {
-        return $request->validate(['name' => ['required', 'string', 'max:255'], 'participant_type' => ['nullable', 'in:PROMOTER,AFFILIATE,CREATOR,PARTNER,MEMBER'], 'event' => ['required', 'string', 'max:100'], 'product_key' => ['nullable', 'string', 'max:100'], 'reward_type' => ['required', 'in:CASH'], 'calculation_type' => ['required', 'in:FIXED,PERCENTAGE'], 'value' => ['required', 'numeric', 'gt:0'], 'currency' => ['nullable', 'string', 'size:3'], 'starts_at' => ['nullable', 'date'], 'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'], 'priority' => ['required', 'integer', 'min:0'], 'status' => ['required', 'in:active,inactive'], 'maximum_rewards' => ['nullable', 'integer', 'min:1'], 'maximum_per_user' => ['nullable', 'integer', 'min:1']]);
+        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'participant_type' => ['nullable', 'in:PROMOTER,AFFILIATE,CREATOR,PARTNER,MEMBER'], 'event' => ['required', 'string', 'max:100'], 'product_key' => ['nullable', 'string', 'max:100'], 'reward_type' => ['required', 'in:CASH,JP'], 'calculation_type' => ['required', 'in:FIXED,PERCENTAGE'], 'value' => ['required', 'numeric', 'gt:0'], 'currency' => ['nullable', 'string', 'size:3'], 'starts_at' => ['nullable', 'date'], 'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'], 'priority' => ['required', 'integer', 'min:0'], 'status' => ['required', 'in:active,inactive'], 'maximum_rewards' => ['nullable', 'integer', 'min:1'], 'maximum_per_user' => ['nullable', 'integer', 'min:1']]);
+        if ($data['reward_type'] === 'JP') {
+            abort_unless($data['participant_type'] === 'MEMBER' && $data['calculation_type'] === 'FIXED' && floor((float) $data['value']) === (float) $data['value'], 422, 'JP requiere MEMBER, FIXED y un valor entero.');
+            $data['currency'] = 'JP';
+        }
+        return $data;
     }
 
     private function audit(Request $request, string $action, RewardRule $rule, ?array $before = null): void

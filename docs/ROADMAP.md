@@ -63,6 +63,10 @@
 Implementado: solicitudes de pago manuales, revisión admin, referencia externa, auditoría y reserva del ledger. Futuro: datos de pago bajo demanda, Creator/Promoter UI, payout provider y ajustes financieros para devoluciones después de pagos.
 # Roadmap
 
+## Member referral + JP V1
+
+Delivered: one-level Member referrals, configured JP ledger rewards, and aggregate Mi JAKAWI invite metrics. Deferred: JP catalog, burns, redemptions, drops, quests, levels, and any JP-to-BOB conversion.
+
 ## Partner acquisition V1
 
 Delivered: Partner referral attribution and aggregate operational metrics. Deferred: Partner RewardRule incentives, payouts, CREDIT, JP, payment QR, campaign engine, loyalty, and geofencing.

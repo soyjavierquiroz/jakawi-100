@@ -1,15 +1,16 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Check, ChevronRight, Sparkles } from 'lucide-react';
 
 type Membership = { id: number; status: string; starts_at: string; ends_at: string; is_active: boolean; amount_paid: string; confirmed_savings: string; remaining_to_payback: string; has_paid_for_itself: boolean };
 type MembershipConfig = { price_bob: number; duration_days: number };
 type Activity = { id: string; type: 'redemption' | 'experience'; title: string; detail: string | null; savings_amount?: string; happened_at: string };
 type Benefit = { slug: string; title: string; partner_name: string };
+type MemberReferral = { eligible: boolean; code: string | null; link: string | null; joined_count: number; jp_earned: number; jp_balance: number };
 
 function formatDate(value: string) { return new Intl.DateTimeFormat('es-BO', { dateStyle: 'medium' }).format(new Date(value)); }
 function money(value: string | number) { return Number(value).toFixed(2); }
 
-export default function MiJakawi({ membership, membershipConfig, valueStats, activity, featuredBenefits }: { membership: Membership | null; membershipConfig: MembershipConfig; valueStats: { benefits_used: number; experiences_lived: number }; activity: Activity[]; featuredBenefits: Benefit[] }) {
+export default function MiJakawi({ membership, membershipConfig, valueStats, activity, featuredBenefits, memberReferral }: { membership: Membership | null; membershipConfig: MembershipConfig; valueStats: { benefits_used: number; experiences_lived: number }; activity: Activity[]; featuredBenefits: Benefit[]; memberReferral: MemberReferral }) {
     if (!membership) return <FreeAccount membershipConfig={membershipConfig} featuredBenefits={featuredBenefits} />;
 
     const savings = Number(membership.confirmed_savings);
@@ -24,9 +25,22 @@ export default function MiJakawi({ membership, membershipConfig, valueStats, act
                 : <div className="mt-6"><p className="text-sm leading-6 text-muted-foreground">{savings === 0 ? 'Empieza a aprovechar tu JAKAWI.' : `Te faltan Bs ${money(membership.remaining_to_payback)} para que tu JAKAWI se pague sola.`}</p><div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-muted"><div className="h-full rounded-full bg-brand" style={{ width: `${Math.min(100, Math.max(0, savings / amountPaid * 100))}%` }} /></div></div>}
         </section>
         <section className="mt-8 flex gap-8 border-b border-border pb-7"><Metric value={valueStats.benefits_used} label="beneficios utilizados" /><Metric value={valueStats.experiences_lived} label="experiencias vividas" /></section>
+        {memberReferral.eligible ? <InviteAndEarn referral={memberReferral} /> : null}
         <ActivityList activity={activity} />
         {!membership.is_active && <section className="mt-8 border-t border-border pt-6"><p className="text-lg font-extrabold">Tu valor sigue aquí.</p><p className="mt-2 leading-6 text-muted-foreground">Explora nuevos beneficios mientras decides cuándo volver a activar tu membresía.</p><Link href="/explorar" className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-extrabold text-brand">EXPLORAR <ChevronRight className="size-4" /></Link></section>}
     </section></main></>;
+}
+
+function InviteAndEarn({ referral }: { referral: MemberReferral }) {
+    const share = () => {
+        router.post('/mi-jakawi/referral-shared', {}, { preserveState: true, preserveScroll: true, onSuccess: () => undefined });
+        const text = 'Invita a tus amigos a vivir más la ciudad.';
+        if (navigator.share) void navigator.share({ title: 'JAKAWI', text, url: referral.link ?? undefined }).catch(() => undefined);
+        else void navigator.clipboard?.writeText(referral.link ?? '');
+    };
+    const copy = () => { void navigator.clipboard?.writeText(referral.link ?? ''); router.post('/mi-jakawi/referral-shared', {}, { preserveState: true, preserveScroll: true }); };
+    const whatsapp = () => { router.post('/mi-jakawi/referral-shared', {}, { preserveState: true, preserveScroll: true }); window.open(`https://wa.me/?text=${encodeURIComponent(`Invita a tus amigos a vivir más la ciudad. ${referral.link ?? ''}`)}`, '_blank', 'noopener,noreferrer'); };
+    return <section className="mt-8 rounded-[28px] bg-surface p-6"><p className="text-xs font-extrabold tracking-[0.12em] text-brand uppercase">INVITA Y GANA</p><h2 className="mt-2 text-2xl font-extrabold">Invita a tus amigos a vivir más la ciudad.</h2><div className="mt-5 rounded-2xl border border-border bg-background p-4"><p className="text-xs font-bold text-muted-foreground uppercase">Tu código</p><p className="mt-1 text-xl font-extrabold tracking-[0.12em]">{referral.code}</p><p className="mt-3 break-all text-sm text-muted-foreground">{referral.link}</p></div><div className="mt-4 grid grid-cols-3 gap-2"><button onClick={copy} className="min-h-11 rounded-xl border border-border px-2 text-xs font-extrabold">COPIAR ENLACE</button><button onClick={whatsapp} className="min-h-11 rounded-xl border border-border px-2 text-xs font-extrabold">WHATSAPP</button><button onClick={share} className="min-h-11 rounded-xl bg-brand px-2 text-xs font-extrabold text-brand-foreground">COMPARTIR</button></div><div className="mt-6 grid grid-cols-3 gap-3 border-t border-border pt-5"><Metric value={referral.joined_count} label="amigos que se unieron" /><Metric value={referral.jp_earned} label="JP ganados" /><Metric value={referral.jp_balance} label="saldo JP" /></div></section>;
 }
 
 function MembershipCard({ membership }: { membership: Membership }) {
