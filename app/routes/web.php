@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminContentReviewController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExperienceCheckInController;
 use App\Http\Controllers\ExperienceReservationController;
+use App\Http\Controllers\ConversionPaywallController;
 use App\Http\Controllers\MemberProfileController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PartnerContentController;
@@ -23,6 +24,7 @@ Route::get('/lugares/{location:slug}', [PublicController::class, 'location'])->n
 Route::get('/lugares/{location:slug}/mapa', [PublicController::class, 'map'])->name('locations.map');
 Route::get('/lugares/{location:slug}/whatsapp', [PublicController::class, 'locationWhatsapp'])->name('locations.whatsapp');
 Route::get('/beneficios', [PublicController::class, 'benefits'])->name('benefits.index');
+Route::get('/beneficios/{benefit:slug}/desbloquear', [ConversionPaywallController::class, 'show'])->name('membership.paywall');
 Route::get('/beneficios/{benefit:slug}', [PublicController::class, 'benefit'])->name('benefits.show');
 Route::get('/experiencias', [PublicController::class, 'experiences'])->name('experiences.index');
 Route::get('/experiencias/{experience:slug}', [PublicController::class, 'experience'])->name('experiences.show');

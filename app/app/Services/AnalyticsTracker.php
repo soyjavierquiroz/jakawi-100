@@ -37,6 +37,16 @@ class AnalyticsTracker
         return $this->record('benefit_view', ['benefit_id' => $benefit->id, 'partner_id' => $benefit->partner_id]);
     }
 
+    public function benefitUnlockClicked(Benefit $benefit): ?AnalyticsEvent
+    {
+        return $this->record('benefit_unlock_clicked', ['benefit_id' => $benefit->id, 'partner_id' => $benefit->partner_id]);
+    }
+
+    public function membershipViewed(Benefit $benefit): ?AnalyticsEvent
+    {
+        return $this->record('membership_viewed', ['benefit_id' => $benefit->id, 'partner_id' => $benefit->partner_id]);
+    }
+
     public function experienceViewed(Experience $experience): ?AnalyticsEvent
     {
         return $this->record('experience_view', ['experience_id' => $experience->id]);

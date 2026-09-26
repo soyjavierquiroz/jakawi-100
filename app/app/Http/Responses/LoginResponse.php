@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses;
 
+use App\Support\ConversionIntent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
@@ -10,6 +11,11 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
+        $paywallPath = app(ConversionIntent::class)->paywallPath($request);
+        if ($paywallPath !== null) {
+            return $request->wantsJson() ? response()->noContent() : redirect()->to($paywallPath);
+        }
+
         if ($request->session()->pull('partner_login')) {
             $partners = $request->user()?->partners()->orderBy('name')->get(['partners.id', 'partners.slug']);
             if ($partners === null || $partners->isEmpty()) {
