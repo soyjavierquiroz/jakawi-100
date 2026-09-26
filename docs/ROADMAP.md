@@ -70,3 +70,6 @@ Delivered: one-level Member referrals, configured JP ledger rewards, and aggrega
 ## Partner acquisition V1
 
 Delivered: Partner referral attribution and aggregate operational metrics. Deferred: Partner RewardRule incentives, payouts, CREDIT, JP, payment QR, campaign engine, loyalty, and geofencing.
+# Deferred: Partner CREDIT and payouts
+
+Partner CREDIT needs its own ledger and consumption semantics. Partner payout requests are deferred until the existing user-only payout workflow can be safely generalized with an independent configured partner minimum.

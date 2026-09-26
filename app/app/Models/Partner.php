@@ -60,6 +60,12 @@ class Partner extends Model
         return $this->hasMany(ExperienceReservation::class);
     }
 
+    /** @return HasMany<RewardTransaction, $this> */
+    public function rewardTransactions(): HasMany
+    {
+        return $this->hasMany(RewardTransaction::class, 'beneficiary_id')->where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER);
+    }
+
     /** @param Builder<Partner> $query */
     public function scopePublished(Builder $query): void
     {

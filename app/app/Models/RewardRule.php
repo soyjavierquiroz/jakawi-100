@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RewardRule extends Model
 {
+    public const BENEFICIARY_USER = 'USER';
+    public const BENEFICIARY_PARTNER = 'PARTNER';
     public const STATUS_ACTIVE = 'active';
 
     public const TYPE_CASH = 'CASH';
@@ -24,4 +26,5 @@ class RewardRule extends Model
     {
         return $this->belongsTo(User::class, 'beneficiary_user_id');
     }
+
 }

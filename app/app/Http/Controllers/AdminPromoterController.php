@@ -83,7 +83,7 @@ class AdminPromoterController extends Controller
         abort_unless($this->enrollment($user), 404);
         $enrollment = $this->enrollment($user);
         $sales = MembershipPurchase::query()->where('collected_by_user_id', $user->id)->with('beneficiary')->latest()->limit(10)->get();
-        $rule = app(RewardResolver::class)->ruleFor($user, ProgramEnrollment::TYPE_PROMOTER, 'membership_purchased', 'jakawi_annual');
+        $rule = app(RewardResolver::class)->ruleFor($user, RewardRule::BENEFICIARY_USER, ProgramEnrollment::TYPE_PROMOTER, 'membership_purchased', 'jakawi_annual');
         $audit = AuditLog::query()->where(fn ($q) => $q->where('subject_type', User::class)->where('subject_id', $user->id)->orWhere('subject_type', ProgramEnrollment::class)->where('subject_id', $enrollment->id)->orWhere('subject_type', RewardRule::class)->whereIn('subject_id', RewardRule::where('beneficiary_user_id', $user->id)->pluck('id')))->latest()->get();
 
         return Inertia::render('admin/promoters/show', ['promoter' => $this->summary($user, $enrollment), 'commission' => ['effective' => $rule, 'source' => $rule ? ($rule->beneficiary_user_id ? 'individual' : ($rule->participant_type ? 'program' : 'global')) : null, 'individual' => RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('reward_type', 'CASH')->latest()->first()], 'sales' => $sales, 'audit' => $audit]);
