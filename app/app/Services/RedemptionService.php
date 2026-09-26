@@ -21,7 +21,7 @@ class RedemptionService
     public function start(User $user, Benefit $benefit, Location $location): Redemption
     {
         // The user lock serializes both pending idempotency and per-member limits.
-        return DB::transaction(function () use ($user, $benefit, $location): Redemption {
+        $result = DB::transaction(function () use ($user, $benefit, $location): array {
             $lockedUser = User::query()->lockForUpdate()->findOrFail($user->getKey());
             $membership = Membership::query()->active()->lockForUpdate()->where('user_id', $lockedUser->id)->first();
             if ($membership === null) {
@@ -43,27 +43,31 @@ class RedemptionService
 
             foreach ($pending as $redemption) {
                 if ($redemption->expires_at->gt($now)) {
-                    return $redemption;
+                    return [$redemption, false];
                 }
                 $redemption->update(['status' => Redemption::STATUS_EXPIRED]);
             }
 
-            $redemption = $this->createRedemption($lockedUser, $membership, $benefit, $location, $now);
-            $this->analytics->redemptionStarted($redemption);
-
-            return $redemption;
+            return [$this->createRedemption($lockedUser, $membership, $benefit, $location, $now), true];
         });
+
+        [$redemption, $created] = $result;
+        if ($created) {
+            $this->analytics->redemptionStarted($redemption);
+        }
+
+        return $redemption;
     }
 
     public function confirm(string $code, string $pin): Redemption
     {
-        $result = DB::transaction(function () use ($code, $pin): ?Redemption {
+        $result = DB::transaction(function () use ($code, $pin): ?array {
             $redemption = Redemption::query()->where('code', $code)->lockForUpdate()->first();
             if ($redemption === null) {
                 throw new DomainException('Redemption code not found.');
             }
             if ($redemption->isConfirmed()) {
-                return $redemption;
+                return [$redemption, false];
             }
             if (! $redemption->isPending()) {
                 throw new DomainException('This redemption cannot be confirmed.');
@@ -89,17 +93,20 @@ class RedemptionService
             $this->assertLimitAvailable($user, $benefit);
 
             $redemption->update(['status' => Redemption::STATUS_CONFIRMED, 'confirmed_at' => now()]);
-            $redemption = $redemption->refresh();
-            $this->analytics->redemptionConfirmed($redemption);
 
-            return $redemption;
+            return [$redemption->refresh(), true];
         });
 
         if ($result === null) {
             throw new DomainException('This redemption code has expired.');
         }
 
-        return $result;
+        [$redemption, $confirmed] = $result;
+        if ($confirmed) {
+            $this->analytics->redemptionConfirmed($redemption);
+        }
+
+        return $redemption;
     }
 
     private function assertRedeemable(?Benefit $benefit, ?Location $location): void

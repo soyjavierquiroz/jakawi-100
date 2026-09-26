@@ -111,11 +111,13 @@ class PublicController extends Controller
     public function benefit(Benefit $benefit, Request $request, AnalyticsTracker $analytics): Response
     {
         $benefit->load('partner');
-        abort_unless($benefit->isAvailable(), 404);
-        $analytics->benefitViewed($benefit);
-        $locations = $benefit->availableLocations()->get();
+        $locations = $benefit->isAvailable() ? $benefit->availableLocations()->get()->filter->hasRedemptionPin()->values() : collect();
+        $availability = $this->benefitAvailability($benefit, $request, $locations->isNotEmpty());
+        if ($availability['available']) {
+            $analytics->benefitViewed($benefit);
+        }
 
-        return Inertia::render('benefits/show', ['benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))), 'hasActiveMembership' => $request->user()?->activeMembership()->exists() ?? false]);
+        return Inertia::render('benefits/show', ['benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))), 'hasActiveMembership' => $request->user()?->activeMembership()->exists() ?? false, 'availability' => $availability]);
     }
 
     public function experiences(Request $request): Response
@@ -130,15 +132,17 @@ class PublicController extends Controller
 
     public function experience(Request $request, Experience $experience, AnalyticsTracker $analytics): Response
     {
-        abort_unless($experience->isPublished(), 404);
-        $analytics->experienceViewed($experience);
+        $available = $experience->isPublished();
+        if ($available) {
+            $analytics->experienceViewed($experience);
+        }
         $experience->load([
             'partners',
-            'sessions' => fn ($query) => $query->upcoming()->with('location'),
+            'sessions' => fn ($query) => $available ? $query->upcoming()->with('location') : $query->whereRaw('1 = 0'),
         ]);
         $reservations = $request->user() ? $request->user()->experienceReservations()->where('experience_id', $experience->id)->get()->keyBy('experience_session_id') : collect();
 
-        return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $request->user()?->hasActiveMembership() ?? false]);
+        return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $request->user()?->hasActiveMembership() ?? false, 'availability' => ['available' => $available, 'reason' => $available ? null : 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA']]);
     }
 
     public function map(Location $location, AnalyticsTracker $analytics): RedirectResponse
@@ -222,5 +226,22 @@ class PublicController extends Controller
     private function membership(Membership $m): array
     {
         return ['amount_paid' => $m->amount_paid, 'ends_at' => $m->ends_at, 'confirmed_savings' => $m->confirmedSavings(), 'remaining_to_payback' => $m->remainingToPayback(), 'has_paid_for_itself' => $m->hasPaidForItself()];
+    }
+
+    /** @return array{available: bool, reason: string|null} */
+    private function benefitAvailability(Benefit $benefit, Request $request, bool $hasUsableLocation): array
+    {
+        if (! $benefit->isAvailable()) {
+            return ['available' => false, 'reason' => 'ESTE BENEFICIO NO ESTÁ DISPONIBLE AHORA'];
+        }
+        if (! $hasUsableLocation) {
+            return ['available' => false, 'reason' => 'ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA'];
+        }
+        $limit = $benefit->redemption_limit_per_member;
+        if ($request->user() && $limit !== null && $request->user()->redemptions()->where('benefit_id', $benefit->id)->where('status', 'confirmed')->count() >= $limit) {
+            return ['available' => false, 'reason' => 'YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES'];
+        }
+
+        return ['available' => true, 'reason' => null];
     }
 }

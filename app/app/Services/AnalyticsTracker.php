@@ -10,7 +10,9 @@ use App\Models\Location;
 use App\Models\Partner;
 use App\Models\Redemption;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class AnalyticsTracker
@@ -101,7 +103,13 @@ class AnalyticsTracker
         $data['metadata'] = $this->validateMetadata($event, $metadata) ?: null;
         $data['occurred_at'] = now();
 
-        return AnalyticsEvent::create($data);
+        try {
+            return AnalyticsEvent::create($data);
+        } catch (QueryException $exception) {
+            Log::warning('Analytics event could not be recorded.', ['event' => $event, 'exception' => $exception->getMessage()]);
+
+            return null;
+        }
     }
 
     private function recordRedemption(string $event, Redemption $redemption): ?AnalyticsEvent

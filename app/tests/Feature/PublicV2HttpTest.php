@@ -61,7 +61,10 @@ class PublicV2HttpTest extends TestCase
         $cafe = Benefit::factory()->published()->forPartner($partner)->create(['category' => 'cafe', 'applies_to_all_locations' => true]);
         foreach ([['draft'], ['paused'], ['published', now()->addDay()], ['published', null, now()->subDay()]] as $state) {
             $benefit = Benefit::factory()->forPartner($partner)->create(['status' => $state[0], 'starts_at' => $state[1] ?? null, 'ends_at' => $state[2] ?? null]);
-            $this->get('/beneficios/'.$benefit->slug)->assertNotFound();
+            $this->get('/beneficios/'.$benefit->slug)->assertOk()->assertInertia(fn (Assert $page) => $page
+                ->where('availability.available', false)
+                ->where('availability.reason', 'ESTE BENEFICIO NO ESTÁ DISPONIBLE AHORA')
+            );
         }
         $this->get('/beneficios?category=food')->assertOk()->assertInertia(fn (Assert $page) => $page->has('benefits', 1)->where('benefits.0.slug', $food->slug));
         $this->get('/beneficios?category=not-a-category')->assertOk()->assertInertia(fn (Assert $page) => $page->has('benefits', 0));
@@ -93,7 +96,7 @@ class PublicV2HttpTest extends TestCase
         }
         $none = Experience::factory()->published()->create(['reservation_method' => 'none']);
         $this->get('/experiencias/'.$none->slug.'/reservar')->assertNotFound();
-        $this->get('/experiencias/'.Experience::factory()->create(['status' => 'draft'])->slug)->assertNotFound();
+        $this->get('/experiencias/'.Experience::factory()->create(['status' => 'draft'])->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->where('availability.available', false));
     }
 
     public function test_contact_redirects_and_empty_states_are_safe(): void

@@ -63,7 +63,7 @@ class RedemptionHttpTest extends TestCase
         $this->actingAs($member)->get('/canjes/'.$redemption->public_id)->assertOk()->assertDontSee('123456');
         $redemption->update(['expires_at' => now()->subSecond()]);
         $this->actingAs($member)->get('/canjes/'.$redemption->public_id)->assertOk();
-        $this->assertSame('pending', $redemption->fresh()->status);
+        $this->assertSame('expired', $redemption->fresh()->status);
     }
 
     public function test_validation_confirms_once_and_handles_wrong_or_expired_codes_privately(): void

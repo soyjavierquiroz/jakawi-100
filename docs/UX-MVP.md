@@ -38,6 +38,12 @@ El MVP consumidor tiene cuatro destinos principales: Inicio, Explorar, Mi JAKAWI
 
 La carga prioriza skeletons y los estados nunca dejan una pantalla vacía ni un dead end.
 
+## System States MVP V1
+
+Explorar comunica búsquedas sin resultados y permite limpiar filtros reales. Benefit conserva su contexto cuando está fuera de disponibilidad, sin ofrecer canje para un límite alcanzado, una membresía inactiva o una ubicación no usable. Un canje toma `expires_at` como fuente de verdad: al expirar deja de mostrar QR/código válido; al volver confirmado mantiene el éxito idempotente.
+
+Experience comunica ausencia de fechas o destino de reserva sin CTA muerto. Mi JAKAWI diferencia cuenta gratuita, membresía activa y vencida preservando valor histórico. Promotor y ventas manuales incluyen vacío inicial, validación contextual, doble envío idempotente, recompensa pendiente/no aplicable y reembolso inequívoco. Media rota o ausente conserva la geometría con fallback JAKAWI neutral.
+
 ## Flujos canónicos
 
 **A. Nuevo usuario → miembro.** Descubre en Inicio o Explorar, entiende el Beneficio y llega a una conversión contextual que conserva ese Benefit; checkout/pagos pertenecen al siguiente bloque de implementación. El contrato y la secuencia están definidos en [CONVERSION.md](CONVERSION.md).
