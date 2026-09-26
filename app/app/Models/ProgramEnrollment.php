@@ -28,4 +28,11 @@ class ProgramEnrollment extends Model
     {
         $query->where('status', self::STATUS_ACTIVE)->where(fn (Builder $q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at', '>=', now()));
     }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE
+            && ($this->starts_at === null || $this->starts_at->lte(now()))
+            && ($this->ends_at === null || $this->ends_at->gte(now()));
+    }
 }

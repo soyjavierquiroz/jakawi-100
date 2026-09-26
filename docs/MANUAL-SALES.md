@@ -2,7 +2,9 @@
 
 ## Dominio y permisos
 
-`ProgramEnrollment` concede acceso operativo por programa, sin convertir el programa en un rol de `User`. Una inscripción activa `PROMOTER` permite ver y registrar únicamente las ventas propias. Un usuario puede conservar a la vez membresía y cualquier número de inscripciones de programa. Admin sigue determinado por `users.is_admin`.
+`ProgramEnrollment` concede acceso operativo por programa, sin convertir el programa en un rol de `User`. Una inscripción `PROMOTER` operativamente activa (estado `active` y dentro de vigencia) permite ver y registrar únicamente las ventas propias. Un usuario puede conservar a la vez membresía y cualquier número de inscripciones de programa. Admin sigue determinado por `users.is_admin`.
+
+Admin gestiona Promotores desde UI: busca o crea la identidad sin contraseña compartida, reutiliza Fortify para que una cuenta nueva defina su contraseña, enrola, activa/desactiva, configura vigencia y entrega código/enlace de referido. Desactivar no borra ventas, recompensas ni historial. La regla CASH individual opcional usa `RewardRule.beneficiary_user_id` y precede a la regla de programa y global.
 
 `MembershipPurchase` es el registro comercial neutral: guarda la referencia JAKAWI inmutable, recibo manual, canal, monto, moneda, duración configurada, beneficiario, registrador, cobrador, estado y vínculos a la membresía y conversión. `manual_cash` confirma de inmediato; QR reutilizará la misma entidad cuando exista confirmación server-side.
 

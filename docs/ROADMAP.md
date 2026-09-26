@@ -2,6 +2,9 @@
 
 ## Ahora
 
+- Admin Promoter Management V1: **LIVE**. Admin enrola y opera promotores,
+  vigencia, referral y override individual de comisión sin alterar Membership.
+
 - Attribution Foundation V1: **LIVE**. Conserva origen anónimo, UTM,
   referente válido y conversiones; no incluye recompensas ni comisiones.
 
@@ -37,6 +40,8 @@
 - Puntos y rewards.
 - Rewards, comisiones, payouts y dashboards de referidos/afiliados/creadores
   (la fundación de atribución ya existe; no incluye recompensas).
+- JP, payouts de afiliados, dashboard de referidos de miembros, analítica de
+  creadores y campañas avanzadas.
 - IA.
 - App nativa.
 - Mapa complejo.

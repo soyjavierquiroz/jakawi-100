@@ -11,14 +11,7 @@ class RewardResolver
 {
     public function createFor(Conversion $conversion, User $beneficiary, string $participantType): ?RewardTransaction
     {
-        $rule = RewardRule::query()->where('status', RewardRule::STATUS_ACTIVE)->where('event', $conversion->type)
-            ->where('reward_type', RewardRule::TYPE_CASH)
-            ->where(fn ($q) => $q->whereNull('product_key')->orWhere('product_key', $conversion->product_key))
-            ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
-            ->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at', '>=', now()))
-            ->where(fn ($q) => $q->where('beneficiary_user_id', $beneficiary->id)->orWhere(fn ($q) => $q->whereNull('beneficiary_user_id')->where('participant_type', $participantType))->orWhere(fn ($q) => $q->whereNull('beneficiary_user_id')->whereNull('participant_type')))
-            ->orderByRaw('CASE WHEN beneficiary_user_id IS NOT NULL THEN 0 WHEN participant_type IS NOT NULL THEN 1 ELSE 2 END')
-            ->orderByDesc('priority')->orderBy('id')->first();
+        $rule = $this->ruleFor($beneficiary, $participantType, $conversion->type, $conversion->product_key);
 
         if (! $rule || ! $this->withinLimits($rule, $beneficiary)) {
             return null;
@@ -35,6 +28,18 @@ class RewardResolver
             'amount' => number_format($amount, 2, '.', ''), 'currency' => $rule->currency ?? $conversion->currency,
             'status' => RewardTransaction::STATUS_PENDING,
         ]);
+    }
+
+    public function ruleFor(User $beneficiary, string $participantType, string $event, ?string $productKey): ?RewardRule
+    {
+        return RewardRule::query()->where('status', RewardRule::STATUS_ACTIVE)->where('event', $event)
+            ->where('reward_type', RewardRule::TYPE_CASH)
+            ->where(fn ($q) => $q->whereNull('product_key')->orWhere('product_key', $productKey))
+            ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
+            ->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at', '>=', now()))
+            ->where(fn ($q) => $q->where('beneficiary_user_id', $beneficiary->id)->orWhere(fn ($q) => $q->whereNull('beneficiary_user_id')->where('participant_type', $participantType))->orWhere(fn ($q) => $q->whereNull('beneficiary_user_id')->whereNull('participant_type')))
+            ->orderByRaw('CASE WHEN beneficiary_user_id IS NOT NULL THEN 0 WHEN participant_type IS NOT NULL THEN 1 ELSE 2 END')
+            ->orderByDesc('priority')->orderBy('id')->first();
     }
 
     private function withinLimits(RewardRule $rule, User $beneficiary): bool

@@ -127,6 +127,13 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('reward-rules', [AdminRewardRuleController::class, 'index'])->name('admin.reward-rules.index');
     Route::post('reward-rules', [AdminRewardRuleController::class, 'store'])->name('admin.reward-rules.store');
     Route::put('reward-rules/{rule}', [AdminRewardRuleController::class, 'update'])->name('admin.reward-rules.update');
+    Route::get('promoters', [\App\Http\Controllers\AdminPromoterController::class, 'index'])->name('admin.promoters.index');
+    Route::get('promoters/create', [\App\Http\Controllers\AdminPromoterController::class, 'create'])->name('admin.promoters.create');
+    Route::post('promoters', [\App\Http\Controllers\AdminPromoterController::class, 'store'])->name('admin.promoters.store');
+    Route::get('promoters/{user}', [\App\Http\Controllers\AdminPromoterController::class, 'show'])->name('admin.promoters.show');
+    Route::put('promoters/{user}/enrollment', [\App\Http\Controllers\AdminPromoterController::class, 'updateEnrollment'])->name('admin.promoters.enrollment.update');
+    Route::post('promoters/{user}/referral-code', [\App\Http\Controllers\AdminPromoterController::class, 'referralCode'])->name('admin.promoters.referral-code');
+    Route::put('promoters/{user}/commission', [\App\Http\Controllers\AdminPromoterController::class, 'commission'])->name('admin.promoters.commission');
 });
 
 require __DIR__.'/settings.php';

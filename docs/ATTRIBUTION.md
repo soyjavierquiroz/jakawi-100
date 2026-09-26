@@ -10,7 +10,7 @@ Se reutiliza el UUID first-party `jakawi_visitor_id` como `anonymous_id`: es ale
 
 ## Códigos y ruta
 
-Los códigos son únicos, normalizados a mayúsculas ASCII y se generan sólo para nuevos usuarios registrados. Las rutas `/r/{CODE}` resuelven el código sin exponer datos del referente y sólo redirigen a Inicio, preservando únicamente UTMs controladas: no existe open redirect.
+Los códigos son únicos, normalizados a mayúsculas ASCII y se generan para usuarios registrados y para un promotor activo que aún no tiene uno. Admin puede regenerarlo sólo mediante una acción explícita auditada; un código existente nunca se sobrescribe silenciosamente. Las rutas `/r/{CODE}` resuelven el código sin exponer datos del referente y sólo redirigen a Inicio, preservando únicamente UTMs controladas: no existe open redirect.
 
 ## First Valid Referrer
 
