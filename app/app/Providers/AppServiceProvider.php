@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Payments\Qr\Contracts\QrPaymentGateway;
+use App\Payments\Qr\Exceptions\UnsafeQrPaymentConfiguration;
+use App\Payments\Qr\Providers\DisabledQrPaymentGateway;
+use App\Payments\Qr\Providers\FakeQrPaymentGateway;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Date;
@@ -17,7 +21,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(QrPaymentGateway::class, function (): QrPaymentGateway {
+            $driver = config('payments.qr.driver', 'disabled');
+
+            if ($driver === 'fake') {
+                if ($this->app->isProduction()) {
+                    throw new UnsafeQrPaymentConfiguration('QR_PAYMENT_DRIVER=fake is not allowed in production.');
+                }
+
+                return new FakeQrPaymentGateway;
+            }
+
+            if ($driver === 'disabled') {
+                return new DisabledQrPaymentGateway;
+            }
+
+            throw new UnsafeQrPaymentConfiguration("Unsupported QR payment driver [{$driver}].");
+        });
     }
 
     /**

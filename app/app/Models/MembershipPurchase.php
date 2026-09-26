@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MembershipPurchase extends Model
 {
+    public const PAYMENT_CHANNEL_QR = 'qr';
+
+    public const STATUS_PENDING = 'pending';
+
     public const STATUS_CONFIRMED = 'confirmed';
 
     public const STATUS_REFUNDED = 'refunded';
