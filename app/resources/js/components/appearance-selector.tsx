@@ -1,5 +1,37 @@
 import { Check, Monitor, Moon, Sun } from 'lucide-react';
 import { type Appearance, useAppearance } from '@/hooks/use-appearance';
 import { cn } from '@/lib/utils';
-const options: Array<{ value: Appearance; label: string; icon: typeof Sun }> = [{ value: 'light', label: 'Claro', icon: Sun }, { value: 'dark', label: 'Oscuro', icon: Moon }, { value: 'system', label: 'Dispositivo', icon: Monitor }];
-export default function AppearanceSelector() { const { appearance, updateAppearance } = useAppearance(true); return <div className="grid gap-2 sm:grid-cols-3">{options.map(({ value, label, icon: Icon }) => <button key={value} type="button" onClick={() => updateAppearance(value)} aria-pressed={appearance === value} className={cn('flex min-h-14 items-center justify-between rounded-2xl border px-3 text-left text-sm font-semibold transition', appearance === value ? 'border-brand bg-brand/15 text-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted')}><span className="flex items-center gap-2"><Icon className="size-4" />{label}</span>{appearance === value ? <Check className="size-4 text-brand" /> : null}</button>)}</div>; }
+const options: Array<{ value: Appearance; label: string; icon: typeof Sun }> = [
+    { value: 'light', label: 'Claro', icon: Sun },
+    { value: 'dark', label: 'Oscuro', icon: Moon },
+    { value: 'system', label: 'Dispositivo', icon: Monitor },
+];
+export default function AppearanceSelector() {
+    const { appearance, updateAppearance } = useAppearance(true);
+    return (
+        <div className="grid gap-2 rounded-2xl border border-border bg-surface-muted p-2 sm:grid-cols-3">
+            {options.map(({ value, label, icon: Icon }) => (
+                <button
+                    key={value}
+                    type="button"
+                    onClick={() => updateAppearance(value)}
+                    aria-pressed={appearance === value}
+                    className={cn(
+                        'flex min-h-12 items-center justify-between rounded-xl border px-3 text-left text-sm font-semibold transition-colors',
+                        appearance === value
+                            ? 'border-brand bg-brand-subtle text-foreground'
+                            : 'border-transparent text-muted-foreground hover:bg-surface',
+                    )}
+                >
+                    <span className="flex items-center gap-2">
+                        <Icon className="size-4" />
+                        {label}
+                    </span>
+                    {appearance === value ? (
+                        <Check className="size-4 text-brand" />
+                    ) : null}
+                </button>
+            ))}
+        </div>
+    );
+}

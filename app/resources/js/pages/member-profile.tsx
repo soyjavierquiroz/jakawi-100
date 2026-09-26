@@ -1,7 +1,9 @@
 import { Head, router } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
 import Cropper, { type Area } from 'react-easy-crop';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import AppearanceSelector from '@/components/appearance-selector';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -108,7 +110,8 @@ function Choices({
                     key={value}
                     type="button"
                     onClick={() => onChange(value)}
-                    className={`rounded-full border px-3 py-2 text-sm font-medium ${selected.includes(value) ? 'border-foreground bg-foreground text-background' : 'border-border bg-background'}`}
+                    aria-pressed={selected.includes(value)}
+                    className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${selected.includes(value) ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface-muted text-foreground hover:border-brand hover:bg-brand-subtle'}`}
                 >
                     {labels[value] ?? value}
                 </button>
@@ -233,27 +236,36 @@ export default function MemberProfile({
     return (
         <>
             <Head title="Tu perfil JAKAWI" />
-            <main className="min-h-screen bg-background px-4 py-6 pb-28 text-foreground sm:px-6">
+            <main className="min-h-screen bg-background px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-28 text-foreground sm:px-6">
                 <form
                     onSubmit={submit}
-                    className="mx-auto flex w-full max-w-xl flex-col gap-6"
+                    className="mx-auto flex w-full max-w-3xl flex-col gap-5"
                 >
-                    <div>
-                        <a href="/" className="text-sm font-medium underline">
+                    <header className="pb-1">
+                        <a
+                            href="/"
+                            className="min-h-11 text-sm font-semibold text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                        >
                             Inicio
                         </a>
-                        <p className="mt-5 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                            Tu perfil JAKAWI
-                        </p>
-                        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">
+                        <div className="mt-5 flex items-center gap-2">
+                            <span
+                                className="size-2 rounded-full bg-action"
+                                aria-hidden="true"
+                            />
+                            <p className="text-xs font-bold tracking-[0.16em] text-muted-foreground uppercase">
+                                Tu perfil JAKAWI
+                            </p>
+                        </div>
+                        <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                             Tu perfil
                         </h1>
                         <p className="mt-3 leading-6 text-muted-foreground">
                             Cuéntanos qué te gusta para mostrarte lugares y
                             experiencias más relevantes.
                         </p>
-                    </div>
-                    <div className="rounded-md border border-border bg-surface p-5">
+                    </header>
+                    <section className="rounded-3xl border border-border bg-surface-elevated p-5 sm:p-6">
                         <div className="flex items-center gap-4">
                             {avatarPreview || profile.avatar_url ? (
                                 <img
@@ -262,22 +274,22 @@ export default function MemberProfile({
                                         profile.avatar_url ??
                                         undefined
                                     }
-                                    className="h-16 w-16 rounded-full object-cover"
+                                    className="h-20 w-20 shrink-0 rounded-full border-4 border-brand-subtle object-cover sm:h-22 sm:w-22"
                                     alt="Tu avatar"
                                 />
                             ) : (
-                                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted text-xl font-semibold">
+                                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-brand-subtle bg-brand-subtle text-2xl font-bold sm:h-22 sm:w-22">
                                     {user.name.slice(0, 1).toUpperCase()}
                                 </div>
                             )}
                             <div>
-                                <p className="font-semibold">{user.name}</p>
+                                <p className="text-lg font-bold">{user.name}</p>
                                 <p className="text-sm text-muted-foreground">
                                     {user.email}
                                 </p>
                                 <button
                                     type="button"
-                                    className="mt-1 min-h-11 text-sm font-semibold underline"
+                                    className="mt-1 min-h-11 text-sm font-semibold text-brand underline underline-offset-4"
                                     onClick={() => setAvatarPickerOpen(true)}
                                 >
                                     {avatarPreview || profile.avatar_url
@@ -291,7 +303,7 @@ export default function MemberProfile({
                                 ) : null}
                             </div>
                         </div>
-                        <label className="mt-5 block text-sm font-semibold">
+                        <label className="mt-6 block border-t border-border pt-5 text-sm font-semibold">
                             Ciudad
                             <select
                                 value={form.city}
@@ -301,80 +313,90 @@ export default function MemberProfile({
                                         city: event.target.value,
                                     }))
                                 }
-                                className="mt-2 block w-full rounded-md border border-border bg-background px-3 py-2"
+                                className="mt-2 block min-h-12 w-full rounded-xl border border-border bg-surface-muted px-3 py-2 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-brand"
                             >
                                 {options.cities.map((city) => (
                                     <option key={city}>{city}</option>
                                 ))}
                             </select>
                         </label>
-                    </div>
-                    <div className="rounded-md border border-border bg-surface p-5">
-                        <p className="text-lg font-semibold">
-                            ¿Qué te interesa?
-                        </p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            Elige entre 3 y 5 si quieres; puedes seleccionar
-                            más.
-                        </p>
-                        <Choices
-                            values={options.interests}
-                            selected={form.interests}
-                            onChange={(value) => toggle('interests', value)}
-                        />
-                    </div>
-                    <div className="rounded-md border border-border bg-surface p-5">
-                        <p className="text-lg font-semibold">
-                            ¿Con quién sueles salir?
-                        </p>
-                        <Choices
-                            values={options.social_contexts}
-                            selected={form.social_contexts}
-                            onChange={(value) =>
-                                toggle('social_contexts', value)
-                            }
-                        />
-                    </div>
-                    <div className="rounded-md border border-border bg-surface p-5">
-                        <p className="text-lg font-semibold">
-                            ¿Cuándo sueles buscar planes?
-                        </p>
-                        <Choices
-                            values={options.preferred_days}
-                            selected={form.preferred_days}
-                            onChange={(value) =>
-                                toggle('preferred_days', value)
-                            }
-                        />
-                    </div>
-                    <div className="rounded-md border border-border bg-surface p-5">
-                        <p className="text-lg font-semibold">
-                            ¿En qué momento del día?
-                        </p>
-                        <Choices
-                            values={options.preferred_times}
-                            selected={form.preferred_times}
-                            onChange={(value) =>
-                                toggle('preferred_times', value)
-                            }
-                        />
-                    </div>
+                    </section>
+                    <section className="rounded-3xl border border-border bg-surface-elevated p-5 sm:p-6">
+                        <div>
+                            <p className="text-lg font-bold">
+                                ¿Qué te interesa?
+                            </p>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Elige entre 3 y 5 si quieres; puedes seleccionar
+                                más.
+                            </p>
+                            <Choices
+                                values={options.interests}
+                                selected={form.interests}
+                                onChange={(value) => toggle('interests', value)}
+                            />
+                        </div>
+                        <div className="mt-6 border-t border-border pt-6">
+                            <p className="text-lg font-bold">
+                                ¿Con quién sueles salir?
+                            </p>
+                            <Choices
+                                values={options.social_contexts}
+                                selected={form.social_contexts}
+                                onChange={(value) =>
+                                    toggle('social_contexts', value)
+                                }
+                            />
+                        </div>
+                        <div className="mt-6 border-t border-border pt-6">
+                            <p className="text-lg font-bold">
+                                ¿Cuándo sueles buscar planes?
+                            </p>
+                            <Choices
+                                values={options.preferred_days}
+                                selected={form.preferred_days}
+                                onChange={(value) =>
+                                    toggle('preferred_days', value)
+                                }
+                            />
+                        </div>
+                        <div className="mt-6 border-t border-border pt-6">
+                            <p className="text-lg font-bold">
+                                ¿En qué momento del día?
+                            </p>
+                            <Choices
+                                values={options.preferred_times}
+                                selected={form.preferred_times}
+                                onChange={(value) =>
+                                    toggle('preferred_times', value)
+                                }
+                            />
+                        </div>
+                    </section>
                     <div
-                        className={`rounded-md border p-5 ${complete ? 'border-success bg-success/10' : 'border-border bg-surface'}`}
+                        className={`flex items-start gap-3 rounded-2xl border p-4 ${complete ? 'border-success bg-success-surface' : 'border-border bg-surface-muted'}`}
                     >
-                        <p className="text-xl font-semibold">
-                            {complete
-                                ? 'Perfil completo'
-                                : `${profile.completion_percentage}% completo`}
-                        </p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            {complete
-                                ? 'Gracias por compartir tus preferencias.'
-                                : 'Completa las cuatro secciones para terminar tu perfil.'}
-                        </p>
+                        <span
+                            className={`flex size-6 shrink-0 items-center justify-center rounded-full text-sm font-bold ${complete ? 'bg-success text-success-foreground' : 'bg-surface text-muted-foreground'}`}
+                            aria-hidden="true"
+                        >
+                            {complete ? '✓' : '·'}
+                        </span>
+                        <div>
+                            <p className="font-bold">
+                                {complete
+                                    ? 'Perfil completo'
+                                    : `${profile.completion_percentage}% completo`}
+                            </p>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                {complete
+                                    ? 'Tus preferencias ya están ayudando a personalizar JAKAWI.'
+                                    : 'Completa las cuatro secciones para terminar tu perfil.'}
+                            </p>
+                        </div>
                     </div>
-                    <section className="rounded-md border border-border bg-surface p-5">
-                        <p className="text-lg font-semibold">Apariencia</p>
+                    <section className="rounded-3xl border border-border bg-surface-elevated p-5 sm:p-6">
+                        <p className="text-lg font-bold">Apariencia</p>
                         <p className="mt-1 text-sm text-muted-foreground">
                             Elige cómo se ve JAKAWI.
                         </p>
@@ -382,17 +404,24 @@ export default function MemberProfile({
                             <AppearanceSelector />
                         </div>
                     </section>
-                    <button
-                        className="rounded-md bg-foreground px-4 py-3 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
+                    <Button
+                        className="h-12 w-full rounded-xl text-base font-bold"
                         type="submit"
                         disabled={saving}
                     >
-                        {saving ? 'Guardando perfil…' : 'Guardar perfil'}
-                    </button>
+                        {saving ? (
+                            <>
+                                <LoaderCircle className="size-4 animate-spin" />
+                                Guardando…
+                            </>
+                        ) : (
+                            'Guardar perfil'
+                        )}
+                    </Button>
                     <button
                         type="button"
                         onClick={() => router.post('/logout')}
-                        className="min-h-11 text-sm font-semibold text-muted-foreground underline"
+                        className="min-h-11 self-center text-sm font-semibold text-muted-foreground underline underline-offset-4 hover:text-foreground"
                     >
                         Cerrar sesión
                     </button>
@@ -502,7 +531,7 @@ export default function MemberProfile({
                         </button>
                         <button
                             type="button"
-                            className="min-h-11 flex-1 rounded-md bg-brand px-4 font-bold text-white disabled:opacity-60"
+                            className="min-h-11 flex-1 rounded-md bg-brand px-4 font-bold text-brand-foreground disabled:opacity-60"
                             onClick={useCroppedAvatar}
                             disabled={cropping || !cropPixels}
                         >

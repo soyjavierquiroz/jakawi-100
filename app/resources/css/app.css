@@ -30,12 +30,14 @@
     --color-surface-foreground: var(--surface-foreground);
     --color-brand: var(--brand);
     --color-brand-foreground: var(--brand-foreground);
+    --color-brand-subtle: var(--brand-subtle);
     --color-action: var(--action);
     --color-action-foreground: var(--action-foreground);
     --color-energy: var(--energy);
     --color-energy-foreground: var(--energy-foreground);
     --color-success: var(--success);
     --color-success-foreground: var(--success-foreground);
+    --color-success-surface: var(--success-surface);
     --color-warning: var(--warning);
     --color-warning-foreground: var(--warning-foreground);
     --color-danger: var(--danger);
@@ -93,5 +95,7 @@
         @apply bg-background text-foreground;
     }
 
-    :focus-visible { @apply outline-2 outline-offset-2 outline-brand; }
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-brand;
+    }
 }
