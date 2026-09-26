@@ -1,67 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
-export default function PartnerShow({
-    partner,
-    locations = [],
-    benefits = [],
-    experiences = [],
-}: any) {
-    return (
-        <main className="min-h-screen bg-background p-5 text-foreground">
-            <Head title={partner.name} />
-            <Link href="/">JAKAWI</Link>
-            <h1 className="mt-6 text-4xl font-semibold">{partner.name}</h1>
-            <p className="mt-3 text-muted-foreground">{partner.description}</p>
-            {partner.whatsapp ? (
-                <a
-                    className="mt-4 inline-block text-brand"
-                    href={`/partners/${partner.slug}/whatsapp`}
-                >
-                    WhatsApp
-                </a>
-            ) : null}
-            <Section title="Lugares">
-                {locations.map((x: any) => (
-                    <Link
-                        className="block py-2"
-                        key={x.id}
-                        href={`/lugares/${x.slug}`}
-                    >
-                        {x.name}
-                    </Link>
-                ))}
-            </Section>
-            <Section title="Beneficios">
-                {benefits.map((x: any) => (
-                    <Link
-                        className="block py-2"
-                        key={x.id}
-                        href={`/beneficios/${x.slug}`}
-                    >
-                        {x.title}
-                    </Link>
-                ))}
-            </Section>
-            <Section title="Experiencias">
-                {experiences.map((x: any) => (
-                    <Link
-                        className="block py-2"
-                        key={x.id}
-                        href={`/experiencias/${x.slug}`}
-                    >
-                        {x.title}
-                    </Link>
-                ))}
-            </Section>
-        </main>
-    );
-}
-function Section({ title, children }: any) {
-    return (
-        <section className="mt-8">
-            <h2 className="text-xl font-semibold">{title}</h2>
-            <div className="mt-2 rounded-md border border-border p-3">
-                {children || 'Aún no hay contenido disponible.'}
-            </div>
-        </section>
-    );
+import { ArrowLeft, MapPin, MessageCircle } from 'lucide-react';
+import BenefitCard from '@/components/benefit-card';
+import ExperienceCard from '@/components/experience-card';
+import { JakawiImage } from '@/components/jakawi-image';
+
+export default function PartnerShow({ partner, locations = [], benefits = [], experiences = [] }: any) {
+    const location = locations[0];
+    return <><Head title={partner.name} /><main className="min-h-screen bg-background pb-28 text-foreground"><section className="mx-auto max-w-5xl"><div className="relative aspect-[16/10] bg-surface-muted sm:rounded-b-[32px]"><JakawiImage src={partner.cover_url} srcset={partner.cover_srcset} sizes="(min-width: 1024px) 960px, 100vw" alt={partner.name} className="h-full w-full object-cover sm:rounded-b-[32px]" loading="eager" priority /><Link href="/explorar" aria-label="Volver a explorar" className="absolute top-4 left-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-background/90 px-4 text-sm font-bold"><ArrowLeft className="size-4" />Explorar</Link></div><div className="px-4 pt-6 sm:px-8 sm:pt-10"><p className="text-xs font-extrabold tracking-[0.12em] text-brand uppercase">{partner.category ?? 'Lugar JAKAWI'}</p><h1 className="mt-2 text-4xl leading-none font-extrabold tracking-tight sm:text-6xl">{partner.name}</h1>{location ? <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="size-4 text-brand" />{location.zone ?? location.address ?? location.name}</p> : null}<div className="mt-6 flex flex-wrap gap-3">{location?.maps_url ? <a href={`/lugares/${location.slug}/mapa`} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-brand px-5 text-sm font-extrabold text-brand-foreground"><MapPin className="size-4" />CÓMO LLEGAR</a> : null}{partner.whatsapp ? <a href={`/partners/${partner.slug}/whatsapp`} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-border bg-surface px-5 text-sm font-extrabold"><MessageCircle className="size-4" />WHATSAPP</a> : null}</div>{benefits.length ? <section className="mt-12"><h2 className="text-2xl font-extrabold">BENEFICIOS JAKAWI</h2><div className="mt-4 flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-3">{benefits.map((benefit: any) => <BenefitCard key={benefit.id} benefit={benefit} />)}</div></section> : null}{experiences.length ? <section className="mt-12"><h2 className="text-2xl font-extrabold">EXPERIENCIAS</h2><div className="mt-4 flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-3">{experiences.map((experience: any) => <ExperienceCard key={experience.id} experience={experience} />)}</div></section> : null}{locations.length ? <section className="mt-12 border-t border-border pt-7"><h2 className="text-xl font-extrabold">HORARIOS Y UBICACIONES</h2><div className="mt-3 divide-y divide-border">{locations.map((item: any) => <div key={item.id} className="py-4"><p className="font-bold">{item.name}</p>{(item.address || item.zone) ? <p className="mt-1 text-sm text-muted-foreground">{item.address ?? item.zone}</p> : null}{item.opening_hours ? <p className="mt-2 text-sm text-muted-foreground">{item.opening_hours}</p> : null}</div>)}</div></section> : null}{partner.description ? <section className="mt-8 border-t border-border pt-7"><h2 className="text-xl font-extrabold">SOBRE {partner.name}</h2><p className="mt-3 max-w-2xl leading-7 text-muted-foreground">{partner.description}</p></section> : null}</div></section></main></>;
 }

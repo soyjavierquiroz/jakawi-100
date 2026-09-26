@@ -18,6 +18,7 @@
     --muted-foreground: #706761;
     --border: #e9ddd4;
     --border-strong: #d7c7bc;
+    --overlay: color-mix(in srgb, var(--foreground) 42%, transparent);
 
     --success: #24b47e;
     --success-foreground: #111111;
@@ -84,6 +85,7 @@
     --muted-foreground: #beb2aa;
     --border: #332f2b;
     --border-strong: #48413c;
+    --overlay: color-mix(in srgb, var(--foreground) 48%, transparent);
 
     --success: #24b47e;
     --success-foreground: #111111;

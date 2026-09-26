@@ -3,6 +3,7 @@
 ## Ahora
 
 - Pulido visual de la experiencia consumidora.
+- Cierre del Core según el [Mapa UX MVP](UX-MVP.md).
 - Contenido real y calidad fotográfica.
 - Onboarding y calidad de supply.
 - QA para preparación de lanzamiento.

@@ -1,123 +1,21 @@
 import { Head, Link } from '@inertiajs/react';
+import { Check, Clock3 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
 
-type Redemption = {
-    public_id: string;
-    code: string;
-    status: string;
-    partner_name: string;
-    location_name: string;
-    benefit_title: string;
-    benefit_slug?: string | null;
-    savings_amount?: string | null;
-    expires_at: string;
-    confirmed_at?: string | null;
-    qr_url?: string | null;
-};
-
-function money(value?: string | null) {
-    if (!value) return null;
-    return `Bs ${Number(value).toFixed(2)}`;
-}
-
+type Redemption = { public_id: string; code: string; status: string; partner_name: string; location_name: string; benefit_title: string; benefit_slug?: string | null; savings_amount?: string | null; expires_at: string; confirmed_at?: string | null; qr_url?: string | null };
+type Membership = { amount_paid?: string | null; confirmed_savings: string; has_paid_for_itself: boolean };
+function money(value?: string | null) { return value ? `Bs ${Number(value).toFixed(2)}` : null; }
 function timeLeft(value: string) { const seconds = Math.max(0, Math.floor((new Date(value).getTime() - Date.now()) / 1000)); return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`; }
 
-export default function RedemptionShow({
-    redemption,
-}: {
-    redemption: Redemption;
-}) {
+export default function RedemptionShow({ redemption, membership }: { redemption: Redemption; membership?: Membership | null }) {
     const confirmed = redemption.status === 'confirmed';
     const expired = redemption.status === 'expired' && !confirmed;
     const savings = money(redemption.savings_amount);
     const [qr, setQr] = useState('');
     const [, tick] = useState(0);
-    useEffect(() => { if (redemption.qr_url) QRCode.toDataURL(redemption.qr_url, { width: 360, margin: 1 }).then(setQr); }, [redemption.qr_url]);
+    useEffect(() => { if (redemption.qr_url) void QRCode.toDataURL(redemption.qr_url, { width: 420, margin: 1 }).then(setQr); }, [redemption.qr_url]);
     useEffect(() => { const timer = window.setInterval(() => tick(value => value + 1), 1000); return () => window.clearInterval(timer); }, []);
-
-    return (
-        <main className="min-h-screen bg-background px-4 py-6 text-foreground">
-            <Head title="Tu código de canje" />
-            <section className="mx-auto flex w-full max-w-md flex-col gap-5">
-                <p className="text-sm font-bold tracking-wide text-brand uppercase">JAKAWI</p><h1 className="text-3xl font-extrabold">{confirmed ? 'CANJE CONFIRMADO' : 'MUESTRA ESTE CÓDIGO'}</h1>
-                <div className="rounded-md border border-border bg-surface p-5">
-                    {confirmed ? (
-                        <><p className="text-lg font-semibold text-success">✓ Valor recibido</p>{savings ? <><p className="mt-5 text-sm font-bold tracking-wide text-success uppercase">Ahorraste</p><p className="text-4xl font-extrabold text-success">{savings}</p></> : null}</>
-                    ) : null}
-                    {expired ? (
-                        <p className="text-lg font-semibold">
-                            Este código venció.
-                        </p>
-                    ) : null}
-                    {!confirmed && !expired ? (
-                        <p className="text-sm text-muted-foreground">
-                            Muéstrale este QR al Partner.
-                        </p>
-                    ) : null}
-                    {qr ? <img src={qr} className="mx-auto mt-4 w-full max-w-[300px]" alt="QR de canje" /> : null}
-                    <p className="mt-4 rounded-md bg-background px-4 py-5 text-center text-5xl font-bold tracking-[0.25em]">
-                        {redemption.code}
-                    </p>
-                    <dl className="mt-5 grid gap-3 text-sm">
-                        <div>
-                            <dt className="font-semibold">Beneficio</dt>
-                            <dd>{redemption.benefit_title}</dd>
-                        </div>
-                        <div>
-                            <dt className="font-semibold">Partner</dt>
-                            <dd>{redemption.partner_name}</dd>
-                        </div>
-                        <div>
-                            <dt className="font-semibold">Lugar</dt>
-                            <dd>{redemption.location_name}</dd>
-                        </div>
-                        {!confirmed && !expired ? (
-                            <div>
-                                <dt className="font-semibold">Expira en</dt>
-                                <dd>
-                                    {timeLeft(redemption.expires_at)}
-                                </dd>
-                            </div>
-                        ) : null}
-                        {confirmed ? (
-                            <div>
-                                <dt className="font-semibold">Confirmado</dt>
-                                <dd>
-                                    {redemption.confirmed_at
-                                        ? new Date(
-                                              redemption.confirmed_at,
-                                          ).toLocaleString('es-BO')
-                                        : ''}
-                                </dd>
-                            </div>
-                        ) : null}
-                        {savings ? (
-                            <div>
-                                <dt className="font-semibold">
-                                    Ahorro estimado
-                                </dt>
-                                <dd>{savings}</dd>
-                            </div>
-                        ) : null}
-                    </dl>
-                    {!confirmed && !expired ? (
-                        <p className="mt-5 text-sm text-muted-foreground">
-                            También puedes usar el código: {redemption.code}
-                        </p>
-                    ) : null}
-                </div>
-                <Link
-                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground"
-                    href={confirmed ? '/explorar' : (
-                        redemption.benefit_slug
-                            ? `/beneficios/${redemption.benefit_slug}`
-                            : '/beneficios'
-                    )}
-                >
-                    {confirmed ? 'Seguir descubriendo' : 'Regresar al beneficio'}
-                </Link>
-            </section>
-        </main>
-    );
+    if (confirmed) return <><Head title="Canje confirmado" /><main className="min-h-screen bg-success-surface px-4 py-[max(2rem,env(safe-area-inset-top))] pb-10 text-foreground"><section className="mx-auto flex min-h-[75vh] w-full max-w-md flex-col justify-center text-center"><div className="mx-auto flex size-20 items-center justify-center rounded-full bg-success text-success-foreground"><Check className="size-11" strokeWidth={3} /></div><p className="mt-7 text-sm font-extrabold tracking-[0.14em] text-success uppercase">Valor recibido</p><h1 className="mt-2 text-4xl font-extrabold tracking-tight">CANJE CONFIRMADO</h1>{savings ? <><p className="mt-8 text-sm font-bold uppercase">AHORRASTE</p><p className="mt-1 text-5xl font-extrabold text-success">{savings}</p></> : null}<div className="mt-9 border-y border-border py-5 text-left"><p className="font-extrabold">{redemption.partner_name}</p><p className="mt-1 text-sm text-muted-foreground">{redemption.benefit_title} · {redemption.location_name}</p></div>{membership ? <div className="mt-7"><p className="text-sm font-bold">Tu ahorro acumulado</p><p className="mt-1 text-2xl font-extrabold">Bs {membership.confirmed_savings}</p>{membership.has_paid_for_itself ? <p className="mt-4 text-sm font-extrabold text-success">🎉 TU JAKAWI YA SE PAGÓ SOLA</p> : null}</div> : null}<Link className="mt-10 inline-flex min-h-14 items-center justify-center rounded-2xl bg-brand px-5 text-sm font-extrabold text-brand-foreground" href="/explorar">SEGUIR DESCUBRIENDO</Link></section></main></>;
+    return <><Head title="Tu código de canje" /><main className="min-h-screen bg-background px-4 py-[max(2rem,env(safe-area-inset-top))] pb-10 text-foreground"><section className="mx-auto w-full max-w-md"><p className="text-sm font-extrabold tracking-[0.14em] text-brand uppercase">JAKAWI</p>{expired ? <><h1 className="mt-3 text-3xl font-extrabold">ESTE CÓDIGO VENCIÓ</h1><p className="mt-3 leading-6 text-muted-foreground">Puedes volver al beneficio cuando estés listo para usarlo.</p></> : <><h1 className="mt-3 text-3xl font-extrabold">MUESTRA ESTE CÓDIGO</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">El establecimiento debe validar el código.</p></>} {!expired ? <><div className="mt-8 rounded-[28px] bg-surface p-5"><div className="flex items-center justify-between"><p className="text-sm font-bold">Válido por 10 minutos</p><p className="inline-flex items-center gap-1.5 font-extrabold text-brand"><Clock3 className="size-4" />{timeLeft(redemption.expires_at)}</p></div>{qr ? <img src={qr} className="mx-auto mt-5 aspect-square w-full max-w-[320px]" alt="QR de canje" /> : <div className="mx-auto mt-5 aspect-square w-full max-w-[320px] animate-pulse bg-surface-muted" />}<p className="mt-5 text-center text-sm font-semibold text-muted-foreground">Código manual</p><p className="mt-2 rounded-2xl bg-surface-muted px-4 py-5 text-center text-4xl font-extrabold tracking-[0.22em]">{redemption.code}</p></div><div className="mt-7 border-y border-border py-5 text-sm"><p className="font-extrabold">{redemption.partner_name}</p><p className="mt-1 text-muted-foreground">{redemption.location_name}</p><p className="mt-3 font-semibold">{redemption.benefit_title}</p></div></> : null}<Link className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-border bg-surface px-4 text-sm font-extrabold" href={redemption.benefit_slug ? `/beneficios/${redemption.benefit_slug}` : '/beneficios'}>{expired ? 'VOLVER AL BENEFICIO' : 'REGRESAR AL BENEFICIO'}</Link></section></main></>;
 }

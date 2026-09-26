@@ -79,23 +79,32 @@ class PublicController extends Controller
         $type = $request->query('type');
         $benefits = Benefit::available()->with('partner')->orderByDesc('featured')->orderBy('sort_order');
         $experiences = Experience::upcoming()->with('sessions.location')->orderByDesc('featured')->orderBy('sort_order');
+        $partners = Partner::query()->published()->orderByDesc('featured')->orderBy('name');
 
         if ($category && $category !== 'todos') {
             $benefits->where('category', $category);
             $experiences->where('category', $category);
+            $partners->where('category', $category);
         }
         if ($term !== '') {
             $like = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%';
             $benefits->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partner', fn ($p) => $p->where('name', 'ilike', $like)));
             $experiences->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partners', fn ($p) => $p->where('name', 'ilike', $like)));
+            $partners->where(fn ($query) => $query->where('name', 'ilike', $like)->orWhere('description', 'ilike', $like));
         }
+
+        $benefitResults = $type === 'experiences' ? collect() : $benefits->get()->map(fn ($b) => $this->benefitData($b) + ['result_type' => 'benefit']);
+        $experienceResults = $type === 'benefits' ? collect() : $experiences->get()->map(fn ($e) => $this->experienceData($e) + ['result_type' => 'experience']);
+        $partnerResults = $type ? collect() : $partners->get()->map(fn ($p) => $this->partner($p) + ['result_type' => 'partner']);
 
         return Inertia::render('explore', [
             'query' => $term,
             'category' => $category,
             'type' => $type,
-            'benefits' => $type === 'experiences' ? [] : $benefits->get()->map(fn ($b) => $this->benefitData($b)),
-            'experiences' => $type === 'benefits' ? [] : $experiences->get()->map(fn ($e) => $this->experienceData($e)),
+            'benefits' => $benefitResults,
+            'experiences' => $experienceResults,
+            'partners' => $partnerResults,
+            'results' => $partnerResults->concat($benefitResults)->concat($experienceResults)->values(),
         ]);
     }
 
