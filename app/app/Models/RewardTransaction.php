@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class RewardTransaction extends Model
 {
@@ -35,5 +36,10 @@ class RewardTransaction extends Model
     public function rule(): BelongsTo
     {
         return $this->belongsTo(RewardRule::class, 'reward_rule_id');
+    }
+
+    public function payouts(): BelongsToMany
+    {
+        return $this->belongsToMany(RewardPayout::class, 'reward_payout_reward_transaction')->withTimestamps();
     }
 }

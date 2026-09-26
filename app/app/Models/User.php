@@ -108,6 +108,12 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(RewardTransaction::class, 'beneficiary_user_id');
     }
 
+    /** @return HasMany<RewardPayout> */
+    public function rewardPayouts(): HasMany
+    {
+        return $this->hasMany(RewardPayout::class, 'beneficiary_user_id');
+    }
+
     public function hasActiveProgram(string $programType): bool
     {
         return $this->programEnrollments()->active()->where('program_type', $programType)->exists();

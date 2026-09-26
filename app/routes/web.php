@@ -6,6 +6,7 @@ use App\Http\Controllers\AffiliateDashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminRewardRuleController;
 use App\Http\Controllers\AdminSalesController;
+use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\ExperienceCheckInController;
 use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\MemberProfileController;
@@ -90,6 +91,7 @@ Route::middleware(['auth', 'verified', 'promoter'])->prefix('promoter')->group(f
 Route::middleware(['auth', 'verified', 'affiliate'])->prefix('affiliate')->group(function () {
     Route::get('/', [AffiliateDashboardController::class, 'show'])->name('affiliate.dashboard');
     Route::post('shared', [AffiliateDashboardController::class, 'shared'])->name('affiliate.shared');
+    Route::post('payouts', [AffiliateDashboardController::class, 'requestPayout'])->name('affiliate.payouts.store');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
@@ -149,6 +151,11 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('affiliates/{user}/referral-code', [AdminAffiliateController::class, 'referralCode'])->name('admin.affiliates.referral-code');
     Route::put('affiliates/{user}/commission', [AdminAffiliateController::class, 'commission'])->name('admin.affiliates.commission');
     Route::post('affiliates/{user}/rewards/{reward}/available', [AdminAffiliateController::class, 'makeAvailable'])->name('admin.affiliates.rewards.available');
+    Route::get('payouts', [AdminPayoutController::class, 'index'])->name('admin.payouts.index');
+    Route::put('payouts/settings', [AdminPayoutController::class, 'settings'])->name('admin.payouts.settings');
+    Route::get('payouts/{payout}', [AdminPayoutController::class, 'show'])->name('admin.payouts.show');
+    Route::post('payouts/{payout}/paid', [AdminPayoutController::class, 'pay'])->name('admin.payouts.paid');
+    Route::post('payouts/{payout}/reject', [AdminPayoutController::class, 'reject'])->name('admin.payouts.reject');
 });
 
 require __DIR__.'/settings.php';
