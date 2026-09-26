@@ -6,6 +6,7 @@ readonly project_name="jakawi-test"
 readonly expected_env="testing"
 readonly expected_host="db-test"
 readonly expected_database="jakawi_test"
+readonly lock_file="${TMPDIR:-/tmp}/jakawi-test.lock"
 readonly refusal_message="REFUSING DESTRUCTIVE TEST: database is not isolated."
 
 refuse() {
@@ -20,6 +21,16 @@ refuse() {
 [[ "${DB_DATABASE:-$expected_database}" == "$expected_database" ]] || refuse
 
 compose=(docker compose --project-name "$project_name" -f compose.yaml -f compose.test.yaml)
+
+# A single persistent test database is deliberately shared by normal runs. Do
+# not let two Laravel migration bootstraps or Compose creates share it at once.
+# The file descriptor (and therefore this lock) is released on exit or signal,
+# so an interrupted run cannot poison the next one.
+exec 9>"$lock_file"
+if ! flock -n 9; then
+    printf 'JAKAWI tests are already running; %s is locked. Retry after that run finishes.\n' "$lock_file" >&2
+    exit 75
+fi
 
 if [[ "${1:-}" == "down" ]]; then
     "${compose[@]}" down --remove-orphans
@@ -43,6 +54,14 @@ actual_database="$("${compose[@]}" exec -T app-test printenv DB_DATABASE)"
 
 if [[ "$#" -eq 0 ]]; then
     set -- php artisan test
+fi
+
+# RefreshDatabase runs migrations lazily in each PHPUnit process. Reset the
+# isolated database once, while holding the wrapper lock, so a stale or
+# interrupted prior run is harmless and concurrent invocations cannot race to
+# create the same PostgreSQL tables.
+if [[ "${1:-}" == "php" && "${2:-}" == "artisan" && "${3:-}" == "test" ]]; then
+    "${compose[@]}" exec -T app-test php artisan migrate:fresh --force
 fi
 
 "${compose[@]}" exec -T app-test "$@"
