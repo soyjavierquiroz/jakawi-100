@@ -75,6 +75,17 @@ class User extends Authenticatable implements PasskeyUser
     /** @return HasMany<Conversion> */
     public function conversions(): HasMany { return $this->hasMany(Conversion::class); }
 
+    /** @return HasMany<ProgramEnrollment> */
+    public function programEnrollments(): HasMany { return $this->hasMany(ProgramEnrollment::class); }
+
+    /** @return HasMany<MembershipPurchase> */
+    public function recordedMembershipPurchases(): HasMany { return $this->hasMany(MembershipPurchase::class, 'recorded_by_user_id'); }
+
+    public function hasActiveProgram(string $programType): bool
+    {
+        return $this->programEnrollments()->active()->where('program_type', $programType)->exists();
+    }
+
     /** @return HasMany<ExperienceReservation> */
     public function experienceReservations(): HasMany
     {

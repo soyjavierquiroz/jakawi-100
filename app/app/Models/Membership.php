@@ -46,6 +46,9 @@ class Membership extends Model
         return $this->belongsTo(User::class, 'activated_by');
     }
 
+    /** @return HasMany<MembershipPurchase, $this> */
+    public function purchases(): HasMany { return $this->hasMany(MembershipPurchase::class); }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE

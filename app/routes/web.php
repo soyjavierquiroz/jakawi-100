@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdminContentReviewController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminRewardRuleController;
+use App\Http\Controllers\AdminSalesController;
 use App\Http\Controllers\ExperienceCheckInController;
 use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\MemberProfileController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\PartnerLoginController;
 use App\Http\Controllers\PartnerPortalController;
 use App\Http\Controllers\PartnerReservationController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\PromoterSalesController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\ReferralController;
 use Illuminate\Http\Request;
@@ -75,6 +78,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/canjes/{redemption:public_id}', [RedemptionController::class, 'show'])->name('redemptions.show');
 });
 
+Route::middleware(['auth', 'verified', 'promoter'])->prefix('promoter')->group(function () {
+    Route::get('sales', [PromoterSalesController::class, 'index'])->name('promoter.sales.index');
+    Route::get('sales/create', [PromoterSalesController::class, 'create'])->name('promoter.sales.create');
+    Route::post('sales', [PromoterSalesController::class, 'store'])->middleware('throttle:20,1')->name('promoter.sales.store');
+    Route::get('sales/{purchase}', [PromoterSalesController::class, 'show'])->name('promoter.sales.show');
+});
+
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('review', [AdminContentReviewController::class, 'index'])->name('admin.review.index');
@@ -109,6 +119,14 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('redemptions', [AdminController::class, 'redemptions'])->name('admin.redemptions.index');
     Route::get('attribution', [AdminController::class, 'attribution'])->name('admin.attribution.index');
     Route::put('attribution/settings', [AdminController::class, 'updateAttributionSettings'])->name('admin.attribution.settings.update');
+    Route::get('sales', [AdminSalesController::class, 'index'])->name('admin.sales.index');
+    Route::get('sales/create', [AdminSalesController::class, 'create'])->name('admin.sales.create');
+    Route::post('sales', [AdminSalesController::class, 'store'])->middleware('throttle:20,1')->name('admin.sales.store');
+    Route::get('sales/{sale}', [AdminSalesController::class, 'show'])->name('admin.sales.show');
+    Route::post('sales/{sale}/refund', [AdminSalesController::class, 'refund'])->name('admin.sales.refund');
+    Route::get('reward-rules', [AdminRewardRuleController::class, 'index'])->name('admin.reward-rules.index');
+    Route::post('reward-rules', [AdminRewardRuleController::class, 'store'])->name('admin.reward-rules.store');
+    Route::put('reward-rules/{rule}', [AdminRewardRuleController::class, 'update'])->name('admin.reward-rules.update');
 });
 
 require __DIR__.'/settings.php';

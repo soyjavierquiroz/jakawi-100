@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsurePartner;
+use App\Http\Middleware\EnsurePromoter;
 use App\Http\Middleware\EnsureVisitorId;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureAdmin::class,
             'partner' => EnsurePartner::class,
+            'promoter' => EnsurePromoter::class,
         ]);
 
         $middleware->trustProxies(

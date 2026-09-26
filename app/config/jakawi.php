@@ -22,6 +22,8 @@ return [
     'membership' => [
         'price_bob' => 100,
         'duration_days' => 365,
+        'currency' => 'BOB',
+        'product_key' => 'jakawi_annual',
     ],
     'membership_statuses' => ['active', 'cancelled'],
     'redemption' => [
