@@ -72,6 +72,11 @@ class AnalyticsTracker
             : $this->record('whatsapp_click', ['partner_id' => $contact->id]);
     }
 
+    public function experienceWhatsappClicked(Experience $experience): ?AnalyticsEvent
+    {
+        return $this->record('whatsapp_click', ['experience_id' => $experience->id]);
+    }
+
     /**
      * Low-level entry point retained for application code that needs a configured event.
      * Metadata is strictly whitelisted per event; request details are never captured.

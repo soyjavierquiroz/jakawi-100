@@ -51,7 +51,7 @@ class PublicController extends Controller
         abort_unless($partner->isPublished(), 404);
         $analytics->partnerViewed($partner);
 
-        return Inertia::render('partners/show', ['partner' => $this->partner($partner), 'locations' => $partner->locations()->published()->get()->map(fn ($x) => $this->locationData($x)), 'benefits' => $partner->benefits()->available()->get()->map(fn ($x) => $this->benefitData($x)), 'experiences' => $partner->experiences()->published()->with('sessions.location')->get()->map(fn ($x) => $this->experienceData($x))]);
+        return Inertia::render('partners/show', ['partner' => $this->partner($partner), 'locations' => $partner->locations()->published()->get()->map(fn ($x) => $this->locationData($x)), 'benefits' => $partner->benefits()->available()->get()->map(fn ($x) => $this->benefitData($x)), 'experiences' => $partner->experiences()->upcoming()->with(['sessions' => fn ($query) => $query->upcoming()->with('location')])->get()->map(fn ($x) => $this->experienceData($x))]);
     }
 
     public function location(Location $location, AnalyticsTracker $analytics): Response
@@ -132,7 +132,10 @@ class PublicController extends Controller
     {
         abort_unless($experience->isPublished(), 404);
         $analytics->experienceViewed($experience);
-        $experience->load('partners', 'sessions.location', 'sessions.reservationPartner');
+        $experience->load([
+            'partners',
+            'sessions' => fn ($query) => $query->upcoming()->with('location'),
+        ]);
         $reservations = $request->user() ? $request->user()->experienceReservations()->where('experience_id', $experience->id)->get()->keyBy('experience_session_id') : collect();
 
         return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $request->user()?->hasActiveMembership() ?? false]);
@@ -162,14 +165,21 @@ class PublicController extends Controller
         return redirect()->away('https://wa.me/'.preg_replace('/\D+/', '', $partner->whatsapp));
     }
 
-    public function reserve(Experience $experience, AnalyticsTracker $analytics): RedirectResponse
+    public function reserve(Request $request, Experience $experience, AnalyticsTracker $analytics): RedirectResponse
     {
-        abort_unless($experience->isPublished() && in_array($experience->reservation_method, config('jakawi.reservation_methods'), true), 404);
-        $destination = match ($experience->reservation_method) {
-            'whatsapp' => filled($experience->reservation_whatsapp) ? 'https://wa.me/'.preg_replace('/\D+/', '', $experience->reservation_whatsapp) : null, 'url', 'external' => $experience->reservation_url, 'phone' => filled($experience->reservation_phone) ? 'tel:'.$experience->reservation_phone : null, default => null
+        abort_unless($experience->isPublished() && $experience->upcomingSessions()->exists(), 404);
+        $method = $request->query('method', $experience->reservation_method);
+        abort_unless(in_array($method, ['whatsapp', 'url', 'external', 'phone'], true), 404);
+        $destination = match ($method) {
+            'whatsapp' => filled($experience->reservation_whatsapp) ? 'https://wa.me/'.preg_replace('/\D+/', '', $experience->reservation_whatsapp) : null,
+            'url', 'external' => filled($experience->reservation_url) ? $experience->reservation_url : null,
+            'phone' => filled($experience->reservation_phone) ? 'tel:'.$experience->reservation_phone : null,
         };
         abort_unless(filled($destination), 404);
-        $analytics->experienceReserveClicked($experience, $experience->reservation_method);
+        $analytics->experienceReserveClicked($experience, $method);
+        if ($method === 'whatsapp') {
+            $analytics->experienceWhatsappClicked($experience);
+        }
 
         return redirect()->away($destination);
     }
@@ -191,7 +201,16 @@ class PublicController extends Controller
 
     private function experienceData(Experience $e, bool $detail = false, $reservations = null): array
     {
-        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + $this->image($e->image_path, 'experience_card') + $this->image($e->image_path, 'hero', 'hero') + $this->image($e->cover_path, 'hero', 'cover') + ['partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size']), 'reservable' => $e->reservation_method === 'jakawi' && $s->isUpcoming() && $s->reservationPartner?->isPublished()]) : []];
+        $targets = [];
+        if (filled($e->reservation_whatsapp)) {
+            $targets[] = ['method' => 'whatsapp', 'label' => 'CONTINUAR POR WHATSAPP'];
+        }
+        if (filled($e->reservation_url)) {
+            $targets[] = ['method' => $e->reservation_method === 'external' ? 'external' : 'url', 'label' => 'IR AL SITIO DE RESERVA'];
+        }
+        usort($targets, fn (array $a, array $b) => ($a['method'] === $e->reservation_method ? 0 : 1) <=> ($b['method'] === $e->reservation_method ? 0 : 1));
+
+        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + $this->image($e->image_path, 'experience_card') + $this->image($e->image_path, 'hero', 'hero') + $this->image($e->cover_path, 'hero', 'cover') + ['partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'reservation_targets' => $detail ? $targets : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size'])]) : []];
     }
 
     private function image(?string $key, string $preset, string $name = 'image'): array

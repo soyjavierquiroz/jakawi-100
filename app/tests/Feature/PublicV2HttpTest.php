@@ -79,13 +79,14 @@ class PublicV2HttpTest extends TestCase
         ExperienceSession::factory()->for($experience)->past()->create();
         ExperienceSession::factory()->for($experience)->cancelled()->create(['starts_at' => now()->addDay()]);
         $this->get('/experiencias')->assertOk()->assertInertia(fn (Assert $page) => $page->has('experiences', 1));
-        $this->get('/experiencias/'.$experience->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('experiences/show')->has('experience.partners', 1)->has('experience.sessions', 3));
+        $this->get('/experiencias/'.$experience->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('experiences/show')->has('experience.partners', 1)->has('experience.sessions', 1)->has('experience.reservation_targets', 1));
         $this->get('/experiencias/'.$experience->slug.'/reservar')->assertRedirect('https://wa.me/59170000000');
-        $this->assertDatabaseCount('analytics_events', 2);
+        $this->assertDatabaseCount('analytics_events', 3);
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'experience_reserve_click', 'experience_id' => $experience->id]);
-        $this->assertDatabaseMissing('analytics_events', ['event_name' => 'whatsapp_click']);
+        $this->assertDatabaseHas('analytics_events', ['event_name' => 'whatsapp_click', 'experience_id' => $experience->id]);
         foreach (['url' => 'https://example.test/book', 'external' => 'https://example.test/external', 'phone' => '+59171111111'] as $method => $target) {
             $item = Experience::factory()->published()->create(['reservation_method' => $method, $method === 'phone' ? 'reservation_phone' : 'reservation_url' => $target]);
+            ExperienceSession::factory()->for($item)->upcoming()->create();
             $this->get('/experiencias/'.$item->slug.'/reservar')->assertRedirect($method === 'phone' ? 'tel:'.$target : $target);
         }
         $none = Experience::factory()->published()->create(['reservation_method' => 'none']);
