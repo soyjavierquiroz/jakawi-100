@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminContentReviewController;
+use App\Http\Controllers\AdminAffiliateController;
+use App\Http\Controllers\AffiliateDashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminRewardRuleController;
 use App\Http\Controllers\AdminSalesController;
@@ -85,6 +87,11 @@ Route::middleware(['auth', 'verified', 'promoter'])->prefix('promoter')->group(f
     Route::get('sales/{purchase}', [PromoterSalesController::class, 'show'])->name('promoter.sales.show');
 });
 
+Route::middleware(['auth', 'verified', 'affiliate'])->prefix('affiliate')->group(function () {
+    Route::get('/', [AffiliateDashboardController::class, 'show'])->name('affiliate.dashboard');
+    Route::post('shared', [AffiliateDashboardController::class, 'shared'])->name('affiliate.shared');
+});
+
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('review', [AdminContentReviewController::class, 'index'])->name('admin.review.index');
@@ -134,6 +141,14 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::put('promoters/{user}/enrollment', [\App\Http\Controllers\AdminPromoterController::class, 'updateEnrollment'])->name('admin.promoters.enrollment.update');
     Route::post('promoters/{user}/referral-code', [\App\Http\Controllers\AdminPromoterController::class, 'referralCode'])->name('admin.promoters.referral-code');
     Route::put('promoters/{user}/commission', [\App\Http\Controllers\AdminPromoterController::class, 'commission'])->name('admin.promoters.commission');
+    Route::get('affiliates', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');
+    Route::get('affiliates/create', [AdminAffiliateController::class, 'create'])->name('admin.affiliates.create');
+    Route::post('affiliates', [AdminAffiliateController::class, 'store'])->name('admin.affiliates.store');
+    Route::get('affiliates/{user}', [AdminAffiliateController::class, 'show'])->name('admin.affiliates.show');
+    Route::put('affiliates/{user}/enrollment', [AdminAffiliateController::class, 'updateEnrollment'])->name('admin.affiliates.enrollment.update');
+    Route::post('affiliates/{user}/referral-code', [AdminAffiliateController::class, 'referralCode'])->name('admin.affiliates.referral-code');
+    Route::put('affiliates/{user}/commission', [AdminAffiliateController::class, 'commission'])->name('admin.affiliates.commission');
+    Route::post('affiliates/{user}/rewards/{reward}/available', [AdminAffiliateController::class, 'makeAvailable'])->name('admin.affiliates.rewards.available');
 });
 
 require __DIR__.'/settings.php';

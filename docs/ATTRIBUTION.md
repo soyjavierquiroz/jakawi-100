@@ -24,6 +24,14 @@ Registro ofrece un código opcional y aplica exactamente la misma política. `Co
 
 Una venta manual de promotor conserva su atribución de marketing en el snapshot de `Conversion` y agrega el cobrador como `credited_seller_user_id`. No se modifica `ReferralRelationship` para pagar una comisión. Esto diferencia el origen de marketing del crédito comercial de una venta específica.
 
+## Afiliados y recompensa de adquisición
+
+Affiliate usa la misma relación first-valid; no crea otra tabla de referidos.
+Una conversión manual puede conservar a un Affiliate como origen mientras un
+Promoter cobrador activo recibe el único crédito comercial. Si no hubo cobrador,
+el Affiliate activo puede ser candidato de recompensa. La regla y el ledger se
+documentan en [AFFILIATES.md](AFFILIATES.md).
+
 ## Administración, privacidad y alcance
 
 Admin permite ajustar la ventana (con audit log) y buscar usuarios para ver referente, historial y conversiones. Manual Membership Sales V1 agrega reglas y transacciones CASH mínimas; no añade payouts, árboles, dashboards completos, campañas ni QR de pago.

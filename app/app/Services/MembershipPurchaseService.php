@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\AuditLog;
 use App\Models\MembershipPurchase;
-use App\Models\ProgramEnrollment;
 use App\Models\RewardTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -39,8 +38,10 @@ class MembershipPurchaseService
                 'attribution_snapshot' => ['credited_seller_user_id' => $collector?->id],
             ]);
             $purchase->update(['membership_id' => $membership->id, 'conversion_id' => $conversion->id]);
-            $reward = $collector?->hasActiveProgram(ProgramEnrollment::TYPE_PROMOTER)
-                ? app(RewardResolver::class)->createFor($conversion, $collector, ProgramEnrollment::TYPE_PROMOTER) : null;
+            $candidate = app(RewardBeneficiaryResolver::class)->forMembershipAcquisition($conversion);
+            $reward = $candidate
+                ? app(RewardResolver::class)->createFor($conversion, $candidate['beneficiary'], $candidate['participant_type'])
+                : null;
             AuditLog::create(['actor_user_id' => $recordedBy->id, 'action' => 'membership_sale_created', 'subject_type' => MembershipPurchase::class, 'subject_id' => $purchase->id, 'metadata' => ['reference' => $purchase->reference, 'amount' => $purchase->amount]]);
             AuditLog::create(['actor_user_id' => $recordedBy->id, 'action' => 'membership_activated_from_purchase', 'subject_type' => get_class($membership), 'subject_id' => $membership->id, 'metadata' => ['purchase_id' => $purchase->id]]);
             if ($reward) {

@@ -9,6 +9,10 @@ class RewardTransaction extends Model
 {
     public const STATUS_PENDING = 'pending';
 
+    public const STATUS_AVAILABLE = 'available';
+
+    public const STATUS_PAID = 'paid';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     protected $guarded = [];

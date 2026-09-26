@@ -10,6 +10,8 @@ class ProgramEnrollment extends Model
 {
     public const TYPE_PROMOTER = 'PROMOTER';
 
+    public const TYPE_AFFILIATE = 'AFFILIATE';
+
     public const STATUS_ACTIVE = 'active';
 
     protected $guarded = [];

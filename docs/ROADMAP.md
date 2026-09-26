@@ -2,6 +2,9 @@
 
 ## Ahora
 
+- Affiliate Program V1: **LIVE**. Enrolamiento, enlace, atribución,
+  resultados y comisiones CASH de adquisición sin QR.
+
 - Admin Promoter Management V1: **LIVE**. Admin enrola y opera promotores,
   vigencia, referral y override individual de comisión sin alterar Membership.
 
@@ -19,6 +22,10 @@
 - QA para preparación de lanzamiento.
 
 ## Siguiente
+
+- Affiliate Payout V1: registrar pago externo con referencia, fecha y auditoría
+  antes de habilitar estado PAID.
+- Creator Program, Partner acquisition, Member referrals + JP y Campaigns.
 
 - Manual Membership Sales V1: **LIVE**. Promotor crea cliente, pago efectivo,
   activación server-side, conversión y reglas/transacciones CASH genéricas.
