@@ -20,11 +20,14 @@
 - Manual Membership Sales V1: **LIVE**. Promotor crea cliente, pago efectivo,
   activación server-side, conversión y reglas/transacciones CASH genéricas.
 
-- Implementar el módulo de pagos propio de JAKAWI para Bolivia, con QR como
-  método principal previsto. Esta fase incluye la verificación server-side e
-  idempotente antes de activar una membresía. La fundación de adaptador está
-  lista pero QR continúa deshabilitado: no define aún proveedor, banco ni
-  integración. Véase [PAYMENTS.md](PAYMENTS.md).
+- QR Payment Adapter Foundation: **READY / LIVE FOUNDATION**. El contrato y
+  el gateway deshabilitado están desplegados; QR productivo continúa apagado.
+
+- QR Payment: **BLOCKED BY EXTERNAL PROVIDER CONTRACT**. Implementar el
+  módulo de pagos propio de JAKAWI para Bolivia, con QR como método principal
+  previsto, requiere contrato de proveedor/banco. Esta fase incluye la
+  verificación server-side e idempotente antes de activar una membresía; no
+  hay aún proveedor ni integración. Véase [PAYMENTS.md](PAYMENTS.md).
 - Retomar y desplegar el Paywall contextual preparado sólo cuando exista ese
   flujo de pago QR real.
 - Refinamiento a partir del uso real.
