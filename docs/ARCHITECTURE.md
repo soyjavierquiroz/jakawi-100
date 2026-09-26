@@ -1,88 +1,47 @@
-# Architecture
+# Arquitectura actual
 
-JAKAWI is a Laravel monolith with an Inertia, React, and TypeScript frontend,
-PostgreSQL, and Docker. TLS terminates at OpenLiteSpeed, which proxies to
-Docker nginx and Laravel/PHP-FPM.
+JAKAWI es un monolito Laravel 13 con frontend React/TypeScript servido mediante Inertia. La aplicación corre en PHP 8.4 dentro de Docker; el PHP 8.1 del host no es un runtime ni una herramienta válida para Laravel, Composer o tests.
 
-```text
-Internet HTTPS -> OpenLiteSpeed -> nginx Docker -> Laravel/PHP-FPM -> PostgreSQL
+```mermaid
+flowchart LR
+  B[Browser] --> OLS[OpenLiteSpeed]
+  OLS -->|127.0.0.1:8080| W[web: nginx]
+  W --> A[app: Laravel / PHP-FPM 8.4]
+  A --> DB[(PostgreSQL 16)]
 ```
 
-## V2 domain
+## Contenedores y borde
 
-V2 starts from a fresh schema. There is no `Merchant`, `merchants`,
-`merchant_id`, Booking, or compatibility adapter in the runtime domain.
+`compose.yaml` define `web`, `app`, `db` e `imgproxy`. `web` publica solamente `127.0.0.1:8080:80`; OpenLiteSpeed maneja el HTTPS público de `jakawi.com` y hace proxy a ese puerto. `imgproxy` publica `127.0.0.1:8082:8080`; `img.jakawi.com` llega a él mediante OpenLiteSpeed. PostgreSQL no publica un puerto de host. Los datos de producción usan el volumen `jakawi_postgres_data` (con el proyecto Compose por defecto, normalmente `jakawicom_jakawi_postgres_data`).
 
-- A `Partner` is the organization or person providing value. It has many
-  `Location` records, many `Benefit` records, and a many-to-many relationship
-  with `Experience` records that includes an editorial role and sort order.
-- A `Location` is a place, not a Partner. It may belong to a Partner or be
-  independent. It has location-specific contacts, publication state, optional
-  maps/contact links, and the sole redemption PIN field:
-  `locations.redemption_pin_hash`.
-- A `Benefit` belongs to one Partner. Its location scope is either all
-  published Locations of that Partner or selected, validated published Partner
-  Locations through `benefit_location`. Independent Locations cannot be used
-  for a Benefit.
-- A `Membership` belongs to a User. Active access requires active status and a
-  current date range; cancellation preserves history.
-- A `Redemption` belongs to a User and Membership, and starts only for an
-  active Membership, an available Benefit, an eligible published Location, and
-  a configured Location PIN. It stores Partner, Location, Benefit, and savings
-  snapshots. Pending codes are reusable until their ten-minute TTL; confirmation
-  is idempotent and limits count confirmed Redemptions only. ROI uses confirmed
-  savings only.
-- An `Experience` has zero or more Partners and `ExperienceSession` records.
-  A member can request one internal reservation per Session; the assigned
-  Partner confirms it and can record an idempotent check-in. There is no
-  Booking domain, payment, or capacity decrement.
-- Members have a profile with explicit interests and a progressive completion
-  state. Home editorial ordering may use those choices plus limited first-party
-  behavior; these scores are never exposed in Partner props.
-- Partner access is explicit through `partner_user`; Admin access does not
-  imply Partner access. The Partner portal provides Content Studio, reservation
-  confirmation/check-in, and scoped KPI views. Admin reviews submitted content.
+El build Docker compila Vite una vez y copia el resultado tanto a la imagen `app` como a `web`. Por ello, cualquier cambio de frontend exige reconstruir/recrear ambos servicios en el mismo despliegue: mezclarlos deja manifests o chunks incompatibles.
 
-Public controllers expose only published/available records according to the
-domain rules. Partner legal/contact/internal fields and Location manager/PIN
-fields are not serialized into public Inertia props. `/mi-jakawi`, redemption
-start, and an individual redemption require authentication; redemption details
-also require ownership. `/admin` is protected server-side by `is_admin`.
+## Aplicación y frontend consumidor
 
-## Analytics
+Las rutas públicas principales son `/`, `/explorar`, partners, lugares, beneficios y experiencias. Las rutas autenticadas incluyen `/mi-jakawi` y `/perfil`; el shell móvil canónico muestra Inicio, Explorar, Mi JAKAWI y Perfil. “Cerca” es una faceta de Explorar, no una navegación primaria.
 
-`AnalyticsEvent` is append-only and can carry nullable User, visitor, Partner,
-Location, Benefit, Experience, Session, and Redemption context. The controlled
-first-party taxonomy is: `home_view`, `partner_view`, `location_view`,
-`benefit_view`, `experience_view`, `redeem_started`, `redeem_confirmed`,
-`experience_reserve_click`, `maps_click`, and `whatsapp_click`.
+Laravel entrega props Inertia y React renderiza las superficies consumidoras. La autenticación usa Laravel/Fortify; las áreas Partner y Admin están protegidas por middleware. Los componentes globales no deben asumir que existe un contexto de página Inertia.
 
-`jakawi_visitor_id` is a random UUID cookie, HttpOnly and SameSite=Lax, with a
-365-day lifetime and Secure in HTTPS production. An authenticated event may
-retain both User and visitor context; JAKAWI performs no fingerprinting or
-identity stitching. The tracker whitelists metadata and never stores request
-bodies, query strings, email, phone/WhatsApp, PIN, code, IP, user-agent, URL,
-destination, or payment data. There is no generic public tracking endpoint or
-analytics dashboard.
+## Backend, base de datos y roles
 
-## Security and uploads
+PostgreSQL 16 es la fuente transaccional. El dominio actual gira alrededor de `User`, `UserProfile`, `Partner`, `Location`, `Benefit`, `Membership`, `Redemption`, `Experience`, `ExperienceSession`, `ExperienceReservation` y `AnalyticsEvent`; la definición completa está en [DOMAIN.md](DOMAIN.md).
 
-Location PIN input is exactly six digits, is stored with `Hash::make`, verified
-with `Hash::check`, never prefilled, and a blank Admin update preserves its
-existing hash. Partners do not own a PIN.
+Un administrador se identifica por `users.is_admin`. El acceso Partner se concede explícitamente por el pivote `partner_user` con roles `owner`, `manager` o `staff`; ser admin no concede ese acceso automáticamente. No existe arquitectura runtime basada en Merchant ni `merchant_id`.
 
-Admin uploads accept JPEG, PNG, and WebP only, at most 5 MB. Laravel image/MIME
-validation and controlled public-disk paths use generated filenames rather than
-the original filename; replacing an upload removes the prior managed file.
+## Media privada
 
-## Isolation
+```mermaid
+flowchart LR
+  U[Admin / Partner / Perfil] --> L[Laravel MediaUploadService]
+  L --> M[(MinIO externo: jakawi-media privado)]
+  B[Browser] --> I[img.jakawi.com]
+  I --> O[OpenLiteSpeed]
+  O --> P[imgproxy :8082]
+  P --> M
+```
 
-All Laravel test and test-database commands use `./bin/jakawi-test`. It uses
-the physically separate `app-test` and `db-test` services and `jakawi_test`.
-Production remains offline in maintenance while V2 is prepared; its app and web
-services are not used for testing. Preview (`jakawi-preview` / `jakawi_preview`)
-and test (`jakawi-test` / `jakawi_test`) have distinct Compose volumes and no
-PostgreSQL host port.
-# Catalog Importer V2
+Laravel guarda object keys, no URLs completas. `MediaUrl` firma URLs de imgproxy y `JakawiImage` consume `src`/`srcset`; el navegador nunca recibe credenciales de MinIO. Véase [MEDIA.md](MEDIA.md).
 
-The V2 importer requires exact CSV headers, validates every record and cross-file reference before planning or writing, and upserts catalog entities by slug. Sessions are identified by `experience_id + reference_key`. Fields absent from the CSV format—media, a Location PIN hash and manager details—are intentionally preserved. Benefit scope and listed Experience-partner groups are authoritative; Sessions are incremental, never destructive syncs.
+## Aislamiento de tests
+
+`./bin/jakawi-test` usa el proyecto `jakawi-test`, los servicios `app-test`/`db-test`, la base `jakawi_test` y el volumen `jakawi-test_jakawi_test_pgdata`. Antes de ejecutar comandos verifica `APP_ENV=testing`, `DB_HOST=db-test` y `DB_DATABASE=jakawi_test`. Producción no es un destino de pruebas destructivas.

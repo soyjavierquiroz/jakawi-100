@@ -1,4 +1,6 @@
-# JAKAWI MVP
+# Histórico — JAKAWI MVP
+
+Este snapshot se conserva como contexto de la etapa MVP. La definición actual de producto y arquitectura está en [PRODUCT.md](PRODUCT.md), [DOMAIN.md](DOMAIN.md) y [ARCHITECTURE.md](ARCHITECTURE.md); no usar este documento como runbook ni como arquitectura vigente.
 
 JAKAWI es la app para vivir más tu ciudad.
 

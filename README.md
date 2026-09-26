@@ -1,59 +1,37 @@
 # JAKAWI
 
-Vive más. Gasta menos.
-
-Produccion:
-[https://jakawi.com](https://jakawi.com)
+**Vive más. Gasta menos.** JAKAWI es la app para descubrir lugares y experiencias en Cochabamba, acceder a beneficios por ser miembro y tener nuevas razones para salir, probar y volver.
 
 ## Stack
 
-- Laravel 13
-- PHP 8.4
-- React
-- TypeScript
-- Inertia
-- Tailwind CSS
-- PostgreSQL 16
-- Docker Compose
-- nginx
-- OpenLiteSpeed
+Laravel 13, PHP 8.4 (Docker), React 19, TypeScript, Inertia 3, Tailwind 4, PostgreSQL 16, Docker Compose, nginx interno y OpenLiteSpeed en el host.
 
-## Architecture
+## Desarrollo y pruebas
 
-```text
-Internet HTTPS
--> OpenLiteSpeed
--> 127.0.0.1:8080
--> nginx Docker
--> Laravel/PHP-FPM
--> PostgreSQL
-```
-
-## Repository Structure
-
-```text
-.
-├── app/                 Laravel application and React/Inertia frontend
-├── docker/              Docker image and service configuration
-├── docs/                Project operations and product documentation
-├── compose.yaml         Docker Compose production stack
-├── README.md            Project overview
-└── CHANGELOG.md         Release history
-```
-
-Runtime-only paths such as `.env`, `logs/`, `public_html/`, `.ssh/`, Docker data, dependencies, and build output are intentionally ignored.
-
-## Health Checks
+El código Laravel, Composer y las pruebas se ejecutan exclusivamente en Docker; el PHP 8.1 del host no se usa. Para pruebas aisladas:
 
 ```bash
-curl -f http://127.0.0.1:8080/up
-curl -f https://jakawi.com/up
+./bin/jakawi-test
 ```
 
-## Documentation
+Esto usa el proyecto Compose `jakawi-test` y la base `jakawi_test`, nunca la base de producción.
 
-- [Architecture](docs/ARCHITECTURE.md)
-- [Deployment](docs/DEPLOYMENT.md)
-- [Operations](docs/OPERATIONS.md)
-- [MVP](docs/MVP.md)
-- [Status](docs/STATUS.md)
+## Reglas de producción
+
+- Producción entra por OpenLiteSpeed a `127.0.0.1:8080` (`web`); imgproxy por `127.0.0.1:8082`.
+- Tras cambiar assets frontend, reconstruir y recrear **`app` y `web` juntos**. Nunca uno solo.
+- Tras cambiar `.env`, recrear el contenedor afectado y comprobar su configuración efectiva.
+- Nunca ejecutar `migrate:fresh` ni resets destructivos contra producción.
+
+## Documentación
+
+- [Arquitectura](docs/ARCHITECTURE.md)
+- [Dominio](docs/DOMAIN.md)
+- [Producto](docs/PRODUCT.md)
+- [Sistema de diseño](docs/DESIGN-SYSTEM.md)
+- [Media](docs/MEDIA.md)
+- [Operaciones](docs/OPERATIONS.md)
+- [Incidentes y lecciones](docs/INCIDENTS.md)
+- [Roadmap](docs/ROADMAP.md)
+
+Los documentos anteriores [MVP](docs/MVP.md), [STATUS](docs/STATUS.md) y [DEPLOYMENT](docs/DEPLOYMENT.md) son contexto histórico; el handbook anterior prevalece para el estado operativo actual.
