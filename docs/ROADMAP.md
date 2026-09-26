@@ -2,6 +2,9 @@
 
 ## Ahora
 
+- Attribution Foundation V1: **LIVE**. Conserva origen anónimo, UTM,
+  referente válido y conversiones; no incluye recompensas ni comisiones.
+
 - Pulido visual de la experiencia consumidora.
 - Cierre del Core según el [Mapa UX MVP](UX-MVP.md).
 - Contenido real y calidad fotográfica.
