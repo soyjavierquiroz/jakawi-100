@@ -63,20 +63,21 @@ USER www-data
 
 CMD ["php-fpm"]
 
-# Test image: it starts from the same built application as production, then adds
-# development dependencies required by Laravel's test runner. It is only used by
-# the isolated app-test Compose service.
-FROM build AS test
+# Test image: PHPUnit uses Laravel and Composer dependencies only. Keeping it
+# separate from the frontend build avoids Node/Vite work on every isolated PHP
+# test run; frontend checks run explicitly in their own validation step.
+FROM php-base AS test
 
-RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts \
-    && npm ci \
-    && cp .env.example .env \
+COPY app/composer.json app/composer.lock* ./
+RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+
+COPY --chown=www-data:www-data app/ ./
+RUN cp .env.example .env \
     && composer dump-autoload --optimize
 
 RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && touch .phpunit.result.cache \
     && chown www-data:www-data .phpunit.result.cache \
-    && chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data storage bootstrap/cache \
     && find storage bootstrap/cache -type d -exec chmod 775 {} + \
     && find storage bootstrap/cache -type f -exec chmod 664 {} +
