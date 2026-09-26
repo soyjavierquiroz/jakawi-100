@@ -27,6 +27,9 @@ Una venta manual de promotor conserva su atribución de marketing en el snapshot
 ## Afiliados y recompensa de adquisición
 
 Affiliate usa la misma relación first-valid; no crea otra tabla de referidos.
+Creator también reutiliza esa relación. Sus enlaces pueden añadir `utm_campaign` y
+`utm_content`; ambos se almacenan en `AttributionTouch` y las métricas por
+contenido son agregados reales de touches, relaciones y conversiones confirmadas.
 Una conversión manual puede conservar a un Affiliate como origen mientras un
 Promoter cobrador activo recibe el único crédito comercial. Si no hubo cobrador,
 el Affiliate activo puede ser candidato de recompensa. La regla y el ledger se

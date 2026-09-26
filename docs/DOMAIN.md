@@ -36,7 +36,7 @@ erDiagram
 - **Redemption:** uso de un Benefit por un miembro con membresía activa; conserva snapshots operativos y de ahorro.
 - **AnalyticsEvent:** eventos first-party limitados, vinculables a usuario y entidades de catálogo.
 - **AttributionTouch / ReferralRelationship / Conversion:** evidencia de origen, primer referente válido y ventas idempotentes; véase [ATTRIBUTION.md](ATTRIBUTION.md).
-- **ProgramEnrollment / MembershipPurchase / RewardRule / RewardTransaction:** acceso de programa, transacción comercial neutral y ledger de recompensa. Promoter y Affiliate son inscripciones independientes; véanse [MANUAL-SALES.md](MANUAL-SALES.md) y [AFFILIATES.md](AFFILIATES.md). El futuro pago QR comparte esta compra comercial, no el dominio de QR de canje; véase [PAYMENTS.md](PAYMENTS.md).
+- **ProgramEnrollment / MembershipPurchase / RewardRule / RewardTransaction:** acceso de programa, transacción comercial neutral y ledger de recompensa. Promoter, Affiliate y Creator son inscripciones independientes; véanse [MANUAL-SALES.md](MANUAL-SALES.md), [AFFILIATES.md](AFFILIATES.md) y [CREATORS.md](CREATORS.md). El futuro pago QR comparte esta compra comercial, no el dominio de QR de canje; véase [PAYMENTS.md](PAYMENTS.md).
 
 ## Ciclos y estados
 

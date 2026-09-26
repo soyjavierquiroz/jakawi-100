@@ -20,19 +20,23 @@ use Inertia\Response;
 
 class AdminAffiliateController extends Controller
 {
+    protected function programType(): string { return ProgramEnrollment::TYPE_AFFILIATE; }
+    protected function programSlug(): string { return 'affiliates'; }
+    protected function page(string $name): string { return 'admin/'.$this->programSlug().'/'.$name; }
+    protected function auditPrefix(): string { return 'affiliate'; }
     public function index(Request $request, AffiliateMetrics $metrics): Response
     {
-        $query = User::query()->whereHas('programEnrollments', fn ($q) => $q->where('program_type', ProgramEnrollment::TYPE_AFFILIATE))
-            ->with(['programEnrollments' => fn ($q) => $q->where('program_type', ProgramEnrollment::TYPE_AFFILIATE)->latest()]);
+        $query = User::query()->whereHas('programEnrollments', fn ($q) => $q->where('program_type', $this->programType()))
+            ->with(['programEnrollments' => fn ($q) => $q->where('program_type', $this->programType())->latest()]);
         if ($request->filled('q')) {
             $term = trim((string) $request->string('q'));
             $query->where(fn ($q) => $q->where('name', 'ilike', "%{$term}%")->orWhere('email', 'ilike', "%{$term}%"));
         }
         if (in_array($request->string('status')->toString(), ['active', 'inactive'], true)) {
-            $query->whereHas('programEnrollments', fn ($q) => $q->where('program_type', ProgramEnrollment::TYPE_AFFILIATE)->where('status', $request->string('status')));
+            $query->whereHas('programEnrollments', fn ($q) => $q->where('program_type', $this->programType())->where('status', $request->string('status')));
         }
 
-        return Inertia::render('admin/affiliates/index', ['affiliates' => $query->orderBy('name')->paginate(20)->through(fn (User $user) => $this->summary($user, $metrics)), 'filters' => $request->only('q', 'status')]);
+        return Inertia::render($this->page('index'), ['affiliates' => $query->orderBy('name')->paginate(20)->through(fn (User $user) => $this->summary($user, $metrics)), 'filters' => $request->only('q', 'status')]);
     }
 
     public function create(Request $request): Response
@@ -40,7 +44,7 @@ class AdminAffiliateController extends Controller
         $q = trim((string) $request->query('q'));
         $users = Str::length($q) < 2 ? [] : User::query()->where(fn ($query) => $query->where('name', 'ilike', "%{$q}%")->orWhere('email', 'ilike', "%{$q}%"))->orderBy('name')->limit(10)->get(['id', 'name', 'email']);
 
-        return Inertia::render('admin/affiliates/create', ['users' => $users, 'query' => $q]);
+        return Inertia::render($this->page('create'), ['users' => $users, 'query' => $q]);
     }
 
     public function store(Request $request)
@@ -59,7 +63,7 @@ class AdminAffiliateController extends Controller
                 $enrollment->update($this->enrollmentAttributes($data));
                 $action = 'affiliate_enrollment_updated';
             } else {
-                $enrollment = $user->programEnrollments()->create(['program_type' => ProgramEnrollment::TYPE_AFFILIATE] + $this->enrollmentAttributes($data));
+                $enrollment = $user->programEnrollments()->create(['program_type' => $this->programType()] + $this->enrollmentAttributes($data));
                 $action = 'program_enrollment_added';
             }
             $this->audit($request, $action, $enrollment, $before, $enrollment->fresh()->toArray());
@@ -74,18 +78,18 @@ class AdminAffiliateController extends Controller
         });
         $setup = $newUser ? Password::sendResetLink(['email' => $user->email]) : null;
 
-        return to_route('admin.affiliates.show', $user)->with('success', $newUser && $setup !== Password::RESET_LINK_SENT ? 'Afiliado creado; el enlace de contraseña no pudo confirmarse.' : 'Afiliado activado.');
+        return to_route('admin.'.$this->programSlug().'.show', $user)->with('success', $newUser && $setup !== Password::RESET_LINK_SENT ? 'Cuenta creada; el enlace de contraseña no pudo confirmarse.' : 'Enrolamiento activado.');
     }
 
     public function show(User $user, AffiliateMetrics $metrics): Response
     {
         abort_unless($enrollment = $this->enrollment($user), 404);
-        $rule = app(RewardResolver::class)->ruleFor($user, ProgramEnrollment::TYPE_AFFILIATE, 'membership_purchased', config('jakawi.membership.product_key', 'jakawi_annual'));
+        $rule = app(RewardResolver::class)->ruleFor($user, $this->programType(), 'membership_purchased', config('jakawi.membership.product_key', 'jakawi_annual'));
         $conversions = Conversion::query()->where('type', 'membership_purchased')->whereHas('relationship', fn ($q) => $q->where('referrer_user_id', $user->id))->latest('occurred_at')->limit(10)->get(['id', 'order_reference', 'eligible_amount', 'currency', 'status', 'occurred_at']);
         $rewards = RewardTransaction::query()->where('beneficiary_user_id', $user->id)->with('rule')->latest()->limit(10)->get();
         $audit = AuditLog::query()->where(fn ($q) => $q->where('subject_type', User::class)->where('subject_id', $user->id)->orWhere('subject_type', ProgramEnrollment::class)->where('subject_id', $enrollment->id)->orWhere('subject_type', RewardRule::class)->whereIn('subject_id', RewardRule::where('beneficiary_user_id', $user->id)->pluck('id'))->orWhere('subject_type', RewardTransaction::class)->whereIn('subject_id', RewardTransaction::where('beneficiary_user_id', $user->id)->pluck('id')))->latest()->get();
 
-        return Inertia::render('admin/affiliates/show', ['affiliate' => $this->summary($user, $metrics), 'commission' => ['effective' => $rule, 'source' => $rule ? ($rule->beneficiary_user_id ? 'individual' : ($rule->participant_type ? 'program' : 'global')) : null, 'individual' => RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('reward_type', 'CASH')->latest()->first()], 'conversions' => $conversions, 'rewards' => $rewards, 'audit' => $audit]);
+        return Inertia::render($this->page('show'), ['affiliate' => $this->summary($user, $metrics), 'commission' => ['effective' => $rule, 'source' => $rule ? ($rule->beneficiary_user_id ? 'individual' : ($rule->participant_type ? 'program' : 'global')) : null, 'individual' => RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('reward_type', 'CASH')->latest()->first()], 'conversions' => $conversions, 'rewards' => $rewards, 'audit' => $audit]);
     }
 
     public function updateEnrollment(Request $request, User $user)
@@ -154,13 +158,13 @@ return back()->with('success', 'Comisión actualizada.');
 
     private function enrollment(User $user): ?ProgramEnrollment
     {
-        return $user->programEnrollments()->where('program_type', ProgramEnrollment::TYPE_AFFILIATE)->latest()->first();
+        return $user->programEnrollments()->where('program_type', $this->programType())->latest()->first();
     }
 
     private function saveCommission(Request $request, User $user, array $data): void
     {
         $rule = RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('product_key', config('jakawi.membership.product_key', 'jakawi_annual'))->where('reward_type', 'CASH')->latest()->first();
-        $attributes = ['name' => 'Comisión individual: '.$user->name, 'beneficiary_user_id' => $user->id, 'participant_type' => ProgramEnrollment::TYPE_AFFILIATE, 'event' => 'membership_purchased', 'product_key' => config('jakawi.membership.product_key', 'jakawi_annual'), 'reward_type' => 'CASH', 'calculation_type' => $data['calculation_type'], 'value' => $data['value'], 'currency' => $data['currency'] ?? 'BOB', 'starts_at' => $data['starts_at'] ?? null, 'ends_at' => $data['ends_at'] ?? null, 'priority' => 0, 'status' => $data['status'] ?? 'active'];
+        $attributes = ['name' => 'Comisión individual: '.$user->name, 'beneficiary_user_id' => $user->id, 'participant_type' => $this->programType(), 'event' => 'membership_purchased', 'product_key' => config('jakawi.membership.product_key', 'jakawi_annual'), 'reward_type' => 'CASH', 'calculation_type' => $data['calculation_type'], 'value' => $data['value'], 'currency' => $data['currency'] ?? 'BOB', 'starts_at' => $data['starts_at'] ?? null, 'ends_at' => $data['ends_at'] ?? null, 'priority' => 0, 'status' => $data['status'] ?? 'active'];
         $before = $rule?->toArray();
         $rule ? $rule->update($attributes) : $rule = RewardRule::create($attributes);
         $this->audit($request, $before ? 'individual_reward_rule_changed' : 'individual_reward_rule_added', $rule, $before, $rule->fresh()->toArray());

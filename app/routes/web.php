@@ -3,6 +3,8 @@
 use App\Http\Controllers\AdminContentReviewController;
 use App\Http\Controllers\AdminAffiliateController;
 use App\Http\Controllers\AffiliateDashboardController;
+use App\Http\Controllers\CreatorDashboardController;
+use App\Http\Controllers\AdminCreatorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminRewardRuleController;
 use App\Http\Controllers\AdminSalesController;
@@ -93,6 +95,11 @@ Route::middleware(['auth', 'verified', 'affiliate'])->prefix('affiliate')->group
     Route::post('shared', [AffiliateDashboardController::class, 'shared'])->name('affiliate.shared');
     Route::post('payouts', [AffiliateDashboardController::class, 'requestPayout'])->name('affiliate.payouts.store');
 });
+Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(function () {
+    Route::get('/', [CreatorDashboardController::class, 'show'])->name('creator.dashboard');
+    Route::post('shared', [CreatorDashboardController::class, 'shared'])->name('creator.shared');
+    Route::post('payouts', [CreatorDashboardController::class, 'requestPayout'])->name('creator.payouts.store');
+});
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
@@ -151,6 +158,14 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('affiliates/{user}/referral-code', [AdminAffiliateController::class, 'referralCode'])->name('admin.affiliates.referral-code');
     Route::put('affiliates/{user}/commission', [AdminAffiliateController::class, 'commission'])->name('admin.affiliates.commission');
     Route::post('affiliates/{user}/rewards/{reward}/available', [AdminAffiliateController::class, 'makeAvailable'])->name('admin.affiliates.rewards.available');
+    Route::get('creators', [AdminCreatorController::class, 'index'])->name('admin.creators.index');
+    Route::get('creators/create', [AdminCreatorController::class, 'create'])->name('admin.creators.create');
+    Route::post('creators', [AdminCreatorController::class, 'store'])->name('admin.creators.store');
+    Route::get('creators/{user}', [AdminCreatorController::class, 'show'])->name('admin.creators.show');
+    Route::put('creators/{user}/enrollment', [AdminCreatorController::class, 'updateEnrollment'])->name('admin.creators.enrollment.update');
+    Route::post('creators/{user}/referral-code', [AdminCreatorController::class, 'referralCode'])->name('admin.creators.referral-code');
+    Route::put('creators/{user}/commission', [AdminCreatorController::class, 'commission'])->name('admin.creators.commission');
+    Route::post('creators/{user}/rewards/{reward}/available', [AdminCreatorController::class, 'makeAvailable'])->name('admin.creators.rewards.available');
     Route::get('payouts', [AdminPayoutController::class, 'index'])->name('admin.payouts.index');
     Route::put('payouts/settings', [AdminPayoutController::class, 'settings'])->name('admin.payouts.settings');
     Route::get('payouts/{payout}', [AdminPayoutController::class, 'show'])->name('admin.payouts.show');

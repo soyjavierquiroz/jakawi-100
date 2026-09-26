@@ -3,6 +3,8 @@
 ## Ahora
 
 - Affiliate Program V1: **LIVE**. Enrolamiento, enlace, atribución,
+
+- Creator Program V1: **LIVE**. Enrolamiento CREATOR, enlaces con campaña/contenido, resultados agregados y payout reutilizado. Campaign como dominio queda para Fase 2.
   resultados y comisiones CASH de adquisición sin QR.
 
 - Admin Promoter Management V1: **LIVE**. Admin enrola y opera promotores,

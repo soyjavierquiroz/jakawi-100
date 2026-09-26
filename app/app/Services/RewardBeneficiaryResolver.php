@@ -22,6 +22,9 @@ class RewardBeneficiaryResolver
 
         $relationship = $conversion->relationship()->with('referrer')->first();
         $referrer = $relationship?->referrer;
+        if ($relationship?->isValid() && $referrer?->hasActiveProgram(ProgramEnrollment::TYPE_CREATOR)) {
+            return ['beneficiary' => $referrer, 'participant_type' => ProgramEnrollment::TYPE_CREATOR];
+        }
         if ($relationship?->isValid() && $referrer?->hasActiveProgram(ProgramEnrollment::TYPE_AFFILIATE)) {
             return ['beneficiary' => $referrer, 'participant_type' => ProgramEnrollment::TYPE_AFFILIATE];
         }

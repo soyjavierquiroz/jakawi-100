@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureAffiliate;
+use App\Http\Middleware\EnsureCreator;
 use App\Http\Middleware\EnsurePartner;
 use App\Http\Middleware\EnsurePromoter;
 use App\Http\Middleware\EnsureVisitorId;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureAdmin::class,
             'affiliate' => EnsureAffiliate::class,
+            'creator' => EnsureCreator::class,
             'partner' => EnsurePartner::class,
             'promoter' => EnsurePromoter::class,
         ]);
