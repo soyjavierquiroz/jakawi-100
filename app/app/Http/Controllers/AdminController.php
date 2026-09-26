@@ -10,6 +10,8 @@ use App\Models\Membership;
 use App\Models\Partner;
 use App\Models\Redemption;
 use App\Models\User;
+use App\Models\AppSetting;
+use App\Models\AuditLog;
 use App\Services\MembershipService;
 use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
@@ -183,6 +185,21 @@ class AdminController extends Controller
     public function redemptions(): Response
     {
         return Inertia::render('admin/redemptions/index', ['redemptions' => Redemption::with('user')->latest()->paginate(50)]);
+    }
+
+    public function attribution(Request $request): Response
+    {
+        $query = User::query()->with(['attributionTouches.referrer', 'referralRelationships.referrer', 'conversions']);
+        if ($request->filled('q')) $query->where(fn ($q) => $q->where('email', 'ilike', '%'.$request->string('q').'%')->orWhere('name', 'ilike', '%'.$request->string('q').'%'));
+        return Inertia::render('admin/attribution/index', ['users' => $query->latest()->paginate(25)->withQueryString(), 'windowDays' => (int) (AppSetting::where('key', 'attribution_window_days')->first()?->value['days'] ?? 30), 'filters' => $request->only('q')]);
+    }
+
+    public function updateAttributionSettings(Request $request)
+    {
+        $data = $request->validate(['attribution_window_days' => ['required', 'integer', 'min:1', 'max:3650']]);
+        AppSetting::updateOrCreate(['key' => 'attribution_window_days'], ['value' => ['days' => $data['attribution_window_days']]]);
+        AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => 'attribution_window_updated', 'subject_type' => AppSetting::class, 'metadata' => ['days' => $data['attribution_window_days']]]);
+        return back()->with('success', 'Ventana de atribución actualizada.');
     }
 
     private function upload(Request $request, object $model, string $input, string $attribute, string $folder): void

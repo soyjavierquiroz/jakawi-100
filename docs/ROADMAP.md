@@ -10,6 +10,9 @@
 
 ## Siguiente
 
+- Manual Membership Sales V1: promotor crea cliente, pago efectivo, activación
+  server-side, conversión y luego reglas/transacciones de recompensa genéricas.
+
 - Implementar el módulo de pagos propio de JAKAWI para Bolivia, con QR como
   método principal previsto. Esta fase incluye la verificación server-side e
   idempotente antes de activar una membresía; está diferida y no define aún
@@ -21,7 +24,8 @@
 ## Diferido
 
 - Puntos y rewards.
-- Referidos.
+- Rewards, comisiones, payouts y dashboards de referidos/afiliados/creadores
+  (la fundación de atribución ya existe; no incluye recompensas).
 - IA.
 - App nativa.
 - Mapa complejo.

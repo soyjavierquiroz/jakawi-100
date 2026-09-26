@@ -34,6 +34,8 @@ Esto describe un límite de producto, no un contrato de API ni un esquema de
 base de datos. No existe todavía `membership_checkouts`, código de pagos, QR
 de pago, callback ni integración financiera.
 
+La fundación genérica `ConversionRecorder` ya registra ventas futuras de forma idempotente y guarda el snapshot de atribución; no activa membresías ni implementa pagos. Véase [ATTRIBUTION.md](ATTRIBUTION.md).
+
 ## Dos dominios QR distintos
 
 **Payment QR** corresponde a dinero y a la compra de una membresía. Su ciclo

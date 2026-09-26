@@ -34,6 +34,7 @@ return [
         'events' => [
             'home_view', 'partner_view', 'location_view', 'benefit_view', 'experience_view',
             'redeem_started', 'redeem_confirmed', 'experience_reserve_click', 'maps_click', 'whatsapp_click',
+            'anonymous_session_created', 'referral_link_opened', 'referral_code_entered', 'signup_completed',
         ],
         'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],
     ],

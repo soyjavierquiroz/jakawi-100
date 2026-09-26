@@ -17,6 +17,9 @@ erDiagram
   EXPERIENCE_SESSION ||--o{ EXPERIENCE_RESERVATION : receives
   LOCATION ||--o{ EXPERIENCE_SESSION : hosts_optional
   MEMBERSHIP ||--o{ REDEMPTION : authorizes
+  USER ||--o{ ATTRIBUTION_TOUCH : accumulates
+  USER ||--o{ REFERRAL_RELATIONSHIP : referred
+  USER ||--o{ CONVERSION : makes
 ```
 
 - **User / UserProfile:** identidad del consumidor y perfil de intereses, ciudad, contexto social, días/horarios preferidos, apariencia y avatar.
@@ -29,6 +32,7 @@ erDiagram
 - **Membership:** acceso de consumidor. Está activa cuando su estado y rango de fechas lo permiten.
 - **Redemption:** uso de un Benefit por un miembro con membresía activa; conserva snapshots operativos y de ahorro.
 - **AnalyticsEvent:** eventos first-party limitados, vinculables a usuario y entidades de catálogo.
+- **AttributionTouch / ReferralRelationship / Conversion:** evidencia de origen, primer referente válido y ventas idempotentes; véase [ATTRIBUTION.md](ATTRIBUTION.md).
 
 ## Ciclos y estados
 

@@ -47,3 +47,24 @@ Confirmar que `imgproxy` está en ejecución con `docker compose ps`, que `https
 El backup debe proteger la base PostgreSQL y, cuando aplique, el inventario de object keys/media; ejecutar únicamente el procedimiento de backup aprobado para el host, no uno inventado. Antes de un cambio riesgoso, confirmar una restauración conocida y el commit de retorno.
 
 Un rollback conservador vuelve al último commit conocido bueno, reconstruye/recrea coherentemente los servicios afectados y repite los health checks. Evaluar las migraciones antes de revertir código: no borrar datos ni volúmenes para “hacer coincidir” una versión. Mantener `app` y `web` sincronizados también durante rollback.
+
+## Production PostgreSQL backup — approved procedure
+
+Antes de una migración o release, desde `/home/jakawi.com`, identificar el
+servicio PostgreSQL real con `docker compose config --services`. Crear sin
+borrar contenido previo `/home/jakawi.com/backups`, generar un timestamp y
+usar `pg_dump` **dentro** de ese contenedor para la base `jakawi`:
+
+```bash
+STAMP=$(date +%Y%m%d-%H%M%S)
+BACKUP="/home/jakawi.com/backups/jakawi-pre-attribution-v1-${STAMP}.dump"
+docker compose exec -T "$DB_SERVICE" sh -lc \
+  'pg_dump -U "$POSTGRES_USER" -d jakawi --format=custom --no-owner --no-acl' \
+  > "$BACKUP"
+```
+
+Validar que el archivo no esté vacío, mostrar su tamaño y comprobar su formato
+sin restaurarlo: `docker compose exec -T "$DB_SERVICE" pg_restore --list <
+"$BACKUP" > /tmp/jakawi-backup-list.txt`. Registrar la ruta,
+tamaño, resultado y, recomendado, `sha256sum`. Nunca usar `pg_dump` del host,
+`migrate:fresh`, ni una restauración destructiva de prueba contra producción.
