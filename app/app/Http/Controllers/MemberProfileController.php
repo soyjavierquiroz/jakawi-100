@@ -6,6 +6,7 @@ use App\Models\UserProfile;
 use App\Services\MediaUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -52,16 +53,34 @@ class MemberProfileController extends Controller
             }
         }
 
-        if ($request->hasFile('avatar')) {
-            $data['avatar_path'] = app(MediaUploadService::class)->replace($request->file('avatar'), 'avatars', $request->user()->id, 'avatar', $profile->avatar_path);
+        unset($data['avatar']);
+        $media = app(MediaUploadService::class);
+        $oldAvatarPath = $profile->avatar_path;
+        $newAvatarPath = null;
+
+        try {
+            if ($request->hasFile('avatar')) {
+                // Preserve the current avatar until the new key is committed.
+                $newAvatarPath = $media->store($request->file('avatar'), 'avatars', $request->user()->id, 'avatar');
+                $data['avatar_path'] = $newAvatarPath;
+            }
+
+            DB::transaction(function () use ($profile, $data): void {
+                $profile->fill($data);
+                if ($profile->completionPercentage() === 100 && $profile->profile_completed_at === null) {
+                    $profile->profile_completed_at = now();
+                }
+                $profile->save();
+            });
+        } catch (\Throwable $exception) {
+            $media->delete($newAvatarPath);
+
+            throw $exception;
         }
 
-        unset($data['avatar']);
-        $profile->fill($data);
-        if ($profile->completionPercentage() === 100 && $profile->profile_completed_at === null) {
-            $profile->profile_completed_at = now();
+        if ($newAvatarPath !== null) {
+            $media->delete($oldAvatarPath);
         }
-        $profile->save();
 
         return to_route('member.profile.show')->with('success', 'Tu perfil JAKAWI fue guardado.');
     }

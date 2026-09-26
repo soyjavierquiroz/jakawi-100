@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import AppearanceSelector from '@/components/appearance-selector';
 
 type Profile = {
@@ -84,6 +84,12 @@ export default function MemberProfile({
         preferred_times: profile.preferred_times,
         avatar: null as File | null,
     });
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [saving, setSaving] = useState(false);
+    useEffect(() => () => {
+        if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    }, [avatarPreview]);
     const toggle = (
         field:
             | 'interests'
@@ -103,14 +109,27 @@ export default function MemberProfile({
         router.post(
             '/mi-jakawi/perfil',
             { ...form, _method: 'put' },
-            { forceFormData: true },
+            {
+                forceFormData: true,
+                onStart: () => { setSaving(true); setErrors({}); },
+                onError: (newErrors) => setErrors(newErrors),
+                onSuccess: () => {
+                    setForm((current) => ({ ...current, avatar: null }));
+                    setAvatarPreview(null);
+                },
+                onFinish: () => setSaving(false),
+            },
         );
     };
-    const avatarChange = (event: ChangeEvent<HTMLInputElement>) =>
-        setForm((current) => ({
-            ...current,
-            avatar: event.target.files?.[0] ?? null,
-        }));
+    const avatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const avatar = event.target.files?.[0] ?? null;
+        setForm((current) => ({ ...current, avatar }));
+        setErrors((current) => ({ ...current, avatar: '' }));
+        setAvatarPreview((current) => {
+            if (current) URL.revokeObjectURL(current);
+            return avatar ? URL.createObjectURL(avatar) : null;
+        });
+    };
     const complete = profile.completion_percentage === 100;
 
     return (
@@ -141,9 +160,9 @@ export default function MemberProfile({
                     </div>
                     <div className="rounded-md border border-border bg-surface p-5">
                         <div className="flex items-center gap-4">
-                            {profile.avatar_url ? (
+                            {avatarPreview || profile.avatar_url ? (
                                 <img
-                                    src={profile.avatar_url}
+                                    src={avatarPreview ?? profile.avatar_url ?? undefined}
                                     className="h-16 w-16 rounded-full object-cover"
                                     alt="Tu avatar"
                                 />
@@ -163,6 +182,8 @@ export default function MemberProfile({
                                         onChange={avatarChange}
                                     />
                                 </label>
+                                {form.avatar ? <p className="mt-1 text-xs text-muted-foreground">{form.avatar.name}</p> : null}
+                                {errors.avatar || errors.image ? <p className="mt-1 text-sm text-destructive">{errors.avatar || errors.image}</p> : null}
                             </div>
                         </div>
                         <label className="mt-5 block text-sm font-semibold">
@@ -249,10 +270,11 @@ export default function MemberProfile({
                     </div>
                     <section className="rounded-md border border-border bg-surface p-5"><p className="text-lg font-semibold">Apariencia</p><p className="mt-1 text-sm text-muted-foreground">Elige cómo se ve JAKAWI.</p><div className="mt-4"><AppearanceSelector /></div></section>
                     <button
-                        className="rounded-md bg-foreground px-4 py-3 font-semibold text-background"
+                        className="rounded-md bg-foreground px-4 py-3 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
                         type="submit"
+                        disabled={saving}
                     >
-                        Guardar perfil
+                        {saving ? 'Guardando perfil…' : 'Guardar perfil'}
                     </button>
                     <button type="button" onClick={() => router.post('/logout')} className="min-h-11 text-sm font-semibold text-muted-foreground underline">Cerrar sesión</button>
                 </form>

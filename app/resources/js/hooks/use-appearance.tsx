@@ -1,5 +1,4 @@
 import { useSyncExternalStore } from 'react';
-import { router } from '@inertiajs/react';
 
 export type ResolvedAppearance = 'light' | 'dark';
 export type Appearance = ResolvedAppearance | 'system';
@@ -59,6 +58,7 @@ const applyTheme = (appearance: Appearance): void => {
 
     document.documentElement.classList.toggle('dark', isDark);
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+    document.documentElement.dataset.appearance = appearance;
 };
 
 const subscribe = (callback: () => void) => {
@@ -84,7 +84,11 @@ export function initializeTheme(): void {
         return;
     }
 
-    currentAppearance = getStoredAppearance();
+    const serverAppearance = document.documentElement.dataset.appearance;
+    const authenticated = document.documentElement.dataset.appearanceAuthenticated === 'true';
+    currentAppearance = authenticated && (serverAppearance === 'light' || serverAppearance === 'dark' || serverAppearance === 'system')
+        ? serverAppearance
+        : getStoredAppearance();
     applyTheme(currentAppearance);
 
     // Set up system theme change listener
@@ -118,15 +122,18 @@ export function useAppearance(persistForAuthenticatedUser = false): UseAppearanc
         applyTheme(mode);
         notify();
 
-        if (persistForAuthenticatedUser) {
-            try {
-                router.patch('/settings/appearance', { theme_preference: mode }, {
-                    preserveScroll: true,
-                    preserveState: true,
-                });
-            } catch {
+        if (persistForAuthenticatedUser && typeof document !== 'undefined') {
+            const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content;
+
+            // The endpoint returns 204. Persist without an Inertia visit so the
+            // current page is never replaced or unmounted.
+            void fetch('/settings/appearance', {
+                method: 'PATCH', credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}) },
+                body: JSON.stringify({ theme_preference: mode }),
+            }).catch(() => {
                 // Local theme application remains usable if persistence fails.
-            }
+            });
         }
     };
 

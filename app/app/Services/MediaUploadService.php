@@ -12,6 +12,15 @@ class MediaUploadService
     /** Store first, then delete an old immutable media object only after success. */
     public function replace(UploadedFile $file, string $kind, int $id, string $slot, ?string $oldKey = null): string
     {
+        $key = $this->store($file, $kind, $id, $slot);
+        $this->delete($oldKey);
+
+        return $key;
+    }
+
+    /** Store an immutable object without changing a currently referenced object. */
+    public function store(UploadedFile $file, string $kind, int $id, string $slot): string
+    {
         $this->validate($file);
         $extension = match ($file->getMimeType()) {
             'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp',
@@ -23,11 +32,15 @@ class MediaUploadService
         Storage::disk(config('media.disk'))->putFileAs(dirname($key), $file, basename($key), [
             'visibility' => 'private', 'CacheControl' => 'public, max-age=31536000, immutable',
         ]);
-        if ($this->isMediaKey($oldKey)) {
-            Storage::disk(config('media.disk'))->delete($oldKey);
-        }
-
         return $key;
+    }
+
+    /** Delete only a known immutable media object. */
+    public function delete(?string $key): void
+    {
+        if ($this->isMediaKey($key)) {
+            Storage::disk(config('media.disk'))->delete($key);
+        }
     }
 
     public function validate(UploadedFile $file): void

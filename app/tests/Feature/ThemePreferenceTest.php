@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ThemePreferenceTest extends TestCase
@@ -36,5 +37,14 @@ class ThemePreferenceTest extends TestCase
         $this->actingAs($first)->patch(route('appearance.update'), ['theme_preference' => 'dark', 'user_id' => $second->id])->assertNoContent();
         $this->assertSame('dark', $first->refresh()->theme_preference);
         $this->assertSame('light', $second->refresh()->theme_preference);
+    }
+
+    public function test_profile_still_renders_after_a_theme_change(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->patch(route('appearance.update'), ['theme_preference' => 'dark'])->assertNoContent();
+        $this->actingAs($user)->get('/perfil')->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('member-profile'));
     }
 }

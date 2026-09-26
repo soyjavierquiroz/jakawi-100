@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Services\MembershipService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -78,5 +80,57 @@ class MemberProfileTest extends TestCase
         $this->assertSame(['food'], $userB->fresh()->profile->interests);
         $this->actingAs($userA)->get('/partner/'.$partner->slug)->assertOk()
             ->assertInertia(fn (Assert $page) => $page->missing('profile')->missing('preferences')->missing('interests'));
+    }
+
+    public function test_owner_can_upload_supported_avatar_formats_without_losing_profile_fields(): void
+    {
+        config()->set('media.disk', 'public');
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $user->profile()->create(['city' => 'Cochabamba', 'interests' => ['cafe']]);
+
+        foreach (['avatar.jpg', 'avatar.png', 'avatar.webp'] as $name) {
+            $this->actingAs($user)->put('/mi-jakawi/perfil', [
+                'avatar' => $this->image($name), 'city' => 'Cochabamba', 'interests' => ['cafe'],
+            ])->assertRedirect('/mi-jakawi/perfil');
+
+            $path = $user->fresh()->profile->avatar_path;
+            $this->assertMatchesRegularExpression('#^avatars/'.$user->id.'/[0-9a-f-]+\\.(jpg|png|webp)$#', $path);
+            $this->assertStringNotContainsString('http', $path);
+            Storage::disk('public')->assertExists($path);
+            $this->assertSame(['cafe'], $user->fresh()->profile->interests);
+        }
+    }
+
+    public function test_svg_avatar_is_rejected_and_old_avatar_survives_until_replaced(): void
+    {
+        config()->set('media.disk', 'public');
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $old = 'avatars/'.$user->id.'/550e8400-e29b-41d4-a716-446655440000.jpg';
+        Storage::disk('public')->put($old, 'old');
+        $user->profile()->create(['avatar_path' => $old, 'interests' => ['food']]);
+
+        $this->actingAs($user)->from('/mi-jakawi/perfil')->put('/mi-jakawi/perfil', [
+            'avatar' => UploadedFile::fake()->createWithContent('avatar.svg', '<svg xmlns="http://www.w3.org/2000/svg"/>'),
+        ])->assertRedirect('/mi-jakawi/perfil')->assertSessionHasErrors('avatar');
+        $this->assertSame($old, $user->fresh()->profile->avatar_path);
+        Storage::disk('public')->assertExists($old);
+
+        $this->actingAs($user)->put('/mi-jakawi/perfil', ['avatar' => $this->image('new.png')])->assertRedirect();
+        $this->assertNotSame($old, $user->fresh()->profile->avatar_path);
+        Storage::disk('public')->assertMissing($old);
+        Storage::disk('public')->assertExists($user->fresh()->profile->avatar_path);
+    }
+
+    private function image(string $name): UploadedFile
+    {
+        $images = [
+            'jpg' => '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAEFAqf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AR//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AR//2Q==',
+            'png' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbhwAAAABJRU5ErkJggg==',
+            'webp' => 'UklGRiIAAABXRUJQVlA4IC4AAAAwAQCdASoBAAEAAUAmJaQAA3AA/vuUAAA=',
+        ];
+
+        return UploadedFile::fake()->createWithContent($name, base64_decode($images[pathinfo($name, PATHINFO_EXTENSION)]));
     }
 }
