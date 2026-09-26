@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AttributionTouch;
+use App\Models\Campaign;
 use App\Models\Conversion;
 use App\Models\ReferralRelationship;
 use App\Models\User;
@@ -17,8 +18,10 @@ class ConversionRecorder
             return $existing;
         } $relationship = ReferralRelationship::where('referred_user_id', $user->id)->where('status', 'active')->latest('attributed_at')->first();
         $touch = AttributionTouch::where('user_id', $user->id)->latest('occurred_at')->first();
-        $snapshot = ['referrer_user_id' => $relationship?->referrer_user_id, 'acquisition_partner_id' => $relationship?->acquisition_partner_id, 'referral_code' => $relationship?->referral_code, 'utm_source' => $touch?->utm_source, 'utm_medium' => $touch?->utm_medium, 'utm_campaign' => $touch?->utm_campaign, 'utm_content' => $touch?->utm_content];
+        $occurredAt = $data['occurred_at'] ?? now();
+        $campaign = $touch?->utm_campaign ? Campaign::query()->where('code', $touch->utm_campaign)->operationalAt($occurredAt)->first() : null;
+        $snapshot = ['referrer_user_id' => $relationship?->referrer_user_id, 'acquisition_partner_id' => $relationship?->acquisition_partner_id, 'referral_code' => $relationship?->referral_code, 'utm_source' => $touch?->utm_source, 'utm_medium' => $touch?->utm_medium, 'utm_campaign' => $touch?->utm_campaign, 'utm_content' => $touch?->utm_content, 'campaign_code' => $campaign?->code];
 
-        return Conversion::create([...$data, 'user_id' => $user->id, 'currency' => $data['currency'] ?? 'BOB', 'eligible_amount' => $data['eligible_amount'] ?? $data['gross_amount'], 'status' => $data['status'] ?? 'pending', 'occurred_at' => $data['occurred_at'] ?? now(), 'referral_relationship_id' => $relationship?->id, 'attribution_touch_id' => $touch?->id, 'attribution_snapshot' => [...$snapshot, ...($data['attribution_snapshot'] ?? [])]]);
+        return Conversion::create([...$data, 'user_id' => $user->id, 'currency' => $data['currency'] ?? 'BOB', 'eligible_amount' => $data['eligible_amount'] ?? $data['gross_amount'], 'status' => $data['status'] ?? 'pending', 'occurred_at' => $occurredAt, 'referral_relationship_id' => $relationship?->id, 'attribution_touch_id' => $touch?->id, 'campaign_id' => $campaign?->id, 'attribution_snapshot' => [...$snapshot, ...($data['attribution_snapshot'] ?? [])]]);
     }
 }

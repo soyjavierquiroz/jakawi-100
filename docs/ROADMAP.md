@@ -73,3 +73,6 @@ Delivered: Partner referral attribution and aggregate operational metrics. Defer
 # Deferred: Partner CREDIT and payouts
 
 Partner CREDIT needs its own ledger and consumption semantics. Partner payout requests are deferred until the existing user-only payout workflow can be safely generalized with an independent configured partner minimum.
+# Campaigns V1
+
+Campaigns V1 entrega campañas administrables para membership purchase, reglas especiales y métricas por contenido. Automatización de marketing, plataformas sociales y A/B testing quedan fuera de alcance.

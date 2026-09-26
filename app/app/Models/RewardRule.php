@@ -27,4 +27,6 @@ class RewardRule extends Model
         return $this->belongsTo(User::class, 'beneficiary_user_id');
     }
 
+    public function campaign(): BelongsTo { return $this->belongsTo(Campaign::class); }
+
 }

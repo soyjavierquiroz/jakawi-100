@@ -7,6 +7,7 @@ use App\Http\Controllers\CreatorDashboardController;
 use App\Http\Controllers\AdminCreatorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminRewardRuleController;
+use App\Http\Controllers\AdminCampaignController;
 use App\Http\Controllers\AdminSalesController;
 use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\ExperienceCheckInController;
@@ -145,6 +146,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('reward-rules', [AdminRewardRuleController::class, 'index'])->name('admin.reward-rules.index');
     Route::post('reward-rules', [AdminRewardRuleController::class, 'store'])->name('admin.reward-rules.store');
     Route::put('reward-rules/{rule}', [AdminRewardRuleController::class, 'update'])->name('admin.reward-rules.update');
+    Route::get('campaigns', [AdminCampaignController::class, 'index'])->name('admin.campaigns.index');
+    Route::post('campaigns', [AdminCampaignController::class, 'store'])->name('admin.campaigns.store');
+    Route::put('campaigns/{campaign}', [AdminCampaignController::class, 'update'])->name('admin.campaigns.update');
     Route::get('promoters', [\App\Http\Controllers\AdminPromoterController::class, 'index'])->name('admin.promoters.index');
     Route::get('promoters/create', [\App\Http\Controllers\AdminPromoterController::class, 'create'])->name('admin.promoters.create');
     Route::post('promoters', [\App\Http\Controllers\AdminPromoterController::class, 'store'])->name('admin.promoters.store');

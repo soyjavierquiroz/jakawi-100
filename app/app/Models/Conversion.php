@@ -28,4 +28,6 @@ class Conversion extends Model
     {
         return $this->belongsTo(MembershipPurchase::class, 'id', 'conversion_id');
     }
+
+    public function campaign(): BelongsTo { return $this->belongsTo(Campaign::class); }
 }

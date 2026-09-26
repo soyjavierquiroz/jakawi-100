@@ -1,5 +1,7 @@
 # JAKAWI
 
+Campaigns V1: campañas temporales administrables sobre atribución UTM y el motor existente de recompensas. Ver [docs/CAMPAIGNS.md](docs/CAMPAIGNS.md).
+
 **Vive más. Gasta menos.** JAKAWI es la app para descubrir lugares y experiencias en Cochabamba, acceder a beneficios por ser miembro y tener nuevas razones para salir, probar y volver.
 
 ## Stack

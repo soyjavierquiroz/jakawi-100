@@ -46,3 +46,6 @@ Referral attribution uses the single `/r/{CODE}` resolver for User and Partner c
 # Partner reward precedence
 
 For membership acquisition, one paid beneficiary is selected: credited active promoter, active creator, active affiliate, eligible member, eligible published acquisition Partner, or none. Attribution remains intact when another beneficiary wins.
+# Campaigns
+
+`utm_campaign` permanece como evidencia de marketing. Cuando coincide con una Campaign operativa al momento de la conversión, la conversión queda vinculada a ella. La ventana de Campaign no modifica la ventana de atribución referral; un touch puede preceder a una conversión dentro de la Campaign.

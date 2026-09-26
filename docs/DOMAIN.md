@@ -62,3 +62,6 @@ Payment QR compra una Membership y sólo se confirma desde backend confiable. Re
 # Reward beneficiaries
 
 Reward rules and transactions support an additive beneficiary subject (`USER` or `PARTNER`) while preserving legacy user foreign keys. Partner portal users authorize access only; they are never the financial beneficiary.
+# Campaigns
+
+Campaign es una entidad comercial con código UTM, ventana, participantes elegibles y reglas de recompensa opcionales. Conversion conserva el vínculo histórico a Campaign; RewardRule puede pertenecer a una Campaign.

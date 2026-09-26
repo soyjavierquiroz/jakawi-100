@@ -23,6 +23,7 @@ export default function AdminLayout({
                 <Link href="/admin/creators">Creadores</Link>
                 <Link href="/admin/payouts">Pagos</Link>
                 <Link href="/admin/reward-rules">Reglas de recompensa</Link>
+                <Link href="/admin/campaigns">Campañas</Link>
                 <Link href="/admin/redemptions">Canjes</Link>
                 <Link href="/admin/attribution">Atribución</Link>
             </nav>
