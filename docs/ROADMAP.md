@@ -10,7 +10,12 @@
 
 ## Siguiente
 
-- Implementar la conversión contextual de membresía en los slices de [CONVERSION.md](CONVERSION.md), incluido checkout externo y activación confirmada por servidor.
+- Implementar el módulo de pagos propio de JAKAWI para Bolivia, con QR como
+  método principal previsto. Esta fase incluye la verificación server-side e
+  idempotente antes de activar una membresía; está diferida y no define aún
+  proveedor, banco ni integración.
+- Retomar y desplegar el Paywall contextual preparado sólo cuando exista ese
+  flujo de pago QR real.
 - Refinamiento a partir del uso real.
 
 ## Diferido

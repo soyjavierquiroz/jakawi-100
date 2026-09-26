@@ -16,6 +16,20 @@ El código Laravel, Composer y las pruebas se ejecutan exclusivamente en Docker;
 
 Esto usa el proyecto Compose `jakawi-test` y la base `jakawi_test`, nunca la base de producción.
 
+## Frontend y Wayfinder
+
+Las rutas y acciones TypeScript de Wayfinder se generan, no se versionan. El
+flujo canónico (incluido el chequeo TypeScript y el build de producción) usa
+PHP 8.4 dentro de Docker:
+
+```bash
+docker build -f docker/Dockerfile --target build -t jakawi-frontend-check .
+```
+
+Ese build limpia el route cache, genera Wayfinder con `--with-form`, ejecuta
+`tsc --noEmit` y luego compila Vite. No ejecutar `php artisan
+wayfinder:generate` con el PHP 8.1 del host.
+
 ## Reglas de producción
 
 - Producción entra por OpenLiteSpeed a `127.0.0.1:8080` (`web`); imgproxy por `127.0.0.1:8082`.
