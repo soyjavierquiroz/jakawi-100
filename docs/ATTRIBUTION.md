@@ -38,3 +38,6 @@ documentan en [AFFILIATES.md](AFFILIATES.md).
 ## Administración, privacidad y alcance
 
 Admin permite ajustar la ventana (con audit log) y buscar usuarios para ver referente, historial y conversiones. Manual Membership Sales V1 agrega reglas y transacciones CASH mínimas; no añade payouts, árboles, dashboards completos, campañas ni QR de pago.
+# Attribution
+
+Referral attribution uses the single `/r/{CODE}` resolver for User and Partner codes. A touch may identify `referrer_user_id` or explicit `acquisition_partner_id`. First-valid policy and the configured expiry window apply equally; later valid touches remain history and do not replace an active relationship. Conversion snapshots retain both user and Partner acquisition references.

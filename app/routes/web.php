@@ -111,6 +111,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('partners', [AdminController::class, 'savePartner'])->name('admin.partners.store');
     Route::get('partners/{partner}/edit', [AdminController::class, 'partnerForm'])->name('admin.partners.edit');
     Route::put('partners/{partner}', [AdminController::class, 'savePartner'])->name('admin.partners.update');
+    Route::post('partners/{partner}/referral-code', [AdminController::class, 'partnerReferralCode'])->name('admin.partners.referral-code');
     Route::get('locations', [AdminController::class, 'locations'])->name('admin.locations.index');
     Route::get('locations/create', [AdminController::class, 'locationForm'])->name('admin.locations.create');
     Route::post('locations', [AdminController::class, 'saveLocation'])->name('admin.locations.store');

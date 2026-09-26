@@ -20,7 +20,7 @@ class Partner extends Model
     }
 
     protected $fillable = [
-        'slug', 'name', 'entity_type', 'partner_type', 'legal_name', 'tax_id',
+        'slug', 'referral_code', 'referral_code_normalized', 'name', 'entity_type', 'partner_type', 'legal_name', 'tax_id',
         'description', 'category', 'website', 'instagram', 'facebook', 'tiktok',
         'phone', 'whatsapp', 'email', 'contact_name', 'contact_phone', 'contact_email',
         'logo_path', 'cover_path', 'status', 'featured', 'internal_notes', 'sort_order', 'published_at',

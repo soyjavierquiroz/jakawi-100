@@ -56,3 +56,6 @@ Payment QR compra una Membership y sólo se confirma desde backend confiable. Re
 # Reward payouts
 
 `RewardPayout` agrupa recompensas cash para un beneficiario y guarda la solicitud, estado, referencia externa de pago, actor y fechas. El pivot conserva el historial de inclusiones; la solicitud toma un lock del beneficiario y excluye recompensas ligadas a payouts `requested`, por lo que una recompensa no puede estar en dos payouts abiertos. Estados V1: `requested`, `paid`, `rejected`.
+# Domain notes
+
+`Partner` is a domain entity and is not a User program participant. Partner acquisition attribution is marketing information, distinct from paid referral beneficiaries and rewards.

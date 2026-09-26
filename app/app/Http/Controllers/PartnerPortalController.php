@@ -7,6 +7,7 @@ use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Models\Partner;
 use App\Services\PartnerKpiService;
+use App\Services\PartnerAcquisitionMetrics;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -34,10 +35,13 @@ class PartnerPortalController extends Controller
         ]);
     }
 
-    public function show(Partner $partner): Response
+    public function show(Request $request, Partner $partner, PartnerAcquisitionMetrics $acquisition): Response
     {
+        $relation = $request->user()->partners()->whereKey($partner->id)->firstOrFail();
+        $canViewAcquisition = in_array($relation->pivot->role, ['owner', 'manager'], true);
         return Inertia::render('partner/dashboard', [
-            'partner' => $partner->only(['name', 'slug']),
+            'partner' => $partner->only(['name', 'slug']) + ($canViewAcquisition ? ['referral_code' => $partner->referral_code, 'referral_link' => $partner->referral_code ? route('referrals.open', $partner->referral_code) : null] : []),
+            'acquisition' => $canViewAcquisition ? $acquisition->forPartner($partner) : null,
             'pendingReservations' => ExperienceReservation::where('partner_id', $partner->id)->where('status', 'pending')->count(),
             'benefitDrafts' => Benefit::where('partner_id', $partner->id)->where('review_status', 'draft')->count(),
             'benefitSubmitted' => Benefit::where('partner_id', $partner->id)->where('review_status', 'submitted')->count(),

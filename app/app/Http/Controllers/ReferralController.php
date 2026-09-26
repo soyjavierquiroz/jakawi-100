@@ -1,6 +1,5 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\User;
 use App\Services\AnalyticsTracker;
 use App\Services\AttributionService;
 use Illuminate\Http\RedirectResponse;

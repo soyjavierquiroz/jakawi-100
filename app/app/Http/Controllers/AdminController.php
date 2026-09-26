@@ -14,6 +14,8 @@ use App\Models\AppSetting;
 use App\Models\AuditLog;
 use App\Services\MembershipService;
 use App\Services\MediaUploadService;
+use App\Services\PartnerAcquisitionMetrics;
+use App\Services\ReferralCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -31,9 +33,9 @@ class AdminController extends Controller
         ]]);
     }
 
-    public function partners(): Response
+    public function partners(PartnerAcquisitionMetrics $acquisition): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'items' => Partner::orderBy('name')->get()]);
+        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'items' => Partner::orderBy('name')->get()->map(fn (Partner $partner) => $partner->toArray() + ['acquisition' => $acquisition->forPartner($partner)])]);
     }
 
     public function partnerForm(?Partner $partner = null): Response
@@ -51,6 +53,14 @@ class AdminController extends Controller
         $this->upload($request, $partner, 'cover', 'cover_path', 'partners');
 
         return to_route('admin.partners.index');
+    }
+
+    public function partnerReferralCode(Request $request, Partner $partner, ReferralCodeService $codes)
+    {
+        $previous = $partner->referral_code;
+        $code = $request->boolean('regenerate') ? $codes->regenerate($partner) : $codes->ensureFor($partner);
+        AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => $previous ? 'partner_referral_code_regenerated' : 'partner_referral_code_generated', 'subject_type' => Partner::class, 'subject_id' => $partner->id, 'metadata' => ['before' => $previous, 'after' => $code]]);
+        return back();
     }
 
     public function locations(): Response
