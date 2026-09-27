@@ -1,5 +1,9 @@
 # Operaciones
 
+## Partner payouts
+
+Admin → Pagos mantiene mínimos BOB independientes: `affiliate_minimum_payout` y `partner_minimum_payout`. Owner/manager solicita el total elegible de su Partner; Admin registra el pago manual con referencia externa o rechaza con motivo. Los pagos PAID son historia financiera y se corrigen sólo con ajustes operativos auditables.
+
 Este runbook describe el stack actual. No autoriza despliegues, cambios de datos ni cambios de infraestructura por sí mismo.
 
 ## Producción

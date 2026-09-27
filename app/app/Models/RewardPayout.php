@@ -31,6 +31,11 @@ class RewardPayout extends Model
         return $this->belongsTo(User::class, 'paid_by_user_id');
     }
 
+    public function requestedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requested_by_user_id');
+    }
+
     public function rewards(): BelongsToMany
     {
         return $this->belongsToMany(RewardTransaction::class, 'reward_payout_reward_transaction')->withTimestamps();

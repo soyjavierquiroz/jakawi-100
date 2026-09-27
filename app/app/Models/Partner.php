@@ -66,6 +66,12 @@ class Partner extends Model
         return $this->hasMany(RewardTransaction::class, 'beneficiary_id')->where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER);
     }
 
+    /** @return HasMany<RewardPayout, $this> */
+    public function rewardPayouts(): HasMany
+    {
+        return $this->hasMany(RewardPayout::class, 'beneficiary_id')->where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER);
+    }
+
     /** @param Builder<Partner> $query */
     public function scopePublished(Builder $query): void
     {

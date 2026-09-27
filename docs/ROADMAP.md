@@ -1,5 +1,9 @@
 # Roadmap
 
+## Partner payout V1
+
+- **LIVE**: payout genérico USER/PARTNER, actor owner/manager separado, mínimo Partner independiente y pago externo manual.
+
 ## Ahora
 
 - Affiliate Program V1: **LIVE**. Enrolamiento, enlace, atribución,

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\AppSetting;
 use App\Models\AuditLog;
+use App\Models\Partner;
+use App\Models\RewardRule;
 use App\Models\RewardPayout;
 use App\Models\RewardTransaction;
 use App\Models\User;
@@ -15,6 +17,11 @@ class RewardPayoutService
     public function minimum(): string
     {
         return (string) (AppSetting::where('key', 'affiliate_minimum_payout')->first()?->value['amount'] ?? config('jakawi.affiliate.minimum_payout', 0));
+    }
+
+    public function partnerMinimum(): string
+    {
+        return (string) (AppSetting::where('key', 'partner_minimum_payout')->first()?->value['amount'] ?? 0);
     }
 
     public function request(User $affiliate): RewardPayout
@@ -31,7 +38,7 @@ class RewardPayoutService
             abort_if($amount < (float) $this->minimum(), 422, 'No alcanzas el mínimo de pago configurado.');
 
             $payout = RewardPayout::create([
-                'reference' => $this->reference(), 'beneficiary_user_id' => $affiliate->id,
+                'reference' => $this->reference(), 'beneficiary_user_id' => $affiliate->id, 'beneficiary_type' => RewardRule::BENEFICIARY_USER, 'beneficiary_id' => $affiliate->id, 'requested_by_user_id' => $affiliate->id,
                 'status' => RewardPayout::STATUS_REQUESTED, 'requested_at' => now(),
                 'requested_amount' => $amount, 'currency' => $rewards->first()->currency ?? 'BOB',
             ]);
@@ -40,6 +47,34 @@ class RewardPayoutService
             foreach ($rewards as $reward) {
                 $this->audit($affiliate, 'reward_reserved_for_payout', $reward, ['status' => $reward->status], ['payout_id' => $payout->id, 'payout_reference' => $payout->reference]);
             }
+
+            return $payout;
+        });
+    }
+
+    public function requestPartner(Partner $partner, User $actor): RewardPayout
+    {
+        return DB::transaction(function () use ($partner, $actor): RewardPayout {
+            Partner::query()->lockForUpdate()->findOrFail($partner->id);
+            $rewards = RewardTransaction::query()
+                ->where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER)->where('beneficiary_id', $partner->id)
+                ->where('reward_type', 'CASH')->where('currency', 'BOB')
+                ->where('status', RewardTransaction::STATUS_AVAILABLE)
+                ->whereDoesntHave('payouts', fn ($query) => $query->where('status', RewardPayout::STATUS_REQUESTED))
+                ->lockForUpdate()->get();
+            $amount = $rewards->sum('amount');
+            abort_if($amount <= 0, 422, 'No hay recompensas disponibles para solicitar.');
+            abort_if($amount < (float) $this->partnerMinimum(), 422, 'No alcanzas el mínimo de pago Partner configurado.');
+
+            $payout = RewardPayout::create([
+                'reference' => $this->reference(), 'beneficiary_type' => RewardRule::BENEFICIARY_PARTNER,
+                'beneficiary_id' => $partner->id, 'requested_by_user_id' => $actor->id,
+                'status' => RewardPayout::STATUS_REQUESTED, 'requested_at' => now(),
+                'requested_amount' => $amount, 'currency' => 'BOB',
+            ]);
+            $payout->rewards()->attach($rewards->pluck('id'));
+            $this->audit($actor, 'partner_payout_requested', $payout, null, ['beneficiary' => 'PARTNER:'.$partner->id, 'amount' => (string) $amount, 'reward_ids' => $rewards->pluck('id')->all()]);
+            foreach ($rewards as $reward) $this->audit($actor, 'reward_reserved_for_payout', $reward, ['status' => $reward->status], ['payout_id' => $payout->id, 'payout_reference' => $payout->reference]);
 
             return $payout;
         });
@@ -62,7 +97,7 @@ class RewardPayoutService
                 $reward->update(['status' => RewardTransaction::STATUS_PAID]);
                 $this->audit($admin, 'reward_paid', $reward, $rewardBefore, $reward->fresh()->toArray() + ['payout_id' => $payout->id]);
             }
-            $this->audit($admin, 'affiliate_payout_paid', $payout, $before, $payout->fresh()->toArray());
+            $this->audit($admin, $payout->beneficiary_type === RewardRule::BENEFICIARY_PARTNER ? 'partner_payout_paid' : 'affiliate_payout_paid', $payout, $before, $payout->fresh()->toArray());
 
             return $payout->fresh();
         });
@@ -75,7 +110,7 @@ class RewardPayoutService
             abort_unless($payout->status === RewardPayout::STATUS_REQUESTED, 422, 'Solo se puede rechazar una solicitud pendiente.');
             $before = $payout->toArray();
             $payout->update(['status' => RewardPayout::STATUS_REJECTED, 'rejection_reason' => trim($reason)]);
-            $this->audit($admin, 'affiliate_payout_rejected', $payout, $before, $payout->fresh()->toArray());
+            $this->audit($admin, $payout->beneficiary_type === RewardRule::BENEFICIARY_PARTNER ? 'partner_payout_rejected' : 'affiliate_payout_rejected', $payout, $before, $payout->fresh()->toArray());
             foreach ($payout->rewards()->lockForUpdate()->get() as $reward) {
                 $this->audit($admin, 'reward_released_from_payout', $reward, ['payout_id' => $payout->id], ['status' => $reward->status, 'reason' => trim($reason)]);
             }

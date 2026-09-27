@@ -7,9 +7,11 @@ use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Models\Partner;
 use App\Models\RewardRule;
+use App\Models\RewardPayout;
 use App\Models\RewardTransaction;
 use App\Services\PartnerKpiService;
 use App\Services\PartnerAcquisitionMetrics;
+use App\Services\RewardPayoutService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -37,7 +39,7 @@ class PartnerPortalController extends Controller
         ]);
     }
 
-    public function show(Request $request, Partner $partner, PartnerAcquisitionMetrics $acquisition): Response
+    public function show(Request $request, Partner $partner, PartnerAcquisitionMetrics $acquisition, RewardPayoutService $payouts): Response
     {
         $relation = $request->user()->partners()->whereKey($partner->id)->firstOrFail();
         $canViewAcquisition = in_array($relation->pivot->role, ['owner', 'manager'], true);
@@ -45,12 +47,22 @@ class PartnerPortalController extends Controller
             'partner' => $partner->only(['name', 'slug']) + ($canViewAcquisition ? ['referral_code' => $partner->referral_code, 'referral_link' => $partner->referral_code ? route('referrals.open', $partner->referral_code) : null] : []),
             'acquisition' => $canViewAcquisition ? $acquisition->forPartner($partner) : null,
             'rewards' => $canViewAcquisition ? collect([RewardTransaction::STATUS_PENDING, RewardTransaction::STATUS_AVAILABLE, RewardTransaction::STATUS_PAID])->mapWithKeys(fn ($status) => [$status => number_format((float) RewardTransaction::where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER)->where('beneficiary_id', $partner->id)->where('status', $status)->sum('amount'), 2, '.', '')])->all() : null,
+            'partnerPayout' => $canViewAcquisition ? ['minimum' => $payouts->partnerMinimum(), 'open' => RewardPayout::where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER)->where('beneficiary_id', $partner->id)->where('status', RewardPayout::STATUS_REQUESTED)->latest('requested_at')->first(['id', 'reference', 'requested_amount', 'status', 'requested_at', 'paid_at', 'payment_reference']), 'history' => RewardPayout::where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER)->where('beneficiary_id', $partner->id)->latest('requested_at')->limit(8)->get(['id', 'reference', 'requested_amount', 'status', 'requested_at', 'paid_at', 'payment_reference'])] : null,
             'pendingReservations' => ExperienceReservation::where('partner_id', $partner->id)->where('status', 'pending')->count(),
             'benefitDrafts' => Benefit::where('partner_id', $partner->id)->where('review_status', 'draft')->count(),
             'benefitSubmitted' => Benefit::where('partner_id', $partner->id)->where('review_status', 'submitted')->count(),
             'experienceDrafts' => Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->where('review_status', 'draft')->count(),
             'experienceSubmitted' => Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->where('review_status', 'submitted')->count(),
         ]);
+    }
+
+    public function requestPayout(Request $request, Partner $partner, RewardPayoutService $payouts): RedirectResponse
+    {
+        $relation = $request->user()->partners()->whereKey($partner->id)->firstOrFail();
+        abort_unless(in_array($relation->pivot->role, ['owner', 'manager'], true), 403);
+        $payouts->requestPartner($partner, $request->user());
+
+        return to_route('partner.portal.show', $partner)->with('success', 'Solicitud de pago enviada.');
     }
 
     public function performance(Request $request, Partner $partner, PartnerKpiService $kpis): Response
