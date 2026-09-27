@@ -65,3 +65,11 @@ Reward rules and transactions support an additive beneficiary subject (`USER` or
 # Campaigns
 
 Campaign es una entidad comercial con código UTM, ventana, participantes elegibles y reglas de recompensa opcionales. Conversion conserva el vínculo histórico a Campaign; RewardRule puede pertenecer a una Campaign.
+
+# Operational adjustments
+
+`OperationalAdjustment` es el historial administrativo genérico e inmutable.
+Registra correcciones de atribución, movimientos manuales de ledger CASH/JP y
+transiciones controladas de RewardTransaction con motivo obligatorio, actor y
+snapshot antes/después. No sustituye RewardTransaction: los movimientos manuales
+no inventan conversiones ni reglas. Una recompensa PAID conserva su historia.

@@ -10,6 +10,8 @@ use App\Http\Controllers\AdminRewardRuleController;
 use App\Http\Controllers\AdminCampaignController;
 use App\Http\Controllers\AdminSalesController;
 use App\Http\Controllers\AdminPayoutController;
+use App\Http\Controllers\AdminAdjustmentController;
+use App\Http\Controllers\AdminExportController;
 use App\Http\Controllers\ExperienceCheckInController;
 use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\MemberProfileController;
@@ -137,6 +139,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::delete('memberships/{membership}', [AdminController::class, 'cancelMembership'])->name('admin.memberships.cancel');
     Route::get('redemptions', [AdminController::class, 'redemptions'])->name('admin.redemptions.index');
     Route::get('attribution', [AdminController::class, 'attribution'])->name('admin.attribution.index');
+    Route::post('attribution/{user}/correction', [AdminAdjustmentController::class, 'attribution'])->name('admin.attribution.correction');
     Route::put('attribution/settings', [AdminController::class, 'updateAttributionSettings'])->name('admin.attribution.settings.update');
     Route::get('sales', [AdminSalesController::class, 'index'])->name('admin.sales.index');
     Route::get('sales/create', [AdminSalesController::class, 'create'])->name('admin.sales.create');
@@ -177,6 +180,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('payouts/{payout}', [AdminPayoutController::class, 'show'])->name('admin.payouts.show');
     Route::post('payouts/{payout}/paid', [AdminPayoutController::class, 'pay'])->name('admin.payouts.paid');
     Route::post('payouts/{payout}/reject', [AdminPayoutController::class, 'reject'])->name('admin.payouts.reject');
+    Route::get('adjustments', [AdminAdjustmentController::class, 'index'])->name('admin.adjustments.index');
+    Route::post('adjustments/ledger', [AdminAdjustmentController::class, 'ledger'])->name('admin.adjustments.ledger');
+    Route::post('adjustments/rewards/{reward}/status', [AdminAdjustmentController::class, 'rewardStatus'])->name('admin.adjustments.rewards.status');
+    Route::get('exports/{type}', [AdminExportController::class, 'download'])->name('admin.exports.download');
 });
 
 require __DIR__.'/settings.php';
