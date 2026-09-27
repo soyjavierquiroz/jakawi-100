@@ -76,3 +76,10 @@ Partner CREDIT needs its own ledger and consumption semantics. Partner payout re
 # Campaigns V1
 
 Campaigns V1 entrega campañas administrables para membership purchase, reglas especiales y métricas por contenido. Automatización de marketing, plataformas sociales y A/B testing quedan fuera de alcance.
+
+# Admin adjustments + CSV export V1
+
+Delivered: immutable, reason-required Admin adjustments for attribution,
+CASH/JP ledger movements and permitted reward-status transitions, plus filtered
+CSV downloads for affiliates, conversions, rewards, payouts and attribution.
+Excluded by design: BI, XLSX, imports, scheduled exports and accounting.

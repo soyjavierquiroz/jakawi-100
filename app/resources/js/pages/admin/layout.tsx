@@ -26,6 +26,7 @@ export default function AdminLayout({
                 <Link href="/admin/campaigns">Campañas</Link>
                 <Link href="/admin/redemptions">Canjes</Link>
                 <Link href="/admin/attribution">Atribución</Link>
+                <Link href="/admin/adjustments">Ajustes</Link>
             </nav>
             <h1 className="mt-8 text-3xl font-semibold">{title}</h1>
             <div className="mt-6">{children}</div>

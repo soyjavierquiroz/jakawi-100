@@ -75,3 +75,19 @@ sin restaurarlo: `docker compose exec -T "$DB_SERVICE" pg_restore --list <
 "$BACKUP" > /tmp/jakawi-backup-list.txt`. Registrar la ruta,
 tamaño, resultado y, recomendado, `sha256sum`. Nunca usar `pg_dump` del host,
 `migrate:fresh`, ni una restauración destructiva de prueba contra producción.
+
+## Ajustes administrativos y CSV V1
+
+Los ajustes operativos son registros inmutables en `operational_adjustments`:
+requieren motivo, actor, antes/después y hora. CASH y JP son unidades separadas
+en el ledger; nunca se actualiza un campo de saldo de usuario. Un débito no puede
+dejar saldo de ledger negativo. Los cambios de recompensa sólo permiten
+`pending → available` y `available → cancelled`; `paid` nunca se reescribe y
+requiere un ajuste financiero posterior. Las correcciones de atribución invalidan
+la relación activa anterior y crean una nueva sin borrar AttributionTouch.
+
+Admin puede descargar CSV de afiliados, conversiones, recompensas, payouts y
+atribución. Los exports no incluyen email, teléfono, IP ni user-agent; son UTF-8,
+usan escaping CSV estándar y anteponen `'` a valores que empiezan por `=`, `+`,
+`-` o `@` para evitar fórmulas de hoja de cálculo. Cada descarga deja una auditoría
+liviana con actor, tipo y filtros, sin guardar el archivo.
