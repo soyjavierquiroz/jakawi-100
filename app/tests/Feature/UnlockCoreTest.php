@@ -95,9 +95,11 @@ class UnlockCoreTest extends TestCase
         $service->cancel($unlock, $a);
         $this->assertSame(2, $unlock->committedCount());
         $this->assertSame(Unlock::GOAL_REACHED, $unlock->fresh()->status);
+        config()->set('unlocks.jp_commitments_enabled', false);
         $jp = $this->unlock(['jp_deposit' => 1]);
         try { $service->commit($jp, User::factory()->create()); $this->fail('JP commitment accepted.'); } catch (ValidationException) {}
         $this->assertSame(0, $jp->committedCount());
+        config()->set('unlocks.jp_commitments_enabled', true);
     }
 
     public function test_deadline_failure_admin_cancellation_audit_and_partner_material_lock(): void

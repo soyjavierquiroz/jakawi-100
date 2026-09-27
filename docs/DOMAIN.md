@@ -37,6 +37,7 @@ erDiagram
 - **AnalyticsEvent:** eventos first-party limitados, vinculables a usuario y entidades de catálogo.
 - **AttributionTouch / ReferralRelationship / Conversion:** evidencia de origen, primer referente válido y ventas idempotentes; véase [ATTRIBUTION.md](ATTRIBUTION.md).
 - **ProgramEnrollment / MembershipPurchase / RewardRule / RewardTransaction:** acceso de programa, transacción comercial neutral y ledger de recompensa. Promoter, Affiliate y Creator son inscripciones independientes; Member se determina exclusivamente por Membership activa. JP vive en el ledger como unidad separada de BOB; véase [MEMBER-REFERRALS.md](MEMBER-REFERRALS.md), [MANUAL-SALES.md](MANUAL-SALES.md), [AFFILIATES.md](AFFILIATES.md) y [CREATORS.md](CREATORS.md).
+- **JpHold:** reserva auditable y no monetaria de JP ganado para una participación de Unlock. `HELD` reduce el JP disponible; `RELEASED` lo devuelve. `FORFEITED` existe sólo como estado futuro y no se ejecuta en Slice 2.
 
 ## Ciclos y estados
 
