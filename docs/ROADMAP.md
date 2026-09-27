@@ -87,3 +87,6 @@ Delivered: immutable, reason-required Admin adjustments for attribution,
 CASH/JP ledger movements and permitted reward-status transitions, plus filtered
 CSV downloads for affiliates, conversions, rewards, payouts and attribution.
 Excluded by design: BI, XLSX, imports, scheduled exports and accounting.
+# Unlocks
+
+Slice 1: core collective commitments. Slice 2: JP commitment. Slice 3: confirmation and fulfillment. Slice 4: growth and operations.

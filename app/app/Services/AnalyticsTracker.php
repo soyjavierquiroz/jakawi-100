@@ -10,6 +10,7 @@ use App\Models\Location;
 use App\Models\Partner;
 use App\Models\Redemption;
 use App\Models\User;
+use App\Models\Unlock;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -42,6 +43,11 @@ class AnalyticsTracker
     public function experienceViewed(Experience $experience): ?AnalyticsEvent
     {
         return $this->record('experience_view', ['experience_id' => $experience->id]);
+    }
+
+    public function unlock(Unlock $unlock, string $event): ?AnalyticsEvent
+    {
+        return $this->record($event, ['unlock_id' => $unlock->id, 'partner_id' => $unlock->partner_id]);
     }
 
     public function redemptionStarted(Redemption $redemption): ?AnalyticsEvent
@@ -96,7 +102,7 @@ class AnalyticsTracker
         }
 
         $data = array_intersect_key($context, array_flip([
-            'user_id', 'visitor_id', 'partner_id', 'location_id', 'benefit_id', 'experience_id', 'redemption_id',
+            'user_id', 'visitor_id', 'partner_id', 'location_id', 'benefit_id', 'experience_id', 'unlock_id', 'redemption_id',
         ]));
         $data += $this->requestContext();
         $data['event_name'] = $event;

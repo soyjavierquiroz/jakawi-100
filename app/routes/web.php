@@ -24,12 +24,17 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PromoterSalesController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\UnlockController;
+use App\Http\Controllers\AdminUnlockController;
+use App\Http\Controllers\PartnerUnlockController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
+Route::get('/d/{unlock:slug}', [UnlockController::class, 'show'])->name('unlocks.show');
+Route::post('/d/{unlock:slug}/shared', [UnlockController::class, 'share'])->name('unlocks.shared');
 Route::get('/partners/{partner:slug}', [PublicController::class, 'partners'])->name('partners.show');
 Route::get('/partners/{partner:slug}/whatsapp', [PublicController::class, 'partnerWhatsapp'])->name('partners.whatsapp');
 Route::get('/lugares/{location:slug}', [PublicController::class, 'location'])->name('locations.show');
@@ -51,6 +56,12 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/validar', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'redemptions.validate'));
     Route::get('/partner/{partner:slug}', [PartnerPortalController::class, 'show'])->name('partner.portal.show');
     Route::post('/partner/{partner:slug}/payouts', [PartnerPortalController::class, 'requestPayout'])->name('partner.payouts.store');
+    Route::get('/partner/{partner:slug}/desbloqueos', [PartnerUnlockController::class, 'index'])->name('partner.unlocks.index');
+    Route::get('/partner/{partner:slug}/desbloqueos/crear', [PartnerUnlockController::class, 'form'])->name('partner.unlocks.create');
+    Route::post('/partner/{partner:slug}/desbloqueos', [PartnerUnlockController::class, 'save'])->name('partner.unlocks.store');
+    Route::get('/partner/{partner:slug}/desbloqueos/{unlock:slug}/editar', [PartnerUnlockController::class, 'form'])->name('partner.unlocks.edit');
+    Route::put('/partner/{partner:slug}/desbloqueos/{unlock:slug}', [PartnerUnlockController::class, 'save'])->name('partner.unlocks.update');
+    Route::post('/partner/{partner:slug}/desbloqueos/{unlock:slug}/enviar', [PartnerUnlockController::class, 'submit'])->name('partner.unlocks.submit');
     Route::get('/partner/{partner:slug}/rendimiento', [PartnerPortalController::class, 'performance'])->name('partner.performance');
     Route::get('/partner/{partner:slug}/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');
     Route::post('/partner/{partner:slug}/reservas/{reservation_public_id}/{status}', [PartnerReservationController::class, 'respond'])->whereIn('status', ['confirmed', 'rejected'])->name('partner.reservations.respond');
@@ -85,6 +96,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->name('experiences.reservations.store');
     Route::post('/reservas/{reservation:public_id}/cancelar', [ExperienceReservationController::class, 'cancel'])->name('experiences.reservations.cancel');
     Route::post('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'start'])->name('redemptions.start');
+    Route::post('/d/{unlock:slug}/interes', [UnlockController::class, 'interest'])->name('unlocks.interest');
+    Route::post('/d/{unlock:slug}/comprometer', [UnlockController::class, 'commit'])->name('unlocks.commit');
+    Route::post('/d/{unlock:slug}/cancelar', [UnlockController::class, 'cancel'])->name('unlocks.cancel');
     Route::get('/canjes/{redemption:public_id}', [RedemptionController::class, 'show'])->name('redemptions.show');
 });
 
@@ -108,6 +122,12 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('desbloqueos', [AdminUnlockController::class, 'index'])->name('admin.unlocks.index');
+    Route::get('desbloqueos/crear', [AdminUnlockController::class, 'form'])->name('admin.unlocks.create');
+    Route::post('desbloqueos', [AdminUnlockController::class, 'save'])->name('admin.unlocks.store');
+    Route::get('desbloqueos/{unlock}/editar', [AdminUnlockController::class, 'form'])->name('admin.unlocks.edit');
+    Route::put('desbloqueos/{unlock}', [AdminUnlockController::class, 'save'])->name('admin.unlocks.update');
+    Route::post('desbloqueos/{unlock}/estado', [AdminUnlockController::class, 'transition'])->name('admin.unlocks.transition');
     Route::get('review', [AdminContentReviewController::class, 'index'])->name('admin.review.index');
     Route::post('review/benefits/{benefit}', [AdminContentReviewController::class, 'benefit'])->name('admin.review.benefit');
     Route::post('review/experiences/{experience}', [AdminContentReviewController::class, 'experience'])->name('admin.review.experience');

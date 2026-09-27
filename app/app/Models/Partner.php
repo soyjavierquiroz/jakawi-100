@@ -38,6 +38,12 @@ class Partner extends Model
         return $this->hasMany(Benefit::class);
     }
 
+    /** @return HasMany<Unlock, $this> */
+    public function unlocks(): HasMany
+    {
+        return $this->hasMany(Unlock::class);
+    }
+
     /** @return BelongsToMany<Experience, $this> */
     public function experiences(): BelongsToMany
     {

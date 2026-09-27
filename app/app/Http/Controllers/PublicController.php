@@ -8,6 +8,8 @@ use App\Models\ExperienceSession;
 use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
+use App\Models\Unlock;
+use App\Http\Controllers\UnlockController;
 use App\Services\AnalyticsTracker;
 use App\Services\HomePersonalizationService;
 use App\Services\MemberAffinityService;
@@ -31,6 +33,7 @@ class PublicController extends Controller
         $benefits = Benefit::available()->with('partner')->orderByDesc('featured')->orderBy('sort_order')->get();
         $experiences = Experience::upcoming()->with(['sessions' => fn ($query) => $query->upcoming()->with('location')])
             ->orderByDesc('featured')->orderBy('sort_order')->get();
+        $unlocks = Unlock::whereIn('status', [Unlock::ACTIVE, Unlock::GOAL_REACHED])->with(['partner', 'locations'])->orderByDesc('featured')->get();
 
         if ($isPersonalizedHome) {
             $benefits = $personalization->rankBenefits($benefits, $affinities);
@@ -40,6 +43,7 @@ class PublicController extends Controller
         return Inertia::render('welcome', [
             'featuredBenefits' => $benefits->take(3)->map(fn (Benefit $b) => $this->benefitData($b)),
             'featuredExperiences' => $experiences->take(3)->map(fn (Experience $e) => $this->experienceData($e)),
+            'featuredUnlocks' => $unlocks->take(3)->map(fn (Unlock $u) => app(UnlockController::class)->data($u)),
             'membershipSummary' => $membership ? $this->membership($membership) : null,
             'isPersonalizedHome' => $isPersonalizedHome,
             'personalizationSubtitle' => $behavior !== [] ? ($interests !== [] ? 'Según tus intereses y actividad.' : 'Según tu actividad.') : ($interests !== [] ? 'Según tus intereses.' : null),
@@ -80,6 +84,7 @@ class PublicController extends Controller
         $benefits = Benefit::available()->with('partner')->orderByDesc('featured')->orderBy('sort_order');
         $experiences = Experience::upcoming()->with('sessions.location')->orderByDesc('featured')->orderBy('sort_order');
         $partners = Partner::query()->published()->orderByDesc('featured')->orderBy('name');
+        $unlocks = Unlock::whereIn('status', [Unlock::ACTIVE, Unlock::GOAL_REACHED])->with(['partner', 'locations'])->orderByDesc('featured');
 
         if ($category && $category !== 'todos') {
             $benefits->where('category', $category);
@@ -91,11 +96,13 @@ class PublicController extends Controller
             $benefits->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partner', fn ($p) => $p->where('name', 'ilike', $like)));
             $experiences->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partners', fn ($p) => $p->where('name', 'ilike', $like)));
             $partners->where(fn ($query) => $query->where('name', 'ilike', $like)->orWhere('description', 'ilike', $like));
+            $unlocks->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhere('short_description', 'ilike', $like));
         }
 
         $benefitResults = $type === 'experiences' ? collect() : $benefits->get()->map(fn ($b) => $this->benefitData($b) + ['result_type' => 'benefit']);
         $experienceResults = $type === 'benefits' ? collect() : $experiences->get()->map(fn ($e) => $this->experienceData($e) + ['result_type' => 'experience']);
         $partnerResults = $type ? collect() : $partners->get()->map(fn ($p) => $this->partner($p) + ['result_type' => 'partner']);
+        $unlockResults = in_array($type, ['benefits', 'experiences'], true) ? collect() : $unlocks->get()->map(fn ($u) => app(UnlockController::class)->data($u) + ['result_type' => 'unlock']);
 
         return Inertia::render('explore', [
             'query' => $term,
@@ -104,7 +111,8 @@ class PublicController extends Controller
             'benefits' => $benefitResults,
             'experiences' => $experienceResults,
             'partners' => $partnerResults,
-            'results' => $partnerResults->concat($benefitResults)->concat($experienceResults)->values(),
+            'unlocks' => $unlockResults,
+            'results' => $unlockResults->concat($partnerResults)->concat($benefitResults)->concat($experienceResults)->values(),
         ]);
     }
 

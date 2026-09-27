@@ -125,6 +125,12 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(ExperienceReservation::class);
     }
 
+    /** @return HasMany<UnlockParticipation> */
+    public function unlockParticipations(): HasMany
+    {
+        return $this->hasMany(UnlockParticipation::class);
+    }
+
     /** @return HasMany<Redemption> */
     public function confirmedRedemptions(): HasMany
     {

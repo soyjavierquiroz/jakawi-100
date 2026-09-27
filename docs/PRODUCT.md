@@ -31,3 +31,6 @@ La navegación canónica es Inicio, Explorar, Mi JAKAWI y Perfil. Un Benefit pri
 La estrategia de supply inicial es curada: Partners, Benefits y Experiences de alta calidad en Cochabamba. Ahora: pulido visual consumidor, calidad de fotos/contenido real, onboarding/calidad de supply y QA de lanzamiento. Después: refinamiento basado en uso real. Los conceptos diferidos están en [ROADMAP.md](ROADMAP.md).
 
 Este documento define qué es JAKAWI. El funcionamiento canónico del MVP está en [UX-MVP.md](UX-MVP.md); su apariencia en [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), su modelo en [DOMAIN.md](DOMAIN.md) y su implementación en [ARCHITECTURE.md](ARCHITECTURE.md).
+# Unlocks
+
+JAKAWI can make an offer possible only when valid commitments reach its goal. Slice 1 has no JP movement.
