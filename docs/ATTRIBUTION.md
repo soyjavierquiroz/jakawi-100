@@ -43,6 +43,11 @@ Admin permite ajustar la ventana (con audit log) y buscar usuarios para ver refe
 # Attribution
 
 Referral attribution uses the single `/r/{CODE}` resolver for User and Partner codes. A touch may identify `referrer_user_id` or explicit `acquisition_partner_id`. First-valid policy and the configured expiry window apply equally; later valid touches remain history and do not replace an active relationship. Conversion snapshots retain both user and Partner acquisition references.
+
+Unlock referrals extend that resolver with `/r/{CODE}/d/{unlock}`. The open,
+commitment, and fulfillment lifecycle retains its attribution context for
+growth reporting. Sharing an Unlock is only attribution/intent: it does not
+create a JP reward or change JP economics.
 # Partner reward precedence
 
 For membership acquisition, one paid beneficiary is selected: credited active promoter, active creator, active affiliate, eligible member, eligible published acquisition Partner, or none. Attribution remains intact when another beneficiary wins.

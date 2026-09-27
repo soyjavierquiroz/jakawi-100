@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
+Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.unlock');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
 Route::get('/d/{unlock:slug}', [UnlockController::class, 'show'])->name('unlocks.show');
 Route::post('/d/{unlock:slug}/shared', [UnlockController::class, 'share'])->name('unlocks.shared');
@@ -130,6 +131,11 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('desbloqueos/{unlock:slug}/editar', [AdminUnlockController::class, 'form'])->name('admin.unlocks.edit');
     Route::put('desbloqueos/{unlock:slug}', [AdminUnlockController::class, 'save'])->name('admin.unlocks.update');
     Route::post('desbloqueos/{unlock:slug}/estado', [AdminUnlockController::class, 'transition'])->name('admin.unlocks.transition');
+    Route::post('desbloqueos/{unlock:slug}/extender', [AdminUnlockController::class, 'extend'])->name('admin.unlocks.extend');
+    Route::post('desbloqueos/{unlock:slug}/cerrar-compromisos', [AdminUnlockController::class, 'closeEarly'])->name('admin.unlocks.close-early');
+    Route::post('desbloqueos/{unlock:slug}/participaciones/{participation}/retirar', [AdminUnlockController::class, 'remove'])->name('admin.unlocks.remove');
+    Route::post('desbloqueos/{unlock:slug}/participaciones/{participation}/liberar-jp', [AdminUnlockController::class, 'releaseJp'])->name('admin.unlocks.release-jp');
+    Route::post('desbloqueos/{unlock:slug}/participaciones/{participation}/corregir', [AdminUnlockController::class, 'correctParticipation'])->name('admin.unlocks.correct');
     Route::post('desbloqueos/{unlock:slug}/participaciones/{participation}/cumplir', [AdminUnlockController::class, 'fulfill'])->name('admin.unlocks.fulfill');
     Route::get('review', [AdminContentReviewController::class, 'index'])->name('admin.review.index');
     Route::post('review/benefits/{benefit}', [AdminContentReviewController::class, 'benefit'])->name('admin.review.benefit');

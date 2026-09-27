@@ -33,7 +33,11 @@ La estrategia de supply inicial es curada: Partners, Benefits y Experiences de a
 Este documento define qué es JAKAWI. El funcionamiento canónico del MVP está en [UX-MVP.md](UX-MVP.md); su apariencia en [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), su modelo en [DOMAIN.md](DOMAIN.md) y su implementación en [ARCHITECTURE.md](ARCHITECTURE.md).
 # Unlocks
 
-JAKAWI can make an offer possible only when valid commitments reach its goal. Slice 1 has no JP movement.
+JAKAWI can make an offer possible only when valid commitments reach its goal.
+Desbloqueos V1 is complete: safe referral sharing supports the demand funnel,
+but a simple share never earns JP. Admin growth and operational monitors, plus
+the Partner monitor, report aggregate funnel results without exposing secret
+supply or participant identities.
 # Desbloqueos: confirmation
 
 Reaching a goal asks each committed user for an explicit second confirmation. A confirmed user who completes a trusted redemption or attendance validation gets the guarantee back plus the configured bonus. No response is neutral expiration, not a no-show.

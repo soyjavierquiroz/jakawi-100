@@ -77,6 +77,11 @@ El orden es Inicio → Explorar → Partner → Beneficio → confirmación → 
 # Unlocks
 
 Public cards and `/d/{slug}` show aggregate commitment progress, never participants. Secret content is revealed only after the goal milestone.
+
+Referral sharing uses the safe `/r/{code}/d/{unlock}` route. Social metadata
+for a secret Unlock is protected before the goal, so previews reveal no
+partner, location, offer, or other secret supply detail. A share is not a JP
+reward action.
 # Unlock confirmation UX
 
 The confirmation card says “LO CONSEGUIMOS. ¿SIGUES DENTRO?” and separates the returned guarantee from the actual completion bonus. Fulfilled copy calls the deposit returned, never newly earned; no-show copy is neutral.
