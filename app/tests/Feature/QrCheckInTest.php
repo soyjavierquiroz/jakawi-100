@@ -17,9 +17,18 @@ class QrCheckInTest extends TestCase
 
     public function test_confirmed_reservation_can_be_reviewed_and_checked_in_once_by_its_partner(): void
     {
-        [$reservation, $partner, $manager] = $this->reservation();
+        [$reservation, $partner, $manager] = $this->reservation('Javier Quispe');
         $url = URL::signedRoute('partner.checkins.scan', ['partner' => $partner->slug, 'reservation_public_id' => $reservation->public_id]);
-        $this->actingAs($manager)->get($url)->assertOk()->assertInertia(fn ($page) => $page->where('reservation.member_name', $reservation->user->name)->where('reservation.party_size', 2));
+        $this->actingAs($manager)->get($url)->assertOk()->assertInertia(fn ($page) => $page
+            ->where('reservation.check_in_code', 'ABCDEF')
+            ->where('reservation.member_display_name', 'Javier Q.')
+            ->where('reservation.party_size', 2)
+            ->missing('reservation.member_name')
+            ->missing('reservation.email')
+            ->missing('reservation.phone')
+            ->missing('reservation.user')
+            ->missing('reservation.membership')
+        );
         $this->actingAs($manager)->post('/partner/'.$partner->slug.'/asistencias/'.$reservation->public_id)->assertOk();
         $checked = $reservation->fresh();
         $this->assertNotNull($checked->checked_in_at);
@@ -38,13 +47,13 @@ class QrCheckInTest extends TestCase
         $this->actingAs($intruder)->get(URL::signedRoute('partner.checkins.scan', ['partner' => $other->slug, 'reservation_public_id' => $reservation->public_id]))->assertForbidden();
     }
 
-    private function reservation(): array
+    private function reservation(string $memberName = 'Member Name'): array
     {
         $partner = Partner::factory()->published()->create();
         $experience = Experience::factory()->published()->create(['reservation_method' => 'jakawi']);
         $experience->syncPartnersWithRoles([['partner_id' => $partner->id, 'role' => 'host']]);
         $session = ExperienceSession::factory()->for($experience)->upcoming()->create(['reservation_partner_id' => $partner->id]);
-        $member = User::factory()->create();
+        $member = User::factory()->create(['name' => $memberName]);
         $reservation = ExperienceReservation::create(['user_id' => $member->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 2, 'check_in_code' => 'ABCDEF']);
         $manager = User::factory()->create();
         $manager->partners()->attach($partner, ['role' => 'staff']);

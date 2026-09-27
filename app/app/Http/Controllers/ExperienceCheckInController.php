@@ -65,6 +65,16 @@ class ExperienceCheckInController extends Controller
         $reservation = $this->authorized($request, $partner, $reservation);
         $reservation->load(['user:id,name', 'experience:id,title', 'session.location']);
 
-        return Inertia::render('partner/check-in-review', ['partner' => $partner->only(['name', 'slug']), 'reservation' => ['public_id' => $reservation->public_id, 'member_name' => $reservation->user->name, 'experience' => $reservation->experience->title, 'party_size' => $reservation->party_size, 'starts_at' => $reservation->session->starts_at, 'venue' => $reservation->session->location?->name ?? $reservation->session->venue_label, 'status' => $reservation->status, 'checked_in_at' => $reservation->checked_in_at]]);
+        return Inertia::render('partner/check-in-review', ['partner' => $partner->only(['name', 'slug']), 'reservation' => ['public_id' => $reservation->public_id, 'check_in_code' => $reservation->check_in_code, 'member_display_name' => $this->memberDisplayName($reservation->user->name), 'experience' => $reservation->experience->title, 'party_size' => $reservation->party_size, 'starts_at' => $reservation->session->starts_at, 'venue' => $reservation->session->location?->name ?? $reservation->session->venue_label, 'status' => $reservation->status, 'checked_in_at' => $reservation->checked_in_at]]);
+    }
+
+    private function memberDisplayName(string $name): string
+    {
+        $parts = preg_split('/\s+/', trim($name), -1, PREG_SPLIT_NO_EMPTY);
+        if (! $parts) {
+            return 'Miembro';
+        }
+
+        return count($parts) === 1 ? $parts[0] : $parts[0].' '.mb_substr($parts[array_key_last($parts)], 0, 1).'.';
     }
 }

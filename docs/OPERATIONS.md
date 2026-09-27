@@ -109,3 +109,12 @@ atribución. Los exports no incluyen email, teléfono, IP ni user-agent; son UTF
 usan escaping CSV estándar y anteponen `'` a valores que empiezan por `=`, `+`,
 `-` o `@` para evitar fórmulas de hoja de cálculo. Cada descarga deja una auditoría
 liviana con actor, tipo y filtros, sin guardar el archivo.
+
+## Identificación mínima en validación Partner
+
+La pantalla Partner de revisión de asistencia entrega únicamente el código de
+asistencia, estado, contexto de la reserva y una identidad abreviada generada en
+servidor: primer nombre más inicial del último apellido (por ejemplo, `Javier Q.`).
+No entrega nombre completo, email, teléfono, perfil, historial de membresía,
+referidos ni datos financieros. El código de asistencia es el identificador
+operativo primario; la identidad abreviada sólo sirve para desambiguación humana.
