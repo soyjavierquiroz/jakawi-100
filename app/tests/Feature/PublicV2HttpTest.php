@@ -39,14 +39,14 @@ class PublicV2HttpTest extends TestCase
     public function test_partner_and_location_are_public_only_when_published_and_do_not_leak_private_fields(): void
     {
         $partner = Partner::factory()->published()->create(['legal_name' => 'Private LLC', 'tax_id' => 'TAX', 'contact_name' => 'Private']);
-        $location = Location::factory()->published()->withPartner($partner)->create(['manager_name' => 'Manager', 'manager_phone' => '70000000', 'manager_email' => 'private@example.test']);
+        $location = Location::factory()->published()->withPartner($partner)->create(['manager_name' => 'Manager', 'manager_phone' => '70000000', 'manager_email' => 'private@example.test', 'opening_hours' => ['mon' => ['08:00-18:00'], 'sat' => ['09:00-15:00']]]);
         $location->setRedemptionPin('123456');
         $location->save();
         foreach (['draft', 'paused', 'archived'] as $status) {
             $this->get('/partners/'.Partner::factory()->create(['status' => $status])->slug)->assertNotFound();
             $this->get('/lugares/'.Location::factory()->create(['status' => $status])->slug)->assertNotFound();
         }
-        $this->get('/partners/'.$partner->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('partners/show')->missing('partner.legal_name')->missing('partner.tax_id')->missing('partner.contact_name')->missing('partner.contact_phone')->missing('partner.contact_email')->missing('partner.internal_notes'));
+        $this->get('/partners/'.$partner->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('partners/show')->where('locations.0.opening_hours.mon.0', '08:00-18:00')->missing('partner.legal_name')->missing('partner.tax_id')->missing('partner.contact_name')->missing('partner.contact_phone')->missing('partner.contact_email')->missing('partner.internal_notes'));
         $this->get('/lugares/'.$location->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('locations/show')->missing('location.manager_name')->missing('location.manager_phone')->missing('location.manager_email')->missing('location.redemption_pin_hash')->missing('location.redemption_pin'));
         $this->assertDatabaseCount('analytics_events', 2);
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'partner_view', 'partner_id' => $partner->id]);
