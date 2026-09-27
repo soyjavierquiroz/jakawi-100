@@ -30,6 +30,20 @@ Una migración normal, si ha sido aprobada como parte del release, se ejecuta s�
 
 Después de cambiar `.env`, recrear cada servicio que consume ese entorno y comprobar la configuración efectiva dentro del contenedor. Esto es especialmente importante para `app` e `imgproxy`; editar el archivo no modifica un contenedor ya creado.
 
+## Laravel Scheduler
+
+Producción ejecuta el scheduler mediante cron del host cada minuto:
+`/home/jakawi.com/bin/jakawi-schedule` → Docker `app` (PHP 8.4) → `php artisan schedule:run`.
+El wrapper usa un bloqueo no bloqueante en `/tmp/jakawi-scheduler.lock`; las
+ejecuciones solapadas salen sin acumularse. Cron registra salida en
+`/home/jakawi.com/storage/logs/scheduler-cron.log`.
+
+Para verificarlo, revisar ese log tras un minuto y ejecutar manualmente:
+
+```bash
+/home/jakawi.com/bin/jakawi-schedule
+```
+
 ## Pagos QR
 
 El release actual debe conservar `QR_PAYMENT_ENABLED=false` y

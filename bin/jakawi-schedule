@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+cd /home/jakawi.com
+exec /usr/bin/flock -n /tmp/jakawi-scheduler.lock /usr/bin/docker compose exec -T app php artisan schedule:run
