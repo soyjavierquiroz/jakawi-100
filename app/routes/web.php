@@ -62,6 +62,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner/{partner:slug}/desbloqueos/{unlock:slug}/editar', [PartnerUnlockController::class, 'form'])->name('partner.unlocks.edit');
     Route::put('/partner/{partner:slug}/desbloqueos/{unlock:slug}', [PartnerUnlockController::class, 'save'])->name('partner.unlocks.update');
     Route::post('/partner/{partner:slug}/desbloqueos/{unlock:slug}/enviar', [PartnerUnlockController::class, 'submit'])->name('partner.unlocks.submit');
+    Route::post('/partner/{partner:slug}/desbloqueos/{unlock:slug}/participaciones/{participation}/cumplir', [PartnerUnlockController::class, 'fulfill'])->name('partner.unlocks.fulfill');
     Route::get('/partner/{partner:slug}/rendimiento', [PartnerPortalController::class, 'performance'])->name('partner.performance');
     Route::get('/partner/{partner:slug}/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');
     Route::post('/partner/{partner:slug}/reservas/{reservation_public_id}/{status}', [PartnerReservationController::class, 'respond'])->whereIn('status', ['confirmed', 'rejected'])->name('partner.reservations.respond');
@@ -99,6 +100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/d/{unlock:slug}/interes', [UnlockController::class, 'interest'])->name('unlocks.interest');
     Route::post('/d/{unlock:slug}/comprometer', [UnlockController::class, 'commit'])->name('unlocks.commit');
     Route::post('/d/{unlock:slug}/cancelar', [UnlockController::class, 'cancel'])->name('unlocks.cancel');
+    Route::post('/d/{unlock:slug}/confirmar', [UnlockController::class, 'confirm'])->name('unlocks.confirm');
     Route::get('/canjes/{redemption:public_id}', [RedemptionController::class, 'show'])->name('redemptions.show');
 });
 
@@ -125,9 +127,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('desbloqueos', [AdminUnlockController::class, 'index'])->name('admin.unlocks.index');
     Route::get('desbloqueos/crear', [AdminUnlockController::class, 'form'])->name('admin.unlocks.create');
     Route::post('desbloqueos', [AdminUnlockController::class, 'save'])->name('admin.unlocks.store');
-    Route::get('desbloqueos/{unlock}/editar', [AdminUnlockController::class, 'form'])->name('admin.unlocks.edit');
-    Route::put('desbloqueos/{unlock}', [AdminUnlockController::class, 'save'])->name('admin.unlocks.update');
-    Route::post('desbloqueos/{unlock}/estado', [AdminUnlockController::class, 'transition'])->name('admin.unlocks.transition');
+    Route::get('desbloqueos/{unlock:slug}/editar', [AdminUnlockController::class, 'form'])->name('admin.unlocks.edit');
+    Route::put('desbloqueos/{unlock:slug}', [AdminUnlockController::class, 'save'])->name('admin.unlocks.update');
+    Route::post('desbloqueos/{unlock:slug}/estado', [AdminUnlockController::class, 'transition'])->name('admin.unlocks.transition');
+    Route::post('desbloqueos/{unlock:slug}/participaciones/{participation}/cumplir', [AdminUnlockController::class, 'fulfill'])->name('admin.unlocks.fulfill');
     Route::get('review', [AdminContentReviewController::class, 'index'])->name('admin.review.index');
     Route::post('review/benefits/{benefit}', [AdminContentReviewController::class, 'benefit'])->name('admin.review.benefit');
     Route::post('review/experiences/{experience}', [AdminContentReviewController::class, 'experience'])->name('admin.review.experience');

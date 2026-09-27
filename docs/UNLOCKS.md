@@ -11,3 +11,6 @@ Positive-deposit Unlocks cannot be activated while the canonical `UNLOCK_JP_COMM
 Secret fields are removed on the server from public data before GOAL_REACHED: configured partner, locations, and offers never appear in Inertia props. Status history is append-only. The scheduler runs `unlocks:expire` to mark missed deadlines as GOAL_NOT_REACHED.
 
 Future slices: 2 JP Commitment, 3 Confirmation/Fulfillment, 4 Growth/Operations.
+# Confirmation and fulfillment V1
+
+After the goal, committed participants enter a second confirmation phase. A participant who does not confirm by the confirmation deadline becomes `EXPIRED`; any JP hold is released and this is never a no-show. Confirmed participants may be fulfilled only by a trusted Benefit Redemption or an authorized Partner/Admin validation. Fulfillment releases the hold and awards the configured `jp_completion_bonus` once. After the fulfillment window, only a still-confirmed, unfulfilled participation becomes `NO_SHOW`, forfeiting its held JP. Zero-deposit Unlocks use the same flow and can award a completion bonus. `FULFILLED`, `CANCELLED_ON_TIME`, `EXPIRED`, and `NO_SHOW` are terminal and all hold/bonus transitions are idempotent.

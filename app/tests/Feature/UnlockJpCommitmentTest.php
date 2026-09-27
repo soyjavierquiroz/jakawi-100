@@ -48,7 +48,7 @@ class UnlockJpCommitmentTest extends TestCase
     {
         $user = User::factory()->create(); $this->earn($user, 50); $unlock = $this->unlock(['jp_deposit' => 50]);
         app(UnlockParticipationService::class)->commit($unlock, $user);
-        $this->assertSame(Unlock::GOAL_REACHED, $unlock->fresh()->status); $this->assertSame(JpHold::HELD, JpHold::sole()->status);
+        $this->assertSame(Unlock::UNLOCKED, $unlock->fresh()->status); $this->assertSame(JpHold::HELD, JpHold::sole()->status);
         config()->set('unlocks.jp_commitments_enabled', false);
         $draft = $this->unlock(['status' => Unlock::SCHEDULED, 'jp_deposit' => 1]);
         $this->expectException(ValidationException::class); app(UnlockStatusService::class)->transition($draft, Unlock::ACTIVE);

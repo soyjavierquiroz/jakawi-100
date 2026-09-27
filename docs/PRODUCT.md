@@ -34,3 +34,6 @@ Este documento define qué es JAKAWI. El funcionamiento canónico del MVP está 
 # Unlocks
 
 JAKAWI can make an offer possible only when valid commitments reach its goal. Slice 1 has no JP movement.
+# Desbloqueos: confirmation
+
+Reaching a goal asks each committed user for an explicit second confirmation. A confirmed user who completes a trusted redemption or attendance validation gets the guarantee back plus the configured bonus. No response is neutral expiration, not a no-show.

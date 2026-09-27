@@ -42,4 +42,9 @@ class RewardTransaction extends Model
     {
         return $this->belongsToMany(RewardPayout::class, 'reward_payout_reward_transaction')->withTimestamps();
     }
+
+    public function unlockParticipation(): BelongsTo
+    {
+        return $this->belongsTo(UnlockParticipation::class);
+    }
 }

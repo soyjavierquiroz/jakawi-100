@@ -77,3 +77,6 @@ no inventan conversiones ni reglas. Una recompensa PAID conserva su historia.
 # Unlocks
 
 Unlocks are a first-class collective-demand domain and are not Benefits, Experiences, or Campaigns. See `UNLOCKS.md`.
+# Unlock fulfillment lifecycle
+
+Unlock participations move from committed to pending confirmation, confirmed, and one terminal outcome. Holds are historical ledger entries: release returns spendable JP; forfeiture does not mutate earned rewards. Completion bonuses are JP RewardTransactions linked to their Unlock participation.

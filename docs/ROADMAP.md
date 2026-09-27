@@ -90,3 +90,6 @@ Excluded by design: BI, XLSX, imports, scheduled exports and accounting.
 # Unlocks
 
 Slice 1: core collective commitments. Slice 2: JP commitment delivered: earned JP is reserved through an auditable hold ledger and released on valid cancellation or failed/cancelled Unlock. Completion bonus and forfeiture remain deferred to Slice 3 confirmation and fulfillment. Positive-deposit production activation stays guarded until then. Slice 4: growth and operations.
+# Unlock Slice 3
+
+Confirmation, trusted fulfillment, JP release/bonus/forfeiture, and zero-deposit acquisition are delivered as one idempotent lifecycle. Sponsor attribution and reputation scoring remain deferred.

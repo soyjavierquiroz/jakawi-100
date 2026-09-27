@@ -88,13 +88,12 @@ class UnlockCoreTest extends TestCase
         $unlock = $this->unlock(['minimum_commitments' => 2, 'maximum_capacity' => 3]);
         $a = User::factory()->create(); $b = User::factory()->create(); $c = User::factory()->create();
         $service->commit($unlock, $a); $service->commit($unlock, $b);
-        $this->assertSame(Unlock::GOAL_REACHED, $unlock->fresh()->status);
+        $this->assertSame(Unlock::UNLOCKED, $unlock->fresh()->status);
         $this->assertSame(1, UnlockStatusHistory::where('unlock_id', $unlock->id)->where('to_status', Unlock::GOAL_REACHED)->count());
-        $service->commit($unlock, $c);
-        try { $service->commit($unlock, User::factory()->create()); $this->fail('Capacity exceeded.'); } catch (ValidationException) {}
+        try { $service->commit($unlock, $c); $this->fail('Commitment accepted after unlock.'); } catch (ValidationException) {}
         $service->cancel($unlock, $a);
-        $this->assertSame(2, $unlock->committedCount());
-        $this->assertSame(Unlock::GOAL_REACHED, $unlock->fresh()->status);
+        $this->assertSame(1, $unlock->committedCount());
+        $this->assertSame(Unlock::UNLOCKED, $unlock->fresh()->status);
         config()->set('unlocks.jp_commitments_enabled', false);
         $jp = $this->unlock(['jp_deposit' => 1]);
         try { $service->commit($jp, User::factory()->create()); $this->fail('JP commitment accepted.'); } catch (ValidationException) {}

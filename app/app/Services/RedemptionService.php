@@ -104,6 +104,7 @@ class RedemptionService
         [$redemption, $confirmed] = $result;
         if ($confirmed) {
             $this->analytics->redemptionConfirmed($redemption);
+            app(UnlockParticipationService::class)->fulfillForRedemption($redemption->id, $redemption->user_id, $redemption->benefit_id);
         }
 
         return $redemption;

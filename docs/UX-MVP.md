@@ -77,3 +77,6 @@ El orden es Inicio → Explorar → Partner → Beneficio → confirmación → 
 # Unlocks
 
 Public cards and `/d/{slug}` show aggregate commitment progress, never participants. Secret content is revealed only after the goal milestone.
+# Unlock confirmation UX
+
+The confirmation card says “LO CONSEGUIMOS. ¿SIGUES DENTRO?” and separates the returned guarantee from the actual completion bonus. Fulfilled copy calls the deposit returned, never newly earned; no-show copy is neutral.
