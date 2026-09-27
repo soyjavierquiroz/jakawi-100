@@ -73,3 +73,6 @@ Registra correcciones de atribución, movimientos manuales de ledger CASH/JP y
 transiciones controladas de RewardTransaction con motivo obligatorio, actor y
 snapshot antes/después. No sustituye RewardTransaction: los movimientos manuales
 no inventan conversiones ni reglas. Una recompensa PAID conserva su historia.
+# Unlocks
+
+Unlocks are a first-class collective-demand domain and are not Benefits, Experiences, or Campaigns. See `UNLOCKS.md`.

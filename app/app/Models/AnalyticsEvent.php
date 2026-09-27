@@ -43,6 +43,11 @@ class AnalyticsEvent extends Model
         return $this->belongsTo(Experience::class);
     }
 
+    public function unlock(): BelongsTo
+    {
+        return $this->belongsTo(Unlock::class);
+    }
+
     /** @return BelongsTo<Redemption, $this> */
     public function redemption(): BelongsTo
     {

@@ -43,6 +43,7 @@ return [
             'anonymous_session_created', 'referral_link_opened', 'referral_shared', 'referral_code_entered', 'signup_completed',
             'affiliate_payout_requested', 'affiliate_payout_completed',
             'reward_created', 'reward_available', 'reward_cancelled',
+            'unlock_impression', 'unlock_viewed', 'unlock_interested', 'unlock_commitment_started', 'unlock_committed', 'unlock_commitment_cancelled', 'unlock_shared', 'unlock_goal_reached', 'unlock_revealed',
         ],
         'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],
     ],

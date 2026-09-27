@@ -74,3 +74,6 @@ Métricas MVP: miembros activos, canjes confirmados, ahorro confirmado por miemb
 ## Orden de diseño y regla final
 
 El orden es Inicio → Explorar → Partner → Beneficio → confirmación → código → éxito → Mi JAKAWI. Primero se cierra el Core; luego se aborda conversión/checkout y el resto del roadmap. La regla final: no desarrollar una feature si no mejora de forma directa el ciclo descubrir → valor real → volver.
+# Unlocks
+
+Public cards and `/d/{slug}` show aggregate commitment progress, never participants. Secret content is revealed only after the goal milestone.
