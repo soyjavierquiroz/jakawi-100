@@ -2,7 +2,7 @@
     --brand: #ff5a4f;
     --brand-foreground: #111111;
     --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
-    --action: #ffcb3d;
+    --action: #ffc83d;
     --action-foreground: #111111;
     --energy: var(--action);
     --energy-foreground: var(--action-foreground);
@@ -56,6 +56,16 @@
     --chart-5: var(--info);
 
     --radius: 0.875rem;
+    /* Discovery System V1: a deliberately small rhythm and shape family. */
+    --space-gutter: 1rem;
+    --space-section: 2.5rem;
+    --space-title-copy: 0.5rem;
+    --space-card: 1rem;
+    --space-media-content: 0.875rem;
+    --space-content-cta: 1rem;
+    --radius-card: 1.375rem;
+    --radius-control: 1rem;
+    --radius-chip: 9999px;
     --sidebar: var(--surface);
     --sidebar-foreground: var(--foreground);
     --sidebar-primary: var(--brand);
@@ -70,7 +80,7 @@
     --brand: #ff5a4f;
     --brand-foreground: #111111;
     --brand-subtle: color-mix(in srgb, var(--brand) 18%, var(--surface));
-    --action: #ffcb3d;
+    --action: #ffc83d;
     --action-foreground: #111111;
     --energy: var(--action);
     --energy-foreground: var(--action-foreground);

@@ -99,10 +99,10 @@ class PublicController extends Controller
             $unlocks->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhere('short_description', 'ilike', $like));
         }
 
-        $benefitResults = $type === 'experiences' ? collect() : $benefits->get()->map(fn ($b) => $this->benefitData($b) + ['result_type' => 'benefit']);
-        $experienceResults = $type === 'benefits' ? collect() : $experiences->get()->map(fn ($e) => $this->experienceData($e) + ['result_type' => 'experience']);
-        $partnerResults = $type ? collect() : $partners->get()->map(fn ($p) => $this->partner($p) + ['result_type' => 'partner']);
-        $unlockResults = in_array($type, ['benefits', 'experiences'], true) ? collect() : $unlocks->get()->map(fn ($u) => app(UnlockController::class)->data($u) + ['result_type' => 'unlock']);
+        $benefitResults = in_array($type, ['experiences', 'places'], true) ? collect() : $benefits->get()->map(fn ($b) => $this->benefitData($b) + ['result_type' => 'benefit']);
+        $experienceResults = in_array($type, ['benefits', 'places'], true) ? collect() : $experiences->get()->map(fn ($e) => $this->experienceData($e) + ['result_type' => 'experience']);
+        $partnerResults = in_array($type, ['benefits', 'experiences'], true) ? collect() : $partners->get()->map(fn ($p) => $this->partner($p) + ['result_type' => 'partner']);
+        $unlockResults = in_array($type, ['benefits', 'experiences', 'places'], true) ? collect() : $unlocks->get()->map(fn ($u) => app(UnlockController::class)->data($u) + ['result_type' => 'unlock']);
 
         return Inertia::render('explore', [
             'query' => $term,
