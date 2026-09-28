@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-JAKAWI es un monolito Laravel 13 con frontend React/TypeScript servido mediante Inertia. La aplicación corre en PHP 8.4 dentro de Docker; el PHP 8.1 del host no es un runtime ni una herramienta válida para Laravel, Composer o tests.
+JAKAWI es un monolito Laravel 13 con frontend React/TypeScript servido mediante Inertia. La aplicación requiere PHP >= 8.4.1 dentro de Docker; el PHP 8.1.2 del host no es un runtime ni una herramienta válida para Laravel, Composer o tests.
 
 ```mermaid
 flowchart LR
