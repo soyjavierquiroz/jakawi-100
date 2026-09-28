@@ -16,6 +16,7 @@ use App\Services\UnlockParticipationService;
 use App\Services\UnlockStatusService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class UnlockCoreTest extends TestCase
@@ -34,6 +35,17 @@ class UnlockCoreTest extends TestCase
         $this->assertSame($experience->id, $unlock->linked_experience_id);
         $this->actingAs($admin)->post('/admin/desbloqueos/'.$unlock->slug.'/estado', ['status' => Unlock::APPROVED])->assertRedirect();
         $this->assertSame(Unlock::APPROVED, $unlock->fresh()->status);
+    }
+
+    public function test_admin_unlock_index_and_forms_are_reachable_only_by_admins(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $unlock = $this->unlock();
+
+        $this->actingAs($admin)->get('/admin/desbloqueos')->assertOk()->assertInertia(fn (Assert $page) => $page->component('admin/unlocks/index'));
+        $this->actingAs($admin)->get('/admin/desbloqueos/crear')->assertOk()->assertInertia(fn (Assert $page) => $page->component('admin/unlocks/form'));
+        $this->actingAs($admin)->get('/admin/desbloqueos/'.$unlock->slug.'/editar')->assertOk()->assertInertia(fn (Assert $page) => $page->component('admin/unlocks/form'));
+        $this->actingAs(User::factory()->create())->get('/admin/desbloqueos')->assertForbidden();
     }
 
     public function test_partner_owner_and_manager_can_propose_but_staff_cannot_and_cannot_approve(): void

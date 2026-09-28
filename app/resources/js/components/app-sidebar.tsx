@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BadgeCheck, Gift, House, Shield, Sparkles } from 'lucide-react';
+import { BadgeCheck, Gift, House, LockOpen, Shield, Sparkles } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -37,6 +37,11 @@ const mainNavItems = (isAdmin: boolean, isPartnerOnly: boolean): NavItem[] => [
                   title: 'Admin',
                   href: '/admin',
                   icon: Shield,
+              },
+              {
+                  title: 'Desbloqueos',
+                  href: '/admin/desbloqueos',
+                  icon: LockOpen,
               },
           ]
         : []),

@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
 use App\Models\Redemption;
+use App\Models\Unlock;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -72,6 +73,38 @@ class PublicV2HttpTest extends TestCase
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'benefit_view', 'benefit_id' => $food->id, 'partner_id' => $partner->id]);
         $this->assertSame($location->id, $food->availableLocations()->sole()->id);
         $this->assertNotSame($food->id, $cafe->id);
+    }
+
+    public function test_explore_keeps_unlocks_distinct_and_active_unlocks_use_their_public_detail(): void
+    {
+        $partner = Partner::factory()->published()->create();
+        $benefit = Benefit::factory()->published()->forPartner($partner)->create(['applies_to_all_locations' => true]);
+        $experience = Experience::factory()->published()->create();
+        ExperienceSession::factory()->for($experience)->upcoming()->create();
+        $unlock = Unlock::create([
+            'title' => 'Unlock de Explore',
+            'slug' => 'unlock-de-explore',
+            'origin' => 'JAKAWI',
+            'type' => 'BENEFIT',
+            'minimum_commitments' => 2,
+            'free_user_eligible' => true,
+            'member_eligible' => true,
+            'status' => Unlock::ACTIVE,
+        ]);
+
+        $this->get('/explorar')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('explore')
+            ->has('results', 4)
+            ->where('results.0.result_type', 'unlock')
+            ->where('results.0.slug', $unlock->slug)
+            ->where('results.1.result_type', 'partner')
+            ->where('results.1.slug', $partner->slug)
+            ->where('results.2.result_type', 'benefit')
+            ->where('results.2.slug', $benefit->slug)
+            ->where('results.3.result_type', 'experience')
+            ->where('results.3.slug', $experience->slug)
+        );
+        $this->get('/d/'.$unlock->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('unlocks/show')->where('unlock.slug', $unlock->slug));
     }
 
     public function test_experience_publication_sessions_partners_and_reservation_redirects_are_safe(): void
