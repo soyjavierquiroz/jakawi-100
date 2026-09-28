@@ -1,5 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 
+export const PWA_INSTALL_DISMISSED_KEY = 'jakawi:pwa-install-dismissed';
+
+function hasDismissedInstallPrompt() {
+    if (typeof window === 'undefined') {
+        return false;
+    }
+
+    try {
+        return window.localStorage.getItem(PWA_INSTALL_DISMISSED_KEY) === 'true';
+    } catch {
+        return false;
+    }
+}
+
 function isIosDevice() {
     if (typeof window === 'undefined') {
         return false;
@@ -25,6 +39,7 @@ export function usePwaInstall() {
     const [standalone, setStandalone] = useState(isPwaStandalone);
     const [installed, setInstalled] = useState(false);
     const [showIosHelp, setShowIosHelp] = useState(false);
+    const [dismissed, setDismissed] = useState(hasDismissedInstallPrompt);
 
     useEffect(() => {
         const media = window.matchMedia('(display-mode: standalone)');
@@ -68,6 +83,16 @@ export function usePwaInstall() {
             showIosHelp,
             setShowIosHelp,
             standalone,
+            dismissed,
+            dismiss() {
+                setDismissed(true);
+
+                try {
+                    window.localStorage.setItem(PWA_INSTALL_DISMISSED_KEY, 'true');
+                } catch {
+                    // The prompt still closes when storage is unavailable.
+                }
+            },
             async install() {
                 if (!installEvent) {
                     return;
@@ -78,6 +103,6 @@ export function usePwaInstall() {
                 setInstallEvent(null);
             },
         }),
-        [canInstall, canShowIosHelp, installEvent, showIosHelp, standalone],
+        [canInstall, canShowIosHelp, dismissed, installEvent, showIosHelp, standalone],
     );
 }

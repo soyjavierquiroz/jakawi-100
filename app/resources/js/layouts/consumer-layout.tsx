@@ -4,7 +4,7 @@ import ThemeToggle from '@/components/theme-toggle';
 
 /** Consumer pages never inherit staff or partner navigation. */
 export default function ConsumerLayout({ children }: { children: React.ReactNode }) {
-    return <div className="min-h-screen bg-background text-foreground">
+    return <div className="min-h-screen bg-background pb-[var(--pwa-install-clearance,0px)] text-foreground">
         <header className="sticky top-0 z-30 hidden border-b border-border/70 bg-background/90 backdrop-blur lg:block">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-8">
                 <Link href="/" className="text-sm font-extrabold tracking-[0.16em]">JAKAWI</Link>
