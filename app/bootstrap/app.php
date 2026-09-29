@@ -43,7 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureVisitorId::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
+            AddLinkHeadersForPreloadedAssets::using(limit: 10),
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
