@@ -97,7 +97,9 @@ class CityLocationTest extends TestCase
 
     public function test_migration_backfills_only_exact_cochabamba_legacy_city_without_changing_related_records(): void
     {
-        Artisan::call('migrate:rollback', ['--step' => 1, '--force' => true]);
+        // C4's city_interests migration follows C2. Revert both so this test
+        // recreates locations before C2 adds city_id and executes its backfill.
+        Artisan::call('migrate:rollback', ['--step' => 2, '--force' => true]);
         $partner = Partner::factory()->create();
         $matching = Location::factory()->for($partner)->create(['city' => 'Cochabamba']);
         $nonmatching = Location::factory()->for($partner)->create(['city' => 'cochabamba centro']);
