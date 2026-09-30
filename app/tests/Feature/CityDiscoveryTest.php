@@ -75,6 +75,15 @@ class CityDiscoveryTest extends TestCase
         $this->withCookie('selected_city', $this->tarija->slug)->get('/')->assertInertia(fn (Assert $page) => $page->where('selectedCity.slug', 'cochabamba'));
     }
 
+    public function test_paused_selected_city_is_invalidated_without_exposing_its_discovery(): void
+    {
+        $this->cbb->update(['status' => City::PAUSED]);
+
+        $this->withCookie('selected_city', 'cochabamba')->get('/')->assertInertia(
+            fn (Assert $page) => $page->where('selectedCity.slug', 'la-paz')->has('featuredBenefits', 2)
+        );
+    }
+
     public function test_city_selection_is_guest_safe_and_rejects_non_active_cities(): void
     {
         $this->post('/ciudades/la-paz/seleccionar', ['return_to' => '/explorar?q=cafe'])->assertRedirect('/explorar?q=cafe')->assertCookie('selected_city', 'la-paz');

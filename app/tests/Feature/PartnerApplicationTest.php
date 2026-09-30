@@ -31,7 +31,7 @@ class PartnerApplicationTest extends TestCase
         $touch = AttributionTouch::create(['anonymous_id' => $visitor, 'utm_source' => 'radio', 'utm_campaign' => 'lapaz', 'occurred_at' => now()]);
         $this->get('/ciudades/la-paz')->assertInertia(fn (Assert $page) => $page->component('cities/show')->where('city.slug', 'la-paz')->missing('applications'));
         $this->get('/ciudades/la-paz/partner')->assertOk()->assertInertia(fn (Assert $page) => $page->where('city.slug', 'la-paz'));
-        $this->withUnencryptedCookie('jakawi_visitor_id', $visitor)->post('/ciudades/la-paz/partner', ['business_name' => 'Café Ruta', 'contact_name' => 'Ana', 'contact_phone' => '+591 700 12345'])->assertRedirect('/ciudades/la-paz/partner/recibida');
+        $this->withUnencryptedCookie('jakawi_visitor_id', $visitor)->post('/ciudades/la-paz/partner', ['business_name' => 'Café Ruta', 'contact_name' => 'Ana', 'contact_phone' => '+591 700 12345', 'city_id' => $this->sucre->id])->assertRedirect('/ciudades/la-paz/partner/recibida');
         $application = PartnerApplication::sole();
         $this->assertSame($this->laPaz->id, $application->city_id); $this->assertNull($application->user_id); $this->assertSame($touch->id, $application->attribution_touch_id); $this->assertSame('radio', $application->attribution_snapshot['utm_source']);
         $this->assertDatabaseCount('partners', 0); $this->assertDatabaseCount('locations', 0); $this->assertDatabaseCount('memberships', 0); $this->assertDatabaseCount('jp_holds', 0); $this->assertDatabaseCount('reward_transactions', 0); $this->assertDatabaseCount('unlock_participations', 0);
@@ -45,6 +45,21 @@ class PartnerApplicationTest extends TestCase
         $this->post('/ciudades/sucre/partner', $data)->assertRedirect();
         $this->post('/ciudades/la-paz/partner', ['business_name' => 'Sin contacto', 'contact_name' => 'Ana'])->assertSessionHasErrors(['contact_phone', 'contact_email']);
         $this->assertDatabaseCount('partner_applications', 2);
+    }
+
+    public function test_duplicate_application_retains_its_original_attribution_snapshot(): void
+    {
+        $visitor = '9a06c7d0-348f-41ca-baa9-9ec409dd41c0';
+        $first = AttributionTouch::create(['anonymous_id' => $visitor, 'utm_source' => 'radio', 'occurred_at' => now()->subMinute()]);
+        $data = ['business_name' => 'Café Ruta', 'contact_name' => 'Ana', 'contact_email' => 'ana@example.test'];
+
+        $this->withUnencryptedCookie('jakawi_visitor_id', $visitor)->post('/ciudades/la-paz/partner', $data)->assertRedirect();
+        AttributionTouch::create(['anonymous_id' => $visitor, 'utm_source' => 'social', 'occurred_at' => now()]);
+        $this->withUnencryptedCookie('jakawi_visitor_id', $visitor)->post('/ciudades/la-paz/partner', $data)->assertRedirect();
+
+        $application = PartnerApplication::sole();
+        $this->assertSame($first->id, $application->attribution_touch_id);
+        $this->assertSame('radio', $application->attribution_snapshot['utm_source']);
     }
 
     public function test_authenticated_submit_admin_workflow_city_metrics_and_paused_protection(): void

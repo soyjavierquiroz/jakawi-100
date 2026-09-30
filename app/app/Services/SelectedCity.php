@@ -17,10 +17,23 @@ class SelectedCity
             ? City::query()->where('slug', $slug)->where('status', City::ACTIVE)->first()
             : null;
 
-        return $city ?? City::query()
-            ->where('slug', 'cochabamba')
+        if ($city) {
+            return $city;
+        }
+
+        // Cochabamba is the preferred national fallback while it remains active.
+        // If its status was changed manually, never revive a stale cookie: use
+        // another active city or make the temporary unavailability explicit.
+        $fallback = City::query()
             ->where('status', City::ACTIVE)
-            ->firstOrFail();
+            ->orderByRaw("CASE WHEN slug = 'cochabamba' THEN 0 ELSE 1 END")
+            ->orderByDesc('priority')
+            ->orderBy('name')
+            ->first();
+
+        abort_unless($fallback, 503, 'JAKAWI no está disponible temporalmente.');
+
+        return $fallback;
     }
 
     /** @return array{id:int,name:string,slug:string,status:string} */

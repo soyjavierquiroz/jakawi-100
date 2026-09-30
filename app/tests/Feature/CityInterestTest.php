@@ -84,6 +84,20 @@ class CityInterestTest extends TestCase
         $this->assertSame('la-paz', $interest->attribution_snapshot['utm_campaign']);
     }
 
+    public function test_repeat_interest_retains_its_original_attribution_snapshot(): void
+    {
+        $visitor = '4b638e6f-270e-4c19-a69b-7441054e39d5';
+        $first = AttributionTouch::create(['anonymous_id' => $visitor, 'utm_source' => 'radio', 'occurred_at' => now()->subMinute()]);
+
+        $this->withUnencryptedCookie('jakawi_visitor_id', $visitor)->post('/ciudades/la-paz/interes')->assertRedirect();
+        AttributionTouch::create(['anonymous_id' => $visitor, 'utm_source' => 'social', 'occurred_at' => now()]);
+        $this->withUnencryptedCookie('jakawi_visitor_id', $visitor)->post('/ciudades/la-paz/interes')->assertRedirect();
+
+        $interest = CityInterest::sole();
+        $this->assertSame($first->id, $interest->attribution_touch_id);
+        $this->assertSame('radio', $interest->attribution_snapshot['utm_source']);
+    }
+
     public function test_paused_city_never_exposes_discovery_or_accepts_interest(): void
     {
         $this->unlocking->update(['status' => City::PAUSED]);
