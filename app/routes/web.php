@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminContentReviewController;
 use App\Http\Controllers\AdminCityController;
+use App\Http\Controllers\AdminExpansionController;
 use App\Http\Controllers\AdminAffiliateController;
 use App\Http\Controllers\AffiliateDashboardController;
 use App\Http\Controllers\CreatorDashboardController;
@@ -136,6 +137,7 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('expansion', [AdminExpansionController::class, 'index'])->name('admin.expansion.index');
     Route::get('ciudades', [AdminCityController::class, 'index'])->name('admin.cities.index');
     Route::get('ciudades/crear', [AdminCityController::class, 'create'])->name('admin.cities.create');
     Route::post('ciudades', [AdminCityController::class, 'store'])->name('admin.cities.store');

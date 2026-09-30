@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AuditLog;
 use App\Models\City;
 use App\Models\CityInterest;
-use App\Models\PartnerApplication;
+use App\Services\CityExpansionMetrics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -41,24 +41,26 @@ class AdminCityController extends Controller
         return to_route('admin.cities.show', $city);
     }
 
-    public function show(City $city): Response
+    public function show(City $city, CityExpansionMetrics $metrics): Response
     {
         $interests = CityInterest::query()->where('city_id', $city->id)->with('user:id,name,email')->latest()->paginate(20)->withQueryString();
+        $expansionMetrics = $metrics->query()->whereKey($city)->sole();
 
         return Inertia::render('admin/cities/show', [
             'city' => $city,
             'interestSummary' => [
-                'total' => $interests->total(),
-                'registered' => CityInterest::query()->where('city_id', $city->id)->whereNotNull('user_id')->count(),
-                'guests' => CityInterest::query()->where('city_id', $city->id)->whereNull('user_id')->count(),
+                'total' => $expansionMetrics->interest_total,
+                'registered' => $expansionMetrics->interest_registered,
+                'guests' => $expansionMetrics->interest_guests,
             ],
             'interests' => $interests,
             'partnerApplicationSummary' => [
-                'total' => PartnerApplication::where('city_id', $city->id)->count(),
-                'submitted' => PartnerApplication::where('city_id', $city->id)->where('status', PartnerApplication::SUBMITTED)->count(),
-                'qualified' => PartnerApplication::where('city_id', $city->id)->where('status', PartnerApplication::QUALIFIED)->count(),
-                'approved' => PartnerApplication::where('city_id', $city->id)->where('status', PartnerApplication::APPROVED)->count(),
+                'total' => $expansionMetrics->application_total,
+                'submitted' => $expansionMetrics->application_submitted,
+                'qualified' => $expansionMetrics->application_qualified,
+                'approved' => $expansionMetrics->application_approved,
             ],
+            'expansionMetrics' => $metrics->values($expansionMetrics),
         ]);
     }
 
