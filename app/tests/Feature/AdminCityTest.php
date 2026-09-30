@@ -29,8 +29,8 @@ class AdminCityTest extends TestCase
 
         $this->actingAs($admin)->get('/admin/ciudades')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('admin/cities/index')
-            ->has('cities', 1)
-            ->where('cities.0.id', $city->id));
+            ->has('cities', 6)
+            ->where('cities.5.id', $city->id));
     }
 
     public function test_admin_views_city_detail(): void
@@ -48,15 +48,15 @@ class AdminCityTest extends TestCase
 
         $this->actingAs($admin)->post('/admin/ciudades', $this->payload(['country_code' => 'bo']))->assertRedirect();
 
-        $this->assertDatabaseHas('cities', ['name' => 'Cochabamba', 'country_code' => 'BO', 'status' => City::COMING_SOON, 'priority' => 3]);
-        $city = City::sole();
+        $this->assertDatabaseHas('cities', ['name' => 'Potosí', 'country_code' => 'BO', 'status' => City::COMING_SOON, 'priority' => 3]);
+        $city = City::where('slug', 'potosi')->sole();
         $this->assertDatabaseHas('audit_logs', ['actor_user_id' => $admin->id, 'action' => 'city_created', 'subject_type' => City::class, 'subject_id' => $city->id]);
         $this->assertSame(null, AuditLog::where('action', 'city_created')->sole()->metadata['before']);
     }
 
     public function test_city_slug_must_be_unique_and_status_must_be_valid(): void
     {
-        City::factory()->create(['slug' => 'cochabamba']);
+        City::factory()->create(['slug' => 'potosi']);
         $admin = $this->admin();
 
         $this->actingAs($admin)->post('/admin/ciudades', $this->payload())->assertSessionHasErrors('slug');
@@ -99,9 +99,9 @@ class AdminCityTest extends TestCase
     private function payload(array $overrides = []): array
     {
         return array_merge([
-            'name' => 'Cochabamba',
-            'slug' => 'cochabamba',
-            'region' => 'Cochabamba',
+            'name' => 'Potosí',
+            'slug' => 'potosi',
+            'region' => 'Potosí',
             'country_code' => 'BO',
             'status' => City::COMING_SOON,
             'priority' => 3,

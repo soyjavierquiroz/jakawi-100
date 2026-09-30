@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Benefit;
+use App\Models\City;
 use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Location;
@@ -65,17 +66,19 @@ class AdminController extends Controller
 
     public function locations(): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Locations', 'resource' => 'locations', 'items' => Location::with('partner')->orderBy('name')->get(), 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('admin/resources/index', ['title' => 'Locations', 'resource' => 'locations', 'items' => Location::with(['partner', 'cityEntity'])->orderBy('name')->get(), 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
     }
 
     public function locationForm(?Location $location = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin()] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('admin/resources/form', ['title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin()] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'cities' => City::orderByDesc('priority')->orderBy('name')->get(['id', 'name'])]);
     }
 
     public function saveLocation(Request $request, ?Location $location = null)
     {
         $data = $request->validate($this->locationRules($location));
+        $city = isset($data['city_id']) ? City::find($data['city_id']) : null;
+        $data['city'] = $city?->name;
         $location ??= new Location;
         $location->fill($data);
         if (filled($data['redemption_pin'] ?? null)) {
@@ -231,7 +234,7 @@ class AdminController extends Controller
 
     private function locationRules(?Location $l): array
     {
-        return array_merge($this->base('locations', $l), ['partner_id' => 'nullable|exists:partners,id', 'name' => 'required|string|max:255', 'location_type' => 'required|in:branch,venue,meeting_point,online,mobile,other', 'is_primary' => 'boolean', 'country_code' => 'nullable|string|size:2', 'region' => 'nullable|string', 'city' => 'nullable|string', 'zone' => 'nullable|string', 'address' => 'nullable|string', 'address_reference' => 'nullable|string', 'latitude' => 'nullable|numeric|between:-90,90', 'longitude' => 'nullable|numeric|between:-180,180', 'maps_url' => 'nullable|url', 'google_place_id' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'timezone' => 'nullable|string', 'opening_hours' => 'nullable|array', 'manager_name' => 'nullable|string', 'manager_phone' => 'nullable|string', 'manager_email' => 'nullable|email', 'redemption_pin' => 'nullable|digits:6', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
+        return array_merge($this->base('locations', $l), ['partner_id' => 'nullable|exists:partners,id', 'city_id' => 'nullable|exists:cities,id|required_unless:location_type,online', 'name' => 'required|string|max:255', 'location_type' => 'required|in:branch,venue,meeting_point,online,mobile,other', 'is_primary' => 'boolean', 'country_code' => 'nullable|string|size:2', 'region' => 'nullable|string', 'zone' => 'nullable|string', 'address' => 'nullable|string', 'address_reference' => 'nullable|string', 'latitude' => 'nullable|numeric|between:-90,90', 'longitude' => 'nullable|numeric|between:-180,180', 'maps_url' => 'nullable|url', 'google_place_id' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'timezone' => 'nullable|string', 'opening_hours' => 'nullable|array', 'manager_name' => 'nullable|string', 'manager_phone' => 'nullable|string', 'manager_email' => 'nullable|email', 'redemption_pin' => 'nullable|digits:6', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function benefitRules(?Benefit $b): array

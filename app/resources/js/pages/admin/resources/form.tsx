@@ -36,7 +36,7 @@ const fields: Record<string, string[]> = {
         'is_primary',
         'country_code',
         'region',
-        'city',
+        'city_id',
         'zone',
         'address',
         'address_reference',
@@ -121,6 +121,7 @@ export default function ResourceForm({
     resource,
     item,
     partners = [],
+    cities = [],
 }: any) {
     const form = useForm<any>({ ...defaults, ...item });
     const submit = (e: any) => {
@@ -180,6 +181,14 @@ export default function ResourceForm({
                                         {p.name}
                                     </option>
                                 ))}
+                            </select>
+                        ) : field === 'city_id' ? (
+                            <select
+                                value={form.data[field] || ''}
+                                onChange={(e) => form.setData(field, e.target.value || null)}
+                            >
+                                <option value="">Sin ciudad (solo online)</option>
+                                {cities.map((city: any) => <option key={city.id} value={city.id}>{city.name}</option>)}
                             </select>
                         ) : options(field).length ? (
                             <select

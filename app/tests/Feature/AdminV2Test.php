@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Benefit;
+use App\Models\City;
 use App\Models\Experience;
 use App\Models\Location;
 use App\Models\Partner;
@@ -37,11 +38,12 @@ class AdminV2Test extends TestCase
         $this->actingAs($admin)->post('/admin/partners', ['name' => 'Casa', 'slug' => 'casa', 'entity_type' => 'organization', 'partner_type' => 'business', 'status' => 'published', 'logo' => $this->image('logo.jpg'), 'cover' => $this->image('cover.png')])->assertRedirect();
         $partner = Partner::firstOrFail();
         Storage::disk('public')->assertExists($partner->logo_path);
-        $this->actingAs($admin)->post('/admin/locations', ['partner_id' => $partner->id, 'name' => 'Centro', 'slug' => 'centro', 'location_type' => 'branch', 'status' => 'published', 'redemption_pin' => '123456', 'image' => $this->image('image.webp')])->assertRedirect();
+        $cityId = City::where('slug', 'cochabamba')->value('id');
+        $this->actingAs($admin)->post('/admin/locations', ['partner_id' => $partner->id, 'city_id' => $cityId, 'name' => 'Centro', 'slug' => 'centro', 'location_type' => 'branch', 'status' => 'published', 'redemption_pin' => '123456', 'image' => $this->image('image.webp')])->assertRedirect();
         $location = Location::firstOrFail();
         $this->assertTrue($location->checkRedemptionPin('123456'));
         $hash = $location->redemption_pin_hash;
-        $this->actingAs($admin)->put('/admin/locations/'.$location->slug, ['partner_id' => $partner->id, 'name' => 'Centro', 'slug' => 'centro', 'location_type' => 'branch', 'status' => 'published', 'redemption_pin' => ''])->assertRedirect();
+        $this->actingAs($admin)->put('/admin/locations/'.$location->slug, ['partner_id' => $partner->id, 'city_id' => $cityId, 'name' => 'Centro', 'slug' => 'centro', 'location_type' => 'branch', 'status' => 'published', 'redemption_pin' => ''])->assertRedirect();
         $this->assertSame($hash, $location->fresh()->redemption_pin_hash);
     }
 

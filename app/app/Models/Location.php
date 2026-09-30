@@ -22,7 +22,7 @@ class Location extends Model
     }
 
     protected $fillable = [
-        'partner_id', 'slug', 'name', 'location_type', 'status', 'is_primary', 'country_code',
+        'partner_id', 'city_id', 'slug', 'name', 'location_type', 'status', 'is_primary', 'country_code',
         'region', 'city', 'zone', 'address', 'address_reference', 'latitude', 'longitude',
         'maps_url', 'google_place_id', 'phone', 'whatsapp', 'email', 'website', 'instagram',
         'facebook', 'tiktok', 'timezone', 'opening_hours', 'manager_name', 'manager_phone',
@@ -35,6 +35,12 @@ class Location extends Model
     public function partner(): BelongsTo
     {
         return $this->belongsTo(Partner::class);
+    }
+
+    /** @return BelongsTo<City, $this> */
+    public function cityEntity(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     /** @return BelongsToMany<Benefit, $this> */
