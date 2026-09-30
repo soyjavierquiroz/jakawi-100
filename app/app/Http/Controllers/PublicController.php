@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Benefit;
-use App\Models\City;
 use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
 use App\Models\Unlock;
+use App\Discovery\BenefitDiscoveryQuery;
+use App\Discovery\ExperienceDiscoveryQuery;
+use App\Discovery\UnlockDiscoveryQuery;
 use App\Services\AnalyticsTracker;
 use App\Services\HomePersonalizationService;
 use App\Services\MediaUrl;
@@ -33,10 +35,10 @@ class PublicController extends Controller
         $affinities = $affinity->combinedCategoryAffinity($request->user(), $behavior);
         $hasGenericExperiencesInterest = in_array('experiences', $interests, true);
         $isPersonalizedHome = $affinities !== [] || $hasGenericExperiencesInterest;
-        $benefits = $this->benefitsForCity($city)->with('partner')->orderByDesc('featured')->orderBy('sort_order')->get();
-        $experiences = $this->experiencesForCity($city)
+        $benefits = app(BenefitDiscoveryQuery::class)->forCity($city)->with('partner')->orderByDesc('featured')->orderBy('sort_order')->get();
+        $experiences = app(ExperienceDiscoveryQuery::class)->forCity($city)
             ->orderByDesc('featured')->orderBy('sort_order')->get();
-        $unlocks = $this->unlocksForCity($city)->orderByDesc('featured')->get();
+        $unlocks = app(UnlockDiscoveryQuery::class)->forCity($city)->orderByDesc('featured')->get();
 
         if ($isPersonalizedHome) {
             $benefits = $personalization->rankBenefits($benefits, $affinities);
@@ -85,10 +87,10 @@ class PublicController extends Controller
         $term = trim((string) $request->query('q', ''));
         $category = $request->query('category');
         $type = $request->query('type');
-        $benefits = $this->benefitsForCity($city)->with('partner')->orderByDesc('featured')->orderBy('sort_order');
-        $experiences = $this->experiencesForCity($city)->orderByDesc('featured')->orderBy('sort_order');
+        $benefits = app(BenefitDiscoveryQuery::class)->forCity($city)->with('partner')->orderByDesc('featured')->orderBy('sort_order');
+        $experiences = app(ExperienceDiscoveryQuery::class)->forCity($city)->orderByDesc('featured')->orderBy('sort_order');
         $partners = Partner::query()->published()->whereHas('locations', fn (Builder $query) => $query->published()->where('city_id', $city->id))->orderByDesc('featured')->orderBy('name');
-        $unlocks = $this->unlocksForCity($city)->orderByDesc('featured');
+        $unlocks = app(UnlockDiscoveryQuery::class)->forCity($city)->orderByDesc('featured');
 
         if ($category && $category !== 'todos') {
             $benefits->where('category', $category);
@@ -203,36 +205,6 @@ class PublicController extends Controller
     private function partner(Partner $p): array
     {
         return $p->only(['id', 'slug', 'name', 'description', 'category', 'website', 'instagram', 'facebook', 'tiktok', 'phone', 'whatsapp', 'email', 'featured']) + $this->image($p->logo_path, 'thumbnail', 'logo') + $this->image($p->cover_path, 'partner_cover', 'cover');
-    }
-
-    /** @return Builder<Benefit> */
-    private function benefitsForCity(City $city): Builder
-    {
-        return Benefit::available()->where(function (Builder $query) use ($city): void {
-            $query->where(function (Builder $allLocations) use ($city): void {
-                $allLocations->where('applies_to_all_locations', true)
-                    ->whereHas('partner.locations', fn (Builder $locations) => $locations->published()->where('city_id', $city->id));
-            })->orWhere(function (Builder $selectedLocations) use ($city): void {
-                $selectedLocations->where('applies_to_all_locations', false)
-                    ->whereHas('locations', fn (Builder $locations) => $locations->published()->where('city_id', $city->id));
-            });
-        });
-    }
-
-    /** @return Builder<Experience> */
-    private function experiencesForCity(City $city): Builder
-    {
-        return Experience::upcoming()
-            ->whereHas('sessions', fn (Builder $sessions) => $sessions->upcoming()->whereHas('location', fn (Builder $location) => $location->where('city_id', $city->id)))
-            ->with(['sessions' => fn ($sessions) => $sessions->upcoming()->whereHas('location', fn (Builder $location) => $location->where('city_id', $city->id))->with('location')]);
-    }
-
-    /** @return Builder<Unlock> */
-    private function unlocksForCity(City $city): Builder
-    {
-        return Unlock::query()->whereIn('status', [Unlock::ACTIVE, Unlock::GOAL_REACHED])
-            ->whereHas('locations', fn (Builder $locations) => $locations->where('city_id', $city->id))
-            ->with(['partner', 'locations' => fn ($locations) => $locations->where('city_id', $city->id)]);
     }
 
     private function locationData(Location $l): array
