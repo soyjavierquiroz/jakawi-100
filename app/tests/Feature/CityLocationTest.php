@@ -97,9 +97,10 @@ class CityLocationTest extends TestCase
 
     public function test_migration_backfills_only_exact_cochabamba_legacy_city_without_changing_related_records(): void
     {
-        // C4's city_interests migration follows C2. Revert both so this test
-        // recreates locations before C2 adds city_id and executes its backfill.
-        Artisan::call('migrate:rollback', ['--step' => 2, '--force' => true]);
+        $migration = 'database/migrations/2026_10_01_000001_add_city_id_to_locations_and_seed_canonical_cities.php';
+        // Isolate precisely the migration under test. Later migrations stay applied,
+        // so adding a future migration cannot change this replay's position.
+        Artisan::call('migrate:rollback', ['--path' => $migration, '--force' => true]);
         $partner = Partner::factory()->create();
         $matching = Location::factory()->for($partner)->create(['city' => 'Cochabamba']);
         $nonmatching = Location::factory()->for($partner)->create(['city' => 'cochabamba centro']);
@@ -112,7 +113,7 @@ class CityLocationTest extends TestCase
         $benefitLocationIds = $benefit->locations()->orderBy('locations.id')->pluck('locations.id')->all();
         $redemptionCount = Redemption::count();
 
-        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('migrate', ['--path' => $migration, '--force' => true]);
 
         $cochabamba = City::where('slug', 'cochabamba')->sole();
         $this->assertSame($locationCount, Location::count());
