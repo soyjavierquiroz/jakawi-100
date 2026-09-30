@@ -24,6 +24,8 @@ use App\Http\Controllers\PartnerReservationController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\SelectedCityController;
 use App\Http\Controllers\CityLandingController;
+use App\Http\Controllers\PartnerApplicationController;
+use App\Http\Controllers\AdminPartnerApplicationController;
 use App\Http\Controllers\PromoterSalesController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\ReferralController;
@@ -39,6 +41,9 @@ Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
 Route::get('/ciudades/{city:slug}', [CityLandingController::class, 'show'])->name('cities.show');
 Route::post('/ciudades/{city:slug}/interes', [CityLandingController::class, 'interest'])->middleware('throttle:20,1')->name('cities.interest');
+Route::get('/ciudades/{city:slug}/partner', [PartnerApplicationController::class, 'create'])->name('cities.partner.create');
+Route::post('/ciudades/{city:slug}/partner', [PartnerApplicationController::class, 'store'])->middleware('throttle:20,1')->name('cities.partner.store');
+Route::get('/ciudades/{city:slug}/partner/recibida', [PartnerApplicationController::class, 'success'])->name('cities.partner.success');
 Route::post('/ciudades/{city:slug}/seleccionar', [SelectedCityController::class, 'store'])->name('cities.select');
 Route::get('/d/{unlock:slug}', [UnlockController::class, 'show'])->name('unlocks.show');
 Route::post('/d/{unlock:slug}/shared', [UnlockController::class, 'share'])->name('unlocks.shared');
@@ -138,6 +143,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('ciudades/{city}/editar', [AdminCityController::class, 'edit'])->name('admin.cities.edit');
     Route::put('ciudades/{city}', [AdminCityController::class, 'update'])->name('admin.cities.update');
     Route::post('ciudades/{city}/estado', [AdminCityController::class, 'updateStatus'])->name('admin.cities.status.update');
+    Route::get('solicitudes-partner', [AdminPartnerApplicationController::class, 'index'])->name('admin.partner-applications.index');
+    Route::get('solicitudes-partner/{partnerApplication}', [AdminPartnerApplicationController::class, 'show'])->name('admin.partner-applications.show');
+    Route::post('solicitudes-partner/{partnerApplication}/estado', [AdminPartnerApplicationController::class, 'status'])->name('admin.partner-applications.status');
     Route::get('desbloqueos', [AdminUnlockController::class, 'index'])->name('admin.unlocks.index');
     Route::get('desbloqueos/crear', [AdminUnlockController::class, 'form'])->name('admin.unlocks.create');
     Route::post('desbloqueos', [AdminUnlockController::class, 'save'])->name('admin.unlocks.store');

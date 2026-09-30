@@ -40,4 +40,10 @@ class City extends Model
     {
         return $this->hasMany(CityInterest::class);
     }
+
+    /** @return HasMany<PartnerApplication, $this> */
+    public function partnerApplications(): HasMany
+    {
+        return $this->hasMany(PartnerApplication::class);
+    }
 }

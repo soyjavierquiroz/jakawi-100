@@ -152,6 +152,7 @@ class AnalyticsTracker
             'experience_reserve_click' => ['reservation_method'],
             'maps_click' => ['source'],
             'city_viewed', 'city_interest_recorded' => ['city_id', 'city_slug', 'authenticated'],
+            'partner_application_started', 'partner_application_submitted' => ['city_id', 'city_slug'],
             default => [],
         };
         if (array_diff(array_keys($metadata), $allowed) !== []) {

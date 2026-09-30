@@ -13,6 +13,7 @@ export default function AdminLayout({
                 <Link href="/admin">Admin</Link>
                 <Link href="/admin/review">Revisión</Link>
                 <Link href="/admin/ciudades">Ciudades</Link>
+                <Link href="/admin/solicitudes-partner">Solicitudes Partner</Link>
                 <Link href="/admin/partners">Partners</Link>
                 <Link href="/admin/locations">Locations</Link>
                 <Link href="/admin/benefits">Beneficios</Link>

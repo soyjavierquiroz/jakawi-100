@@ -44,7 +44,7 @@ return [
             'affiliate_payout_requested', 'affiliate_payout_completed',
             'reward_created', 'reward_available', 'reward_cancelled',
             'unlock_impression', 'unlock_viewed', 'unlock_interested', 'unlock_commitment_started', 'unlock_committed', 'unlock_commitment_cancelled', 'unlock_shared', 'unlock_referral_opened', 'unlock_referral_committed', 'unlock_referral_fulfilled', 'unlock_goal_reached', 'unlock_revealed', 'unlock_confirmation_requested', 'unlock_confirmed', 'unlock_confirmation_declined', 'unlock_fulfilled', 'unlock_no_show', 'unlock_jp_held', 'unlock_jp_released', 'unlock_jp_bonus_awarded', 'unlock_jp_forfeited',
-            'city_viewed', 'city_interest_recorded',
+            'city_viewed', 'city_interest_recorded', 'partner_application_started', 'partner_application_submitted',
         ],
         'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],
     ],

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AuditLog;
 use App\Models\City;
 use App\Models\CityInterest;
+use App\Models\PartnerApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -52,6 +53,12 @@ class AdminCityController extends Controller
                 'guests' => CityInterest::query()->where('city_id', $city->id)->whereNull('user_id')->count(),
             ],
             'interests' => $interests,
+            'partnerApplicationSummary' => [
+                'total' => PartnerApplication::where('city_id', $city->id)->count(),
+                'submitted' => PartnerApplication::where('city_id', $city->id)->where('status', PartnerApplication::SUBMITTED)->count(),
+                'qualified' => PartnerApplication::where('city_id', $city->id)->where('status', PartnerApplication::QUALIFIED)->count(),
+                'approved' => PartnerApplication::where('city_id', $city->id)->where('status', PartnerApplication::APPROVED)->count(),
+            ],
         ]);
     }
 
