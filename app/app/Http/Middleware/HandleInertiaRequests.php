@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\SelectedCity;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,6 +36,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $selectedCity = app(SelectedCity::class);
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -46,6 +49,8 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'selectedCity' => fn () => $selectedCity->data($selectedCity->resolve($request)),
+            'availableCities' => fn () => $selectedCity->available(),
         ];
     }
 }

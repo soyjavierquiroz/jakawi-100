@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\AnalyticsEvent;
 use App\Models\Benefit;
+use App\Models\City;
 use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Models\ExperienceSession;
@@ -58,6 +59,8 @@ class PublicV2HttpTest extends TestCase
     {
         $partner = Partner::factory()->published()->create();
         $location = Location::factory()->published()->withPartner($partner)->create();
+        $location->setRedemptionPin('123456');
+        $location->save();
         $food = Benefit::factory()->published()->forPartner($partner)->create(['category' => 'food', 'applies_to_all_locations' => true]);
         $cafe = Benefit::factory()->published()->forPartner($partner)->create(['category' => 'cafe', 'applies_to_all_locations' => true]);
         foreach ([['draft'], ['paused'], ['published', now()->addDay()], ['published', null, now()->subDay()]] as $state) {
@@ -79,9 +82,12 @@ class PublicV2HttpTest extends TestCase
     {
         $partner = Partner::factory()->published()->create(['cover_path' => 'partners/brasa-prisma.jpg', 'featured' => true]);
         $partnerWithoutMedia = Partner::factory()->published()->create(['cover_path' => null, 'featured' => false]);
+        $cochabamba = City::query()->where('slug', 'cochabamba')->sole();
+        $location = Location::factory()->published()->withPartner($partner)->create(['city_id' => $cochabamba->id]);
+        Location::factory()->published()->withPartner($partnerWithoutMedia)->create(['city_id' => $cochabamba->id]);
         $benefit = Benefit::factory()->published()->forPartner($partner)->create(['applies_to_all_locations' => true]);
         $experience = Experience::factory()->published()->create();
-        ExperienceSession::factory()->for($experience)->upcoming()->create();
+        ExperienceSession::factory()->for($experience)->upcoming()->withLocation($location)->create();
         $unlock = Unlock::create([
             'title' => 'Unlock de Explore',
             'slug' => 'unlock-de-explore',
@@ -92,6 +98,7 @@ class PublicV2HttpTest extends TestCase
             'member_eligible' => true,
             'status' => Unlock::ACTIVE,
         ]);
+        $unlock->locations()->attach($location);
 
         $this->get('/explorar')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('explore')
