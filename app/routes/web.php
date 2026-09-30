@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminContentReviewController;
+use App\Http\Controllers\AdminCityController;
 use App\Http\Controllers\AdminAffiliateController;
 use App\Http\Controllers\AffiliateDashboardController;
 use App\Http\Controllers\CreatorDashboardController;
@@ -125,6 +126,13 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('ciudades', [AdminCityController::class, 'index'])->name('admin.cities.index');
+    Route::get('ciudades/crear', [AdminCityController::class, 'create'])->name('admin.cities.create');
+    Route::post('ciudades', [AdminCityController::class, 'store'])->name('admin.cities.store');
+    Route::get('ciudades/{city}', [AdminCityController::class, 'show'])->name('admin.cities.show');
+    Route::get('ciudades/{city}/editar', [AdminCityController::class, 'edit'])->name('admin.cities.edit');
+    Route::put('ciudades/{city}', [AdminCityController::class, 'update'])->name('admin.cities.update');
+    Route::post('ciudades/{city}/estado', [AdminCityController::class, 'updateStatus'])->name('admin.cities.status.update');
     Route::get('desbloqueos', [AdminUnlockController::class, 'index'])->name('admin.unlocks.index');
     Route::get('desbloqueos/crear', [AdminUnlockController::class, 'form'])->name('admin.unlocks.create');
     Route::post('desbloqueos', [AdminUnlockController::class, 'save'])->name('admin.unlocks.store');

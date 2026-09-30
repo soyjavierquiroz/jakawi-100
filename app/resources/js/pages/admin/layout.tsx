@@ -12,6 +12,7 @@ export default function AdminLayout({
             <nav className="flex flex-wrap gap-4 text-sm">
                 <Link href="/admin">Admin</Link>
                 <Link href="/admin/review">Revisión</Link>
+                <Link href="/admin/ciudades">Ciudades</Link>
                 <Link href="/admin/partners">Partners</Link>
                 <Link href="/admin/locations">Locations</Link>
                 <Link href="/admin/benefits">Beneficios</Link>
