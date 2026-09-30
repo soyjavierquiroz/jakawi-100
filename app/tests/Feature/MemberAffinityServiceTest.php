@@ -4,9 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\AnalyticsEvent;
 use App\Models\Benefit;
+use App\Models\City;
 use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Models\ExperienceSession;
+use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
 use App\Models\Redemption;
@@ -131,6 +133,9 @@ class MemberAffinityServiceTest extends TestCase
 
     private function benefit(string $category, bool $featured = false): Benefit
     {
-        return Benefit::factory()->published()->for(Partner::factory()->published())->create(['category' => $category, 'featured' => $featured]);
+        $partner = Partner::factory()->published()->create();
+        Location::factory()->published()->withPartner($partner)->create(['city_id' => City::query()->where('slug', 'cochabamba')->value('id')]);
+
+        return Benefit::factory()->published()->for($partner)->create(['category' => $category, 'featured' => $featured, 'applies_to_all_locations' => true]);
     }
 }

@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Benefit;
+use App\Models\City;
 use App\Models\Experience;
 use App\Models\ExperienceSession;
+use App\Models\Location;
 use App\Models\Partner;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -116,10 +118,14 @@ class HomePersonalizationTest extends TestCase
 
     private function benefit(string $category, bool $featured = false, int $sortOrder = 0): Benefit
     {
-        return Benefit::factory()->published()->for(Partner::factory()->published())->create([
+        $partner = Partner::factory()->published()->create();
+        Location::factory()->published()->withPartner($partner)->create(['city_id' => City::query()->where('slug', 'cochabamba')->value('id')]);
+
+        return Benefit::factory()->published()->for($partner)->create([
             'category' => $category,
             'featured' => $featured,
             'sort_order' => $sortOrder,
+            'applies_to_all_locations' => true,
         ]);
     }
 
@@ -130,7 +136,8 @@ class HomePersonalizationTest extends TestCase
             'featured' => $featured,
             'sort_order' => $sortOrder,
         ]);
-        ExperienceSession::factory()->upcoming()->for($experience)->create(['starts_at' => $startsAt ?? now()->addDay()]);
+        $location = Location::factory()->published()->create(['city_id' => City::query()->where('slug', 'cochabamba')->value('id')]);
+        ExperienceSession::factory()->upcoming()->for($experience)->withLocation($location)->create(['starts_at' => $startsAt ?? now()->addDay()]);
 
         return $experience;
     }
