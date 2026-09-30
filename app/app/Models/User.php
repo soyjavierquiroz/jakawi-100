@@ -72,6 +72,12 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(AttributionTouch::class);
     }
 
+    /** @return HasMany<CityInterest, $this> */
+    public function cityInterests(): HasMany
+    {
+        return $this->hasMany(CityInterest::class);
+    }
+
     /** @return HasMany<ReferralRelationship> */
     public function referralRelationships(): HasMany
     {

@@ -9,8 +9,8 @@ use App\Models\Experience;
 use App\Models\Location;
 use App\Models\Partner;
 use App\Models\Redemption;
-use App\Models\User;
 use App\Models\Unlock;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -151,6 +151,7 @@ class AnalyticsTracker
         $allowed = match ($event) {
             'experience_reserve_click' => ['reservation_method'],
             'maps_click' => ['source'],
+            'city_viewed', 'city_interest_recorded' => ['city_id', 'city_slug', 'authenticated'],
             default => [],
         };
         if (array_diff(array_keys($metadata), $allowed) !== []) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\City;
+use App\Models\CityInterest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -41,7 +42,17 @@ class AdminCityController extends Controller
 
     public function show(City $city): Response
     {
-        return Inertia::render('admin/cities/show', ['city' => $city]);
+        $interests = CityInterest::query()->where('city_id', $city->id)->with('user:id,name,email')->latest()->paginate(20)->withQueryString();
+
+        return Inertia::render('admin/cities/show', [
+            'city' => $city,
+            'interestSummary' => [
+                'total' => $interests->total(),
+                'registered' => CityInterest::query()->where('city_id', $city->id)->whereNotNull('user_id')->count(),
+                'guests' => CityInterest::query()->where('city_id', $city->id)->whereNull('user_id')->count(),
+            ],
+            'interests' => $interests,
+        ]);
     }
 
     public function edit(City $city): Response

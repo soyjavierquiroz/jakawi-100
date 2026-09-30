@@ -32,7 +32,7 @@ class SelectedCity
     /** @return list<array{id:int,name:string,slug:string,status:string}> */
     public function available(): array
     {
-        return City::query()->whereIn('status', [City::ACTIVE, City::UNLOCKING, City::COMING_SOON])
+        return City::query()->whereIn('status', [City::ACTIVE, City::UNLOCKING, City::COMING_SOON, City::PREPARING, City::PAUSED])
             ->orderByDesc('priority')->orderBy('name')
             ->get(['id', 'name', 'slug', 'status'])->map(fn (City $city) => $this->data($city))->all();
     }
