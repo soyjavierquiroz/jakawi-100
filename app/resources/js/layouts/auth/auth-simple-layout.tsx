@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import AppLogoIcon from '@/components/app-logo-icon';
+import { BrandEnergy } from '@/components/brand-energy';
 import { home } from '@/routes';
 import type { AuthLayoutProps } from '@/types';
 
@@ -9,23 +9,23 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 pb-[calc(1.5rem+var(--pwa-install-clearance,0px))] md:p-10 md:pb-[calc(2.5rem+var(--pwa-install-clearance,0px))]">
-            <div className="w-full max-w-sm">
-                <div className="flex flex-col gap-8">
-                    <div className="flex flex-col items-center gap-4">
+        <div className="flex min-h-svh flex-col items-center justify-center bg-background px-5 py-8 pb-[calc(2rem+var(--pwa-install-clearance,0px))] font-discovery sm:px-6 md:px-10 md:py-10 md:pb-[calc(2.5rem+var(--pwa-install-clearance,0px))]">
+            <div className="w-full max-w-[25rem]">
+                <div className="flex flex-col gap-8 sm:gap-10">
+                    <div className="flex flex-col items-center gap-5 text-center">
                         <Link
                             href={home()}
-                            className="flex flex-col items-center gap-2 font-medium"
+                            className="flex items-center gap-3 text-xs font-extrabold tracking-[0.18em] text-foreground uppercase"
                         >
-                            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                                <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
-                            </div>
-                            <span className="sr-only">{title}</span>
+                            JAKAWI
+                            <BrandEnergy />
                         </Link>
 
-                        <div className="space-y-2 text-center">
-                            <h1 className="text-xl font-medium">{title}</h1>
-                            <p className="text-center text-sm text-muted-foreground">
+                        <div className="space-y-3">
+                            <h1 className="text-[2rem] leading-[1.02] font-extrabold tracking-[-0.055em] text-foreground uppercase sm:text-[2.25rem]">
+                                {title}
+                            </h1>
+                            <p className="mx-auto max-w-sm text-base leading-6 text-muted-foreground">
                                 {description}
                             </p>
                         </div>
