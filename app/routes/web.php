@@ -33,6 +33,7 @@ use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\UnlockController;
 use App\Http\Controllers\AdminUnlockController;
 use App\Http\Controllers\PartnerUnlockController;
+use App\Http\Controllers\OpportunityAnalyticsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,7 @@ Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
 Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.unlock');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
+Route::post('/analytics/opportunities', [OpportunityAnalyticsController::class, 'store'])->middleware('throttle:120,1')->name('analytics.opportunities.store');
 Route::get('/ciudades/{city:slug}', [CityLandingController::class, 'show'])->name('cities.show');
 Route::post('/ciudades/{city:slug}/interes', [CityLandingController::class, 'interest'])->middleware('throttle:20,1')->name('cities.interest');
 Route::get('/ciudades/{city:slug}/partner', [PartnerApplicationController::class, 'create'])->name('cities.partner.create');
