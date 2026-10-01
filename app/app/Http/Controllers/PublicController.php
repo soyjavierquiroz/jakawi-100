@@ -77,7 +77,7 @@ class PublicController extends Controller
     public function explore(Request $request, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
         $city = $selectedCity->resolve($request);
-        $term = trim((string) $request->query('q', ''));
+        $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
         $category = $request->query('category');
         $category = in_array($category, config('jakawi.categories'), true) ? $category : null;
         $type = in_array($request->query('type'), ['benefits', 'experiences', 'unlocks', 'places'], true) ? $request->query('type') : null;
