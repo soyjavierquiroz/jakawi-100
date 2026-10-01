@@ -20,6 +20,15 @@ export function experienceTiming(opportunity: DiscoveryOpportunity) {
     return new Intl.DateTimeFormat('es-BO', { dateStyle: 'medium', timeStyle: 'short' }).format(startsAt);
 }
 
+// A membership explanation is useful context, but it is not an editorial offer.
+// Keep the contract value intact while allowing the actual title to lead when it
+// is the only meaningful value supplied by the opportunity.
+export function benefitValue(opportunity: DiscoveryOpportunity) {
+    const value = opportunity.primary_value?.trim();
+    if (!value) return null;
+    return /beneficio para miembros|en tu pr[oó]xima visita|miembros jakawi/i.test(value) ? null : value;
+}
+
 function UnlockProgress({ opportunity }: { opportunity: DiscoveryOpportunity }) {
     const target = typeof opportunity.metadata.target === 'number' ? opportunity.metadata.target : null;
     const progress = typeof opportunity.metadata.progress === 'number' ? opportunity.metadata.progress : null;
@@ -35,12 +44,18 @@ function UnlockProgress({ opportunity }: { opportunity: DiscoveryOpportunity }) 
 
 function OpportunityDetails({ opportunity }: { opportunity: DiscoveryOpportunity }) {
     const context = opportunity.location?.name ?? opportunity.partner?.name;
-    if (opportunity.type === 'BENEFIT') return <>{opportunity.primary_value ? <p className="mt-2 text-lg leading-snug font-extrabold text-foreground">{opportunity.primary_value}</p> : null}<h3 className="mt-1 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3>{opportunity.partner?.name ? <p className="mt-2 text-sm text-muted-foreground">{opportunity.partner.name}</p> : null}</>;
-    if (opportunity.type === 'EXPERIENCE') return <><h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3>{experienceTiming(opportunity) ? <p className="mt-2 text-sm font-extrabold text-foreground">{experienceTiming(opportunity)}</p> : null}{context ? <p className="mt-1 text-sm text-muted-foreground">{context}</p> : null}</>;
+    if (opportunity.type === 'BENEFIT') {
+        const value = benefitValue(opportunity);
+        return <>{value ? <p className="mt-2 text-xl leading-none font-extrabold tracking-[-0.035em] text-foreground">{value}</p> : null}<h3 className={`${value ? 'mt-2' : 'mt-2'} text-lg leading-tight font-extrabold tracking-tight`}>{opportunity.title}</h3>{opportunity.partner?.name ? <p className="mt-2 text-sm font-medium text-muted-foreground">{opportunity.partner.name}</p> : null}</>;
+    }
+    if (opportunity.type === 'EXPERIENCE') return <><h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3>{experienceTiming(opportunity) ? <p className="mt-3 text-sm leading-tight font-extrabold text-foreground">{experienceTiming(opportunity)}</p> : null}{context ? <p className="mt-1.5 text-sm font-medium text-muted-foreground">{context}</p> : null}</>;
     return <><h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3><UnlockProgress opportunity={opportunity} /></>;
 }
 
 export function OpportunityCard({ opportunity, section, position, compact = false }: { opportunity: DiscoveryOpportunity; section: HomeSection; position: number; compact?: boolean }) {
     const { elementRef, onOpen } = useOpportunityAnalytics({ opportunity, surface: 'HOME', section, position });
-    return <Link ref={elementRef} href={opportunity.destination_url} onClick={onOpen} className={`group block shrink-0 overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-[0_8px_24px_color-mix(in_srgb,var(--foreground)_8%,transparent)] transition duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] ${compact ? 'w-[15.5rem] sm:w-auto' : 'w-[17.5rem] sm:w-auto'}`}><div className={`${compact ? 'aspect-[16/9]' : 'aspect-[4/3]'} overflow-hidden bg-surface-muted`}><JakawiImage src={opportunity.image} sizes="(min-width: 640px) 33vw, 280px" alt={opportunity.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" fallbackContent={false} /></div><div className="p-[var(--space-card)]"><p className="discovery-eyebrow text-brand">{opportunityType(opportunity.type)}</p><OpportunityDetails opportunity={opportunity} /><span className="mt-4 inline-flex min-h-8 items-center text-xs font-extrabold tracking-[0.08em] text-brand">{opportunityLabel(opportunity.type)}</span></div></Link>;
+    const width = compact ? 'w-[72vw] sm:w-auto' : 'w-[80vw] sm:w-auto';
+    const media = compact ? 'aspect-[16/9]' : 'aspect-[5/4]';
+    const padding = compact ? 'p-4' : 'p-[var(--space-card)]';
+    return <Link ref={elementRef} href={opportunity.destination_url} onClick={onOpen} className={`group block shrink-0 overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-[0_10px_28px_color-mix(in_srgb,var(--foreground)_7%,transparent)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_color-mix(in_srgb,var(--foreground)_10%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] ${width}`}><div className={`${media} overflow-hidden bg-surface-muted`}><JakawiImage src={opportunity.image} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 45vw, 80vw" alt={opportunity.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" fallbackContent={false} /></div><div className={padding}><p className="discovery-eyebrow text-muted-foreground">{opportunityType(opportunity.type)}</p><OpportunityDetails opportunity={opportunity} /><span className="mt-4 inline-flex min-h-8 items-center text-xs font-extrabold tracking-[0.08em] text-muted-foreground underline decoration-brand/60 decoration-2 underline-offset-4 transition group-hover:text-foreground">{opportunityLabel(opportunity.type)}</span></div></Link>;
 }
