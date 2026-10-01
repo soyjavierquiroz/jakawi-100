@@ -20,6 +20,6 @@ class ExperienceDiscoveryQuery
 
         return Experience::upcoming()
             ->whereHas('sessions', $citySessions)
-            ->with(['sessions' => fn ($sessions) => $citySessions($sessions)->with('location')]);
+            ->with(['sessions' => fn ($sessions) => $citySessions($sessions)->with('location'), 'partners']);
     }
 }

@@ -20,6 +20,9 @@ class BenefitDiscoveryQuery
                     $selectedLocations->where('applies_to_all_locations', false)
                         ->whereHas('locations', fn (Builder $locations) => $locations->published()->where('city_id', $city->id));
                 });
-            });
+            })
+            // DiscoveryService deliberately selects a city location from these
+            // bounded relations; this prevents per-card partner/location reads.
+            ->with(['partner.locations' => fn ($locations) => $locations->published()->where('city_id', $city->id), 'locations' => fn ($locations) => $locations->published()->where('city_id', $city->id)]);
     }
 }
