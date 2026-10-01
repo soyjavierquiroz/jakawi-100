@@ -1,28 +1,39 @@
 :root {
+    /* Discovery V2 semantic foundation. Legacy shadcn names below remain aliases. */
+    --background: #fff8f2;
+    --surface: #fffdf9;
+    --surface-raised: #ffffff;
+    --surface-subtle: #f6eee8;
+    --text-primary: #111111;
+    --text-secondary: #514a45;
+    --text-muted: #706761;
+    --border: #e9ddd4;
     --brand: #ff5a4f;
+    --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
+    --success: #24b47e;
+    --reward: #ffc83d;
+    --scrim: color-mix(in srgb, #111111 82%, transparent);
+    --shadow: 0 8px 24px rgb(17 17 17 / 6%);
+    --shadow-featured: 0 14px 30px rgb(17 17 17 / 10%);
+
     --brand-foreground: #111111;
     --brand-contrast-surface: #fff8f2;
-    --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
-    --action: #ffc83d;
+    --action: var(--reward);
     --action-foreground: #111111;
     --energy: var(--action);
     --energy-foreground: var(--action-foreground);
 
-    --background: #fff8f2;
-    --foreground: #111111;
-    --foreground-soft: #332e2a;
-    --surface-elevated: #ffffff;
-    --surface: oklch(1 0 0);
+    --foreground: var(--text-primary);
+    --foreground-soft: var(--text-secondary);
+    --surface-elevated: var(--surface-raised);
     --surface-foreground: var(--foreground);
-    --surface-muted: #f6eee8;
+    --surface-muted: var(--surface-subtle);
     --muted: var(--surface-muted);
-    --muted-foreground: #706761;
-    --border: #e9ddd4;
+    --muted-foreground: var(--text-muted);
     --border-strong: #d7c7bc;
     --overlay: color-mix(in srgb, var(--foreground) 42%, transparent);
-    --overlay-scrim: color-mix(in srgb, #111111 82%, transparent);
+    --overlay-scrim: var(--scrim);
 
-    --success: #24b47e;
     --success-foreground: #111111;
     --success-surface: color-mix(
         in srgb,
@@ -79,29 +90,39 @@
 }
 
 .dark {
+    --background: #111111;
+    --surface: #191919;
+    --surface-raised: #202020;
+    --surface-subtle: #24211f;
+    --text-primary: #fff8f2;
+    --text-secondary: #eee5de;
+    --text-muted: #beb2aa;
+    --border: #332f2b;
     --brand: #ff5a4f;
     --brand-foreground: #111111;
     --brand-contrast-surface: #fff8f2;
     --brand-subtle: color-mix(in srgb, var(--brand) 18%, var(--surface));
-    --action: #ffc83d;
+    --success: #24b47e;
+    --reward: #ffc83d;
+    --scrim: color-mix(in srgb, #000000 86%, transparent);
+    --shadow: 0 10px 28px rgb(0 0 0 / 28%);
+    --shadow-featured: 0 16px 36px rgb(0 0 0 / 38%);
+
+    --action: var(--reward);
     --action-foreground: #111111;
     --energy: var(--action);
     --energy-foreground: var(--action-foreground);
-    --background: #111111;
-    --foreground: #fff8f2;
-    --foreground-soft: #eee5de;
-    --surface: #191919;
-    --surface-elevated: #202020;
+    --foreground: var(--text-primary);
+    --foreground-soft: var(--text-secondary);
+    --surface-elevated: var(--surface-raised);
     --surface-foreground: var(--foreground);
-    --surface-muted: #27231f;
+    --surface-muted: var(--surface-subtle);
     --muted: var(--surface-muted);
-    --muted-foreground: #beb2aa;
-    --border: #332f2b;
+    --muted-foreground: var(--text-muted);
     --border-strong: #48413c;
     --overlay: color-mix(in srgb, var(--foreground) 48%, transparent);
-    --overlay-scrim: color-mix(in srgb, #000000 86%, transparent);
+    --overlay-scrim: var(--scrim);
 
-    --success: #24b47e;
     --success-foreground: #111111;
     --success-surface: color-mix(in srgb, var(--success) 18%, var(--surface));
     --warning: oklch(0.78 0.16 75);
