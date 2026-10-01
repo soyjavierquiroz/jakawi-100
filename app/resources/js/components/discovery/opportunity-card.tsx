@@ -3,7 +3,7 @@ import { JakawiImage } from '@/components/jakawi-image';
 import { useOpportunityAnalytics } from '@/hooks/use-opportunity-analytics';
 import type { DiscoveryOpportunity } from '@/types/discovery';
 
-type HomeSection = 'FOR_YOU' | 'HAPPENING_NOW' | 'DISCOVER_MORE';
+type DiscoverySection = 'FOR_YOU' | 'HAPPENING_NOW' | 'DISCOVER_MORE' | 'RESULTS';
 
 export function opportunityLabel(type: DiscoveryOpportunity['type']) {
     return type === 'BENEFIT' ? 'VER BENEFICIO' : type === 'EXPERIENCE' ? 'VER EXPERIENCIA' : 'VER DESBLOQUEO';
@@ -52,8 +52,11 @@ function OpportunityDetails({ opportunity }: { opportunity: DiscoveryOpportunity
     return <><h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3><UnlockProgress opportunity={opportunity} /></>;
 }
 
-export function OpportunityCard({ opportunity, section, position, compact = false }: { opportunity: DiscoveryOpportunity; section: HomeSection; position: number; compact?: boolean }) {
-    const { elementRef, onOpen } = useOpportunityAnalytics({ opportunity, surface: 'HOME', section, position });
+export function OpportunityCard({ opportunity, section, position, compact = false, surface = 'HOME', variant = 'home-carousel' }: { opportunity: DiscoveryOpportunity; section: DiscoverySection; position: number; compact?: boolean; surface?: 'HOME' | 'EXPLORE' | 'SEARCH'; variant?: 'home-carousel' | 'explore-grid' }) {
+    const { elementRef, onOpen } = useOpportunityAnalytics({ opportunity, surface, section, position });
+    if (variant === 'explore-grid') {
+        return <Link ref={elementRef} href={opportunity.destination_url} onClick={onOpen} className="group grid min-h-40 grid-cols-[42%_1fr] overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-[0_8px_24px_color-mix(in_srgb,var(--foreground)_6%,transparent)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_color-mix(in_srgb,var(--foreground)_10%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] sm:block"><div className="overflow-hidden bg-surface-muted sm:aspect-[5/4]"><JakawiImage src={opportunity.image} sizes="(min-width: 1024px) 29vw, (min-width: 640px) 44vw, 42vw" alt={opportunity.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" fallbackContent={false} /></div><div className="min-w-0 p-4 sm:p-[var(--space-card)]"><p className="discovery-eyebrow text-muted-foreground">{opportunityType(opportunity.type)}</p><OpportunityDetails opportunity={opportunity} /><span className="mt-3 inline-flex min-h-7 items-center text-xs font-extrabold tracking-[0.08em] text-muted-foreground underline decoration-brand/60 decoration-2 underline-offset-4 transition group-hover:text-foreground">{opportunityLabel(opportunity.type)}</span></div></Link>;
+    }
     const width = compact ? 'w-[72vw] sm:w-auto' : 'w-[80vw] sm:w-auto';
     const media = compact ? 'aspect-[16/9]' : 'aspect-[5/4]';
     const padding = compact ? 'p-4' : 'p-[var(--space-card)]';
