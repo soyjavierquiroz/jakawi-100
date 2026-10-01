@@ -10,12 +10,12 @@ use App\Models\Membership;
 use App\Models\Partner;
 use App\Models\Unlock;
 use App\Discovery\BenefitDiscoveryQuery;
+use App\Discovery\DiscoveryContext;
+use App\Discovery\DiscoveryService;
 use App\Discovery\ExperienceDiscoveryQuery;
 use App\Discovery\UnlockDiscoveryQuery;
 use App\Services\AnalyticsTracker;
-use App\Services\HomePersonalizationService;
 use App\Services\MediaUrl;
-use App\Services\MemberAffinityService;
 use App\Services\SelectedCity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -25,33 +25,28 @@ use Inertia\Response;
 
 class PublicController extends Controller
 {
-    public function home(Request $request, AnalyticsTracker $analytics, HomePersonalizationService $personalization, MemberAffinityService $affinity, SelectedCity $selectedCity): Response
+    public function home(Request $request, AnalyticsTracker $analytics, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
         $analytics->homeViewed();
         $city = $selectedCity->resolve($request);
         $membership = $request->user()?->activeMembership()->first();
-        $interests = $personalization->interestsFor($request->user());
-        $behavior = $affinity->behavioralCategoryAffinity($request->user());
-        $affinities = $affinity->combinedCategoryAffinity($request->user(), $behavior);
-        $hasGenericExperiencesInterest = in_array('experiences', $interests, true);
-        $isPersonalizedHome = $affinities !== [] || $hasGenericExperiencesInterest;
-        $benefits = app(BenefitDiscoveryQuery::class)->forCity($city)->with('partner')->orderByDesc('featured')->orderBy('sort_order')->get();
-        $experiences = app(ExperienceDiscoveryQuery::class)->forCity($city)
-            ->orderByDesc('featured')->orderBy('sort_order')->get();
-        $unlocks = app(UnlockDiscoveryQuery::class)->forCity($city)->orderByDesc('featured')->get();
-
-        if ($isPersonalizedHome) {
-            $benefits = $personalization->rankBenefits($benefits, $affinities);
-            $experiences = $personalization->rankExperiences($experiences, $affinities, $hasGenericExperiencesInterest);
-        }
+        $result = $discovery->discover(new DiscoveryContext(
+            city: $city,
+            user: $request->user(),
+            surface: 'home',
+            forYouLimit: 5,
+            happeningNowLimit: 4,
+            discoverMoreLimit: 8,
+        ));
 
         return Inertia::render('welcome', [
-            'featuredBenefits' => $benefits->take(3)->map(fn (Benefit $b) => $this->benefitData($b)),
-            'featuredExperiences' => $experiences->take(3)->map(fn (Experience $e) => $this->experienceData($e)),
-            'featuredUnlocks' => $unlocks->take(3)->map(fn (Unlock $u) => app(UnlockController::class)->data($u)),
-            'membershipSummary' => $membership ? $this->membership($membership) : null,
-            'isPersonalizedHome' => $isPersonalizedHome,
-            'personalizationSubtitle' => $behavior !== [] ? ($interests !== [] ? 'Según tus intereses y actividad.' : 'Según tu actividad.') : ($interests !== [] ? 'Según tus intereses.' : null),
+            'discovery' => [
+                'hero' => $result->hero?->toArray(),
+                'forYou' => array_map(fn ($item) => $item->toArray(), $result->forYou),
+                'happeningNow' => array_map(fn ($item) => $item->toArray(), $result->happeningNow),
+                'discoverMore' => array_map(fn ($item) => $item->toArray(), $result->discoverMore),
+            ],
+            'myJakawi' => $membership ? $this->membership($membership) : null,
         ]);
     }
 

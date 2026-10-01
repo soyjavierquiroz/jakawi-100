@@ -50,6 +50,27 @@ class DiscoveryServiceTest extends TestCase
         $this->assertSame(1, collect($queries)->filter(fn (array $query) => str_contains($query['query'], 'unlock_participations'))->count());
     }
 
+    public function test_each_opportunity_type_can_be_the_hero_when_it_is_the_only_candidate(): void
+    {
+        $city = City::query()->where('slug', 'cochabamba')->sole();
+        $partner = Partner::factory()->published()->create();
+        $location = Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
+
+        $benefit = Benefit::factory()->published()->forPartner($partner)->create(['applies_to_all_locations' => true]);
+        $this->assertSame(OpportunityType::BENEFIT, app(DiscoveryService::class)->discover(new DiscoveryContext($city))->hero?->type);
+        $benefit->delete();
+
+        $experience = Experience::factory()->published()->create();
+        $experience->partners()->attach($partner, ['role' => 'HOST', 'sort_order' => 1]);
+        ExperienceSession::factory()->for($experience)->upcoming()->withLocation($location)->create();
+        $this->assertSame(OpportunityType::EXPERIENCE, app(DiscoveryService::class)->discover(new DiscoveryContext($city))->hero?->type);
+        $experience->delete();
+
+        $unlock = $this->unlock($location);
+        $this->assertSame(OpportunityType::UNLOCK, app(DiscoveryService::class)->discover(new DiscoveryContext($city))->hero?->type);
+        $this->assertNotNull($unlock);
+    }
+
     private function unlock(Location $location): Unlock
     {
         $unlock = Unlock::create([

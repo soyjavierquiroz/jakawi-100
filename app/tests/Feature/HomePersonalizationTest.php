@@ -7,9 +7,12 @@ use App\Models\City;
 use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Location;
+use App\Models\Membership;
 use App\Models\Partner;
+use App\Models\Unlock;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -17,128 +20,100 @@ class HomePersonalizationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guest_keeps_the_editorial_home_order(): void
+    public function test_home_exposes_mixed_discovery_sections_without_duplicates_and_keeps_my_jakawi_separate(): void
     {
-        $featured = $this->benefit('food', true, 10);
-        $other = $this->benefit('cafe', false, 0);
-
-        $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('isPersonalizedHome', false)
-            ->where('featuredBenefits.0.id', $featured->id)
-            ->where('featuredBenefits.1.id', $other->id));
-    }
-
-    public function test_consumer_without_interests_keeps_the_editorial_home_order(): void
-    {
+        $city = City::query()->where('slug', 'cochabamba')->sole();
+        $partner = Partner::factory()->published()->create();
+        $location = Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
+        $benefit = $this->benefit($partner, $location, ['featured' => true]);
+        $experience = $this->experience($partner, $location);
+        $unlock = $this->unlock($location);
         $user = User::factory()->create();
-        $featured = $this->benefit('food', true, 10);
-        $other = $this->benefit('cafe', false, 0);
+        Membership::create(['user_id' => $user->id, 'status' => Membership::STATUS_ACTIVE, 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth(), 'amount_paid' => '100.00']);
+        $before = [DB::table('memberships')->count(), DB::table('reward_transactions')->count(), DB::table('unlock_participations')->count()];
 
         $this->actingAs($user)->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('isPersonalizedHome', false)
-            ->where('featuredBenefits.0.id', $featured->id)
-            ->where('featuredBenefits.1.id', $other->id));
+            ->has('discovery.hero')
+            ->has('discovery.forYou')
+            ->has('discovery.happeningNow')
+            ->has('discovery.discoverMore')
+            ->has('myJakawi')
+            ->missing('featuredBenefits')
+            ->missing('featuredExperiences')
+            ->missing('featuredUnlocks'));
+
+        $response = $this->actingAs($user)->get('/')->viewData('page')['props']['discovery'];
+        $items = collect([$response['hero'], ...$response['forYou'], ...$response['happeningNow'], ...$response['discoverMore']])->filter();
+        $this->assertEqualsCanonicalizing(['BENEFIT', 'EXPERIENCE', 'UNLOCK'], $items->pluck('type')->unique()->all());
+        $this->assertCount($items->count(), $items->map(fn (array $item) => $item['type'].'|'.$item['source_id'])->unique());
+        $this->assertSame([$benefit->id, $experience->id, $unlock->id], $items->pluck('source_id')->sort()->values()->all());
+        $this->assertSame($before, [DB::table('memberships')->count(), DB::table('reward_transactions')->count(), DB::table('unlock_participations')->count()]);
     }
 
-    public function test_cafe_and_food_interests_prioritize_matching_benefits(): void
+    public function test_home_allows_a_null_hero_and_empty_optional_sections_for_empty_inventory(): void
     {
-        $user = User::factory()->create();
-        $user->profile()->create(['interests' => ['cafe', 'food']]);
-        $featuredOther = $this->benefit('shopping', true, 0);
-        $cafe = $this->benefit('cafe', false, 10);
-        $food = $this->benefit('food', false, 20);
-
-        $this->actingAs($user)->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('isPersonalizedHome', true)
-            ->where('featuredBenefits.0.id', $cafe->id)
-            ->where('featuredBenefits.1.id', $food->id)
-            ->where('featuredBenefits.2.id', $featuredOther->id));
+        $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('discovery.hero', null)
+            ->has('discovery.forYou', 0)
+            ->has('discovery.happeningNow', 0)
+            ->has('discovery.discoverMore', 0)
+            ->where('myJakawi', null));
     }
 
-    public function test_experiences_interest_personalizes_upcoming_experiences_and_keeps_the_nearest_editorial_tie_breaker(): void
+    public function test_home_uses_selected_city_for_guest_discovery(): void
     {
-        $user = User::factory()->create();
-        $user->profile()->create(['interests' => ['experiences']]);
-        $later = $this->experience('shopping', false, 0, now()->addDays(3));
-        $sooner = $this->experience('wellness', false, 0, now()->addDay());
+        $city = City::query()->where('slug', 'cochabamba')->sole();
+        $otherCity = City::query()->where('slug', 'la-paz')->sole();
+        $otherCity->update(['status' => City::ACTIVE]);
+        $partner = Partner::factory()->published()->create();
+        $location = Location::factory()->published()->withPartner($partner)->create(['city_id' => $otherCity->id]);
+        $benefit = $this->benefit($partner, $location, ['featured' => true]);
 
-        $this->actingAs($user)->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('isPersonalizedHome', true)
-            ->where('featuredExperiences.0.id', $sooner->id)
-            ->where('featuredExperiences.1.id', $later->id));
+        $this->withCookie('selected_city', $otherCity->slug)->get('/')->assertInertia(fn (Assert $page) => $page
+            ->where('selectedCity.slug', $otherCity->slug)
+            ->where('discovery.hero.type', 'BENEFIT')
+            ->where('discovery.hero.source_id', $benefit->id)
+            ->where('discovery.hero.city.id', $otherCity->id));
+        $this->withCookie('selected_city', $city->slug)->get('/')->assertInertia(fn (Assert $page) => $page->where('discovery.hero', null));
     }
 
-    public function test_unavailable_benefits_and_non_upcoming_experiences_never_surface_as_matches(): void
+    public function test_partner_only_user_keeps_generic_discovery_ranking(): void
     {
-        $user = User::factory()->create();
-        $user->profile()->create(['interests' => ['cafe']]);
-        $available = $this->benefit('food');
-        $expired = Benefit::factory()->published()->for(Partner::factory()->published())->create(['category' => 'cafe', 'ends_at' => now()->subDay()]);
-        $upcoming = $this->experience('food');
-        $past = Experience::factory()->published()->create(['category' => 'cafe']);
-        ExperienceSession::factory()->past()->for($past)->create();
-
-        $this->actingAs($user)->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('featuredBenefits.0.id', $available->id)
-            ->where('featuredBenefits', fn ($benefits) => $benefits->doesntContain('id', $expired->id))
-            ->where('featuredExperiences.0.id', $upcoming->id)
-            ->where('featuredExperiences', fn ($experiences) => $experiences->doesntContain('id', $past->id)));
-    }
-
-    public function test_partner_only_user_gets_generic_home_even_if_a_profile_exists(): void
-    {
+        $city = City::query()->where('slug', 'cochabamba')->sole();
+        $partner = Partner::factory()->published()->create();
+        $location = Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
+        $featured = $this->benefit($partner, $location, ['featured' => true, 'category' => 'food']);
+        $this->benefit($partner, $location, ['category' => 'cafe']);
         $user = User::factory()->create();
         $user->partners()->attach(Partner::factory()->create(), ['role' => 'manager']);
         $user->profile()->create(['interests' => ['cafe']]);
-        $featured = $this->benefit('food', true);
-        $cafe = $this->benefit('cafe');
 
         $this->actingAs($user)->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('isPersonalizedHome', false)
-            ->where('featuredBenefits.0.id', $featured->id)
-            ->where('featuredBenefits.1.id', $cafe->id));
+            ->where('discovery.hero.type', 'BENEFIT')
+            ->where('discovery.hero.source_id', $featured->id));
     }
 
-    public function test_member_admin_is_personalized_and_the_order_is_deterministic(): void
+    private function benefit(Partner $partner, Location $location, array $attributes = []): Benefit
     {
-        $user = User::factory()->create(['is_admin' => true]);
-        $user->profile()->create(['interests' => ['cafe']]);
-        $first = $this->benefit('cafe', false, 0);
-        $second = $this->benefit('cafe', false, 0);
+        $benefit = Benefit::factory()->published()->forPartner($partner)->create(array_merge(['applies_to_all_locations' => true], $attributes));
 
-        $this->actingAs($user)->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('isPersonalizedHome', true)
-            ->where('featuredBenefits.0.id', $first->id)
-            ->where('featuredBenefits.1.id', $second->id));
-
-        $this->actingAs($user)->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('featuredBenefits.0.id', $first->id)
-            ->where('featuredBenefits.1.id', $second->id));
+        return $benefit;
     }
 
-    private function benefit(string $category, bool $featured = false, int $sortOrder = 0): Benefit
+    private function experience(Partner $partner, Location $location): Experience
     {
-        $partner = Partner::factory()->published()->create();
-        Location::factory()->published()->withPartner($partner)->create(['city_id' => City::query()->where('slug', 'cochabamba')->value('id')]);
-
-        return Benefit::factory()->published()->for($partner)->create([
-            'category' => $category,
-            'featured' => $featured,
-            'sort_order' => $sortOrder,
-            'applies_to_all_locations' => true,
-        ]);
-    }
-
-    private function experience(string $category, bool $featured = false, int $sortOrder = 0, mixed $startsAt = null): Experience
-    {
-        $experience = Experience::factory()->published()->create([
-            'category' => $category,
-            'featured' => $featured,
-            'sort_order' => $sortOrder,
-        ]);
-        $location = Location::factory()->published()->create(['city_id' => City::query()->where('slug', 'cochabamba')->value('id')]);
-        ExperienceSession::factory()->upcoming()->for($experience)->withLocation($location)->create(['starts_at' => $startsAt ?? now()->addDay()]);
+        $experience = Experience::factory()->published()->create();
+        $experience->partners()->attach($partner, ['role' => 'HOST', 'sort_order' => 1]);
+        ExperienceSession::factory()->upcoming()->for($experience)->withLocation($location)->create(['starts_at' => now()->addDays(20)]);
 
         return $experience;
+    }
+
+    private function unlock(Location $location): Unlock
+    {
+        $unlock = Unlock::create(['title' => 'Unlock de prueba', 'slug' => 'unlock-de-prueba', 'origin' => 'JAKAWI', 'type' => 'BENEFIT', 'minimum_commitments' => 2, 'free_user_eligible' => true, 'member_eligible' => true, 'status' => Unlock::ACTIVE]);
+        $unlock->locations()->attach($location);
+
+        return $unlock;
     }
 }

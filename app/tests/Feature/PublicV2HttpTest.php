@@ -24,7 +24,7 @@ class PublicV2HttpTest extends TestCase
 
     public function test_home_is_public_tracks_views_and_keeps_a_first_party_visitor(): void
     {
-        $first = $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->component('welcome')->has('featuredBenefits')->has('featuredExperiences'));
+        $first = $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->component('welcome')->has('discovery')->has('myJakawi'));
         $cookieName = config('jakawi.analytics.visitor_cookie');
         $this->assertMatchesRegularExpression('/'.preg_quote($cookieName, '/').'=(?<visitor>[0-9a-f-]{36});/i', $first->headers->get('Set-Cookie'));
         preg_match('/'.preg_quote($cookieName, '/').'=(?<visitor>[0-9a-f-]{36});/i', $first->headers->get('Set-Cookie'), $matches);

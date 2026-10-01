@@ -50,3 +50,10 @@ export type DiscoveryOpportunity = {
     editorial_priority: number | null;
     metadata: Record<string, boolean | number | string | null>;
 };
+
+export type HomeDiscovery = {
+    hero: DiscoveryOpportunity | null;
+    forYou: DiscoveryOpportunity[];
+    happeningNow: DiscoveryOpportunity[];
+    discoverMore: DiscoveryOpportunity[];
+};

@@ -87,9 +87,8 @@ class MemberAffinityServiceTest extends TestCase
         $this->benefit('wellness');
 
         $this->actingAs($user)->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('isPersonalizedHome', true)
-            ->where('personalizationSubtitle', 'Según tu actividad.')
-            ->where('featuredBenefits.0.category', 'wellness'));
+            ->where('discovery.hero.type', 'BENEFIT')
+            ->where('discovery.hero.categories.0', 'wellness'));
 
         $this->assertNull($user->fresh()->profile);
     }

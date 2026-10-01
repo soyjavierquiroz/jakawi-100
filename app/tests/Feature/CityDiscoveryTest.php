@@ -80,7 +80,7 @@ class CityDiscoveryTest extends TestCase
         $this->cbb->update(['status' => City::PAUSED]);
 
         $this->withCookie('selected_city', 'cochabamba')->get('/')->assertInertia(
-            fn (Assert $page) => $page->where('selectedCity.slug', 'la-paz')->has('featuredBenefits', 2)
+            fn (Assert $page) => $page->where('selectedCity.slug', 'la-paz')->where('discovery.hero.city.slug', 'la-paz')
         );
     }
 
@@ -97,10 +97,9 @@ class CityDiscoveryTest extends TestCase
         $before = [DB::table('memberships')->count(), DB::table('reward_transactions')->count(), DB::table('jp_holds')->count()];
 
         $this->withCookie('selected_city', 'cochabamba')->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('selectedCity.slug', 'cochabamba')->has('featuredBenefits', 2)->has('featuredExperiences', 1)->has('featuredUnlocks', 1));
+            ->where('selectedCity.slug', 'cochabamba')->has('discovery.hero')->has('discovery.forYou'));
         $this->withCookie('selected_city', 'la-paz')->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('selectedCity.slug', 'la-paz')->has('featuredBenefits', 2)->has('featuredExperiences', 1)->has('featuredUnlocks', 0)
-            ->where('featuredExperiences.0.sessions.0.id', $this->lpzSession->id));
+            ->where('selectedCity.slug', 'la-paz')->where('discovery.hero.city.slug', 'la-paz'));
 
         foreach ([['', 4], ['benefits', 2], ['experiences', 1], ['places', 1]] as [$type, $count]) {
             $this->withCookie('selected_city', 'la-paz')->get('/explorar?type='.$type)->assertInertia(fn (Assert $page) => $page->has('results', $count));
