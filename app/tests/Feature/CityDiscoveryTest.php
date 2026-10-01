@@ -101,13 +101,13 @@ class CityDiscoveryTest extends TestCase
         $this->withCookie('selected_city', 'la-paz')->get('/')->assertInertia(fn (Assert $page) => $page
             ->where('selectedCity.slug', 'la-paz')->where('discovery.hero.city.slug', 'la-paz'));
 
-        foreach ([['', 4], ['benefits', 2], ['experiences', 1], ['places', 1]] as [$type, $count]) {
-            $this->withCookie('selected_city', 'la-paz')->get('/explorar?type='.$type)->assertInertia(fn (Assert $page) => $page->has('results', $count));
+        foreach ([['', 'opportunities', 3], ['benefits', 'opportunities', 2], ['experiences', 'opportunities', 1], ['unlocks', 'opportunities', 0], ['places', 'places', 1]] as [$type, $property, $count]) {
+            $this->withCookie('selected_city', 'la-paz')->get('/explorar?type='.$type)->assertInertia(fn (Assert $page) => $page->has($property, $count));
         }
-        $this->withCookie('selected_city', 'la-paz')->get('/explorar?type=benefits&q=beneficio-cbb')->assertInertia(fn (Assert $page) => $page->has('results', 0));
-        $this->withCookie('selected_city', 'cochabamba')->get('/explorar?type=benefits&q=beneficio-lpz')->assertInertia(fn (Assert $page) => $page->has('results', 0));
-        $this->withCookie('selected_city', 'la-paz')->get('/explorar?type=experiences')->assertInertia(fn (Assert $page) => $page->where('results.0.sessions.0.id', $this->lpzSession->id));
-        $this->withCookie('selected_city', 'la-paz')->get('/explorar')->assertInertia(fn (Assert $page) => $page->missing('results.0.venue_label'));
+        $this->withCookie('selected_city', 'la-paz')->get('/explorar?type=benefits&q=beneficio-cbb')->assertInertia(fn (Assert $page) => $page->has('opportunities', 0));
+        $this->withCookie('selected_city', 'cochabamba')->get('/explorar?type=benefits&q=beneficio-lpz')->assertInertia(fn (Assert $page) => $page->has('opportunities', 0));
+        $this->withCookie('selected_city', 'la-paz')->get('/explorar?type=experiences')->assertInertia(fn (Assert $page) => $page->where('opportunities.0.source_id', $this->experience->id));
+        $this->withCookie('selected_city', 'la-paz')->get('/explorar')->assertInertia(fn (Assert $page) => $page->missing('opportunities.0.venue_label'));
 
         $this->assertSame($membership->id, Membership::findOrFail($membership->id)->id);
         $this->assertSame($before, [DB::table('memberships')->count(), DB::table('reward_transactions')->count(), DB::table('jp_holds')->count()]);

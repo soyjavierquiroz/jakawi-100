@@ -9,11 +9,9 @@ use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
 use App\Models\Unlock;
-use App\Discovery\BenefitDiscoveryQuery;
 use App\Discovery\DiscoveryContext;
 use App\Discovery\DiscoveryService;
-use App\Discovery\ExperienceDiscoveryQuery;
-use App\Discovery\UnlockDiscoveryQuery;
+use App\Discovery\OpportunityType;
 use App\Services\AnalyticsTracker;
 use App\Services\MediaUrl;
 use App\Services\SelectedCity;
@@ -76,44 +74,39 @@ class PublicController extends Controller
         return Inertia::render('benefits/index', ['benefits' => $query->get()->map(fn ($b) => $this->benefitData($b)), 'category' => $request->query('category')]);
     }
 
-    public function explore(Request $request): Response
+    public function explore(Request $request, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
-        $city = app(SelectedCity::class)->resolve($request);
+        $city = $selectedCity->resolve($request);
         $term = trim((string) $request->query('q', ''));
         $category = $request->query('category');
-        $type = $request->query('type');
-        $benefits = app(BenefitDiscoveryQuery::class)->forCity($city)->with('partner')->orderByDesc('featured')->orderBy('sort_order');
-        $experiences = app(ExperienceDiscoveryQuery::class)->forCity($city)->orderByDesc('featured')->orderBy('sort_order');
+        $category = in_array($category, config('jakawi.categories'), true) ? $category : null;
+        $type = in_array($request->query('type'), ['benefits', 'experiences', 'unlocks', 'places'], true) ? $request->query('type') : null;
         $partners = Partner::query()->published()->whereHas('locations', fn (Builder $query) => $query->published()->where('city_id', $city->id))->orderByDesc('featured')->orderBy('name');
-        $unlocks = app(UnlockDiscoveryQuery::class)->forCity($city)->orderByDesc('featured');
 
-        if ($category && $category !== 'todos') {
-            $benefits->where('category', $category);
-            $experiences->where('category', $category);
+        if ($category !== null) {
             $partners->where('category', $category);
         }
         if ($term !== '') {
             $like = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%';
-            $benefits->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partner', fn ($p) => $p->where('name', 'ilike', $like)));
-            $experiences->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhereHas('partners', fn ($p) => $p->where('name', 'ilike', $like)));
             $partners->where(fn ($query) => $query->where('name', 'ilike', $like)->orWhere('description', 'ilike', $like));
-            $unlocks->where(fn ($query) => $query->where('title', 'ilike', $like)->orWhere('short_description', 'ilike', $like));
         }
 
-        $benefitResults = in_array($type, ['experiences', 'places'], true) ? collect() : $benefits->get()->map(fn ($b) => $this->benefitData($b) + ['result_type' => 'benefit']);
-        $experienceResults = in_array($type, ['benefits', 'places'], true) ? collect() : $experiences->get()->map(fn ($e) => $this->experienceData($e) + ['result_type' => 'experience']);
-        $partnerResults = in_array($type, ['benefits', 'experiences'], true) ? collect() : $partners->get()->map(fn ($p) => $this->partner($p) + ['result_type' => 'partner']);
-        $unlockResults = in_array($type, ['benefits', 'experiences', 'places'], true) ? collect() : $unlocks->get()->map(fn ($u) => app(UnlockController::class)->data($u) + ['result_type' => 'unlock']);
+        $opportunityType = match ($type) {
+            'benefits' => OpportunityType::BENEFIT,
+            'experiences' => OpportunityType::EXPERIENCE,
+            'unlocks' => OpportunityType::UNLOCK,
+            default => null,
+        };
+        $opportunities = $type === 'places' ? [] : $discovery->explore(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore', candidateLimitPerDomain: 24), $opportunityType, $category, $term, 24);
+        $places = $type === 'places' ? $partners->limit(24)->get()->map(fn (Partner $partner) => $this->partner($partner))->values() : collect();
 
         return Inertia::render('explore', [
             'query' => $term,
             'category' => $category,
             'type' => $type,
-            'benefits' => $benefitResults,
-            'experiences' => $experienceResults,
-            'partners' => $partnerResults,
-            'unlocks' => $unlockResults,
-            'results' => $unlockResults->concat($partnerResults)->concat($benefitResults)->concat($experienceResults)->values(),
+            'categories' => config('jakawi.categories'),
+            'opportunities' => array_map(fn ($item) => $item->toArray(), $opportunities),
+            'places' => $places,
         ]);
     }
 

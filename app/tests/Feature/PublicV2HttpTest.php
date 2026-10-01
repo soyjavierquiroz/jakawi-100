@@ -102,37 +102,26 @@ class PublicV2HttpTest extends TestCase
 
         $this->get('/explorar')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('explore')
-            ->has('results', 5)
-            ->where('results.0.result_type', 'unlock')
-            ->where('results.0.slug', $unlock->slug)
-            ->where('results.1.result_type', 'partner')
-            ->where('results.1.slug', $partner->slug)
-            ->where('results.1.cover_url', 'https://jakawi.com/storage/partners/brasa-prisma.jpg')
-            ->where('results.2.result_type', 'partner')
-            ->where('results.2.slug', $partnerWithoutMedia->slug)
-            ->where('results.2.cover_url', null)
-            ->where('results.3.result_type', 'benefit')
-            ->where('results.3.slug', $benefit->slug)
-            ->where('results.4.result_type', 'experience')
-            ->where('results.4.slug', $experience->slug)
+            ->has('opportunities', 3)
+            ->has('places', 0)
         );
         $this->get('/explorar?type=places')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->has('results', 2)
-            ->where('results.0.result_type', 'partner')
-            ->where('results.0.slug', $partner->slug)
-            ->where('results.0.cover_url', 'https://jakawi.com/storage/partners/brasa-prisma.jpg')
-            ->where('results.1.slug', $partnerWithoutMedia->slug)
-            ->where('results.1.cover_url', null)
+            ->has('places', 2)
+            ->has('opportunities', 0)
+            ->where('places.0.slug', $partner->slug)
+            ->where('places.0.cover_url', 'https://jakawi.com/storage/partners/brasa-prisma.jpg')
+            ->where('places.1.slug', $partnerWithoutMedia->slug)
+            ->where('places.1.cover_url', null)
         );
         $this->get('/explorar?type=benefits')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->has('results', 1)
-            ->where('results.0.result_type', 'benefit')
-            ->where('results.0.slug', $benefit->slug)
+            ->has('opportunities', 1)
+            ->where('opportunities.0.type', 'BENEFIT')
+            ->where('opportunities.0.source_id', $benefit->id)
         );
         $this->get('/explorar?type=experiences')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->has('results', 1)
-            ->where('results.0.result_type', 'experience')
-            ->where('results.0.slug', $experience->slug)
+            ->has('opportunities', 1)
+            ->where('opportunities.0.type', 'EXPERIENCE')
+            ->where('opportunities.0.source_id', $experience->id)
         );
         $this->get('/d/'.$unlock->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('unlocks/show')->where('unlock.slug', $unlock->slug));
     }

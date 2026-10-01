@@ -6,6 +6,7 @@ use App\Models\Benefit;
 use App\Models\Experience;
 use App\Models\Unlock;
 use App\Services\MemberAffinityService;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Read-only aggregation boundary for Discovery. Candidate queries are capped
@@ -83,6 +84,70 @@ final readonly class DiscoveryService
         $forYou = array_splice($remaining, 0, max(0, $context->forYouLimit));
 
         return new DiscoveryResult($hero, $forYou, $happeningNow, array_slice($remaining, 0, max(0, $context->discoverMoreLimit)));
+    }
+
+    /**
+     * Bounded, flat Discovery output for Explore. Filters are applied to the
+     * source-domain predicates before adapting, so a category never becomes a
+     * synthetic property of an Unlock.
+     *
+     * @return list<DiscoveryOpportunity>
+     */
+    public function explore(DiscoveryContext $context, ?OpportunityType $type = null, ?string $category = null, ?string $term = null, int $limit = 24): array
+    {
+        $city = new DiscoveryCity($context->city->id, $context->city->name, $context->city->slug);
+        $limit = max(1, $limit);
+        $like = $term !== null && $term !== '' ? '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%' : null;
+        $items = [];
+
+        if ($type === null || $type === OpportunityType::BENEFIT) {
+            $benefits = $this->benefits->forCity($context->city);
+            if ($category !== null) {
+                $benefits->where('category', $category);
+            }
+            if ($like !== null) {
+                $benefits->where(fn (Builder $query) => $query->where('title', 'ilike', $like)->orWhereHas('partner', fn (Builder $partner) => $partner->where('name', 'ilike', $like)));
+            }
+            foreach ($benefits->limit($limit)->get() as $benefit) {
+                $location = $benefit->applies_to_all_locations ? $benefit->partner->locations->first() : $benefit->locations->first();
+                $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location);
+            }
+        }
+
+        if ($type === null || $type === OpportunityType::EXPERIENCE) {
+            $experiences = $this->experiences->forCity($context->city);
+            if ($category !== null) {
+                $experiences->where('category', $category);
+            }
+            if ($like !== null) {
+                $experiences->where(fn (Builder $query) => $query->where('title', 'ilike', $like)->orWhereHas('partners', fn (Builder $partner) => $partner->where('name', 'ilike', $like)));
+            }
+            foreach ($experiences->limit($limit)->get() as $experience) {
+                $session = $experience->sessions->sortBy('starts_at')->first();
+                if ($session !== null && $session->location !== null) {
+                    $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first());
+                }
+            }
+        }
+
+        // Unlocks have no category in V1. An explicit category therefore
+        // yields no Unlocks rather than inventing a match from a linked domain.
+        if (($type === null || $type === OpportunityType::UNLOCK) && $category === null) {
+            $unlocks = $this->unlocks->forCity($context->city);
+            if ($like !== null) {
+                $unlocks->where(fn (Builder $query) => $query->where('title', 'ilike', $like)->orWhere('short_description', 'ilike', $like));
+            }
+            $unlocks = $unlocks->limit($limit)->get();
+            $progress = $this->progress->forUnlocks($unlocks->pluck('id')->all(), $unlocks->mapWithKeys(fn (Unlock $unlock): array => [$unlock->id => $unlock->minimum_commitments])->all());
+            foreach ($unlocks as $unlock) {
+                $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first());
+            }
+        }
+
+        $items = array_values(collect($items)->unique(fn (DiscoveryOpportunity $item): string => $item->type->value.'|'.$item->sourceId)->all());
+        $ranked = $this->ranker->rank($items, $this->affinity->explicitCategoryAffinity($context->user), $this->affinity->behavioralCategoryAffinity($context->user));
+
+        return array_slice($type === null ? $this->diversify($ranked) : $ranked, 0, $limit);
     }
 
     /** @param list<DiscoveryOpportunity> $ranked @return list<DiscoveryOpportunity> */
