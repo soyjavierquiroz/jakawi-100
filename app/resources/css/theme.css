@@ -1,6 +1,7 @@
 :root {
     --brand: #ff5a4f;
     --brand-foreground: #111111;
+    --brand-contrast-surface: #fff8f2;
     --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
     --action: #ffc83d;
     --action-foreground: #111111;
@@ -80,6 +81,7 @@
 .dark {
     --brand: #ff5a4f;
     --brand-foreground: #111111;
+    --brand-contrast-surface: #fff8f2;
     --brand-subtle: color-mix(in srgb, var(--brand) 18%, var(--surface));
     --action: #ffc83d;
     --action-foreground: #111111;
