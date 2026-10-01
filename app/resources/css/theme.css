@@ -19,6 +19,7 @@
     --border: #e9ddd4;
     --border-strong: #d7c7bc;
     --overlay: color-mix(in srgb, var(--foreground) 42%, transparent);
+    --overlay-scrim: color-mix(in srgb, #111111 82%, transparent);
 
     --success: #24b47e;
     --success-foreground: #111111;
@@ -96,6 +97,7 @@
     --border: #332f2b;
     --border-strong: #48413c;
     --overlay: color-mix(in srgb, var(--foreground) 48%, transparent);
+    --overlay-scrim: color-mix(in srgb, #000000 86%, transparent);
 
     --success: #24b47e;
     --success-foreground: #111111;

@@ -45,6 +45,7 @@ class PublicController extends Controller
                 'discoverMore' => array_map(fn ($item) => $item->toArray(), $result->discoverMore),
             ],
             'myJakawi' => $membership ? $this->membership($membership) : null,
+            'categories' => config('jakawi.categories'),
         ]);
     }
 

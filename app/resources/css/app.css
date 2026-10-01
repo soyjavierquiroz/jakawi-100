@@ -84,6 +84,7 @@
 
     --color-border: var(--border);
     --color-overlay: var(--overlay);
+    --color-overlay-scrim: var(--overlay-scrim);
     --color-input: var(--input);
     --color-ring: var(--ring);
 
