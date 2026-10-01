@@ -1,10 +1,13 @@
 :root {
+    /* Brand and semantic colors are defined here only. Components consume tokens, never palette literals. */
     /* Discovery V2 semantic foundation. Legacy shadcn names below remain aliases. */
-    --background: #fff8f2;
+    --ink: #111111;
+    --cream: #fff8f2;
+    --background: var(--cream);
     --surface: #fffdf9;
     --surface-raised: #ffffff;
     --surface-subtle: #f6eee8;
-    --text-primary: #111111;
+    --text-primary: var(--ink);
     --text-secondary: #514a45;
     --text-muted: #706761;
     --border: #e9ddd4;
@@ -12,14 +15,14 @@
     --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
     --success: #24b47e;
     --reward: #ffc83d;
-    --scrim: color-mix(in srgb, #111111 82%, transparent);
-    --shadow: 0 8px 24px rgb(17 17 17 / 6%);
-    --shadow-featured: 0 14px 30px rgb(17 17 17 / 10%);
+    --scrim: color-mix(in srgb, var(--ink) 82%, transparent);
+    --shadow: 0 8px 24px color-mix(in srgb, var(--ink) 6%, transparent);
+    --shadow-featured: 0 14px 30px color-mix(in srgb, var(--ink) 10%, transparent);
 
-    --brand-foreground: #111111;
-    --brand-contrast-surface: #fff8f2;
+    --brand-foreground: var(--ink);
+    --brand-contrast-surface: var(--cream);
     --action: var(--reward);
-    --action-foreground: #111111;
+    --action-foreground: var(--ink);
     --energy: var(--action);
     --energy-foreground: var(--action-foreground);
 
@@ -34,7 +37,7 @@
     --overlay: color-mix(in srgb, var(--foreground) 42%, transparent);
     --overlay-scrim: var(--scrim);
 
-    --success-foreground: #111111;
+    --success-foreground: var(--ink);
     --success-surface: color-mix(
         in srgb,
         var(--success) 16%,
@@ -90,26 +93,21 @@
 }
 
 .dark {
-    --background: #111111;
+    --background: var(--ink);
     --surface: #191919;
     --surface-raised: #202020;
     --surface-subtle: #24211f;
-    --text-primary: #fff8f2;
+    --text-primary: var(--cream);
     --text-secondary: #eee5de;
     --text-muted: #beb2aa;
     --border: #332f2b;
-    --brand: #ff5a4f;
-    --brand-foreground: #111111;
-    --brand-contrast-surface: #fff8f2;
     --brand-subtle: color-mix(in srgb, var(--brand) 18%, var(--surface));
-    --success: #24b47e;
-    --reward: #ffc83d;
     --scrim: color-mix(in srgb, #000000 86%, transparent);
-    --shadow: 0 10px 28px rgb(0 0 0 / 28%);
-    --shadow-featured: 0 16px 36px rgb(0 0 0 / 38%);
+    --shadow: 0 10px 28px color-mix(in srgb, var(--background) 28%, transparent);
+    --shadow-featured: 0 16px 36px color-mix(in srgb, var(--background) 38%, transparent);
 
     --action: var(--reward);
-    --action-foreground: #111111;
+    --action-foreground: var(--ink);
     --energy: var(--action);
     --energy-foreground: var(--action-foreground);
     --foreground: var(--text-primary);
@@ -123,7 +121,7 @@
     --overlay: color-mix(in srgb, var(--foreground) 48%, transparent);
     --overlay-scrim: var(--scrim);
 
-    --success-foreground: #111111;
+    --success-foreground: var(--ink);
     --success-surface: color-mix(in srgb, var(--success) 18%, var(--surface));
     --warning: oklch(0.78 0.16 75);
     --warning-foreground: oklch(0.18 0.02 85);
