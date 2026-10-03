@@ -44,7 +44,6 @@
         <link rel="manifest" href="/manifest.webmanifest">
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        {{-- Temporary application icon until final JAKAWI mark is approved. --}}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         @fonts

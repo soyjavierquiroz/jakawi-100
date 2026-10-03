@@ -1,5 +1,4 @@
 import { Link } from '@inertiajs/react';
-import { BrandEnergy } from '@/components/brand-energy';
 import { home } from '@/routes';
 import type { AuthLayoutProps } from '@/types';
 
@@ -15,10 +14,13 @@ export default function AuthSimpleLayout({
                     <div className="flex flex-col items-center gap-5 text-center">
                         <Link
                             href={home()}
-                            className="flex items-center gap-3 text-xs font-extrabold tracking-[0.18em] text-foreground uppercase"
+                            className="flex items-center"
                         >
-                            JAKAWI
-                            <BrandEnergy />
+                            <img
+                                src="/jakawi-logo.svg"
+                                alt="JAKAWI"
+                                className="h-10 w-auto"
+                            />
                         </Link>
 
                         <div className="space-y-3">
