@@ -9,13 +9,14 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $user_id
+ * @property string|null $whatsapp
  * @property array<int, string>|null $interests
  * @property array<int, string>|null $social_contexts
  * @property array<int, string>|null $preferred_days
  * @property array<int, string>|null $preferred_times
  * @property Carbon|null $profile_completed_at
  */
-#[Fillable(['avatar_path', 'city', 'interests', 'social_contexts', 'preferred_days', 'preferred_times', 'profile_completed_at'])]
+#[Fillable(['whatsapp', 'avatar_path', 'city', 'interests', 'social_contexts', 'preferred_days', 'preferred_times', 'profile_completed_at'])]
 class UserProfile extends Model
 {
     public function user(): BelongsTo

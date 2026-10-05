@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses;
 
+use App\Services\PublicJourneyContinuation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
@@ -21,6 +22,16 @@ class LoginResponse implements LoginResponseContract
             return redirect()->to($this->intendedOrFallback($request, $partners->count() === 1
                 ? route('partner.portal.show', $partners->first())
                 : route('partner.index'), true));
+        }
+
+        if (! $request->wantsJson()) {
+            $continuation = app(PublicJourneyContinuation::class);
+            $intent = $continuation->consume();
+            if ($intent !== null && ($destination = $continuation->destination($intent)) !== null) {
+                $request->session()->forget('url.intended');
+
+                return redirect()->to($destination);
+            }
         }
 
         return $request->wantsJson()

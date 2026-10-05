@@ -1,6 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
 import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,108 +9,44 @@ import { login } from '@/routes';
 import { store } from '@/routes/register';
 
 type Props = {
-    passwordRules: string;
+    referralCode?: string | null;
 };
 
-export default function Register({ passwordRules }: Props) {
+export default function Register({ referralCode }: Props) {
     return (
         <>
-            <Head title="Register" />
-            <Form
-                {...store.form()}
-                resetOnSuccess={['password', 'password_confirmation']}
-                disableWhileProcessing
-                className="flex flex-col gap-6"
-            >
+            <Head title="Crear cuenta gratis" />
+            <Form {...store.form()} disableWhileProcessing className="flex flex-col gap-6">
                 {({ processing, errors }) => (
                     <>
-                        <div className="grid gap-6">
+                        {referralCode && <input type="hidden" name="referral_code" value={referralCode} />}
+                        <div className="grid gap-5">
                             <div className="grid gap-2">
-                                <Label htmlFor="referral_code">¿Tienes un código?</Label>
-                                <Input id="referral_code" type="text" tabIndex={3} name="referral_code" placeholder="Opcional" />
-                                <InputError message={errors.referral_code} />
+                                <Label htmlFor="name">Nombre</Label>
+                                <Input id="name" name="name" type="text" required autoFocus autoComplete="name" placeholder="Tu nombre" />
+                                <InputError message={errors.name} />
                             </div>
-
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="name"
-                                    name="name"
-                                    placeholder="Full name"
-                                />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
-                                />
+                                <Label htmlFor="email">Correo</Label>
+                                <Input id="email" name="email" type="email" required autoComplete="email" placeholder="tu@correo.com" />
                                 <InputError message={errors.email} />
                             </div>
-
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <PasswordInput
-                                    id="password"
-                                    required
-                                    tabIndex={4}
-                                    autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
-                                    passwordrules={passwordRules}
-                                />
-                                <InputError message={errors.password} />
+                                <Label htmlFor="whatsapp">WhatsApp</Label>
+                                <Input id="whatsapp" name="whatsapp" type="tel" required autoComplete="tel" inputMode="tel" placeholder="71234567" aria-describedby="whatsapp-hint" />
+                                <p id="whatsapp-hint" className="text-sm text-muted-foreground">Número de Bolivia; incluye el código de país si usas otro país.</p>
+                                <InputError message={errors.whatsapp} />
                             </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
-                                <PasswordInput
-                                    id="password_confirmation"
-                                    required
-                                    tabIndex={5}
-                                    autoComplete="new-password"
-                                    name="password_confirmation"
-                                    placeholder="Confirm password"
-                                    passwordrules={passwordRules}
-                                />
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={6}
-                                data-test="register-user-button"
-                            >
+                            <Button type="submit" className="mt-2 w-full" disabled={processing} data-test="register-user-button">
                                 {processing && <Spinner />}
-                                Create account
+                                Crear cuenta gratis
                             </Button>
                         </div>
-
                         <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={7}>
-                                Log in
-                            </TextLink>
+                            ¿Ya tienes cuenta?{' '}
+                            <TextLink href={login()}>Inicia sesión</TextLink>
+                            {' · '}
+                            <TextLink href="/forgot-password">Recupera tu acceso</TextLink>
                         </div>
                     </>
                 )}
@@ -121,6 +56,6 @@ export default function Register({ passwordRules }: Props) {
 }
 
 Register.layout = {
-    title: 'Create an account',
-    description: 'Enter your details below to create your account',
+    title: 'Crea tu cuenta gratis',
+    description: 'Solo necesitamos tu nombre, correo y WhatsApp.',
 };

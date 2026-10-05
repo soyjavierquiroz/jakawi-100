@@ -92,4 +92,28 @@ class PasswordResetTest extends TestCase
 
         $response->assertSessionHasErrors('email');
     }
+
+    public function test_public_signup_user_can_choose_password_with_reset_and_then_log_in(): void
+    {
+        Notification::fake();
+        $this->post('/register', ['name' => 'New User', 'email' => 'new@example.test', 'whatsapp' => '71234567'])->assertRedirect();
+        $user = User::whereEmail('new@example.test')->firstOrFail();
+        $this->post(route('logout'));
+
+        $this->post(route('password.email'), ['email' => $user->email]);
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+            $this->post(route('password.update'), [
+                'token' => $notification->token,
+                'email' => $user->email,
+                'password' => 'chosen-password-123',
+                'password_confirmation' => 'chosen-password-123',
+            ])->assertSessionHasNoErrors()->assertRedirect(route('login'));
+
+            return true;
+        });
+
+        $this->post(route('login.store'), ['email' => $user->email, 'password' => 'chosen-password-123'])
+            ->assertRedirect('/mi-jakawi');
+        $this->assertAuthenticatedAs($user);
+    }
 }

@@ -16,7 +16,7 @@ class AttributionFoundationTest extends TestCase
     use RefreshDatabase;
 
     private function referrer(string $code = 'COCHAFOOD'): User { return User::factory()->create(['referral_code' => $code, 'referral_code_normalized' => $code]); }
-    private function register(array $data = []): void { $this->post('/register', array_merge(['name' => 'New User', 'email' => 'new@example.test', 'password' => 'password', 'password_confirmation' => 'password'], $data))->assertRedirect(); }
+    private function register(array $data = []): void { $this->post('/register', array_merge(['name' => 'New User', 'email' => 'new@example.test', 'whatsapp' => '71234567'], $data))->assertRedirect(); }
 
     public function test_anonymous_referral_is_associated_at_signup(): void { $referrer = $this->referrer(); $this->get('/r/COCHAFOOD?utm_source=tiktok&utm_campaign=launch')->assertRedirect('/?utm_source=tiktok&utm_campaign=launch'); $this->register(); $user = User::whereEmail('new@example.test')->firstOrFail(); $this->assertDatabaseHas('referral_relationships', ['referrer_user_id' => $referrer->id, 'referred_user_id' => $user->id]); $this->assertDatabaseHas('attribution_touches', ['user_id' => $user->id, 'utm_source' => 'tiktok']); }
     public function test_first_referrer_remains_within_window_and_second_is_a_touch(): void { $a = $this->referrer('A100'); $b = $this->referrer('B100'); $this->get('/r/A100'); $this->get('/r/B100'); $this->register(); $user = User::whereEmail('new@example.test')->firstOrFail(); $this->assertDatabaseHas('referral_relationships', ['referrer_user_id' => $a->id, 'referred_user_id' => $user->id, 'status' => 'active']); $this->assertDatabaseHas('attribution_touches', ['user_id' => $user->id, 'referrer_user_id' => $b->id]); }

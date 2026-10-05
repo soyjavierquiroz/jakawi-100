@@ -31,7 +31,7 @@ class PartnerAcquisitionTest extends TestCase
         $user = User::factory()->create(['referral_code' => 'USERCODE', 'referral_code_normalized' => 'USERCODE']);
         $this->assertNotSame('USERCODE', app(ReferralCodeService::class)->ensureFor($partner));
         $this->get('/r/'.$partner->referral_code.'?utm_source=poster&utm_campaign=door')->assertRedirect('/?utm_source=poster&utm_campaign=door');
-        $this->post('/register', ['name' => 'New User', 'email' => 'partner@example.test', 'password' => 'password', 'password_confirmation' => 'password'])->assertRedirect();
+        $this->post('/register', ['name' => 'New User', 'email' => 'partner@example.test', 'whatsapp' => '71234567'])->assertRedirect();
         $registered = User::whereEmail('partner@example.test')->firstOrFail();
         $this->assertDatabaseHas('attribution_touches', ['user_id' => $registered->id, 'acquisition_partner_id' => $partner->id, 'utm_source' => 'poster']);
         $this->assertDatabaseHas('referral_relationships', ['referred_user_id' => $registered->id, 'acquisition_partner_id' => $partner->id, 'referrer_user_id' => null]);
@@ -41,7 +41,7 @@ class PartnerAcquisitionTest extends TestCase
     {
         $a = $this->partner('Partner Alpha'); $b = $this->partner('Partner Beta');
         $this->get('/r/'.$a->referral_code); $this->get('/r/'.$b->referral_code);
-        $this->post('/register', ['name' => 'New User', 'email' => 'metrics@example.test', 'password' => 'password', 'password_confirmation' => 'password']);
+        $this->post('/register', ['name' => 'New User', 'email' => 'metrics@example.test', 'whatsapp' => '71234567']);
         $user = User::whereEmail('metrics@example.test')->firstOrFail();
         $relationship = ReferralRelationship::where('referred_user_id', $user->id)->firstOrFail();
         $this->assertSame($a->id, $relationship->acquisition_partner_id);

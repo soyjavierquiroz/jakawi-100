@@ -153,6 +153,7 @@ class AnalyticsTracker
             'maps_click' => ['source'],
             'city_viewed', 'city_interest_recorded' => ['city_id', 'city_slug', 'authenticated'],
             'partner_application_started', 'partner_application_submitted' => ['city_id', 'city_slug'],
+            'landing_view', 'landing_cta_click' => ['landing'],
             'opportunity_impression', 'opportunity_opened' => ['opportunity_type', 'source_id', 'city_id', 'city_slug', 'surface', 'section', 'position', 'category'],
             default => [],
         };

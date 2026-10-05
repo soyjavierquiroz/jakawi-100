@@ -52,6 +52,16 @@ class MemberProfileTest extends TestCase
         $this->assertTrue($completedAt->equalTo($profile->profile_completed_at));
     }
 
+    public function test_profile_edit_preserves_signup_whatsapp(): void
+    {
+        $this->post('/register', ['name' => 'New User', 'email' => 'new@example.test', 'whatsapp' => '71234567'])->assertRedirect();
+        $user = User::whereEmail('new@example.test')->firstOrFail();
+
+        $this->put('/mi-jakawi/perfil', ['interests' => ['food']])->assertRedirect();
+
+        $this->assertSame('+59171234567', $user->profile()->firstOrFail()->whatsapp);
+    }
+
     public function test_each_preference_group_can_be_updated_and_invalid_values_are_rejected(): void
     {
         $user = User::factory()->create();
