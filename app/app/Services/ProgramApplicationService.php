@@ -32,6 +32,7 @@ class ProgramApplicationService
                 'attribution_touch_id' => $current?->id,
                 'attribution_snapshot' => $current ? ['first' => $first?->only($fields), 'conversion' => $current->only($fields)] : null,
             ]);
+            app(OwnershipAssignmentService::class)->inheritFromUser($application, $user);
             return [$application, true];
         });
     }

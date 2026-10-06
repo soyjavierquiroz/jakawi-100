@@ -7,6 +7,7 @@ use App\Models\ProgramApplication;
 use App\Models\ProgramEnrollment;
 use App\Models\User;
 use App\Services\ReferralCodeService;
+use App\Services\OwnershipAssignmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -30,12 +31,17 @@ class AdminProgramApplicationController extends Controller
         ]);
     }
 
-    public function show(ProgramApplication $programApplication): Response
+    public function show(ProgramApplication $programApplication, OwnershipAssignmentService $ownership): Response
     {
+        $assignment = $ownership->current($programApplication);
         return Inertia::render('admin/program-applications/show', [
             'application' => $programApplication->load('user:id,name,email', 'user.profile:user_id,whatsapp,city'),
             'statuses' => ProgramApplication::statuses(),
             'enrollment' => $programApplication->user->programEnrollments()->where('program_type', $programApplication->program_type)->latest()->first(),
+            'ownership' => $assignment?->load('owner:id,name'),
+            'ownerCandidates' => User::query()->where(fn ($q) => $q->where('is_admin', true)
+                ->orWhereHas('programEnrollments', fn ($enrollments) => $enrollments->active()->whereIn('program_type', ProgramApplication::programTypes())))
+                ->whereKeyNot($programApplication->user_id)->orderBy('name')->get(['id', 'name']),
         ]);
     }
 

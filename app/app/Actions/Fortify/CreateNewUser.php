@@ -6,6 +6,7 @@ use App\Concerns\ProfileValidationRules;
 use App\Models\User;
 use App\Services\AnalyticsTracker;
 use App\Services\AttributionService;
+use App\Services\OwnershipAssignmentService;
 use App\Services\PhoneNormalizer;
 use App\Services\ReferralCodeService;
 use Illuminate\Http\Request;
@@ -45,6 +46,7 @@ class CreateNewUser implements CreatesNewUsers
             $user->profile()->create(['whatsapp' => $whatsapp]);
             app(ReferralCodeService::class)->ensureFor($user);
             app(AttributionService::class)->associateRegisteredUser($user, $request, $input['referral_code'] ?? null);
+            app(OwnershipAssignmentService::class)->autoAssignUserFromReferral($user);
             return $user;
         });
         if (filled($input['referral_code'] ?? null)) app(AnalyticsTracker::class)->record('referral_code_entered');

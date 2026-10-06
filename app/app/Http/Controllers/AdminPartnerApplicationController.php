@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\AuditLog;
 use App\Models\City;
 use App\Models\PartnerApplication;
+use App\Models\ProgramEnrollment;
+use App\Models\User;
+use App\Services\OwnershipAssignmentService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -19,9 +22,18 @@ class AdminPartnerApplicationController extends Controller
         if ($request->filled('status')) $query->where('status', $request->string('status'));
         return Inertia::render('admin/partner-applications/index', ['applications' => $query->paginate(20)->withQueryString(), 'cities' => City::orderBy('name')->get(['id', 'name']), 'statuses' => PartnerApplication::statuses(), 'filters' => $request->only('city', 'status')]);
     }
-    public function show(PartnerApplication $partnerApplication): Response
+    public function show(PartnerApplication $partnerApplication, OwnershipAssignmentService $ownership): Response
     {
-        return Inertia::render('admin/partner-applications/show', ['application' => $partnerApplication->load('city:id,name,slug', 'user:id,name,email'), 'statuses' => PartnerApplication::statuses()]);
+        $assignment = $ownership->current($partnerApplication);
+        return Inertia::render('admin/partner-applications/show', [
+            'application' => $partnerApplication->load('city:id,name,slug', 'user:id,name,email'),
+            'statuses' => PartnerApplication::statuses(),
+            'ownership' => $assignment?->load('owner:id,name'),
+            'ownerCandidates' => User::query()->where(fn ($q) => $q->where('is_admin', true)
+                ->orWhereHas('programEnrollments', fn ($enrollments) => $enrollments->active()->whereIn('program_type', [ProgramEnrollment::TYPE_AFFILIATE, ProgramEnrollment::TYPE_CREATOR, ProgramEnrollment::TYPE_PROMOTER])))
+                ->when($partnerApplication->user_id, fn ($q) => $q->whereKeyNot($partnerApplication->user_id))
+                ->orderBy('name')->get(['id', 'name']),
+        ]);
     }
     public function status(Request $request, PartnerApplication $partnerApplication)
     {

@@ -29,6 +29,7 @@ use App\Http\Controllers\PartnerApplicationController;
 use App\Http\Controllers\PartnersLandingController;
 use App\Http\Controllers\AdminPartnerApplicationController;
 use App\Http\Controllers\AdminProgramApplicationController;
+use App\Http\Controllers\AdminOwnershipAssignmentController;
 use App\Http\Controllers\ProgramApplicationController;
 use App\Http\Controllers\PromoterSalesController;
 use App\Http\Controllers\RedemptionController;
@@ -146,6 +147,8 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::post('ownership/{targetType}/{targetId}', [AdminOwnershipAssignmentController::class, 'save'])->whereNumber('targetId')->name('admin.ownership.save');
+    Route::delete('ownership/{targetType}/{targetId}', [AdminOwnershipAssignmentController::class, 'remove'])->whereNumber('targetId')->name('admin.ownership.remove');
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('expansion', [AdminExpansionController::class, 'index'])->name('admin.expansion.index');
     Route::get('ciudades', [AdminCityController::class, 'index'])->name('admin.cities.index');
