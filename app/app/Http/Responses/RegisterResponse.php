@@ -3,6 +3,7 @@
 namespace App\Http\Responses;
 
 use App\Services\PublicJourneyContinuation;
+use App\Services\AnalyticsTracker;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use Laravel\Fortify\Fortify;
@@ -19,6 +20,12 @@ class RegisterResponse implements RegisterResponseContract
         $intent = $continuation->consume();
         if ($intent !== null && ($destination = $continuation->destination($intent)) !== null) {
             $request->session()->forget('url.intended');
+
+            try {
+                app(AnalyticsTracker::class)->journeyAuthReturned($intent, 'register');
+            } catch (\Throwable) {
+                \Illuminate\Support\Facades\Log::warning('Journey auth return analytics failed.', ['method' => 'register']);
+            }
 
             return redirect()->to($destination);
         }

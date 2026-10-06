@@ -1,10 +1,11 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, MapPin, MessageCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { BrandEnergy } from '@/components/brand-energy';
 import { JakawiImage } from '@/components/jakawi-image';
 import { StatusBanner } from '@/components/state-panel';
-import { register } from '@/routes';
+import JourneyLayout from '@/layouts/journey-layout';
+import { trackJourneyIntent } from '@/lib/journey-analytics';
 import type { BenefitSummary } from '@/types';
 
 type Location = {
@@ -46,9 +47,14 @@ export default function BenefitShow({
 }) {
     const { auth } = usePage().props;
     const [confirming, setConfirming] = useState(false);
-    const [locationId, setLocationId] = useState<number | null>(
-        locations[0]?.id ?? null,
-    );
+    const intentSentFor = useRef<string | null>(null);
+    const membershipIntent = () => {
+        if (intentSentFor.current === benefit.slug) return;
+        intentSentFor.current = benefit.slug;
+        trackJourneyIntent('benefit', benefit.slug);
+    };
+    const [locationId, setLocationId] = useState<number | null>(null);
+    const selectedLocation = locations.find((location) => location.id === locationId);
     const hasMedia = Boolean(benefit.hero_url ?? benefit.image_url);
     const canUse =
         availability.available &&
@@ -56,17 +62,20 @@ export default function BenefitShow({
         hasActiveMembership &&
         locations.length > 0;
     const action = !availability.available ? null : !auth.user ? (
-        <Link href={register()} className="benefit-primary-action">
-            CREAR CUENTA
-        </Link>
+        <button type="button" onClick={() => router.post(`/beneficios/${benefit.slug}/canjear`)} className="benefit-primary-action">
+            CREAR CUENTA GRATIS
+        </button>
     ) : !hasActiveMembership ? (
-        <Link href="/mi-jakawi" className="benefit-primary-action">
-            VER MI JAKAWI
+        <Link href="/mi-jakawi" onClick={membershipIntent} className="benefit-primary-action">
+            VER MEMBRESÍA
         </Link>
     ) : (
         <button
             type="button"
-            onClick={() => setConfirming(true)}
+            onClick={() => {
+                membershipIntent();
+                setConfirming(true);
+            }}
             className="benefit-primary-action"
         >
             USAR BENEFICIO
@@ -82,7 +91,7 @@ export default function BenefitShow({
     const value = savings(benefit.estimated_savings);
 
     return (
-        <>
+        <JourneyLayout>
             <Head title={benefit.title} />
             <main className="min-h-screen bg-background pb-40 font-discovery text-foreground">
                 <section className="mx-auto w-full max-w-5xl">
@@ -157,6 +166,7 @@ export default function BenefitShow({
                                 {benefit.short_description}
                             </p>
                         ) : null}
+                        {auth.user && !hasActiveMembership && availability.available ? <StatusBanner title="SE REQUIERE MEMBRESÍA" description="Necesitas una membresía activa para usar este beneficio. Consulta Mi JAKAWI para continuar." className="mt-7" /> : null}
 
                         <section className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface-elevated">
                             <div className="bg-brand px-5 py-4 text-brand-foreground">
@@ -265,8 +275,7 @@ export default function BenefitShow({
                             </h2>
                             <p className="mt-2 text-sm leading-6 text-muted-foreground">
                                 Válido para membresías activas. Sujeto a
-                                disponibilidad. No acumulable con otras
-                                promociones.
+                                disponibilidad.
                             </p>
                             {benefit.terms ? (
                                 <details className="mt-4 text-sm text-muted-foreground">
@@ -309,9 +318,9 @@ export default function BenefitShow({
                         </p>
                         <p className="mt-1 font-bold">{benefit.title}</p>
                         <p className="text-sm text-muted-foreground">
-                            {benefit.partner?.name} — {locations[0]?.name}
+                            {benefit.partner?.name}{selectedLocation ? ` — ${selectedLocation.name}` : ''}
                         </p>
-                        {locations.length > 1 ? (
+                        {locations.length ? (
                             <label className="mt-5 block text-sm font-semibold">
                                 Elige tu sucursal
                                 <select
@@ -323,6 +332,7 @@ export default function BenefitShow({
                                     }
                                     className="mt-2 min-h-11 w-full rounded-xl border border-border bg-background px-3"
                                 >
+                                    <option value="" disabled>Selecciona una sucursal</option>
                                     {locations.map((location) => (
                                         <option
                                             key={location.id}
@@ -367,6 +377,6 @@ export default function BenefitShow({
                     </div>
                 </div>
             ) : null}
-        </>
+        </JourneyLayout>
     );
 }

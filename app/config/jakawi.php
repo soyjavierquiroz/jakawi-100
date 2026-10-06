@@ -41,6 +41,7 @@ return [
             'home_view', 'partner_view', 'location_view', 'benefit_view', 'experience_view',
             'opportunity_impression', 'opportunity_opened',
             'redeem_started', 'redeem_confirmed', 'experience_reserve_click', 'maps_click', 'whatsapp_click',
+            'journey_intent_started', 'journey_auth_started', 'journey_auth_returned', 'journey_membership_gate_viewed', 'journey_external_exit',
             'anonymous_session_created', 'referral_link_opened', 'referral_shared', 'referral_code_entered', 'signup_completed',
             'affiliate_payout_requested', 'affiliate_payout_completed',
             'reward_created', 'reward_available', 'reward_cancelled',

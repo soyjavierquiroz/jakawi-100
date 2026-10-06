@@ -9,8 +9,10 @@ use App\Http\Middleware\EnsureVisitorId;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\Experience;
+use App\Models\Benefit;
 use App\Models\Unlock;
 use App\Services\PublicJourneyContinuation;
+use App\Services\AnalyticsTracker;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -30,13 +32,25 @@ return Application::configure(basePath: dirname(__DIR__))
                 'experiences.reservations.store' => Experience::where('slug', $route->parameter('experience'))->first(),
                 'unlocks.commit' => Unlock::where('slug', $route->parameter('unlock'))
                     ->whereIn('status', [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED])->first(),
+                'redemptions.start' => Benefit::where('slug', $route->parameter('benefit'))->first(),
                 default => null,
             };
 
             if ($resource instanceof Experience) {
-                app(PublicJourneyContinuation::class)->set('EXPERIENCE', $resource->id, 'RESERVE');
+                $sessionId = $request->input('experience_session_id');
+                $context = is_numeric($sessionId) && ctype_digit((string) $sessionId)
+                    && $resource->upcomingSessions()->whereKey((int) $sessionId)->exists()
+                    ? ['experience_session_id' => (int) $sessionId] : [];
+                app(PublicJourneyContinuation::class)->set('EXPERIENCE', $resource->id, 'RESERVE', $context);
             } elseif ($resource instanceof Unlock) {
                 app(PublicJourneyContinuation::class)->set('UNLOCK', $resource->id, 'COMMIT');
+            } elseif ($resource instanceof Benefit) {
+                app(PublicJourneyContinuation::class)->set('BENEFIT', $resource->id, 'REDEEM');
+            }
+
+            if ($resource) {
+                app(AnalyticsTracker::class)->journeyIntentStarted($resource);
+                app(AnalyticsTracker::class)->journeyAuthStarted($resource, 'register');
             }
 
             return $resource ? route('register') : route('login');

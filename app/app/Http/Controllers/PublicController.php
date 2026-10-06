@@ -113,14 +113,19 @@ class PublicController extends Controller
 
     public function benefit(Benefit $benefit, Request $request, AnalyticsTracker $analytics): Response
     {
+        $analytics->resetJourneyIntent($benefit);
         $benefit->load('partner');
         $locations = $benefit->isAvailable() ? $benefit->availableLocations()->get()->filter->hasRedemptionPin()->values() : collect();
         $availability = $this->benefitAvailability($benefit, $request, $locations->isNotEmpty());
+        $hasActiveMembership = $request->user()?->activeMembership()->exists() ?? false;
+        if ($availability['available'] && $request->user() && ! $hasActiveMembership) {
+            $analytics->journeyMembershipGateViewed($benefit);
+        }
         if ($availability['available']) {
             $analytics->benefitViewed($benefit);
         }
 
-        return Inertia::render('benefits/show', ['benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))), 'hasActiveMembership' => $request->user()?->activeMembership()->exists() ?? false, 'availability' => $availability]);
+        return Inertia::render('benefits/show', ['benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))), 'hasActiveMembership' => $hasActiveMembership, 'availability' => $availability]);
     }
 
     public function experiences(Request $request): Response
@@ -135,6 +140,7 @@ class PublicController extends Controller
 
     public function experience(Request $request, Experience $experience, AnalyticsTracker $analytics): Response
     {
+        $analytics->resetJourneyIntent($experience);
         $available = $experience->isPublished();
         if ($available) {
             $analytics->experienceViewed($experience);
@@ -144,8 +150,12 @@ class PublicController extends Controller
             'sessions' => fn ($query) => $available ? $query->upcoming()->with('location') : $query->whereRaw('1 = 0'),
         ]);
         $reservations = $request->user() ? $request->user()->experienceReservations()->where('experience_id', $experience->id)->get()->keyBy('experience_session_id') : collect();
+        $hasActiveMembership = $request->user()?->hasActiveMembership() ?? false;
+        if ($available && $experience->reservation_method === 'jakawi' && $experience->sessions->isNotEmpty() && $request->user() && ! $hasActiveMembership) {
+            $analytics->journeyMembershipGateViewed($experience);
+        }
 
-        return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $request->user()?->hasActiveMembership() ?? false, 'availability' => ['available' => $available, 'reason' => $available ? null : 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA']]);
+        return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $hasActiveMembership, 'restoredSessionId' => app(\App\Services\PublicJourneyContinuation::class)->restoredExperienceSessionId($experience), 'availability' => ['available' => $available, 'reason' => $available ? null : 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA']]);
     }
 
     public function map(Location $location, AnalyticsTracker $analytics): RedirectResponse
@@ -180,9 +190,11 @@ class PublicController extends Controller
         $destination = match ($method) {
             'whatsapp' => filled($experience->reservation_whatsapp) ? 'https://wa.me/'.preg_replace('/\D+/', '', $experience->reservation_whatsapp) : null,
             'url', 'external' => filled($experience->reservation_url) ? $experience->reservation_url : null,
-            'phone' => filled($experience->reservation_phone) ? 'tel:'.$experience->reservation_phone : null,
+            'phone' => filled($experience->reservation_phone) && preg_match('/^\+?[1-9]\d{6,14}$/', $experience->reservation_phone) ? 'tel:'.$experience->reservation_phone : null,
         };
         abort_unless(filled($destination), 404);
+        $analytics->journeyIntentStarted($experience);
+        $analytics->journeyExternalExit($experience, $method);
         $analytics->experienceReserveClicked($experience, $method);
         if ($method === 'whatsapp') {
             $analytics->experienceWhatsappClicked($experience);
@@ -214,6 +226,9 @@ class PublicController extends Controller
         }
         if (filled($e->reservation_url)) {
             $targets[] = ['method' => $e->reservation_method === 'external' ? 'external' : 'url', 'label' => 'IR AL SITIO DE RESERVA'];
+        }
+        if (filled($e->reservation_phone) && preg_match('/^\+?[1-9]\d{6,14}$/', $e->reservation_phone)) {
+            $targets[] = ['method' => 'phone', 'label' => 'LLAMAR PARA RESERVAR'];
         }
         usort($targets, fn (array $a, array $b) => ($a['method'] === $e->reservation_method ? 0 : 1) <=> ($b['method'] === $e->reservation_method ? 0 : 1));
 

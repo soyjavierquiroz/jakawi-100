@@ -23,6 +23,7 @@ use App\Http\Controllers\PartnerLoginController;
 use App\Http\Controllers\PartnerPortalController;
 use App\Http\Controllers\PartnerReservationController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\PublicJourneyIntentController;
 use App\Http\Controllers\SelectedCityController;
 use App\Http\Controllers\CityLandingController;
 use App\Http\Controllers\PartnerApplicationController;
@@ -50,6 +51,7 @@ Route::get('/partners/aplicar', [PartnersLandingController::class, 'apply'])->na
 Route::get('/{program}', [ProgramApplicationController::class, 'show'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.show');
 Route::get('/{program}/aplicar', [ProgramApplicationController::class, 'apply'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.apply');
 Route::post('/analytics/opportunities', [OpportunityAnalyticsController::class, 'store'])->middleware('throttle:120,1')->name('analytics.opportunities.store');
+Route::post('/analytics/journey-intent/{journey}/{slug}', [PublicJourneyIntentController::class, 'store'])->whereIn('journey', ['experience', 'unlock', 'benefit'])->middleware('throttle:60,1')->name('analytics.journey-intent.store');
 Route::get('/ciudades/{city:slug}', [CityLandingController::class, 'show'])->name('cities.show');
 Route::post('/ciudades/{city:slug}/interes', [CityLandingController::class, 'interest'])->middleware('throttle:20,1')->name('cities.interest');
 Route::get('/ciudades/{city:slug}/partner', [PartnerApplicationController::class, 'create'])->name('cities.partner.create');

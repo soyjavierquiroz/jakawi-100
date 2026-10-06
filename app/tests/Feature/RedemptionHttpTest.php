@@ -19,7 +19,7 @@ class RedemptionHttpTest extends TestCase
     public function test_start_requires_auth_membership_and_an_explicit_valid_location(): void
     {
         [$member, $benefit, $location] = $this->redeemable();
-        $this->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id])->assertRedirect('/login');
+        $this->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id])->assertRedirect('/register');
         $this->actingAs(User::factory()->create())->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id])->assertSessionHasErrors('redemption');
         $this->actingAs($member)->post('/beneficios/'.$benefit->slug.'/canjear')->assertSessionHasErrors('location_id');
         $this->assertDatabaseCount('redemptions', 0);

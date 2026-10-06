@@ -7,6 +7,7 @@ use App\Models\Location;
 use App\Models\Partner;
 use App\Models\Redemption;
 use App\Services\RedemptionService;
+use App\Services\AnalyticsTracker;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,9 +17,10 @@ use Inertia\Response;
 
 class RedemptionController extends Controller
 {
-    public function start(Request $r, Benefit $benefit, RedemptionService $service)
+    public function start(Request $r, Benefit $benefit, RedemptionService $service, AnalyticsTracker $analytics)
     {
         $data = $r->validate(['location_id' => ['required', 'integer', 'exists:locations,id']]);
+        $analytics->journeyIntentStarted($benefit);
         try {
             $redemption = $service->start($r->user(), $benefit, Location::findOrFail($data['location_id']));
         } catch (DomainException $e) {

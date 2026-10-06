@@ -85,12 +85,110 @@ class AnalyticsTracker
         return $this->record('whatsapp_click', ['experience_id' => $experience->id]);
     }
 
+    public function journeyIntentStarted(Experience|Unlock|Benefit $resource): ?AnalyticsEvent
+    {
+        [$journey, $action, $context] = $this->journeyResource($resource);
+        $key = "journey_intent.{$journey}.{$resource->id}.".($this->request->user()?->id ?? 'guest');
+        if ($this->request->session()->get($key) === true) {
+            return null;
+        }
+        $this->request->session()->put($key, true);
+        $user = $this->request->user();
+        $city = $this->journeyCity($resource);
+
+        return $this->record('journey_intent_started', $context, [
+            'journey' => $journey, 'action' => $action, 'resource_id' => $resource->id,
+            'resource_slug' => $resource->slug,
+            ...($city ? ['city' => $city] : []),
+            'auth_state' => $user ? 'authenticated' : 'guest',
+            ...($user ? ['membership_state' => $user->hasActiveMembership() ? 'active' : 'inactive'] : []),
+        ]);
+    }
+
+    public function resetJourneyIntent(Experience|Unlock|Benefit $resource): void
+    {
+        [$journey] = $this->journeyResource($resource);
+        $this->request->session()->forget("journey_intent.{$journey}.{$resource->id}.".($this->request->user()?->id ?? 'guest'));
+    }
+
+    public function journeyAuthStarted(Experience|Unlock|Benefit $resource, string $destination): ?AnalyticsEvent
+    {
+        [$journey, $action, $context] = $this->journeyResource($resource);
+
+        return $this->record('journey_auth_started', $context, [
+            'journey' => $journey, 'action' => $action, 'resource_id' => $resource->id,
+            'auth_destination' => $destination,
+        ]);
+    }
+
+    /** @param array{journey:string, action:string, resource_id:int|string, context?:array<string,mixed>} $intent */
+    public function journeyAuthReturned(array $intent, string $method): ?AnalyticsEvent
+    {
+        if (! in_array($intent['journey'], ['EXPERIENCE', 'UNLOCK', 'BENEFIT'], true)) {
+            return null;
+        }
+
+        return $this->record('journey_auth_returned', [$this->journeyContextKey($intent['journey']) => $intent['resource_id']], [
+            'journey' => $intent['journey'], 'action' => $intent['action'], 'resource_id' => $intent['resource_id'],
+            'auth_method' => $method,
+            'has_session_context' => isset($intent['context']['experience_session_id']),
+        ]);
+    }
+
+    public function journeyMembershipGateViewed(Experience|Unlock|Benefit $resource): ?AnalyticsEvent
+    {
+        [$journey, $action, $context] = $this->journeyResource($resource);
+
+        return $this->record('journey_membership_gate_viewed', $context, [
+            'journey' => $journey, 'action' => $action, 'resource_id' => $resource->id,
+            'membership_state' => 'inactive',
+        ]);
+    }
+
+    public function journeyExternalExit(Experience $experience, string $method): ?AnalyticsEvent
+    {
+        return $this->record('journey_external_exit', ['experience_id' => $experience->id], [
+            'journey' => 'EXPERIENCE', 'action' => 'RESERVE', 'resource_id' => $experience->id,
+            'destination_type' => $method === 'whatsapp' ? 'whatsapp' : ($method === 'phone' ? 'phone' : 'url'),
+        ]);
+    }
+
+    /** @return array{string,string,array<string,int>} */
+    private function journeyResource(Experience|Unlock|Benefit $resource): array
+    {
+        return match (true) {
+            $resource instanceof Experience => ['EXPERIENCE', 'RESERVE', ['experience_id' => $resource->id]],
+            $resource instanceof Unlock => ['UNLOCK', 'COMMIT', ['unlock_id' => $resource->id]],
+            default => ['BENEFIT', 'REDEEM', ['benefit_id' => $resource->id]],
+        };
+    }
+
+    private function journeyContextKey(string $journey): string
+    {
+        return match ($journey) {
+            'EXPERIENCE' => 'experience_id', 'UNLOCK' => 'unlock_id', 'BENEFIT' => 'benefit_id',
+        };
+    }
+
+    private function journeyCity(Experience|Unlock|Benefit $resource): ?string
+    {
+        $locations = match (true) {
+            $resource instanceof Experience => $resource->upcomingSessions()->with('location.cityEntity')->get()->pluck('location')->filter(),
+            $resource instanceof Unlock => $resource->locations()->with('cityEntity')->get(),
+            default => $resource->availableLocations()->with('cityEntity')->get(),
+        };
+        $cities = $locations->map(fn ($location) => $location->cityEntity?->slug ?? $location->city)
+            ->filter(fn ($city) => is_string($city) && filled($city))->unique()->values();
+
+        return $cities->count() === 1 ? $cities->first() : null;
+    }
+
     /**
      * Low-level entry point retained for application code that needs a configured event.
      * Metadata is strictly whitelisted per event; request details are never captured.
      *
      * @param  array<string, int|string|null>  $context
-     * @param  array<string, string>  $metadata
+     * @param  array<string, bool|int|string>  $metadata
      */
     public function record(string $event, array $context = [], array $metadata = []): ?AnalyticsEvent
     {
@@ -142,7 +240,7 @@ class AnalyticsTracker
         ];
     }
 
-    /** @param array<string, string> $metadata */
+    /** @param array<string, bool|int|string> $metadata */
     private function validateMetadata(string $event, array $metadata): array
     {
         if ($metadata === []) {
@@ -150,6 +248,11 @@ class AnalyticsTracker
         }
         $allowed = match ($event) {
             'experience_reserve_click' => ['reservation_method'],
+            'journey_intent_started' => ['journey', 'action', 'resource_id', 'resource_slug', 'city', 'auth_state', 'membership_state'],
+            'journey_auth_started' => ['journey', 'action', 'resource_id', 'auth_destination'],
+            'journey_auth_returned' => ['journey', 'action', 'resource_id', 'auth_method', 'has_session_context'],
+            'journey_membership_gate_viewed' => ['journey', 'action', 'resource_id', 'membership_state'],
+            'journey_external_exit' => ['journey', 'action', 'resource_id', 'destination_type'],
             'maps_click' => ['source'],
             'city_viewed', 'city_interest_recorded' => ['city_id', 'city_slug', 'authenticated'],
             'partner_application_started', 'partner_application_submitted' => ['city_id', 'city_slug'],
@@ -166,6 +269,14 @@ class AnalyticsTracker
         }
         if (isset($metadata['source']) && ! in_array($metadata['source'], config('jakawi.analytics.maps_sources'), true)) {
             throw new InvalidArgumentException('Analytics source is not allowed.');
+        }
+        foreach (['journey' => ['EXPERIENCE', 'UNLOCK', 'BENEFIT'], 'action' => ['RESERVE', 'COMMIT', 'REDEEM'],
+            'auth_state' => ['guest', 'authenticated'], 'membership_state' => ['active', 'inactive'],
+            'auth_destination' => ['register', 'login'], 'auth_method' => ['register', 'login'],
+            'has_session_context' => [true, false], 'destination_type' => ['whatsapp', 'url', 'phone']] as $key => $values) {
+            if (isset($metadata[$key]) && ! in_array($metadata[$key], $values, true)) {
+                throw new InvalidArgumentException('Analytics metadata value is not allowed.');
+            }
         }
 
         return $metadata;

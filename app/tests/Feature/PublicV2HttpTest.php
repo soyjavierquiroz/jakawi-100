@@ -138,7 +138,9 @@ class PublicV2HttpTest extends TestCase
         $this->get('/experiencias')->assertOk()->assertInertia(fn (Assert $page) => $page->has('experiences', 1));
         $this->get('/experiencias/'.$experience->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('experiences/show')->has('experience.partners', 1)->has('experience.sessions', 1)->has('experience.reservation_targets', 1));
         $this->get('/experiencias/'.$experience->slug.'/reservar')->assertRedirect('https://wa.me/59170000000');
-        $this->assertDatabaseCount('analytics_events', 3);
+        $this->assertSame(3, AnalyticsEvent::whereIn('event_name', ['experience_view', 'experience_reserve_click', 'whatsapp_click'])->count());
+        $this->assertSame(1, AnalyticsEvent::where('event_name', 'journey_intent_started')->count());
+        $this->assertSame(1, AnalyticsEvent::where('event_name', 'journey_external_exit')->count());
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'experience_reserve_click', 'experience_id' => $experience->id]);
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'whatsapp_click', 'experience_id' => $experience->id]);
         foreach (['url' => 'https://example.test/book', 'external' => 'https://example.test/external', 'phone' => '+59171111111'] as $method => $target) {

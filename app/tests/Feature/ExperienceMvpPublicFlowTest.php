@@ -76,6 +76,19 @@ class ExperienceMvpPublicFlowTest extends TestCase
         $this->assertSame('url', AnalyticsEvent::where('event_name', 'experience_reserve_click')->latest('id')->value('metadata')['reservation_method']);
     }
 
+    public function test_phone_destination_uses_existing_external_reservation_flow(): void
+    {
+        $experience = Experience::factory()->published()->create(['reservation_method' => 'phone', 'reservation_phone' => '+59170000000']);
+        ExperienceSession::factory()->for($experience)->upcoming()->create();
+
+        $this->get(route('experiences.show', $experience))->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('experience.reservation_targets.0.method', 'phone')
+            ->where('experience.reservation_targets.0.label', 'LLAMAR PARA RESERVAR')
+        );
+        $this->get('/experiencias/'.$experience->slug.'/reservar?method=phone')->assertRedirect('tel:+59170000000');
+        $this->assertSame('phone', AnalyticsEvent::where('event_name', 'experience_reserve_click')->latest('id')->value('metadata')['reservation_method']);
+    }
+
     public function test_unpublished_experience_has_a_safe_unavailable_state(): void
     {
         $experience = Experience::factory()->create(['status' => 'draft']);
