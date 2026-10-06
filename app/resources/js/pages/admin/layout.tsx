@@ -15,6 +15,7 @@ export default function AdminLayout({
                 <Link href="/admin/ciudades">Ciudades</Link>
                 <Link href="/admin/expansion">Expansión</Link>
                 <Link href="/admin/solicitudes-partner">Solicitudes Partner</Link>
+                <Link href="/admin/solicitudes-programas">Solicitudes de programas</Link>
                 <Link href="/admin/partners">Partners</Link>
                 <Link href="/admin/locations">Locations</Link>
                 <Link href="/admin/benefits">Beneficios</Link>

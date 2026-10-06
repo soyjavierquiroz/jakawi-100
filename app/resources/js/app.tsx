@@ -16,7 +16,7 @@ void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
-            case name === 'partners/index':
+            case name === 'partners/index' || name === 'programs/index':
                 return MarketingLayout;
             case ['welcome', 'explore', 'cities/show', 'benefits/index', 'benefits/show', 'experiences/index', 'experiences/show', 'partners/show', 'locations/show', 'unlocks/show', 'mi-jakawi', 'member-profile', 'redemptions/show'].includes(name):
                 return ConsumerLayout;

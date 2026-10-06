@@ -96,6 +96,11 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(ProgramEnrollment::class);
     }
 
+    public function programApplications(): HasMany
+    {
+        return $this->hasMany(ProgramApplication::class);
+    }
+
     /** @return HasMany<MembershipPurchase> */
     public function recordedMembershipPurchases(): HasMany
     {

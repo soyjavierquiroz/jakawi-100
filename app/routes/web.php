@@ -28,6 +28,8 @@ use App\Http\Controllers\CityLandingController;
 use App\Http\Controllers\PartnerApplicationController;
 use App\Http\Controllers\PartnersLandingController;
 use App\Http\Controllers\AdminPartnerApplicationController;
+use App\Http\Controllers\AdminProgramApplicationController;
+use App\Http\Controllers\ProgramApplicationController;
 use App\Http\Controllers\PromoterSalesController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\ReferralController;
@@ -44,6 +46,8 @@ Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
 Route::get('/partners', [PartnersLandingController::class, 'show'])->name('partners.index');
 Route::get('/partners/aplicar', [PartnersLandingController::class, 'apply'])->name('partners.apply');
+Route::get('/{program}', [ProgramApplicationController::class, 'show'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.show');
+Route::get('/{program}/aplicar', [ProgramApplicationController::class, 'apply'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.apply');
 Route::post('/analytics/opportunities', [OpportunityAnalyticsController::class, 'store'])->middleware('throttle:120,1')->name('analytics.opportunities.store');
 Route::get('/ciudades/{city:slug}', [CityLandingController::class, 'show'])->name('cities.show');
 Route::post('/ciudades/{city:slug}/interes', [CityLandingController::class, 'interest'])->middleware('throttle:20,1')->name('cities.interest');
@@ -106,6 +110,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/{program}/solicitudes', [ProgramApplicationController::class, 'store'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->middleware('throttle:20,1')->name('programs.applications.store');
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
     Route::post('mi-jakawi/referral-shared', [MembershipController::class, 'shared'])->name('mi-jakawi.referral-shared');
@@ -151,6 +156,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::put('ciudades/{city}', [AdminCityController::class, 'update'])->name('admin.cities.update');
     Route::post('ciudades/{city}/estado', [AdminCityController::class, 'updateStatus'])->name('admin.cities.status.update');
     Route::get('solicitudes-partner', [AdminPartnerApplicationController::class, 'index'])->name('admin.partner-applications.index');
+    Route::get('solicitudes-programas', [AdminProgramApplicationController::class, 'index'])->name('admin.program-applications.index');
+    Route::get('solicitudes-programas/{programApplication}', [AdminProgramApplicationController::class, 'show'])->name('admin.program-applications.show');
+    Route::post('solicitudes-programas/{programApplication}/estado', [AdminProgramApplicationController::class, 'status'])->name('admin.program-applications.status');
     Route::get('solicitudes-partner/{partnerApplication}', [AdminPartnerApplicationController::class, 'show'])->name('admin.partner-applications.show');
     Route::post('solicitudes-partner/{partnerApplication}/estado', [AdminPartnerApplicationController::class, 'status'])->name('admin.partner-applications.status');
     Route::get('desbloqueos', [AdminUnlockController::class, 'index'])->name('admin.unlocks.index');
