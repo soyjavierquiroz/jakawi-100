@@ -33,7 +33,7 @@ class MemberReferralJpTest extends TestCase
         $this->assertSame('JP', $reward->currency);
         $this->assertSame('137.00', $reward->amount);
         $this->assertSame('available', $reward->status);
-        $this->actingAs($member)->get('/mi-jakawi')->assertInertia(fn ($page) => $page->where('memberReferral.joined_count', 1)->where('memberReferral.jp_earned', 137)->where('memberReferral.jp_balance', 137));
+        $this->actingAs($member)->get('/mi-jakawi')->assertInertia(fn ($page) => $page->where('memberReferral.joined_count', 1)->where('memberReferral.jp_ledger', 137)->where('memberReferral.jp_balance', 137));
     }
 
     public function test_free_or_expired_referrer_does_not_earn_but_history_survives_expiry(): void
@@ -59,7 +59,8 @@ class MemberReferralJpTest extends TestCase
         $sale = app(MembershipPurchaseService::class)->confirmManualCash($friend2, User::factory()->create(), null, 'JP-4', (string) Str::uuid());
         $jp = RewardTransaction::where('reward_type', 'JP')->sole();
         app(MembershipPurchaseService::class)->refund($sale, User::factory()->create(['is_admin' => true]), 'refund');
-        $this->assertSame('cancelled', $jp->fresh()->status);
+        $this->assertSame('available', $jp->fresh()->status);
+        $this->assertDatabaseHas('reward_transactions', ['reversal_of_reward_transaction_id' => $jp->id, 'amount' => -41, 'source' => 'reversal']);
     }
 
     private function member(): User

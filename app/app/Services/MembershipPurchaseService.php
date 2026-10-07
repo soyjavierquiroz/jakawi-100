@@ -85,13 +85,25 @@ class MembershipPurchaseService
             }
             if ($purchase->conversion_id) {
                 $purchase->conversion()->lockForUpdate()->firstOrFail()->update(['status' => 'refunded']);
+                $jpBeneficiaryIds = RewardTransaction::query()->where('conversion_id', $purchase->conversion_id)
+                    ->where('reward_type', 'JP')->whereNotNull('beneficiary_user_id')
+                    ->distinct()->orderBy('beneficiary_user_id')->pluck('beneficiary_user_id');
+                foreach ($jpBeneficiaryIds as $beneficiaryId) {
+                    User::query()->lockForUpdate()->findOrFail($beneficiaryId);
+                }
                 $rewards = RewardTransaction::query()->where('conversion_id', $purchase->conversion_id)->lockForUpdate()->get();
                 foreach ($rewards as $reward) {
                     $openPayout = $reward->payouts()->where('status', RewardPayout::STATUS_REQUESTED)->lockForUpdate()->first();
                     abort_if($openPayout, 422, 'La comisión está reservada en una solicitud de pago. Rechace la solicitud antes de reembolsar la venta.');
                     abort_if($reward->status === RewardTransaction::STATUS_PAID, 422, 'La comisión ya fue pagada; requiere un ajuste financiero posterior, no una reversión automática.');
-                    $reward->update(['status' => RewardTransaction::STATUS_CANCELLED]);
-                    AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'reward_cancelled', 'subject_type' => RewardTransaction::class, 'subject_id' => $reward->id, 'metadata' => ['purchase_id' => $purchase->id]]);
+                    if ($reward->reward_type === 'JP' && $reward->status === RewardTransaction::STATUS_AVAILABLE) {
+                        $reversal = app(JpLedgerService::class)->reverse($reward, $admin->id, $reason);
+                        $metadata = ['purchase_id' => $purchase->id, 'reversal_reward_transaction_id' => $reversal->id];
+                    } else {
+                        $reward->update(['status' => RewardTransaction::STATUS_CANCELLED]);
+                        $metadata = ['purchase_id' => $purchase->id];
+                    }
+                    AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'reward_cancelled', 'subject_type' => RewardTransaction::class, 'subject_id' => $reward->id, 'metadata' => $metadata]);
                     app(AnalyticsTracker::class)->record('reward_cancelled', ['user_id' => $reward->beneficiary_user_id]);
                 }
             }

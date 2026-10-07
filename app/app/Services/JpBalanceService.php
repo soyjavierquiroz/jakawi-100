@@ -8,13 +8,13 @@ use App\Models\User;
 
 class JpBalanceService
 {
-    /** @return array{earned:int,held:int,spendable:int} */
+    /** @return array{ledger_balance:int,held:int,available_balance:int} */
     public function for(User|int $user): array
     {
         $id = $user instanceof User ? $user->id : $user;
-        $earned = (int) RewardTransaction::query()->where('beneficiary_user_id', $id)->where('reward_type', 'JP')->where('status', RewardTransaction::STATUS_AVAILABLE)->sum('amount');
+        $ledger = (int) RewardTransaction::query()->where('beneficiary_user_id', $id)->where('reward_type', 'JP')->where('status', RewardTransaction::STATUS_AVAILABLE)->sum('amount');
         $held = (int) JpHold::query()->where('user_id', $id)->where('status', JpHold::HELD)->sum('amount');
 
-        return ['earned' => $earned, 'held' => $held, 'spendable' => $earned - $held];
+        return ['ledger_balance' => $ledger, 'held' => $held, 'available_balance' => max(0, $ledger - $held)];
     }
 }

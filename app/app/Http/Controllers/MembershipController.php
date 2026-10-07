@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Benefit;
 use App\Models\Membership;
 use App\Models\Conversion;
-use App\Models\RewardTransaction;
 use App\Services\AnalyticsTracker;
 use App\Services\ReferralCodeService;
 use App\Services\JpBalanceService;
@@ -52,7 +51,6 @@ class MembershipController extends Controller
 
         $user = $request->user();
         $isActiveMember = $user->hasActiveMembership();
-        $jpRewards = RewardTransaction::query()->where('beneficiary_user_id', $user->id)->where('reward_type', 'JP');
         $jpBalance = app(JpBalanceService::class)->for($user);
 
         return Inertia::render('mi-jakawi', [
@@ -72,9 +70,8 @@ class MembershipController extends Controller
                 'link' => $isActiveMember ? route('referrals.open', app(ReferralCodeService::class)->ensureFor($user)) : null,
                 // "Amigos que se unieron" means referred users with a confirmed membership purchase.
                 'joined_count' => Conversion::query()->where('type', 'membership_purchased')->where('status', 'confirmed')->whereHas('relationship', fn ($query) => $query->where('referrer_user_id', $user->id))->count(),
-                // JP is a non-monetary reward; available means spendable after active guarantees.
-                'jp_earned' => (int) (clone $jpRewards)->where('status', '!=', RewardTransaction::STATUS_CANCELLED)->sum('amount'),
-                'jp_balance' => $jpBalance['spendable'],
+                'jp_ledger' => $jpBalance['ledger_balance'],
+                'jp_balance' => $jpBalance['available_balance'],
                 'jp_held' => $jpBalance['held'],
             ],
             'featuredBenefits' => $membership ? [] : Benefit::query()->available()->with('partner:id,name')->orderByDesc('featured')->orderBy('sort_order')->limit(3)->get()

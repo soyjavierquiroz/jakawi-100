@@ -140,7 +140,7 @@ class PublicJourneyWiringTest extends TestCase
         );
         $this->actingAs(User::factory()->create())->get(route('unlocks.show', $unlock))->assertOk()->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
             ->where('hasActiveMembership', false)
-            ->where('jpBalance.spendable', 0)
+            ->where('jpBalance.available_balance', 0)
         );
         $this->assertSame(0, UnlockParticipation::count());
     }

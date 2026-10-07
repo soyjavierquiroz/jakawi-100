@@ -10,6 +10,7 @@ use App\Models\ReferralRelationship;
 use App\Models\RewardRule;
 use App\Models\RewardTransaction;
 use App\Models\User;
+use App\Services\JpBalanceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -18,14 +19,16 @@ class AdminAdjustmentExportTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_records_separate_audited_cash_and_jp_adjustments_without_a_balance_mutation(): void
+    public function test_admin_records_effective_jp_and_separate_cash_adjustments(): void
     {
         $admin = User::factory()->create(['is_admin' => true]); $user = User::factory()->create();
-        $this->actingAs($admin)->post('/admin/adjustments/ledger', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'JP', 'amount' => 100, 'reason' => 'Manual JP correction', 'confirm' => true])->assertRedirect();
+        $this->actingAs($admin)->post('/admin/adjustments/ledger', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'JP', 'type' => 'ledger_credit', 'amount' => 100, 'idempotency_key' => (string) Str::uuid(), 'reason' => 'Manual JP correction', 'confirm' => true])->assertRedirect();
         $this->actingAs($admin)->post('/admin/adjustments/ledger', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'CASH', 'amount' => 12.5, 'reason' => 'Manual cash correction', 'confirm' => true])->assertRedirect();
         $this->assertDatabaseHas('operational_adjustments', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'JP', 'amount' => 100]);
         $this->assertDatabaseHas('operational_adjustments', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'CASH', 'amount' => 12.5]);
-        $this->assertSame(2, OperationalAdjustment::count()); $this->assertArrayNotHasKey('jp_balance', $user->fresh()->getAttributes());
+        $this->assertSame(2, OperationalAdjustment::count());
+        $this->assertSame(1, RewardTransaction::where('reward_type', 'JP')->count());
+        $this->assertSame(['ledger_balance' => 100, 'held' => 0, 'available_balance' => 100], app(JpBalanceService::class)->for($user));
     }
 
     public function test_non_admin_and_missing_reason_are_denied(): void

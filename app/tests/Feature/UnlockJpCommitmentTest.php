@@ -28,7 +28,7 @@ class UnlockJpCommitmentTest extends TestCase
         $unlock = $this->unlock(['jp_deposit' => 50, 'minimum_commitments' => 2]);
         app(UnlockParticipationService::class)->commit($unlock, $user);
         $this->assertDatabaseHas('jp_holds', ['user_id' => $user->id, 'amount' => 50, 'status' => JpHold::HELD]);
-        $this->assertSame(['earned' => 50, 'held' => 50, 'spendable' => 0], app(JpBalanceService::class)->for($user));
+        $this->assertSame(['ledger_balance' => 50, 'held' => 50, 'available_balance' => 0], app(JpBalanceService::class)->for($user));
         try { app(UnlockParticipationService::class)->commit($this->unlock(['jp_deposit' => 1]), $user); $this->fail('Overdraw accepted'); } catch (ValidationException) {}
         $this->assertSame(1, JpHold::count());
     }

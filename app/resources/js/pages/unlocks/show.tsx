@@ -15,7 +15,7 @@ type Detail = Unlock & {
 
 export default function Show({ unlock, participation, hasActiveMembership = false, jpBalance }: {
     unlock: Detail; participation?: { status: string } | null; hasActiveMembership?: boolean;
-    jpBalance?: { earned: number; held: number; spendable: number } | null;
+    jpBalance?: { ledger_balance: number; held: number; available_balance: number } | null;
 }) {
     const { auth } = usePage().props;
     const intentSentFor = useRef<string | null>(null);
@@ -71,7 +71,7 @@ export default function Show({ unlock, participation, hasActiveMembership = fals
                         <p className="mt-3">Cuenta gratis: <strong>{unlock.free_user_eligible ? 'elegible' : 'no elegible'}</strong></p>
                         <p>Miembro activo: <strong>{unlock.member_eligible ? 'elegible' : 'no elegible'}</strong></p>
                         {membershipRequired ? <p className="mt-2 font-semibold">Este desbloqueo requiere membresía activa.</p> : null}
-                        {unlock.jp_deposit > 0 ? <><p className="mt-3 font-semibold">Garantía: {unlock.jp_deposit} JP</p><p className="text-muted-foreground">Al comprometerte, esos JP quedan retenidos. Se liberan o aplican según el resultado de tu participación.</p>{jpBalance ? <p className="mt-2">Tu saldo disponible: <strong>{jpBalance.spendable} JP</strong> · retenidos: {jpBalance.held} JP</p> : null}</> : <p className="mt-3 text-muted-foreground">Al comprometerte, te sumas a la meta. Si se alcanza, podrás confirmar tu participación.</p>}
+                        {unlock.jp_deposit > 0 ? <><p className="mt-3 font-semibold">Garantía: {unlock.jp_deposit} JP</p><p className="text-muted-foreground">Al comprometerte, esos JP quedan retenidos. Se liberan o aplican según el resultado de tu participación.</p>{jpBalance ? <p className="mt-2">Tu saldo disponible: <strong>{jpBalance.available_balance} JP</strong> · retenidos: {jpBalance.held} JP</p> : null}</> : <p className="mt-3 text-muted-foreground">Al comprometerte, te sumas a la meta. Si se alcanza, podrás confirmar tu participación.</p>}
                         {!hidden && (hasActiveMembership ? unlock.member_offer : unlock.free_user_offer) ? <p className="mt-3 font-semibold">{hasActiveMembership ? unlock.member_offer : unlock.free_user_offer}</p> : null}
                     </div>
                     <div className="mt-7 space-y-3">
