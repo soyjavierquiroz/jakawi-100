@@ -62,8 +62,9 @@ final class ChallengeService {
             $selected = $c->participations()->whereIn('selection_status', ['candidate','selected'])->whereKeyNot($p->id)->count();
             $limit = $c->winner_limit;
             if ($limit !== null && $selected >= $limit) return null;
+            $wasCandidate = $p->selection_status === 'candidate';
             $p->update(['selection_status'=>$c->review_mode === 'REQUIRED' ? 'candidate' : 'selected', 'selected_entry_id'=>$p->qualified_entry_id, 'selected_at'=>$p->selected_at ?? now()]);
-            if ($c->review_mode === 'REQUIRED') return null;
+            if ($c->review_mode === 'REQUIRED') { if (!$wasCandidate) $this->event('challenge_candidate',$p); return null; }
             return $this->grantLocked($c, $p, $adminId);
         });
     }
@@ -85,12 +86,14 @@ final class ChallengeService {
                 }
                 usort($rank, fn ($a,$b) => ($b['score'] <=> $a['score']) ?: (($a['p']->qualified_at ?? $a['entry']->created_at) <=> ($b['p']->qualified_at ?? $b['entry']->created_at)) ?: ($a['p']->id <=> $b['p']->id));
                 $grantedIds = $c->grants()->pluck('participation_id')->all();
+                $previousCandidates = $c->participations()->where('selection_status','candidate')->pluck('id')->all();
                 $c->participations()->whereIn('selection_status',['candidate','selected'])->whereDoesntHave('grant')->update(['selection_status'=>'pending','selected_entry_id'=>null,'selected_at'=>null]);
                 $available = $c->winner_limit === null ? count($rank) : max(0, $c->winner_limit - count($grantedIds));
                 $remaining = array_values(array_filter($rank, fn ($row) => !in_array($row['p']->id, $grantedIds, true)));
                 foreach (array_slice($remaining, 0, $available) as $position => $row) {
                     $p = $row['p'];
                     $p->update(['selection_status'=>$c->review_mode === 'REQUIRED' ? 'candidate' : 'selected', 'selected_entry_id'=>$row['entry']->id, 'selected_at'=>$p->selected_at ?? now()]);
+                    if ($c->review_mode === 'REQUIRED' && !in_array($p->id,$previousCandidates,true)) $this->event('challenge_candidate',$p);
                     if ($c->review_mode === 'AUTOMATIC') $this->grantLocked($c, $p, null, count($grantedIds) + $position + 1);
                 }
             } elseif (in_array($c->selection_type, ['ALL_QUALIFIED','FIRST_N'], true)) {
@@ -142,6 +145,6 @@ final class ChallengeService {
     }
 
     public function event(string $name, ChallengeParticipation $p): void {
-        app(AnalyticsTracker::class)->record($name, ['user_id'=>$p->user_id], ['challenge_id'=>$p->challenge_id, 'evidence_type'=>$p->challenge->evidence_type, 'qualification_type'=>$p->challenge->qualification_type, 'reward_type'=>$p->challenge->reward_type]);
+        app(AnalyticsTracker::class)->record($name, [], ['challenge_id'=>$p->challenge_id, 'evidence_type'=>$p->challenge->evidence_type, 'qualification_type'=>$p->challenge->qualification_type, 'reward_type'=>$p->challenge->reward_type]);
     }
 }

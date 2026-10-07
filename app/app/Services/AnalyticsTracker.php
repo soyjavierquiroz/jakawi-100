@@ -203,6 +203,7 @@ class AnalyticsTracker
             'user_id', 'visitor_id', 'partner_id', 'location_id', 'benefit_id', 'experience_id', 'unlock_id', 'redemption_id',
         ]));
         $data += $this->requestContext();
+        if (str_starts_with($event, 'challenge_')) { $data['user_id'] = null; $data['visitor_id'] = null; }
         $data['event_name'] = $event;
         $data['metadata'] = $this->validateMetadata($event, $metadata) ?: null;
         $data['occurred_at'] = now();
@@ -264,7 +265,7 @@ class AnalyticsTracker
             'opportunity_impression', 'opportunity_opened' => ['opportunity_type', 'source_id', 'city_id', 'city_slug', 'surface', 'section', 'position', 'category'],
             'social_challenge_view', 'social_challenge_intent_started', 'social_participation_submitted', 'social_participation_validation_result', 'social_challenge_qualified' => ['challenge_id', 'qualification_mode', 'platform', 'result', 'reward_type', 'metric'],
             'social_challenge_reward_granted' => ['challenge_id', 'qualification_mode', 'platform', 'result', 'reward_type', 'metric', 'jp_amount'],
-            'challenge_view', 'challenge_intent_started', 'challenge_social_entry_submitted', 'challenge_qualified', 'challenge_reward_granted' => ['challenge_id', 'entry_id', 'evidence_type', 'qualification_type', 'reward_type'],
+            'challenge_view', 'challenge_participation_started', 'challenge_entry_submitted', 'challenge_qualified', 'challenge_candidate', 'challenge_reward_granted' => ['challenge_id', 'evidence_type', 'qualification_type', 'reward_type'],
             default => [],
         };
         if (array_diff(array_keys($metadata), $allowed) !== []) {

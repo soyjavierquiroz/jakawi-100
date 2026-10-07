@@ -15,7 +15,7 @@ class OpportunityAnalyticsController extends Controller
     {
         $data = $request->validate([
             'event' => ['required', Rule::in(['opportunity_impression', 'opportunity_opened'])],
-            'opportunity_type' => ['required', Rule::in(['BENEFIT', 'EXPERIENCE', 'UNLOCK'])],
+            'opportunity_type' => ['required', Rule::in(['BENEFIT', 'EXPERIENCE', 'UNLOCK', 'CHALLENGE'])],
             'source_id' => ['required', 'string', 'max:255'],
             'surface' => ['required', Rule::in(['HOME', 'EXPLORE', 'SEARCH'])],
             'section' => ['required', Rule::in(['HERO', 'FOR_YOU', 'HAPPENING_NOW', 'DISCOVER_MORE', 'RESULTS'])],
@@ -23,7 +23,7 @@ class OpportunityAnalyticsController extends Controller
             'position' => ['required', 'integer', 'min:0'],
             'category' => ['nullable', Rule::in(config('jakawi.categories'))],
         ]);
-        if ($data['opportunity_type'] === 'UNLOCK' && ($data['category'] ?? null) !== null) {
+        if (in_array($data['opportunity_type'], ['UNLOCK','CHALLENGE'], true) && ($data['category'] ?? null) !== null) {
             throw ValidationException::withMessages(['category' => 'Unlock opportunities do not have a category.']);
         }
 

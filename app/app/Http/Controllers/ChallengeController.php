@@ -19,32 +19,35 @@ use Inertia\Inertia;
 class ChallengeController extends Controller {
     public function index(Request $request, SelectedCity $selectedCity) {
         $city = $selectedCity->resolve($request);
-        return Inertia::render('social-challenges/index', ['challenges'=>Challenge::where('status','open')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))->orderBy('ends_at')->get(['id','title','slug','description','ends_at','evidence_type','qualification_type','reward_type'])]);
+        return Inertia::render('social-challenges/index', ['challenges'=>Challenge::where('review_status','APPROVED')->where('status','open')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()))->withCount(['participations as reserved_count'=>fn ($q) => $q->whereIn('selection_status',['candidate','selected'])])->orderBy('ends_at')->get()]);
     }
-    public function show(Request $request, Challenge $challenge, AnalyticsTracker $analytics) {
-        abort_unless(in_array($challenge->status, ['open','closed'], true), 404);
+    public function show(Request $request, Challenge $challenge, AnalyticsTracker $analytics, \App\Services\ChallengeRanking $ranking) {
+        abort_unless($challenge->isPublic(), 404);
         $p = $request->user() ? ChallengeParticipation::where('challenge_id',$challenge->id)->where('user_id',$request->user()->id)->with(['socialEntries','grant.jpCredit.reversal'])->first() : null;
         $analytics->record('challenge_view', [], ['challenge_id'=>$challenge->id]);
         $grant = $p?->grant;
         return Inertia::render('social-challenges/show', [
-            'challenge'=>$challenge, 'rules'=>$challenge->rulesContract(),
+            'challenge'=>$challenge, 'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null, 'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'), 'rules'=>$challenge->rulesContract(),
             'participation'=>$p?->only(['id','qualification_status','qualified_entry_id','qualified_at','selection_status','selected_entry_id','review_status']),
             'entries'=>$p?->socialEntries->map(fn ($e) => $e->only(['id','social_url','platform','views','likes','comments','inspection_status','data_quality','validation_status','moderation_status','checked_at','sharecontest_payload','refresh_pending']))->all() ?? [],
             'grant'=>$grant ? ['id'=>$grant->id,'status'=>$grant->status,'reward_type'=>$grant->reward_type,'jp_amount'=>$grant->jp_amount,
                 'jp_reversed'=>$grant->reward_type === 'JP' && $grant->jpCredit?->reversal !== null,
                 'benefit'=>$grant->benefit?->only(['title','slug']), 'locations'=>$grant->benefit?->availableLocations()->get(['id','name'])] : null,
             'canParticipate'=>$challenge->acceptsParticipation(), 'canSubmit'=>($request->user()?->hasVerifiedEmail() ?? false) && ($challenge->participation_eligibility === 'ALL_USERS' || ($request->user()?->hasActiveMembership() ?? false)),
+            'isMember'=>$request->user()?->hasActiveMembership() ?? false,
+            'slots'=> $challenge->selection_type === 'FIRST_N' ? ['awarded'=>$challenge->grants()->where('status','!=','cancelled')->count(),'reserved'=>$challenge->participations()->whereIn('selection_status',['candidate','selected'])->count(),'limit'=>$challenge->winner_limit] : null,
+            'ranking'=>$ranking->forLanding($challenge,$request),
             'verificationUrl'=>route('verification.notice'),
         ]);
     }
     public function intent(Request $request, Challenge $challenge, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, ChallengeService $service) {
         abort_unless($challenge->acceptsParticipation(), 404);
-        $analytics->record('challenge_intent_started', [], ['challenge_id'=>$challenge->id]);
         if (!$request->user()) { $continuation->set('SOCIAL_CHALLENGE',$challenge->id,'PARTICIPATE'); return to_route('register'); }
         if (!$request->user()->hasVerifiedEmail()) return to_route('verification.notice');
         $this->assertParticipationEligible($challenge, $request);
         if ($challenge->evidence_type === 'MANUAL') {
             $p = ChallengeParticipation::firstOrCreate(['challenge_id'=>$challenge->id,'user_id'=>$request->user()->id]);
+            if ($p->wasRecentlyCreated) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
             $service->evaluate($p);
         }
         return redirect()->to(route('social-challenges.show',$challenge->slug).'#participar');
@@ -54,10 +57,12 @@ class ChallengeController extends Controller {
         if ($challenge->evidence_type !== 'SOCIAL_POST' || !$challenge->acceptsParticipation()) throw ValidationException::withMessages(['url'=>'Este reto no acepta publicaciones.']);
         $this->assertParticipationEligible($challenge, $request);
         $hash = hash('sha256', $this->normalizeUrl($data['url']));
+        $participationStarted = false;
         try {
-            $entry = DB::transaction(function () use ($challenge, $request, $data, $hash) {
+            $entry = DB::transaction(function () use ($challenge, $request, $data, $hash, &$participationStarted) {
                 $c = Challenge::query()->lockForUpdate()->findOrFail($challenge->id);
                 $p = ChallengeParticipation::firstOrCreate(['challenge_id'=>$c->id,'user_id'=>$request->user()->id]);
+                $participationStarted = $p->wasRecentlyCreated;
                 if ($c->max_entries_per_user !== null && $p->socialEntries()->count() >= $c->max_entries_per_user) throw ValidationException::withMessages(['url'=>'Alcanzaste el máximo de publicaciones de este reto.']);
                 if ($c->socialEntries()->where('normalized_url_hash',$hash)->exists()) throw ValidationException::withMessages(['url'=>'Esta publicación ya participa en el reto.']);
                 $entry = ChallengeSocialEntry::create(['challenge_id'=>$c->id,'participation_id'=>$p->id,'social_url'=>$data['url'],
@@ -66,7 +71,8 @@ class ChallengeController extends Controller {
                 return $entry;
             });
         } catch (UniqueConstraintViolationException) { throw ValidationException::withMessages(['url'=>'Esta publicación ya participa en el reto.']); }
-        $analytics->record('challenge_social_entry_submitted',['user_id'=>$request->user()->id],['challenge_id'=>$challenge->id,'entry_id'=>$entry->id]);
+        if ($participationStarted) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
+        $analytics->record('challenge_entry_submitted',[],['challenge_id'=>$challenge->id]);
         return to_route('social-challenges.show',$challenge->slug)->with('success','Estamos verificando tu publicación.');
     }
     public function refresh(Request $request, Challenge $challenge) {

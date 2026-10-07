@@ -46,7 +46,7 @@ class HomePersonalizationTest extends TestCase
         $items = collect([$response['hero'], ...$response['forYou'], ...$response['happeningNow'], ...$response['discoverMore']])->filter();
         $this->assertEqualsCanonicalizing(['BENEFIT', 'EXPERIENCE', 'UNLOCK'], $items->pluck('type')->unique()->all());
         $this->assertCount($items->count(), $items->map(fn (array $item) => $item['type'].'|'.$item['source_id'])->unique());
-        $this->assertSame([$benefit->id, $experience->id, $unlock->id], $items->pluck('source_id')->sort()->values()->all());
+        $this->assertEqualsCanonicalizing([$benefit->id, $experience->id, $unlock->id], $items->pluck('source_id')->all());
         $this->assertSame($before, [DB::table('memberships')->count(), DB::table('reward_transactions')->count(), DB::table('unlock_participations')->count()]);
     }
 

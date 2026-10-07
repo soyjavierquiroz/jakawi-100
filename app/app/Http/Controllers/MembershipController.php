@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Benefit;
+use App\Models\ChallengeParticipation;
 use App\Models\Membership;
 use App\Models\Conversion;
 use App\Services\AnalyticsTracker;
@@ -54,6 +55,14 @@ class MembershipController extends Controller
         $jpBalance = app(JpBalanceService::class)->for($user);
 
         return Inertia::render('mi-jakawi', [
+            'challenges' => ChallengeParticipation::where('user_id',$user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type','socialEntries:id,participation_id,likes,views,comments,validation_status','grant:id,participation_id,status,reward_type,jp_amount,benefit_id','grant.benefit:id,title'])->latest()->get()->map(function ($p) {
+                $c=$p->challenge; $metric=$c->qualification_metric;
+                return ['title'=>$c->title,'slug'=>$c->slug,'qualification_status'=>$p->qualification_status,'selection_status'=>$p->selection_status,
+                    'progress'=>$metric ? $p->socialEntries->filter(fn ($e) => $e->validation_status==='valid')->max($metric) ?? 0 : null,
+                    'target'=>$c->qualification_target,'metric'=>$metric,
+                    'reward'=>$p->grant ? ($p->grant->reward_type==='JP' ? '+'.$p->grant->jp_amount.' JP' : $p->grant->benefit?->title ?? $c->manual_prize_description) : null,
+                    'grant_status'=>$p->grant?->status];
+            }),
             'membership' => $membership ? $this->serializeMembership($membership) : null,
             'membershipConfig' => [
                 'price_bob' => config('jakawi.membership.price_bob'),

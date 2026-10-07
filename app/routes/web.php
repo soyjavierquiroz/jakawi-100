@@ -90,6 +90,14 @@ Route::get('/partner/{partner:slug}/canjes/{redemption_public_id}', [RedemptionC
 Route::post('/partner/{partner:slug}/canjes/{redemption_public_id}', [RedemptionController::class, 'scanConfirm'])->middleware(['auth', 'verified', 'partner', 'signed'])->name('partner.redemptions.scan.confirm');
 Route::get('/partner/{partner:slug}/asistencias/{reservation_public_id}', [ExperienceCheckInController::class, 'scan'])->middleware('signed')->name('partner.checkins.scan');
 Route::middleware(['auth', 'verified', 'partner'])->group(function () {
+    Route::get('/partner/{partner:slug}/retos', [\App\Http\Controllers\PartnerChallengeController::class, 'index'])->name('partner.challenges.index');
+    Route::get('/partner/{partner:slug}/retos/crear', [\App\Http\Controllers\PartnerChallengeController::class, 'form'])->name('partner.challenges.create');
+    Route::post('/partner/{partner:slug}/retos', [\App\Http\Controllers\PartnerChallengeController::class, 'save'])->name('partner.challenges.store');
+    Route::get('/partner/{partner:slug}/retos/{challenge:slug}/editar', [\App\Http\Controllers\PartnerChallengeController::class, 'form'])->name('partner.challenges.edit');
+    Route::put('/partner/{partner:slug}/retos/{challenge:slug}', [\App\Http\Controllers\PartnerChallengeController::class, 'save'])->name('partner.challenges.update');
+    Route::get('/partner/{partner:slug}/retos/{challenge:slug}/preview', [\App\Http\Controllers\PartnerChallengeController::class, 'preview'])->name('partner.challenges.preview');
+    Route::post('/partner/{partner:slug}/retos/{challenge:slug}/enviar', [\App\Http\Controllers\PartnerChallengeController::class, 'submit'])->name('partner.challenges.submit');
+    Route::post('/partner/{partner:slug}/retos/{challenge:slug}/imagen', [\App\Http\Controllers\PartnerChallengeController::class, 'image'])->name('partner.challenges.image');
     Route::get('/partner', [PartnerPortalController::class, 'index'])->name('partner.index');
     Route::get('/partner/reservas', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'partner.reservations.index'));
     Route::get('/validar', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'redemptions.validate'));
@@ -171,8 +179,11 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('retos/crear', [AdminChallengeController::class, 'form'])->name('admin.social-challenges.create');
     Route::post('retos', [AdminChallengeController::class, 'save'])->name('admin.social-challenges.store');
     Route::get('retos/{challenge:slug}', [AdminChallengeController::class, 'show'])->name('admin.social-challenges.show');
+    Route::get('retos/{challenge:slug}/preview', [AdminChallengeController::class, 'preview'])->name('admin.social-challenges.preview');
     Route::get('retos/{challenge:slug}/editar', [AdminChallengeController::class, 'form'])->name('admin.social-challenges.edit');
     Route::put('retos/{challenge:slug}', [AdminChallengeController::class, 'save'])->name('admin.social-challenges.update');
+    Route::post('retos/{challenge:slug}/revision-editorial', [AdminChallengeController::class, 'editorial'])->name('admin.social-challenges.editorial');
+    Route::post('retos/{challenge:slug}/imagen', [AdminChallengeController::class, 'image'])->name('admin.social-challenges.image');
     Route::post('retos/{challenge:slug}/actualizar', [AdminChallengeController::class, 'refresh'])->name('admin.social-challenges.refresh');
     Route::post('retos/{challenge:slug}/participaciones/{participation}/actualizar', [AdminChallengeController::class, 'refresh'])->name('admin.social-challenges.participations.refresh');
     Route::get('retos/{challenge:slug}/participaciones/{participation}', [AdminChallengeController::class, 'participation'])->name('admin.social-challenges.participations.show');

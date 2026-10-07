@@ -29,7 +29,7 @@ class MembershipOfferController extends Controller
             $action = $query['action'];
             $resourceId = (int) $query['resource_id'];
             if (! is_string($journey) || ! is_string($action)
-                || ! in_array($journey.'/'.$action, ['EXPERIENCE/RESERVE', 'BENEFIT/REDEEM', 'UNLOCK/COMMIT'], true)) {
+                || ! in_array($journey.'/'.$action, ['EXPERIENCE/RESERVE', 'BENEFIT/REDEEM', 'UNLOCK/COMMIT', 'SOCIAL_CHALLENGE/PARTICIPATE'], true)) {
                 throw ValidationException::withMessages(['journey' => 'Intención inválida.']);
             }
             $context = [];

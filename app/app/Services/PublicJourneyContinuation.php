@@ -81,7 +81,7 @@ class PublicJourneyContinuation
             'ACQUISITION' => route('programs.show', ['program' => match ($intent['resource_id']) {
                 'AFFILIATE' => 'afiliados', 'CREATOR' => 'creadores', 'PROMOTER' => 'promotores',
             }], false).'#solicitud',
-            'SOCIAL_CHALLENGE' => ($challenge = Challenge::find($intent['resource_id'])) && $challenge->status === 'open' ? route('social-challenges.show', $challenge->slug, false) : null,
+            'SOCIAL_CHALLENGE' => ($challenge = Challenge::find($intent['resource_id'])) && $challenge->isPublic() ? route('social-challenges.show', $challenge->slug, false) : null,
         };
     }
 

@@ -1,0 +1,7 @@
+import { Head, Link, router } from '@inertiajs/react';
+type Challenge={title:string;slug:string;status:string;review_status:string;review_comment:string|null};
+export default function Index({partner,challenges}:{partner:{name:string;slug:string};challenges:Challenge[]}) {
+ const base=`/partner/${partner.slug}/retos`;
+ const state:Record<string,string>={DRAFT:'Borrador',SUBMITTED:'En revisión',CHANGES_REQUESTED:'Cambios solicitados',APPROVED:'Aprobado',REJECTED:'Rechazado'};
+ return <main className="mx-auto max-w-3xl px-4 py-8"><Head title="Retos del Partner"/><p className="text-sm text-muted-foreground">{partner.name}</p><h1 className="mt-2 text-3xl font-extrabold">TUS RETOS</h1><Link href={`${base}/crear`} className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-brand px-4 font-bold text-brand-foreground">PROPONER RETO</Link><div className="mt-6 space-y-3">{challenges.map(c=><article key={c.slug} className="rounded-2xl border p-4"><h2 className="font-bold">{c.title}</h2><p className="mt-1 text-sm">{state[c.review_status]??'En revisión'}{c.status==='open'?' · Publicado':''}</p>{c.review_comment&&<p className="mt-2 text-sm">JAKAWI: {c.review_comment}</p>}<div className="mt-3 flex flex-wrap gap-4 text-sm font-bold text-brand"><Link href={`${base}/${c.slug}/preview`}>PREVISUALIZAR</Link>{['DRAFT','CHANGES_REQUESTED'].includes(c.review_status)&&<><Link href={`${base}/${c.slug}/editar`}>EDITAR</Link><button onClick={()=>router.post(`${base}/${c.slug}/enviar`)}>ENVIAR A JAKAWI</button></>}</div></article>)}</div></main>;
+}

@@ -1,4 +1,4 @@
-export type OpportunityType = 'BENEFIT' | 'EXPERIENCE' | 'UNLOCK';
+export type OpportunityType = 'BENEFIT' | 'EXPERIENCE' | 'UNLOCK' | 'CHALLENGE';
 
 export type DiscoveryCity = {
     id: number;

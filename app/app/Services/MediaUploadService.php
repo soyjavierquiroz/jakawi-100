@@ -56,7 +56,7 @@ class MediaUploadService
 
     public function isMediaKey(?string $key): bool
     {
-        return is_string($key) && preg_match('#^(partners|benefits|experiences|locations)/\d+/(cover|logo|image)/[0-9a-f-]+\.(jpg|png|webp)$#', $key) === 1
+        return is_string($key) && preg_match('#^(partners|benefits|experiences|locations|challenges)/\d+/(cover|logo|image)/[0-9a-f-]+\.(jpg|png|webp)$#', $key) === 1
             || is_string($key) && preg_match('#^avatars/\d+/[0-9a-f-]+\.(jpg|png|webp)$#', $key) === 1;
     }
 }

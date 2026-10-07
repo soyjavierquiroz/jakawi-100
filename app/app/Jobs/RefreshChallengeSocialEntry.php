@@ -32,6 +32,7 @@ class RefreshChallengeSocialEntry implements ShouldQueue {
         }
         DB::transaction(function () use ($entry, $result, $service) {
             $locked = ChallengeSocialEntry::query()->lockForUpdate()->findOrFail($entry->id);
+            $final = $this->final || $locked->challenge->status === 'closed';
             $data = $result->data;
             if ($data['social_external_id'] && $data['platform'] && ChallengeSocialEntry::where('challenge_id', $locked->challenge_id)->where('platform', $data['platform'])->where('social_external_id', $data['social_external_id'])->whereKeyNot($locked->id)->exists()) {
                 $data['social_external_id'] = null;
@@ -42,26 +43,27 @@ class RefreshChallengeSocialEntry implements ShouldQueue {
             $locked->sharecontest_payload = $result->payload;
             $locked->inspection_status = 'inspected';
             $locked->refresh_pending = false;
-            if ($this->final) {
+            if ($final) {
                 $metric = $locked->challenge->selection_metric;
                 $locked->final_metric_value = $metric ? $locked->{$metric} : null;
                 $locked->final_checked_at = $locked->checked_at ?? now();
             }
             $locked->save();
-            $service->evaluate($locked->participation, $this->final);
-            if ($this->final) $service->finalize($locked->challenge);
+            $service->evaluate($locked->participation, $final);
+            if ($final) $service->finalize($locked->challenge);
         });
     }
     public function failed(?\Throwable $e): void {
         DB::transaction(function () use ($e) {
             $entry = ChallengeSocialEntry::query()->lockForUpdate()->find($this->entryId);
             if (!$entry) return;
+            $final = $this->final || $entry->challenge->status === 'closed';
             $entry->update(['refresh_pending'=>false, 'inspection_status'=>'failed',
                 'integration_error_code'=>$e instanceof InspectionException ? $e->errorCode : 'retry_exhausted',
-                'validation_status'=>$this->final ? 'review_required' : $entry->validation_status,
-                'final_metric_value'=>$this->final ? null : $entry->final_metric_value,
-                'final_checked_at'=>$this->final ? now() : $entry->final_checked_at]);
-            if ($this->final) {
+                'validation_status'=>$final ? 'review_required' : $entry->validation_status,
+                'final_metric_value'=>$final ? null : $entry->final_metric_value,
+                'final_checked_at'=>$final ? now() : $entry->final_checked_at]);
+            if ($final) {
                 app(ChallengeService::class)->evaluate($entry->participation, true);
                 app(ChallengeService::class)->finalize($entry->challenge);
             }

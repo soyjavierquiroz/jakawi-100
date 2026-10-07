@@ -5,6 +5,7 @@ namespace App\Discovery;
 use App\Models\Benefit;
 use App\Models\Experience;
 use App\Models\Unlock;
+use App\Models\Challenge;
 use App\Services\MemberAffinityService;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -22,6 +23,7 @@ final readonly class DiscoveryService
         private BenefitOpportunityAdapter $benefitAdapter,
         private ExperienceOpportunityAdapter $experienceAdapter,
         private UnlockOpportunityAdapter $unlockAdapter,
+        private ChallengeOpportunityAdapter $challengeAdapter,
         private UnlockProgressLoader $progress,
         private MemberAffinityService $affinity,
         private DiscoveryRanker $ranker,
@@ -59,6 +61,9 @@ final readonly class DiscoveryService
         }
         foreach ($unlocks as $unlock) {
             $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first());
+        }
+        foreach ($this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title'])->limit($limit)->get() as $challenge) {
+            $items[] = $this->challengeAdapter->adapt($challenge,$city);
         }
 
         // Canonical identity intentionally retains linked Unlock/Benefit or
@@ -143,6 +148,11 @@ final readonly class DiscoveryService
                 $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first());
             }
         }
+        if (($type === null || $type === OpportunityType::CHALLENGE) && $category === null) {
+            $challenges = $this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title']);
+            if ($like !== null) $challenges->where(fn (Builder $q) => $q->where('title','ilike',$like)->orWhere('description','ilike',$like));
+            foreach ($challenges->limit($limit)->get() as $challenge) $items[] = $this->challengeAdapter->adapt($challenge,$city);
+        }
 
         $items = array_values(collect($items)->unique(fn (DiscoveryOpportunity $item): string => $item->type->value.'|'.$item->sourceId)->all());
         $ranked = $this->ranker->rank($items, $this->affinity->explicitCategoryAffinity($context->user), $this->affinity->behavioralCategoryAffinity($context->user));
@@ -201,5 +211,12 @@ final readonly class DiscoveryService
         $progress = (int) ($item->metadata['progress'] ?? 0);
 
         return $deadlineSoon || ($target > 0 && $progress * 2 >= $target);
+    }
+
+    private function challengesForCity(\App\Models\City $city): Builder {
+        return Challenge::query()->where('review_status','APPROVED')->where('status','open')
+            ->where(fn (Builder $q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))
+            ->where(fn (Builder $q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))
+            ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()));
     }
 }

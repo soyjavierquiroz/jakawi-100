@@ -44,6 +44,12 @@ class Partner extends Model
         return $this->hasMany(Unlock::class);
     }
 
+    /** @return HasMany<Challenge, $this> */
+    public function challenges(): HasMany
+    {
+        return $this->hasMany(Challenge::class);
+    }
+
     /** @return BelongsToMany<Experience, $this> */
     public function experiences(): BelongsToMany
     {

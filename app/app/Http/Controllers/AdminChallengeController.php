@@ -9,6 +9,7 @@ use App\Models\ChallengeParticipation;
 use App\Models\ChallengeSocialEntry;
 use App\Services\ChallengeService;
 use App\Services\JpLedgerService;
+use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -16,8 +17,8 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class AdminChallengeController extends Controller {
-    public function index() { return Inertia::render('admin/social-challenges/index',['challenges'=>Challenge::latest()->get(['id','title','slug','status','evidence_type','qualification_type','selection_type','ends_at'])]); }
-    public function form(?Challenge $challenge=null) { return Inertia::render('admin/social-challenges/form',['challenge'=>$challenge,'partners'=>\App\Models\Partner::orderBy('name')->get(['id','name']),'cities'=>\App\Models\City::orderBy('name')->get(['id','name']),'benefits'=>Benefit::where('access_mode','social_challenge_grant')->get(['id','partner_id','title'])]); }
+    public function index() { return Inertia::render('admin/social-challenges/index',['challenges'=>Challenge::with('partner:id,name')->latest()->get(['id','partner_id','city_id','title','slug','status','review_status','evidence_type','qualification_type','selection_type','reward_type','ends_at'])]); }
+    public function form(?Challenge $challenge=null) { return Inertia::render('admin/social-challenges/form',['challenge'=>$challenge,'heroUrl'=>$challenge ? app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero') : null,'partners'=>\App\Models\Partner::orderBy('name')->get(['id','name']),'cities'=>\App\Models\City::orderBy('name')->get(['id','name']),'benefits'=>Benefit::where('access_mode','social_challenge_grant')->get(['id','partner_id','title'])]); }
     public function save(Request $request, ?Challenge $challenge=null) {
         $data = $request->validate([
             'partner_id'=>['nullable','integer','exists:partners,id'], 'city_id'=>['nullable','integer','exists:cities,id'], 'title'=>['required','string','max:255'],
@@ -33,6 +34,8 @@ class AdminChallengeController extends Controller {
             'required_mentions'=>['present','array'], 'required_mentions.*'=>['string','max:100'], 'published_from'=>['nullable','date'], 'published_until'=>['nullable','date','after:published_from'],
             'reward_type'=>['required',Rule::in(['BENEFIT','MANUAL_PRIZE','JP'])], 'benefit_id'=>['nullable','integer','exists:benefits,id'], 'manual_prize_description'=>['nullable','string'],
             'reward_jp_amount'=>[Rule::requiredIf($request->input('reward_type')==='JP'),Rule::prohibitedIf($request->input('reward_type')!=='JP'),'nullable','integer','min:1'],
+            'instructions'=>['nullable','string','max:10000'], 'ranking_visibility'=>['nullable',Rule::in(['NONE','PUBLIC','PARTICIPANTS_ONLY'])],
+            'ranking_refresh_interval_minutes'=>['nullable','integer','min:15'],
         ]);
         if ($data['qualification_type']==='METRIC_THRESHOLD' && (empty($data['qualification_metric']) || empty($data['qualification_target']) || $data['evidence_type']!=='SOCIAL_POST')) throw ValidationException::withMessages(['qualification_metric'=>'El umbral requiere publicación, métrica y objetivo.']);
         if ($data['evidence_type']==='MANUAL' && $data['qualification_type']!=='MANUAL') throw ValidationException::withMessages(['qualification_type'=>'La evidencia manual requiere revisión de calificación.']);
@@ -48,14 +51,57 @@ class AdminChallengeController extends Controller {
         if (!$challenge && in_array($data['status'],['closed','cancelled'],true)) throw ValidationException::withMessages(['status'=>'Crea el reto como borrador o abierto.']);
         if ($data['status']==='closed' && $challenge?->status!=='closed') throw ValidationException::withMessages(['status'=>'Cierra el reto desde su detalle.']);
         if ($challenge && in_array($challenge->status,['closed','cancelled'],true) && $data['status']!==$challenge->status) throw ValidationException::withMessages(['status'=>'Este reto no se puede reabrir.']);
-        if ($challenge && $challenge->participations()->exists()) foreach (['evidence_type','qualification_type','qualification_metric','qualification_target','selection_type','selection_metric','winner_limit','evaluation_mode','review_mode','participation_eligibility','reward_eligibility','max_entries_per_user','reward_type','reward_jp_amount','benefit_id','manual_prize_description','partner_id'] as $field) if (($challenge->$field ?? null) != ($data[$field] ?? null)) throw ValidationException::withMessages([$field=>'No se puede cambiar esta regla después de recibir participaciones.']);
+        if ($challenge && $challenge->participations()->exists()) {
+            foreach (['slug','city_id','description','evidence_type','qualification_type','qualification_metric','qualification_target','selection_type','selection_metric','winner_limit','evaluation_mode','review_mode','participation_eligibility','reward_eligibility','max_entries_per_user','reward_type','reward_jp_amount','benefit_id','manual_prize_description','partner_id','starts_at','ends_at','published_from','published_until','allowed_platforms','required_hashtags','required_mentions','instructions'] as $field) {
+                $before = $challenge->$field ?? null; $after = $data[$field] ?? null;
+                if (in_array($field,['starts_at','ends_at','published_from','published_until'],true)) {
+                    $before = $before ? $before->getTimestamp() : null;
+                    $after = $after ? \Illuminate\Support\Carbon::parse($after)->getTimestamp() : null;
+                }
+                if ($before != $after) throw ValidationException::withMessages([$field=>'Este dato no se puede cambiar después de recibir participaciones. El contrato del reto ya está en curso.']);
+            }
+            if ($challenge->status === 'open' && $data['status'] === 'draft') throw ValidationException::withMessages(['status'=>'Un reto con participaciones no puede volver a borrador.']);
+        }
+        $data['ranking_visibility'] = $data['selection_type'] === 'TOP_N' ? ($data['ranking_visibility'] ?? $challenge?->ranking_visibility ?? 'PUBLIC') : 'NONE';
+        $data['ranking_refresh_interval_minutes'] ??= 30;
+        if ($data['status'] === 'open' && $challenge && $challenge->review_status !== 'APPROVED') throw ValidationException::withMessages(['status'=>'Aprueba el reto antes de publicarlo.']);
+        if ($data['status'] === 'open' && !$challenge) $data['review_status'] = 'APPROVED';
+        if ($request->attributes->get('partner_challenge')) {
+            $data['partner_id'] = $request->attributes->get('partner_challenge');
+            $data['status'] = 'draft';
+            $data['review_status'] = $challenge?->review_status === 'CHANGES_REQUESTED' ? 'CHANGES_REQUESTED' : 'DRAFT';
+        }
         $challenge ? $challenge->update($data) : $challenge=Challenge::create($data);
-        return to_route('admin.social-challenges.show',$challenge->slug);
+        return $request->attributes->get('partner_challenge')
+            ? to_route('partner.challenges.index', $request->attributes->get('partner_slug'))
+            : to_route('admin.social-challenges.show',$challenge->slug);
+    }
+    public function editorial(Request $request, Challenge $challenge) {
+        $data = $request->validate(['decision'=>['required',Rule::in(['APPROVED','CHANGES_REQUESTED','REJECTED'])], 'comment'=>['required_if:decision,CHANGES_REQUESTED','nullable','string','max:2000']]);
+        if ($challenge->review_status !== 'SUBMITTED') throw ValidationException::withMessages(['decision'=>'Solo puedes revisar retos enviados.']);
+        $challenge->update(['review_status'=>$data['decision'],'review_comment'=>$data['comment'] ?? null]);
+        $this->audit($request,'challenge_editorial_reviewed',$challenge,['decision'=>$data['decision']]);
+        return back();
     }
     public function show(Challenge $challenge) {
+        $challenge->load(['partner:id,name','city:id,name']);
         $rows = $challenge->participations()->with(['user','socialEntries','selectedEntry','qualifiedEntry','grant.jpCredit.reversal'])->orderBy('created_at')->get();
-        $ranking = $rows->filter(fn ($p) => $p->selectedEntry && in_array($p->selection_status,['candidate','selected'],true))->sort(fn ($a,$b) => ($b->selectedEntry->final_metric_value <=> $a->selectedEntry->final_metric_value) ?: ($a->qualified_at <=> $b->qualified_at) ?: ($a->id <=> $b->id))->values()->map(fn ($p,$i) => ['participation_id'=>$p->id,'position'=>$i+1,'value'=>$p->selectedEntry->final_metric_value])->all();
-        return Inertia::render('admin/social-challenges/show',['challenge'=>$challenge,'participations'=>$rows->map(fn ($p) => $p->toArray()+['user_name'=>$p->user->name]),'ranking'=>$ranking]);
+        $ranking = $rows->filter(fn ($p) => $p->selectedEntry && in_array($p->selection_status,['candidate','selected'],true))->sort(fn ($a,$b) => ($b->selectedEntry->final_metric_value <=> $a->selectedEntry->final_metric_value) ?: ($a->qualified_at <=> $b->qualified_at) ?: ($a->id <=> $b->id))->values()->map(fn ($p,$i) => ['participation_id'=>$p->id,'participant'=>$p->user->name,'position'=>$i+1,'value'=>$p->selectedEntry->final_metric_value,'entry_url'=>$p->selectedEntry->social_url,'final_checked_at'=>$p->selectedEntry->final_checked_at,'qualification'=>$p->qualification_status,'warning'=>$p->selectedEntry->final_metric_value === null ? 'Falta la métrica final' : ($p->selectedEntry->validation_status !== 'valid' ? 'Revisar validación' : null)])->all();
+        $warnings = array_values(array_filter([
+            !$challenge->instructions ? 'Faltan instrucciones específicas.' : null,
+            !$challenge->ends_at ? 'El reto no tiene fecha de cierre.' : null,
+            $challenge->selection_type === 'TOP_N' && $challenge->ranking_visibility === 'NONE' ? 'El ranking no será visible.' : null,
+            $challenge->reward_type === 'BENEFIT' && !$challenge->benefit ? 'El beneficio no está disponible.' : null,
+        ]));
+        return Inertia::render('admin/social-challenges/show',['challenge'=>$challenge,'reviewWarnings'=>$warnings,'participations'=>$rows->map(fn ($p) => $p->toArray()+['user_name'=>$p->user->name]),'ranking'=>$ranking]);
+    }
+    public function preview(Challenge $challenge) {
+        return Inertia::render('social-challenges/show',['challenge'=>$challenge,'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null,'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'preview'=>true,'verificationUrl'=>route('verification.notice')]);
+    }
+    public function image(Request $request, Challenge $challenge) {
+        $request->validate(['image'=>['required','image','mimes:jpeg,png,webp','max:10240']]);
+        $challenge->update(['hero_path'=>app(MediaUploadService::class)->replace($request->file('image'),'challenges',$challenge->id,'cover',$challenge->hero_path)]);
+        return back();
     }
     public function participation(Challenge $challenge, ChallengeParticipation $participation) {
         abort_unless($participation->challenge_id===$challenge->id,404);

@@ -6,11 +6,11 @@ import type { DiscoveryOpportunity } from '@/types/discovery';
 type DiscoverySection = 'FOR_YOU' | 'HAPPENING_NOW' | 'DISCOVER_MORE' | 'RESULTS';
 
 export function opportunityLabel(type: DiscoveryOpportunity['type']) {
-    return type === 'BENEFIT' ? 'VER BENEFICIO' : type === 'EXPERIENCE' ? 'VER EXPERIENCIA' : 'VER DESBLOQUEO';
+    return type === 'BENEFIT' ? 'VER BENEFICIO' : type === 'EXPERIENCE' ? 'VER EXPERIENCIA' : type === 'CHALLENGE' ? 'VER RETO' : 'VER DESBLOQUEO';
 }
 
 export function opportunityType(type: DiscoveryOpportunity['type']) {
-    return type === 'BENEFIT' ? 'Beneficio' : type === 'EXPERIENCE' ? 'Experiencia' : 'Desbloqueo';
+    return type === 'BENEFIT' ? 'Beneficio' : type === 'EXPERIENCE' ? 'Experiencia' : type === 'CHALLENGE' ? 'Reto' : 'Desbloqueo';
 }
 
 export function experienceTiming(opportunity: DiscoveryOpportunity) {
@@ -49,6 +49,7 @@ function OpportunityDetails({ opportunity }: { opportunity: DiscoveryOpportunity
         return <>{value ? <p className="mt-2 text-xl leading-none font-extrabold tracking-[-0.035em] text-foreground">{value}</p> : null}<h3 className={`${value ? 'mt-2' : 'mt-2'} text-lg leading-tight font-extrabold tracking-tight`}>{opportunity.title}</h3>{opportunity.partner?.name ? <p className="mt-2 text-sm font-medium text-muted-foreground">{opportunity.partner.name}</p> : null}</>;
     }
     if (opportunity.type === 'EXPERIENCE') return <><h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3>{experienceTiming(opportunity) ? <p className="mt-3 text-sm leading-tight font-extrabold text-foreground">{experienceTiming(opportunity)}</p> : null}{context ? <p className="mt-1.5 text-sm font-medium text-muted-foreground">{context}</p> : null}</>;
+    if (opportunity.type === 'CHALLENGE') return <><h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3><p className="mt-2 text-sm font-bold">{opportunity.primary_value}</p><p className="mt-1 text-sm text-muted-foreground">{opportunity.secondary_value}</p></>;
     return <><h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3><UnlockProgress opportunity={opportunity} /></>;
 }
 

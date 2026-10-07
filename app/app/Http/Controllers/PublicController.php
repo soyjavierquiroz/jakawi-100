@@ -38,6 +38,7 @@ class PublicController extends Controller
         ));
 
         return Inertia::render('welcome', [
+            'challenges' => array_map(fn ($item) => $item->toArray(), $discovery->explore(new DiscoveryContext(city:$city,user:$request->user(),surface:'home'), OpportunityType::CHALLENGE,limit:4)),
             'discovery' => [
                 'hero' => $result->hero?->toArray(),
                 'forYou' => array_map(fn ($item) => $item->toArray(), $result->forYou),
@@ -81,7 +82,7 @@ class PublicController extends Controller
         $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
         $category = $request->query('category');
         $category = in_array($category, config('jakawi.categories'), true) ? $category : null;
-        $type = in_array($request->query('type'), ['benefits', 'experiences', 'unlocks', 'places'], true) ? $request->query('type') : null;
+        $type = in_array($request->query('type'), ['benefits', 'experiences', 'challenges', 'unlocks', 'places'], true) ? $request->query('type') : null;
         $partners = Partner::query()->published()->whereHas('locations', fn (Builder $query) => $query->published()->where('city_id', $city->id))->orderByDesc('featured')->orderBy('name');
 
         if ($category !== null) {
@@ -96,6 +97,7 @@ class PublicController extends Controller
             'benefits' => OpportunityType::BENEFIT,
             'experiences' => OpportunityType::EXPERIENCE,
             'unlocks' => OpportunityType::UNLOCK,
+            'challenges' => OpportunityType::CHALLENGE,
             default => null,
         };
         $opportunities = $type === 'places' ? [] : $discovery->explore(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore', candidateLimitPerDomain: 24), $opportunityType, $category, $term, 24);
