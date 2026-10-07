@@ -6,6 +6,7 @@ use App\Models\Benefit;
 use App\Models\SocialChallenge;
 use App\Models\SocialChallengeParticipation;
 use App\Services\SocialChallengeQualificationService;
+use App\Services\JpLedgerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -23,27 +24,31 @@ class AdminSocialChallengeController extends Controller {
             'required_mentions'=>['required','array'],'required_mentions.*'=>['string','max:100'], 'published_from'=>['nullable','date'], 'published_until'=>['nullable','date','after:published_from'],
             'qualification_mode'=>['required',Rule::in(['VALID_POST','METRIC_THRESHOLD','RANKED','MANUAL'])], 'evaluation_mode'=>['required',Rule::in(['CONTINUOUS','AT_CLOSE'])],
             'metric'=>['nullable',Rule::in(['views','likes','comments'])], 'target'=>['nullable','integer','min:1'], 'winner_count'=>['nullable','integer','min:1'],
-            'reward_type'=>['required',Rule::in(['BENEFIT','MANUAL_PRIZE'])], 'benefit_id'=>['nullable','integer','exists:benefits,id'],'manual_prize_description'=>['nullable','string'],
+            'reward_type'=>['required',Rule::in(['BENEFIT','MANUAL_PRIZE','JP'])], 'benefit_id'=>['nullable','integer','exists:benefits,id'],'manual_prize_description'=>['nullable','string'],
+            'reward_jp_amount'=>[Rule::requiredIf($request->input('reward_type')==='JP'),Rule::prohibitedIf($request->input('reward_type')!=='JP'),'nullable','integer','min:1'],
         ]);
         if ($data['qualification_mode']==='RANKED' && ($data['evaluation_mode']!=='AT_CLOSE' || empty($data['metric']) || empty($data['winner_count']))) throw ValidationException::withMessages(['qualification_mode'=>'El ranking requiere evaluación al cierre, métrica y cantidad de ganadores.']);
         if ($data['qualification_mode']==='METRIC_THRESHOLD' && (empty($data['metric']) || empty($data['target']))) throw ValidationException::withMessages(['metric'=>'El umbral requiere métrica y objetivo.']);
         if ($data['reward_type']==='BENEFIT') { $benefit=Benefit::find($data['benefit_id'] ?? null); if (!$benefit || !$data['partner_id'] || $benefit->partner_id!=(int)$data['partner_id'] || $benefit->access_mode!=='social_challenge_grant') throw ValidationException::withMessages(['benefit_id'=>'Selecciona un beneficio exclusivo del mismo Partner.']); }
         if ($data['reward_type']==='MANUAL_PRIZE' && empty($data['manual_prize_description'])) throw ValidationException::withMessages(['manual_prize_description'=>'Describe el premio.']);
+        $data['reward_jp_amount']=$data['reward_type']==='JP' ? (int) $data['reward_jp_amount'] : null;
+        $data['benefit_id']=$data['reward_type']==='BENEFIT' ? ($data['benefit_id'] ?? null) : null;
+        $data['manual_prize_description']=$data['reward_type']==='MANUAL_PRIZE' ? ($data['manual_prize_description'] ?? null) : null;
         if (!$challenge && in_array($data['status'],['closed','cancelled'],true)) throw ValidationException::withMessages(['status'=>'Crea el reto como borrador o abierto.']);
         if ($data['status']==='closed' && $challenge?->status!=='closed') throw ValidationException::withMessages(['status'=>'Cierra el reto desde su detalle.']);
         if ($challenge && in_array($challenge->status,['closed','cancelled'],true) && $data['status']!==$challenge->status) throw ValidationException::withMessages(['status'=>'Este reto no se puede reabrir.']);
-        if ($challenge && $challenge->participations()->exists()) foreach (['qualification_mode','evaluation_mode','metric','target','winner_count','reward_type','benefit_id','partner_id'] as $field) if (($challenge->$field ?? null) != ($data[$field] ?? null)) throw ValidationException::withMessages([$field=>'No se puede cambiar esta regla después de recibir participaciones.']);
+        if ($challenge && $challenge->participations()->exists()) foreach (['qualification_mode','evaluation_mode','metric','target','winner_count','reward_type','reward_jp_amount','benefit_id','manual_prize_description','partner_id'] as $field) if (($challenge->$field ?? null) != ($data[$field] ?? null)) throw ValidationException::withMessages([$field=>'No se puede cambiar esta regla después de recibir participaciones.']);
         $challenge ? $challenge->update($data) : $challenge=SocialChallenge::create($data);
         return to_route('admin.social-challenges.show',$challenge->slug);
     }
     public function show(SocialChallenge $challenge) {
-        $rows=$challenge->participations()->with(['user','grant'])->orderBy('created_at')->get();
+        $rows=$challenge->participations()->with(['user','grant.jpCredit.reversal'])->orderBy('created_at')->get();
         $ranking=$challenge->qualification_mode==='RANKED' ? $rows->filter(fn($p)=>$p->final_checked_at && $p->final_metric_value!==null && $p->validation_status==='valid' && $p->moderation_status!=='rejected')->sort(fn($a,$b)=>($b->final_metric_value<=>$a->final_metric_value) ?: ($a->created_at<=>$b->created_at) ?: ($a->id<=>$b->id))->values()->map(fn($p,$i)=>['participation_id'=>$p->id,'position'=>$i+1,'value'=>$p->final_metric_value])->all() : [];
         return Inertia::render('admin/social-challenges/show',['challenge'=>$challenge,'participations'=>$rows->map(fn($p)=>$p->toArray()+['user_name'=>$p->user->name]),'ranking'=>$ranking]);
     }
     public function participation(SocialChallenge $challenge, SocialChallengeParticipation $participation) {
         abort_unless($participation->social_challenge_id===$challenge->id,404);
-        return Inertia::render('admin/social-challenges/participation',['challenge'=>$challenge->only(['slug','title']),'participation'=>$participation->load(['user','grant'])->toArray()]);
+        return Inertia::render('admin/social-challenges/participation',['challenge'=>$challenge->only(['slug','title']),'participation'=>$participation->load(['user','grant.jpCredit.reversal'])->toArray()]);
     }
     public function refresh(SocialChallenge $challenge, ?SocialChallengeParticipation $participation=null) {
         if ($participation) { abort_unless($participation->social_challenge_id===$challenge->id,404); $this->queue($participation,$challenge->status==='closed'); }
@@ -96,7 +101,9 @@ class AdminSocialChallengeController extends Controller {
         abort_unless($participation->social_challenge_id===$challenge->id,404);
         DB::transaction(function() use($request,$participation) {
             $grant=$participation->grant()->lockForUpdate()->firstOrFail();
+            if ($grant->status==='cancelled') return;
             if ($grant->status!=='granted') throw ValidationException::withMessages(['grant'=>'Este premio ya no se puede cancelar.']);
+            if ($grant->reward_type==='JP' && $grant->jpCredit) app(JpLedgerService::class)->reverse($grant->jpCredit,$request->user()->id,'social_challenge_reward_cancelled');
             $grant->update(['status'=>'cancelled','cancelled_at'=>now()]); $this->audit($request,'social_challenge_reward_cancelled',$grant);
         }); return back();
     }

@@ -21,9 +21,11 @@ class SocialChallengeController extends Controller {
         $p=$request->user()?SocialChallengeParticipation::where('social_challenge_id',$challenge->id)->where('user_id',$request->user()->id)->with('grant')->first():null;
         $analytics->record('social_challenge_view',[],['challenge_id'=>$challenge->id]);
         $grant=$p?->grant;
-        return Inertia::render('social-challenges/show',['challenge'=>$challenge->only(['id','slug','title','description','status','starts_at','ends_at','allowed_platforms','required_hashtags','required_mentions','qualification_mode','evaluation_mode','metric','target','winner_count','reward_type','manual_prize_description']),
+        return Inertia::render('social-challenges/show',['challenge'=>$challenge->only(['id','slug','title','description','status','starts_at','ends_at','allowed_platforms','required_hashtags','required_mentions','qualification_mode','evaluation_mode','metric','target','winner_count','reward_type','reward_jp_amount','manual_prize_description']),
             'participation'=>$p?->only(['id','social_url','platform','views','likes','comments','inspection_status','data_quality','validation_status','qualification_status','moderation_status','checked_at','sharecontest_payload','refresh_pending','last_refresh_requested_at','refresh_count_today','refresh_count_date']),
-            'grant'=>$grant ? ['id'=>$grant->id,'status'=>$grant->status,'reward_type'=>$grant->reward_type,'benefit'=>$grant->benefit?->only(['title','slug']),'locations'=>$grant->benefit?->availableLocations()->get(['id','name'])] : null,
+            'grant'=>$grant ? ['id'=>$grant->id,'status'=>$grant->status,'reward_type'=>$grant->reward_type,'jp_amount'=>$grant->jp_amount,
+                'jp_reversed'=>$grant->reward_type==='JP' && $grant->jpCredit?->reversal !== null,
+                'benefit'=>$grant->benefit?->only(['title','slug']),'locations'=>$grant->benefit?->availableLocations()->get(['id','name'])] : null,
             'canParticipate'=>$challenge->acceptsParticipation(), 'canSubmit'=>$request->user()?->hasVerifiedEmail() ?? false,
             'verificationUrl'=>route('verification.notice')]);
     }

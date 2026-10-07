@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RewardTransaction extends Model
 {
@@ -46,5 +47,15 @@ class RewardTransaction extends Model
     public function unlockParticipation(): BelongsTo
     {
         return $this->belongsTo(UnlockParticipation::class);
+    }
+
+    public function socialChallengeRewardGrant(): BelongsTo
+    {
+        return $this->belongsTo(SocialChallengeRewardGrant::class);
+    }
+
+    public function reversal(): HasOne
+    {
+        return $this->hasOne(self::class, 'reversal_of_reward_transaction_id');
     }
 }

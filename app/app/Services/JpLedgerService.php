@@ -6,12 +6,30 @@ use App\Models\AuditLog;
 use App\Models\JpHold;
 use App\Models\OperationalAdjustment;
 use App\Models\RewardTransaction;
+use App\Models\SocialChallengeRewardGrant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class JpLedgerService
 {
+    public function socialChallengeCredit(SocialChallengeRewardGrant $grant): RewardTransaction
+    {
+        if ($grant->reward_type !== 'JP' || (int) $grant->jp_amount <= 0) {
+            throw ValidationException::withMessages(['grant' => 'El premio JP requiere una cantidad positiva.']);
+        }
+
+        return DB::transaction(function () use ($grant): RewardTransaction {
+            User::query()->lockForUpdate()->findOrFail($grant->user_id);
+            return RewardTransaction::firstOrCreate(
+                ['social_challenge_reward_grant_id' => $grant->id],
+                ['beneficiary_user_id' => $grant->user_id, 'beneficiary_type' => 'USER', 'beneficiary_id' => $grant->user_id,
+                    'reward_type' => 'JP', 'currency' => 'JP', 'amount' => $grant->jp_amount,
+                    'status' => RewardTransaction::STATUS_AVAILABLE, 'available_at' => now(), 'source' => 'social_challenge']
+            );
+        });
+    }
+
     public function adminAdjustment(User $actor, User $beneficiary, string $type, int $amount, string $reason, string $key): OperationalAdjustment
     {
         if (! in_array($type, ['ledger_credit', 'ledger_debit'], true) || $amount <= 0) {
