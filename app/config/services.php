@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'sharecontest' => ['url' => env('SHARECONTEST_URL', 'https://sharecontest.kuruk.in'), 'token' => env('SHARECONTEST_TOKEN')],
 
     /*
     |--------------------------------------------------------------------------

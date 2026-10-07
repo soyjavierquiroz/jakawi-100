@@ -54,7 +54,7 @@ class PublicController extends Controller
         abort_unless($partner->isPublished(), 404);
         $analytics->partnerViewed($partner);
 
-        return Inertia::render('partners/show', ['partner' => $this->partner($partner), 'locations' => $partner->locations()->published()->get()->map(fn ($x) => $this->locationData($x)), 'benefits' => $partner->benefits()->available()->get()->map(fn ($x) => $this->benefitData($x)), 'experiences' => $partner->experiences()->upcoming()->with(['sessions' => fn ($query) => $query->upcoming()->with('location')])->get()->map(fn ($x) => $this->experienceData($x))]);
+        return Inertia::render('partners/show', ['partner' => $this->partner($partner), 'locations' => $partner->locations()->published()->get()->map(fn ($x) => $this->locationData($x)), 'benefits' => $partner->benefits()->available()->publicAccess()->get()->map(fn ($x) => $this->benefitData($x)), 'experiences' => $partner->experiences()->upcoming()->with(['sessions' => fn ($query) => $query->upcoming()->with('location')])->get()->map(fn ($x) => $this->experienceData($x))]);
     }
 
     public function location(Location $location, AnalyticsTracker $analytics): Response
@@ -62,12 +62,12 @@ class PublicController extends Controller
         abort_unless($location->isPublished(), 404);
         $analytics->locationViewed($location);
 
-        return Inertia::render('locations/show', ['location' => $this->locationData($location->load('partner')), 'benefits' => $location->benefits()->available()->get()->filter(fn ($b) => $b->isAvailableAt($location))->map(fn ($b) => $this->benefitData($b)), 'sessions' => $location->hasMany(ExperienceSession::class)->upcoming()->with('experience')->get()]);
+        return Inertia::render('locations/show', ['location' => $this->locationData($location->load('partner')), 'benefits' => $location->benefits()->available()->publicAccess()->get()->filter(fn ($b) => $b->isAvailableAt($location))->map(fn ($b) => $this->benefitData($b)), 'sessions' => $location->hasMany(ExperienceSession::class)->upcoming()->with('experience')->get()]);
     }
 
     public function benefits(Request $request): Response
     {
-        $query = Benefit::available()->with('partner')->orderByDesc('featured')->orderBy('sort_order')->orderBy('title');
+        $query = Benefit::available()->publicAccess()->with('partner')->orderByDesc('featured')->orderBy('sort_order')->orderBy('title');
         if ($request->filled('category')) {
             $query->where('category', $request->string('category'));
         }
@@ -113,6 +113,7 @@ class PublicController extends Controller
 
     public function benefit(Benefit $benefit, Request $request, AnalyticsTracker $analytics): Response
     {
+        if ($benefit->access_mode === 'social_challenge_grant') abort_unless($request->user() && \App\Models\SocialChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->exists(), 404);
         $analytics->resetJourneyIntent($benefit);
         $benefit->load('partner');
         $locations = $benefit->isAvailable() ? $benefit->availableLocations()->get()->filter->hasRedemptionPin()->values() : collect();

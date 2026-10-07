@@ -23,7 +23,7 @@ class Redemption extends Model
 
     public const STATUS_CANCELLED = 'cancelled';
 
-    protected $fillable = ['public_id', 'code', 'user_id', 'membership_id', 'partner_id', 'location_id', 'benefit_id', 'partner_name', 'location_name', 'benefit_title', 'status', 'savings_amount', 'expires_at', 'confirmed_at'];
+    protected $fillable = ['public_id', 'code', 'user_id', 'membership_id', 'social_challenge_reward_grant_id', 'partner_id', 'location_id', 'benefit_id', 'partner_name', 'location_name', 'benefit_title', 'status', 'savings_amount', 'expires_at', 'confirmed_at'];
 
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo

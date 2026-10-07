@@ -19,13 +19,13 @@ class RedemptionController extends Controller
 {
     public function start(Request $r, Benefit $benefit, RedemptionService $service, AnalyticsTracker $analytics)
     {
-        $data = $r->validate(['location_id' => ['required', 'integer', 'exists:locations,id']]);
+        $data = $r->validate(['location_id' => ['required', 'integer', 'exists:locations,id'], 'social_challenge_reward_grant_id'=>['nullable','integer']]);
         $analytics->journeyIntentStarted($benefit);
-        if (! $r->user()->hasActiveMembership()) {
+        if ($benefit->access_mode !== 'social_challenge_grant' && ! $r->user()->hasActiveMembership()) {
             return redirect('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id]));
         }
         try {
-            $redemption = $service->start($r->user(), $benefit, Location::findOrFail($data['location_id']));
+            $redemption = $service->start($r->user(), $benefit, Location::findOrFail($data['location_id']), isset($data['social_challenge_reward_grant_id']) ? \App\Models\SocialChallengeRewardGrant::find($data['social_challenge_reward_grant_id']) : null);
         } catch (DomainException $e) {
             return back()->withErrors(['redemption' => $e->getMessage()]);
         }

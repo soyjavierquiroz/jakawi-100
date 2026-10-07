@@ -111,6 +111,9 @@ class AdminController extends Controller
             }
         });
         $data = $validator->validate();
+        if ($benefit && isset($data['access_mode']) && $data['access_mode'] !== $benefit->access_mode && \App\Models\SocialChallenge::where('benefit_id', $benefit->id)->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['access_mode' => 'No se puede cambiar el acceso de un beneficio vinculado a un reto.']);
+        }
         $benefit ??= new Benefit;
         $benefit->fill($data);
         $benefit->applies_to_all_locations = $data['location_scope'] === 'all';
@@ -239,7 +242,7 @@ class AdminController extends Controller
 
     private function benefitRules(?Benefit $b): array
     {
-        return array_merge($this->base('benefits', $b), ['partner_id' => 'required|exists:partners,id', 'title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'benefit_type' => 'nullable|in:percentage,fixed_amount,two_for_one,free_item,upgrade,exclusive_access,other', 'estimated_savings' => 'nullable|numeric|min:0', 'redemption_limit_per_member' => 'nullable|integer|min:1', 'featured' => 'boolean', 'starts_at' => 'nullable|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_scope' => 'required|in:all,selected', 'location_ids' => 'array', 'location_ids.*' => 'integer', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
+        return array_merge($this->base('benefits', $b), ['partner_id' => 'required|exists:partners,id', 'title' => 'required|string|max:255', 'short_description' => 'nullable|string', 'description' => 'nullable|string', 'terms' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'benefit_type' => 'nullable|in:percentage,fixed_amount,two_for_one,free_item,upgrade,exclusive_access,other', 'access_mode' => 'sometimes|in:public,social_challenge_grant', 'estimated_savings' => 'nullable|numeric|min:0', 'redemption_limit_per_member' => 'nullable|integer|min:1', 'featured' => 'boolean', 'starts_at' => 'nullable|date', 'ends_at' => 'nullable|date|after_or_equal:starts_at', 'location_scope' => 'required|in:all,selected', 'location_ids' => 'array', 'location_ids.*' => 'integer', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function experienceRules(?Experience $e): array

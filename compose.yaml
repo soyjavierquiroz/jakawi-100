@@ -39,6 +39,26 @@ services:
     networks:
       - jakawi
 
+  social-worker:
+    image: jakawi-app
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    environment:
+      DB_QUEUE_RETRY_AFTER: "90"
+    command: ["php", "artisan", "queue:work", "database", "--queue=social", "--sleep=3", "--tries=6", "--timeout=45"]
+    stop_grace_period: 60s
+    depends_on:
+      app:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - jakawi_public_uploads:/var/www/html/storage/app/public
+    networks:
+      - jakawi
+
   imgproxy:
     image: darthsim/imgproxy:v3.30.1
     restart: unless-stopped

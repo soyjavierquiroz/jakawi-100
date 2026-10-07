@@ -1,0 +1,3 @@
+import { Link } from '@inertiajs/react';
+import AdminLayout from '../layout';
+export default function Index({ challenges }: { challenges: Array<{id:number;title:string;slug:string;status:string;qualification_mode:string}> }) { return <AdminLayout title="Retos sociales"><Link href="/admin/retos/crear" className="rounded bg-primary px-4 py-2 text-primary-foreground">Crear reto</Link><div className="mt-6 space-y-3">{challenges.map(c=><Link key={c.id} href={`/admin/retos/${c.slug}`} className="block rounded border p-4"><strong>{c.title}</strong> · {c.status} · {c.qualification_mode}</Link>)}</div></AdminLayout>; }

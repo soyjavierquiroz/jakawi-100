@@ -68,6 +68,7 @@ const fields: Record<string, string[]> = {
         'terms',
         'category',
         'benefit_type',
+        'access_mode',
         'estimated_savings',
         'redemption_limit_per_member',
         'status',
@@ -101,6 +102,7 @@ const fields: Record<string, string[]> = {
 };
 const defaults: Record<string, any> = {
     status: 'draft',
+    access_mode: 'public',
     entity_type: 'organization',
     partner_type: 'business',
     location_type: 'branch',
@@ -133,7 +135,9 @@ export default function ResourceForm({
         }
     };
     const options = (field: string) =>
-        field === 'status'
+        field === 'access_mode'
+            ? ['public', 'social_challenge_grant']
+            : field === 'status'
             ? ['draft', 'published', 'paused', 'archived']
             : field === 'entity_type'
               ? ['organization', 'individual']

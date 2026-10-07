@@ -11,7 +11,7 @@ class BenefitDiscoveryQuery
     /** @return Builder<Benefit> */
     public function forCity(City $city): Builder
     {
-        return Benefit::available()
+        return Benefit::available()->publicAccess()
             ->where(function (Builder $query) use ($city): void {
                 $query->where(function (Builder $allLocations) use ($city): void {
                     $allLocations->where('applies_to_all_locations', true)

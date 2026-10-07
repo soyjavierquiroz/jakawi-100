@@ -43,6 +43,8 @@ use App\Http\Controllers\UnlockController;
 use App\Http\Controllers\AdminUnlockController;
 use App\Http\Controllers\PartnerUnlockController;
 use App\Http\Controllers\OpportunityAnalyticsController;
+use App\Http\Controllers\SocialChallengeController;
+use App\Http\Controllers\AdminSocialChallengeController;
 use App\Support\PublicJourneyConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +57,9 @@ Route::post('/analytics/public-landings/{key}/cta', [PublicJourneyLandingControl
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
 Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.unlock');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
+Route::get('/retos', [SocialChallengeController::class, 'index'])->name('social-challenges.index');
+Route::get('/retos/{challenge:slug}', [SocialChallengeController::class, 'show'])->name('social-challenges.show');
+Route::post('/retos/{challenge:slug}/participar', [SocialChallengeController::class, 'intent'])->name('social-challenges.intent');
 Route::get('/partners', [PartnersLandingController::class, 'show'])->name('partners.index');
 Route::get('/partners/aplicar', [PartnersLandingController::class, 'apply'])->name('partners.apply');
 Route::get('/{program}', [ProgramApplicationController::class, 'show'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.show');
@@ -122,6 +127,8 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/retos/{challenge:slug}/publicaciones', [SocialChallengeController::class, 'submit'])->middleware('throttle:10,1')->name('social-challenges.submit');
+    Route::post('/retos/{challenge:slug}/actualizar', [SocialChallengeController::class, 'refresh'])->name('social-challenges.refresh');
     Route::post('/membresia/solicitar', [MembershipOfferController::class, 'request'])->middleware('throttle:20,1')->name('membership.request');
     Route::post('/membresia/volver/{purchaseRequest}', [MembershipOfferController::class, 'returnToIntent'])->name('membership.return');
     Route::post('/{program}/solicitudes', [ProgramApplicationController::class, 'store'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->middleware('throttle:20,1')->name('programs.applications.store');
@@ -160,6 +167,21 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('retos', [AdminSocialChallengeController::class, 'index'])->name('admin.social-challenges.index');
+    Route::get('retos/crear', [AdminSocialChallengeController::class, 'form'])->name('admin.social-challenges.create');
+    Route::post('retos', [AdminSocialChallengeController::class, 'save'])->name('admin.social-challenges.store');
+    Route::get('retos/{challenge:slug}', [AdminSocialChallengeController::class, 'show'])->name('admin.social-challenges.show');
+    Route::get('retos/{challenge:slug}/editar', [AdminSocialChallengeController::class, 'form'])->name('admin.social-challenges.edit');
+    Route::put('retos/{challenge:slug}', [AdminSocialChallengeController::class, 'save'])->name('admin.social-challenges.update');
+    Route::post('retos/{challenge:slug}/actualizar', [AdminSocialChallengeController::class, 'refresh'])->name('admin.social-challenges.refresh');
+    Route::post('retos/{challenge:slug}/participaciones/{participation}/actualizar', [AdminSocialChallengeController::class, 'refresh'])->name('admin.social-challenges.participations.refresh');
+    Route::get('retos/{challenge:slug}/participaciones/{participation}', [AdminSocialChallengeController::class, 'participation'])->name('admin.social-challenges.participations.show');
+    Route::post('retos/{challenge:slug}/cerrar', [AdminSocialChallengeController::class, 'close'])->name('admin.social-challenges.close');
+    Route::post('retos/{challenge:slug}/participaciones/{participation}/revisar', [AdminSocialChallengeController::class, 'review'])->name('admin.social-challenges.review');
+    Route::post('retos/{challenge:slug}/participaciones/{participation}/ganador', [AdminSocialChallengeController::class, 'winner'])->name('admin.social-challenges.winner');
+    Route::post('retos/{challenge:slug}/participaciones/{participation}/entregar', [AdminSocialChallengeController::class, 'fulfill'])->name('admin.social-challenges.fulfill');
+    Route::post('retos/{challenge:slug}/participaciones/{participation}/conceder', [AdminSocialChallengeController::class, 'grant'])->name('admin.social-challenges.grant');
+    Route::post('retos/{challenge:slug}/participaciones/{participation}/cancelar-premio', [AdminSocialChallengeController::class, 'cancelGrant'])->name('admin.social-challenges.grant.cancel');
     Route::get('solicitudes-membresia', [AdminMembershipRequestController::class, 'index'])->name('admin.membership-requests.index');
     Route::get('solicitudes-membresia/{purchaseRequest}', [AdminMembershipRequestController::class, 'show'])->name('admin.membership-requests.show');
     Route::post('ownership/{targetType}/{targetId}', [AdminOwnershipAssignmentController::class, 'save'])->whereNumber('targetId')->name('admin.ownership.save');

@@ -7,6 +7,7 @@ use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Redemption;
 use App\Models\User;
+use App\Models\SocialChallengeRewardGrant;
 use Carbon\CarbonInterface;
 use DomainException;
 use Illuminate\Support\Facades\DB;
@@ -18,18 +19,19 @@ class RedemptionService
 
     public function __construct(private readonly AnalyticsTracker $analytics) {}
 
-    public function start(User $user, Benefit $benefit, Location $location): Redemption
+    public function start(User $user, Benefit $benefit, Location $location, ?SocialChallengeRewardGrant $grant = null): Redemption
     {
         // The user lock serializes both pending idempotency and per-member limits.
-        $result = DB::transaction(function () use ($user, $benefit, $location): array {
+        $result = DB::transaction(function () use ($user, $benefit, $location, $grant): array {
             $lockedUser = User::query()->lockForUpdate()->findOrFail($user->getKey());
             $membership = Membership::query()->active()->lockForUpdate()->where('user_id', $lockedUser->id)->first();
-            if ($membership === null) {
-                throw new DomainException('An active membership is required.');
-            }
-
             $benefit = Benefit::query()->with('partner')->find($benefit->getKey());
             $location = Location::query()->find($location->getKey());
+            if ($benefit?->access_mode === 'social_challenge_grant') {
+                $grant = $grant ? SocialChallengeRewardGrant::query()->lockForUpdate()->find($grant->id) : null;
+                $this->assertGrant($grant, $lockedUser, $benefit);
+                $membership = null;
+            } elseif ($membership === null) throw new DomainException('An active membership is required.');
             $this->assertRedeemable($benefit, $location);
             $this->assertLimitAvailable($lockedUser, $benefit);
 
@@ -39,7 +41,7 @@ class RedemptionService
                 'benefit_id' => $benefit->id,
                 'location_id' => $location->id,
                 'status' => Redemption::STATUS_PENDING,
-            ])->lockForUpdate()->get();
+            ])->when($grant, fn ($q) => $q->where('social_challenge_reward_grant_id', $grant->id), fn ($q) => $q->whereNull('social_challenge_reward_grant_id'))->lockForUpdate()->get();
 
             foreach ($pending as $redemption) {
                 if ($redemption->expires_at->gt($now)) {
@@ -48,7 +50,7 @@ class RedemptionService
                 $redemption->update(['status' => Redemption::STATUS_EXPIRED]);
             }
 
-            return [$this->createRedemption($lockedUser, $membership, $benefit, $location, $now), true];
+            return [$this->createRedemption($lockedUser, $membership, $benefit, $location, $now, $grant), true];
         });
 
         [$redemption, $created] = $result;
@@ -79,12 +81,15 @@ class RedemptionService
             }
 
             $user = User::query()->lockForUpdate()->findOrFail($redemption->user_id);
-            $membership = Membership::query()->lockForUpdate()->find($redemption->membership_id);
-            if ($membership === null || $membership->user_id !== $user->id || ! $membership->isActive()) {
-                throw new DomainException('The membership is no longer active.');
-            }
-
             $benefit = Benefit::query()->with('partner')->find($redemption->benefit_id);
+            if ($redemption->social_challenge_reward_grant_id) {
+                $grant = SocialChallengeRewardGrant::query()->lockForUpdate()->find($redemption->social_challenge_reward_grant_id);
+                $this->assertGrant($grant, $user, $benefit);
+            } else {
+                if ($benefit?->access_mode === 'social_challenge_grant') throw new DomainException('A challenge grant is required.');
+                $membership = Membership::query()->lockForUpdate()->find($redemption->membership_id);
+                if ($membership === null || $membership->user_id !== $user->id || ! $membership->isActive()) throw new DomainException('The membership is no longer active.');
+            }
             $location = Location::query()->find($redemption->location_id);
             $this->assertRedeemable($benefit, $location);
             if (! $location->checkRedemptionPin($pin)) {
@@ -93,6 +98,7 @@ class RedemptionService
             $this->assertLimitAvailable($user, $benefit);
 
             $redemption->update(['status' => Redemption::STATUS_CONFIRMED, 'confirmed_at' => now()]);
+            if (isset($grant)) $grant->update(['status'=>'fulfilled','fulfilled_at'=>now()]);
 
             return [$redemption->refresh(), true];
         });
@@ -104,7 +110,7 @@ class RedemptionService
         [$redemption, $confirmed] = $result;
         if ($confirmed) {
             $this->analytics->redemptionConfirmed($redemption);
-            app(UnlockParticipationService::class)->fulfillForRedemption($redemption->id, $redemption->user_id, $redemption->benefit_id);
+            if ($redemption->social_challenge_reward_grant_id === null) app(UnlockParticipationService::class)->fulfillForRedemption($redemption->id, $redemption->user_id, $redemption->benefit_id);
         }
 
         return $redemption;
@@ -138,7 +144,7 @@ class RedemptionService
         }
     }
 
-    private function createRedemption(User $user, Membership $membership, Benefit $benefit, Location $location, CarbonInterface $now): Redemption
+    private function createRedemption(User $user, ?Membership $membership, Benefit $benefit, Location $location, CarbonInterface $now, ?SocialChallengeRewardGrant $grant): Redemption
     {
         for ($attempt = 0; $attempt < 20; $attempt++) {
             $code = $this->generateCode();
@@ -148,7 +154,7 @@ class RedemptionService
 
             return Redemption::create([
                 'public_id' => (string) Str::ulid(), 'code' => $code,
-                'user_id' => $user->id, 'membership_id' => $membership->id,
+                'user_id' => $user->id, 'membership_id' => $membership?->id, 'social_challenge_reward_grant_id'=>$grant?->id,
                 'partner_id' => $benefit->partner_id, 'location_id' => $location->id, 'benefit_id' => $benefit->id,
                 'partner_name' => $benefit->partner->name, 'location_name' => $location->name,
                 'benefit_title' => $benefit->title, 'savings_amount' => $benefit->estimated_savings,
@@ -158,6 +164,10 @@ class RedemptionService
         }
 
         throw new DomainException('Could not generate a unique redemption code.');
+    }
+
+    private function assertGrant(?SocialChallengeRewardGrant $grant, User $user, ?Benefit $benefit): void {
+        if (!$grant || !$benefit || $benefit->access_mode !== 'social_challenge_grant' || $grant->user_id !== $user->id || $grant->benefit_id !== $benefit->id || $grant->reward_type !== 'BENEFIT' || $grant->status !== 'granted' || $grant->fulfilled_at || $grant->cancelled_at) throw new DomainException('A valid challenge grant is required.');
     }
 
     private function generateCode(): string

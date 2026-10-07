@@ -1,0 +1,6 @@
+import { Link } from '@inertiajs/react';
+import AdminLayout from '../layout';
+export default function Participation({challenge,participation}:{challenge:{slug:string;title:string};participation:Record<string,any>}) {
+    const fields=['social_url','external_reference','sharecontest_id','sharecontest_request_id','canonical_url','platform','social_external_id','author','username','caption','published_at','published_at_precision','views','likes','comments','inspection_status','data_quality','validation_status','qualification_status','moderation_status','checked_at','integration_error_code','final_metric_value','final_checked_at'];
+    return <AdminLayout title={`Participación #${participation.id}`}><Link href={`/admin/retos/${challenge.slug}`} className="underline">← {challenge.title}</Link><p className="mt-4">Usuario: {participation.user?.name}</p><dl className="mt-4 grid gap-3 sm:grid-cols-2">{fields.map(key=><div key={key} className="rounded border p-3"><dt className="font-semibold">{key}</dt><dd className="break-all">{participation[key]===null?'—':String(participation[key])}</dd></div>)}</dl><h2 className="mt-6 font-semibold">Checks de validación</h2><pre className="mt-2 overflow-x-auto rounded border p-4 text-sm">{JSON.stringify(participation.sharecontest_payload?.validation?.checks??[],null,2)}</pre></AdminLayout>;
+}

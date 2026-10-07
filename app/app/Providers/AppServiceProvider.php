@@ -21,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(\App\Integrations\ShareContest\Inspector::class, \App\Integrations\ShareContest\ShareContestClient::class);
         $this->app->singleton(QrPaymentGateway::class, function (): QrPaymentGateway {
             $driver = config('payments.qr.driver', 'disabled');
 

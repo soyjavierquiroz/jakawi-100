@@ -23,7 +23,7 @@ class Benefit extends Model
 
     protected $fillable = [
         'partner_id', 'slug', 'title', 'short_description', 'description', 'terms', 'category',
-        'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'status', 'featured',
+        'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'status', 'featured', 'access_mode',
         'starts_at', 'ends_at', 'applies_to_all_locations', 'image_path', 'sort_order', 'published_at', 'review_status', 'submitted_at', 'submitted_by_user_id', 'reviewed_at', 'reviewed_by_user_id', 'review_notes', 'created_by_user_id',
     ];
 
@@ -58,6 +58,8 @@ class Benefit extends Model
             ->where(fn (Builder $query) => $query->whereNull('ends_at')->orWhere('ends_at', '>=', now()))
             ->whereHas('partner', fn (Builder $query) => $query->published());
     }
+
+    public function scopePublicAccess(Builder $query): void { $query->where('access_mode', 'public'); }
 
     public function isPublished(): bool
     {
