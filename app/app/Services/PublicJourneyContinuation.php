@@ -6,7 +6,7 @@ use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Benefit;
 use App\Models\Unlock;
-use App\Models\SocialChallenge;
+use App\Models\Challenge;
 use Illuminate\Session\Store;
 use InvalidArgumentException;
 
@@ -81,7 +81,7 @@ class PublicJourneyContinuation
             'ACQUISITION' => route('programs.show', ['program' => match ($intent['resource_id']) {
                 'AFFILIATE' => 'afiliados', 'CREATOR' => 'creadores', 'PROMOTER' => 'promotores',
             }], false).'#solicitud',
-            'SOCIAL_CHALLENGE' => ($challenge = SocialChallenge::find($intent['resource_id'])) && $challenge->status === 'open' ? route('social-challenges.show', $challenge->slug, false) : null,
+            'SOCIAL_CHALLENGE' => ($challenge = Challenge::find($intent['resource_id'])) && $challenge->status === 'open' ? route('social-challenges.show', $challenge->slug, false) : null,
         };
     }
 

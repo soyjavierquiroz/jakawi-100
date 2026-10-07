@@ -51,7 +51,7 @@ class RewardTransaction extends Model
 
     public function socialChallengeRewardGrant(): BelongsTo
     {
-        return $this->belongsTo(SocialChallengeRewardGrant::class);
+        return $this->belongsTo(ChallengeRewardGrant::class, 'social_challenge_reward_grant_id');
     }
 
     public function reversal(): HasOne

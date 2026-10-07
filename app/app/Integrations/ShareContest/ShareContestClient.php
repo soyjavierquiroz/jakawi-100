@@ -1,17 +1,17 @@
 <?php
 namespace App\Integrations\ShareContest;
-use App\Models\SocialChallengeParticipation;
+use App\Models\ChallengeSocialEntry;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 final class ShareContestClient implements Inspector {
-    public function inspect(SocialChallengeParticipation $participation): InspectionResult {
-        $challenge = $participation->challenge;
+    public function inspect(ChallengeSocialEntry $entry): InspectionResult {
+        $challenge = $entry->challenge;
         $base = rtrim((string) config('services.sharecontest.url'), '/');
         $token = (string) config('services.sharecontest.token');
         if ($base === '' || $token === '') throw new InspectionException('configuration', false);
         try {
             $response = Http::withToken($token)->acceptJson()->asJson()->connectTimeout(5)->timeout(30)->post($base.'/api/v1/inspect', [
-                'url'=>$participation->social_url, 'external_reference'=>$participation->external_reference,
+                'url'=>$entry->social_url, 'external_reference'=>$entry->external_reference,
                 'campaign_reference'=>'social-challenge-'.$challenge->id,
                 'rules'=>['allowed_platforms'=>$challenge->allowed_platforms ?? [], 'required_hashtags'=>$challenge->required_hashtags ?? [],
                     'required_mentions'=>$challenge->required_mentions ?? [], 'published_from'=>$challenge->published_from?->toIso8601String(), 'published_until'=>$challenge->published_until?->toIso8601String()],

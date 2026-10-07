@@ -111,7 +111,7 @@ class AdminController extends Controller
             }
         });
         $data = $validator->validate();
-        if ($benefit && isset($data['access_mode']) && $data['access_mode'] !== $benefit->access_mode && \App\Models\SocialChallenge::where('benefit_id', $benefit->id)->exists()) {
+        if ($benefit && isset($data['access_mode']) && $data['access_mode'] !== $benefit->access_mode && \App\Models\Challenge::where('benefit_id', $benefit->id)->exists()) {
             throw \Illuminate\Validation\ValidationException::withMessages(['access_mode' => 'No se puede cambiar el acceso de un beneficio vinculado a un reto.']);
         }
         $benefit ??= new Benefit;

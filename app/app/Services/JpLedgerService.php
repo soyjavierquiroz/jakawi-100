@@ -6,14 +6,14 @@ use App\Models\AuditLog;
 use App\Models\JpHold;
 use App\Models\OperationalAdjustment;
 use App\Models\RewardTransaction;
-use App\Models\SocialChallengeRewardGrant;
+use App\Models\ChallengeRewardGrant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class JpLedgerService
 {
-    public function socialChallengeCredit(SocialChallengeRewardGrant $grant): RewardTransaction
+    public function socialChallengeCredit(ChallengeRewardGrant $grant): RewardTransaction
     {
         if ($grant->reward_type !== 'JP' || (int) $grant->jp_amount <= 0) {
             throw ValidationException::withMessages(['grant' => 'El premio JP requiere una cantidad positiva.']);

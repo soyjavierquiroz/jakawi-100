@@ -25,7 +25,7 @@ class RedemptionController extends Controller
             return redirect('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id]));
         }
         try {
-            $redemption = $service->start($r->user(), $benefit, Location::findOrFail($data['location_id']), isset($data['social_challenge_reward_grant_id']) ? \App\Models\SocialChallengeRewardGrant::find($data['social_challenge_reward_grant_id']) : null);
+            $redemption = $service->start($r->user(), $benefit, Location::findOrFail($data['location_id']), isset($data['social_challenge_reward_grant_id']) ? \App\Models\ChallengeRewardGrant::find($data['social_challenge_reward_grant_id']) : null);
         } catch (DomainException $e) {
             return back()->withErrors(['redemption' => $e->getMessage()]);
         }

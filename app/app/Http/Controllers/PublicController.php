@@ -113,7 +113,7 @@ class PublicController extends Controller
 
     public function benefit(Benefit $benefit, Request $request, AnalyticsTracker $analytics): Response
     {
-        if ($benefit->access_mode === 'social_challenge_grant') abort_unless($request->user() && \App\Models\SocialChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->exists(), 404);
+        if ($benefit->access_mode === 'social_challenge_grant') abort_unless($request->user() && \App\Models\ChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->exists(), 404);
         $analytics->resetJourneyIntent($benefit);
         $benefit->load('partner');
         $locations = $benefit->isAvailable() ? $benefit->availableLocations()->get()->filter->hasRedemptionPin()->values() : collect();

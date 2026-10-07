@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Membership;
+use App\Models\ChallengeParticipation;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use DomainException;
@@ -12,7 +13,7 @@ class MembershipService
 {
     public function activate(User $user, User $activatedBy, ?CarbonInterface $startsAt = null, ?string $paymentMethod = null, ?string $paymentReference = null, ?string $notes = null, ?string $amountPaid = null): Membership
     {
-        return DB::transaction(function () use ($user, $activatedBy, $startsAt, $paymentMethod, $paymentReference, $notes, $amountPaid): Membership {
+        $membership = DB::transaction(function () use ($user, $activatedBy, $startsAt, $paymentMethod, $paymentReference, $notes, $amountPaid): Membership {
             $lockedUser = User::query()->lockForUpdate()->findOrFail($user->getKey());
 
             if ($lockedUser->activeMembership()->exists()) {
@@ -33,6 +34,13 @@ class MembershipService
                 'notes' => $notes,
             ]);
         });
+        ChallengeParticipation::query()->where('user_id', $user->id)->where('qualification_status', 'qualified')
+            ->whereDoesntHave('grant')->whereHas('challenge', fn ($q) => $q->where('reward_eligibility', 'ACTIVE_MEMBERS'))
+            ->with('challenge')->get()->each(function (ChallengeParticipation $participation): void {
+                if ($participation->challenge->selection_type === 'TOP_N' && $participation->challenge->status === 'closed') app(ChallengeService::class)->finalize($participation->challenge);
+                else app(ChallengeService::class)->selectAndMaybeGrant($participation);
+            });
+        return $membership;
     }
 
     public function cancel(Membership $membership): Membership

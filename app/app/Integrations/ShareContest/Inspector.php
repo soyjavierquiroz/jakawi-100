@@ -1,4 +1,4 @@
 <?php
 namespace App\Integrations\ShareContest;
-use App\Models\SocialChallengeParticipation;
-interface Inspector { public function inspect(SocialChallengeParticipation $participation): InspectionResult; }
+use App\Models\ChallengeSocialEntry;
+interface Inspector { public function inspect(ChallengeSocialEntry $entry): InspectionResult; }
