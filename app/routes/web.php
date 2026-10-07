@@ -10,6 +10,8 @@ use App\Http\Controllers\AdminCreatorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminRewardRuleController;
 use App\Http\Controllers\AdminCampaignController;
+use App\Http\Controllers\ExternalRedirectController;
+use App\Http\Controllers\PublicJourneyLandingController;
 use App\Http\Controllers\AdminSalesController;
 use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\AdminAdjustmentController;
@@ -39,10 +41,13 @@ use App\Http\Controllers\UnlockController;
 use App\Http\Controllers\AdminUnlockController;
 use App\Http\Controllers\PartnerUnlockController;
 use App\Http\Controllers\OpportunityAnalyticsController;
+use App\Support\PublicJourneyConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('/go/{slug}', [ExternalRedirectController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('external-redirect.show');
+Route::post('/analytics/public-landings/{key}/cta', [PublicJourneyLandingController::class, 'cta'])->where('key', '[a-z0-9]+(?:-[a-z0-9]+)*')->middleware('throttle:60,1')->name('public-landings.cta');
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
 Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.unlock');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
@@ -258,3 +263,5 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 });
 
 require __DIR__.'/settings.php';
+
+app(PublicJourneyConfig::class)->registerRoutes();

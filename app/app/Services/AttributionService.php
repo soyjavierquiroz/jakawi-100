@@ -20,14 +20,20 @@ class AttributionService
         return is_string($id) && Str::isUuid($id) ? $id : null;
     }
 
-    public function recordTouch(Request $request, User|Partner|null $referrer = null, ?string $code = null, ?Unlock $unlock = null): AttributionTouch
+    public function recordTouch(Request $request, User|Partner|null $referrer = null, ?string $code = null, ?Unlock $unlock = null, ?string $campaignKey = null): AttributionTouch
     {
         $input = $request->only(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']);
+        $clickIds = [];
+        foreach (['fbclid', 'ttclid', 'gclid'] as $name) {
+            $value = $request->query($name);
+            $clickIds[$name] = is_string($value) ? Str::limit(trim($value), 255, '') : null;
+        }
         return AttributionTouch::create([
             'anonymous_id' => $this->anonymousId($request), 'user_id' => $request->user()?->id,
             'referral_code' => $code, 'referrer_user_id' => $referrer instanceof User ? $referrer->id : null,
             'acquisition_partner_id' => $referrer instanceof Partner ? $referrer->id : null, 'unlock_id' => $unlock?->id,
             ...array_map(fn ($value) => is_string($value) ? Str::limit(trim($value), 255, '') : null, $input),
+            ...$clickIds, 'campaign_key' => $campaignKey,
             'landing_page' => Str::limit('/'.ltrim($request->path(), '/'), 2048, ''), 'occurred_at' => now(),
         ]);
     }

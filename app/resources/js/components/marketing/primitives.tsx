@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 
-type Action = { href: string; label: string };
+type Action = { href: string; label: string; onClick?: MouseEventHandler<HTMLAnchorElement> };
 
 export function MarketingCTA({ action, className = '' }: { action: Action; className?: string }) {
-    return <a href={action.href} className={`inline-flex min-h-13 w-full items-center justify-center rounded-[var(--radius-control)] bg-brand px-6 py-3 text-center text-sm font-extrabold tracking-wide text-brand-foreground uppercase transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:w-auto ${className}`}>{action.label}</a>;
+    return <a href={action.href} onClick={action.onClick} className={`inline-flex min-h-13 w-full items-center justify-center rounded-[var(--radius-control)] bg-brand px-6 py-3 text-center text-sm font-extrabold tracking-wide text-brand-foreground uppercase transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:w-auto ${className}`}>{action.label}</a>;
 }
 
 export function MarketingHero({ eyebrow, title, description, action, aside }: { eyebrow: string; title: string; description: string; action: Action; aside?: ReactNode }) {

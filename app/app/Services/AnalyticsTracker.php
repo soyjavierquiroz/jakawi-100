@@ -257,7 +257,9 @@ class AnalyticsTracker
             'city_viewed', 'city_interest_recorded' => ['city_id', 'city_slug', 'authenticated'],
             'partner_application_started', 'partner_application_submitted' => ['city_id', 'city_slug'],
             'program_application_submitted' => ['program', 'landing'],
-            'landing_view', 'landing_cta_click' => ['landing'],
+            'landing_view' => ['landing', 'campaign_key'],
+            'landing_cta_click' => ['landing', 'campaign_key', 'destination_type', 'destination_kind'],
+            'external_redirect' => ['redirect_slug', 'campaign_key', 'destination_type', 'landing'],
             'opportunity_impression', 'opportunity_opened' => ['opportunity_type', 'source_id', 'city_id', 'city_slug', 'surface', 'section', 'position', 'category'],
             default => [],
         };
@@ -273,10 +275,20 @@ class AnalyticsTracker
         foreach (['journey' => ['EXPERIENCE', 'UNLOCK', 'BENEFIT'], 'action' => ['RESERVE', 'COMMIT', 'REDEEM'],
             'auth_state' => ['guest', 'authenticated'], 'membership_state' => ['active', 'inactive'],
             'auth_destination' => ['register', 'login'], 'auth_method' => ['register', 'login'],
-            'has_session_context' => [true, false], 'destination_type' => ['whatsapp', 'url', 'phone']] as $key => $values) {
+            'has_session_context' => [true, false], 'destination_type' => ['whatsapp', 'url', 'phone', 'internal', 'external'],
+            'destination_kind' => ['experience']] as $key => $values) {
             if (isset($metadata[$key]) && ! in_array($metadata[$key], $values, true)) {
                 throw new InvalidArgumentException('Analytics metadata value is not allowed.');
             }
+        }
+        $destinationTypes = match ($event) {
+            'landing_cta_click' => ['internal', 'external'],
+            'external_redirect', 'journey_external_exit' => ['whatsapp', 'url', 'phone'],
+            default => null,
+        };
+        if ($destinationTypes !== null && isset($metadata['destination_type'])
+            && ! in_array($metadata['destination_type'], $destinationTypes, true)) {
+            throw new InvalidArgumentException('Analytics destination type is not allowed for this event.');
         }
 
         return $metadata;
