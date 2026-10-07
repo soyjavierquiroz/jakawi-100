@@ -76,7 +76,7 @@ class LoginResponse implements LoginResponseContract
         if ($path === '/admin' || Str::startsWith($path, '/admin/')) {
             return (bool) $user?->is_admin;
         }
-        if ($path === '/mi-jakawi') {
+        if (in_array($path, ['/mi-jakawi', '/membresia'], true)) {
             return ! $user?->isPartnerOnly();
         }
         if (Str::startsWith($path, '/partner')) {

@@ -66,7 +66,7 @@ export default function BenefitShow({
             CREAR CUENTA GRATIS
         </button>
     ) : !hasActiveMembership ? (
-        <Link href="/mi-jakawi" onClick={membershipIntent} className="benefit-primary-action">
+        <Link href={`/membresia?journey=BENEFIT&action=REDEEM&resource_id=${benefit.id}`} onClick={membershipIntent} className="benefit-primary-action">
             VER MEMBRESÍA
         </Link>
     ) : (
@@ -166,7 +166,7 @@ export default function BenefitShow({
                                 {benefit.short_description}
                             </p>
                         ) : null}
-                        {auth.user && !hasActiveMembership && availability.available ? <StatusBanner title="SE REQUIERE MEMBRESÍA" description="Necesitas una membresía activa para usar este beneficio. Consulta Mi JAKAWI para continuar." className="mt-7" /> : null}
+                        {auth.user && !hasActiveMembership && availability.available ? <StatusBanner title="SE REQUIERE MEMBRESÍA" description="Necesitas una membresía activa para usar este beneficio. Consulta la membresía para continuar." className="mt-7" /> : null}
 
                         <section className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface-elevated">
                             <div className="bg-brand px-5 py-4 text-brand-foreground">

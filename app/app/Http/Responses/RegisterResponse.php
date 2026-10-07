@@ -60,7 +60,7 @@ class RegisterResponse implements RegisterResponseContract
             return false;
         }
 
-        return $parts['path'] === '/mi-jakawi'
+        return in_array($parts['path'], ['/mi-jakawi', '/membresia'], true)
             || preg_match('#^/experiencias/[a-zA-Z0-9_-]+$#D', $parts['path']) === 1
             || preg_match('#^/d/[a-zA-Z0-9_-]+$#D', $parts['path']) === 1;
     }

@@ -33,15 +33,20 @@ class AdminSalesController extends Controller
 
     public function create(Request $request): Response
     {
-        return Inertia::render('admin/sales/create', ['customers' => $this->customers($request), 'membership' => config('jakawi.membership')]);
+        $purchaseRequest = $request->integer('membership_purchase_request_id') ? \App\Models\MembershipPurchaseRequest::query()->whereKey($request->integer('membership_purchase_request_id'))->where('status', 'REQUESTED')->with('user:id,name,email')->firstOrFail() : null;
+        return Inertia::render('admin/sales/create', ['customers' => $this->customers($request), 'membership' => config('jakawi.membership'), 'purchaseRequest' => $purchaseRequest]);
     }
 
     public function store(Request $request, CustomerAccountService $customers, MembershipPurchaseService $purchases)
     {
-        $data = $request->validate(['user_id' => ['nullable', 'integer', 'exists:users,id'], 'name' => ['required_without:user_id', 'nullable', 'string', 'max:255'], 'email' => ['required_without:user_id', 'nullable', 'email', 'max:255', 'unique:users,email'], 'manual_reference' => ['required', 'string', 'max:255'], 'idempotency_key' => ['required', 'uuid']]);
+        $data = $request->validate(['user_id' => ['nullable', 'integer', 'exists:users,id'], 'name' => ['required_without:user_id', 'nullable', 'string', 'max:255'], 'email' => ['required_without:user_id', 'nullable', 'email', 'max:255', 'unique:users,email'], 'manual_reference' => ['required', 'string', 'max:255'], 'idempotency_key' => ['required', 'uuid'], 'membership_purchase_request_id' => ['nullable', 'integer', 'exists:membership_purchase_requests,id']]);
+        if (isset($data['membership_purchase_request_id'])) {
+            abort_unless(isset($data['user_id']) && \App\Models\MembershipPurchaseRequest::query()
+                ->whereKey($data['membership_purchase_request_id'])->where('user_id', $data['user_id'])->exists(), 422, 'La solicitud no corresponde al usuario.');
+        }
         $actor = $request->user();
         $customer = isset($data['user_id']) ? User::findOrFail($data['user_id']) : $customers->create($actor, $data['name'], $data['email']);
-        $purchase = $purchases->confirmManualCash($customer, $actor, null, $data['manual_reference'], $data['idempotency_key']);
+        $purchase = $purchases->confirmManualCash($customer, $actor, null, $data['manual_reference'], $data['idempotency_key'], $data['membership_purchase_request_id'] ?? null);
 
         return to_route('admin.sales.show', $purchase)->with('success', 'Membresía activada.');
     }

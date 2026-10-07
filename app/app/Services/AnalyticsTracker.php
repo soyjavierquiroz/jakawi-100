@@ -257,6 +257,7 @@ class AnalyticsTracker
             'city_viewed', 'city_interest_recorded' => ['city_id', 'city_slug', 'authenticated'],
             'partner_application_started', 'partner_application_submitted' => ['city_id', 'city_slug'],
             'program_application_submitted' => ['program', 'landing'],
+            'membership_assistance_requested', 'membership_purchase_confirmed', 'membership_returned_to_intent' => ['journey', 'action', 'resource_id', 'campaign_key', 'request_status'],
             'landing_view' => ['landing', 'campaign_key'],
             'landing_cta_click' => ['landing', 'campaign_key', 'destination_type', 'destination_kind'],
             'external_redirect' => ['redirect_slug', 'campaign_key', 'destination_type', 'landing'],

@@ -20,6 +20,8 @@ use App\Http\Controllers\ExperienceCheckInController;
 use App\Http\Controllers\ExperienceReservationController;
 use App\Http\Controllers\MemberProfileController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\MembershipOfferController;
+use App\Http\Controllers\AdminMembershipRequestController;
 use App\Http\Controllers\PartnerContentController;
 use App\Http\Controllers\PartnerLoginController;
 use App\Http\Controllers\PartnerPortalController;
@@ -46,6 +48,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('/membresia', [MembershipOfferController::class, 'show'])->name('membership.show');
+Route::get('/membresia/registro', [MembershipOfferController::class, 'register'])->middleware('guest')->name('membership.register');
 Route::get('/go/{slug}', [ExternalRedirectController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('external-redirect.show');
 Route::post('/analytics/public-landings/{key}/cta', [PublicJourneyLandingController::class, 'cta'])->where('key', '[a-z0-9]+(?:-[a-z0-9]+)*')->middleware('throttle:60,1')->name('public-landings.cta');
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
@@ -118,6 +122,8 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/membresia/solicitar', [MembershipOfferController::class, 'request'])->middleware('throttle:20,1')->name('membership.request');
+    Route::post('/membresia/volver/{purchaseRequest}', [MembershipOfferController::class, 'returnToIntent'])->name('membership.return');
     Route::post('/{program}/solicitudes', [ProgramApplicationController::class, 'store'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->middleware('throttle:20,1')->name('programs.applications.store');
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
@@ -154,6 +160,8 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('solicitudes-membresia', [AdminMembershipRequestController::class, 'index'])->name('admin.membership-requests.index');
+    Route::get('solicitudes-membresia/{purchaseRequest}', [AdminMembershipRequestController::class, 'show'])->name('admin.membership-requests.show');
     Route::post('ownership/{targetType}/{targetId}', [AdminOwnershipAssignmentController::class, 'save'])->whereNumber('targetId')->name('admin.ownership.save');
     Route::delete('ownership/{targetType}/{targetId}', [AdminOwnershipAssignmentController::class, 'remove'])->whereNumber('targetId')->name('admin.ownership.remove');
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');

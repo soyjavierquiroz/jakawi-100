@@ -20,7 +20,8 @@ class RedemptionHttpTest extends TestCase
     {
         [$member, $benefit, $location] = $this->redeemable();
         $this->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id])->assertRedirect('/register');
-        $this->actingAs(User::factory()->create())->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id])->assertSessionHasErrors('redemption');
+        $this->actingAs(User::factory()->create())->post('/beneficios/'.$benefit->slug.'/canjear', ['location_id' => $location->id])
+            ->assertRedirect('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id);
         $this->actingAs($member)->post('/beneficios/'.$benefit->slug.'/canjear')->assertSessionHasErrors('location_id');
         $this->assertDatabaseCount('redemptions', 0);
         $this->assertDatabaseMissing('analytics_events', ['event_name' => 'redeem_started']);

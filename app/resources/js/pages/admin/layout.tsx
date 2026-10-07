@@ -22,6 +22,7 @@ export default function AdminLayout({
                 <Link href="/admin/experiences">Experiencias</Link>
                 <Link href="/admin/memberships">Membresías</Link>
                 <Link href="/admin/sales">Ventas</Link>
+                <Link href="/admin/solicitudes-membresia">Solicitudes de membresía</Link>
                 <Link href="/admin/promoters">Promotores</Link>
                 <Link href="/admin/affiliates">Afiliados</Link>
                 <Link href="/admin/creators">Creadores</Link>

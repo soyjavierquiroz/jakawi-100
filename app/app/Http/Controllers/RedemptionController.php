@@ -21,6 +21,9 @@ class RedemptionController extends Controller
     {
         $data = $r->validate(['location_id' => ['required', 'integer', 'exists:locations,id']]);
         $analytics->journeyIntentStarted($benefit);
+        if (! $r->user()->hasActiveMembership()) {
+            return redirect('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id]));
+        }
         try {
             $redemption = $service->start($r->user(), $benefit, Location::findOrFail($data['location_id']));
         } catch (DomainException $e) {

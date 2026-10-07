@@ -10,7 +10,7 @@ type Session = { id: number; starts_at: string; venue_label?: string | null; loc
 type Target = { method: 'whatsapp' | 'url' | 'external' | 'phone'; label: string };
 type Partner = { id: number; slug: string; name: string; role: string };
 type Experience = {
-    slug: string; title: string; short_description?: string | null; description?: string | null;
+    id: number; slug: string; title: string; short_description?: string | null; description?: string | null;
     reservation_method?: string; experience_type?: string | null; terms?: string | null;
     regular_price?: string | null; member_price?: string | null; image_url?: string | null;
     image_srcset?: Array<{ src: string; width: number }>; cover_url?: string | null;
@@ -50,7 +50,7 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
                 intentSentFor.current = experience.slug;
                 trackJourneyIntent('experience', experience.slug);
             }
-            router.visit('/mi-jakawi'); return;
+            router.visit(`/membresia?journey=EXPERIENCE&action=RESERVE&resource_id=${experience.id}&experience_session_id=${selectedSession!.id}`); return;
         }
         router.post(`/experiencias/${experience.slug}/reservas`, { experience_session_id: selectedSession!.id });
     };
@@ -87,7 +87,7 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
 
                 {priceExists ? <section className="mt-10 max-w-2xl rounded-[var(--radius-card)] border border-border bg-surface p-5"><h2 className="text-xs font-extrabold tracking-[0.14em] text-muted-foreground uppercase">Precio</h2>{experience.regular_price ? <p className="mt-3">Normal: Bs {experience.regular_price}</p> : null}{experience.member_price ? <p className="mt-2 text-lg font-bold">Miembro JAKAWI: Bs {experience.member_price}</p> : null}</section> : null}
                 {internalReservation && availability.available && !auth.user ? <p className="mt-7 max-w-2xl text-sm text-muted-foreground">Crea una cuenta gratis para continuar con la fecha elegida. La reserva requiere una membresía activa.</p> : null}
-                {internalReservation && availability.available && auth.user && !hasActiveMembership ? <StatusBanner title="SE REQUIERE MEMBRESÍA" description="Necesitas una membresía activa para reservar esta experiencia. Consulta Mi JAKAWI antes de continuar." className="mt-7 max-w-2xl" /> : null}
+                {internalReservation && availability.available && auth.user && !hasActiveMembership ? <StatusBanner title="SE REQUIERE MEMBRESÍA" description="Necesitas una membresía activa para reservar esta experiencia. Consulta la membresía antes de continuar." className="mt-7 max-w-2xl" /> : null}
                 {!canReserve && sessions.length > 0 && availability.available ? <StatusBanner title="LA RESERVA NO ESTÁ DISPONIBLE" description="Esta experiencia no tiene un destino de reserva configurado. Consulta directamente con el organizador." className="mt-10 max-w-2xl" /> : null}
             </div>
         </section>

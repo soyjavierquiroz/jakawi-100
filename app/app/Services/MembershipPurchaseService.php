@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AuditLog;
 use App\Models\MembershipPurchase;
+use App\Models\MembershipPurchaseRequest;
 use App\Models\RewardPayout;
 use App\Models\RewardTransaction;
 use App\Models\User;
@@ -13,15 +14,22 @@ use Illuminate\Support\Str;
 
 class MembershipPurchaseService
 {
-    public function confirmManualCash(User $beneficiary, User $recordedBy, ?User $collector, string $manualReference, string $idempotencyKey): MembershipPurchase
+    public function confirmManualCash(User $beneficiary, User $recordedBy, ?User $collector, string $manualReference, string $idempotencyKey, ?int $purchaseRequestId = null): MembershipPurchase
     {
-        return DB::transaction(function () use ($beneficiary, $recordedBy, $collector, $manualReference, $idempotencyKey): MembershipPurchase {
+        return DB::transaction(function () use ($beneficiary, $recordedBy, $collector, $manualReference, $idempotencyKey, $purchaseRequestId): MembershipPurchase {
             $existing = MembershipPurchase::query()->where('idempotency_key', $idempotencyKey)->lockForUpdate()->first();
             if ($existing) {
+                if ($purchaseRequestId !== null) {
+                    abort_unless(MembershipPurchaseRequest::whereKey($purchaseRequestId)->where('membership_purchase_id', $existing->id)->where('user_id', $beneficiary->id)->exists(), 422, 'La solicitud no corresponde a esta venta.');
+                }
                 return $existing;
             }
 
             $beneficiary = User::query()->lockForUpdate()->findOrFail($beneficiary->id);
+            $purchaseRequest = $purchaseRequestId === null ? null : MembershipPurchaseRequest::query()->whereKey($purchaseRequestId)->lockForUpdate()->firstOrFail();
+            if ($purchaseRequest) {
+                abort_unless($purchaseRequest->status === MembershipPurchaseRequest::REQUESTED && $purchaseRequest->user_id === $beneficiary->id && ! $beneficiary->hasActiveMembership(), 422, 'La solicitud no está disponible para esta venta.');
+            }
             $purchase = MembershipPurchase::create([
                 'reference' => $this->reference(), 'idempotency_key' => $idempotencyKey,
                 'beneficiary_user_id' => $beneficiary->id, 'recorded_by_user_id' => $recordedBy->id,
@@ -38,8 +46,12 @@ class MembershipPurchaseService
                 'order_reference' => $purchase->reference, 'gross_amount' => $purchase->amount, 'eligible_amount' => $purchase->amount,
                 'currency' => $purchase->currency, 'status' => 'confirmed', 'occurred_at' => $purchase->paid_at,
                 'attribution_snapshot' => ['credited_seller_user_id' => $collector?->id],
-            ]);
+            ], $purchaseRequest?->attributionTouch, $purchaseRequest !== null);
             $purchase->update(['membership_id' => $membership->id, 'conversion_id' => $conversion->id]);
+            if ($purchaseRequest) {
+                $purchaseRequest->update(['status' => MembershipPurchaseRequest::COMPLETED, 'membership_purchase_id' => $purchase->id, 'completed_at' => now()]);
+                app(AnalyticsTracker::class)->record('membership_purchase_confirmed', ['user_id' => $beneficiary->id], ['request_status' => MembershipPurchaseRequest::COMPLETED]);
+            }
             $candidate = app(RewardBeneficiaryResolver::class)->forMembershipAcquisition($conversion);
             $reward = $candidate
                 ? app(RewardResolver::class)->createFor($conversion, $candidate['beneficiary'], $candidate['participant_type'])

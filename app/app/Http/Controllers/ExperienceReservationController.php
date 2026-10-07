@@ -18,6 +18,11 @@ class ExperienceReservationController extends Controller
             'party_size' => ['nullable', 'integer', 'min:1', 'max:'.ExperienceReservation::MAX_PARTY_SIZE],
         ]);
         $analytics->journeyIntentStarted($experience);
+        if (! $request->user()->hasActiveMembership() && $experience->reservation_method === 'jakawi'
+            && $experience->upcomingSessions()->whereKey($data['experience_session_id'])->exists()) {
+            return redirect('/membresia?'.http_build_query(['journey' => 'EXPERIENCE', 'action' => 'RESERVE',
+                'resource_id' => $experience->id, 'experience_session_id' => $data['experience_session_id']]));
+        }
         $before = ExperienceReservation::query()->where('user_id', $request->user()->id)->where('experience_session_id', $data['experience_session_id'])->whereIn('status', ['pending', 'confirmed'])->exists();
         $reservation = $service->request($request->user(), $experience, $data['experience_session_id'], $data['party_size'] ?? 1);
         if (! $before && $reservation->wasRecentlyCreated) {

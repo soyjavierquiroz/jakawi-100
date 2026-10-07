@@ -50,6 +50,7 @@ return [
             'landing_view', 'landing_cta_click',
             'external_redirect',
             'program_application_submitted',
+            'membership_view', 'membership_assistance_requested', 'membership_purchase_confirmed', 'membership_returned_to_intent',
         ],
         'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],
     ],

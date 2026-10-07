@@ -81,7 +81,7 @@ export default function Show({ unlock, participation, hasActiveMembership = fals
                         : status === 'NO_SHOW' ? <p>No registramos tu participación.</p>
                         : status === 'COMMITTED' ? <><p className="font-bold">✓ ESTÁS DENTRO</p><p>Faltan {unlock.remaining} personas. Haz que suceda.</p><button onClick={share} className="discovery-primary-action w-full">INVITAR AMIGOS</button><button onClick={() => post('cancelar')} className="discovery-secondary-action w-full">CANCELAR COMPROMISO</button></>
                         : !unavailable && !auth.user ? <button onClick={commit} className="discovery-primary-action w-full">CREAR CUENTA GRATIS PARA COMPROMETERTE</button>
-                        : !unavailable && !eligible && membershipRequired && !hasActiveMembership ? <Link href="/mi-jakawi" onClick={membershipIntent} className="discovery-primary-action w-full">VER MEMBRESÍA</Link>
+                        : !unavailable && !eligible && membershipRequired && !hasActiveMembership ? <Link href={`/membresia?journey=UNLOCK&action=COMMIT&resource_id=${unlock.id}`} onClick={membershipIntent} className="discovery-primary-action w-full">VER MEMBRESÍA</Link>
                         : !unavailable && eligible ? <button onClick={commit} className="discovery-primary-action w-full">SÍ, CUENTEN CONMIGO</button>
                         : !unavailable ? <p className="font-semibold">Tu estado actual no es elegible para este desbloqueo.</p> : null}
                     </div>

@@ -51,7 +51,8 @@ class ExperienceReservationTest extends TestCase
     {
         [$user, $experience, $session] = $this->reservable();
         $this->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertRedirect();
-        $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertSessionHasErrors('session');
+        $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])
+            ->assertRedirect('/membresia?journey=EXPERIENCE&action=RESERVE&resource_id='.$experience->id.'&experience_session_id='.$session->id);
         $this->assertDatabaseCount('experience_reservations', 0);
     }
 
