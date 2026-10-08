@@ -47,7 +47,7 @@ services:
       - .env
     environment:
       DB_QUEUE_RETRY_AFTER: "90"
-    command: ["php", "artisan", "queue:work", "database", "--queue=social", "--sleep=3", "--tries=6", "--timeout=45"]
+    command: ["php", "artisan", "queue:work", "database", "--queue=social-interactive,social", "--sleep=1", "--tries=6", "--timeout=45"]
     stop_grace_period: 60s
     depends_on:
       app:

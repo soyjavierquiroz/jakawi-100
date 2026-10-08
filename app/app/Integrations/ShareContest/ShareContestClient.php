@@ -13,8 +13,9 @@ final class ShareContestClient implements Inspector {
             $response = Http::withToken($token)->acceptJson()->asJson()->connectTimeout(5)->timeout(30)->post($base.'/api/v1/inspect', [
                 'url'=>$entry->social_url, 'external_reference'=>$entry->external_reference,
                 'campaign_reference'=>'social-challenge-'.$challenge->id,
-                'rules'=>['allowed_platforms'=>$challenge->allowed_platforms ?? [], 'required_hashtags'=>$challenge->required_hashtags ?? [],
-                    'required_mentions'=>$challenge->required_mentions ?? [], 'published_from'=>$challenge->published_from?->toIso8601String(), 'published_until'=>$challenge->published_until?->toIso8601String()],
+                // ShareContest accepts date-only bounds; JAKAWI's timestamp bounds are evaluated locally.
+                'rules'=>['allowed_platforms'=>$challenge->allowed_platforms ?? [], 'required_hashtags'=>array_map(fn ($tag) => '#'.ltrim(mb_strtolower(trim($tag)), '#'), $challenge->required_hashtags ?? []),
+                    'required_mentions'=>$challenge->required_mentions ?? []],
             ]);
         } catch (ConnectionException) { throw new InspectionException('connection', true); }
         if (!$response->successful()) {

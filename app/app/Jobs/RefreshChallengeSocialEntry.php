@@ -5,6 +5,7 @@ use App\Integrations\ShareContest\InspectionException;
 use App\Integrations\ShareContest\Inspector;
 use App\Models\ChallengeSocialEntry;
 use App\Services\ChallengeService;
+use App\Services\SocialEntryRules;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,8 +19,9 @@ class RefreshChallengeSocialEntry implements ShouldQueue {
     public int $tries = 6;
     public int $timeout = 40;
     public function backoff(): array { return [15,30,60,120,240]; }
-    public function __construct(public int $entryId, public bool $final = false) { $this->onConnection('database')->onQueue('social'); }
-    public function handle(Inspector $inspector, ChallengeService $service): void {
+    public function __construct(public int $entryId, public bool $final = false, public bool $interactive = false) { $this->onConnection('database')->onQueue($interactive ? 'social-interactive' : 'social'); }
+    public function handle(Inspector $inspector, ChallengeService $service, ?SocialEntryRules $rules = null): void {
+        $rules ??= app(SocialEntryRules::class);
         $entry = ChallengeSocialEntry::find($this->entryId);
         if (!$entry) return;
         if (!RateLimiter::attempt('sharecontest-social-inspect', 50, fn () => true, 60)) { $this->release(max(2, RateLimiter::availableIn('sharecontest-social-inspect') + 1)); return; }
@@ -30,7 +32,7 @@ class RefreshChallengeSocialEntry implements ShouldQueue {
             $this->fail($e);
             return;
         }
-        DB::transaction(function () use ($entry, $result, $service) {
+        DB::transaction(function () use ($entry, $result, $service, $rules) {
             $locked = ChallengeSocialEntry::query()->lockForUpdate()->findOrFail($entry->id);
             $final = $this->final || $locked->challenge->status === 'closed';
             $data = $result->data;
@@ -42,6 +44,7 @@ class RefreshChallengeSocialEntry implements ShouldQueue {
             $locked->fill($data);
             $locked->sharecontest_payload = $result->payload;
             $locked->inspection_status = 'inspected';
+            $locked->validation_status = $rules->validationStatus($locked->challenge, $locked, $data['validation_status'] ?? 'not_requested');
             $locked->refresh_pending = false;
             if ($final) {
                 $metric = $locked->challenge->selection_metric;

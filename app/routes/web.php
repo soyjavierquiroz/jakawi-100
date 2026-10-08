@@ -136,6 +136,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/retos/{challenge:slug}/publicaciones', [ChallengeController::class, 'submit'])->middleware('throttle:10,1')->name('social-challenges.submit');
+    Route::get('/retos/{challenge:slug}/publicaciones/{entry}/estado', [ChallengeController::class, 'entryStatus'])->middleware('throttle:600,1')->name('social-challenges.entry-status');
     Route::post('/retos/{challenge:slug}/actualizar', [ChallengeController::class, 'refresh'])->name('social-challenges.refresh');
     Route::post('/membresia/solicitar', [MembershipOfferController::class, 'request'])->middleware('throttle:20,1')->name('membership.request');
     Route::post('/membresia/volver/{purchaseRequest}', [MembershipOfferController::class, 'returnToIntent'])->name('membership.return');

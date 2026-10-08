@@ -9,6 +9,7 @@ use App\Services\AnalyticsTracker;
 use App\Services\ChallengeService;
 use App\Services\PublicJourneyContinuation;
 use App\Services\SelectedCity;
+use App\Services\SocialEntryState;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,7 @@ class ChallengeController extends Controller {
         $city = $selectedCity->resolve($request);
         return Inertia::render('social-challenges/index', ['challenges'=>Challenge::where('review_status','APPROVED')->where('status','open')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()))->withCount(['participations as reserved_count'=>fn ($q) => $q->whereIn('selection_status',['candidate','selected'])])->orderBy('ends_at')->get()]);
     }
-    public function show(Request $request, Challenge $challenge, AnalyticsTracker $analytics, \App\Services\ChallengeRanking $ranking) {
+    public function show(Request $request, Challenge $challenge, AnalyticsTracker $analytics, \App\Services\ChallengeRanking $ranking, SocialEntryState $state) {
         abort_unless($challenge->isPublic(), 404);
         $p = $request->user() ? ChallengeParticipation::where('challenge_id',$challenge->id)->where('user_id',$request->user()->id)->with(['socialEntries','grant.jpCredit.reversal'])->first() : null;
         $analytics->record('challenge_view', [], ['challenge_id'=>$challenge->id]);
@@ -29,7 +30,8 @@ class ChallengeController extends Controller {
         return Inertia::render('social-challenges/show', [
             'challenge'=>$challenge, 'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null, 'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'), 'rules'=>$challenge->rulesContract(),
             'participation'=>$p?->only(['id','qualification_status','qualified_entry_id','qualified_at','selection_status','selected_entry_id','review_status']),
-            'entries'=>$p?->socialEntries->map(fn ($e) => $e->only(['id','social_url','platform','views','likes','comments','inspection_status','data_quality','validation_status','moderation_status','checked_at','sharecontest_payload','refresh_pending']))->all() ?? [],
+            'entries'=>$p?->socialEntries->map(fn ($e) => $state->entry($e))->all() ?? [],
+            'submittedEntryId'=>$request->session()->get('submitted_entry_id'),
             'grant'=>$grant ? ['id'=>$grant->id,'status'=>$grant->status,'reward_type'=>$grant->reward_type,'jp_amount'=>$grant->jp_amount,
                 'jp_reversed'=>$grant->reward_type === 'JP' && $grant->jpCredit?->reversal !== null,
                 'benefit'=>$grant->benefit?->only(['title','slug']), 'locations'=>$grant->benefit?->availableLocations()->get(['id','name'])] : null,
@@ -63,17 +65,25 @@ class ChallengeController extends Controller {
                 $c = Challenge::query()->lockForUpdate()->findOrFail($challenge->id);
                 $p = ChallengeParticipation::firstOrCreate(['challenge_id'=>$c->id,'user_id'=>$request->user()->id]);
                 $participationStarted = $p->wasRecentlyCreated;
-                if ($c->max_entries_per_user !== null && $p->socialEntries()->count() >= $c->max_entries_per_user) throw ValidationException::withMessages(['url'=>'Alcanzaste el máximo de publicaciones de este reto.']);
                 if ($c->socialEntries()->where('normalized_url_hash',$hash)->exists()) throw ValidationException::withMessages(['url'=>'Esta publicación ya participa en el reto.']);
+                if ($c->max_entries_per_user !== null && $p->socialEntries()->count() >= $c->max_entries_per_user) throw ValidationException::withMessages(['url'=>'Alcanzaste el máximo de publicaciones de este reto.']);
                 $entry = ChallengeSocialEntry::create(['challenge_id'=>$c->id,'participation_id'=>$p->id,'social_url'=>$data['url'],
                     'normalized_url_hash'=>$hash,'external_reference'=>'jakawi-social-'.Str::ulid(),'refresh_pending'=>true]);
-                RefreshChallengeSocialEntry::dispatch($entry->id)->afterCommit();
+                RefreshChallengeSocialEntry::dispatch($entry->id, false, true)->afterCommit();
                 return $entry;
             });
         } catch (UniqueConstraintViolationException) { throw ValidationException::withMessages(['url'=>'Esta publicación ya participa en el reto.']); }
         if ($participationStarted) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
         $analytics->record('challenge_entry_submitted',[],['challenge_id'=>$challenge->id]);
-        return to_route('social-challenges.show',$challenge->slug)->with('success','Estamos verificando tu publicación.');
+        return to_route('social-challenges.show',$challenge->slug)->with('success','Estamos verificando tu publicación.')->with('submitted_entry_id',$entry->id);
+    }
+    public function entryStatus(Request $request, Challenge $challenge, ChallengeSocialEntry $entry, SocialEntryState $state) {
+        abort_unless($entry->challenge_id === $challenge->id && $entry->participation()->where('user_id', $request->user()->id)->exists(), 404);
+        $entry->load(['challenge','participation.grant']);
+        return response()->json($state->entry($entry) + [
+            'participation'=>$state->participation($entry),
+            'grant'=>$state->grant($entry),
+        ])->header('Cache-Control', 'private, no-store');
     }
     public function refresh(Request $request, Challenge $challenge) {
         if ($challenge->status !== 'open' || $challenge->evidence_type !== 'SOCIAL_POST') throw ValidationException::withMessages(['refresh'=>'Este reto ya no acepta actualizaciones.']);
@@ -86,7 +96,7 @@ class ChallengeController extends Controller {
             $count = $e->refresh_count_date?->isToday() ? $e->refresh_count_today : 0;
             if ($count >= 3) throw ValidationException::withMessages(['refresh'=>'Ya usaste tus 3 actualizaciones de hoy.']);
             $e->update(['refresh_pending'=>true,'last_refresh_requested_at'=>now(),'refresh_count_date'=>today(),'refresh_count_today'=>$count+1]);
-            RefreshChallengeSocialEntry::dispatch($e->id)->afterCommit();
+            RefreshChallengeSocialEntry::dispatch($e->id, false, true)->afterCommit();
         });
         return back()->with('success','Actualización solicitada.');
     }
