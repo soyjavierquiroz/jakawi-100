@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Challenge;
+use App\Models\Benefit;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\LandingPresentation;
 use App\Services\LandingPresentationDefaults;
 use Illuminate\Http\Request;
@@ -12,17 +14,21 @@ use Inertia\Inertia;
 
 class AdminLandingPresentationController extends Controller
 {
-    public function index(Challenge $challenge)
+    public function index(Request $request, string $subjectSlug)
     {
+        $subject = $this->subject($request);
         return Inertia::render('admin/landing-presentations/index', [
-            'challenge'=>$challenge->only(['title','slug']),
-            'presentations'=>$challenge->landingPresentations()->orderBy('id')->get(),
+            'subject'=>$subject->only(['title','slug']),
+            'baseUrl'=>$this->baseUrl($subject),
+            'productUrl'=>$subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug,
+            'presentations'=>$subject->landingPresentations()->orderBy('id')->get(),
         ]);
     }
 
-    public function save(Request $request, Challenge $challenge, ?LandingPresentation $presentation = null)
+    public function save(Request $request, string $subjectSlug, ?LandingPresentation $presentation = null)
     {
-        if ($presentation) $this->belongsTo($challenge, $presentation);
+        $subject = $this->subject($request);
+        if ($presentation) $this->belongsTo($subject, $presentation);
         $data = $request->validate([
             'name'=>['required','string','max:255'],
             'slug'=>['required','alpha_dash','max:255',Rule::unique('landing_presentations','slug')->ignore($presentation?->id)],
@@ -34,45 +40,59 @@ class AdminLandingPresentationController extends Controller
             'reward_display_override'=>['nullable','string','max:180','regex:/^[^0-9]*$/u'],
             'final_cta_headline'=>['nullable','string','max:180','regex:/^[^0-9]*$/u'],
         ]);
-        // Editorial fields may change tone; quantities and rules remain on the Challenge.
-        $presentation ? $presentation->update($data) : $challenge->landingPresentations()->create($data + ['status'=>'DRAFT','default_scope'=>'NONE']);
-        return to_route('admin.landing-presentations.index', $challenge);
+        // Editorial fields may change tone; quantities and rules remain on the product.
+        $presentation ? $presentation->update($data) : $subject->landingPresentations()->create($data + ['status'=>'DRAFT','default_scope'=>'NONE']);
+        return redirect($this->baseUrl($subject));
     }
 
-    public function publish(Challenge $challenge, LandingPresentation $presentation)
+    public function publish(Request $request, string $subjectSlug, LandingPresentation $presentation)
     {
-        $this->belongsTo($challenge,$presentation);
-        if (!$challenge->isPublic()) throw ValidationException::withMessages(['presentation'=>'Publica el reto antes de publicar su landing.']);
+        $subject = $this->subject($request);
+        $this->belongsTo($subject,$presentation);
+        if (!($subject instanceof Benefit ? $subject->isPublished() && $subject->partner?->isPublished() : $subject->isPublic())) throw ValidationException::withMessages(['presentation'=>'Publica el producto y su partner antes de publicar su landing.']);
         $presentation->update(['status'=>'PUBLISHED']);
         return back();
     }
 
-    public function archive(Challenge $challenge, LandingPresentation $presentation)
+    public function archive(Request $request, string $subjectSlug, LandingPresentation $presentation)
     {
-        $this->belongsTo($challenge,$presentation);
-        DB::transaction(function () use ($challenge,$presentation) {
-            $challenge->newQuery()->whereKey($challenge->id)->lockForUpdate()->firstOrFail();
+        $subject = $this->subject($request);
+        $this->belongsTo($subject,$presentation);
+        DB::transaction(function () use ($subject,$presentation) {
+            $subject->newQuery()->whereKey($subject->id)->lockForUpdate()->firstOrFail();
             $presentation->update(['status'=>'ARCHIVED','default_scope'=>'NONE']);
         });
         return back();
     }
 
-    public function useDefault(Request $request, Challenge $challenge, LandingPresentation $presentation, LandingPresentationDefaults $defaults)
+    public function useDefault(Request $request, string $subjectSlug, LandingPresentation $presentation, LandingPresentationDefaults $defaults)
     {
-        $this->belongsTo($challenge,$presentation);
+        $subject = $this->subject($request);
+        $this->belongsTo($subject,$presentation);
         $data = $request->validate(['default_scope'=>['required',Rule::in(['GUESTS','ALL'])]]);
-        $defaults->choose($challenge,$presentation,$data['default_scope']);
+        $defaults->choose($subject,$presentation,$data['default_scope']);
         return back();
     }
 
-    public function productDefault(Challenge $challenge, LandingPresentationDefaults $defaults)
+    public function productDefault(Request $request, string $subjectSlug, LandingPresentationDefaults $defaults)
     {
-        $defaults->choose($challenge,null,'NONE');
+        $subject = $this->subject($request);
+        $defaults->choose($subject,null,'NONE');
         return back();
     }
 
-    private function belongsTo(Challenge $challenge, LandingPresentation $presentation): void
+    private function subject(Request $request): Model
     {
-        abort_unless($presentation->subject_type === $challenge->getMorphClass() && $presentation->subject_id === $challenge->id,404);
+        return $request->route()->hasParameter('benefit') ? Benefit::where('slug', $request->route('benefit'))->firstOrFail() : Challenge::where('slug', $request->route('challenge'))->firstOrFail();
+    }
+
+    private function baseUrl(Model $subject): string
+    {
+        return '/admin/'.($subject instanceof Benefit ? 'beneficios' : 'retos').'/'.$subject->slug.'/landings';
+    }
+
+    private function belongsTo(Model $subject, LandingPresentation $presentation): void
+    {
+        abort_unless($presentation->subject_type === $subject->getMorphClass() && $presentation->subject_id === $subject->id,404);
     }
 }

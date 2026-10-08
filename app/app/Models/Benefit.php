@@ -27,6 +27,11 @@ class Benefit extends Model
         'starts_at', 'ends_at', 'applies_to_all_locations', 'image_path', 'sort_order', 'published_at', 'review_status', 'submitted_at', 'submitted_by_user_id', 'reviewed_at', 'reviewed_by_user_id', 'review_notes', 'created_by_user_id',
     ];
 
+    public function landingPresentations(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(LandingPresentation::class, 'subject');
+    }
+
     /** @return BelongsTo<Partner, $this> */
     public function partner(): BelongsTo
     {

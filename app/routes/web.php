@@ -179,6 +179,14 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('beneficios/{benefit:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.benefit-landing-presentations.index');
+    Route::post('beneficios/{benefit:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.benefit-landing-presentations.store');
+    Route::put('beneficios/{benefit:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.benefit-landing-presentations.update');
+    Route::get('beneficios/{benefit:slug}/landings/{presentation:slug}/preview', [LandingPresentationController::class, 'preview'])->name('admin.benefit-landing-presentations.preview');
+    Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.benefit-landing-presentations.publish');
+    Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.benefit-landing-presentations.archive');
+    Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.benefit-landing-presentations.default');
+    Route::post('beneficios/{benefit:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.benefit-landing-presentations.default-product');
     Route::get('retos/{challenge:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.landing-presentations.index');
     Route::post('retos/{challenge:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.landing-presentations.store');
     Route::put('retos/{challenge:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.landing-presentations.update');

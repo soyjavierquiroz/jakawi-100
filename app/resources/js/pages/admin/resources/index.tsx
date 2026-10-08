@@ -19,7 +19,7 @@ export default function ResourceIndex({ title, resource, items = [] }: any) {
                             </small>
                         </span>
                         {resource === 'partners' ? <span className="text-sm text-muted-foreground">{item.referral_code ? `/r/${item.referral_code}` : 'Sin código'} · {item.acquisition?.clicks ?? 0} clics · {item.acquisition?.registrations ?? 0} registros · {item.acquisition?.purchases ?? 0} compras · Bs {item.acquisition?.revenue ?? '0.00'} <button className="ml-2 underline" onClick={() => router.post(`/admin/partners/${item.id}/referral-code`, { regenerate: Boolean(item.referral_code) })}>{item.referral_code ? 'Regenerar' : 'Generar'}</button></span> : null}
-                        <Link href={`/admin/${resource}/${item.id}/edit`}>
+                        <Link href={`/admin/${resource}/${resource === 'benefits' ? item.slug : item.id}/edit`}>
                             Editar
                         </Link>
                     </div>

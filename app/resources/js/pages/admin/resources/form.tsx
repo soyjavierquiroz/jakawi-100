@@ -129,7 +129,7 @@ export default function ResourceForm({
     const submit = (e: any) => {
         e.preventDefault();
         if (item) {
-            form.put(`/admin/${resource}/${item.id}`, { forceFormData: true });
+            form.put(`/admin/${resource}/${resource === 'benefits' ? item.slug : item.id}`, { forceFormData: true });
         } else {
             form.post(`/admin/${resource}`, { forceFormData: true });
         }
@@ -164,6 +164,7 @@ export default function ResourceForm({
                     : [];
     return (
         <AdminLayout title={title}>
+            {resource === 'benefits' && item?.slug && <Link href={`/admin/beneficios/${item.slug}/landings`} className="mb-5 inline-flex min-h-11 items-center font-bold text-brand underline">MARKETING LANDINGS</Link>}
             <form onSubmit={submit} className="grid max-w-2xl gap-4">
                 {fields[resource].map((field) => (
                     <label key={field} className="grid gap-1 text-sm">

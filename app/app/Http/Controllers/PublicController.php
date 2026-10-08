@@ -115,20 +115,27 @@ class PublicController extends Controller
 
     public function benefit(Benefit $benefit, Request $request, AnalyticsTracker $analytics): Response
     {
-        if ($benefit->access_mode === 'social_challenge_grant') abort_unless($request->user() && \App\Models\ChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->exists(), 404);
+        $props = $this->benefitPublicProps($benefit, $request);
         $analytics->resetJourneyIntent($benefit);
-        $benefit->load('partner');
-        $locations = $benefit->isAvailable() ? $benefit->availableLocations()->get()->filter->hasRedemptionPin()->values() : collect();
-        $availability = $this->benefitAvailability($benefit, $request, $locations->isNotEmpty());
-        $hasActiveMembership = $request->user()?->activeMembership()->exists() ?? false;
-        if ($availability['available'] && $request->user() && ! $hasActiveMembership) {
+        if ($props['availability']['available'] && $request->user() && ! $props['hasActiveMembership']) {
             $analytics->journeyMembershipGateViewed($benefit);
         }
-        if ($availability['available']) {
-            $analytics->benefitViewed($benefit);
-        }
+        if ($props['availability']['available']) $analytics->benefitViewed($benefit);
+        return Inertia::render('benefits/show', $props);
+    }
 
-        return Inertia::render('benefits/show', ['benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))), 'hasActiveMembership' => $hasActiveMembership, 'availability' => $availability]);
+    public function benefitPublicProps(Benefit $benefit, Request $request, bool $preview = false): array
+    {
+        $grant = null;
+        if (!$preview && $benefit->access_mode === 'social_challenge_grant') {
+            $grant = $request->user() ? \App\Models\ChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->first() : null;
+            abort_unless($grant, 404);
+        }
+        $benefit->load('partner');
+        $locations = $benefit->isAvailable() ? $benefit->availableLocations()->get()->filter->hasRedemptionPin()->values() : collect();
+        return ['rewardUrl' => $grant ? route('social-challenges.show', $grant->participation->challenge) : null, 'benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))),
+            'hasActiveMembership' => $request->user()?->activeMembership()->exists() ?? false,
+            'availability' => $this->benefitAvailability($benefit, $request, $locations->isNotEmpty())];
     }
 
     public function experiences(Request $request): Response

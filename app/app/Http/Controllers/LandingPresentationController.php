@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Challenge;
+use App\Models\Benefit;
 use App\Models\LandingPresentation;
 use App\Services\AnalyticsTracker;
 use App\Services\AttributionService;
@@ -21,16 +22,18 @@ class LandingPresentationController extends Controller
         return $this->render($request, $presentation, $attribution, $analytics, $ranking, $state, $presenter, $resolver, false);
     }
 
-    public function preview(Request $request, Challenge $challenge, LandingPresentation $presentation, AttributionService $attribution, AnalyticsTracker $analytics, ChallengeRanking $ranking, SocialEntryState $state, ChallengeMarketingLandingPresenter $presenter, ProductLandingResolver $resolver)
+    public function preview(Request $request, string $subjectSlug, LandingPresentation $presentation, AttributionService $attribution, AnalyticsTracker $analytics, ChallengeRanking $ranking, SocialEntryState $state, ChallengeMarketingLandingPresenter $presenter, ProductLandingResolver $resolver)
     {
-        abort_unless($challenge->id === $presentation->subject_id && $presentation->subject_type === $challenge->getMorphClass(), 404);
+        $subject = $request->route()->hasParameter('benefit') ? Benefit::where('slug', $request->route('benefit'))->firstOrFail() : Challenge::where('slug', $request->route('challenge'))->firstOrFail();
+        abort_unless($subject->id === $presentation->subject_id && $presentation->subject_type === $subject->getMorphClass(), 404);
         return $this->render($request, $presentation, $attribution, $analytics, $ranking, $state, $presenter, $resolver, true);
     }
 
     private function render(Request $request, LandingPresentation $presentation, AttributionService $attribution, AnalyticsTracker $analytics, ChallengeRanking $ranking, SocialEntryState $state, ChallengeMarketingLandingPresenter $presenter, ProductLandingResolver $resolver, bool $preview)
     {
         $subject = $presentation->subject;
-        abort_unless($subject instanceof Challenge && ($preview || $subject->isPublic()), 404);
+        abort_unless($subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
+        $benefitProps = $subject instanceof Benefit ? app(PublicController::class)->benefitPublicProps($subject, $request, $preview) : null;
         if (!$preview) {
             $ref = $request->query('ref');
             $referrer = is_string($ref) ? $attribution->findReferrer($ref) : null;
@@ -38,15 +41,25 @@ class LandingPresentationController extends Controller
             $request->session()->push('attribution_touch_ids', $touch->id);
             $analytics->record('landing_view', ['user_id'=>null,'visitor_id'=>null], ['landing'=>$presentation->slug,'campaign_key'=>$presentation->campaign_key ?? '', 'landing_presentation_id'=>$presentation->id,'subject_type'=>$presentation->subject_type,'subject_id'=>$presentation->subject_id,'default_scope'=>$presentation->default_scope]);
         }
-        $props = $preview ? ['challenge'=>$subject,'rewardLabel'=>$subject->benefit?->title,'heroUrl'=>app(MediaUrl::class)->url($subject->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'slots'=>null,'ranking'=>null,'verificationUrl'=>route('verification.notice')]
-            : app(ChallengeController::class)->publicProps($request, $subject, $ranking, $state);
-        return Inertia::render('landing-presentations/challenge', [
-            ...$props, 'presentation'=>array_replace($presentation->only(['id','name','slug','status','default_scope','campaign_key','hero_alt']), ['hero_alt'=>$presentation->hero_alt ?: $subject->hero_alt]),
-            'copy'=>$presenter->present($subject, $presentation),
-            'heroUrl'=>app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path,'hero'),
+        $shared = [
+            'presentation'=>$presentation->only(['id','name','slug','status','default_scope','campaign_key','hero_alt']),
             'nativeUrl'=>$resolver->nativeUrl($subject), 'preview'=>$preview,
             'canonical'=>$presentation->default_scope === 'ALL' ? route('landing-presentations.show',$presentation->slug) : $resolver->nativeUrl($subject),
             'noindex'=>$presentation->default_scope !== 'ALL' || $preview,
+        ];
+        if ($subject instanceof Benefit) {
+            return Inertia::render('landing-presentations/benefit', [
+                ...$benefitProps, ...$shared,
+                'copy'=>app(\App\Services\BenefitMarketingLandingPresenter::class)->present($subject, $presentation, $request, $benefitProps),
+                'heroUrl'=>app(MediaUrl::class)->url($presentation->hero_path ?: $subject->image_path, 'hero'),
+            ]);
+        }
+        $props = $preview ? ['challenge'=>$subject,'rewardLabel'=>$subject->benefit?->title,'heroUrl'=>app(MediaUrl::class)->url($subject->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'slots'=>null,'ranking'=>null,'verificationUrl'=>route('verification.notice')]
+            : app(ChallengeController::class)->publicProps($request, $subject, $ranking, $state);
+        return Inertia::render('landing-presentations/challenge', [
+            ...$props, ...$shared, 'presentation'=>array_replace($presentation->only(['id','name','slug','status','default_scope','campaign_key','hero_alt']), ['hero_alt'=>$presentation->hero_alt ?: $subject->hero_alt]),
+            'copy'=>$presenter->present($subject, $presentation),
+            'heroUrl'=>app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path,'hero'),
         ]);
     }
 }
