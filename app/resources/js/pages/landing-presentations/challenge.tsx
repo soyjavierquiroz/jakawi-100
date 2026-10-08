@@ -6,7 +6,7 @@ import Show from '@/pages/social-challenges/show';
 import type { ComponentProps } from 'react';
 
 type Props = ComponentProps<typeof Show> & {
-    presentation: { id:number; name:string; slug:string; is_default:boolean; hero_alt:string|null };
+    presentation: { id:number; name:string; slug:string; default_scope:'NONE'|'GUESTS'|'ALL'; hero_alt:string|null };
     copy: { eyebrow:string; headline:string; subheadline:string; reward:string; rewardType:string; rewardNote:string|null; rewardDetail:string|null; deadline:string|null; qualification:string; selection:string; membership:string; review:string; benefits:Array<{title:string;description:string}>; steps:Array<{title:string;description:string}>; rules:Array<{title:string;description:string}>; faq:Array<{question:string;answer:string}>; finalHeadline:string };
     nativeUrl:string; canonical:string; noindex:boolean;
 };

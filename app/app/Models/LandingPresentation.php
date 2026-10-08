@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class LandingPresentation extends Model
 {
     protected $guarded = [];
-    protected function casts(): array { return ['is_default' => 'boolean']; }
+    public const SCOPES = ['NONE', 'GUESTS', 'ALL'];
+    protected $attributes = ['default_scope' => 'NONE'];
     public function subject(): MorphTo { return $this->morphTo(); }
     public function getRouteKeyName(): string { return 'slug'; }
 }

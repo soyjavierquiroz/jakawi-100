@@ -35,7 +35,7 @@ class AdminLandingPresentationController extends Controller
             'final_cta_headline'=>['nullable','string','max:180','regex:/^[^0-9]*$/u'],
         ]);
         // Editorial fields may change tone; quantities and rules remain on the Challenge.
-        $presentation ? $presentation->update($data) : $challenge->landingPresentations()->create($data + ['status'=>'DRAFT','is_default'=>false]);
+        $presentation ? $presentation->update($data) : $challenge->landingPresentations()->create($data + ['status'=>'DRAFT','default_scope'=>'NONE']);
         return to_route('admin.landing-presentations.index', $challenge);
     }
 
@@ -47,26 +47,27 @@ class AdminLandingPresentationController extends Controller
         return back();
     }
 
-    public function archive(Challenge $challenge, LandingPresentation $presentation, LandingPresentationDefaults $defaults)
+    public function archive(Challenge $challenge, LandingPresentation $presentation)
     {
         $this->belongsTo($challenge,$presentation);
-        DB::transaction(function () use ($challenge,$presentation,$defaults) {
-            if ($presentation->fresh()->is_default) $defaults->choose($challenge,null);
-            $presentation->update(['status'=>'ARCHIVED','is_default'=>false]);
+        DB::transaction(function () use ($challenge,$presentation) {
+            $challenge->newQuery()->whereKey($challenge->id)->lockForUpdate()->firstOrFail();
+            $presentation->update(['status'=>'ARCHIVED','default_scope'=>'NONE']);
         });
         return back();
     }
 
-    public function useDefault(Challenge $challenge, LandingPresentation $presentation, LandingPresentationDefaults $defaults)
+    public function useDefault(Request $request, Challenge $challenge, LandingPresentation $presentation, LandingPresentationDefaults $defaults)
     {
         $this->belongsTo($challenge,$presentation);
-        $defaults->choose($challenge,$presentation);
+        $data = $request->validate(['default_scope'=>['required',Rule::in(['GUESTS','ALL'])]]);
+        $defaults->choose($challenge,$presentation,$data['default_scope']);
         return back();
     }
 
     public function productDefault(Challenge $challenge, LandingPresentationDefaults $defaults)
     {
-        $defaults->choose($challenge,null);
+        $defaults->choose($challenge,null,'NONE');
         return back();
     }
 

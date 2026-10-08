@@ -48,24 +48,25 @@ final readonly class DiscoveryService
             $unlocks->mapWithKeys(fn (Unlock $unlock): array => [$unlock->id => $unlock->minimum_commitments])->all(),
         );
 
+        // Destinations are resolved per viewer; this payload is not shared in a cache.
         $items = [];
         foreach ($benefits as $benefit) {
             $location = $benefit->applies_to_all_locations
                 ? $benefit->partner->locations->first()
                 : $benefit->locations->first();
-            $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->defaultUrl($benefit));
+            $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->navigationUrl($benefit, $context->user !== null));
         }
         foreach ($experiences as $experience) {
             $session = $experience->sessions->sortBy('starts_at')->first();
             if ($session !== null && $session->location !== null) {
-                $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->defaultUrl($experience));
+                $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->navigationUrl($experience, $context->user !== null));
             }
         }
         foreach ($unlocks as $unlock) {
-            $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->defaultUrl($unlock));
+            $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->navigationUrl($unlock, $context->user !== null));
         }
         foreach ($this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title'])->limit($limit)->get() as $challenge) {
-            $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->defaultUrl($challenge));
+            $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->navigationUrl($challenge, $context->user !== null));
         }
 
         // Canonical identity intentionally retains linked Unlock/Benefit or
@@ -105,6 +106,7 @@ final readonly class DiscoveryService
         $city = new DiscoveryCity($context->city->id, $context->city->name, $context->city->slug);
         $limit = max(1, $limit);
         $like = $term !== null && $term !== '' ? '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%' : null;
+        // Destinations are resolved per viewer; this payload is not shared in a cache.
         $items = [];
 
         if ($type === null || $type === OpportunityType::BENEFIT) {
@@ -117,7 +119,7 @@ final readonly class DiscoveryService
             }
             foreach ($benefits->limit($limit)->get() as $benefit) {
                 $location = $benefit->applies_to_all_locations ? $benefit->partner->locations->first() : $benefit->locations->first();
-                $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->defaultUrl($benefit));
+                $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->navigationUrl($benefit, $context->user !== null));
             }
         }
 
@@ -132,7 +134,7 @@ final readonly class DiscoveryService
             foreach ($experiences->limit($limit)->get() as $experience) {
                 $session = $experience->sessions->sortBy('starts_at')->first();
                 if ($session !== null && $session->location !== null) {
-                    $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->defaultUrl($experience));
+                    $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->navigationUrl($experience, $context->user !== null));
                 }
             }
         }
@@ -147,13 +149,13 @@ final readonly class DiscoveryService
             $unlocks = $unlocks->limit($limit)->get();
             $progress = $this->progress->forUnlocks($unlocks->pluck('id')->all(), $unlocks->mapWithKeys(fn (Unlock $unlock): array => [$unlock->id => $unlock->minimum_commitments])->all());
             foreach ($unlocks as $unlock) {
-                $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->defaultUrl($unlock));
+                $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->navigationUrl($unlock, $context->user !== null));
             }
         }
         if (($type === null || $type === OpportunityType::CHALLENGE) && $category === null) {
             $challenges = $this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title']);
             if ($like !== null) $challenges->where(fn (Builder $q) => $q->where('title','ilike',$like)->orWhere('description','ilike',$like));
-            foreach ($challenges->limit($limit)->get() as $challenge) $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->defaultUrl($challenge));
+            foreach ($challenges->limit($limit)->get() as $challenge) $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->navigationUrl($challenge, $context->user !== null));
         }
 
         $items = array_values(collect($items)->unique(fn (DiscoveryOpportunity $item): string => $item->type->value.'|'.$item->sourceId)->all());

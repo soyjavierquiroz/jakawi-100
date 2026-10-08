@@ -12,6 +12,7 @@ use App\Services\ConversionRecorder;
 use App\Services\RewardResolver;
 use App\Support\PublicJourneyConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 use InvalidArgumentException;
 use Tests\TestCase;
@@ -82,6 +83,11 @@ class PublicCampaignJourneysTest extends TestCase
 
     public function test_campaign_key_alone_never_selects_economic_campaign_or_reward_rule(): void
     {
+        // Both visits can arrive within one persisted second, even without test-order contamination.
+        $this->freezeTime();
+        // Exercise a sequential plan rather than relying on incidental index ordering for ties.
+        DB::statement('SET LOCAL enable_indexscan = off');
+        DB::statement('SET LOCAL enable_bitmapscan = off');
         $user = User::factory()->create();
         $campaign = Campaign::create(['name' => 'Economic', 'code' => 'test-journey', 'status' => 'active', 'event' => 'membership_purchased']);
         CampaignParticipant::create(['campaign_id' => $campaign->id, 'participant_type' => 'CREATOR']);
@@ -95,14 +101,26 @@ class PublicCampaignJourneysTest extends TestCase
             'gross_amount' => 100, 'status' => 'confirmed',
         ]);
         $this->assertNull($first->campaign_id);
-        $this->assertSame('test-journey', AttributionTouch::findOrFail($first->attribution_touch_id)->campaign_key);
+        $firstTouch = AttributionTouch::findOrFail($first->attribution_touch_id);
+        $this->assertSame('test-journey', $firstTouch->campaign_key);
+        $this->assertSame('meta-seminar', $firstTouch->utm_campaign);
         $this->assertSame($global->id, app(RewardResolver::class)->ruleFor($user, 'USER', 'CREATOR', 'membership_purchased', 'jakawi_annual')?->id);
 
         $this->get('/test-public-journey?utm_campaign=test-journey')->assertOk();
+        $secondTouch = AttributionTouch::where('user_id', $user->id)->orderByDesc('id')->firstOrFail();
+        $this->assertNotSame($firstTouch->id, $secondTouch->id);
+        $this->assertTrue($firstTouch->occurred_at->equalTo($secondTouch->occurred_at));
+        $this->assertSame('test-journey', $secondTouch->campaign_key);
+        $this->assertSame('test-journey', $secondTouch->utm_campaign);
+        // A higher ID with an older timestamp must not override chronological priority.
+        AttributionTouch::create(['user_id' => $user->id, 'campaign_key' => 'test-journey',
+            'utm_campaign' => 'meta-seminar', 'occurred_at' => now()->subMinute()]);
         $second = app(ConversionRecorder::class)->record($user, [
             'idempotency_key' => 'public-journey-intentional', 'type' => 'membership_purchased', 'product_key' => 'jakawi_annual',
             'gross_amount' => 100, 'status' => 'confirmed',
         ]);
+        $this->assertSame($secondTouch->id, $second->attribution_touch_id);
+        $this->assertSame('test-journey', $second->attribution_snapshot['utm_campaign']);
         $this->assertSame($campaign->id, $second->campaign_id);
         $this->assertSame($specific->id, app(RewardResolver::class)->ruleFor($user, 'USER', 'CREATOR', 'membership_purchased', 'jakawi_annual', 'CASH', $second->campaign_id)?->id);
     }

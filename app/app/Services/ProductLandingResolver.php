@@ -11,11 +11,11 @@ use InvalidArgumentException;
 
 class ProductLandingResolver
 {
-    public function defaultUrl(Model $subject): string
+    public function navigationUrl(Model $subject, bool $authenticated): string
     {
         $presentation = LandingPresentation::query()->where('subject_type', $subject->getMorphClass())
-            ->where('subject_id', $subject->getKey())->where('status', 'PUBLISHED')->where('is_default', true)->first();
-        return $presentation ? route('landing-presentations.show', $presentation->slug) : $this->nativeUrl($subject);
+            ->where('subject_id', $subject->getKey())->where('status', 'PUBLISHED')->where('default_scope', '<>', 'NONE')->first();
+        return $presentation && ($presentation->default_scope === 'ALL' || ($presentation->default_scope === 'GUESTS' && !$authenticated)) ? route('landing-presentations.show', $presentation->slug) : $this->nativeUrl($subject);
     }
 
     public function nativeUrl(Model $subject): string

@@ -20,7 +20,7 @@ use Inertia\Inertia;
 class ChallengeController extends Controller {
     public function index(Request $request, SelectedCity $selectedCity) {
         $city = $selectedCity->resolve($request);
-        return Inertia::render('social-challenges/index', ['challenges'=>Challenge::where('review_status','APPROVED')->where('status','open')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()))->withCount(['participations as reserved_count'=>fn ($q) => $q->whereIn('selection_status',['candidate','selected'])])->orderBy('ends_at')->get()->map(fn ($challenge) => $challenge->toArray() + ['destination_url'=>app(\App\Services\ProductLandingResolver::class)->defaultUrl($challenge)])]);
+        return Inertia::render('social-challenges/index', ['challenges'=>Challenge::where('review_status','APPROVED')->where('status','open')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()))->withCount(['participations as reserved_count'=>fn ($q) => $q->whereIn('selection_status',['candidate','selected'])])->orderBy('ends_at')->get()->map(fn ($challenge) => $challenge->toArray() + ['destination_url'=>app(\App\Services\ProductLandingResolver::class)->navigationUrl($challenge, auth()->check())])]);
     }
     public function show(Request $request, Challenge $challenge, AnalyticsTracker $analytics, \App\Services\ChallengeRanking $ranking, SocialEntryState $state) {
         abort_unless($challenge->isPublic(), 404);

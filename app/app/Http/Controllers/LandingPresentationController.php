@@ -36,17 +36,17 @@ class LandingPresentationController extends Controller
             $referrer = is_string($ref) ? $attribution->findReferrer($ref) : null;
             $touch = $attribution->recordTouch($request, $referrer, $referrer?->referral_code_normalized, null, $presentation->campaign_key);
             $request->session()->push('attribution_touch_ids', $touch->id);
-            $analytics->record('landing_view', ['user_id'=>null,'visitor_id'=>null], ['landing'=>$presentation->slug,'campaign_key'=>$presentation->campaign_key ?? '', 'landing_presentation_id'=>$presentation->id,'subject_type'=>$presentation->subject_type,'subject_id'=>$presentation->subject_id,'is_default'=>$presentation->is_default]);
+            $analytics->record('landing_view', ['user_id'=>null,'visitor_id'=>null], ['landing'=>$presentation->slug,'campaign_key'=>$presentation->campaign_key ?? '', 'landing_presentation_id'=>$presentation->id,'subject_type'=>$presentation->subject_type,'subject_id'=>$presentation->subject_id,'default_scope'=>$presentation->default_scope]);
         }
         $props = $preview ? ['challenge'=>$subject,'rewardLabel'=>$subject->benefit?->title,'heroUrl'=>app(MediaUrl::class)->url($subject->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'slots'=>null,'ranking'=>null,'verificationUrl'=>route('verification.notice')]
             : app(ChallengeController::class)->publicProps($request, $subject, $ranking, $state);
         return Inertia::render('landing-presentations/challenge', [
-            ...$props, 'presentation'=>array_replace($presentation->only(['id','name','slug','status','is_default','campaign_key','hero_alt']), ['hero_alt'=>$presentation->hero_alt ?: $subject->hero_alt]),
+            ...$props, 'presentation'=>array_replace($presentation->only(['id','name','slug','status','default_scope','campaign_key','hero_alt']), ['hero_alt'=>$presentation->hero_alt ?: $subject->hero_alt]),
             'copy'=>$presenter->present($subject, $presentation),
             'heroUrl'=>app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path,'hero'),
             'nativeUrl'=>$resolver->nativeUrl($subject), 'preview'=>$preview,
-            'canonical'=>$presentation->is_default ? route('landing-presentations.show',$presentation->slug) : $resolver->nativeUrl($subject),
-            'noindex'=>!$presentation->is_default || $preview,
+            'canonical'=>$presentation->default_scope === 'ALL' ? route('landing-presentations.show',$presentation->slug) : $resolver->nativeUrl($subject),
+            'noindex'=>$presentation->default_scope !== 'ALL' || $preview,
         ]);
     }
 }

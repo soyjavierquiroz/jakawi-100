@@ -33,7 +33,7 @@ class LandingPresentationTest extends TestCase
 
     private function landing(Challenge $challenge, string $slug, array $attributes = []): LandingPresentation
     {
-        return $challenge->landingPresentations()->create(array_merge(['name'=>$slug,'slug'=>$slug,'status'=>'DRAFT','is_default'=>false],$attributes));
+        return $challenge->landingPresentations()->create(array_merge(['name'=>$slug,'slug'=>$slug,'status'=>'DRAFT','default_scope'=>'NONE'],$attributes));
     }
 
     public function test_multiple_presentations_atomic_default_and_native_fallback(): void
@@ -43,15 +43,15 @@ class LandingPresentationTest extends TestCase
         $defaults = app(LandingPresentationDefaults::class);
         $first = $this->landing($challenge,'first',['status'=>'PUBLISHED']);
         $second = $this->landing($challenge,'second',['status'=>'PUBLISHED']);
-        $this->assertSame(route('social-challenges.show',$challenge),$resolver->defaultUrl($challenge));
-        $defaults->choose($challenge,$first);
-        $this->assertSame(route('landing-presentations.show',$first),$resolver->defaultUrl($challenge));
-        $defaults->choose($challenge,$second);
-        $this->assertFalse($first->fresh()->is_default);
-        $this->assertTrue($second->fresh()->is_default);
-        $this->assertSame(1,$challenge->landingPresentations()->where('is_default',true)->count());
-        $defaults->choose($challenge,null);
-        $this->assertSame(route('social-challenges.show',$challenge),$resolver->defaultUrl($challenge));
+        $this->assertSame(route('social-challenges.show',$challenge),$resolver->navigationUrl($challenge,false));
+        $defaults->choose($challenge,$first,'ALL');
+        $this->assertSame(route('landing-presentations.show',$first),$resolver->navigationUrl($challenge,false));
+        $defaults->choose($challenge,$second,'ALL');
+        $this->assertSame('NONE',$first->fresh()->default_scope);
+        $this->assertSame('ALL',$second->fresh()->default_scope);
+        $this->assertSame(1,$challenge->landingPresentations()->where('default_scope','<>','NONE')->count());
+        $defaults->choose($challenge,null,'NONE');
+        $this->assertSame(route('social-challenges.show',$challenge),$resolver->navigationUrl($challenge,false));
         $this->assertCount(2,$challenge->landingPresentations);
     }
 
@@ -63,10 +63,10 @@ class LandingPresentationTest extends TestCase
         $this->get('/l/draft')->assertNotFound();
         $this->get('/l/archived')->assertNotFound();
         foreach ([$draft,$archived] as $landing) {
-            try { app(LandingPresentationDefaults::class)->choose($challenge,$landing); $this->fail('Unpublished default accepted.'); }
+            try { app(LandingPresentationDefaults::class)->choose($challenge,$landing,'ALL'); $this->fail('Unpublished default accepted.'); }
             catch (\Illuminate\Validation\ValidationException) {}
         }
-        $this->assertSame(0,$challenge->landingPresentations()->where('is_default',true)->count());
+        $this->assertSame(0,$challenge->landingPresentations()->where('default_scope','<>','NONE')->count());
     }
 
     public function test_published_non_default_is_public_and_captures_campaign_without_economics(): void
@@ -87,7 +87,7 @@ class LandingPresentationTest extends TestCase
         $challenge=$this->challenge();
         $landing=$this->landing($challenge,'featured',['status'=>'PUBLISHED']);
         $this->get('/retos')->assertOk()->assertInertia(fn (Assert $page) => $page->component('social-challenges/index')->has('challenges',1)->where('challenges.0.destination_url',route('social-challenges.show',$challenge)));
-        app(LandingPresentationDefaults::class)->choose($challenge,$landing);
+        app(LandingPresentationDefaults::class)->choose($challenge,$landing,'ALL');
         $this->get('/retos')->assertOk()->assertInertia(fn (Assert $page) => $page->component('social-challenges/index')->has('challenges',1)->where('challenges.0.destination_url',route('landing-presentations.show',$landing)));
         $this->get('/explorar?type=challenges')->assertOk()->assertInertia(fn (Assert $page) => $page->component('explore')->has('opportunities',1)->where('opportunities.0.destination_url',route('landing-presentations.show',$landing)));
         $this->get('/l/featured')->assertOk()->assertInertia(fn (Assert $page) => $page->component('landing-presentations/challenge')->where('noindex',false));
@@ -102,10 +102,10 @@ class LandingPresentationTest extends TestCase
         $this->actingAs($admin)->get("/admin/retos/{$challenge->slug}/landings/{$landing->slug}/preview")->assertOk()->assertInertia(fn (Assert $page) => $page->component('landing-presentations/challenge')->where('preview',true));
         $this->get('/l/lanzamiento')->assertNotFound();
         $this->post("/admin/retos/{$challenge->slug}/landings/{$landing->slug}/publish")->assertRedirect();
-        $this->post("/admin/retos/{$challenge->slug}/landings/{$landing->slug}/default")->assertRedirect();
-        $this->assertTrue($landing->fresh()->is_default);
+        $this->post("/admin/retos/{$challenge->slug}/landings/{$landing->slug}/default",['default_scope'=>'ALL'])->assertRedirect();
+        $this->assertSame('ALL',$landing->fresh()->default_scope);
         $this->post("/admin/retos/{$challenge->slug}/landings/default-product")->assertRedirect();
-        $this->assertFalse($landing->fresh()->is_default);
+        $this->assertSame('NONE',$landing->fresh()->default_scope);
         $this->assertSame('PUBLISHED',$landing->fresh()->status);
     }
 
@@ -141,8 +141,122 @@ class LandingPresentationTest extends TestCase
     public function test_other_product_native_urls_remain_available(): void
     {
         $resolver=app(ProductLandingResolver::class);
-        $this->assertSame(route('benefits.show','beneficio'),$resolver->defaultUrl((new Benefit(['slug'=>'beneficio']))->forceFill(['id'=>100])));
-        $this->assertSame(route('experiences.show','experiencia'),$resolver->defaultUrl((new Experience(['slug'=>'experiencia']))->forceFill(['id'=>101])));
-        $this->assertSame(route('unlocks.show','desbloqueo'),$resolver->defaultUrl((new Unlock(['slug'=>'desbloqueo']))->forceFill(['id'=>102])));
+        $this->assertSame(route('benefits.show','beneficio'),$resolver->navigationUrl((new Benefit(['slug'=>'beneficio']))->forceFill(['id'=>100]),false));
+        $this->assertSame(route('experiences.show','experiencia'),$resolver->navigationUrl((new Experience(['slug'=>'experiencia']))->forceFill(['id'=>101]),false));
+        $this->assertSame(route('unlocks.show','desbloqueo'),$resolver->navigationUrl((new Unlock(['slug'=>'desbloqueo']))->forceFill(['id'=>102]),false));
     }
+
+    public function test_audience_matrix_for_every_product_type(): void
+    {
+        $resolver=app(ProductLandingResolver::class);
+        $defaults=app(LandingPresentationDefaults::class);
+        $subjects=[Benefit::factory()->create(), Experience::factory()->create(),
+            Unlock::create(['title'=>'Unlock','slug'=>'matrix-unlock','origin'=>'JAKAWI','type'=>'BENEFIT','minimum_commitments'=>2,'status'=>Unlock::ACTIVE]), $this->challenge()];
+        foreach ($subjects as $i=>$subject) {
+            $landing=LandingPresentation::create(['subject_type'=>$subject->getMorphClass(),'subject_id'=>$subject->id,'name'=>'Matrix','slug'=>'matrix-'.$i,'status'=>'PUBLISHED']);
+            foreach (['NONE','GUESTS','ALL'] as $scope) {
+                $defaults->choose($subject,$scope==='NONE'?null:$landing,$scope);
+                foreach ([false,true] as $authenticated) {
+                    $expected=$scope==='ALL'||($scope==='GUESTS'&&!$authenticated)?route('landing-presentations.show',$landing):$resolver->nativeUrl($subject);
+                    $this->assertSame($expected,$resolver->navigationUrl($subject,$authenticated));
+                }
+            }
+        }
+    }
+
+    public function test_guests_navigation_direct_urls_and_seo_do_not_leak_between_viewers(): void
+    {
+        $challenge=$this->challenge();
+        $landing=$this->landing($challenge,'audience',['status'=>'PUBLISHED','campaign_key'=>'guest-campaign']);
+        app(LandingPresentationDefaults::class)->choose($challenge,$landing,'GUESTS');
+        foreach ([false,true,false] as $authenticated) {
+            if ($authenticated) $this->actingAs(User::factory()->create());
+            else auth()->forgetGuards();
+            $expected=$authenticated?route('social-challenges.show',$challenge):route('landing-presentations.show',$landing);
+            $this->get('/')->assertOk()->assertInertia(fn (Assert $page)=>$page->has('challenges',1)->where('challenges.0.destination_url',$expected)->where('discovery.hero.destination_url',$expected));
+            foreach (['/explorar?type=challenges','/explorar?q=Reto&type=challenges'] as $url) {
+                $this->get($url)->assertOk()->assertInertia(fn (Assert $page)=>$page->has('opportunities',1)->where('opportunities.0.destination_url',$expected));
+            }
+            $this->get('/l/audience')->assertOk()->assertInertia(fn (Assert $page)=>$page->component('landing-presentations/challenge')->where('noindex',true)->where('canonical',route('social-challenges.show',$challenge))->where('presentation.default_scope','GUESTS'));
+            $this->get('/retos/'.$challenge->slug)->assertOk()->assertInertia(fn (Assert $page)=>$page->component('social-challenges/show'));
+        }
+        foreach (['NONE','ALL'] as $scope) {
+            app(LandingPresentationDefaults::class)->choose($challenge,$scope==='NONE'?null:$landing,$scope);
+            foreach ([false,true] as $authenticated) {
+                if ($authenticated) $this->actingAs(User::factory()->create());
+                else auth()->forgetGuards();
+                $this->get('/l/audience')->assertOk()->assertInertia(fn (Assert $page)=>$page->component('landing-presentations/challenge')->where('noindex',$scope!=='ALL')->where('canonical',$scope==='ALL'?route('landing-presentations.show',$landing):route('social-challenges.show',$challenge)));
+                $this->get('/retos/'.$challenge->slug)->assertOk()->assertInertia(fn (Assert $page)=>$page->component('social-challenges/show'));
+            }
+        }
+        $this->assertDatabaseHas('attribution_touches',['campaign_key'=>'guest-campaign']);
+        $this->assertDatabaseCount('conversions',0);
+        $this->assertDatabaseCount('campaigns',0);
+    }
+
+    public function test_admin_visitors_everyone_archive_and_invalid_scope(): void
+    {
+        $challenge=$this->challenge();
+        $landing=$this->landing($challenge,'admin-audience',['status'=>'PUBLISHED']);
+        $this->actingAs(User::factory()->create(['is_admin'=>true]));
+        $base="/admin/retos/{$challenge->slug}/landings";
+        foreach (['GUESTS','ALL'] as $scope) {
+            $this->post("$base/{$landing->slug}/default",['default_scope'=>$scope])->assertRedirect();
+            $this->assertSame($scope,$landing->fresh()->default_scope);
+        }
+        $this->post("$base/{$landing->slug}/default",['default_scope'=>'INVALID'])->assertSessionHasErrors('default_scope');
+        $this->post("$base/{$landing->slug}/archive")->assertRedirect();
+        $this->assertSame('NONE',$landing->fresh()->default_scope);
+        $this->assertSame('ARCHIVED',$landing->fresh()->status);
+    }
+
+    public function test_database_rejects_invalid_scopes_unpublished_defaults_and_duplicate_defaults(): void
+    {
+        $challenge=$this->challenge();
+        $first=$this->landing($challenge,'constraint-first',['status'=>'PUBLISHED','default_scope'=>'GUESTS']);
+        $second=$this->landing($challenge,'constraint-second',['status'=>'PUBLISHED']);
+        foreach ([['default_scope'=>'ALL'],['default_scope'=>'INVALID']] as $attributes) {
+            try { DB::transaction(fn ()=>$second->update($attributes)); $this->fail('Invalid default accepted.'); }
+            catch (\Illuminate\Database\QueryException) {}
+        }
+        foreach (['DRAFT','ARCHIVED'] as $status) {
+            foreach (['GUESTS','ALL'] as $scope) {
+                try { DB::transaction(fn ()=>$second->update(['status'=>$status,'default_scope'=>$scope])); $this->fail('Unpublished default accepted.'); }
+                catch (\Illuminate\Database\QueryException) {}
+            }
+        }
+        try { app(LandingPresentationDefaults::class)->choose($challenge,$second->fresh(),'INVALID'); $this->fail('Invalid scope accepted.'); }
+        catch (\Illuminate\Validation\ValidationException) {}
+        $this->assertSame('GUESTS',$first->fresh()->default_scope);
+    }
+    public function test_incremental_migration_preserves_legacy_and_qa_non_default(): void
+    {
+        $challenge=$this->challenge();
+        $qa=$this->landing($challenge,'qa-bafabo-marketing',['status'=>'PUBLISHED']);
+        $legacy=$this->landing($challenge,'legacy-default',['status'=>'PUBLISHED']);
+        $migration=require database_path('migrations/2026_10_08_000003_add_landing_default_scope.php');
+        $migration->down();
+        DB::table('landing_presentations')->where('id',$legacy->id)->update(['is_default'=>true]);
+        $migration->up();
+        $this->assertSame('NONE',$qa->fresh()->default_scope);
+        $this->assertSame('PUBLISHED',$qa->fresh()->status);
+        $this->assertSame('ALL',$legacy->fresh()->default_scope);
+        $this->assertFalse(\Illuminate\Support\Facades\Schema::hasColumn('landing_presentations','is_default'));
+    }
+
+    public function test_native_routes_for_other_products_ignore_all_default(): void
+    {
+        $subjects=[Benefit::factory()->published()->create(),Experience::factory()->published()->create(),
+            Unlock::create(['title'=>'Native unlock','slug'=>'native-unlock','origin'=>'JAKAWI','type'=>'BENEFIT','minimum_commitments'=>2,'status'=>Unlock::ACTIVE])];
+        foreach ($subjects as $i=>$subject) {
+            $landing=LandingPresentation::create(['subject_type'=>$subject->getMorphClass(),'subject_id'=>$subject->id,'name'=>'Native','slug'=>'native-'.$i,'status'=>'PUBLISHED','default_scope'=>'ALL']);
+            foreach ([false,true] as $authenticated) {
+                if ($authenticated) $this->actingAs(User::factory()->create());
+                else auth()->forgetGuards();
+                $component=match (true) { $subject instanceof Benefit=>'benefits/show', $subject instanceof Experience=>'experiences/show', default=>'unlocks/show' };
+                $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertOk()->assertInertia(fn (Assert $page)=>$page->component($component));
+            }
+        }
+    }
+
 }
