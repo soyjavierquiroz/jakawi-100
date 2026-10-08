@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Challenge extends Model {
     protected $guarded = [];
@@ -15,6 +16,8 @@ class Challenge extends Model {
     public function participations(): HasMany { return $this->hasMany(ChallengeParticipation::class); }
     public function socialEntries(): HasMany { return $this->hasMany(ChallengeSocialEntry::class); }
     public function grants(): HasMany { return $this->hasMany(ChallengeRewardGrant::class); }
+    public function landingPresentations(): MorphMany { return $this->morphMany(LandingPresentation::class, 'subject'); }
+    public function presentations(): MorphMany { return $this->landingPresentations(); }
     public function benefit(): BelongsTo { return $this->belongsTo(Benefit::class); }
     public function partner(): BelongsTo { return $this->belongsTo(Partner::class); }
     public function city(): BelongsTo { return $this->belongsTo(City::class); }

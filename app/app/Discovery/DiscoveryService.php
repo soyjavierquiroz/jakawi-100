@@ -7,6 +7,7 @@ use App\Models\Experience;
 use App\Models\Unlock;
 use App\Models\Challenge;
 use App\Services\MemberAffinityService;
+use App\Services\ProductLandingResolver;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -24,6 +25,7 @@ final readonly class DiscoveryService
         private ExperienceOpportunityAdapter $experienceAdapter,
         private UnlockOpportunityAdapter $unlockAdapter,
         private ChallengeOpportunityAdapter $challengeAdapter,
+        private ProductLandingResolver $landingResolver,
         private UnlockProgressLoader $progress,
         private MemberAffinityService $affinity,
         private DiscoveryRanker $ranker,
@@ -51,19 +53,19 @@ final readonly class DiscoveryService
             $location = $benefit->applies_to_all_locations
                 ? $benefit->partner->locations->first()
                 : $benefit->locations->first();
-            $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location);
+            $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->defaultUrl($benefit));
         }
         foreach ($experiences as $experience) {
             $session = $experience->sessions->sortBy('starts_at')->first();
             if ($session !== null && $session->location !== null) {
-                $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first());
+                $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->defaultUrl($experience));
             }
         }
         foreach ($unlocks as $unlock) {
-            $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first());
+            $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->defaultUrl($unlock));
         }
         foreach ($this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title'])->limit($limit)->get() as $challenge) {
-            $items[] = $this->challengeAdapter->adapt($challenge,$city);
+            $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->defaultUrl($challenge));
         }
 
         // Canonical identity intentionally retains linked Unlock/Benefit or
@@ -115,7 +117,7 @@ final readonly class DiscoveryService
             }
             foreach ($benefits->limit($limit)->get() as $benefit) {
                 $location = $benefit->applies_to_all_locations ? $benefit->partner->locations->first() : $benefit->locations->first();
-                $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location);
+                $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->defaultUrl($benefit));
             }
         }
 
@@ -130,7 +132,7 @@ final readonly class DiscoveryService
             foreach ($experiences->limit($limit)->get() as $experience) {
                 $session = $experience->sessions->sortBy('starts_at')->first();
                 if ($session !== null && $session->location !== null) {
-                    $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first());
+                    $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->defaultUrl($experience));
                 }
             }
         }
@@ -145,13 +147,13 @@ final readonly class DiscoveryService
             $unlocks = $unlocks->limit($limit)->get();
             $progress = $this->progress->forUnlocks($unlocks->pluck('id')->all(), $unlocks->mapWithKeys(fn (Unlock $unlock): array => [$unlock->id => $unlock->minimum_commitments])->all());
             foreach ($unlocks as $unlock) {
-                $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first());
+                $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->defaultUrl($unlock));
             }
         }
         if (($type === null || $type === OpportunityType::CHALLENGE) && $category === null) {
             $challenges = $this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title']);
             if ($like !== null) $challenges->where(fn (Builder $q) => $q->where('title','ilike',$like)->orWhere('description','ilike',$like));
-            foreach ($challenges->limit($limit)->get() as $challenge) $items[] = $this->challengeAdapter->adapt($challenge,$city);
+            foreach ($challenges->limit($limit)->get() as $challenge) $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->defaultUrl($challenge));
         }
 
         $items = array_values(collect($items)->unique(fn (DiscoveryOpportunity $item): string => $item->type->value.'|'.$item->sourceId)->all());

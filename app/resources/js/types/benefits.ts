@@ -10,6 +10,7 @@ export type BenefitSummary = {
     id: number;
     title: string;
     slug: string;
+    destination_url?: string;
     short_description?: string | null;
     description?: string | null;
     terms?: string | null;

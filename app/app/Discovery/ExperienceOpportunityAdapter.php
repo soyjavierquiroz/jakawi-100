@@ -17,7 +17,7 @@ final readonly class ExperienceOpportunityAdapter
 {
     public function __construct(private MediaUrl $mediaUrl) {}
 
-    public function adapt(Experience $experience, DiscoveryCity $city, ExperienceSession $session, Location $location, ?Partner $partner = null): DiscoveryOpportunity
+    public function adapt(Experience $experience, DiscoveryCity $city, ExperienceSession $session, Location $location, ?Partner $partner = null, ?string $destinationUrl = null): DiscoveryOpportunity
     {
         if ($session->location_id !== $location->getKey() || $location->city_id !== $city->id) {
             throw new InvalidArgumentException('The selected experience session location must belong to the discovery city.');
@@ -27,7 +27,7 @@ final readonly class ExperienceOpportunityAdapter
             type: OpportunityType::EXPERIENCE,
             sourceId: $experience->getKey(),
             title: $experience->title,
-            destinationUrl: route('experiences.show', $experience),
+            destinationUrl: $destinationUrl ?? route('experiences.show', $experience),
             city: $city,
             subtitle: $experience->short_description,
             image: $this->mediaUrl->url($experience->image_path, 'experience_card'),

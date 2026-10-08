@@ -15,13 +15,13 @@ final readonly class BenefitOpportunityAdapter
 {
     public function __construct(private MediaUrl $mediaUrl) {}
 
-    public function adapt(Benefit $benefit, DiscoveryCity $city, Partner $partner, ?Location $location = null): DiscoveryOpportunity
+    public function adapt(Benefit $benefit, DiscoveryCity $city, Partner $partner, ?Location $location = null, ?string $destinationUrl = null): DiscoveryOpportunity
     {
         return new DiscoveryOpportunity(
             type: OpportunityType::BENEFIT,
             sourceId: $benefit->getKey(),
             title: $benefit->title,
-            destinationUrl: route('benefits.show', $benefit),
+            destinationUrl: $destinationUrl ?? route('benefits.show', $benefit),
             city: $city,
             subtitle: $benefit->short_description,
             image: $this->mediaUrl->url($benefit->image_path, 'benefit_card'),

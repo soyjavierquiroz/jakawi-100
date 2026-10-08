@@ -11,7 +11,7 @@ export default function ExperiencesIndex({ experiences = [] }: any) {
                         <Link
                             className="rounded-md border border-border p-4"
                             key={x.id}
-                            href={`/experiencias/${x.slug}`}
+                            href={x.destination_url ?? `/experiencias/${x.slug}`}
                         >
                             <h2 className="text-xl font-semibold">{x.title}</h2>
                             <p>{x.short_description}</p>

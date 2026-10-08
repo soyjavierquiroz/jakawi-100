@@ -12,7 +12,7 @@ final readonly class UnlockOpportunityAdapter
 {
     public function __construct(private MediaUrl $mediaUrl) {}
 
-    public function adapt(Unlock $unlock, DiscoveryCity $city, UnlockProgress $progress, ?Partner $partner = null, ?Location $location = null): DiscoveryOpportunity
+    public function adapt(Unlock $unlock, DiscoveryCity $city, UnlockProgress $progress, ?Partner $partner = null, ?Location $location = null, ?string $destinationUrl = null): DiscoveryOpportunity
     {
         $partnerVisible = ! $unlock->secret_mode || ! $unlock->hide_partner_until_unlock || $unlock->revealable();
         $locationVisible = ! $unlock->secret_mode || ! $unlock->hide_location_until_unlock || $unlock->revealable();
@@ -22,7 +22,7 @@ final readonly class UnlockOpportunityAdapter
             type: OpportunityType::UNLOCK,
             sourceId: $unlock->getKey(),
             title: $unlock->title,
-            destinationUrl: route('unlocks.show', $unlock),
+            destinationUrl: $destinationUrl ?? route('unlocks.show', $unlock),
             city: $city,
             subtitle: $unlock->short_description,
             image: $this->mediaUrl->url($unlock->hero_path, 'hero'),

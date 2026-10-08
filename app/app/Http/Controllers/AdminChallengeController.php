@@ -35,6 +35,11 @@ class AdminChallengeController extends Controller {
             'reward_type'=>['required',Rule::in(['BENEFIT','MANUAL_PRIZE','JP'])], 'benefit_id'=>['nullable','integer','exists:benefits,id'], 'manual_prize_description'=>['nullable','string'],
             'reward_jp_amount'=>[Rule::requiredIf($request->input('reward_type')==='JP'),Rule::prohibitedIf($request->input('reward_type')!=='JP'),'nullable','integer','min:1'],
             'instructions'=>['nullable','string','max:10000'], 'ranking_visibility'=>['nullable',Rule::in(['NONE','PUBLIC','PARTICIPANTS_ONLY'])],
+            'marketing_hook'=>['nullable','string','max:180','regex:/^[^0-9]*$/u'],
+            'marketing_headline'=>['nullable','string','max:180','regex:/^[^0-9]*$/u'],
+            'marketing_subheadline'=>['nullable','string','max:1000','regex:/^[^0-9]*$/u'],
+            'marketing_reward_copy'=>['nullable','string','max:180','regex:/^[^0-9]*$/u'],
+            'hero_alt'=>['nullable','string','max:255'],
             'ranking_refresh_interval_minutes'=>['nullable','integer','min:15'],
         ]);
         if ($data['qualification_type']==='METRIC_THRESHOLD' && (empty($data['qualification_metric']) || empty($data['qualification_target']) || $data['evidence_type']!=='SOCIAL_POST')) throw ValidationException::withMessages(['qualification_metric'=>'El umbral requiere publicación, métrica y objetivo.']);

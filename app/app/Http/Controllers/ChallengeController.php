@@ -20,14 +20,17 @@ use Inertia\Inertia;
 class ChallengeController extends Controller {
     public function index(Request $request, SelectedCity $selectedCity) {
         $city = $selectedCity->resolve($request);
-        return Inertia::render('social-challenges/index', ['challenges'=>Challenge::where('review_status','APPROVED')->where('status','open')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()))->withCount(['participations as reserved_count'=>fn ($q) => $q->whereIn('selection_status',['candidate','selected'])])->orderBy('ends_at')->get()]);
+        return Inertia::render('social-challenges/index', ['challenges'=>Challenge::where('review_status','APPROVED')->where('status','open')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()))->withCount(['participations as reserved_count'=>fn ($q) => $q->whereIn('selection_status',['candidate','selected'])])->orderBy('ends_at')->get()->map(fn ($challenge) => $challenge->toArray() + ['destination_url'=>app(\App\Services\ProductLandingResolver::class)->defaultUrl($challenge)])]);
     }
     public function show(Request $request, Challenge $challenge, AnalyticsTracker $analytics, \App\Services\ChallengeRanking $ranking, SocialEntryState $state) {
         abort_unless($challenge->isPublic(), 404);
-        $p = $request->user() ? ChallengeParticipation::where('challenge_id',$challenge->id)->where('user_id',$request->user()->id)->with(['socialEntries','grant.jpCredit.reversal'])->first() : null;
         $analytics->record('challenge_view', [], ['challenge_id'=>$challenge->id]);
+        return Inertia::render('social-challenges/show', $this->publicProps($request, $challenge, $ranking, $state));
+    }
+    public function publicProps(Request $request, Challenge $challenge, \App\Services\ChallengeRanking $ranking, SocialEntryState $state): array {
+        $p = $request->user() ? ChallengeParticipation::where('challenge_id',$challenge->id)->where('user_id',$request->user()->id)->with(['socialEntries','grant.jpCredit.reversal'])->first() : null;
         $grant = $p?->grant;
-        return Inertia::render('social-challenges/show', [
+        return [
             'challenge'=>$challenge, 'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null, 'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'), 'rules'=>$challenge->rulesContract(),
             'participation'=>$p?->only(['id','qualification_status','qualified_entry_id','qualified_at','selection_status','selected_entry_id','review_status']),
             'entries'=>$p?->socialEntries->map(fn ($e) => $state->entry($e))->all() ?? [],
@@ -40,7 +43,7 @@ class ChallengeController extends Controller {
             'slots'=> $challenge->selection_type === 'FIRST_N' ? ['awarded'=>$challenge->grants()->where('status','!=','cancelled')->count(),'reserved'=>$challenge->participations()->whereIn('selection_status',['candidate','selected'])->count(),'limit'=>$challenge->winner_limit] : null,
             'ranking'=>$ranking->forLanding($challenge,$request),
             'verificationUrl'=>route('verification.notice'),
-        ]);
+        ];
     }
     public function intent(Request $request, Challenge $challenge, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, ChallengeService $service) {
         abort_unless($challenge->acceptsParticipation(), 404);
@@ -52,7 +55,9 @@ class ChallengeController extends Controller {
             if ($p->wasRecentlyCreated) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
             $service->evaluate($p);
         }
-        return redirect()->to(route('social-challenges.show',$challenge->slug).'#participar');
+        $landingSlug = $request->input('landing_presentation_slug');
+        $landing = is_string($landingSlug) ? \App\Models\LandingPresentation::query()->where('slug',$landingSlug)->where('subject_type',$challenge->getMorphClass())->where('subject_id',$challenge->id)->where('status','PUBLISHED')->first() : null;
+        return redirect()->to(($landing ? route('landing-presentations.show',$landing->slug) : route('social-challenges.show',$challenge->slug)).'#participar');
     }
     public function submit(Request $request, Challenge $challenge, AnalyticsTracker $analytics) {
         $data = $request->validate(['url'=>['required','url','max:2048','starts_with:https://,http://']]);
@@ -75,7 +80,9 @@ class ChallengeController extends Controller {
         } catch (UniqueConstraintViolationException) { throw ValidationException::withMessages(['url'=>'Esta publicación ya participa en el reto.']); }
         if ($participationStarted) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
         $analytics->record('challenge_entry_submitted',[],['challenge_id'=>$challenge->id]);
-        return to_route('social-challenges.show',$challenge->slug)->with('success','Estamos verificando tu publicación.')->with('submitted_entry_id',$entry->id);
+        $landingSlug = $request->input('landing_presentation_slug');
+        $landing = is_string($landingSlug) ? \App\Models\LandingPresentation::query()->where('slug',$landingSlug)->where('subject_type',$challenge->getMorphClass())->where('subject_id',$challenge->id)->where('status','PUBLISHED')->first() : null;
+        return redirect()->to($landing ? route('landing-presentations.show',$landing->slug) : route('social-challenges.show',$challenge->slug))->with('success','Estamos verificando tu publicación.')->with('submitted_entry_id',$entry->id);
     }
     public function entryStatus(Request $request, Challenge $challenge, ChallengeSocialEntry $entry, SocialEntryState $state) {
         abort_unless($entry->challenge_id === $challenge->id && $entry->participation()->where('user_id', $request->user()->id)->exists(), 404);

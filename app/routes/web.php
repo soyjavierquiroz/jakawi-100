@@ -44,6 +44,8 @@ use App\Http\Controllers\AdminUnlockController;
 use App\Http\Controllers\PartnerUnlockController;
 use App\Http\Controllers\OpportunityAnalyticsController;
 use App\Http\Controllers\ChallengeController;
+use App\Http\Controllers\LandingPresentationController;
+use App\Http\Controllers\AdminLandingPresentationController;
 use App\Http\Controllers\AdminChallengeController;
 use App\Support\PublicJourneyConfig;
 use Illuminate\Http\Request;
@@ -53,6 +55,7 @@ Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/membresia', [MembershipOfferController::class, 'show'])->name('membership.show');
 Route::get('/membresia/registro', [MembershipOfferController::class, 'register'])->middleware('guest')->name('membership.register');
 Route::get('/go/{slug}', [ExternalRedirectController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('external-redirect.show');
+Route::get('/l/{presentation:slug}', [LandingPresentationController::class, 'show'])->name('landing-presentations.show');
 Route::post('/analytics/public-landings/{key}/cta', [PublicJourneyLandingController::class, 'cta'])->where('key', '[a-z0-9]+(?:-[a-z0-9]+)*')->middleware('throttle:60,1')->name('public-landings.cta');
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
 Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.unlock');
@@ -176,6 +179,14 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('retos/{challenge:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.landing-presentations.index');
+    Route::post('retos/{challenge:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.landing-presentations.store');
+    Route::put('retos/{challenge:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.landing-presentations.update');
+    Route::get('retos/{challenge:slug}/landings/{presentation:slug}/preview', [LandingPresentationController::class, 'preview'])->name('admin.landing-presentations.preview');
+    Route::post('retos/{challenge:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.landing-presentations.publish');
+    Route::post('retos/{challenge:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.landing-presentations.archive');
+    Route::post('retos/{challenge:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.landing-presentations.default');
+    Route::post('retos/{challenge:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.landing-presentations.default-product');
     Route::get('retos', [AdminChallengeController::class, 'index'])->name('admin.social-challenges.index');
     Route::get('retos/crear', [AdminChallengeController::class, 'form'])->name('admin.social-challenges.create');
     Route::post('retos', [AdminChallengeController::class, 'save'])->name('admin.social-challenges.store');

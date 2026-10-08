@@ -18,6 +18,10 @@ void createInertiaApp({
         switch (true) {
             case name === 'partners/index' || name === 'programs/index':
                 return MarketingLayout;
+            case name === 'landing-presentations/challenge':
+                return MarketingLayout;
+            case name === 'social-challenges/show' || name === 'social-challenges/index':
+                return null;
             case ['welcome', 'explore', 'cities/show', 'benefits/index', 'benefits/show', 'experiences/index', 'experiences/show', 'partners/show', 'locations/show', 'unlocks/show', 'mi-jakawi', 'membresia', 'member-profile', 'redemptions/show'].includes(name):
                 return ConsumerLayout;
             case name.startsWith('auth/'):
