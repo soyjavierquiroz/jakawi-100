@@ -18,7 +18,7 @@ void createInertiaApp({
         switch (true) {
             case name === 'partners/index' || name === 'programs/index':
                 return MarketingLayout;
-            case name === 'landing-presentations/challenge' || name === 'landing-presentations/benefit':
+            case name === 'landing-presentations/experience' || name === 'landing-presentations/challenge' || name === 'landing-presentations/benefit':
                 return MarketingLayout;
             case name === 'social-challenges/show' || name === 'social-challenges/index':
                 return null;

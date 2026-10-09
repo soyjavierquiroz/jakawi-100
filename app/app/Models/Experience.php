@@ -17,6 +17,11 @@ class Experience extends Model
     /** @use HasFactory<ExperienceFactory> */
     use HasFactory;
 
+    public function landingPresentations(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(LandingPresentation::class, 'subject');
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

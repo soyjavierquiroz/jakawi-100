@@ -164,6 +164,7 @@ export default function ResourceForm({
                     : [];
     return (
         <AdminLayout title={title}>
+            {resource === 'experiences' && item?.slug && <Link href={`/admin/experiencias/${item.slug}/landings`} className="mb-5 inline-flex min-h-11 items-center font-bold text-brand underline">MARKETING LANDINGS</Link>}
             {resource === 'benefits' && item?.slug && <Link href={`/admin/beneficios/${item.slug}/landings`} className="mb-5 inline-flex min-h-11 items-center font-bold text-brand underline">MARKETING LANDINGS</Link>}
             <form onSubmit={submit} className="grid max-w-2xl gap-4">
                 {fields[resource].map((field) => (

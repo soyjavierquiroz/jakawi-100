@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Challenge;
 use App\Models\Benefit;
+use App\Models\Experience;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\LandingPresentation;
 use App\Services\LandingPresentationDefaults;
@@ -20,7 +21,7 @@ class AdminLandingPresentationController extends Controller
         return Inertia::render('admin/landing-presentations/index', [
             'subject'=>$subject->only(['title','slug']),
             'baseUrl'=>$this->baseUrl($subject),
-            'productUrl'=>$subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug,
+            'productUrl'=>$subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug),
             'presentations'=>$subject->landingPresentations()->orderBy('id')->get(),
         ]);
     }
@@ -49,7 +50,7 @@ class AdminLandingPresentationController extends Controller
     {
         $subject = $this->subject($request);
         $this->belongsTo($subject,$presentation);
-        if (!($subject instanceof Benefit ? $subject->isPublished() && $subject->partner?->isPublished() : $subject->isPublic())) throw ValidationException::withMessages(['presentation'=>'Publica el producto y su partner antes de publicar su landing.']);
+        if (!($subject instanceof Experience ? $subject->isPublished() : ($subject instanceof Benefit ? $subject->isPublished() && $subject->partner?->isPublished() : $subject->isPublic()))) throw ValidationException::withMessages(['presentation'=>'Publica el producto y su partner antes de publicar su landing.']);
         $presentation->update(['status'=>'PUBLISHED']);
         return back();
     }
@@ -83,12 +84,12 @@ class AdminLandingPresentationController extends Controller
 
     private function subject(Request $request): Model
     {
-        return $request->route()->hasParameter('benefit') ? Benefit::where('slug', $request->route('benefit'))->firstOrFail() : Challenge::where('slug', $request->route('challenge'))->firstOrFail();
+        return $request->route()->hasParameter('experience') ? Experience::where('slug', $request->route('experience'))->firstOrFail() : ($request->route()->hasParameter('benefit') ? Benefit::where('slug', $request->route('benefit'))->firstOrFail() : Challenge::where('slug', $request->route('challenge'))->firstOrFail());
     }
 
     private function baseUrl(Model $subject): string
     {
-        return '/admin/'.($subject instanceof Benefit ? 'beneficios' : 'retos').'/'.$subject->slug.'/landings';
+        return '/admin/'.($subject instanceof Experience ? 'experiencias' : ($subject instanceof Benefit ? 'beneficios' : 'retos')).'/'.$subject->slug.'/landings';
     }
 
     private function belongsTo(Model $subject, LandingPresentation $presentation): void

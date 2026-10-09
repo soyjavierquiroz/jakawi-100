@@ -179,6 +179,14 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('experiencias/{experience:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.experience-landing-presentations.index');
+    Route::post('experiencias/{experience:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.experience-landing-presentations.store');
+    Route::put('experiencias/{experience:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.experience-landing-presentations.update');
+    Route::get('experiencias/{experience:slug}/landings/{presentation:slug}/preview', [LandingPresentationController::class, 'preview'])->name('admin.experience-landing-presentations.preview');
+    Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.experience-landing-presentations.publish');
+    Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.experience-landing-presentations.archive');
+    Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.experience-landing-presentations.default');
+    Route::post('experiencias/{experience:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.experience-landing-presentations.default-product');
     Route::get('beneficios/{benefit:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.benefit-landing-presentations.index');
     Route::post('beneficios/{benefit:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.benefit-landing-presentations.store');
     Route::put('beneficios/{benefit:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.benefit-landing-presentations.update');
