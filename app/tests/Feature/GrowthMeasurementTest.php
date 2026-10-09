@@ -31,6 +31,87 @@ class GrowthMeasurementTest extends TestCase
         return $event;
     }
 
+    public function test_direct_landing_does_not_supersede_economic_attribution(): void
+    {
+        $this->freezeTime();
+        $landing = $this->landing();
+        $landing->update(['campaign_key' => null]);
+        $direct = $landing->subject->landingPresentations()->create(['name'=>'Direct', 'slug'=>'direct', 'status'=>'PUBLISHED', 'default_scope'=>'NONE']);
+        $user = User::factory()->create();
+        $campaign = \App\Models\Campaign::create(['name'=>'Economic', 'code'=>'test-journey', 'status'=>'active', 'event'=>'membership_purchased']);
+        $this->actingAs($user)->get('/l/growth?utm_source=meta&utm_medium=paid_social&utm_campaign=test-journey')->assertOk();
+        $touch = AttributionTouch::sole();
+        $this->get('/l/direct')->assertOk();
+        $conversion = app(\App\Services\ConversionRecorder::class)->record($user, ['idempotency_key'=>'touch-hygiene', 'type'=>'membership_purchased', 'gross_amount'=>100]);
+        $this->assertSame($touch->id, $conversion->attribution_touch_id);
+        $this->assertSame($campaign->id, $conversion->campaign_id);
+        $this->assertSame('meta', $conversion->attribution_snapshot['utm_source']);
+        $this->assertSame('test-journey', $conversion->attribution_snapshot['utm_campaign']);
+        $this->assertDatabaseCount('attribution_touches', 1);
+        $view = AnalyticsEvent::where('event_name','landing_view')->latest('id')->firstOrFail();
+        $this->assertSame($direct->id, $view->landing_presentation_id);
+        $this->assertSame($touch->id, $view->attribution_touch_id);
+        $this->get('/l/direct?utm_source=new&utm_campaign=new-campaign')->assertOk();
+        $latest = AttributionTouch::latest('occurred_at')->orderByDesc('id')->firstOrFail();
+        $this->assertNotSame($touch->id, $latest->id);
+        $next = app(\App\Services\ConversionRecorder::class)->record($user, ['idempotency_key'=>'touch-hygiene-new', 'type'=>'membership_purchased', 'gross_amount'=>100]);
+        $this->assertSame($latest->id, $next->attribution_touch_id);
+        $this->assertSame('new', $next->attribution_snapshot['utm_source']);
+    }
+
+    public function test_direct_landing_records_context_without_an_empty_touch(): void
+    {
+        $landing = $this->landing();
+        $landing->update(['campaign_key'=>null]);
+        $this->get('/l/growth')->assertOk();
+        $this->assertDatabaseCount('attribution_touches', 0);
+        $view = AnalyticsEvent::where('event_name','landing_view')->sole();
+        $this->assertTrue(Str::isUuid($view->visitor_id));
+        $this->assertNull($view->attribution_touch_id);
+        $this->assertSame($landing->id, $view->landing_presentation_id);
+        $this->assertSame($landing->subject_type, $view->subject_type);
+        $this->assertSame($landing->subject_id, $view->subject_id);
+        $this->assertSame('growth', $view->landing_slug);
+    }
+
+    public function test_each_explicit_acquisition_signal_creates_a_touch(): void
+    {
+        $landing = $this->landing();
+        $landing->update(['campaign_key'=>null]);
+        foreach (['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','ttclid','gclid'] as $index => $signal) {
+            $this->get('/l/growth?'.$signal.'=signal-'.$index)->assertOk();
+            $this->assertDatabaseCount('attribution_touches', $index + 1);
+            $this->assertSame('signal-'.$index, AttributionTouch::latest('id')->firstOrFail()->{$signal});
+        }
+        $landing->update(['campaign_key'=>'test-journey']);
+        $user = User::factory()->create();
+        \App\Models\Campaign::create(['name'=>'Economic', 'code'=>'test-journey', 'status'=>'active', 'event'=>'membership_purchased']);
+        $this->actingAs($user)->get('/l/growth')->assertOk();
+        $touch = AttributionTouch::latest('id')->firstOrFail();
+        $this->assertSame('test-journey', $touch->campaign_key);
+        $conversion = app(\App\Services\ConversionRecorder::class)->record($user, ['idempotency_key'=>'key-only', 'type'=>'membership_purchased', 'gross_amount'=>100]);
+        $this->assertSame($touch->id, $conversion->attribution_touch_id);
+        $this->assertNull($conversion->campaign_id);
+    }
+
+    public function test_valid_referral_on_a_landing_keeps_existing_capture_contract(): void
+    {
+        $landing = $this->landing();
+        $landing->update(['campaign_key'=>null]);
+        $referrer = User::factory()->create(['referral_code_normalized'=>'REF123']);
+        $this->get('/l/growth?ref=REF123')->assertOk();
+        $this->assertSame($referrer->id, AttributionTouch::sole()->referrer_user_id);
+    }
+
+    public function test_blank_signals_do_not_fabricate_acquisition(): void
+    {
+        $landing = $this->landing();
+        $landing->update(['campaign_key'=>'   ']);
+        $this->get('/l/growth?utm_source=%20&utm_medium=&utm_campaign=&utm_content=&utm_term=&fbclid=%20&ttclid=&gclid=')->assertOk();
+        $this->assertDatabaseCount('attribution_touches', 0);
+        $this->assertSame(1, AnalyticsEvent::where('event_name','landing_view')->count());
+    }
+
     public function test_null_campaign_key_remains_null_in_landing_view_and_cta(): void
     {
         $landing = $this->landing();
@@ -90,6 +171,9 @@ class GrowthMeasurementTest extends TestCase
     public function test_signup_membership_activation_and_return_keep_acquisition_context(): void
     {
         $landing=$this->landing(); $view=$this->viewLanding($landing);
+        $landing->subject->landingPresentations()->create(['name'=>'Direct', 'slug'=>'direct', 'status'=>'PUBLISHED', 'default_scope'=>'NONE']);
+        $this->get('/l/direct')->assertOk();
+        $this->assertDatabaseCount('attribution_touches', 1);
         $this->post('/retos/growth-challenge/participar', ['landing_presentation_slug'=>'growth'])->assertRedirect();
         $this->post('/register', ['name'=>'Private Name', 'email'=>'growth@example.test', 'whatsapp'=>'71234567'])->assertRedirect();
         $user=User::where('email', 'growth@example.test')->sole();
@@ -103,6 +187,7 @@ class GrowthMeasurementTest extends TestCase
         $this->post('/membresia/solicitar')->assertRedirect(); $this->post('/membresia/solicitar')->assertRedirect();
         $intent=AnalyticsEvent::where('event_name', 'membership_purchase_requested')->sole();
         $this->assertSame($view->visitor_id, $intent->visitor_id); $this->assertSame($view->attribution_touch_id, $intent->attribution_touch_id);
+        $this->assertDatabaseCount('attribution_touches', 1);
         $admin=User::factory()->create(['is_admin'=>true]);
         AttributionTouch::create(['user_id'=>$user->id, 'anonymous_id'=>(string)Str::uuid(), 'utm_source'=>'later', 'occurred_at'=>now()->addSecond()]);
         $item=MembershipPurchaseRequest::sole();
@@ -181,14 +266,19 @@ class GrowthMeasurementTest extends TestCase
     public function test_authenticated_product_action_keeps_guest_identity_and_landing(): void
     {
         $landing=$this->landing(); $view=$this->viewLanding($landing);
+        $landing->subject->landingPresentations()->create(['name'=>'Direct', 'slug'=>'direct', 'status'=>'PUBLISHED', 'default_scope'=>'NONE']);
+        $this->get('/l/direct')->assertOk();
+        $this->assertDatabaseCount('attribution_touches', 1);
         $this->post('/register',['name'=>'Growth User','email'=>'product@example.test','whatsapp'=>'71234567'])->assertRedirect();
         $user=User::where('email','product@example.test')->sole();
         $user->markEmailAsVerified();
+        $this->actingAs($user)->get('/l/direct')->assertOk();
         $this->actingAs($user)->post('/retos/growth-challenge/participar')->assertRedirect();
         $joined=AnalyticsEvent::where('event_name','challenge_joined')->sole();
         $this->assertSame($view->visitor_id,$joined->visitor_id); $this->assertSame($user->id,$joined->user_id);
         $this->assertSame($landing->id,$joined->landing_presentation_id);
         $this->assertSame($view->attribution_touch_id,$joined->attribution_touch_id);
+        $this->assertDatabaseCount('attribution_touches', 1);
     }
 
     public function test_external_cta_is_intent_only_and_unknown_categories_are_rejected(): void

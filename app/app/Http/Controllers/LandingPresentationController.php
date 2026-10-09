@@ -39,10 +39,12 @@ class LandingPresentationController extends Controller
         if (!$preview && !str_contains(strtolower($request->header('Purpose', '').$request->header('Sec-Purpose', '')), 'prefetch') && !$request->header('X-Inertia-Partial-Component')) {
             $ref = $request->query('ref');
             $referrer = is_string($ref) ? $attribution->findReferrer($ref) : null;
-            $touch = $attribution->recordTouch($request, $referrer, $referrer?->referral_code_normalized, null, $presentation->campaign_key);
-            $request->session()->push('attribution_touch_ids', $touch->id);
-            $touch->update(['metadata' => ['landing_presentation_id' => $presentation->id, 'landing_slug' => $presentation->slug,
-                'subject_type' => $presentation->subject_type, 'subject_id' => $presentation->subject_id, 'default_scope' => $presentation->default_scope]]);
+            $touch = $attribution->recordLandingTouch($request, $referrer, $presentation->campaign_key);
+            if ($touch) {
+                $request->session()->push('attribution_touch_ids', $touch->id);
+                $touch->update(['metadata' => ['landing_presentation_id' => $presentation->id, 'landing_slug' => $presentation->slug,
+                    'subject_type' => $presentation->subject_type, 'subject_id' => $presentation->subject_id, 'default_scope' => $presentation->default_scope]]);
+            }
             app(\App\Services\GrowthMeasurementService::class)->landingView($presentation, $touch);
         }
         $shared = [

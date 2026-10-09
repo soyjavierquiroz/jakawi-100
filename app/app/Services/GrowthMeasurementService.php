@@ -25,13 +25,13 @@ class GrowthMeasurementService
 
     public function __construct(private readonly Request $request) {}
 
-    public function landingView(LandingPresentation $landing, AttributionTouch $touch): ?AnalyticsEvent
+    public function landingView(LandingPresentation $landing, ?AttributionTouch $touch = null): ?AnalyticsEvent
     {
         return $this->record('landing_view', $this->context(null, $touch), [
             'landing' => $landing->slug, 'campaign_key' => $landing->campaign_key,
             'landing_presentation_id' => $landing->id, 'subject_type' => $landing->subject_type,
             'subject_id' => $landing->subject_id, 'default_scope' => $landing->default_scope,
-        ]);
+        ], $landing);
     }
 
     public function cta(LandingPresentation $landing, string $kind, string $location, string $destination): ?AnalyticsEvent

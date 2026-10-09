@@ -34,6 +34,19 @@ class AttributionService
             })->orderByDesc('occurred_at')->orderByDesc('id')->first();
     }
 
+    /** A landing render alone is not a new acquisition; preserve valid referral capture. */
+    public function recordLandingTouch(Request $request, User|Partner|null $referrer = null, ?string $campaignKey = null): ?AttributionTouch
+    {
+        $hasSignal = is_string($campaignKey) && trim($campaignKey) !== '';
+        foreach (['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid', 'gclid'] as $name) {
+            $value = in_array($name, ['fbclid', 'ttclid', 'gclid'], true) ? $request->query($name) : $request->input($name);
+            $hasSignal = $hasSignal || (is_string($value) && trim($value) !== '');
+        }
+        if (! $hasSignal && ! $referrer) return null;
+
+        return $this->recordTouch($request, $referrer, $referrer?->referral_code_normalized, null, $campaignKey);
+    }
+
     public function recordTouch(Request $request, User|Partner|null $referrer = null, ?string $code = null, ?Unlock $unlock = null, ?string $campaignKey = null): AttributionTouch
     {
         $input = $request->only(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']);
