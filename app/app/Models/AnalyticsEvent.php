@@ -13,6 +13,14 @@ class AnalyticsEvent extends Model
 
     protected $guarded = [];
 
+    protected static function booted(): void
+    {
+        static::creating(function (self $event): void {
+            $event->event_id ??= (string) \Illuminate\Support\Str::uuid();
+        });
+    }
+
+
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
@@ -52,6 +60,16 @@ class AnalyticsEvent extends Model
     public function redemption(): BelongsTo
     {
         return $this->belongsTo(Redemption::class);
+    }
+
+    public function attributionTouch(): BelongsTo
+    {
+        return $this->belongsTo(AttributionTouch::class);
+    }
+
+    public function landingPresentation(): BelongsTo
+    {
+        return $this->belongsTo(LandingPresentation::class);
     }
 
     protected function casts(): array

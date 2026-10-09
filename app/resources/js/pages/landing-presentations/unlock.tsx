@@ -1,3 +1,4 @@
+import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import { Head, Link, router } from '@inertiajs/react';
 import { useRef, type MouseEvent } from 'react';
 import { JakawiImage } from '@/components/jakawi-image';
@@ -47,9 +48,10 @@ export default function UnlockLanding({ nativeUrl, canonical, noindex, preview, 
         <p className="mt-4 text-sm text-foreground-soft">Compromisos reales hacia la meta.</p>
         {copy.deadline && <p className="mt-4 text-sm font-bold">Plazo de compromisos: {copy.deadline}</p>}
     </section>;
+    const trackGrowthClick = useGrowthLandingClicks();
     return <>
         <Head title={copy.headline}><link rel="canonical" href={canonical}/><meta name="description" content={copy.subheadline}/>{noindex && <meta name="robots" content="noindex,follow"/>}</Head>
-        <main className="overflow-x-clip break-words font-discovery">
+        <main onClickCapture={trackGrowthClick} className="overflow-x-clip break-words font-discovery">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 {preview && <StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mt-5"/>}
                 <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10"><JakawiImage src={copy.heroUrl} alt={copy.heroAlt} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority/></div>

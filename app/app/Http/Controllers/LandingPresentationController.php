@@ -36,12 +36,14 @@ class LandingPresentationController extends Controller
         $subject = $presentation->subject;
         abort_unless(($subject instanceof Unlock && ($preview || in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true))) || $subject instanceof Experience || $subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
         $benefitProps = $subject instanceof Benefit ? app(PublicController::class)->benefitPublicProps($subject, $request, $preview) : null;
-        if (!$preview) {
+        if (!$preview && !str_contains(strtolower($request->header('Purpose', '').$request->header('Sec-Purpose', '')), 'prefetch') && !$request->header('X-Inertia-Partial-Component')) {
             $ref = $request->query('ref');
             $referrer = is_string($ref) ? $attribution->findReferrer($ref) : null;
             $touch = $attribution->recordTouch($request, $referrer, $referrer?->referral_code_normalized, null, $presentation->campaign_key);
             $request->session()->push('attribution_touch_ids', $touch->id);
-            $analytics->record('landing_view', ['user_id'=>null,'visitor_id'=>null], ['landing'=>$presentation->slug,'campaign_key'=>$presentation->campaign_key ?? '', 'landing_presentation_id'=>$presentation->id,'subject_type'=>$presentation->subject_type,'subject_id'=>$presentation->subject_id,'default_scope'=>$presentation->default_scope]);
+            $touch->update(['metadata' => ['landing_presentation_id' => $presentation->id, 'landing_slug' => $presentation->slug,
+                'subject_type' => $presentation->subject_type, 'subject_id' => $presentation->subject_id, 'default_scope' => $presentation->default_scope]]);
+            app(\App\Services\GrowthMeasurementService::class)->landingView($presentation, $touch);
         }
         $shared = [
             'presentation'=>$presentation->only(['id','name','slug','status','default_scope','campaign_key','hero_alt']),

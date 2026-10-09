@@ -20,6 +20,20 @@ class AttributionService
         return is_string($id) && Str::isUuid($id) ? $id : null;
     }
 
+    /** Resolve measurement continuation without changing economic conversion attribution. */
+    public function latestApplicableTouch(?int $userId, ?string $anonymousId, ?AttributionTouch $explicitTouch = null): ?AttributionTouch
+    {
+        $cutoff = now()->subDays($this->windowDays());
+        if ($explicitTouch) return $explicitTouch->occurred_at->gte($cutoff) ? $explicitTouch : null;
+
+        return AttributionTouch::query()->where('occurred_at', '>=', $cutoff)
+            ->where(function ($query) use ($userId, $anonymousId) {
+                if ($userId !== null) $query->where('user_id', $userId);
+                elseif ($anonymousId) $query->where('anonymous_id', $anonymousId);
+                else $query->whereRaw('1 = 0');
+            })->orderByDesc('occurred_at')->orderByDesc('id')->first();
+    }
+
     public function recordTouch(Request $request, User|Partner|null $referrer = null, ?string $code = null, ?Unlock $unlock = null, ?string $campaignKey = null): AttributionTouch
     {
         $input = $request->only(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']);

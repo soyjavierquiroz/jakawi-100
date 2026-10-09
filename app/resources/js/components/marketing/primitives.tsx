@@ -1,14 +1,14 @@
 import type { MouseEventHandler, ReactNode } from 'react';
 
-type Action = { href: string; label: string; onClick?: MouseEventHandler<HTMLAnchorElement>; disabled?: boolean };
+type Action = { href: string; label: string; onClick?: MouseEventHandler<HTMLAnchorElement>; disabled?: boolean; kind?: string };
 
-export function MarketingCTA({ action, className = '' }: { action: Action; className?: string }) {
-    return <a href={action.href} aria-disabled={action.disabled || undefined} onClick={action.onClick} className={`inline-flex min-h-13 w-full items-center justify-center rounded-[var(--radius-control)] bg-brand px-6 py-3 text-center text-sm font-extrabold tracking-wide text-brand-foreground uppercase transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:w-auto ${className}`}>{action.label}</a>;
+export function MarketingCTA({ action, className = '', location = 'final' }: { action: Action; className?: string; location?: 'hero' | 'body' | 'final' }) {
+    return <a data-growth-kind={action.kind} data-growth-location={location} href={action.href} aria-disabled={action.disabled || undefined} onClick={action.onClick} className={`inline-flex min-h-13 w-full items-center justify-center rounded-[var(--radius-control)] bg-brand px-6 py-3 text-center text-sm font-extrabold tracking-wide text-brand-foreground uppercase transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:w-auto ${className}`}>{action.label}</a>;
 }
 
 export function MarketingHero({ eyebrow, title, description, action, aside }: { eyebrow: string; title: string; description: string; action: Action; aside?: ReactNode }) {
     return <section className="grid gap-10 py-12 sm:py-20 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:items-center lg:gap-16">
-        <div><p className="text-xs font-extrabold tracking-[0.18em] text-brand uppercase">{eyebrow}</p><h1 className="mt-4 max-w-3xl text-[clamp(2.65rem,7vw,5.5rem)] leading-[0.97] font-extrabold tracking-[-0.055em] uppercase">{title}</h1><p className="mt-6 max-w-xl text-lg leading-8 text-foreground-soft">{description}</p><div className="mt-8"><MarketingCTA action={action} /></div></div>
+        <div><p className="text-xs font-extrabold tracking-[0.18em] text-brand uppercase">{eyebrow}</p><h1 className="mt-4 max-w-3xl text-[clamp(2.65rem,7vw,5.5rem)] leading-[0.97] font-extrabold tracking-[-0.055em] uppercase">{title}</h1><p className="mt-6 max-w-xl text-lg leading-8 text-foreground-soft">{description}</p><div className="mt-8"><MarketingCTA action={action} location="hero" /></div></div>
         {aside ? <div className="min-w-0">{aside}</div> : null}
     </section>;
 }

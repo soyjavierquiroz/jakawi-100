@@ -199,6 +199,12 @@ class AnalyticsTracker
             throw new InvalidArgumentException('Analytics event is not configured.');
         }
 
+        if (in_array($event, ['landing_view', 'landing_cta_click', 'signup_completed'], true)) {
+            $growth = app(GrowthMeasurementService::class);
+            $this->validateMetadata($event, $metadata);
+            return $growth->record($event, $growth->context($context['user_id'] ?? null), $metadata);
+        }
+
         $data = array_intersect_key($context, array_flip([
             'user_id', 'visitor_id', 'partner_id', 'location_id', 'benefit_id', 'experience_id', 'unlock_id', 'redemption_id',
         ]));
@@ -260,7 +266,7 @@ class AnalyticsTracker
             'program_application_submitted' => ['program', 'landing'],
             'membership_assistance_requested', 'membership_purchase_confirmed', 'membership_returned_to_intent' => ['journey', 'action', 'resource_id', 'campaign_key', 'request_status'],
             'landing_view' => ['landing', 'campaign_key', 'landing_presentation_id', 'subject_type', 'subject_id', 'default_scope'],
-            'landing_cta_click' => ['landing', 'campaign_key', 'destination_type', 'destination_kind'],
+            'landing_cta_click' => ['landing', 'campaign_key', 'destination_type', 'destination_kind', 'cta_kind', 'cta_location', 'destination'],
             'external_redirect' => ['redirect_slug', 'campaign_key', 'destination_type', 'landing'],
             'opportunity_impression', 'opportunity_opened' => ['opportunity_type', 'source_id', 'city_id', 'city_slug', 'surface', 'section', 'position', 'category'],
             'social_challenge_view', 'social_challenge_intent_started', 'social_participation_submitted', 'social_participation_validation_result', 'social_challenge_qualified' => ['challenge_id', 'qualification_mode', 'platform', 'result', 'reward_type', 'metric'],

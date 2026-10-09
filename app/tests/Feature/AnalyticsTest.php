@@ -152,7 +152,7 @@ class AnalyticsTest extends TestCase
         $pending = $service->start($user, $benefit, $location);
         $again = $service->start($user, $benefit, $location);
         $this->assertSame($pending->id, $again->id);
-        $this->assertDatabaseCount('analytics_events', 1);
+        $this->assertSame(1, AnalyticsEvent::whereIn('event_name', ['redeem_started', 'redeem_confirmed'])->count());
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'redeem_started', 'user_id' => $user->id, 'partner_id' => $benefit->partner_id, 'location_id' => $location->id, 'benefit_id' => $benefit->id, 'redemption_id' => $pending->id]);
 
         try {
@@ -160,10 +160,15 @@ class AnalyticsTest extends TestCase
             $this->fail('Wrong PIN accepted.');
         } catch (DomainException) {
         }
-        $this->assertDatabaseCount('analytics_events', 1);
+        $this->assertSame(1, AnalyticsEvent::whereIn('event_name', ['redeem_started', 'redeem_confirmed'])->count());
+        $this->assertSame(0, AnalyticsEvent::where('event_name', 'benefit_redeemed')->count());
         $service->confirm($pending->code, '123456');
         $service->confirm($pending->code, '999999');
-        $this->assertDatabaseCount('analytics_events', 2);
+        $outcome = AnalyticsEvent::where('event_name', 'benefit_redeemed')->sole();
+        $this->assertSame($pending->id, $outcome->source_id);
+        $this->assertEquals(['benefit_id' => $benefit->id, 'partner_id' => $benefit->partner_id, 'redemption_id' => $pending->id], $outcome->metadata);
+        $this->assertSame($user->id, $outcome->user_id);
+        $this->assertSame(2, AnalyticsEvent::whereIn('event_name', ['redeem_started', 'redeem_confirmed'])->count());
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'redeem_confirmed', 'redemption_id' => $pending->id]);
 
         [, $invalidBenefit, $invalidLocation] = $this->redeemable();
@@ -173,7 +178,7 @@ class AnalyticsTest extends TestCase
             $this->fail('Invalid location accepted.');
         } catch (DomainException) {
         }
-        $this->assertDatabaseCount('analytics_events', 2);
+        $this->assertSame(2, AnalyticsEvent::whereIn('event_name', ['redeem_started', 'redeem_confirmed'])->count());
     }
 
     /** @return array{Partner, Location, Benefit, Experience} */

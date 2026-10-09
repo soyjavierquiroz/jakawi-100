@@ -47,6 +47,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        foreach ([\App\Models\MembershipPurchaseRequest::class, \App\Models\Membership::class,
+            \App\Models\Redemption::class, \App\Models\ExperienceReservation::class,
+            \App\Models\ChallengeParticipation::class, \App\Models\UnlockParticipation::class] as $model) {
+            $model::observe(\App\Observers\GrowthOutcomeObserver::class);
+        }
     }
 
     /**

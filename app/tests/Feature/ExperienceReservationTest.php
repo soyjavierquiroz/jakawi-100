@@ -25,6 +25,9 @@ class ExperienceReservationTest extends TestCase
         $this->assertDatabaseCount('experience_reservations', 1);
         $this->assertDatabaseHas('experience_reservations', ['user_id' => $user->id, 'status' => 'pending', 'party_size' => 1]);
         $this->assertSame(1, AnalyticsEvent::where('event_name', 'experience_reserve_click')->count());
+        $event = AnalyticsEvent::where('event_name', 'experience_reserved')->sole();
+        $this->assertEquals(['experience_id' => $experience->id, 'session_id' => $session->id, 'reservation_id' => ExperienceReservation::sole()->id], $event->metadata);
+        $this->assertSame($user->id, $event->user_id);
     }
 
     public function test_party_size_persists_and_existing_active_reservation_keeps_its_original_size(): void
@@ -61,6 +64,7 @@ class ExperienceReservationTest extends TestCase
         [$user, $experience, $session] = $this->reservable(true);
         $experience->update(['reservation_method' => 'external']);
         $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertSessionHasErrors('session');
+        $this->assertSame(0, AnalyticsEvent::where('event_name', 'experience_reserved')->count());
         $experience->update(['reservation_method' => 'jakawi']);
         $session->update(['starts_at' => now()->subMinute()]);
         $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertSessionHasErrors('session');

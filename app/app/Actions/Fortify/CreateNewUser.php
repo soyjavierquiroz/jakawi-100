@@ -50,7 +50,7 @@ class CreateNewUser implements CreatesNewUsers
             return $user;
         });
         if (filled($input['referral_code'] ?? null)) app(AnalyticsTracker::class)->record('referral_code_entered');
-        app(AnalyticsTracker::class)->record('signup_completed', ['user_id' => $user->id]);
+        app(\App\Services\GrowthMeasurementService::class)->signupCompleted($user);
         return $user;
     }
 }

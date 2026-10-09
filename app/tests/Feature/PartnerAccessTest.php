@@ -21,7 +21,7 @@ class PartnerAccessTest extends TestCase
         $partner = Partner::factory()->create();
         $partnerUser = $this->partnerUser($partner, 'manager');
 
-        $this->actingAs($partnerUser)->get('/partner/'.$partner->slug)->assertOk()->assertSee($partner->name);
+        $this->actingAs($partnerUser)->get('/partner/'.$partner->slug)->assertOk()->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page->where('partner.name', $partner->name)->etc());
         $this->actingAs($partnerUser)->get('/admin')->assertForbidden();
 
         $member = User::factory()->create();

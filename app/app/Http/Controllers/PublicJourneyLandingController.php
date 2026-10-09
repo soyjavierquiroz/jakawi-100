@@ -41,7 +41,9 @@ class PublicJourneyLandingController extends Controller
         $definition = $journeys->landing($key);
         abort_unless($definition, 404);
         $cta = $journeys->cta($definition);
-        $metadata = ['landing' => $key, 'campaign_key' => $definition['campaign_key'], 'destination_type' => $cta['type']];
+        $metadata = ['landing' => $key, 'campaign_key' => $definition['campaign_key'], 'destination_type' => $cta['type'],
+            'cta_kind' => $cta['type'] === 'external' ? 'external' : ($cta['href'] === '/register' ? 'signup' : 'product_detail'),
+            'cta_location' => 'other', 'destination' => $cta['href']];
         if ($cta['destination_kind'] ?? null) $metadata['destination_kind'] = $cta['destination_kind'];
         $analytics->record('landing_cta_click', [], $metadata);
         return response()->noContent();

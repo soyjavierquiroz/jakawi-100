@@ -1,3 +1,4 @@
+import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import { Head, Link, router } from '@inertiajs/react';
 import { useRef } from 'react';
 import { JakawiImage } from '@/components/jakawi-image';
@@ -26,9 +27,10 @@ export default function BenefitLanding({ benefit,presentation,copy,heroUrl,nativ
         if(copy.action.kind==='guest'){event.preventDefault();router.post(copy.action.href);return;}
         if(copy.action.kind==='membership'&&!sent.current){sent.current=true;trackJourneyIntent('benefit',benefit.slug);}
     }};
+    const trackGrowthClick = useGrowthLandingClicks();
     return <>
         <Head title={copy.headline}><link rel="canonical" href={canonical}/>{noindex&&<meta name="robots" content="noindex,follow"/>}</Head>
-        <main className="overflow-x-clip break-words">
+        <main onClickCapture={trackGrowthClick} className="overflow-x-clip break-words">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 {preview&&<StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mt-5"/>}
                 <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={copy.subheadline} action={action} aside={<div className="overflow-hidden rounded-[var(--radius-card)] bg-surface-muted shadow-featured">{heroUrl&&<JakawiImage src={heroUrl} alt={presentation.hero_alt||benefit.title} className="aspect-[4/3] w-full object-cover" loading="eager" priority/>}<div className="p-6"><p className="discovery-eyebrow text-brand">EN {copy.partner}</p><p className="mt-3 break-words text-3xl leading-tight font-extrabold">{copy.value}</p><p className="mt-4 text-sm text-foreground-soft">{copy.membership}</p>{copy.deadline&&<p className="mt-3 text-sm font-bold">Válido hasta el {copy.deadline}</p>}</div></div>}/>

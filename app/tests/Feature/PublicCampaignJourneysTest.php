@@ -63,7 +63,7 @@ class PublicCampaignJourneysTest extends TestCase
     {
         $this->post('/analytics/public-landings/test-public-journey/cta')->assertNoContent();
         $event = AnalyticsEvent::where('event_name', 'landing_cta_click')->sole();
-        $this->assertSame(['landing' => 'test-public-journey', 'campaign_key' => 'test-journey', 'destination_type' => 'internal'], $event->metadata);
+        $this->assertEquals(['landing' => 'test-public-journey', 'campaign_key' => 'test-journey', 'destination_type' => 'internal', 'cta_kind' => 'signup', 'cta_location' => 'other', 'destination' => '/register'], $event->metadata);
 
         $definition = config('public_journeys.landings.test-public-journey');
         $definition['primary_cta']['path'] = '//evil.example';

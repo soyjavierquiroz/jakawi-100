@@ -342,3 +342,5 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 require __DIR__.'/settings.php';
 
 app(PublicJourneyConfig::class)->registerRoutes();
+
+Route::post('/analytics/landing-presentations/{presentation:slug}/cta', [\App\Http\Controllers\GrowthLandingCtaController::class, 'store'])->middleware('throttle:120,1')->name('analytics.landing-presentations.cta');
