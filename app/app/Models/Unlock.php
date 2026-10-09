@@ -9,6 +9,7 @@ class Unlock extends Model {
     protected $guarded=[];
     protected function casts(): array { return ['featured'=>'boolean','secret_mode'=>'boolean','hide_partner_until_unlock'=>'boolean','hide_exact_offer_until_unlock'=>'boolean','hide_location_until_unlock'=>'boolean','free_user_eligible'=>'boolean','member_eligible'=>'boolean','starts_at'=>'datetime','commitment_deadline'=>'datetime','confirmation_deadline'=>'datetime','fulfillment_starts_at'=>'datetime','fulfillment_ends_at'=>'datetime','cancellation_deadline'=>'datetime','goal_reached_at'=>'datetime','status_changed_at'=>'datetime']; }
     public function getRouteKeyName(): string { return 'slug'; }
+    public function landingPresentations(): \Illuminate\Database\Eloquent\Relations\MorphMany { return $this->morphMany(LandingPresentation::class, 'subject'); }
     public function partner(): BelongsTo { return $this->belongsTo(Partner::class); }
     public function locations(): BelongsToMany { return $this->belongsToMany(Location::class, 'unlock_location'); }
     public function participations(): HasMany { return $this->hasMany(UnlockParticipation::class); }

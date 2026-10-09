@@ -179,6 +179,14 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('desbloqueos/{unlock:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.unlock-landing-presentations.index');
+    Route::post('desbloqueos/{unlock:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.unlock-landing-presentations.store');
+    Route::put('desbloqueos/{unlock:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.unlock-landing-presentations.update');
+    Route::get('desbloqueos/{unlock:slug}/landings/{presentation:slug}/preview', [LandingPresentationController::class, 'preview'])->name('admin.unlock-landing-presentations.preview');
+    Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.unlock-landing-presentations.publish');
+    Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.unlock-landing-presentations.archive');
+    Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.unlock-landing-presentations.default');
+    Route::post('desbloqueos/{unlock:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.unlock-landing-presentations.default-product');
     Route::get('experiencias/{experience:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.experience-landing-presentations.index');
     Route::post('experiencias/{experience:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.experience-landing-presentations.store');
     Route::put('experiencias/{experience:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.experience-landing-presentations.update');

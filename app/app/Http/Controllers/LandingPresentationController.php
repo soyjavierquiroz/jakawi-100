@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Challenge;
 use App\Models\Benefit;
 use App\Models\Experience;
+use App\Models\Unlock;
 use App\Models\LandingPresentation;
 use App\Services\AnalyticsTracker;
 use App\Services\AttributionService;
@@ -25,7 +26,7 @@ class LandingPresentationController extends Controller
 
     public function preview(Request $request, string $subjectSlug, LandingPresentation $presentation, AttributionService $attribution, AnalyticsTracker $analytics, ChallengeRanking $ranking, SocialEntryState $state, ChallengeMarketingLandingPresenter $presenter, ProductLandingResolver $resolver)
     {
-        $subject = $request->route()->hasParameter('experience') ? Experience::where('slug', $request->route('experience'))->firstOrFail() : ($request->route()->hasParameter('benefit') ? Benefit::where('slug', $request->route('benefit'))->firstOrFail() : Challenge::where('slug', $request->route('challenge'))->firstOrFail());
+        $subject = $request->route()->hasParameter('unlock') ? Unlock::where('slug', $request->route('unlock'))->firstOrFail() : ($request->route()->hasParameter('experience') ? Experience::where('slug', $request->route('experience'))->firstOrFail() : ($request->route()->hasParameter('benefit') ? Benefit::where('slug', $request->route('benefit'))->firstOrFail() : Challenge::where('slug', $request->route('challenge'))->firstOrFail()));
         abort_unless($subject->id === $presentation->subject_id && $presentation->subject_type === $subject->getMorphClass(), 404);
         return $this->render($request, $presentation, $attribution, $analytics, $ranking, $state, $presenter, $resolver, true);
     }
@@ -33,7 +34,7 @@ class LandingPresentationController extends Controller
     private function render(Request $request, LandingPresentation $presentation, AttributionService $attribution, AnalyticsTracker $analytics, ChallengeRanking $ranking, SocialEntryState $state, ChallengeMarketingLandingPresenter $presenter, ProductLandingResolver $resolver, bool $preview)
     {
         $subject = $presentation->subject;
-        abort_unless($subject instanceof Experience || $subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
+        abort_unless(($subject instanceof Unlock && ($preview || in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true))) || $subject instanceof Experience || $subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
         $benefitProps = $subject instanceof Benefit ? app(PublicController::class)->benefitPublicProps($subject, $request, $preview) : null;
         if (!$preview) {
             $ref = $request->query('ref');
@@ -48,6 +49,18 @@ class LandingPresentationController extends Controller
             'canonical'=>$presentation->default_scope === 'ALL' ? route('landing-presentations.show',$presentation->slug) : $resolver->nativeUrl($subject),
             'noindex'=>$presentation->default_scope !== 'ALL' || $preview,
         ];
+        if ($subject instanceof Unlock) {
+            $copy = app(\App\Services\UnlockMarketingLandingPresenter::class)->present($subject, $presentation, $request);
+            if (!$preview) {
+                $analytics->resetJourneyIntent($subject);
+                $analytics->unlock($subject, 'unlock_viewed');
+                if ($copy['action']['kind'] === 'membership') $analytics->journeyMembershipGateViewed($subject);
+            }
+            return Inertia::render('landing-presentations/unlock', [
+                ...$shared,
+                'copy'=>$copy,
+            ]);
+        }
         if ($subject instanceof Experience) {
             return Inertia::render('landing-presentations/experience', [
                 ...$shared,
