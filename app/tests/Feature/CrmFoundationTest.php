@@ -37,7 +37,7 @@ class CrmFoundationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['crm.enabled' => true, 'crm.provider' => 'fluentcrm', 'crm.bridge_url' => 'https://bridge.example.test/wp-json/jakawi-fluentcrm/v1/events', 'crm.secret' => str_repeat('test', 8), 'jakawi.analytics.enabled' => false]);
+        config(['crm.enabled' => true, 'crm.provider' => 'fluentcrm', 'crm.bridge_url' => 'https://crm.jakawi.com/wp-json/jakawi-fluentcrm/v1/events', 'crm.secret' => str_repeat('test', 8), 'jakawi.analytics.enabled' => false]);
         Http::preventStrayRequests();
         $this->app['request']->setLaravelSession($this->app['session.store']);
     }
@@ -66,7 +66,7 @@ class CrmFoundationTest extends TestCase
         $this->assertSame(0, app(CrmDeliveryDispatcher::class)->run());
         config(['crm.enabled' => true, 'crm.secret' => '']);
         $this->assertFalse(app(CrmConfiguration::class)->ready());
-        config(['crm.secret' => str_repeat('a', 32), 'crm.bridge_url' => 'http://bridge.example.test/wp-json/jakawi-fluentcrm/v1/events']);
+        config(['crm.secret' => str_repeat('a', 32), 'crm.bridge_url' => 'http://crm.jakawi.com/wp-json/jakawi-fluentcrm/v1/events']);
         $this->assertFalse(app(CrmConfiguration::class)->ready());
         Http::assertNothingSent();
     }
