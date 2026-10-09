@@ -21,8 +21,8 @@ class PublicJourneyLandingController extends Controller
 
         $ref = $request->query('ref');
         $referrer = is_string($ref) ? $attribution->findReferrer($ref) : null;
-        $touch = $attribution->recordTouch($request, $referrer, $referrer?->referral_code_normalized, null, $definition['campaign_key']);
-        $request->session()->push('attribution_touch_ids', $touch->id);
+        $touch = $attribution->recordLandingTouch($request, $referrer, $definition['campaign_key']);
+        if ($touch) $request->session()->push('attribution_touch_ids', $touch->id);
         $analytics->record('landing_view', [], ['landing' => $key, 'campaign_key' => $definition['campaign_key']]);
 
         return Inertia::render('public-journeys/show', [

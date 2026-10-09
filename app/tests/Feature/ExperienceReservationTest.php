@@ -20,6 +20,7 @@ class ExperienceReservationTest extends TestCase
     public function test_active_member_requests_once_and_the_event_is_recorded_once(): void
     {
         [$user, $experience, $session] = $this->reservable(true);
+        $touch = \App\Models\AttributionTouch::create(['user_id' => $user->id, 'acquisition_provider' => \App\Enums\AcquisitionProvider::META, 'occurred_at' => now()]);
         $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertRedirect();
         $this->actingAs($user)->post("/experiencias/{$experience->slug}/reservas", ['experience_session_id' => $session->id])->assertRedirect();
         $this->assertDatabaseCount('experience_reservations', 1);
@@ -28,6 +29,9 @@ class ExperienceReservationTest extends TestCase
         $event = AnalyticsEvent::where('event_name', 'experience_reserved')->sole();
         $this->assertEquals(['experience_id' => $experience->id, 'session_id' => $session->id, 'reservation_id' => ExperienceReservation::sole()->id], $event->metadata);
         $this->assertSame($user->id, $event->user_id);
+        $this->assertSame(\App\Enums\AcquisitionProvider::META, $event->acquisition_provider);
+        $this->assertSame($touch->id, $event->attribution_touch_id);
+        $this->assertDatabaseCount('attribution_touches', 1);
     }
 
     public function test_party_size_persists_and_existing_active_reservation_keeps_its_original_size(): void

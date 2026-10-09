@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AcquisitionProvider;
 use App\Http\Middleware\EnsureVisitorId;
 use App\Models\AnalyticsEvent;
 use App\Models\AttributionTouch;
@@ -101,6 +102,7 @@ class GrowthMeasurementService
         if ($userId !== null && $actor !== $userId) $visitor = null;
         $touch = app(AttributionService::class)->latestApplicableTouch($userId, $visitor, $touch);
         $data = ['visitor_id' => $visitor ?? $touch?->anonymous_id, 'user_id' => $userId,
+            'acquisition_provider' => $touch?->acquisition_provider ?? AcquisitionProvider::NONE,
             'attribution_touch_id' => $touch?->id, 'campaign_key' => $touch?->campaign_key,
             'source_route' => $this->request->route()?->getName()];
         foreach (['source', 'medium', 'campaign', 'content', 'term'] as $key) $data['utm_'.$key] = $touch?->{'utm_'.$key};
@@ -115,6 +117,7 @@ class GrowthMeasurementService
     public function record(string $event, array $context, array $metadata = [], ?LandingPresentation $landing = null, mixed $occurredAt = null): ?AnalyticsEvent
     {
         if (! config('jakawi.analytics.enabled')) return null;
+        if ($event === 'landing_view' && app(AcquisitionProviderResolver::class)->suppressed($this->request)) return null;
         if (! isset(self::STAGES[$event])) throw new \InvalidArgumentException('Unknown growth event.');
         $context['campaign_key'] ??= $metadata['campaign_key'] ?? null;
         $context['landing_slug'] ??= $metadata['landing'] ?? null;
@@ -140,7 +143,7 @@ class GrowthMeasurementService
         }
         if (isset($metadata['destination'])) $metadata['destination'] = $this->sanitizeDestination($metadata['destination']);
         $scope = $landing?->default_scope ?? $context['_default_scope'] ?? null;
-        $context = array_intersect_key($context, array_flip(['visitor_id', 'user_id', 'attribution_touch_id', 'campaign_key',
+        $context = array_intersect_key($context, array_flip(['visitor_id', 'user_id', 'attribution_touch_id', 'campaign_key', 'acquisition_provider',
             'source_route', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
             'landing_presentation_id', 'landing_slug', 'subject_type', 'subject_id', 'source_type', 'source_id']));
         if (isset($context['landing_presentation_id'])) {

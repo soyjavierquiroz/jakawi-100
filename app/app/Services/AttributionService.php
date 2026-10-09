@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AcquisitionProvider;
 use App\Http\Middleware\EnsureVisitorId;
 use App\Models\AppSetting;
 use App\Models\AttributionTouch;
@@ -37,7 +38,9 @@ class AttributionService
     /** A landing render alone is not a new acquisition; preserve valid referral capture. */
     public function recordLandingTouch(Request $request, User|Partner|null $referrer = null, ?string $campaignKey = null): ?AttributionTouch
     {
-        $hasSignal = is_string($campaignKey) && trim($campaignKey) !== '';
+        $resolver = app(AcquisitionProviderResolver::class);
+        if ($resolver->suppressed($request)) return null;
+        $hasSignal = $resolver->forNewTouch($request) !== AcquisitionProvider::NONE || is_string($campaignKey) && trim($campaignKey) !== '';
         foreach (['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid', 'gclid'] as $name) {
             $value = in_array($name, ['fbclid', 'ttclid', 'gclid'], true) ? $request->query($name) : $request->input($name);
             $hasSignal = $hasSignal || (is_string($value) && trim($value) !== '');
@@ -56,6 +59,7 @@ class AttributionService
             $clickIds[$name] = is_string($value) ? Str::limit(trim($value), 255, '') : null;
         }
         return AttributionTouch::create([
+            'acquisition_provider' => app(AcquisitionProviderResolver::class)->forNewTouch($request),
             'anonymous_id' => $this->anonymousId($request), 'user_id' => $request->user()?->id,
             'referral_code' => $code, 'referrer_user_id' => $referrer instanceof User ? $referrer->id : null,
             'acquisition_partner_id' => $referrer instanceof Partner ? $referrer->id : null, 'unlock_id' => $unlock?->id,

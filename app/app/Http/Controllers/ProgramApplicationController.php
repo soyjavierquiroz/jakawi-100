@@ -22,8 +22,8 @@ class ProgramApplicationController extends Controller
         if ($request->filled('campaign') && ! $request->filled('utm_campaign')) $request->merge(['utm_campaign' => $request->query('campaign')]);
         $ref = $request->query('ref');
         $referrer = is_string($ref) ? $attribution->findReferrer($ref) : null;
-        $touch = $attribution->recordTouch($request, $referrer, $referrer?->referral_code_normalized);
-        $request->session()->push('attribution_touch_ids', $touch->id);
+        $touch = $attribution->recordLandingTouch($request, $referrer);
+        if ($touch) $request->session()->push('attribution_touch_ids', $touch->id);
         $analytics->record('landing_view', [], ['landing' => $program]);
 
         $user = $request->user();

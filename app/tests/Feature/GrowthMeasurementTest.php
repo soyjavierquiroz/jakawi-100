@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\AcquisitionProvider;
 use App\Http\Middleware\EnsureVisitorId;
 use App\Models\{AnalyticsEvent, AttributionTouch, Benefit, Challenge, ChallengeParticipation, Experience, ExperienceReservation, ExperienceSession, LandingPresentation, Membership, MembershipPurchaseRequest, Partner, Unlock, UnlockParticipation, User};
 use App\Services\{GrowthMeasurementService, MembershipService, UnlockParticipationService};
@@ -25,8 +26,9 @@ class GrowthMeasurementTest extends TestCase
 
     private function viewLanding(LandingPresentation $landing): AnalyticsEvent
     {
-        $this->get('/l/'.$landing->slug.'?utm_source=tiktok&utm_medium=paid&utm_campaign=launch&utm_content=hero&utm_term=food&email=secret@example.test&token=SECRET')->assertOk();
+        $this->get('/l/'.$landing->slug.'?acq=meta&utm_source=tiktok&utm_medium=paid&utm_campaign=launch&utm_content=hero&utm_term=food&email=secret@example.test&token=SECRET')->assertOk();
         $event = AnalyticsEvent::where('event_name', 'landing_view')->sole();
+        $this->assertSame(AcquisitionProvider::META, $event->acquisition_provider);
         $this->withUnencryptedCookie(config('jakawi.analytics.visitor_cookie'), $event->visitor_id);
         return $event;
     }
@@ -68,6 +70,7 @@ class GrowthMeasurementTest extends TestCase
         $view = AnalyticsEvent::where('event_name','landing_view')->sole();
         $this->assertTrue(Str::isUuid($view->visitor_id));
         $this->assertNull($view->attribution_touch_id);
+        $this->assertSame(AcquisitionProvider::NONE, $view->acquisition_provider);
         $this->assertSame($landing->id, $view->landing_presentation_id);
         $this->assertSame($landing->subject_type, $view->subject_type);
         $this->assertSame($landing->subject_id, $view->subject_id);
@@ -81,6 +84,7 @@ class GrowthMeasurementTest extends TestCase
         foreach (['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','ttclid','gclid'] as $index => $signal) {
             $this->get('/l/growth?'.$signal.'=signal-'.$index)->assertOk();
             $this->assertDatabaseCount('attribution_touches', $index + 1);
+            $this->assertSame(AcquisitionProvider::NONE, AttributionTouch::latest('id')->firstOrFail()->acquisition_provider);
             $this->assertSame('signal-'.$index, AttributionTouch::latest('id')->firstOrFail()->{$signal});
         }
         $landing->update(['campaign_key'=>'test-journey']);
@@ -88,6 +92,7 @@ class GrowthMeasurementTest extends TestCase
         \App\Models\Campaign::create(['name'=>'Economic', 'code'=>'test-journey', 'status'=>'active', 'event'=>'membership_purchased']);
         $this->actingAs($user)->get('/l/growth')->assertOk();
         $touch = AttributionTouch::latest('id')->firstOrFail();
+        $this->assertSame(AcquisitionProvider::NONE, $touch->acquisition_provider);
         $this->assertSame('test-journey', $touch->campaign_key);
         $conversion = app(\App\Services\ConversionRecorder::class)->record($user, ['idempotency_key'=>'key-only', 'type'=>'membership_purchased', 'gross_amount'=>100]);
         $this->assertSame($touch->id, $conversion->attribution_touch_id);
@@ -101,6 +106,7 @@ class GrowthMeasurementTest extends TestCase
         $referrer = User::factory()->create(['referral_code_normalized'=>'REF123']);
         $this->get('/l/growth?ref=REF123')->assertOk();
         $this->assertSame($referrer->id, AttributionTouch::sole()->referrer_user_id);
+        $this->assertSame(AcquisitionProvider::NONE, AttributionTouch::sole()->acquisition_provider);
     }
 
     public function test_blank_signals_do_not_fabricate_acquisition(): void
@@ -159,6 +165,7 @@ class GrowthMeasurementTest extends TestCase
         $clicks = AnalyticsEvent::where('event_name', 'landing_cta_click')->get();
         $this->assertCount(2, $clicks);
         foreach ($clicks as $click) {
+            $this->assertSame(AcquisitionProvider::META, $click->acquisition_provider);
             $this->assertSame($view->visitor_id, $click->visitor_id); $this->assertSame($view->attribution_touch_id, $click->attribution_touch_id);
             $this->assertSame('/register', $click->metadata['destination']);
             $this->assertSame('signup', $click->metadata['cta_kind']); $this->assertSame('hero', $click->metadata['cta_location']);
@@ -178,6 +185,7 @@ class GrowthMeasurementTest extends TestCase
         $this->post('/register', ['name'=>'Private Name', 'email'=>'growth@example.test', 'whatsapp'=>'71234567'])->assertRedirect();
         $user=User::where('email', 'growth@example.test')->sole();
         $signup=AnalyticsEvent::where('event_name', 'signup_completed')->sole();
+        $this->assertSame(AcquisitionProvider::META, $signup->acquisition_provider);
         $this->assertSame($user->id, $signup->user_id); $this->assertSame($view->visitor_id, $signup->visitor_id);
         $this->assertSame($view->attribution_touch_id, $signup->attribution_touch_id); $this->assertSame($landing->id, $signup->landing_presentation_id);
         app(GrowthMeasurementService::class)->signupCompleted($user);
@@ -186,6 +194,7 @@ class GrowthMeasurementTest extends TestCase
         $this->actingAs($user)->get('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id)->assertOk();
         $this->post('/membresia/solicitar')->assertRedirect(); $this->post('/membresia/solicitar')->assertRedirect();
         $intent=AnalyticsEvent::where('event_name', 'membership_purchase_requested')->sole();
+        $this->assertSame(AcquisitionProvider::META, $intent->acquisition_provider);
         $this->assertSame($view->visitor_id, $intent->visitor_id); $this->assertSame($view->attribution_touch_id, $intent->attribution_touch_id);
         $this->assertDatabaseCount('attribution_touches', 1);
         $admin=User::factory()->create(['is_admin'=>true]);
@@ -194,6 +203,7 @@ class GrowthMeasurementTest extends TestCase
         $payload=['user_id'=>$user->id,'membership_purchase_request_id'=>$item->id,'manual_reference'=>'GROWTH-1','idempotency_key'=>(string)Str::uuid()];
         $this->actingAs($admin)->post('/admin/sales', $payload)->assertRedirect(); $this->post('/admin/sales', $payload)->assertRedirect();
         $activated=AnalyticsEvent::where('event_name','membership_activated')->sole();
+        $this->assertSame(AcquisitionProvider::META, $activated->acquisition_provider);
         $this->assertSame($view->visitor_id,$activated->visitor_id); $this->assertSame($view->attribution_touch_id,$activated->attribution_touch_id);
         $this->assertSame($user->id,$activated->user_id); $this->assertSame($landing->id,$activated->landing_presentation_id);
         $this->assertStringNotContainsString('Private Name',$signup->toJson()); $this->assertStringNotContainsString('growth@example',$signup->toJson());
@@ -205,13 +215,17 @@ class GrowthMeasurementTest extends TestCase
     public function test_native_challenge_and_unlock_outcomes_are_idempotent_and_no_economics(): void
     {
         $landing=$this->landing(); $user=User::factory()->create(); $this->actingAs($user);
+        $this->get('/l/growth?acq=meta')->assertOk();
         $this->post('/retos/growth-challenge/participar')->assertRedirect(); $this->post('/retos/growth-challenge/participar')->assertRedirect();
         $joined=AnalyticsEvent::where('event_name','challenge_joined')->sole();
-        $this->assertNull($joined->landing_presentation_id); $this->assertSame($user->id,$joined->user_id);
+        $this->assertSame($landing->id, $joined->landing_presentation_id); $this->assertSame($user->id,$joined->user_id);
         $this->assertSame(ChallengeParticipation::sole()->id,$joined->metadata['participation_id']);
         $unlock=Unlock::create(['title'=>'Growth Unlock','slug'=>'growth-unlock','status'=>Unlock::ACTIVE,'minimum_commitments'=>10,'free_user_eligible'=>true,'member_eligible'=>true]);
         $p=app(UnlockParticipationService::class)->commit($unlock,$user); app(UnlockParticipationService::class)->commit($unlock,$user);
         $committed=AnalyticsEvent::where('event_name','unlock_committed')->sole();
+        $this->assertSame(AcquisitionProvider::META, $joined->acquisition_provider);
+        $this->assertSame(AcquisitionProvider::META, $committed->acquisition_provider);
+        $this->assertDatabaseCount('attribution_touches', 1);
         $this->assertSame($p->id,$committed->source_id); $this->assertSame($p->id,$committed->metadata['participation_id']);
         $this->assertDatabaseCount('jp_holds',0); $this->assertDatabaseCount('reward_transactions',0); $this->assertDatabaseCount('conversions',0);
     }
@@ -229,6 +243,7 @@ class GrowthMeasurementTest extends TestCase
         $this->assertSame(0,AnalyticsEvent::where('event_name','challenge_joined')->count());
         $this->post('/retos/growth-challenge/participar')->assertRedirect();
         $this->assertNull(AnalyticsEvent::where('event_name','challenge_joined')->sole()->attribution_touch_id);
+        $this->assertSame(AcquisitionProvider::NONE, AnalyticsEvent::where('event_name','challenge_joined')->sole()->acquisition_provider);
     }
 
     public function test_preview_prefetch_and_partial_reload_do_not_count_acquisition(): void

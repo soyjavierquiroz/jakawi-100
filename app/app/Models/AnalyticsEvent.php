@@ -74,6 +74,6 @@ class AnalyticsEvent extends Model
 
     protected function casts(): array
     {
-        return ['metadata' => 'array', 'occurred_at' => 'datetime'];
+        return ['acquisition_provider' => \App\Enums\AcquisitionProvider::class, 'metadata' => 'array', 'occurred_at' => 'datetime'];
     }
 }

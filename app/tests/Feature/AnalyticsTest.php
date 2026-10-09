@@ -148,6 +148,7 @@ class AnalyticsTest extends TestCase
     public function test_redemption_events_are_transactional_and_idempotent(): void
     {
         [$user, $benefit, $location] = $this->redeemable();
+        $touch = \App\Models\AttributionTouch::create(['user_id' => $user->id, 'acquisition_provider' => \App\Enums\AcquisitionProvider::META, 'occurred_at' => now()]);
         $service = app(RedemptionService::class);
         $pending = $service->start($user, $benefit, $location);
         $again = $service->start($user, $benefit, $location);
@@ -168,6 +169,9 @@ class AnalyticsTest extends TestCase
         $this->assertSame($pending->id, $outcome->source_id);
         $this->assertEquals(['benefit_id' => $benefit->id, 'partner_id' => $benefit->partner_id, 'redemption_id' => $pending->id], $outcome->metadata);
         $this->assertSame($user->id, $outcome->user_id);
+        $this->assertSame(\App\Enums\AcquisitionProvider::META, $outcome->acquisition_provider);
+        $this->assertSame($touch->id, $outcome->attribution_touch_id);
+        $this->assertDatabaseCount('attribution_touches', 1);
         $this->assertSame(2, AnalyticsEvent::whereIn('event_name', ['redeem_started', 'redeem_confirmed'])->count());
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'redeem_confirmed', 'redemption_id' => $pending->id]);
 
