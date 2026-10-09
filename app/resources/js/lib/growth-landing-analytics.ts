@@ -1,3 +1,4 @@
+import { metaBrowserTracker } from './meta-browser-tracker';
 import { usePage } from '@inertiajs/react';
 import type { MouseEvent } from 'react';
 
@@ -23,10 +24,14 @@ export function useGrowthLandingClicks() {
         if (!csrf) return;
         // Strip query/fragment before sending. External paths can contain phone numbers/tokens.
         const destination = external ? 'external' : url.pathname;
-        void fetch(`/analytics/landing-presentations/${encodeURIComponent(presentation.slug)}/cta`, {
-            method: 'POST', credentials: 'same-origin', keepalive: true,
-            headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cta_kind: kind, cta_location: location, destination }),
-        }).catch(() => undefined);
+        try {
+            const eventId = globalThis.crypto?.randomUUID?.();
+            if (eventId) metaBrowserTracker.cta(eventId, kind, location);
+            void fetch(`/analytics/landing-presentations/${encodeURIComponent(presentation.slug)}/cta`, {
+                method: 'POST', credentials: 'same-origin', keepalive: true,
+                headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ event_id: eventId, cta_kind: kind, cta_location: location, destination }),
+            }).catch(() => undefined);
+        } catch { /* Tracking never interrupts the CTA. */ }
     };
 }

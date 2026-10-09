@@ -1,3 +1,4 @@
+import { metaBrowserTracker } from '@/lib/meta-browser-tracker';
 import { Head } from '@inertiajs/react';
 import { MarketingBenefits, MarketingCTA, MarketingFAQ, MarketingHero, MarketingSocialProof } from '@/components/marketing/primitives';
 import MarketingLayout from '@/layouts/marketing-layout';
@@ -29,10 +30,14 @@ export default function PublicJourneyShow({ landing, canonical }: { landing: Lan
     const trackClick = () => {
         const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         if (!csrf) return;
-        void fetch(`/analytics/public-landings/${encodeURIComponent(landing.key)}/cta`, {
-            method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
-            credentials: 'same-origin', keepalive: true,
-        }).catch(() => undefined);
+        try {
+            const eventId = globalThis.crypto?.randomUUID?.();
+            if (eventId) metaBrowserTracker.cta(eventId, landing.primary_cta.type === 'external' ? 'external' : (landing.primary_cta.href === '/register' ? 'signup' : 'product_detail'), 'other');
+            void fetch(`/analytics/public-landings/${encodeURIComponent(landing.key)}/cta`, {
+                method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json', 'Content-Type': 'application/json' },
+                credentials: 'same-origin', keepalive: true, body: JSON.stringify({ event_id: eventId }),
+            }).catch(() => undefined);
+        } catch { /* Tracking never interrupts the CTA. */ }
     };
     const action = { href: landing.primary_cta.href, label: landing.primary_cta.label, onClick: trackClick };
     const title = landing.seo.title ?? landing.title;

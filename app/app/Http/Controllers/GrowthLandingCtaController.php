@@ -13,11 +13,12 @@ class GrowthLandingCtaController extends Controller
     {
         abort_unless($presentation->status === 'PUBLISHED', 404);
         $data = $request->validate([
+            'event_id' => ['nullable', 'uuid'],
             'cta_kind' => ['required', Rule::in(['signup', 'membership', 'product_detail', 'redeem', 'reserve', 'participate', 'commit', 'external', 'other'])],
             'cta_location' => ['required', Rule::in(['hero', 'body', 'final', 'other'])],
             'destination' => ['required', 'string', 'max:2048'],
         ]);
-        $growth->cta($presentation, $data['cta_kind'], $data['cta_location'], $data['destination']);
+        $growth->cta($presentation, $data['cta_kind'], $data['cta_location'], $data['destination'], $data['event_id'] ?? null);
         return response()->noContent();
     }
 }

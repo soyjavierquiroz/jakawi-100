@@ -36,7 +36,7 @@ class PublicJourneyLandingController extends Controller
         ]);
     }
 
-    public function cta(string $key, PublicJourneyConfig $journeys, AnalyticsTracker $analytics): HttpResponse
+    public function cta(Request $request, string $key, PublicJourneyConfig $journeys, AnalyticsTracker $analytics): HttpResponse
     {
         $definition = $journeys->landing($key);
         abort_unless($definition, 404);
@@ -45,7 +45,8 @@ class PublicJourneyLandingController extends Controller
             'cta_kind' => $cta['type'] === 'external' ? 'external' : ($cta['href'] === '/register' ? 'signup' : 'product_detail'),
             'cta_location' => 'other', 'destination' => $cta['href']];
         if ($cta['destination_kind'] ?? null) $metadata['destination_kind'] = $cta['destination_kind'];
-        $analytics->record('landing_cta_click', [], $metadata);
+        $data = $request->validate(['event_id' => ['nullable', 'uuid']]);
+        $analytics->record('landing_cta_click', [], $metadata, $data['event_id'] ?? null);
         return response()->noContent();
     }
 }

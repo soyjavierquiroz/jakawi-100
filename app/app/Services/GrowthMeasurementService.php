@@ -35,12 +35,12 @@ class GrowthMeasurementService
         ], $landing);
     }
 
-    public function cta(LandingPresentation $landing, string $kind, string $location, string $destination): ?AnalyticsEvent
+    public function cta(LandingPresentation $landing, string $kind, string $location, string $destination, ?string $eventId = null): ?AnalyticsEvent
     {
         return $this->record('landing_cta_click', $this->context(), [
             'cta_kind' => $kind, 'cta_location' => $location,
             'destination' => $this->sanitizeDestination($destination),
-        ], $landing);
+        ], $landing, eventId: $eventId);
     }
 
     public function signupCompleted(Model $user): void
@@ -114,10 +114,10 @@ class GrowthMeasurementService
         return $data;
     }
 
-    public function record(string $event, array $context, array $metadata = [], ?LandingPresentation $landing = null, mixed $occurredAt = null): ?AnalyticsEvent
+    public function record(string $event, array $context, array $metadata = [], ?LandingPresentation $landing = null, mixed $occurredAt = null, ?string $eventId = null): ?AnalyticsEvent
     {
         if (! config('jakawi.analytics.enabled')) return null;
-        if ($event === 'landing_view' && app(AcquisitionProviderResolver::class)->suppressed($this->request)) return null;
+        if (in_array($event, ['landing_view', 'landing_cta_click'], true) && app(AcquisitionProviderResolver::class)->suppressed($this->request)) return null;
         if (! isset(self::STAGES[$event])) throw new \InvalidArgumentException('Unknown growth event.');
         $context['campaign_key'] ??= $metadata['campaign_key'] ?? null;
         $context['landing_slug'] ??= $metadata['landing'] ?? null;
@@ -149,14 +149,31 @@ class GrowthMeasurementService
         if (isset($context['landing_presentation_id'])) {
             if ($scope) $metadata['default_scope'] = $scope;
         }
-        $data = [...$context, 'event_id' => (string) Str::uuid(), 'event_name' => $event,
+        if ($eventId !== null && ! Str::isUuid($eventId)) return null;
+        $data = [...$context, 'event_id' => $eventId ?? (string) Str::uuid(), 'event_name' => $event,
             'metadata' => $metadata ?: null, 'occurred_at' => $occurredAt ?? now()];
         try {
             // Separate transaction/savepoint isolates PostgreSQL failures from valid business operations.
-            return DB::transaction(function () use ($data) {
-                if (isset($data['source_id'])) return AnalyticsEvent::firstOrCreate(array_intersect_key($data, array_flip(['event_name', 'source_type', 'source_id'])), $data);
-                return AnalyticsEvent::create($data);
+            $recorded = DB::transaction(function () use ($data, $eventId) {
+                if ($eventId && ($existing = AnalyticsEvent::where('event_id', $eventId)->first())) {
+                    // UUID is an idempotency key, never permission to reuse another actor's event.
+                    return $existing->event_name === $data['event_name']
+                        && $existing->user_id === ($data['user_id'] ?? null)
+                        && $existing->visitor_id === ($data['visitor_id'] ?? null)
+                        ? $existing : null;
+                }
+                $recorded = isset($data['source_id'])
+                    ? AnalyticsEvent::firstOrCreate(array_intersect_key($data, array_flip(['event_name', 'source_type', 'source_id'])), $data)
+                    : AnalyticsEvent::create($data);
+                app(\App\Services\Meta\MetaDeliveryOutbox::class)->enqueueNew($recorded);
+                return $recorded;
             });
+            if ($recorded && $event === 'landing_view' && $recorded->wasRecentlyCreated) {
+                $events = $this->request->attributes->get(\App\Services\Meta\MetaBrowserContext::EVENTS_ATTRIBUTE, []);
+                $events[] = $recorded;
+                $this->request->attributes->set(\App\Services\Meta\MetaBrowserContext::EVENTS_ATTRIBUTE, $events);
+            }
+            return $recorded;
         } catch (Throwable $exception) {
             Log::warning('Growth event could not be recorded.', ['event' => $event, 'exception_type' => get_class($exception)]);
             return null;

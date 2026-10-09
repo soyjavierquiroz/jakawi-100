@@ -190,7 +190,7 @@ class AnalyticsTracker
      * @param  array<string, int|string|null>  $context
      * @param  array<string, bool|int|string>  $metadata
      */
-    public function record(string $event, array $context = [], array $metadata = []): ?AnalyticsEvent
+    public function record(string $event, array $context = [], array $metadata = [], ?string $eventId = null): ?AnalyticsEvent
     {
         if (! config('jakawi.analytics.enabled')) {
             return null;
@@ -202,7 +202,7 @@ class AnalyticsTracker
         if (in_array($event, ['landing_view', 'landing_cta_click', 'signup_completed'], true)) {
             $growth = app(GrowthMeasurementService::class);
             $this->validateMetadata($event, $metadata);
-            return $growth->record($event, $growth->context($context['user_id'] ?? null), $metadata);
+            return $growth->record($event, $growth->context($context['user_id'] ?? null), $metadata, eventId: $eventId);
         }
 
         $data = array_intersect_key($context, array_flip([

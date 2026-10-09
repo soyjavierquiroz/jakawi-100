@@ -63,3 +63,8 @@ Artisan::command('challenges:close-expired', function () {
     $this->info("{$closed} retos cerrados.");
 })->purpose('Close expired challenges and queue final social snapshots');
 Schedule::command('challenges:close-expired')->everyMinute()->withoutOverlapping();
+
+Artisan::command('growth:dispatch-meta', function (\App\Services\Meta\MetaDeliveryDispatcher $dispatcher) {
+    $this->info($dispatcher->run().' Meta deliveries processed.');
+})->purpose('Dispatch eligible canonical growth events from the Meta outbox');
+Schedule::command('growth:dispatch-meta')->everyMinute()->withoutOverlapping(15);

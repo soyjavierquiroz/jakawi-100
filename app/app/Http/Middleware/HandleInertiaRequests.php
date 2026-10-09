@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
+            'metaBrowser' => \Inertia\Inertia::always(fn () => app(\App\Services\Meta\MetaBrowserContext::class)->forRequest($request)),
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user() ? $request->user()->toArray() + ['is_partner_only' => $request->user()->isPartnerOnly()] : null,
