@@ -2,6 +2,20 @@
 
 namespace App\Providers;
 
+use App\Integrations\ShareContest\Inspector;
+use App\Integrations\ShareContest\ShareContestClient;
+use App\Models\ChallengeParticipation;
+use App\Models\ExperienceReservation;
+use App\Models\Membership;
+use App\Models\MembershipPurchaseRequest;
+use App\Models\PartnerApplication;
+use App\Models\ProgramApplication;
+use App\Models\Redemption;
+use App\Models\UnlockParticipation;
+use App\Models\User;
+use App\Models\UserProfile;
+use App\Observers\CrmOutcomeObserver;
+use App\Observers\GrowthOutcomeObserver;
 use App\Payments\Qr\Contracts\QrPaymentGateway;
 use App\Payments\Qr\Exceptions\UnsafeQrPaymentConfiguration;
 use App\Payments\Qr\Providers\DisabledQrPaymentGateway;
@@ -21,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(\App\Integrations\ShareContest\Inspector::class, \App\Integrations\ShareContest\ShareContestClient::class);
+        $this->app->bind(Inspector::class, ShareContestClient::class);
         $this->app->singleton(QrPaymentGateway::class, function (): QrPaymentGateway {
             $driver = config('payments.qr.driver', 'disabled');
 
@@ -47,10 +61,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-        foreach ([\App\Models\MembershipPurchaseRequest::class, \App\Models\Membership::class,
-            \App\Models\Redemption::class, \App\Models\ExperienceReservation::class,
-            \App\Models\ChallengeParticipation::class, \App\Models\UnlockParticipation::class] as $model) {
-            $model::observe(\App\Observers\GrowthOutcomeObserver::class);
+        foreach ([User::class, UserProfile::class, PartnerApplication::class, ProgramApplication::class,
+            MembershipPurchaseRequest::class, Membership::class, Redemption::class,
+            ExperienceReservation::class, ChallengeParticipation::class, UnlockParticipation::class] as $model) {
+            $model::observe(CrmOutcomeObserver::class);
+        }
+        foreach ([MembershipPurchaseRequest::class, Membership::class,
+            Redemption::class, ExperienceReservation::class,
+            ChallengeParticipation::class, UnlockParticipation::class] as $model) {
+            $model::observe(GrowthOutcomeObserver::class);
         }
     }
 

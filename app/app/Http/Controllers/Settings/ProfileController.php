@@ -36,6 +36,10 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
+        if ($request->user()->isDirty('marketing_opt_in')) {
+            $request->user()->marketing_opt_in_at = now();
+            $request->user()->marketing_opt_in_source = 'profile';
+        }
         $request->user()->save();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);

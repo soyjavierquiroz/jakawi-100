@@ -2,6 +2,7 @@ export type User = {
     id: number;
     name: string;
     email: string;
+    marketing_opt_in?: boolean | null;
     avatar?: string;
     is_admin?: boolean;
     email_verified_at: string | null;

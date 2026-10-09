@@ -93,6 +93,9 @@ export default function Profile(
                                 />
                             </div>
 
+                            <input type="hidden" name="marketing_opt_in" value="0" />
+                            <label className="flex items-start gap-2 text-sm"><input type="checkbox" name="marketing_opt_in" value="1" defaultChecked={auth.user.marketing_opt_in === true} />Quiero recibir novedades, beneficios y experiencias de JAKAWI por email.</label>
+                            {auth.user.marketing_opt_in == null && <p className="text-sm text-muted-foreground">Aún no has indicado tu preferencia. Se guardará al actualizar el perfil.</p>}
                             {/* @chisel-email-verification */}
                             {mustVerifyEmail &&
                                 auth.user.email_verified_at === null && (

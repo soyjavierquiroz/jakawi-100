@@ -37,6 +37,7 @@ export default function Register({ referralCode }: Props) {
                                 <p id="whatsapp-hint" className="text-sm text-muted-foreground">Número de Bolivia; incluye el código de país si usas otro país.</p>
                                 <InputError message={errors.whatsapp} />
                             </div>
+                            <label className="flex items-start gap-2 text-sm"><input type="checkbox" name="marketing_opt_in" value="1" defaultChecked />Quiero recibir novedades, beneficios y experiencias de JAKAWI por email.</label>
                             <Button type="submit" className="mt-2 w-full" disabled={processing} data-test="register-user-button">
                                 {processing && <Spinner />}
                                 Crear cuenta gratis
