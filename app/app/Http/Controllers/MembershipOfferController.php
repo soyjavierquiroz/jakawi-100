@@ -6,6 +6,7 @@ use App\Models\AttributionTouch;
 use App\Models\MembershipPurchaseRequest;
 use App\Models\User;
 use App\Services\AnalyticsTracker;
+use App\Services\AttributionService;
 use App\Services\PublicJourneyContinuation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,10 +17,13 @@ use Inertia\Response;
 
 class MembershipOfferController extends Controller
 {
-    public function show(Request $request, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics): Response
+    public function show(Request $request, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, AttributionService $attribution): Response
     {
-        if ($request->query()) {
-            $query = $request->query();
+        // Attribution metadata must never define or override the business intent.
+        $query = array_diff_key($request->query(), array_flip([
+            'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+        ]));
+        if ($query) {
             if (array_diff(array_keys($query), ['journey', 'action', 'resource_id', 'experience_session_id'])
                 || ! isset($query['journey'], $query['action'], $query['resource_id'])
                 || ! ctype_digit((string) $query['resource_id'])) {
@@ -47,6 +51,11 @@ class MembershipOfferController extends Controller
             } catch (\InvalidArgumentException $exception) {
                 throw ValidationException::withMessages(['journey' => 'Intención inválida.']);
             }
+        }
+
+        $touch = $attribution->recordLandingTouch($request);
+        if ($touch) {
+            $request->session()->push('attribution_touch_ids', $touch->id);
         }
 
         $user = $request->user();

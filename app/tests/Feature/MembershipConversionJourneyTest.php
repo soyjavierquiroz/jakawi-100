@@ -153,6 +153,85 @@ class MembershipConversionJourneyTest extends TestCase
         $this->assertSame(0, UnlockParticipation::count());
     }
 
+    public function test_standard_utms_are_optional_metadata_only(): void
+    {
+        $utms = ['utm_source' => 'fluentcrm', 'utm_medium' => 'email',
+            'utm_campaign' => 'crm_membership_requested_v1', 'utm_content' => 'email_1_continue', 'utm_term' => ''];
+        $queries = [$utms];
+        foreach (array_keys($utms) as $key) {
+            $queries[] = array_diff_key($utms, [$key => true]);
+            $queries[] = [$key => $utms[$key]];
+        }
+        foreach ($queries as $query) {
+            $this->get('/membresia?'.http_build_query($query))->assertOk()
+                ->assertSessionMissing('public_journey.continuation')
+                ->assertInertia(fn (Assert $page) => $page->component('membresia')
+                    ->where('price', config('jakawi.membership.price_bob'))
+                    ->where('durationDays', config('jakawi.membership.duration_days'))
+                    ->where('membership', null)->where('requestStatus', null));
+        }
+        $touch = AttributionTouch::firstOrFail();
+        $this->assertSame('fluentcrm', $touch->utm_source);
+        $this->assertSame('email', $touch->utm_medium);
+        $this->assertNull($touch->utm_term);
+        foreach (AttributionTouch::all() as $item) {
+            $this->assertSame(\App\Enums\AcquisitionProvider::NONE, $item->acquisition_provider);
+            $this->assertNull($item->campaign_key);
+            $this->assertNull($item->user_id);
+        }
+        $this->assertDatabaseCount('campaigns', 0);
+        $this->assertDatabaseCount('conversions', 0);
+        $this->assertDatabaseCount('memberships', 0);
+        $this->assertDatabaseCount('membership_purchase_requests', 0);
+        $this->assertDatabaseCount('crm_contact_links', 0);
+        $this->assertDatabaseCount('crm_deliveries', 0);
+    }
+
+    public function test_utms_preserve_existing_intent_and_request_flow(): void
+    {
+        $user = User::factory()->create();
+        $experience = Experience::factory()->published()->create(['reservation_method' => 'jakawi']);
+        $session = ExperienceSession::factory()->for($experience)->upcoming()->create();
+        $url = '/membresia?'.http_build_query(['journey' => 'EXPERIENCE', 'action' => 'RESERVE',
+            'resource_id' => $experience->id, 'experience_session_id' => $session->id]);
+        $this->actingAs($user)->get($url)->assertOk();
+        $intent = session('public_journey.continuation');
+        $this->get($url.'&utm_source=fluentcrm&utm_medium=email')->assertOk();
+        $this->assertSame($intent, session('public_journey.continuation'));
+        $this->get('/membresia?utm_source=fluentcrm')->assertOk();
+        $this->assertSame($intent, session('public_journey.continuation'));
+        $this->post('/membresia/solicitar')->assertRedirect('/membresia');
+        $item = MembershipPurchaseRequest::firstOrFail();
+        $this->assertSame('EXPERIENCE', $item->journey_type);
+        $this->assertSame('RESERVE', $item->journey_action);
+        $this->assertSame($experience->id, $item->journey_resource_id);
+        $this->assertSame(['experience_session_id' => $session->id], $item->journey_context);
+        $this->assertSame(AttributionTouch::latest('id')->first()->id, $item->attribution_touch_id);
+        $this->assertDatabaseCount('campaigns', 0);
+        $this->assertDatabaseCount('conversions', 0);
+        $this->assertDatabaseCount('memberships', 0);
+    }
+
+    public function test_tracking_allowlist_keeps_unknown_queries_and_invalid_intents_rejected(): void
+    {
+        $experience = Experience::factory()->published()->create();
+        $intent = ['journey' => 'EXPERIENCE', 'action' => 'RESERVE', 'resource_id' => $experience->id];
+        foreach (['foo', 'campaign_key', 'acq', 'fbclid', 'gclid', 'ttclid', 'redirect', 'return_url',
+            'price', 'plan', 'discount', 'coupon'] as $key) {
+            foreach ([[], $intent] as $business) {
+                $this->get('/membresia?'.http_build_query($business + [$key => 'bar', 'utm_source' => 'fluentcrm']))
+                    ->assertSessionHasErrors('journey');
+            }
+        }
+        foreach ([['journey' => 'EXPERIENCE'], $intent + ['experience_session_id' => 'invalid'],
+            array_replace($intent, ['action' => 'DELETE']), array_replace($intent, ['resource_id' => 'invalid'])] as $business) {
+            $this->get('/membresia?'.http_build_query($business + ['utm_medium' => 'email']))->assertSessionHasErrors();
+        }
+        $this->assertDatabaseCount('attribution_touches', 0);
+        $this->assertDatabaseCount('conversions', 0);
+        $this->assertDatabaseCount('campaigns', 0);
+    }
+
     private function activate(User $user): Membership
     {
         return Membership::create(['user_id' => $user->id, 'status' => Membership::STATUS_ACTIVE, 'starts_at' => now()->subDay(), 'ends_at' => now()->addYear(), 'amount_paid' => 100]);
