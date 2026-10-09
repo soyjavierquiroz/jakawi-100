@@ -28,7 +28,7 @@ class GrowthMeasurementService
     public function landingView(LandingPresentation $landing, AttributionTouch $touch): ?AnalyticsEvent
     {
         return $this->record('landing_view', $this->context(null, $touch), [
-            'landing' => $landing->slug, 'campaign_key' => $landing->campaign_key ?? '',
+            'landing' => $landing->slug, 'campaign_key' => $landing->campaign_key,
             'landing_presentation_id' => $landing->id, 'subject_type' => $landing->subject_type,
             'subject_id' => $landing->subject_id, 'default_scope' => $landing->default_scope,
         ]);
@@ -120,6 +120,8 @@ class GrowthMeasurementService
         $context['landing_slug'] ??= $metadata['landing'] ?? null;
         if ($landing) $context = array_replace($context, ['landing_presentation_id' => $landing->id, 'landing_slug' => $landing->slug,
             'subject_type' => $landing->subject_type, 'subject_id' => $landing->subject_id, 'campaign_key' => $landing->campaign_key]);
+        $context['campaign_key'] = $this->normalizeCampaignKey($context['campaign_key'] ?? null);
+        if (array_key_exists('campaign_key', $metadata)) $metadata['campaign_key'] = $this->normalizeCampaignKey($metadata['campaign_key']);
         $allowed = match ($event) {
             'landing_view' => ['landing', 'campaign_key', 'landing_presentation_id', 'subject_type', 'subject_id', 'default_scope'],
             'landing_cta_click' => ['landing', 'campaign_key', 'destination_type', 'destination_kind', 'cta_kind', 'cta_location', 'destination'],
@@ -156,6 +158,12 @@ class GrowthMeasurementService
             Log::warning('Growth event could not be recorded.', ['event' => $event, 'exception_type' => get_class($exception)]);
             return null;
         }
+    }
+
+    private function normalizeCampaignKey(?string $value): ?string
+    {
+        $value = $value === null ? null : trim($value);
+        return $value === '' ? null : $value;
     }
 
     private function sanitizeDestination(string $destination): string

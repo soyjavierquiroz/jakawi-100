@@ -31,6 +31,37 @@ class GrowthMeasurementTest extends TestCase
         return $event;
     }
 
+    public function test_null_campaign_key_remains_null_in_landing_view_and_cta(): void
+    {
+        $landing = $this->landing();
+        $landing->update(['campaign_key' => null]);
+        $view = $this->viewLanding($landing);
+        $this->assertNull($view->campaign_key);
+        $this->post('/analytics/landing-presentations/growth/cta', ['cta_kind'=>'signup', 'cta_location'=>'hero', 'destination'=>'/register'])->assertNoContent();
+        $this->assertNull(AnalyticsEvent::where('event_name','landing_cta_click')->sole()->campaign_key);
+    }
+
+    public function test_real_campaign_key_is_preserved_in_landing_view_and_cta(): void
+    {
+        $landing = $this->landing();
+        $landing->update(['campaign_key' => 'meta-benefit-launch']);
+        $view = $this->viewLanding($landing);
+        $this->assertSame('meta-benefit-launch', $view->campaign_key);
+        $this->post('/analytics/landing-presentations/growth/cta', ['cta_kind'=>'signup', 'cta_location'=>'hero', 'destination'=>'/register'])->assertNoContent();
+        $this->assertSame('meta-benefit-launch', AnalyticsEvent::where('event_name','landing_cta_click')->sole()->campaign_key);
+    }
+
+    public function test_empty_and_whitespace_campaign_keys_normalize_in_shared_growth_writer(): void
+    {
+        foreach (['', '   ', '  meta-benefit-launch  '] as $value) {
+            $expected = trim($value) === '' ? null : trim($value);
+            foreach (['landing_view', 'landing_cta_click'] as $name) {
+                $event = app(GrowthMeasurementService::class)->record($name, ['campaign_key'=>$value]);
+                $this->assertSame($expected, $event->campaign_key);
+            }
+        }
+    }
+
     public function test_guest_cta_continuity_and_privacy_and_repeated_clicks(): void
     {
         $landing = $this->landing('GUESTS'); $view = $this->viewLanding($landing);
