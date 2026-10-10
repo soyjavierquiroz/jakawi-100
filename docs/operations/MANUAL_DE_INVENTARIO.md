@@ -131,3 +131,9 @@ El piloto comercial aún no comenzó. Preparación requiere Benefits reales sufi
 **La cantidad comercial exacta debe decidirse por planificación de producto/comercial, no inferirse del código.** Límites de consulta de Discovery no son metas de inventario. Evitar llenar la oferta con demos para alcanzar una cifra ficticia.
 
 Runbook técnico: [OPERATIONS](../OPERATIONS.md). Estado y automations que acompañan el piloto: [CURRENT](../CURRENT.md), [CRM](../CRM_FOUNDATION_V1.md).
+
+## 10. Registros de trabajo y gate comercial
+
+Este manual conserva las **reglas de operación**. Las [plantillas](templates/README.md) son registros/checklists **individuales** para [Benefit](templates/BENEFIT.md), [Experience](templates/EXPERIENCE.md), [Unlock](templates/UNLOCK.md), [Challenge](templates/CHALLENGE.md) y [Partner](templates/PARTNER.md); no schemas de código. [PILOT_READINESS](PILOT_READINESS.md) es el **gate GO / NO-GO** del lanzamiento, sin cantidades inventadas ni readiness acreditada por llenar una plantilla.
+
+Términos: [GLOSSARY](../GLOSSARY.md). Límites de producto/presentación: [ARCHITECTURE](../ARCHITECTURE.md) y [ADRs](../decisions/README.md). Adquisición: [Growth](../growth-measurement-v1.md). Recuperación por síntoma: [RUNBOOKS](RUNBOOKS.md). No copiar registros comerciales reales con datos personales ni PIN al repositorio.

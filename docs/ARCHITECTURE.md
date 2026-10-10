@@ -8,6 +8,10 @@ flowchart LR
   OLS -->|127.0.0.1:8080| W[web: nginx]
   W --> A[app: Laravel / PHP-FPM 8.4]
   A --> DB[(PostgreSQL 16)]
+  A --> SW[social-worker]
+  SC[Scheduler via cron] --> A
+  A --> CB[CRM Bridge HTTPS]
+  CB --> CRM[FluentCRM]
 ```
 
 ## Contenedores y borde
@@ -83,3 +87,5 @@ La atribución reutiliza el visitor UUID first-party existente como identidad an
 `social-worker` usa `jakawi-app` para las colas `social-interactive,social`; no despacha CRM ni Meta. Ambos outboxes se despachan por scheduler cada minuto. WordPress/FluentCRM viven en CyberPanel, fuera de Docker.
 
 Estado y límites: [CURRENT](CURRENT.md). Uso: [Manual de Funciones](product/MANUAL_DE_FUNCIONES.md). Carga comercial: [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md). Contratos: [Growth](growth-measurement-v1.md), [CRM](CRM_FOUNDATION_V1.md).
+
+[Decisiones de arquitectura](decisions/README.md) · [Glosario](GLOSSARY.md). Scheduler es cron que invoca app, no un servicio Compose adicional; social-worker procesa colas sociales y CRM se despacha desde scheduler.

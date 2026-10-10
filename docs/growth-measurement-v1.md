@@ -50,3 +50,17 @@ High-level mappings: landing_view → ViewContent; landing_cta_click → JakawiL
 Growth Analytics retains canonical funnel/history and indexed context suitable for queries by landing/campaign/UTM/provider. Current Admin exposes pilot/acquisition metrics and membership-request attribution, not a dedicated canonical Growth dashboard. FluentCRM is contact projection, not that history or reporting warehouse. Click on external reservation destination is intent, not experience_reserved. Provider failures never replace canonical facts or roll back product outcomes.
 
 Authoritative implementation: GrowthMeasurementService, GrowthOutcomeObserver, AttributionService, AcquisitionProviderResolver and MetaEventMapper. Scope/current state: [CURRENT](CURRENT.md); economic attribution: [ATTRIBUTION](ATTRIBUTION.md); CRM projection: [CRM](CRM_FOUNDATION_V1.md); landing operations: [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md).
+
+## Flujo de adquisición y medición
+
+```mermaid
+flowchart LR
+  T[Tráfico con señal explícita] --> A[(AttributionTouch)]
+  A --> E[(AnalyticsEvent)]
+  D[Resultado de dominio confirmado] --> E
+  E --> S[Snapshot acquisition_provider]
+  E -. entrega opcional .-> M[(Meta provider outbox)]
+  M -. canales actualmente OFF .-> X[Meta]
+```
+
+El snapshot se conserva en AnalyticsEvent; tráfico sin touch puede producir un evento con contexto nulo/NONE. No inferir que todo tráfico crea touch, ni que la clasificación habilita proveedor. Meta permanece OFF; este diagrama no activa envíos. [Glosario](GLOSSARY.md) · [ADR-005](decisions/ADR-005-acquisition-provider.md).

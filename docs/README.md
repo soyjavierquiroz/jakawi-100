@@ -84,3 +84,24 @@ Referencia: **2026-10-09**. Empieza por [CURRENT](CURRENT.md), el [Manual de Fun
 | ../CHANGELOG.md | Historia de cambios | Developers/ops | REFERENCE |
 
 Los documentos breves remiten a su fuente canónica; no sustituyen los manuales. Histórico de tests/hotfix del bridge permanece en su repositorio y Git, separado del estado operativo actual.
+
+## Reglas de autoridad y vigencia
+
+- **CURRENT / AUTHORITATIVE** describe el sistema vigente dentro del alcance declarado; distinguir contrato estático de estado runtime y conservar fecha/fuente de evidencia. Una actualización documental no certifica una nueva observación de producción.
+- **REFERENCE** aporta detalle de dominio/decisiones dentro de su alcance; no sustituye estado operativo ni el gate de lanzamiento.
+- **HISTORICAL / REFERENCE** conserva snapshots anteriores y nunca debe tratarse como comportamiento/readiness actual.
+- Cambios de producto/arquitectura deben actualizar en el mismo cambio las fuentes afectadas cuando corresponda; enlazar autoridad antes de duplicarla.
+
+| Fuente añadida | Alcance | Estado |
+| --- | --- | --- |
+| [GLOSSARY](GLOSSARY.md) | Terminología canónica para todos los equipos | CURRENT / AUTHORITATIVE |
+| [PILOT_READINESS](operations/PILOT_READINESS.md) | Único gate comercial GO / NO-GO Cochabamba | CURRENT / AUTHORITATIVE |
+| [RUNBOOKS](operations/RUNBOOKS.md) | Recuperación por síntoma; procedimientos técnicos siguen en OPERATIONS | CURRENT / AUTHORITATIVE |
+| [ADRs](decisions/README.md) | Decisiones aceptadas y sus límites | REFERENCE |
+| [Plantillas](operations/templates/README.md) | Registros individuales de inventario/Partner | WORKING TEMPLATES |
+
+[Meta Provider V1](../app/docs/meta-provider-v1.md) permanece en app/docs: es la ubicación existente de su contrato de integración, con referencias activas; mantenerla evita mover autoridad sin necesidad. CURRENT conserva los flags efectivos. El README del bridge es autoridad del contrato estático del plugin; estados de sync, cron y automations pertenecen a CURRENT/CRM/OPERATIONS.
+
+## QA documental local
+
+QA automatizado: [.github/workflows/docs.yml](../.github/workflows/docs.yml) ejecuta sólo enlaces y whitespace para cambios documentales en push/PR. Reutiliza el pin de checkout del workflow heredado app/.github; no activa sus checks de producto. Ejecutar `python3 bin/check-docs.py` desde cualquier directorio y `git diff --check` en cada repo. El checker usa sólo Python estándar y comprueba destinos relativos de Markdown en README raíz, docs/ y app/docs/; admite archivos explícitos de otro repo. No hace red, builds, PHP ni pruebas de producto. Comprueba archivos/directorios, no anchors, enlaces externos ni render Mermaid. Revisar manualmente el diff para secretos/PII; no se añade un escáner genérico con falsos positivos.

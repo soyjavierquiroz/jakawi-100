@@ -119,3 +119,17 @@ Contrato cotejado con modelos/servicios/config/comando/routes Laravel y `include
 Estado general: [CURRENT](CURRENT.md). Atribución/funnel: [Growth](growth-measurement-v1.md). Funciones: [manual](product/MANUAL_DE_FUNCIONES.md). Seguridad y diagnostics: [bridge README](https://github.com/soyjavierquiroz/jakawi-fluentcrm-bridge/blob/main/README.md).
 
 [Registro histórico de implementación y validación](history/CRM_FOUNDATION_IMPLEMENTATION.md) retenido sin reclamar autoridad operativa actual.
+
+## Flujo de proyección
+
+```mermaid
+flowchart LR
+  D[Acción de dominio confirmada] --> P[CrmContactProjectionService]
+  P --> O[(crm_deliveries)]
+  O --> Q[Dispatcher vía scheduler]
+  Q --> H[HTTPS HMAC]
+  H --> B[WordPress Bridge]
+  B --> F[FluentCRM]
+```
+
+Outbox y vínculo CRM son independientes del historial AnalyticsEvent. Recuperación por síntoma: [RUNBOOKS](operations/RUNBOOKS.md). Decisión: [ADR-003](decisions/ADR-003-fluentcrm-as-external-crm.md).

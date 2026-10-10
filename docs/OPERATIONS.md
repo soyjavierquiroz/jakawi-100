@@ -146,3 +146,7 @@ No borrar manualmente containerd, no hacer general-prune a ciegas ni eliminar im
 Backups en `/home/jakawi.com/backups`: custom pg_dump dentro de PostgreSQL, `--no-owner --no-acl`; validar `pg_restore --list` sin restaurar sobre producción. Definir DB_SERVICE con el servicio real antes del ejemplo de backup. Jamás migrate:fresh, db:wipe, seed/reset producción.
 
 Cambios sólo documentales: `git diff --check`, revisión de status/stat y enlaces relativos sin instalar dependencias; no requieren tests/build/deploy. No copiar .env, tokens, HMAC, contraseñas, salts o PII QA. Para oferta usar el [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md); para comportamiento el [Manual de Funciones](product/MANUAL_DE_FUNCIONES.md).
+
+## Recuperación y QA documental V1.1
+
+[RUNBOOKS](operations/RUNBOOKS.md) es el índice de recuperación por síntoma; este documento conserva los procedimientos técnicos de backup/deploy/rollback/disco. [PILOT_READINESS](operations/PILOT_READINESS.md) conserva el gate comercial. Para cambios documentales ejecutar `python3 bin/check-docs.py` y `git diff --check`; el checker no usa red, PHP, dependencias adicionales ni pruebas/builds de producto.

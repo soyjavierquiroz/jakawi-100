@@ -106,3 +106,7 @@ Challenges separan evidencia, calificación, selección y entrega del premio; pa
 LandingPresentation presenta un Benefit, Experience, Unlock o Challenge para adquisición. Product Detail sigue siendo la superficie operativa; `/l/{slug}` es marketing, `/go/{slug}` redirect externo/configuración y `/d/{slug}` Unlock nativo. Ninguna landing cambia reglas ni economía del subject.
 
 Growth Analytics conserva los nueve eventos canónicos y contexto de AttributionTouch en JAKAWI; Meta Pixel+CAPI ya está implementado pero apagado. CRM es una proyección independiente para contactos, segmentación, email y automations; FluentCRM no es un almacén de analytics. Véanse [arquitectura](ARCHITECTURE.md), [growth](growth-measurement-v1.md) y [CRM](CRM_FOUNDATION_V1.md).
+
+## Preparación operativa V1.1
+
+El piloto sigue **NOT STARTED**, con **REAL INVENTORY** como bloqueador primario. [PILOT_READINESS](operations/PILOT_READINESS.md) es el gate vigente; [RUNBOOKS](operations/RUNBOOKS.md) organiza recuperación y [GLOSSARY](GLOSSARY.md) fija términos. Esta revisión documental no ejecutó QA de producto ni revalidación live de CRM/cron/automations: conserva el estado suministrado, CRM_SYNC_ENABLED=true, Partner Applicant ACTIVE, consumidor 1–4 INACTIVE y Meta OFF.

@@ -88,3 +88,43 @@ No existe transferencia automática de payout ni permiso implícito para que Adm
 - Sin marketplace abierto, Partner self-service completo, permisos por Location, app nativa ni Desbloqueos Comerciales monetarios.
 
 No vender funciones de [ROADMAP](../ROADMAP.md) como activas. Para preparar oferta real usar el [Manual de Inventario](../operations/MANUAL_DE_INVENTARIO.md).
+
+## H. Matriz de actores y capacidades
+
+YES = capacidad expuesta para ese contexto; NO = ese contexto no concede acceso; CONDITIONAL = depende de verificación, asignación, vigencia o reglas del producto. Las acciones autenticadas indicadas requieren auth + verified. Guest y Authenticated User son contextos; Active Member es estado de Membership, Admin usa users.is_admin y Partner-related actor usa partner_user (owner/manager/staff). No son roles mutuamente excluyentes. Partner Applicant es una solicitud, sin privilegio adicional: hereda Guest/User según sesión.
+
+| Capacidad | Guest | Authenticated User | Active Member | Admin | Partner-related actor |
+| --- | --- | --- | --- | --- | --- |
+| Discover | YES | YES | YES | YES | YES |
+| Ver Product Detail | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Ver Marketing Landing pública | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Registrar nueva cuenta | YES | NO | NO | NO | NO |
+| Solicitar membresía | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Usar acceso Member | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Canjear Benefit como consumidor | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Reservar Experience internamente | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Participar Challenge | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Commit Unlock | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Ver Mi JAKAWI | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Enviar Partner Application | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Enviar Program Application | NO | CONDITIONAL | CONDITIONAL | CONDITIONAL | CONDITIONAL |
+| Administrar inventario | NO | NO | NO | CONDITIONAL | CONDITIONAL |
+| Administrar Campaigns económicas | NO | NO | NO | YES | NO |
+| Administrar Challenges | NO | NO | NO | CONDITIONAL | CONDITIONAL |
+| Administrar LandingPresentations | NO | NO | NO | CONDITIONAL | NO |
+
+Partner Applicant no tiene capacidades adicionales: todas son las de Guest o Authenticated User según sesión y, sólo si existen por separado, las de Member/Admin/equipo asignado. Una aplicación no concede ninguno de esos accesos.
+
+Notas de condiciones:
+
+- Detalle/landing públicos requieren publicación y reglas de disponibilidad; admin preview es una superficie protegida aparte. Discovery consulta oferta elegible por ciudad, sin garantizar inventario real.
+- Mi JAKAWI y solicitudes autenticadas requieren cuenta verificada; solicitar no implica compra/activación. Member requiere status active y starts_at ≤ ahora ≤ ends_at. Admin/Partner no reciben acceso Member automáticamente.
+- Benefit normal requiere Member activo; un grant válido social_challenge_grant habilita su Benefit exclusivo sin Membership. Partner valida canjes de su contexto, no elude requisitos de consumidor.
+- Reserva interna exige Member activo, método jakawi, Experience publicada, sesión upcoming y Partner receptor publicado/asociado. Piloto usa reserva externa; abrir su destino público no es reserva interna ni evento experience_reserved. capacity no se aplica como límite en el servicio.
+- Challenge depende de elegibilidad de participación y estado/fechas; premio tiene elegibilidad independiente. Unlock depende de free_user_eligible/member_eligible, estado, cupo, condiciones y JP.
+- Partner Application depende de ciudad/superficie habilitada; no concede acceso Partner. Program Application valida programa y solicitud, sin conceder enrollment automáticamente.
+- Admin opera inventario/revisión/publicación bajo reglas de dominio. Partner asignado prepara/edita/envía oferta propia y Challenges con permisos/estados específicos; no tiene administración global ni publicación Admin implícita. Ser Admin no concede asignación Partner. Roles owner/manager/staff no implican permisos por Location.
+
+Cotejo: [rutas](../../app/routes/web.php), [admin middleware](../../app/app/Http/Middleware/EnsureAdmin.php), [partner middleware](../../app/app/Http/Middleware/EnsurePartner.php), [Membership](../../app/app/Models/Membership.php), [RedemptionService](../../app/app/Services/RedemptionService.php), [ExperienceReservationService](../../app/app/Services/ExperienceReservationService.php), [UnlockParticipationService](../../app/app/Services/UnlockParticipationService.php) y controllers de solicitudes/Challenge. La matriz resume acceso existente, no crea RBAC.
+
+Referencias de autoridad: [GLOSSARY](../GLOSSARY.md), [ARCHITECTURE](../ARCHITECTURE.md), [CURRENT](../CURRENT.md), [CRM](../CRM_FOUNDATION_V1.md), [Manual de Inventario](../operations/MANUAL_DE_INVENTARIO.md). La arquitectura detallada permanece en su fuente.
