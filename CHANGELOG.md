@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Documentation
+
+- Consolidación V1 (2026-10-09): índice, estado productivo, arquitectura, CRM/schema/automations/cron, Growth/Meta y operaciones.
+- Manual de Funciones y Manual de Inventario en español; referencias históricas conservadas y autoridad por tema delimitada.
+- Sólo documentación, sin versión de producto nueva ni cambios de código/schema/deploy.
+
 ## [2026-09-28]
 
 ### Partner operations
@@ -16,8 +22,8 @@
 
 ### Redemptions y Experiences
 
-- TTL configurable y expiración programada de Redemptions pendientes.
-- Publicar Experiences con `reservation_method=jakawi` queda bloqueado server-side durante piloto; la reserva pública es externa.
+- TTL configurable de Redemptions pendientes. Corrección documental: el SHA actual aplica expiración en controller/service, sin comando de expiración programada registrado.
+- Registro histórico de regla de piloto: reserva externa. La afirmación anterior de bloqueo server-side no corresponde al SHA actual; véase CURRENT para capacidad interna y límites.
 
 ### Attribution, rewards y payouts
 

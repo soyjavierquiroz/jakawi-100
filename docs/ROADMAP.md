@@ -4,11 +4,11 @@
 
 ## Implementado para piloto
 
-Membership de compra/admin grant, Benefits/Redemptions, reservas externas de Experiences, Partner users, venta manual Promoter, Affiliate/Creator, attribution/Campaigns, rewards/payout externo, JP, Desbloqueos V1, Reputation V1 y dashboard de piloto.
+Membership de compra/admin grant, Benefits/Redemptions, reservas externas de Experiences, Partner users, venta manual Promoter, Affiliate/Creator, attribution/Campaigns, rewards/payout externo, JP, Desbloqueos V1, Reputation V1 y dashboard de piloto. También están implementados Challenges, Cities, Discovery, LandingPresentation, eventos Growth canónicos, Meta Pixel/CAPI (OFF) y CRM projection; estado vigente en CURRENT.
 
 ## Deliberadamente fuera del MVP
 
-Pagos internos de Experiences, booking público interno, availability en tiempo real, marketplace abierto, self-service Partner completo, permisos por Location, app nativa, geofencing, recomendaciones/gamificación avanzadas, catálogo/cash-out JP y payout provider automático.
+Pagos internos de Experiences, operación comercial de booking interno en piloto, availability en tiempo real, marketplace abierto, self-service Partner completo, permisos por Location, app nativa, geofencing, recomendaciones/gamificación avanzadas, catálogo/cash-out JP y payout provider automático.
 
 ## Desbloqueos Comerciales
 
@@ -16,4 +16,4 @@ Pagos internos de Experiences, booking público interno, availability en tiempo 
 
 ## Verificación pendiente
 
-La implementación está lista; falta ejecución funcional completa en PHP >= 8.4.1. La incompatibilidad conocida del host no equivale a fallo funcional.
+Este documento no acredita readiness comercial ni una ejecución nueva de pruebas. El piloto requiere inventario real y operación comercial; estado y baseline conocidos en [CURRENT](CURRENT.md), checklist en el [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md). PHP del host nunca se usa ni inspecciona.

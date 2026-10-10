@@ -4,4 +4,4 @@
 
 Experience muestra destino de reserva externo durante piloto. Mi JAKAWI separa cuenta gratuita, Membership activa, valor/ahorro confirmado, JP y reputación cuando aplique. Unlocks tienen superficie pública, interés/compromiso/confirmación, sin exponer supply secreta antes de meta.
 
-No prometer checkout QR, booking público interno, puntos convertibles, gamificación, mapa avanzado ni recomendaciones avanzadas.
+No prometer checkout QR, booking público interno, puntos convertibles, gamificación avanzada, mapa avanzado ni recomendaciones avanzadas.

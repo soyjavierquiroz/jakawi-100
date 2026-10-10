@@ -8,9 +8,9 @@ Este runbook describe el stack actual. No autoriza despliegues, cambios de datos
 
 ## Producción
 
-`jakawi.com` llega por OpenLiteSpeed al servicio Docker `web` en `127.0.0.1:8080`. `web` (nginx) reenvía PHP a `app` (Laravel/PHP-FPM 8.4). `db` es PostgreSQL 16 sin puerto publicado. `img.jakawi.com` llega por OpenLiteSpeed a `imgproxy` en `127.0.0.1:8082`. Los servicios del compose productivo son `web`, `app`, `db` e `imgproxy`.
+`jakawi.com` llega por OpenLiteSpeed al servicio Docker `web` en `127.0.0.1:8080`. `web` (nginx) reenvía PHP a `app` (Laravel/PHP-FPM 8.4). `db` es PostgreSQL 16 sin puerto publicado. `img.jakawi.com` llega por OpenLiteSpeed a `imgproxy` en `127.0.0.1:8082`. Los servicios del compose productivo son `web`, `app`, `social-worker`, `db` e `imgproxy`.
 
-No usar PHP ni Composer del host. Todo comando Laravel/Composer relevante se ejecuta dentro de la imagen PHP 8.4, por ejemplo:
+**PHP DEL HOST: NUNCA USAR NI INSPECCIONAR.** No usar Composer del host. Todo comando Laravel/Composer relevante se ejecuta dentro de la imagen PHP 8.4, por ejemplo:
 
 ```bash
 docker compose exec app php artisan <command>
@@ -26,7 +26,7 @@ curl -f http://127.0.0.1:8080/up
 curl -f https://jakawi.com/up
 ```
 
-Una migración normal, si ha sido aprobada como parte del release, se ejecuta sólo desde `app` con `--force`. Está prohibido `migrate:fresh` contra producción. No borrar volúmenes, no hacer `docker compose down -v` como operación normal y no regenerar `.env` durante un deploy.
+Una migración normal, si ha sido aprobada como parte del release, se ejecuta sólo desde `app` con `--force`. Está prohibido `migrate:fresh`, `db:wipe`, seed/reset contra producción. No borrar volúmenes, no hacer `docker compose down -v` como operación normal y no regenerar `.env` durante un deploy.
 
 Después de cambiar `.env`, recrear cada servicio que consume ese entorno y comprobar la configuración efectiva dentro del contenedor. Esto es especialmente importante para `app` e `imgproxy`; editar el archivo no modifica un contenedor ya creado.
 
@@ -69,7 +69,7 @@ Confirmar que `imgproxy` está en ejecución con `docker compose ps`, que `https
 
 ## Backups y rollback
 
-El backup debe proteger la base PostgreSQL y, cuando aplique, el inventario de object keys/media; ejecutar únicamente el procedimiento de backup aprobado para el host, no uno inventado. Antes de un cambio riesgoso, confirmar una restauración conocida y el commit de retorno.
+El backup debe proteger la base PostgreSQL y, cuando aplique, el inventario de object keys/media; usar el procedimiento aprobado más abajo. Antes de un cambio riesgoso, confirmar una restauración conocida y el commit de retorno.
 
 Un rollback conservador vuelve al último commit conocido bueno, reconstruye/recrea coherentemente los servicios afectados y repite los health checks. Evaluar las migraciones antes de revertir código: no borrar datos ni volúmenes para “hacer coincidir” una versión. Mantener `app` y `web` sincronizados también durante rollback.
 
@@ -82,7 +82,7 @@ usar `pg_dump` **dentro** de ese contenedor para la base `jakawi`:
 
 ```bash
 STAMP=$(date +%Y%m%d-%H%M%S)
-BACKUP="/home/jakawi.com/backups/jakawi-pre-attribution-v1-${STAMP}.dump"
+BACKUP="/home/jakawi.com/backups/jakawi-pre-release-${STAMP}.dump"
 docker compose exec -T "$DB_SERVICE" sh -lc \
   'pg_dump -U "$POSTGRES_USER" -d jakawi --format=custom --no-owner --no-acl' \
   > "$BACKUP"
@@ -118,3 +118,31 @@ servidor: primer nombre más inicial del último apellido (por ejemplo, `Javier 
 No entrega nombre completo, email, teléfono, perfil, historial de membresía,
 referidos ni datos financieros. El código de asistencia es el identificador
 operativo primario; la identidad abreviada sólo sirve para desambiguación humana.
+
+## Desarrollo y verificación de frontend
+
+La raíz comparte el host productivo: no ejecutar bootstrap/reset como si fuera una base local vacía. `./bin/jakawi-test` es el wrapper aislado para tests; nunca PHP del host. Baseline conocido: CampaignTest::admin_can_create_campaign_and_non_admin_cannot (nombre PHPUnit con prefijo test_), redirect esperado frente a 403 recibido; no clasificar como regresión nueva.
+
+Build de verificación, sólo cuando autorizado:
+
+```bash
+docker build -f docker/Dockerfile \
+  --target build \
+  -t jakawi-frontend-check .
+```
+
+`jakawi-frontend-check` es imagen temporal, no despliegue. Esta consolidación documental no ejecuta tests ni builds. Producción es directa; no existe staging/preview operativo. El archivo preview heredado no constituye un entorno aprobado.
+
+`social-worker` usa la misma imagen `jakawi-app`, consume social-interactive/social y debe acompañar cambios de imagen que le afecten; frontend exige `app` + `web` coherentes. No crear otro worker para CRM/Meta: `crm:dispatch` y `growth:dispatch-meta` ya corren cada minuto en Laravel Scheduler. CRM sync activo; Meta OFF. Runbook WordPress independiente: [CRM](CRM_FOUNDATION_V1.md).
+
+## Disco y Docker
+
+Los builds consumen disco significativo. Antes de un build, revisar `df -h /` y artefactos Docker mediante consultas de lectura. La cifra libre del día no es una especificación de arquitectura.
+
+No borrar manualmente containerd, no hacer general-prune a ciegas ni eliminar imágenes activas. Para retirar una imagen temporal, identificar ID exacto y comprobar que **cero contenedores (incluidos detenidos)** la usan; sólo entonces eliminar ese artefacto explícito. No retirar cachés/volúmenes/imágenes por su nombre aproximado. No usar `docker compose down -v` en producción.
+
+## Seguridad de base y documentación
+
+Backups en `/home/jakawi.com/backups`: custom pg_dump dentro de PostgreSQL, `--no-owner --no-acl`; validar `pg_restore --list` sin restaurar sobre producción. Definir DB_SERVICE con el servicio real antes del ejemplo de backup. Jamás migrate:fresh, db:wipe, seed/reset producción.
+
+Cambios sólo documentales: `git diff --check`, revisión de status/stat y enlaces relativos sin instalar dependencias; no requieren tests/build/deploy. No copiar .env, tokens, HMAC, contraseñas, salts o PII QA. Para oferta usar el [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md); para comportamiento el [Manual de Funciones](product/MANUAL_DE_FUNCIONES.md).

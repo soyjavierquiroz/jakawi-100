@@ -1,8 +1,7 @@
-# Meta Provider V1
+# Meta Provider V1 — implemented, production OFF
 
-Disabled by default. No actual Meta credentials are required to install or verify this code.
-`acq=meta` selects an acquisition provider; it is not legal consent. No existing consent or
-tracking-preference mechanism was found in the application. This change adds no CMP.
+Current production effective state (2026-10-09): META_PROVIDER_ENABLED=false, META_BROWSER_ENABLED=false, META_CAPI_ENABLED=false. Defaults are false. No actual Meta credentials are required to install or verify this code.
+`acq=meta` selects an acquisition provider; it is not legal consent. CRM email opt-in now exists separately; it does not authorize Meta tracking. This provider foundation adds no CMP.
 
 ## Enable later
 
@@ -69,3 +68,5 @@ tracking settings in Meta, then validate delivery/deduplication in Meta Test Eve
 HTTP and a fake browser adapter verify the contract locally; they cannot prove remote Meta
 acceptance, attribution/match quality or deduplication. This V1 intentionally omits fbp/fbc,
 advanced matching, Purchase, an outcome browser mirror and a delivery dashboard.
+
+Canonical event mapping and membership UTM boundaries: [Growth](../../docs/growth-measurement-v1.md). Current production: [CURRENT](../../docs/CURRENT.md). Enabling channels requires a separately authorized operational change.

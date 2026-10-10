@@ -1,100 +1,121 @@
-# CRM Integration Foundation V1 — implementation, unreleased
+# CRM V1 — arquitectura, contrato y operación
 
-Laravel uses its own `crm_deliveries`, independently of analytics, Meta and `growth_provider_deliveries`. `CrmContactProjectionService` is the central contract builder. Eligible domain observers register after-commit callbacks; signup signals inside its transaction after attribution association. Outbox errors are contained after domain commit and logged with a fixed code only. No synchronous CRM HTTP happens in domain requests.
+**CURRENT / AUTHORITATIVE — 2026-10-09.** Para desarrollo y operaciones CRM. JAKAWI productivo de referencia: `e9d420870fa6d44802ceb52e4f253f84333b0071`; Bridge 1.0.1: `356fad2b51967c67a3a5efd62c91bffb758398c0`. Estado operativo de automations/cron conforme al contexto de producción suministrado; no es un nuevo ensayo ni una autorización de mutación.
 
-## Configuration
+## Responsabilidades
 
-`config/crm.php` and `.env.example` document CRM_SYNC_ENABLED=false, CRM_PROVIDER=fluentcrm, CRM_BRIDGE_URL, CRM_BRIDGE_SECRET, CRM_CONNECT_TIMEOUT=3, CRM_TIMEOUT=8. Enqueue and dispatch require explicit true, supported provider, HTTPS exact bridge path and a secret of at least 32 bytes. No real configuration or secret was installed.
+**JAKAWI → crm_deliveries → HTTPS firmado HMAC → Jakawi FluentCRM Bridge → FluentCRM.**
 
-Bridge repository: `/home/crm.jakawi.com/public_html/wp-content/plugins/jakawi-fluentcrm-bridge`. Remote: https://github.com/soyjavierquiroz/jakawi-fluentcrm-bridge.git. Legacy repository, endpoint and table remain untouched.
+JAKAWI mantiene verdad de producto/dominio, AttributionTouch, ledger e historial analítico. FluentCRM recibe proyección de contactos para segmentación, email y automations; **no es un analytics warehouse**. `crm_deliveries` es independiente de `analytics_events` y `growth_provider_deliveries`.
 
-## Projection
+CRM: https://crm.jakawi.com, WordPress + FluentCRM en runtime CyberPanel del host; no Docker. Bridge repo: `/home/crm.jakawi.com/public_html/wp-content/plugins/jakawi-fluentcrm-bridge`; [README del bridge](https://github.com/soyjavierquiroz/jakawi-fluentcrm-bridge/blob/main/README.md).
 
-Signup, partner application with a valid submitted email, authenticated program application, membership request/activation/state change, confirmed benefit redemption, experience reservation, challenge participation, committed unlock, profile city/name/email/preference updates. Partner phone-only applications succeed without deliveries. A partner contact email different from the signed-in user's email is treated as a guest contact. Partners list requires an existing product partner relation; submitting an application alone never grants it.
+## Configuración y endpoint
 
-FIRST and LATEST each select one historical AttributionTouch using occurred_at and ID as deterministic tie breaker, without changing campaign/conversion semantics. Each carries provider, all five standard UTM components (source/medium/campaign/content/term), campaign_key, landing slug and touch_at. Source tags derive only from FIRST, never LATEST. NONE produces no organic/provider source tag. The bridge freezes the complete first snapshot, orders last snapshots by touch clock, and uses event clocks for domain state and consent; activity is maximum timestamp. Historical activity tags remain additive across reordered deliveries.
+Producción: **CRM_SYNC_ENABLED=true**, provider fluentcrm. Secret y URL se configuran externamente; no copiar credenciales a documentación. Enqueue/dispatch requieren flag, provider, URL HTTPS exacta y secret de al menos 32 bytes. Defaults del código no prueban por sí solos el estado de producción.
 
-## Consent
+Endpoint actualmente usado: **https://crm.jakawi.com/?rest_route=/jakawi-fluentcrm/v1/events**. El servidor devuelve 404 para el routing pretty `/wp-json`; el fallback alcanza la misma ruta WordPress registrada `jakawi-fluentcrm/v1/events`.
 
-Register and partner forms show the exact Spanish single-opt-in checkbox, checked in the new-form UI. Missing/unchecked backend input means false. Consent is nullable until recorded; no legacy migration is required. Profile shows NULL as unchecked with explicit explanatory copy and persists only on save. Ordinary events use UNCHANGED; explicit changes use GRANT/REVOKE. No double opt-in or confirmation step. The bridge preserves provider suppressions.
+También soportado por Laravel: **https://crm.jakawi.com/wp-json/jakawi-fluentcrm/v1/events**. Son las dos URLs exactas admitidas: sin hosts/puertos alternativos, userinfo, fragments, queries adicionales/duplicados ni variantes codificadas. No se siguen redirects. No confundir ruta plugin con forma de routing del host.
 
-## Delivery and links
+## Proyección y consentimiento
 
-Payload uses Laravel encrypted:array at rest, hidden from serialization; payload never includes bridge credentials. Scheduler `crm:dispatch` every minute uses existing scheduler, no worker/container. Up to 100 deliveries in a 40-second budget, bounded 3-second connection/8-second HTTP defaults (hard caps 5/10), PostgreSQL FOR UPDATE SKIP LOCKED through the HTTP call, and rollback on process death.
+`CrmContactProjectionService` construye el contrato. Signup, aplicaciones Partner con email válido, aplicaciones de programa autenticadas, solicitud/activación/cambio de Membership, canje confirmado, reserva interna, participación Challenge, compromiso Unlock y cambios de perfil/preferencia producen proyección donde corresponde. No se envían page views/CTA, click IDs, fingerprint, metadata libre ni query strings.
 
-Six attempts, delays 1m/5m/15m/1h/6h; network, 429 and 5xx retry. Retry-After is bounded between 1m and 6h. Other responses, including 400/409/422 and 401/403, become DEAD. No redirect following. Successful response must contain OK and a positive provider_contact_id before creating a durable link. Unique provider/user and provider/contact ID prevent merges. A link discovered before a delivery's first attempt is copied into its stored payload; once attempted, event ID and body remain fixed, timestamp/signature refresh.
+Aplicación Partner sólo teléfono sigue válida sin delivery. Email comercial distinto del usuario se trata como contacto invitado. Aplicar no concede relación Partner: lista Partners/tag jakawi-partner requieren relación real del producto.
 
-`crm_contact_links.last_known_email` is server-side domain data; it is hidden from model serialization. Deleting a user cascades their link. CRM deliveries have no user foreign key, so encrypted history survives deletion; no automatic CRM purge is implemented.
+Single opt-in explícito; checkbox nuevo registro/Partner inicialmente marcado en UI, input ausente/desmarcado significa false. Eventos ordinarios UNCHANGED; cambios explícitos GRANT/REVOKE. Campo legado NULL no representa consentimiento. Bridge respeta suppressions unsubscribed/bounced/complained/spammed; no hay double opt-in ni enrollment retroactivo automático.
 
-## Controlled rollout (not performed)
+## Schema V1 — READY 3/15/32
 
-Review changes against the configured remote. Run migrations on an approved release. Activation is technical only. Explicit schema provisioning uses the nonce-protected manage_options POST action at Tools → Jakawi CRM Bridge; verify diagnostics and required transactional FluentCRM storage/hooks. Configure matching random secrets externally; enable both sides only after controlled validation. Monitor sanitized status counts and DEAD codes. No backfill, merge or legacy migration happens automatically. Disabling flags stops new deliveries and dispatch.
+CRM_SCHEMA_VERSION=1. READY significa mapping vivo compatible, no sólo counts guardados. Provision/repair requiere acción explícita de Admin en WordPress; activar plugin no aprovisiona schema de negocio.
 
-## Definitive contract
+Listas exactas:
 
-CRM_SCHEMA_VERSION = 1: 3 lists, 15 tags, 32 fields. Exact contract is documented in the new bridge README and Contract.php. JAKAWI retains event history; FluentCRM gets marketing projection only. No click IDs, metadata, fingerprints, query strings or Growth page-view/CTA deliveries.
+- JAKAWI — Leads
+- JAKAWI — Usuarios
+- JAKAWI — Partners
 
-signup_at uses user creation time. last_activity_type is canonical and last_activity_at uses domain event time; the bridge applies a monotonic maximum and preserves the associated type. lead_source/lead_form are first-write stable surface keys. Membership request adds membership-requested; activation removes requested/expired and adds active; expiry adds expired/removes active. Cancelled or pending memberships are not mislabeled expired.
+Tags exactos:
 
-Frontend source was unchanged during contract finalization; no new Docker/Vite build. Tests use Docker PHP 8.4 and isolated PostgreSQL only. No live mutation, provisioning, secrets, activation/deactivation, production migration, deploy, commit or push.
+- jakawi-lead
+- jakawi-user
+- partner-applicant
+- program-applicant
+- jakawi-partner
+- membership-requested
+- member-active
+- member-expired
+- benefit-redeemer
+- experience-reserver
+- challenge-participant
+- unlock-participant
+- source-meta
+- source-tiktok
+- source-google
 
-## Files changed — JAKAWI
+32 custom fields agrupados; los nombres `last_*` representan LATEST:
 
-Modified under /home/jakawi.com:
+| Grupo | Campos exactos |
+| --- | --- |
+| Identity / lifecycle (14) | jakawi_user_id, jakawi_city, jakawi_lifecycle_stage, membership_status, membership_started_at, membership_expires_at, lead_source, lead_form, signup_at, last_activity_type, last_activity_at, marketing_opt_in, marketing_opt_in_at, marketing_opt_in_source |
+| FIRST attribution (9) | first_acquisition_provider, first_utm_source, first_utm_medium, first_utm_campaign, first_utm_content, first_utm_term, first_campaign_key, first_landing_slug, first_touch_at |
+| LATEST attribution (9) | last_acquisition_provider, last_utm_source, last_utm_medium, last_utm_campaign, last_utm_content, last_utm_term, last_campaign_key, last_landing_slug, last_touch_at |
 
-- `app/.env.example`
-- `app/app/Actions/Fortify/CreateNewUser.php`
-- `app/app/Http/Controllers/PartnerApplicationController.php`
-- `app/app/Http/Controllers/Settings/ProfileController.php`
-- `app/app/Http/Requests/Settings/ProfileUpdateRequest.php`
-- `app/app/Models/PartnerApplication.php`
-- `app/app/Models/User.php`
-- `app/app/Providers/AppServiceProvider.php`
-- `app/app/Services/PartnerApplicationService.php`
-- `app/resources/js/pages/auth/register.tsx`
-- `app/resources/js/pages/cities/partner-application.tsx`
-- `app/resources/js/pages/settings/profile.tsx`
-- `app/resources/js/types/auth.ts`
-- `app/routes/console.php`
+FIRST selecciona el touch más temprano con occurred_at ASC/id ASC y congela snapshot coherente completo, incluidos nulos. Nunca rellena huecos con otro touch. LATEST el más reciente con occurred_at DESC/id DESC y actualiza sólo por reloj más nuevo. Cada snapshot contiene provider, cinco UTMs, campaign_key, landing_slug y touch_at del mismo touch.
 
-Created under /home/jakawi.com:
+source-meta/source-tiktok/source-google derivan únicamente del FIRST congelado. NONE no crea source tag; cambiar LATEST no cambia fuente FIRST. `campaign_key` proviene de LandingPresentation, no URL arbitraria ni activación de Campaign económica.
 
-- `app/app/Models/CrmContactLink.php`
-- `app/app/Models/CrmDelivery.php`
-- `app/app/Observers/CrmOutcomeObserver.php`
-- `app/app/Services/Crm/CrmBridgeClient.php`
-- `app/app/Services/Crm/CrmConfiguration.php`
-- `app/app/Services/Crm/CrmContactProjectionService.php`
-- `app/app/Services/Crm/CrmDeliveryDispatcher.php`
-- `app/config/crm.php`
-- `app/database/migrations/2026_10_09_180000_create_crm_foundation.php`
-- `app/tests/Feature/CrmFoundationTest.php`
-- `docs/CRM_FOUNDATION_V1.md`
+Identity no usa el native user_id de FluentCRM. Resolver provider_contact_id, luego jakawi_user_id, luego email normalizado. IDs incompatibles o email ocupado devuelven conflicto, sin merge automático. Signup/lead surface son first-write; actividad conserva timestamp máximo y tipo asociado. Membership request añade requested; activación retira requested/expired y añade active; expiración retira active y añade expired. Cancelled/pending no se etiquetan como expired.
 
-## Files created — plugin
+## Delivery contract y recuperación
 
-Under /home/crm.jakawi.com/public_html/wp-content/plugins/jakawi-fluentcrm-bridge:
+Payload `encrypted:array` en reposo y oculto de serialización. Event UUID persistente; envelope V1 CONTACT_UPSERT con occurred_at/source/contact/identity/listas/tags/fields/marketing. Nunca contiene secret. Headers X-Jakawi-Timestamp, X-Jakawi-Event-Id y X-Jakawi-Signature; HMAC SHA256 sobre timestamp + newline + UUID + newline + raw body. Ventana ±300 segundos; máximo 65536 bytes. Misma UUID/body idempotente; misma UUID/body distinto conflicto 409.
 
-- `.gitignore`
-- `CHANGELOG.md`
-- `README.md`
-- `includes/Adapter.php`
-- `includes/BridgeError.php`
-- `includes/Contract.php`
-- `includes/EventStore.php`
-- `includes/SchemaManager.php`
-- `jakawi-fluentcrm-bridge.php`
-- `tests/fixtures.php`
-- `tests/run.php`
+Acciones de dominio confirman antes de callbacks de CRM; fallos de enqueue/HTTP **nunca revierten una acción de producto**. No hay HTTP síncrono de CRM en requests del dominio. `crm_contact_links` guarda vínculo durable provider/user/contact con restricciones únicas; email server-side oculto. Borrar User elimina su vínculo por cascada pero deliveries cifrados sin FK User conservan historia; no hay purge CRM automático.
 
-## Contract finalization validation — 2026-10-09
+Estados: **PENDING → PROCESSING → SENT / RETRY / DEAD**. `crm:dispatch` corre cada minuto, withoutOverlapping(15), máximo 100 filas/40 segundos. Lock PostgreSQL FOR UPDATE SKIP LOCKED durante request; caída revierte claim. Conexión default 3s/HTTP 8s, caps 5s/10s. No requiere worker/container adicional.
 
-Docker PHP 8.4.26 only. Bridge: 112 assertions passed, all eight PHP files passed syntax checks. Laravel CRM focused: 19 tests / 114 assertions passed. Exactly one full Laravel suite: 524 passed, 1 failed, 6660 assertions, 131.12 seconds. The sole failure is the allowed CampaignTest::test_admin_can_create_campaign_and_non_admin_cannot baseline (403 versus expected redirect). No additional regression. Existing test container and isolated jakawi_test PostgreSQL were used, with HTTP fakes; no CRM runtime in Docker.
+Retry por red, 429, 5xx: **1m, 5m, 15m, 1h, 6h; máximo seis intentos**. Retry-After acotado 1m–6h. Errores permanentes (incluidos 400/409/422/401/403) o presupuesto agotado → DEAD. Éxito requiere OK y provider_contact_id positivo antes del vínculo. Tras primer intento UUID/body fijos; timestamp y firma se renuevan.
 
-Both repositories passed git diff --check, including whitespace checks for untracked files. No frontend source changed during this task; no Docker/Vite build. Live mutations: NONE. No provisioning, contacts, real secrets, webhook, plugin activation/deactivation, sync enablement, production migration, deploy, commit or push. Ready to version: SÍ.
+Requeue explícito de una fila elegible, sólo con autorización operativa:
 
-## REST endpoint compatibility and delivery requeue
+```bash
+docker compose exec app php artisan crm:requeue <deliveryId>
+```
 
-CRM accepts exactly two production HTTPS endpoint strings: `https://crm.jakawi.com/wp-json/jakawi-fluentcrm/v1/events` and `https://crm.jakawi.com/?rest_route=/jakawi-fluentcrm/v1/events`. The latter supports WordPress hosts without pretty REST rewrites and is sent unchanged. Other hosts, ports, userinfo, fragments, extra/duplicate query parameters and encoded variants fail closed. Redirect following remains disabled.
+Contrato del comando: **crm:requeue {deliveryId}**. Sólo DEAD/RETRY: cambia status a RETRY y next_attempt_at a ahora. Preserva **event_id, payload cifrado, source, attempts y historial de intento/creación**. No reinicia presupuesto, despacha ni habilita sync; rechaza inexistente/PENDING/PROCESSING/SENT. No reejecutar la acción comercial para reparar proyección.
 
-`php artisan crm:requeue <deliveryId>` requeues one DEAD or RETRY row under a transaction and row lock. It changes only status to RETRY and next_attempt_at to now; ciphertext, event ID, attempts, source and creation time remain intact. Missing rows and PENDING/PROCESSING/SENT rows are refused with a nonzero exit. It does not dispatch or enable sync. Run only in Docker PHP 8.4 and inspect the existing event before explicitly dispatching. Requeue retains the dispatcher's existing retry-attempt history and retry budget. Attribution campaign keys continue to derive from LandingPresentation, never arbitrary query parameters.
+## Automations actuales
+
+| # | Nombre exacto | Estado |
+| --- | --- | --- |
+| 1 | JAKAWI — Lead → Usuario V1 | DRAFT / INACTIVE |
+| 2 | JAKAWI — Onboarding Usuario V1 | DRAFT / INACTIVE |
+| 3 | JAKAWI — Membresía Solicitada V1 | DRAFT / INACTIVE |
+| 4 | JAKAWI — Onboarding Miembro V1 | DRAFT / INACTIVE |
+| 5 | JAKAWI — Partner Applicant V1 | PUBLISHED / ACTIVE |
+
+Partner Applicant: trigger tag **partner-applicant** añadido; **2 emails**, delay **2 días**, stop **jakawi-partner**. Publicar no enrola retroactivamente contactos. No incluir cuerpos de email, datos QA o contactos privados en repo. CRM sync activo no implica automations consumidor activas. Meta OFF en los tres flags; [Meta](../app/docs/meta-provider-v1.md).
+
+## WordPress / FluentCRM cron runbook
+
+Producción suministrada: page-load cron **DISABLE_WP_CRON=true**; **ALTERNATE_WP_CRON no habilitado**. Cron del servidor bajo usuario **crmja9127**, **cada minuto**, target **https://crm.jakawi.com/wp-cron.php?doing_wp_cron**, usando **flock + curl con timeout integrado** (`--connect-timeout 10 --max-time 50`); el wrapper actual no invoca el binario `timeout`. La entrada ejecuta `/home/crm.jakawi.com/bin/wordpress-cron` y registra en `/home/crm.jakawi.com/storage/logs/wordpress-cron.log`. Este es el cron WordPress; Laravel tiene scheduler independiente en [OPERATIONS](OPERATIONS.md).
+
+Comprobaciones de operación (read-only, en ventana autorizada):
+
+1. Revisar entrada efectiva de cron y resultados HTTP exitosos del target; sin ejecutar campañas como prueba.
+2. Confirmar timestamps del scheduler FluentCRM avanzan entre observaciones.
+3. Revisar locks y solapamientos: no borrar locks sin diagnosticar proceso y antigüedad.
+4. Revisar email backlog/errores y que no aumente inesperadamente; no reenviar ni enrolar masivamente para comprobar cron.
+5. Revisar counts/DEAD codes de Laravel y diagnostics de Bridge sin mostrar payload/PII/HMAC.
+
+HTTP exitoso por sí solo no prueba procesamiento de email. No habilitar page-load/alternate cron como solución improvisada. No reinstalar la entrada ni publicar automations por seguir este documento.
+
+## Fuentes y límites de consolidación
+
+Contrato cotejado con modelos/servicios/config/comando/routes Laravel y `includes/Contract.php`, SchemaManager, EventStore y Adapter del bridge. Runtime CRM/automations y endpoint routing son estado operativo suministrado, no hechos deducidos del código. En esta tarea se verificaron de forma estática los booleanos accesibles (CRM sync y WordPress page-load cron), crontab del usuario y wrapper WordPress, sin imprimir configuración privada; no se ejecutó WordPress ni se consultaron contactos/automations.
+
+Estado general: [CURRENT](CURRENT.md). Atribución/funnel: [Growth](growth-measurement-v1.md). Funciones: [manual](product/MANUAL_DE_FUNCIONES.md). Seguridad y diagnostics: [bridge README](https://github.com/soyjavierquiroz/jakawi-fluentcrm-bridge/blob/main/README.md).
+
+[Registro histórico de implementación y validación](history/CRM_FOUNDATION_IMPLEMENTATION.md) retenido sin reclamar autoridad operativa actual.

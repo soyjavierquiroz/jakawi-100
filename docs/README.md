@@ -1,26 +1,86 @@
-# Documentación JAKAWI
+# Índice de documentación JAKAWI
 
-Referencia: **2026-09-28**. El código actual es la fuente de verdad.
+Referencia: **2026-10-09**. Empieza por [CURRENT](CURRENT.md), el [Manual de Funciones](product/MANUAL_DE_FUNCIONES.md) y la [arquitectura](ARCHITECTURE.md). Para cargar oferta real, usa el [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md). Código de referencia y estado operativo se distinguen en CURRENT; los históricos no son runbooks.
 
-## Producto operativo
+## Product
 
-- [CURRENT.md](CURRENT.md): handbook canónico: actores, Membership, Benefits, Experiences, attribution, JP, Unlocks, Reputation, Admin y piloto.
-- [PRODUCT.md](PRODUCT.md), [DOMAIN.md](DOMAIN.md), [UX-MVP.md](UX-MVP.md).
+- [Manual de Funciones](product/MANUAL_DE_FUNCIONES.md): fuente funcional para producto, soporte, operaciones, comercial y developers.
+- [PRODUCT](PRODUCT.md): resumen de propuesta; [DOMAIN](DOMAIN.md): entidades; [UX-MVP](UX-MVP.md): convenciones de navegación.
+- [UNLOCKS](UNLOCKS.md): mecanismo colectivo; [Cities V1](cities-v1.md): estados/localidad/aplicaciones.
+- [ROADMAP](ROADMAP.md): futuro explícitamente no operativo.
 
-## Arquitectura y operaciones
+## Architecture
 
-- [ARCHITECTURE.md](ARCHITECTURE.md), [OPERATIONS.md](OPERATIONS.md), [MEDIA.md](MEDIA.md), [PAYMENTS.md](PAYMENTS.md), [DEPLOYMENT.md](DEPLOYMENT.md).
+- [CURRENT](CURRENT.md): **fuente del estado de producción y límites actuales**.
+- [ARCHITECTURE](ARCHITECTURE.md): dominios, runtime y límites Product Detail/marketing/proyección.
+- [MEDIA](MEDIA.md): almacenamiento privado y entrega de imágenes.
+- [PAYMENTS](PAYMENTS.md): contrato QR preparado, deshabilitado.
 
-## Economía y adquisición
+## Development
 
-- [ATTRIBUTION.md](ATTRIBUTION.md), [MANUAL-SALES.md](MANUAL-SALES.md), [AFFILIATES.md](AFFILIATES.md), [CREATORS.md](CREATORS.md), [MEMBER-REFERRALS.md](MEMBER-REFERRALS.md), [CAMPAIGNS.md](CAMPAIGNS.md).
+- [README raíz](../README.md): estructura y comandos básicos Docker.
+- [OPERATIONS](OPERATIONS.md): ejecución segura, aislamiento y baseline conocido.
+- [README aplicación](../app/README.md): entrada a Laravel/React.
+- [DESIGN-SYSTEM](DESIGN-SYSTEM.md), [ejemplos](examples/README.md): referencias de diseño.
 
-## Piloto y futuro
+## Deployment
 
-- [ROADMAP.md](ROADMAP.md): límites MVP y estrategia futura; Desbloqueos Comerciales no está implementado.
-- [LAUNCH-READINESS.md](LAUNCH-READINESS.md): checklist operativo; contrastar con CURRENT antes de decidir un release.
+- [DEPLOYMENT](DEPLOYMENT.md): política de producción directa y enlace al procedimiento.
+- [OPERATIONS](OPERATIONS.md): runbook canónico de deploy/backups/rollback/disco.
 
-## Históricos y diseño
+## Operations
 
-- [MVP.md](MVP.md), [STATUS.md](STATUS.md) e [INCIDENTS.md](INCIDENTS.md) son históricos.
-- [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) y [examples/README.md](examples/README.md) son referencias, no especificaciones funcionales.
+- [OPERATIONS](OPERATIONS.md): scheduler Docker PHP 8.4, seguridad DB y Docker.
+- [CRM](CRM_FOUNDATION_V1.md): automations actuales y cron WordPress/FluentCRM.
+- [MANUAL-SALES](MANUAL-SALES.md): ventas manuales; [CONVERSION](CONVERSION.md): pipeline económico.
+
+## CRM
+
+- [CRM V1](CRM_FOUNDATION_V1.md): fuente de arquitectura/contrato/schema y estado operativo CRM.
+- [Bridge 1.0.1](https://github.com/soyjavierquiroz/jakawi-fluentcrm-bridge/blob/main/README.md): seguridad, configuración/provisioning y diagnostics de plugin.
+
+## Growth / Attribution
+
+- [Growth Measurement V1](growth-measurement-v1.md): nueve eventos, funnel y contexto de adquisición.
+- [Meta Provider V1](../app/docs/meta-provider-v1.md): Pixel+CAPI implementados, producción OFF.
+- [ATTRIBUTION](ATTRIBUTION.md): referido/economía; [CAMPAIGNS](CAMPAIGNS.md): reglas económicas.
+- [MEMBER-REFERRALS](MEMBER-REFERRALS.md), [AFFILIATES](AFFILIATES.md), [CREATORS](CREATORS.md), [PARTNER-ACQUISITION](PARTNER-ACQUISITION.md): mecanismos específicos.
+
+## Inventory
+
+- [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md): **fuente operativa de carga real**, lifecycle, checklist, publicación y piloto.
+- [Manual de Funciones](product/MANUAL_DE_FUNCIONES.md): comportamiento y recorridos que la oferta debe respetar.
+
+## QA / Runbooks
+
+- [OPERATIONS](OPERATIONS.md): wrapper aislado, frontend-check temporal, prohibiciones y baseline CampaignTest.
+- [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md): checklist Guest/User/Member, disponibilidad y móvil 390px.
+- [CRM](CRM_FOUNDATION_V1.md): delivery/requeue y cron sin mutaciones improvisadas.
+- [Historial CRM](history/CRM_FOUNDATION_IMPLEMENTATION.md): validación anterior, HISTORICAL / REFERENCE.
+
+## Inventario de autoridad y referencias retenidas
+
+| Ruta | Propósito | Audiencia | Estado |
+| --- | --- | --- | --- |
+| ../README.md | Entrada y ejecución básica | Developers | CURRENT / entrada |
+| README.md | Índice único y autoridad | Todos | CURRENT / índice |
+| CURRENT.md | Estado productivo | Producto/dev/ops | AUTHORITATIVE |
+| ARCHITECTURE.md | Dominios y runtime | Developers/producto | AUTHORITATIVE |
+| product/MANUAL_DE_FUNCIONES.md | Uso y recorridos reales | Producto/ops/soporte/comercial/dev | AUTHORITATIVE |
+| operations/MANUAL_DE_INVENTARIO.md | Carga comercial real | Comercial/ops/producto/Admin | AUTHORITATIVE |
+| CRM_FOUNDATION_V1.md | Contrato y operación CRM | Developers/ops CRM | AUTHORITATIVE |
+| growth-measurement-v1.md | Analytics canónicos y adquisición | Growth/dev/producto | AUTHORITATIVE |
+| ../app/docs/meta-provider-v1.md | Implementación Meta | Developers/ops | AUTHORITATIVE / OFF |
+| OPERATIONS.md | Procedimientos técnicos | Developers/ops | AUTHORITATIVE |
+| DEPLOYMENT.md | Política/enlace a runbook | Developers/ops | CURRENT / navegación |
+| DOMAIN.md, PRODUCT.md, UX-MVP.md | Entidades/resumen/navegación | Producto/dev | CURRENT / referencia delimitada |
+| UNLOCKS.md, cities-v1.md | Mecánicas específicas | Producto/dev/ops | CURRENT / referencia específica |
+| ATTRIBUTION.md, CONVERSION.md, CAMPAIGNS.md | Economía y referidos | Growth/comercial/dev | CURRENT / referencia específica |
+| MANUAL-SALES.md, AFFILIATES.md, CREATORS.md, MEMBER-REFERRALS.md, PARTNER-ACQUISITION.md | Operación económica por actor | Comercial/ops/dev | CURRENT / referencia específica |
+| MEDIA.md, PAYMENTS.md | Media / contrato QR deshabilitado | Developers/ops | CURRENT / referencia específica |
+| ROADMAP.md | Estrategia futura | Producto/comercial | REFERENCE / no operativo |
+| MVP.md, STATUS.md, INCIDENTS.md, LAUNCH-READINESS.md, history/CRM_FOUNDATION_IMPLEMENTATION.md | Contexto/snapshots anteriores | Producto/dev/ops | HISTORICAL / REFERENCE |
+| DESIGN-SYSTEM.md, examples/README.md | Diseño/ejemplos | Diseño/dev | REFERENCE |
+| ../CHANGELOG.md | Historia de cambios | Developers/ops | REFERENCE |
+
+Los documentos breves remiten a su fuente canónica; no sustituyen los manuales. Histórico de tests/hotfix del bridge permanece en su repositorio y Git, separado del estado operativo actual.

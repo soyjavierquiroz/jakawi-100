@@ -1,5 +1,7 @@
 # Incidentes y lecciones
 
+**HISTORICAL / REFERENCE.** Hechos anteriores retenidos; el runbook vigente es [OPERATIONS](OPERATIONS.md).
+
 ## `migrate:fresh` accidental en QA
 
 **Síntoma:** un reset destructivo se dirigió a un entorno que no debía recibirlo.

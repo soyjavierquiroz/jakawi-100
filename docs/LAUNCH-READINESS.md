@@ -1,6 +1,6 @@
 # JAKAWI — Launch Readiness V1
 
-**STATUS: ARCHIVED SNAPSHOT (2026-09-27).** Sus comprobaciones de ese día no sustituyen el estado actual: [CURRENT.md](CURRENT.md) establece *implementation ready / functional environment verification pending* para el código al 2026-09-28.
+**STATUS: HISTORICAL / REFERENCE — snapshot 2026-09-27.** Las comprobaciones de ese día no prueban el estado actual ni readiness comercial. Usar [CURRENT](CURRENT.md) y el [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md) para preparar el piloto real.
 
 Audited on 2026-09-27 against production commit `d0238f5bb9780a1e70b69473f02efedfec2d7a95`. This is an operational checklist; no production records were created or changed.
 

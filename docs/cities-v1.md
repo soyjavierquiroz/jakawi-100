@@ -35,4 +35,4 @@ promoter payouts.
 Deferred: home_city_id, geolocation, city memberships/wallets/JP/pricing,
 automatic expansion scores or activation, application-to-partner creation,
 interest rewards, pre-sales, multi-country mechanics, advanced applicant CRM
-or contact merge, and national search.
+or contact merge beyond the current secure contact projection, and national search.

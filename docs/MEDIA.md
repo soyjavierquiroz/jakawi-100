@@ -27,7 +27,7 @@ imgproxy se sirve por `img.jakawi.com` → OpenLiteSpeed → `127.0.0.1:8082`; l
 
 Como referencia de la migración, un hero PNG de 1774×887 y 2.349.286 bytes se redujo a WebP 1280×800 de 126.704 bytes; una card PNG de 1774×887 y 1.866.729 bytes a WebP 720×480 de 42.624 bytes.
 
-Se aceptan JPEG, PNG y WebP, hasta 10 MB y 50.000.000 píxeles. SVG se rechaza para nuevas cargas. Los SVG locales legacy se conservan como comportamiento histórico/fallback, no son parte de las nuevas cargas MinIO. La migración ejecutada trasladó 59 objetos a MinIO, omitió intencionalmente 31 SVG locales y terminó con 0 fallos; los originales locales fueron preservados. El comando existente `php artisan jakawi:migrate-media-to-minio` hace dry-run por defecto; `--apply` persiste y debe usarse sólo con alcance y entorno verificados.
+Se aceptan JPEG, PNG y WebP, hasta 10 MB y 50.000.000 píxeles. SVG se rechaza para nuevas cargas. Los SVG locales legacy se conservan como comportamiento histórico/fallback, no son parte de las nuevas cargas MinIO. La migración ejecutada trasladó 59 objetos a MinIO, omitió intencionalmente 31 SVG locales y terminó con 0 fallos; los originales locales fueron preservados. El comando existente, sólo dentro de Docker PHP 8.4, `php artisan jakawi:migrate-media-to-minio` hace dry-run por defecto; `--apply` persiste y debe usarse sólo con alcance y entorno verificados.
 
 ## Operación y advertencia crítica
 

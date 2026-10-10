@@ -15,3 +15,5 @@ La conversión conserva `campaign_id` y `campaign_code` en su snapshot de atribu
 ## Tracking y métricas
 
 Los enlaces usan `/r/{code}?utm_campaign={campaign-code}&utm_content={content}`. `utm_content` queda libre y sanitizado por los portales. Métricas de Campaign se calculan desde AttributionTouch, Conversion confirmada y RewardTransaction no cancelada; conversiones reembolsadas no cuentan para revenue activo.
+
+`campaign_key` de LandingPresentation es contexto de adquisición controlado, no activa Campaign económica ni acepta override arbitrario de URL. Taxonomía canónica: [Growth](growth-measurement-v1.md).
