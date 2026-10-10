@@ -1,0 +1,66 @@
+{
+  "name": "jakawi-vsl-test",
+  "services": {
+    "db-test": {
+      "image": "postgres:16-alpine",
+      "environment": {
+        "POSTGRES_DB": "${POSTGRES_DB:?dedicated environment required}",
+        "POSTGRES_USER": "${POSTGRES_USER:?dedicated environment required}",
+        "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD:?dedicated environment required}"
+      },
+      "volumes": [
+        "pgdata:/var/lib/postgresql/data"
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""
+        ],
+        "interval": "5s",
+        "timeout": "5s",
+        "retries": 10
+      },
+      "restart": "no"
+    },
+    "app-test": {
+      "image": "jakawi-vsl-test-app:local",
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/Dockerfile.vsl",
+        "target": "runtime"
+      },
+      "env_file": [
+        ".env.vsl-test"
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        "uploads:/var/www/html/storage/app/public"
+      ],
+      "depends_on": {
+        "db-test": {
+          "condition": "service_healthy"
+        }
+      },
+      "restart": "no"
+    }
+  },
+  "networks": {
+    "isolated": {
+      "name": "jakawi-vsl-test-network",
+      "internal": true
+    }
+  },
+  "volumes": {
+    "pgdata": {
+      "name": "jakawi-vsl-test-pgdata"
+    },
+    "uploads": {
+      "name": "jakawi-vsl-test-uploads"
+    }
+  }
+}

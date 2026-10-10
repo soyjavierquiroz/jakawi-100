@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd -- "$script_dir/.."
+refuse() { echo 'REFUSED: VSL isolation guard failed.' >&2; exit 78; }
+[[ "${VSL_ENV_CONFIRM:-}" == 'jakawi-vsl-test' ]] || refuse
+[[ "${APP_ENV:-testing}" == testing ]] || refuse
+[[ "${DB_HOST:-db-test}" == db-test ]] || refuse
+[[ "${DB_DATABASE:-jakawi_vsl_test}" == jakawi_vsl_test ]] || refuse
+[[ -z "${DB_URL:-}" && -z "${DATABASE_URL:-}" ]] || refuse
+[[ "${COMPOSE_PROJECT_NAME:-jakawi-vsl-test}" == jakawi-vsl-test ]] || refuse
+[[ -z "${COMPOSE_FILE:-}" && -z "${COMPOSE_ENV_FILES:-}" ]] || refuse
+python3 bin/check-vsl-isolation.py test
+[[ "${1:-}" == --check ]] && exit 0
+[[ $# == 0 || ( "$1" == php && "${2:-}" == artisan && "${3:-}" == test && $# == 3 ) ]] || refuse
+mkdir -p .vsl-state
+exec 9>.vsl-state/test.lock
+flock -n 9 || refuse
+compose=(docker compose --project-name jakawi-vsl-test --env-file .env.vsl-test -f compose.vsl-test.yaml)
+"${compose[@]}" up -d --build db-test app-test
+# Verify effective Laravel configuration, not just container environment.
+"${compose[@]}" exec -T app-test php -r '
+require "vendor/autoload.php";
+$app=require "bootstrap/app.php";
+$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+$c=config("database.connections.pgsql");
+if(app()->environment()!=="testing" || config("database.default")!=="pgsql" || $c["host"]!=="db-test" || $c["database"]!=="jakawi_vsl_test" || !empty($c["url"])) exit(78);
+'
+"${compose[@]}" exec -T app-test php artisan test --configuration=phpunit.vsl.xml

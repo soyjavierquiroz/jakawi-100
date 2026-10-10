@@ -25,3 +25,5 @@
 /backups/
 /public_html/
 /.docker-data/
+
+/.vsl-state/

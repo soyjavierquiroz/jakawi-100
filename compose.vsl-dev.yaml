@@ -1,0 +1,110 @@
+{
+  "name": "jakawi-vsl-dev",
+  "services": {
+    "db": {
+      "image": "postgres:16-alpine",
+      "environment": {
+        "POSTGRES_DB": "${POSTGRES_DB:?dedicated environment required}",
+        "POSTGRES_USER": "${POSTGRES_USER:?dedicated environment required}",
+        "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD:?dedicated environment required}"
+      },
+      "volumes": [
+        "pgdata:/var/lib/postgresql/data"
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""
+        ],
+        "interval": "5s",
+        "timeout": "5s",
+        "retries": 10
+      },
+      "restart": "no"
+    },
+    "app": {
+      "image": "jakawi-vsl-dev-app:local",
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/Dockerfile.vsl",
+        "target": "runtime"
+      },
+      "env_file": [
+        ".env.vsl-dev"
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        "uploads:/var/www/html/storage/app/public"
+      ],
+      "depends_on": {
+        "db": {
+          "condition": "service_healthy"
+        }
+      },
+      "restart": "no"
+    },
+    "web": {
+      "image": "jakawi-vsl-dev-web:local",
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/Dockerfile.vsl",
+        "target": "web"
+      },
+      "ports": [
+        "127.0.0.1:8093:80"
+      ],
+      "volumes": [
+        "uploads:/var/www/html/public/storage:ro"
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "depends_on": [
+        "app"
+      ],
+      "restart": "no"
+    },
+    "frontend-check": {
+      "image": "jakawi-vsl-dev-tools:local",
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/Dockerfile.vsl",
+        "target": "tools"
+      },
+      "env_file": [
+        ".env.vsl-dev"
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "profiles": [
+        "checks"
+      ],
+      "command": [
+        "npm",
+        "run",
+        "types:check"
+      ],
+      "restart": "no"
+    }
+  },
+  "networks": {
+    "isolated": {
+      "name": "jakawi-vsl-dev-network",
+      "internal": true
+    }
+  },
+  "volumes": {
+    "pgdata": {
+      "name": "jakawi-vsl-dev-pgdata"
+    },
+    "uploads": {
+      "name": "jakawi-vsl-dev-uploads"
+    }
+  }
+}
