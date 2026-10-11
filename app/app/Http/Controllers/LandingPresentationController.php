@@ -48,6 +48,7 @@ class LandingPresentationController extends Controller
             app(\App\Services\GrowthMeasurementService::class)->landingView($presentation, $touch);
         }
         $shared = [
+            'vsl'=>app(\App\Services\LandingVideoConfiguration::class)->forPresentation($presentation),
             'presentation'=>$presentation->only(['id','name','slug','status','default_scope','campaign_key','hero_alt']),
             'nativeUrl'=>$resolver->nativeUrl($subject), 'preview'=>$preview,
             'canonical'=>$presentation->default_scope === 'ALL' ? route('landing-presentations.show',$presentation->slug) : $resolver->nativeUrl($subject),

@@ -1,3 +1,4 @@
+import { LandingVideo, type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import { Head, Link, router } from '@inertiajs/react';
 import { useRef } from 'react';
@@ -7,6 +8,7 @@ import { StatusBanner } from '@/components/state-panel';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
 
 type Props = {
+    vsl?: LandingVideoConfig | null;
     benefit: { slug:string; title:string; terms:string|null };
     presentation: { hero_alt:string|null };
     copy: {
@@ -19,7 +21,7 @@ type Props = {
     heroUrl:string|null;nativeUrl:string;canonical:string;noindex:boolean;preview:boolean;
 };
 
-export default function BenefitLanding({ benefit,presentation,copy,heroUrl,nativeUrl,canonical,noindex,preview }:Props) {
+export default function BenefitLanding({ vsl, benefit,presentation,copy,heroUrl,nativeUrl,canonical,noindex,preview }:Props) {
     const sent=useRef(false);
     const disabled=preview||copy.action.kind==='unavailable';
     const action={...copy.action,disabled,href:disabled?'#condiciones':copy.action.href,onClick:(event:React.MouseEvent<HTMLAnchorElement>)=>{
@@ -33,7 +35,7 @@ export default function BenefitLanding({ benefit,presentation,copy,heroUrl,nativ
         <main onClickCapture={trackGrowthClick} className="overflow-x-clip break-words">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 {preview&&<StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mt-5"/>}
-                <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={copy.subheadline} action={action} aside={<div className="overflow-hidden rounded-[var(--radius-card)] bg-surface-muted shadow-featured">{heroUrl&&<JakawiImage src={heroUrl} alt={presentation.hero_alt||benefit.title} className="aspect-[4/3] w-full object-cover" loading="eager" priority/>}<div className="p-6"><p className="discovery-eyebrow text-brand">EN {copy.partner}</p><p className="mt-3 break-words text-3xl leading-tight font-extrabold">{copy.value}</p><p className="mt-4 text-sm text-foreground-soft">{copy.membership}</p>{copy.deadline&&<p className="mt-3 text-sm font-bold">Válido hasta el {copy.deadline}</p>}</div></div>}/>
+                <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={copy.subheadline} action={action} aside={<div className="overflow-hidden rounded-[var(--radius-card)] bg-surface-muted shadow-featured">{vsl ? <LandingVideo config={vsl}/> : (heroUrl&&<JakawiImage src={heroUrl} alt={presentation.hero_alt||benefit.title} className="aspect-[4/3] w-full object-cover" loading="eager" priority/>)}<div className="p-6"><p className="discovery-eyebrow text-brand">EN {copy.partner}</p><p className="mt-3 break-words text-3xl leading-tight font-extrabold">{copy.value}</p><p className="mt-4 text-sm text-foreground-soft">{copy.membership}</p>{copy.deadline&&<p className="mt-3 text-sm font-bold">Válido hasta el {copy.deadline}</p>}</div></div>}/>
                 <section aria-label="Tu beneficio" className="rounded-[var(--radius-card)] bg-brand p-7 text-brand-foreground sm:p-10"><p className="discovery-eyebrow">TU BENEFICIO</p><h2 className="mt-3 break-words text-4xl leading-tight font-extrabold uppercase sm:text-5xl">{copy.value}</h2><p className="mt-4 font-bold">En {copy.partner}</p>{copy.description&&<p className="mt-4 max-w-3xl leading-7 whitespace-pre-line">{copy.description}</p>}{copy.valueNote&&<p className="mt-4 text-sm">{copy.valueNote}</p>}</section>
                 <MarketingBenefits eyebrow="POR QUÉ APROVECHARLO" title="CONOCE LO QUE OBTIENES" items={copy.benefits}/>
                 <section className="border-t border-border py-14 sm:py-20"><p className="discovery-eyebrow text-brand">CÓMO FUNCIONA</p><h2 className="mt-3 text-3xl font-extrabold uppercase sm:text-5xl">TU BENEFICIO EN TRES PASOS</h2><div className="mt-10 grid gap-7 md:grid-cols-3">{copy.steps.map((step,index)=><article key={step.title} className="border-t border-border pt-5"><span className="text-sm font-extrabold text-brand">0{index+1}</span><h3 className="mt-4 text-xl font-extrabold">{step.title}</h3><p className="mt-3 leading-7 text-foreground-soft">{step.description}</p></article>)}</div></section>

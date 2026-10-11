@@ -1,3 +1,4 @@
+import { LandingVideo, type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { JakawiImage } from '@/components/jakawi-image';
@@ -7,6 +8,7 @@ import Show from '@/pages/social-challenges/show';
 import type { ComponentProps } from 'react';
 
 type Props = ComponentProps<typeof Show> & {
+    vsl?: LandingVideoConfig | null;
     presentation: { id:number; name:string; slug:string; default_scope:'NONE'|'GUESTS'|'ALL'; hero_alt:string|null };
     copy: { eyebrow:string; headline:string; subheadline:string; reward:string; rewardType:string; rewardNote:string|null; rewardDetail:string|null; deadline:string|null; qualification:string; selection:string; membership:string; review:string; benefits:Array<{title:string;description:string}>; steps:Array<{title:string;description:string}>; rules:Array<{title:string;description:string}>; faq:Array<{question:string;answer:string}>; finalHeadline:string };
     nativeUrl:string; canonical:string; noindex:boolean;
@@ -14,7 +16,7 @@ type Props = ComponentProps<typeof Show> & {
 
 function formattedDate(value:string|null) { return value ? new Intl.DateTimeFormat('es-BO',{dateStyle:'long',timeStyle:'short'}).format(new Date(value)) : null; }
 
-export default function ChallengeLanding({ presentation, copy, nativeUrl, canonical, noindex, ...challengeProps }:Props) {
+export default function ChallengeLanding({ vsl, presentation, copy, nativeUrl, canonical, noindex, ...challengeProps }:Props) {
     const {auth}=usePage().props as {auth:{user?:{id:number}|null}};
     const participating=Boolean(challengeProps.participation);
     const grant=challengeProps.grant;
@@ -32,7 +34,7 @@ export default function ChallengeLanding({ presentation, copy, nativeUrl, canoni
         {challengeProps.preview&&<div className="mx-auto max-w-6xl px-4 pt-5"><StatusBanner title="VISTA PREVIA" description="Esta presentación aún no está disponible públicamente."/></div>}
         <main onClickCapture={trackGrowthClick}>
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={copy.subheadline} action={{...action, kind: membershipRequired ? 'membership' : (!participating && !closed ? 'participate' : 'other')}} aside={<div className="overflow-hidden rounded-[var(--radius-card)] bg-surface-muted shadow-featured">{challengeProps.heroUrl&&<JakawiImage src={challengeProps.heroUrl} alt={presentation.hero_alt || challengeProps.challenge.title} className="aspect-[4/3] w-full object-cover" loading="eager" priority/>}<div className="p-6"><p className="discovery-eyebrow text-brand">PREMIO DEL RETO</p><p className="mt-2 text-2xl font-extrabold">{copy.reward}</p>{copy.deadline&&<p className="mt-3 text-sm text-muted-foreground">Cierra el {formattedDate(copy.deadline)}</p>}</div></div>}/>
+                <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={copy.subheadline} action={{...action, kind: membershipRequired ? 'membership' : (!participating && !closed ? 'participate' : 'other')}} aside={<div className="overflow-hidden rounded-[var(--radius-card)] bg-surface-muted shadow-featured">{vsl ? <LandingVideo config={vsl}/> : (challengeProps.heroUrl&&<JakawiImage src={challengeProps.heroUrl} alt={presentation.hero_alt || challengeProps.challenge.title} className="aspect-[4/3] w-full object-cover" loading="eager" priority/>)}<div className="p-6"><p className="discovery-eyebrow text-brand">PREMIO DEL RETO</p><p className="mt-2 text-2xl font-extrabold">{copy.reward}</p>{copy.deadline&&<p className="mt-3 text-sm text-muted-foreground">Cierra el {formattedDate(copy.deadline)}</p>}</div></div>}/>
                 <section className="rounded-[var(--radius-card)] bg-foreground p-7 text-background sm:p-10" aria-label="Premio"><p className="text-xs font-extrabold tracking-[0.18em] text-background/70">TU PREMIO</p><h2 className="mt-3 text-4xl font-extrabold uppercase sm:text-5xl">{copy.reward}</h2>{copy.rewardDetail&&<p className="mt-4 max-w-2xl leading-7 text-background/80">{copy.rewardDetail}</p>}<p className="mt-4 max-w-2xl leading-7 text-background/80">{copy.selection}</p>{copy.rewardNote&&<p className="mt-4 text-sm text-background/70">{copy.rewardNote}</p>}</section>
                 <MarketingBenefits eyebrow="POR QUÉ PARTICIPAR" title="UN RETO CON UN RESULTADO CLARO" items={copy.benefits}/>
                 <section className="border-t border-border py-14 sm:py-20"><p className="discovery-eyebrow text-brand">CÓMO FUNCIONA</p><h2 className="mt-3 text-3xl font-extrabold uppercase sm:text-5xl">TRES PASOS PARA PARTICIPAR</h2><div className="mt-10 grid gap-7 md:grid-cols-3">{copy.steps.map((step,index)=><article key={step.title} className="border-t border-border pt-5"><span className="text-sm font-extrabold text-brand">0{index+1}</span><h3 className="mt-4 text-xl font-extrabold">{step.title}</h3><p className="mt-3 leading-7 text-foreground-soft">{step.description}</p></article>)}</div></section>

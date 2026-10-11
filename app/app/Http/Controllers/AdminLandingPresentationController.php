@@ -32,6 +32,7 @@ class AdminLandingPresentationController extends Controller
         $subject = $this->subject($request);
         if ($presentation) $this->belongsTo($subject, $presentation);
         $data = $request->validate([
+            ...\App\Services\LandingVideoConfiguration::rules(),
             'name'=>['required','string','max:255'],
             'slug'=>['required','alpha_dash','max:255',Rule::unique('landing_presentations','slug')->ignore($presentation?->id)],
             'campaign_key'=>['nullable','string','max:255','regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
