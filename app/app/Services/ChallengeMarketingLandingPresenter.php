@@ -36,8 +36,15 @@ class ChallengeMarketingLandingPresenter
         };
         $action = $challenge->evidence_type === 'SOCIAL_POST' ? 'Publica según las instrucciones del reto.' : ($challenge->instructions ?: 'Sigue las instrucciones del reto.');
         $steps = $challenge->evidence_type === 'SOCIAL_POST'
-            ? [['title'=>'Publica','description'=>$action],['title'=>'Envía tu enlace','description'=>'Comparte la URL de tu publicación para verificarla.'],['title'=>'Cumple la meta y recibe tu resultado','description'=>$qualification.' '.$selection]]
+            ? [['title'=>'Publica','description'=>$action],['title'=>'Envía tu enlace','description'=>'Ingresa con tu cuenta y correo verificado. Comparte la URL de tu publicación para verificarla.'],['title'=>'JAKAWI verifica','description'=>'Sigue el estado de tu publicación y recibe el resultado después de la verificación.']]
             : [['title'=>'Participa','description'=>'Ingresa con tu cuenta JAKAWI y participa.'],['title'=>'Cumple el reto','description'=>$action],['title'=>'Recibe tu resultado','description'=>$qualification.' '.$selection]];
+        $mechanism = $action;
+        if ($challenge->evidence_type === 'SOCIAL_POST') {
+            $platforms = implode(' o ', array_map('ucfirst', $challenge->allowed_platforms ?? []));
+            $hashtags = implode(' ', $challenge->required_hashtags ?? []);
+            $mentions = implode(' ', $challenge->required_mentions ?? []);
+            $mechanism = 'Publica'.($platforms ? ' en '.$platforms : '').($hashtags ? ' con '.$hashtags : '').($mentions ? ' y menciona '.$mentions : '').'. Envía tu enlace para que JAKAWI verifique el reto.';
+        }
         $membership = $challenge->participation_eligibility === 'ACTIVE_MEMBERS' ? 'Necesitas membresía activa para participar.' : ($challenge->reward_eligibility === 'ACTIVE_MEMBERS' ? 'Puedes participar gratis; necesitas membresía activa para recibir el premio.' : 'No necesitas membresía activa para participar ni para recibir el premio.');
         $rules = [
             ['title'=>'Qué hacer','description'=>$action], ['title'=>'Cómo calificas','description'=>$qualification],
@@ -58,6 +65,8 @@ class ChallengeMarketingLandingPresenter
         return [
             'eyebrow'=>$this->editorial($landing->eyebrow) ?: 'RETO JAKAWI', 'headline'=>$this->editorial($landing->headline) ?: ($this->editorial($challenge->marketing_headline) ?: $headline),
             'subheadline'=>trim(($editorialSubheadline ? $editorialSubheadline.' ' : '').$qualification.' '.$selection),
+            'mechanism'=>$mechanism,
+            'confidence'=>$selection.($challenge->reward_eligibility === 'ACTIVE_MEMBERS' ? ' Necesitas membresía activa para recibir el premio.' : ''),
             'reward'=>$reward, 'rewardType'=>$challenge->reward_type, 'rewardNote'=>$this->editorial($landing->reward_display_override) ?: $this->editorial($challenge->marketing_reward_copy),
             'rewardDetail'=>$challenge->reward_type === 'BENEFIT' ? ($challenge->benefit?->short_description ?: $challenge->benefit?->description) : null,
             'deadline'=>$challenge->ends_at?->toIso8601String(), 'qualification'=>$qualification, 'selection'=>$selection,
