@@ -1,6 +1,8 @@
 # Autonomía nativa del reproductor JAKAWI
 
-Auditoría local: 11 de octubre de 2026. No se implementaron funcionalidades nuevas.
+Auditoría histórica local: 11 de octubre de 2026, previa al merge principal. No se implementaron funcionalidades nuevas.
+
+Manual canónico: [JAKAWI_VIDEO_PLAYER.md](JAKAWI_VIDEO_PLAYER.md). Este documento conserva la auditoría de autonomía; sus resultados de build/tests son evidencia anterior, no una nueva ejecución durante el cierre documental. El estado Git/runtime actual está en el manual.
 
 ## Resultado
 
@@ -86,4 +88,4 @@ Se conservan fuera del commit los cambios previos de `app/dev/vsl-demo/`, el tes
 opcional ligado a esa demo `app/tests/media/course-browser.test.mjs` y los informes
 de desarrollo `docs/VSL_COURSE.md`/`docs/VSL_MARKETING.md`.
 
-No hubo push, deploy, migración de producción ni cambios en `/home/jakawi.com`.
+Durante aquella auditoría no hubo push, deploy, migración de producción ni cambios en `/home/jakawi.com`. Esa frase es histórica: el cierre posterior observó el player en el principal y la migración aplicada. Consultar el [estado de entrega](JAKAWI_VIDEO_PLAYER.md#estado-de-entrega-y-evidencia) para evidencia y límites actuales.

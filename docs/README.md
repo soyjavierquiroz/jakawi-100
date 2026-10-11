@@ -18,6 +18,8 @@ Referencia: **2026-10-09**. Empieza por [CURRENT](CURRENT.md), el [Manual de Fun
 
 ## Development
 
+- [Jakawi Video Player](JAKAWI_VIDEO_PLAYER.md): manual canónico de integración React/Inertia, API, ejemplos y estado de entrega; [integración](VSL_INTEGRATION.md) y [autonomía](VSL_AUTONOMY.md) conservan evidencia especializada.
+
 - [README raíz](../README.md): estructura y comandos básicos Docker.
 - [OPERATIONS](OPERATIONS.md): ejecución segura, aislamiento y baseline conocido.
 - [README aplicación](../app/README.md): entrada a Laravel/React.
