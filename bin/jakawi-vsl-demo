@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Standalone loopback Vite demo; no Laravel routes, source mounts or production media.
+set -euo pipefail
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+[[ $(git branch --show-current) == feat/jakawi-vsl-v1 ]] || exit 78
+[[ -z ${COMPOSE_FILE:-} && -z ${COMPOSE_ENV_FILES:-} ]] || exit 78
+python3 bin/check-vsl-isolation.py dev
+vsl_demo_container=jakawi-vsl-dev-demo
+vsl_demo_web=jakawi-vsl-dev-demo-web
+if [[ ${1:-} == --stop && $# == 1 ]]; then
+    for vsl_stop_container in "$vsl_demo_web" "$vsl_demo_container"; do
+        if docker inspect "$vsl_stop_container" >/dev/null 2>&1; then
+            [[ $(docker inspect -f '{{ index .Config.Labels "com.docker.compose.project" }}' "$vsl_stop_container") == jakawi-vsl-dev ]] || exit 78
+            [[ $(docker inspect -f '{{ index .Config.Labels "jakawi.vsl.demo" }}' "$vsl_stop_container") == alpha ]] || exit 78
+            docker rm -f "$vsl_stop_container" >/dev/null
+        fi
+    done
+    exit 0
+fi
+[[ $# == 0 ]] || exit 78
+command -v ffmpeg >/dev/null
+# Never replace an existing container or copy private media.
+if docker inspect "$vsl_demo_container" >/dev/null 2>&1 || docker inspect "$vsl_demo_web" >/dev/null 2>&1; then
+    echo 'Demo container already exists. Use bin/jakawi-vsl-demo --stop first.' >&2
+    exit 78
+fi
+mkdir -p .vsl-state/demo-fixture
+ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'testsrc2=size=180x320:rate=24' -f lavfi -i 'sine=frequency=440:sample_rate=44100' -t 6 -c:v libx264 -threads 1 -pix_fmt yuv420p -c:a aac -movflags +faststart .vsl-state/demo-fixture/alpha.mp4
+# frontend-check stays internal. A separate nginx ingress publishes only loopback.
+docker compose -p jakawi-vsl-dev --env-file .env.vsl-dev -f compose.vsl-dev.yaml --profile checks run -d --no-deps --name "$vsl_demo_container" --label jakawi.vsl.demo=alpha --entrypoint sleep frontend-check infinity >/dev/null
+trap 'docker rm -f "$vsl_demo_web" "$vsl_demo_container" >/dev/null 2>&1 || true' ERR
+docker exec "$vsl_demo_container" mkdir -p /var/www/html/dev/vsl-demo /var/www/html/resources/js/components/media /var/www/html/dev/vsl-demo/public/__vsl-fixtures__
+docker cp app/dev/vsl-demo/. "$vsl_demo_container":/var/www/html/dev/vsl-demo/
+docker cp app/resources/js/components/media/jakawi-vsl-player "$vsl_demo_container":/var/www/html/resources/js/components/media/
+docker cp .vsl-state/demo-fixture/alpha.mp4 "$vsl_demo_container":/var/www/html/dev/vsl-demo/public/__vsl-fixtures__/alpha.mp4
+docker exec -d -e VSL_DEMO=jakawi-vsl-dev "$vsl_demo_container" sh -c 'exec ./node_modules/.bin/vite --config dev/vsl-demo/vite.config.ts > /tmp/vsl-demo.log 2>&1'
+# Like the isolated dev web, only the nginx ingress reaches the entry network.
+cat > .vsl-state/demo-fixture/nginx.conf <<'NGINX'
+server {
+    listen 80;
+    server_name localhost;
+    location / {
+        proxy_pass http://jakawi-vsl-dev-demo:5173;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+NGINX
+docker run -d --name "$vsl_demo_web" --label com.docker.compose.project=jakawi-vsl-dev --label jakawi.vsl.demo=alpha --network jakawi-vsl-dev-entry --publish 127.0.0.1:8094:80 --cpus 0.5 --memory 256m --pids-limit 256 --entrypoint sleep jakawi-vsl-dev-web:local infinity >/dev/null
+docker network connect jakawi-vsl-dev-network "$vsl_demo_web"
+docker cp .vsl-state/demo-fixture/nginx.conf "$vsl_demo_web":/etc/nginx/conf.d/default.conf
+docker exec -d "$vsl_demo_web" nginx -g 'daemon off;'
+for vsl_attempt in {1..20}; do
+    if curl --fail --silent http://127.0.0.1:8094/ >/dev/null; then
+        echo 'Development demo: http://127.0.0.1:8094 — stop with bin/jakawi-vsl-demo --stop'
+        exit 0
+    fi
+    sleep 0.25
+done
+echo 'Demo startup failed.' >&2
+docker rm -f "$vsl_demo_web" "$vsl_demo_container" >/dev/null
+exit 1
