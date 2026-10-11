@@ -23,7 +23,10 @@
         "timeout": "5s",
         "retries": 10
       },
-      "restart": "no"
+      "restart": "no",
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 256
     },
     "app": {
       "image": "jakawi-vsl-dev-app:local",
@@ -46,7 +49,10 @@
           "condition": "service_healthy"
         }
       },
-      "restart": "no"
+      "restart": "no",
+      "cpus": 1.0,
+      "mem_limit": "1536m",
+      "pids_limit": 256
     },
     "web": {
       "image": "jakawi-vsl-dev-web:local",
@@ -62,19 +68,23 @@
         "uploads:/var/www/html/public/storage:ro"
       ],
       "networks": [
-        "isolated"
+        "isolated",
+        "entry"
       ],
       "depends_on": [
         "app"
       ],
-      "restart": "no"
+      "restart": "no",
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 256
     },
     "frontend-check": {
       "image": "jakawi-vsl-dev-tools:local",
       "build": {
         "context": ".",
         "dockerfile": "docker/Dockerfile.vsl",
-        "target": "tools"
+        "target": "tools-offline"
       },
       "env_file": [
         ".env.vsl-dev"
@@ -90,13 +100,19 @@
         "run",
         "types:check"
       ],
-      "restart": "no"
+      "restart": "no",
+      "cpus": 1.0,
+      "mem_limit": "1536m",
+      "pids_limit": 256
     }
   },
   "networks": {
     "isolated": {
       "name": "jakawi-vsl-dev-network",
       "internal": true
+    },
+    "entry": {
+      "name": "jakawi-vsl-dev-entry"
     }
   },
   "volumes": {

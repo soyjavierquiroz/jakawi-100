@@ -23,14 +23,17 @@
         "timeout": "5s",
         "retries": 10
       },
-      "restart": "no"
+      "restart": "no",
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 256
     },
     "app-test": {
       "image": "jakawi-vsl-test-app:local",
       "build": {
         "context": ".",
         "dockerfile": "docker/Dockerfile.vsl",
-        "target": "runtime"
+        "target": "test"
       },
       "env_file": [
         ".env.vsl-test"
@@ -46,7 +49,10 @@
           "condition": "service_healthy"
         }
       },
-      "restart": "no"
+      "restart": "no",
+      "cpus": 1.0,
+      "mem_limit": "1536m",
+      "pids_limit": 256
     }
   },
   "networks": {

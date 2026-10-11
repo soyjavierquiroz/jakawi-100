@@ -12,6 +12,11 @@ refuse() { echo 'REFUSED: VSL isolation guard failed.' >&2; exit 78; }
 [[ -z "${COMPOSE_FILE:-}" && -z "${COMPOSE_ENV_FILES:-}" ]] || refuse
 python3 bin/check-vsl-isolation.py test
 [[ "${1:-}" == --check ]] && exit 0
+filter_args=()
+if [[ $# == 2 && "$1" == --filter && -n "$2" ]]; then
+    filter_args=(--filter "$2")
+    set --
+fi
 [[ $# == 0 || ( "$1" == php && "${2:-}" == artisan && "${3:-}" == test && $# == 3 ) ]] || refuse
 mkdir -p .vsl-state
 exec 9>.vsl-state/test.lock
@@ -26,4 +31,4 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 $c=config("database.connections.pgsql");
 if(app()->environment()!=="testing" || config("database.default")!=="pgsql" || $c["host"]!=="db-test" || $c["database"]!=="jakawi_vsl_test" || !empty($c["url"])) exit(78);
 '
-"${compose[@]}" exec -T app-test php artisan test --configuration=phpunit.vsl.xml
+"${compose[@]}" exec -T app-test php artisan test --configuration=phpunit.vsl.xml "${filter_args[@]}" --display-warnings

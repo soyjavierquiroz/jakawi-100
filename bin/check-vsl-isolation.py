@@ -25,12 +25,14 @@ try:
  c=json.loads(result.stdout); assert c['name']==prefix
  expected={'db','app','web','frontend-check'} if mode=='dev' else {'db-test','app-test'}
  assert set(c['services'])==expected
- assert set(c['networks'])=={'isolated'}
+ assert set(c['networks'])==({'isolated','entry'} if mode=='dev' else {'isolated'})
+ if mode=='dev':
+  entry=c['networks']['entry']; assert entry['name']==prefix+'-entry' and not entry.get('external')
  n=c['networks']['isolated']; assert n['name']==prefix+'-network' and n['internal'] and not n.get('external')
  assert set(c['volumes'])=={'pgdata','uploads'}
  for key,v in c['volumes'].items(): assert v['name']==prefix+'-'+key and not v.get('external')
  for key,s in c['services'].items():
-  assert set(s['networks'])=={'isolated'}
+  assert set(s['networks'])==({'isolated','entry'} if key=='web' else {'isolated'})
   assert not s.get('container_name') and not s.get('privileged') and not s.get('network_mode')
   assert s['image']==('postgres:16-alpine' if key.startswith('db') else prefix+'-'+('tools' if key=='frontend-check' else 'web' if key=='web' else 'app')+':local')
   if 'build' in s:

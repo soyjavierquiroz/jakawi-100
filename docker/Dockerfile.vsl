@@ -9,8 +9,12 @@ COPY app/package.json app/package-lock.json ./
 RUN npm ci
 COPY app/ ./
 RUN composer dump-autoload --optimize
+FROM tools AS test
+RUN touch .env && rm -rf public/build
 FROM tools AS assets
 RUN npm run types:check && npm run build
+FROM tools AS tools-offline
+COPY --from=assets /var/www/html/node_modules/.cache/laravel-vite-plugin/fonts ./node_modules/.cache/laravel-vite-plugin/fonts
 FROM tools AS runtime
 COPY --from=assets /var/www/html/public/build ./public/build
 RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache storage/app/public && chown -R www-data:www-data storage bootstrap/cache
