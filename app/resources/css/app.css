@@ -152,3 +152,141 @@
         font-size: clamp(2.75rem, 3.4vw, 3.25rem);
     }
 }
+
+/* V4.1: mobile-only editorial rhythm; desktop retains the approved V4 layout. */
+@media (max-width: 1023px) {
+    .challenge-mobile-polish .challenge-demo-hook {
+        font-size: clamp(1.65rem, 7.5vw, 2.25rem);
+        line-height: 1.02;
+        text-wrap: initial;
+    }
+    .challenge-mobile-polish .challenge-demo-hook > span {
+        font-size: 1em;
+        white-space: nowrap;
+    }
+    .challenge-mobile-polish [data-demo-reward] {
+        margin-top: 1rem;
+        border-left: 0;
+        padding-left: 0;
+    }
+    .challenge-mobile-polish .challenge-compact-teaser { display: block; }
+    .challenge-mobile-polish .challenge-desktop-teaser { display: none; }
+    .challenge-mobile-polish [data-demo-reward] + p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    .challenge-mobile-polish [data-growth-location="hero"] + p { font-size: 0.875rem; }
+    .challenge-mobile-polish [data-challenge-chapter="hero"] .text-xs:last-child {
+        font-size: 0.875rem;
+    }
+    .challenge-mobile-polish .challenge-offer { padding-block: 2rem; }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] { padding-block: 2rem; }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] h2 { font-size: 2rem; }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] > div {
+        margin-top: 1.5rem;
+        gap: 1.25rem;
+        grid-template-columns: 1fr;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article {
+        display: grid;
+        grid-template-columns: 2.75rem 1fr;
+        gap: 0.25rem 0.875rem;
+        padding-top: 0;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article > span {
+        grid-row: 1 / 3;
+        align-self: start;
+        min-width: 0;
+        height: 2.75rem;
+        padding: 0;
+        font-size: 1.25rem;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] h3 {
+        margin-top: 0;
+        font-size: 1.25rem;
+        line-height: 1.4;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article p {
+        margin-top: 0;
+        font-size: 0.9375rem;
+        line-height: 1.5;
+    }
+    .challenge-mobile-polish .challenge-result { padding-block: 2rem; }
+    .challenge-mobile-polish .challenge-result > div > p:last-of-type { font-size: 1rem; }
+    .challenge-mobile-polish [data-challenge-chapter="rules"] { padding-block: 2rem; }
+    .challenge-mobile-polish [data-challenge-chapter="rules"] > dl { margin-top: 1.5rem; grid-template-columns: 1fr; }
+    .challenge-mobile-polish [data-challenge-chapter="rules"] > dl > div { padding-block: 1rem; }
+    .challenge-mobile-polish [data-challenge-chapter="rules"] dd { font-size: 0.9375rem; line-height: 1.5; }
+    .challenge-mobile-polish [data-challenge-chapter="rules"] details > div { font-size: 0.9375rem; }
+    .challenge-mobile-polish .challenge-guest-participation { padding-block: 1rem; }
+    .challenge-mobile-polish .challenge-guest-participation > p,
+    .challenge-mobile-polish .challenge-guest-participation > h2 { display: none; }
+    .challenge-mobile-polish .challenge-guest-participation button {
+        margin-top: 0;
+        padding-inline: 0;
+        background: transparent;
+        color: var(--foreground);
+        text-decoration: underline;
+        text-underline-offset: 0.25rem;
+        font-size: 0.875rem;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="faq"] { padding-block: 2rem; }
+    .challenge-mobile-polish [data-challenge-chapter="faq"] > div { margin-top: 1.5rem; }
+    .challenge-mobile-polish [data-challenge-chapter="faq"] details { padding-block: 1rem; }
+    .challenge-mobile-polish [data-challenge-chapter="faq"] summary { font-size: 1rem; min-height: 2.75rem; align-items: center; }
+    [data-marketing-theme]:has(.challenge-mobile-polish) > footer > div {
+        padding-top: 1.5rem;
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+        gap: 1rem;
+    }
+}
+
+/* V4.2: scope the public video accent to decorative progress, not action controls. */
+.challenge-mobile-polish [data-landing-media] [data-vsl-progress="decorative"] {
+    --jakawi-video-accent: var(--marketing-value);
+}
+.challenge-mobile-polish [data-challenge-chapter="faq"] summary > span {
+    background: var(--marketing-value);
+    color: var(--ink);
+}
+@media (max-width: 1023px) {
+    .challenge-mobile-polish [data-challenge-chapter="steps"] > div { gap: 0.875rem; }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article {
+        grid-template-columns: 2rem 1fr;
+        gap: 0.125rem 0.875rem;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article > span {
+        grid-row: 1;
+        align-self: center;
+        height: 2rem;
+        font-size: 1rem;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] h3 { align-self: center; }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article p { grid-column: 2; }
+    .challenge-mobile-polish [data-growth-location="hero"] + p {
+        letter-spacing: 0.1em;
+        color: var(--marketing-text-secondary);
+    }
+    .challenge-mobile-polish .challenge-guest-participation { padding-block: 0.75rem; }
+}
+
+/* Explicit badge/title header; display:contents preserves desktop composition. */
+.challenge-mobile-polish .challenge-step-header { display: contents; }
+@media (max-width: 1023px) {
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article { display: block; }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] .challenge-step-header {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+    }
+    .challenge-mobile-polish .challenge-step-header > span {
+        width: 2.75rem;
+        min-width: 2.75rem;
+        height: 2.75rem;
+        padding: 0;
+        flex-shrink: 0;
+        font-size: 1.125rem;
+    }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] h3 { margin: 0; }
+    .challenge-mobile-polish [data-challenge-chapter="steps"] article p { margin: 0 0 0 3.625rem; }
+}
