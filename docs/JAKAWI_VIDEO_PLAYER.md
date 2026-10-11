@@ -155,12 +155,12 @@ Omitir `vsl` en una actualización conserva la configuración. Enviar null la el
 
 | Variante | Ubicación |
 | --- | --- |
-| [Challenge](../app/resources/js/pages/landing-presentations/challenge.tsx) | Visual del aside de MarketingHero, antes del premio |
+| [Challenge](../app/resources/js/pages/landing-presentations/challenge.tsx) | Columna media del hero de conversión, sobre CTA y antes del premio |
 | [Benefit](../app/resources/js/pages/landing-presentations/benefit.tsx) | Visual del aside de MarketingHero, antes del valor/partner |
 | [Experience](../app/resources/js/pages/landing-presentations/experience.tsx) | Visual bajo el encabezado |
 | [Unlock](../app/resources/js/pages/landing-presentations/unlock.tsx) | Visual bajo el encabezado, sujeto a revelación |
 
-Sin configuración entregada se usa el bloque de imagen existente. Un error de reproducción no cambia automáticamente a imagen. Unlock usa `Unlock::revealable()`: antes de revelar se devuelve `vsl: null`, sin serializar fuente, URL ni póster, también en preview. El player no convierte una URL pública en privada. CTA y handlers Growth de las páginas siguen siendo los existentes; no hay wiring automático de `onEvent` a Growth ni desbloqueo por ver el video.
+Sin configuración entregada se usa la imagen existente donde haya una; Challenge omite el wrapper media si no tiene video ni imagen. Un error de reproducción no cambia automáticamente a imagen. Unlock usa `Unlock::revealable()`: antes de revelar se devuelve `vsl: null`, sin serializar fuente, URL ni póster, también en preview. El player no convierte una URL pública en privada. CTA y handlers Growth de las páginas siguen siendo los existentes; no hay wiring automático de `onEvent` a Growth ni desbloqueo por ver el video.
 
 ## Cursos
 
@@ -235,3 +235,7 @@ Limitaciones de entrega: falta una página de lecciones y wiring de shortcodes; 
 - Ambos payloads JSON del manual pasan `LandingVideoConfiguration::rules()` mediante Validator en el contenedor de test, tras comprobar entorno `testing` y base configurada `jakawi_vsl_test`; sin consultas ni cambios a DB.
 - `python3 bin/check-docs.py`: sin enlaces relativos rotos; `git diff --check`: aprobado. Rutas revisadas contra archivos locales. El checker no verifica anchors ni enlaces externos.
 - El intento local de TypeScript en el principal falló porque su instalación npm existente carece de `hls.js`; no se alteraron esas dependencias. La validación aislada anterior resuelve la comprobación de ejemplos. No se ejecutaron `npm run types:check` (generación Wayfinder), build ni feature tests nuevos; sus resultados previos siguen identificados como históricos.
+
+### Contexto de color de marketing
+
+Las cuatro Marketing Landings pasan `theme="inherit"`: MarketingLayout establece `dark-conversion` (Challenge) o `light-conversion` (Benefit/Experience/Unlock). El player hereda tokens locales deterministas independientemente de `.dark` del usuario. Sus internals, colores por instancia y proveedores permanecen intactos. El [contrato marketing](DESIGN-SYSTEM.md#marketing-theme-foundation-v1) no depende del video: admite imagen o ausencia de media donde el renderer lo soporta. No existe selección persistida de tema en LandingPresentation todavía.

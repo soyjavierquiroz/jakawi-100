@@ -89,3 +89,7 @@ La atribución reutiliza el visitor UUID first-party existente como identidad an
 Estado y límites: [CURRENT](CURRENT.md). Uso: [Manual de Funciones](product/MANUAL_DE_FUNCIONES.md). Carga comercial: [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md). Contratos: [Growth](growth-measurement-v1.md), [CRM](CRM_FOUNDATION_V1.md).
 
 [Decisiones de arquitectura](decisions/README.md) · [Glosario](GLOSSARY.md). Scheduler es cron que invoca app, no un servicio Compose adicional; social-worker procesa colas sociales y CRM se despacha desde scheduler.
+
+## Temas de conversión marketing
+
+MarketingLayout establece temas frontend explícitos `dark-conversion` / `light-conversion`, aislados de la preferencia Product UI. Challenge usa el primero; Benefit, Experience y Unlock el segundo como defaults actuales. Las secciones claras/oscuras establecen pares completos mediante `data-marketing-surface`. El contrato y reglas de contraste están en [Sistema de diseño](DESIGN-SYSTEM.md#marketing-theme-foundation-v1). No se añadió persistencia del tema ni Landing Engine; media sigue siendo opcional.

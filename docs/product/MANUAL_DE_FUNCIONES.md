@@ -128,3 +128,9 @@ Notas de condiciones:
 Cotejo: [rutas](../../app/routes/web.php), [admin middleware](../../app/app/Http/Middleware/EnsureAdmin.php), [partner middleware](../../app/app/Http/Middleware/EnsurePartner.php), [Membership](../../app/app/Models/Membership.php), [RedemptionService](../../app/app/Services/RedemptionService.php), [ExperienceReservationService](../../app/app/Services/ExperienceReservationService.php), [UnlockParticipationService](../../app/app/Services/UnlockParticipationService.php) y controllers de solicitudes/Challenge. La matriz resume acceso existente, no crea RBAC.
 
 Referencias de autoridad: [GLOSSARY](../GLOSSARY.md), [ARCHITECTURE](../ARCHITECTURE.md), [CURRENT](../CURRENT.md), [CRM](../CRM_FOUNDATION_V1.md), [Manual de Inventario](../operations/MANUAL_DE_INVENTARIO.md). La arquitectura detallada permanece en su fuente.
+
+## Apariencia de Marketing Landings
+
+Product UI respeta la apariencia elegida por usuario/sistema. Las páginas de conversión no muestran toggle: usan `DARK_CONVERSION` / `LIGHT_CONVERSION`, definidos localmente por MarketingLayout. Defaults actuales: Challenge oscuro; Benefit, Experience y Unlock claros, con cierre oscuro. No modifican la preferencia guardada ni la economía del producto; no existe campo DB de tema ni Landing Engine.
+
+Coral identifica acción; verde sólo valor/success verificado; amarillo premio/oportunidad. Promesas condicionales y premios cancelados/revertidos no se presentan como success. Media es opcional y el player hereda el contexto. Ver [Sistema de diseño](../DESIGN-SYSTEM.md#marketing-theme-foundation-v1).

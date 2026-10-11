@@ -6,7 +6,8 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@custom-variant dark (&:is(.dark *));
+/* Product dark utilities never override an explicit marketing composition. */
+@custom-variant dark (&:is(.dark *):not(:where([data-marketing-theme], [data-marketing-theme] *)));
 
 @utility benefit-primary-action {
     @apply inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-extrabold text-brand-foreground uppercase transition hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand;
