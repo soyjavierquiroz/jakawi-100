@@ -37,6 +37,9 @@ class Video extends EventTarget {
         this.handlers.delete(name);
         super.removeEventListener(name, callback);
     }
+    canPlayType() {
+        return 'maybe';
+    }
     load() {
         this.loadCalls++;
     }
@@ -449,4 +452,129 @@ void test('preference pause after media error retains explicit reload recovery',
     const loads = video.loadCalls;
     engine.play();
     assert.equal(video.loadCalls, loads + 1);
+});
+
+void test('native video dimensions are exposed for automatic framing', () => {
+    const { video, engine } = setup();
+    video.videoWidth = 1080;
+    video.videoHeight = 1920;
+    video.ready();
+    assert.equal(engine.getState().aspectRatio, 9 / 16);
+    engine.dispose();
+});
+
+void test('Bunny native HLS reuses HTML5 audio, buffering, pause and replay', () => {
+    const { video, engine } = setup({
+        source: { type: 'bunny', url: 'https://example.test/playlist.m3u8' },
+    });
+    video.ready();
+    video.confirm();
+    assert.equal(video.playCalls[0].muted, true);
+    video.currentTime = 5;
+    engine.activateAudio();
+    video.confirm();
+    assert.deepEqual(video.playCalls.at(-1), {
+        time: 0,
+        muted: false,
+        volume: 1,
+    });
+    video.currentTime = 2;
+    video.fire('waiting');
+    assert.equal(engine.getState().status, 'buffering');
+    video.confirm();
+    const loads = video.loadCalls;
+    engine.pause();
+    engine.play();
+    video.confirm();
+    assert.equal(video.loadCalls, loads);
+    assert.equal(video.currentTime, 2);
+    video.time = 12;
+    video.ended = true;
+    video.paused = true;
+    video.fire('ended');
+    engine.play();
+    video.confirm();
+    assert.deepEqual(video.playCalls.at(-1), {
+        time: 0,
+        muted: false,
+        volume: 1,
+    });
+    engine.dispose();
+    assert.equal(video.handlers.size, 0);
+});
+void test('Bunny accepts HTTPS m3u8 with query and rejects other sources', () => {
+    assert.equal(
+        resolveSource(
+            {
+                type: 'bunny',
+                url: 'https://example.test/playlist.m3u8?fixture=1',
+            },
+            'http://localhost',
+            false,
+        ),
+        'https://example.test/playlist.m3u8?fixture=1',
+    );
+    for (const url of [
+        'http://example.test/playlist.m3u8',
+        'https://example.test/video.mp4',
+    ]) {
+        assert.throws(() =>
+            resolveSource({ type: 'bunny', url }, 'http://localhost', false),
+        );
+    }
+});
+void test('Bunny manifest error before metadata can reload and resume manually', () => {
+    const { video, engine } = setup({
+        source: { type: 'bunny', url: 'https://example.test/playlist.m3u8' },
+    });
+    video.error = { code: 2 };
+    video.fire('error');
+    assert.equal(engine.getState().ready, false);
+    assert.equal(engine.getState().status, 'error');
+    engine.play();
+    assert.equal(engine.getState().status, 'initializing');
+    video.error = null;
+    video.ready();
+    video.confirm();
+    assert.equal(engine.getState().status, 'playing');
+    engine.dispose();
+});
+
+void test('course mute and volume keep lesson position; navigation clamps and capabilities expire on disposal', () => {
+    const { video, engine } = setup({ autoplay: false });
+    assert.equal(engine.getCapabilities().seek, false);
+    video.ready();
+    assert.equal(video.playCalls.length, 0);
+    assert.equal(engine.getCapabilities().seek, true);
+    engine.seek(5);
+    engine.setMuted(false);
+    engine.setVolume(0.4);
+    assert.equal(video.currentTime, 5);
+    engine.seek(video.currentTime + 10);
+    assert.equal(video.currentTime, 12);
+    engine.seek(video.currentTime - 10);
+    assert.equal(video.currentTime, 2);
+    engine.dispose();
+    assert.deepEqual(engine.getCapabilities(), {
+        seek: false,
+        mute: false,
+        volume: false,
+    });
+});
+
+void test('course keeps the actual completed time until replay seeks to zero', () => {
+    const { video, engine } = setup({ autoplay: false, resetOnEnd: false });
+    video.ready();
+    engine.play();
+    video.confirm();
+    video.time = 12;
+    video.ended = true;
+    video.paused = true;
+    video.fire('ended');
+    assert.equal(engine.getState().currentTime, 12);
+    assert.equal(video.currentTime, 12);
+    engine.play();
+    video.confirm();
+    assert.equal(video.currentTime, 0);
+    engine.dispose();
 });

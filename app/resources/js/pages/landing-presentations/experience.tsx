@@ -1,3 +1,4 @@
+import { LandingVideo, type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import { Head, Link, router } from '@inertiajs/react';
 import { useRef } from 'react';
@@ -9,13 +10,14 @@ import { trackJourneyIntent } from '@/lib/journey-analytics';
 type Session = { id:number; date:string; time:string; place:string|null; address:string|null; city:string|null };
 type Partner = { name:string; slug:string; role?:string };
 type Props = {
+    vsl?: LandingVideoConfig | null;
     presentation:{hero_alt:string|null}; heroUrl:string|null; nativeUrl:string; canonical:string; noindex:boolean; preview:boolean;
     copy:{title:string;slug:string;experienceType:string|null;eyebrow:string;headline:string;subheadline:string;valueNote:string|null;description:string|null;terms:string|null;
         organizers:Partner[];partners:Partner[];prices:Array<{label:string;value:string}>;next:Session|null;sessions:Session[];sessionCount:number;membership:string;
         steps:Array<{title:string;description:string}>;faq:Array<{question:string;answer:string}>;finalHeadline:string;
         action:{label:string;href:string;kind:string;sessionId:number|null}};
 };
-export default function ExperienceLanding({presentation,heroUrl,nativeUrl,canonical,noindex,preview,copy}:Props) {
+export default function ExperienceLanding({vsl,presentation,heroUrl,nativeUrl,canonical,noindex,preview,copy}:Props) {
     const sent=useRef(false);
     const disabled=preview||copy.action.kind==='unavailable';
     const action={...copy.action,disabled,onClick:(event:React.MouseEvent<HTMLAnchorElement>)=>{
@@ -31,7 +33,7 @@ export default function ExperienceLanding({presentation,heroUrl,nativeUrl,canoni
         <main onClickCapture={trackGrowthClick} className="overflow-x-clip break-words font-discovery">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 {preview&&<StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mt-5"/>}
-                <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10"><JakawiImage src={heroUrl} alt={presentation.hero_alt||copy.title} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority/></div>
+                <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10">{vsl ? <LandingVideo config={vsl}/> : (<JakawiImage src={heroUrl} alt={presentation.hero_alt||copy.title} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority/>)}</div>
                 <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={copy.subheadline} action={action} aside={<div className="rounded-[var(--radius-card)] bg-surface-muted p-6"><p className="discovery-eyebrow text-brand">{copy.experienceType||'EXPERIENCIA'}</p><p className="mt-3 text-2xl font-extrabold">{copy.title}</p>{copy.next&&<p className="mt-4 font-bold">{copy.next.date} · {copy.next.time}<span className="mt-2 block">{place(copy.next)}</span></p>}<p className="mt-4 text-sm leading-6 text-foreground-soft">{copy.membership}</p></div>}/>
                 {facts.length>0&&<section aria-label="Datos de la experiencia" className="grid grid-cols-2 gap-6 rounded-[var(--radius-card)] bg-brand p-6 text-brand-foreground md:grid-cols-4">{facts.map(fact=><div key={fact.label}><p className="discovery-eyebrow">{fact.label}</p><p className="mt-2 font-bold">{fact.value}</p></div>)}</section>}
                 {copy.sessionCount>1&&<p className="mt-4 text-sm font-bold text-foreground-soft">Hay más horarios disponibles. Elige tu sesión en la ficha de la experiencia.</p>}

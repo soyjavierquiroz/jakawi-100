@@ -1,3 +1,4 @@
+import { attachHlsSource } from './hls-source.js';
 import type {
     PlaybackError,
     PlaybackState,
@@ -34,6 +35,12 @@ export function resolveSource(
         throw new Error('Video credentials are not supported.');
     if (source.type === 'mp4' && url.protocol === 'https:') return url.href;
     if (
+        source.type === 'bunny' &&
+        url.protocol === 'https:' &&
+        /\.m3u8$/i.test(url.pathname)
+    )
+        return url.href;
+    if (
         source.type === 'development-fixture' &&
         development &&
         source.url === '/__vsl-fixtures__/alpha.mp4' &&
@@ -41,7 +48,7 @@ export function resolveSource(
     )
         return url.href;
     throw new Error(
-        'Use an HTTPS MP4 URL or the isolated development fixture.',
+        'Use an HTTPS MP4/HLS URL or the isolated development fixture.',
     );
 }
 
@@ -53,6 +60,7 @@ export function createHtml5Engine(
         origin: string;
         development: boolean;
         autoplay: boolean;
+        resetOnEnd?: boolean;
         onState: (state: PlaybackState) => void;
         onEvent?: (event: VslEvent) => void;
     },
@@ -64,6 +72,9 @@ export function createHtml5Engine(
     let audioPending = false;
     let autoplayAttempted = false;
     let expectedSource = '';
+    let sourceUrl = '';
+    let hlsSession: ReturnType<typeof attachHlsSource> | undefined;
+    let retryRequested = false;
     const listeners: Array<[string, EventListener]> = [];
 
     function update(patch: Partial<PlaybackState>) {
@@ -101,6 +112,10 @@ export function createHtml5Engine(
     function readProgress() {
         update({
             currentTime: video.currentTime,
+            aspectRatio:
+                video.videoWidth > 0 && video.videoHeight > 0
+                    ? video.videoWidth / video.videoHeight
+                    : undefined,
             duration: Number.isFinite(video.duration) ? video.duration : 0,
         });
     }
@@ -178,7 +193,10 @@ export function createHtml5Engine(
                 : {}),
         });
         if (first) emit('ready');
-        if (options.autoplay && !autoplayAttempted) {
+        if (retryRequested) {
+            retryRequested = false;
+            play();
+        } else if (options.autoplay && !autoplayAttempted) {
             autoplayAttempted = true;
             play('autoplay');
         }
@@ -234,8 +252,8 @@ export function createHtml5Engine(
         intent = null;
         audioPending = false;
         video.pause();
-        seek(0);
-        update({ status: 'ended', currentTime: 0 });
+        if (options.resetOnEnd !== false) seek(0);
+        update({ status: 'ended', currentTime: video.currentTime });
         emit('ended');
     });
     listen('error', () => {
@@ -248,9 +266,29 @@ export function createHtml5Engine(
                 'No se pudo cargar el video. Revisa tu conexión e intenta de nuevo.',
         });
     });
+    function loadSource() {
+        hlsSession?.dispose();
+        hlsSession = undefined;
+        expectedSource = '';
+        if (options.source.type === 'bunny') {
+            hlsSession = attachHlsSource(video, sourceUrl, {
+                onAttached: (url) => {
+                    expectedSource = url;
+                },
+                onError: (error) => {
+                    ++request;
+                    fail(error);
+                },
+            });
+        } else {
+            expectedSource = sourceUrl;
+            video.src = sourceUrl;
+            video.load();
+        }
+    }
     update({ ...initialPlaybackState, volume: video.volume });
     try {
-        expectedSource = resolveSource(
+        sourceUrl = resolveSource(
             options.source,
             options.origin,
             options.development,
@@ -258,8 +296,7 @@ export function createHtml5Engine(
         video.muted = true;
         video.defaultMuted = true;
         video.loop = false;
-        video.src = expectedSource;
-        video.load();
+        loadSource();
     } catch {
         fail({
             kind: 'source',
@@ -269,9 +306,24 @@ export function createHtml5Engine(
 
     return {
         getState: () => state,
+        getCapabilities: () => ({
+            seek: alive && state.ready && state.duration > 0 && !state.error,
+            mute: alive && state.ready && !state.error,
+            volume: alive && state.ready && !state.error,
+        }),
         play: () => {
             if (!alive) return;
             if (state.status === 'error' && state.error?.kind === 'media') {
+                if (options.source.type === 'bunny') {
+                    retryRequested = true;
+                    update({
+                        status: 'initializing',
+                        ready: false,
+                        error: null,
+                    });
+                    loadSource();
+                    return;
+                }
                 video.load();
             }
             if (state.status === 'ended') seek(0);
@@ -318,6 +370,7 @@ export function createHtml5Engine(
             ++request;
             for (const [name, listener] of listeners)
                 video.removeEventListener(name, listener);
+            hlsSession?.dispose();
             video.pause();
             video.removeAttribute('src');
             video.load();

@@ -19,6 +19,53 @@ class LandingPresentationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_video_configuration_is_nullable_and_projected_only_when_unlock_is_revealable(): void
+    {
+        $challenge = $this->challenge();
+        $landing = $this->landing($challenge, 'video-config', ['status'=>'PUBLISHED']);
+        $this->get('/l/video-config')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+        $config = ['source'=>['type'=>'youtube', 'url'=>'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing'=>'embedded-vertical'];
+        $landing->update(['vsl'=>$config]);
+        $this->get('/l/video-config')->assertInertia(fn (Assert $page) => $page->where('vsl', $config));
+        $unlock = Unlock::create(['title'=>'Private video', 'slug'=>'private-video', 'origin'=>'JAKAWI', 'type'=>'BENEFIT', 'minimum_commitments'=>2, 'status'=>Unlock::ACTIVE]);
+        $private = $unlock->landingPresentations()->create(['name'=>'Private', 'slug'=>'private-video-landing', 'status'=>'PUBLISHED', 'vsl'=>$config]);
+        $this->get('/l/private-video-landing')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+        $this->actingAs(User::factory()->create())->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+        $this->actingAs(User::factory()->create(['is_admin'=>true]))->get('/admin/desbloqueos/private-video/landings/private-video-landing/preview')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+        $unlock->update(['status'=>Unlock::UNLOCKED]);
+        $this->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', $config));
+    }
+
+    public function test_video_configuration_validates_allowlists_and_null_removal(): void
+    {
+        $rules = \App\Services\LandingVideoConfiguration::rules();
+        $validator = fn ($vsl) => \Illuminate\Support\Facades\Validator::make(['vsl'=>$vsl], $rules);
+        $this->assertTrue($validator(null)->passes());
+        $this->assertTrue($validator([])->fails());
+        $valid = ['source'=>['type'=>'mp4', 'url'=>'https://cdn.example/video.mp4'], 'mode'=>'vsl', 'autoplay'=>'off', 'colors'=>['accent'=>'#ff5a4f']];
+        $this->assertTrue($validator($valid)->passes());
+        foreach ([['mode'=>'course'], ['framing'=>'unknown'], ['autoplay'=>true], ['theme'=>'unknown'], ['colors'=>['accent'=>'red']], ['unknown'=>'injected'], ['source'=>['type'=>'html', 'url'=>'javascript:alert(1)']], ['source'=>['type'=>'mp4', 'url'=>null]], ['source'=>['type'=>'youtube', 'url'=>'https://example.com/video']], ['source'=>['type'=>'mp4', 'url'=>'https://user:pass@example.com/video.mp4']]] as $invalid) {
+            $this->assertTrue($validator(array_replace($valid, $invalid))->fails());
+        }
+    }
+
+    public function test_admin_persists_valid_video_rejects_invalid_configuration_and_removes_it(): void
+    {
+        $challenge = $this->challenge();
+        $admin = User::factory()->create(['is_admin'=>true]);
+        $base = "/admin/retos/{$challenge->slug}/landings";
+        $config = ['source'=>['type'=>'youtube', 'url'=>'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing'=>'embedded-vertical'];
+        $this->actingAs($admin)->post($base, ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>$config])->assertRedirect();
+        $landing = LandingPresentation::where('slug', 'admin-video')->firstOrFail();
+        $this->assertSame($config, $landing->vsl);
+        $this->put($base.'/admin-video', ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>['source'=>['type'=>'html', 'url'=>'javascript:alert(1)']]])->assertSessionHasErrors('vsl.source.type');
+        $this->assertSame($config, $landing->fresh()->vsl);
+        $this->put($base.'/admin-video', ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>null])->assertRedirect();
+        $this->assertNull($landing->fresh()->vsl);
+        $this->actingAs(User::factory()->create())->put($base.'/admin-video', ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>$config])->assertForbidden();
+        $this->assertNull($landing->fresh()->vsl);
+    }
+
     private function challenge(array $attributes = []): Challenge
     {
         return Challenge::create(array_merge([

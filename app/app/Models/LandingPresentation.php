@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class LandingPresentation extends Model
 {
     protected $guarded = [];
+    protected $casts = ['vsl' => 'array'];
     public const SCOPES = ['NONE', 'GUESTS', 'ALL'];
     protected $attributes = ['default_scope' => 'NONE'];
     public function subject(): MorphTo { return $this->morphTo(); }

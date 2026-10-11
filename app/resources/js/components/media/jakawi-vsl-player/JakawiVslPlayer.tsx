@@ -1,14 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 import styles from './JakawiVslPlayer.module.css';
-import { PlaybackControls } from './PlaybackControls';
+import { Pause, Play, RotateCcw, Volume2 } from 'lucide-react';
+import { applyYouTubeCrop, framingMetadata } from './youtube-crop';
+import { resolveFraming, verticalFraming } from './marketing-presentation';
+import { useDecorativeProgress } from './use-decorative-progress';
 import type { JakawiVslPlayerProps } from './types';
+import { PlaybackControls } from './PlaybackControls';
 import { useVslPlayback } from './use-vsl-playback';
-
-type WebkitVideo = HTMLVideoElement & { webkitEnterFullscreen?: () => void };
+import { videoThemeColors } from './video-theme';
+import { parseYoutubeId } from './youtube-engine';
 
 export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
+    props = { ...props, framing: typeof props.framing === 'string' ? { kind: props.framing } : props.framing };
+    const framingOptions = typeof props.framing === 'object' ? props.framing : undefined;
     const {
         poster,
         title = 'Video',
@@ -16,59 +21,146 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
         focalPosition = 'center',
         className,
     } = props;
-    const { state, videoRef, engineRef } = useVslPlayback(props);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [fullscreenSupported, setFullscreenSupported] = useState(false);
-    const [fullscreenError, setFullscreenError] = useState('');
-    const fullscreenRequestRef = useRef(0);
+    const colors = videoThemeColors(props.colors);
+    const { state, videoRef, youtubeRef, engineRef } = useVslPlayback(props);
+    const course = props.mode === 'course';
+    const youtube = props.source.type === 'youtube';
+    const sourceKey = `${props.source.type}:${props.source.url}`;
+    const [progressReset, setProgressReset] = useState(0);
+    const progress = useDecorativeProgress(
+        state,
+        `${sourceKey}:${course ? 'course' : 'vsl'}:${progressReset}`,
+        props.progressAcceleration,
+        props.progressSeconds,
+        !course,
+    );
+    const playing = state.status === 'playing';
+    const audible = playing && !state.muted && state.volume > 0;
+    const [audioRequest, setAudioRequest] = useState<string | null>(null);
     useEffect(() => {
-        setFullscreenSupported(
-            Boolean(
-                document.fullscreenEnabled ||
-                (videoRef.current as WebkitVideo | null)?.webkitEnterFullscreen,
-            ),
-        );
-        return () => {
-            ++fullscreenRequestRef.current;
-        };
-    }, [videoRef]);
-    const fullscreen = () => {
-        setFullscreenError('');
-        const request = ++fullscreenRequestRef.current;
-        const reportError = (message: string) => {
-            if (request === fullscreenRequestRef.current)
-                setFullscreenError(message);
-        };
-        try {
-            if (document.fullscreenElement) {
-                void document
-                    .exitFullscreen()
-                    .catch(() =>
-                        reportError('No se pudo salir de pantalla completa.'),
-                    );
-            } else if (document.fullscreenEnabled && containerRef.current) {
-                void containerRef.current
-                    .requestFullscreen()
-                    .catch(() =>
-                        reportError('Pantalla completa no disponible.'),
-                    );
-            } else {
-                (
-                    videoRef.current as WebkitVideo | null
-                )?.webkitEnterFullscreen?.();
-            }
-        } catch {
-            reportError('Pantalla completa no disponible.');
-        }
-    };
-    const manual =
-        state.status !== 'playing' &&
-        state.status !== 'requesting' &&
-        state.status !== 'buffering';
+        if (
+            audible ||
+            ['blocked', 'error', 'paused', 'ended'].includes(state.status)
+        )
+            setAudioRequest(null);
+    }, [audible, state.status]);
+    const awaitingAudio =
+        audioRequest === sourceKey &&
+        ['requesting', 'buffering'].includes(state.status);
+    const needsSound = (playing && !audible) || awaitingAudio;
+    const manual = ['ready', 'paused', 'ended', 'blocked', 'error'].includes(
+        state.status,
+    );
     const showPoster = !state.hasPlayed || state.status === 'ended';
+    // Course playback starts from the bottom controls, not YouTube's large
+    // initial play affordance. Keep its thumbnail until playback begins.
+    let courseYoutubePoster: string | undefined;
+    if (course && youtube && showPoster) {
+        try {
+            courseYoutubePoster =
+                poster ||
+                `https://i.ytimg.com/vi/${parseYoutubeId(props.source.url)}/hqdefault.jpg`;
+        } catch {
+            // The existing engine reports invalid sources; retain a clean cover.
+        }
+    }
+    const replay = () => {
+        setProgressReset((value) => value + 1);
+        engineRef.current?.seek(0);
+        engineRef.current?.play();
+    };
+    const action =
+        state.status === 'ended'
+            ? 'Volver a ver'
+            : state.status === 'paused'
+              ? 'Continuar'
+              : state.status === 'error'
+                ? 'Intentar de nuevo'
+                : 'Ver video';
+    const framing = resolveFraming(props.source.type, props.framing);
+    const geometry =
+        (props.framing || !focalPosition || focalPosition === 'center') &&
+        !youtube &&
+        framing.kind !== 'horizontal' &&
+        fit === 'cover'
+            ? verticalFraming({
+                  sourceAspectRatio: framing.sourceAspectRatio,
+                  contentAspectRatio: framing.contentAspectRatio,
+                  focalX: framingOptions?.focalX,
+                  focalY: framingOptions?.focalY,
+              })
+            : undefined;
+    useEffect(() => {
+        const iframe = youtubeRef.current?.querySelector('iframe');
+        if (!iframe) return;
+        iframe.removeAttribute('style');
+        if (framing.kind === 'embedded-vertical') {
+            applyYouTubeCrop(
+                iframe,
+                framingMetadata(
+                    framing.kind,
+                    framingOptions?.focalX,
+                    framingOptions?.focalY,
+                ),
+            );
+        } else if (framing.kind === 'native-vertical') {
+            Object.assign(iframe.style, {
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '9 / 16',
+                left: '50%',
+                top: '50%',
+                inset: 'auto',
+                transform: 'translate(-50%, -50%)',
+            });
+        }
+    }, [
+        state.ready,
+        framing.kind,
+        framingOptions?.focalX,
+        framingOptions?.focalY,
+        youtubeRef,
+    ]);
+    const mediaStyle = geometry
+        ? {
+              width: `${geometry.widthPercent}%`,
+              height: `${geometry.heightPercent}%`,
+              left: `${geometry.leftPercent}%`,
+              top: `${geometry.topPercent}%`,
+              objectFit: fit,
+          }
+        : {
+              objectFit:
+                  framing.kind === 'horizontal' ? ('contain' as const) : fit,
+              objectPosition: focalPosition,
+          };
+    const soundAction = (
+        <button
+            type="button"
+            className={styles.sound}
+            onClick={() => {
+                setAudioRequest(sourceKey);
+                setProgressReset((value) => value + 1);
+                engineRef.current?.activateAudio();
+            }}
+        >
+            <span className={styles.soundCopy}>
+                <strong>Enciende tus parlantes.</strong>
+                <span className={styles.soundPrompt}>
+                    <Volume2 size={16} strokeWidth={1.6} aria-hidden="true" />
+                    <span>Haz clic para escuchar.</span>
+                </span>
+            </span>
+        </button>
+    );
     return (
         <div
-            ref={containerRef}
+            data-theme={props.theme ?? 'inherit'}
+            style={{
+                '--jakawi-video-accent': colors.accent,
+                '--jakawi-video-text': colors.text,
+                '--jakawi-video-overlay': colors.overlay,
+            } as CSSProperties}
             role="region"
             aria-label={title}
             aria-busy={
@@ -76,96 +168,128 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
             }
             className={cn(
                 styles.player,
-                'mx-auto w-full max-w-md overflow-hidden rounded-xl border border-border bg-surface text-surface-foreground',
+                framing.kind === 'horizontal' && styles.horizontal,
                 className,
             )}
         >
             <div
-                className={cn(
-                    styles.frame,
-                    'relative aspect-[3/4] bg-surface-muted',
-                )}
+                className={styles.frame}
+                style={{ aspectRatio: framing.viewportAspectRatio }}
             >
-                <video
-                    ref={videoRef}
-                    poster={poster}
-                    playsInline
-                    muted
-                    aria-label={title}
-                    className="absolute inset-0 size-full"
-                    style={{ objectFit: fit, objectPosition: focalPosition }}
-                />
-                {showPoster && poster && (
-                    <img
-                        src={poster}
-                        alt=""
-                        className="pointer-events-none absolute inset-0 size-full"
-                        style={{
-                            objectFit: fit,
-                            objectPosition: focalPosition,
-                        }}
+                {youtube ? (
+                    <>
+                        <div ref={youtubeRef} className={styles.youtube} />
+                    </>
+                ) : (
+                    <>
+                        <video
+                            ref={videoRef}
+                            poster={poster}
+                            playsInline
+                            muted
+                            aria-label={title}
+                            className={styles.media}
+                            style={mediaStyle}
+                        />
+                    </>
+                )}
+                <>
+                    {course && youtube && showPoster && (
+                        <div className={styles.coursePoster} data-course-poster>
+                            {courseYoutubePoster && (
+                                <img src={courseYoutubePoster} alt="" />
+                            )}
+                        </div>
+                    )}
+                    {showPoster && poster && !(course && youtube) && (
+                        <img
+                            src={poster}
+                            alt=""
+                            className={styles.media}
+                            style={{ objectFit: 'cover' }}
+                        />
+                    )}
+                    {!course && manual && (
+                        <div className={styles.overlay}>
+                            <button
+                                type="button"
+                                className={styles.start}
+                                disabled={
+                                    (!state.ready &&
+                                        state.error?.kind !== 'media') ||
+                                    state.error?.kind === 'source'
+                                }
+                                onClick={
+                                    state.status === 'ended'
+                                        ? replay
+                                        : () => engineRef.current?.play()
+                                }
+                            >
+                                {state.status === 'ended' ? (
+                                    <RotateCcw size={26} aria-hidden="true" />
+                                ) : (
+                                    <Play size={28} aria-hidden="true" />
+                                )}
+                                {action}
+                            </button>
+                        </div>
+                    )}
+                    {!course && needsSound && (
+                        <div className={styles.soundOverlay}>{soundAction}</div>
+                    )}
+                    {!course && playing && (
+                        <button
+                            type="button"
+                            className={styles.pause}
+                            aria-label="Pausar video"
+                            onClick={() => engineRef.current?.pause()}
+                        >
+                            <Pause size={20} aria-hidden="true" />
+                        </button>
+                    )}
+                </>
+                {state.error && (
+                    <p role="status" className={styles.error}>
+                        {state.error.message}
+                    </p>
+                )}
+                {(state.status === 'initializing' ||
+                    state.status === 'requesting' ||
+                    state.status === 'buffering') && (
+                    <span className={styles.loading} role="status">
+                        {state.status === 'initializing'
+                            ? 'Preparando video…'
+                            : 'Cargando…'}
+                    </span>
+                )}
+                {course && (
+                    <PlaybackControls
+                        key={`${sourceKey}:course`}
+                        state={state}
+                        engine={engineRef.current}
                     />
                 )}
-                {manual && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <Button
-                            type="button"
-                            size="lg"
-                            disabled={state.error?.kind === 'source'}
-                            onClick={() => engineRef.current?.play()}
-                        >
-                            {state.status === 'ended'
-                                ? 'Volver a reproducir'
-                                : state.status === 'error'
-                                  ? 'Intentar de nuevo'
-                                  : 'Reproducir video'}
-                        </Button>
-                    </div>
-                )}
-                {state.status === 'playing' && state.muted && (
-                    <div className="absolute inset-x-0 bottom-4 flex justify-center">
-                        <Button
-                            type="button"
-                            size="lg"
-                            onClick={() => engineRef.current?.activateAudio()}
-                        >
-                            ACTIVAR SONIDO
-                        </Button>
+                {!course && (
+                    <div
+                        className={styles.progress}
+                        aria-hidden="true"
+                        data-vsl-progress="decorative"
+                    >
+                        <div style={{ transform: `scaleX(${progress})` }} />
                     </div>
                 )}
             </div>
-            <p className="px-3 py-2 text-sm" role="status" aria-live="polite">
-                {state.error?.message ??
-                    (state.status === 'requesting'
-                        ? 'Iniciando video…'
-                        : state.status === 'buffering'
-                          ? 'Cargando video…'
-                          : state.status === 'playing'
-                            ? state.muted || state.volume === 0
-                                ? 'Reproduciendo sin sonido.'
-                                : 'Reproduciendo con sonido.'
-                            : state.status === 'ended'
-                              ? 'Video terminado. Puedes volver a reproducirlo.'
-                              : 'Pulsa reproducir para ver el video.')}
-            </p>
-            {fullscreenError && (
-                <p role="status" className="px-3 text-sm">
-                    {fullscreenError}
-                </p>
-            )}
-            <PlaybackControls
-                state={state}
-                onPlay={() => engineRef.current?.play()}
-                onPause={() => engineRef.current?.pause()}
-                onMute={() => {
-                    if (state.muted) engineRef.current?.activateAudio();
-                    else engineRef.current?.setMuted(true);
-                }}
-                onSeek={(time) => engineRef.current?.seek(time)}
-                onVolume={(volume) => engineRef.current?.setVolume(volume)}
-                onFullscreen={fullscreen}
-                fullscreenSupported={fullscreenSupported}
-            />
+            <span className={styles.srOnly} role="status" aria-live="polite">
+                {audible
+                    ? 'Reproduciendo con sonido'
+                    : needsSound
+                      ? 'Reproduciendo sin sonido'
+                      : state.status === 'ended'
+                        ? 'Video terminado'
+                        : state.status === 'paused'
+                          ? 'Video pausado'
+                          : ''}
+            </span>
         </div>
     );
 }
