@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 import styles from './JakawiVslPlayer.module.css';
 import { Pause, Play, RotateCcw, Volume2 } from 'lucide-react';
@@ -37,12 +37,19 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
     const playing = state.status === 'playing';
     const audible = playing && !state.muted && state.volume > 0;
     const [audioRequest, setAudioRequest] = useState<string | null>(null);
+    const audioInFlight = useRef(false);
+    useEffect(() => {
+        audioInFlight.current = false;
+        setAudioRequest(null);
+    }, [sourceKey, course]);
     useEffect(() => {
         if (
             audible ||
             ['blocked', 'error', 'paused', 'ended'].includes(state.status)
         )
             setAudioRequest(null);
+        if (!['requesting', 'buffering'].includes(state.status))
+            audioInFlight.current = false;
     }, [audible, state.status]);
     const awaitingAudio =
         audioRequest === sourceKey &&
@@ -137,18 +144,25 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
     const soundAction = (
         <button
             type="button"
-            className={styles.sound}
+            className={styles.soundOverlay}
+            data-vsl-sound
+            aria-label="Enciende tus parlantes. Toca para escuchar desde el inicio"
             onClick={() => {
+                if (
+                    audioInFlight.current ||
+                    !engineRef.current?.getState().ready
+                ) return;
+                audioInFlight.current = true;
                 setAudioRequest(sourceKey);
                 setProgressReset((value) => value + 1);
                 engineRef.current?.activateAudio();
             }}
         >
             <span className={styles.soundCopy}>
-                <strong>Enciende tus parlantes.</strong>
+                <strong>Enciende tus parlantes</strong>
                 <span className={styles.soundPrompt}>
                     <Volume2 size={16} strokeWidth={1.6} aria-hidden="true" />
-                    <span>Haz clic para escuchar.</span>
+                    <span>Toca para escuchar</span>
                 </span>
             </span>
         </button>
@@ -234,9 +248,7 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
                             </button>
                         </div>
                     )}
-                    {!course && needsSound && (
-                        <div className={styles.soundOverlay}>{soundAction}</div>
-                    )}
+                    {!course && needsSound && soundAction}
                     {!course && playing && (
                         <button
                             type="button"

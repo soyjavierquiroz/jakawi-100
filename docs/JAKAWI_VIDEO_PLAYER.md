@@ -204,9 +204,19 @@ Errores comunes: `source` inválida (HTTP MP4, Bunny MP4 mal tipado, iframe en l
 
 Dependencias de red: API YouTube, iframe nocookie, miniaturas `i.ytimg.com`, CDN del medio/póster; el build general además obtiene fuentes Bunny de Vite. Recomendar MP4 con codecs compatibles y fast-start/Range, y HLS con variantes adaptativas, MIME y CORS correctos. Evitar URLs privadas permanentes en documentación; no exponer secretos de firma al cliente.
 
+## Activación de sonido en VSL
+
+Mientras el VSL reproduce silenciado o espera confirmación de audio, toda la superficie libre del video es un botón semántico: tocar el centro o una esquina solicita volver a 00:00, activar sonido y reproducir mediante la acción existente, directamente desde el gesto. La cápsula «Enciende tus parlantes / Toca para escuchar» es sólo la indicación visual; admite personalización con los tokens de texto, fondo y acento existentes. Enter y Space también activan el botón, con foco visible.
+
+La capa se retira al confirmar reproducción audible y deja disponibles las interacciones del proveedor. Pausa permanece por encima de la capa; replay y el inicio manual conservan sus estados. Un bloqueo mantiene inicio/reintento manual, sin simular éxito. El cambio de fuente limpia la solicitud. Curso no utiliza esta capa ni reinicia la posición al activar sonido.
+
+Sobre el iframe YouTube el botón pertenece al contenedor visual, sin remontar el iframe ni modificar el crop vertical. En móviles se usa el clic del toque, sin handlers de touch/pointer que dupliquen acciones y permitiendo scroll vertical y zoom. Las políticas del navegador/proveedor pueden bloquear audio o autoplay: la confirmación procede del motor y se conserva recuperación manual.
+
 ## Estado de entrega y evidencia
 
-Observación local del 11 de octubre de 2026, antes de editar documentación:
+Mejora tap-to-sound del 11 de octubre de 2026: implementada en el worktree limpio `/home/jakawi-video-touch-dev`, rama `feat/video-tap-to-sound`, desde `origin/main` (`af80147`). La demo pendiente de `/home/jakawi-vsl-dev` se preserva. Validación aislada: 61 tests del motor/parser, TypeScript y build aprobados; Chromium comprueba centro/esquina, Enter/Space, foco, toque y scroll emulados, una solicitud por gesto, espera de confirmación, bloqueo de autoplay/audio, pausa/replay, Curso y cambio de fuente. MP4/HLS utilizan medios reales de prueba; YouTube utiliza su contrato de API y un iframe de prueba. La comprobación adicional con YouTube remoto no llegó a reproducir en este entorno y no se certifica; no hubo dispositivo móvil físico. Advertencias del build: optimización opcional de fuentes y chunk HLS mayor de 500 kB. El [harness de pruebas](../app/tests/media/tap-harness/README.md) describe ejecución y requisitos.
+
+Evidencia histórica previa, conservada como referencia (no describe el release tap-to-sound):
 
 - Reproductor e integraciones consolidados en `cdfed97d7d7988a50501904102f464bad37f6a8a`.
 - Principal `/home/jakawi.com`: rama `main`, HEAD `d440c02628df5785b7d51a971daf326db1253bd3` (merge sin demo local), árbol de trabajo inicialmente limpio. El módulo es idéntico al commit consolidado.
