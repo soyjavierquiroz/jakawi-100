@@ -46,40 +46,70 @@ export default function ChallengeLanding({ vsl, presentation, copy, nativeUrl, c
         return () => { observer.disconnect(); window.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
     }, []);
     const primaryAction = {...action, kind: membershipRequired ? 'membership' : (!participating && !closed ? 'participate' : 'other')};
+    const allQualified = challengeProps.challenge.selection_type === 'ALL_QUALIFIED';
+    const socialPost = challengeProps.challenge.evidence_type === 'SOCIAL_POST';
+    const supportCopy = socialPost
+        ? `${copy.mechanism.split('. ')[0]}. JAKAWI verifica si cumpliste el reto.`
+        : copy.mechanism;
+    const steps = socialPost ? [
+        {title: 'PUBLICA', description: copy.mechanism.split('. ')[0] + '.'},
+        {title: 'ENVÍA', description: 'Con tu cuenta y correo verificado, envía el enlace de tu publicación.'},
+        {title: 'CALIFICA', description: copy.qualification},
+    ] : copy.steps;
     const hasMedia = Boolean(vsl || challengeProps.heroUrl);
     const trackGrowthClick = useGrowthLandingClicks();
     return <>
         <Head title={copy.headline}><link rel="canonical" href={canonical}/>{noindex&&<meta name="robots" content="noindex,follow"/>}</Head>
         {challengeProps.preview&&<div className="mx-auto max-w-6xl px-4 pt-5"><StatusBanner title="VISTA PREVIA" description="Esta presentación aún no está disponible públicamente."/></div>}
         <main className="pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0" onClickCapture={trackGrowthClick}>
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <section className={`grid gap-6 py-7 sm:py-10 lg:items-center lg:gap-12 ${hasMedia ? 'lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]' : ''}`}>
-                    <div className="min-w-0">
-                        <p className="text-xs font-extrabold tracking-[0.18em] text-brand uppercase">{copy.eyebrow}</p>
-                        <h1 className="mt-3 max-w-2xl text-[clamp(2rem,8.6vw,2.75rem)] leading-[1.04] font-extrabold tracking-[-0.045em] uppercase lg:text-[clamp(2.75rem,4vw,3.75rem)]">{copy.headline}</h1>
-                        <p className="mt-4 max-w-xl text-base leading-6 text-foreground-soft">{copy.mechanism}</p>
-                        <div ref={heroCTA} className="mt-5"><MarketingCTA action={primaryAction} location="hero" /></div>
-                        <p className="mt-3 max-w-xl text-sm leading-5 font-semibold">{copy.confidence}</p>
-                        {copy.deadline&&<p className="mt-2 text-sm text-muted-foreground">Cierra el {formattedDate(copy.deadline)}</p>}
-                        <div className="mt-5 border-l-4 border-brand pl-4" aria-label="Premio del reto">
-                            <p className="discovery-eyebrow text-brand">PREMIO DEL RETO</p>
-                            <p className="mt-1 text-lg leading-6 font-extrabold">{copy.reward}</p>
-                            {copy.rewardDetail&&<p className="mt-2 text-sm leading-6 text-foreground-soft">{copy.rewardDetail}</p>}
-                            {copy.rewardNote&&<p className="mt-2 text-sm leading-5 text-muted-foreground">{copy.rewardNote}</p>}
-                        </div>
+            <section className="bg-[var(--ink)] text-[var(--cream)]">
+                <div className="mx-auto grid max-w-6xl gap-5 px-4 py-6 sm:px-6 sm:py-10 lg:grid-cols-2 lg:items-start lg:gap-x-12 lg:px-8 lg:py-14">
+                    <div className="min-w-0 lg:sticky lg:top-8">
+                        <p className="text-xs font-extrabold tracking-[0.18em] uppercase">{copy.eyebrow}</p>
+                        <h1 className="mt-3 max-w-2xl text-[clamp(2rem,8.2vw,2.5rem)] leading-[1.06] font-extrabold tracking-[-0.035em] uppercase lg:text-[clamp(2.75rem,4vw,3.75rem)]">{copy.headline.endsWith('LA ROMPA?') ? <>{copy.headline.slice(0, -9)}<span className="text-energy">LA ROMPA?</span></> : copy.headline}</h1>
+                        <p className="mt-3 max-w-xl text-base leading-6 text-[var(--cream)]/80">{supportCopy}</p>
                     </div>
-                    {hasMedia&&<div className="mx-auto w-full max-w-[22rem] overflow-hidden rounded-[var(--radius-card)] bg-surface-muted shadow-featured lg:max-w-[24rem]">
-                        {vsl ? <LandingVideo config={{...vsl, theme:'inherit'}}/> : <JakawiImage src={challengeProps.heroUrl!} alt={presentation.hero_alt || challengeProps.challenge.title} className="aspect-[4/3] w-full object-cover" loading="eager" priority/>}
-                    </div>}
-                </section>
-                <section className="border-t border-border py-10 sm:py-14"><p className="discovery-eyebrow text-brand">CÓMO FUNCIONA</p><h2 className="mt-3 text-3xl font-extrabold uppercase sm:text-4xl">TRES PASOS PARA PARTICIPAR</h2><div className="mt-6 grid gap-5 md:grid-cols-3">{copy.steps.map((step,index)=><article key={step.title} className="border-t border-border pt-5"><span className="text-sm font-extrabold text-brand">0{index+1}</span><h3 className="mt-2 text-xl font-extrabold uppercase">{step.title}</h3><p className="mt-2 leading-6 text-foreground-soft">{step.description}</p></article>)}</div></section>
+                    <div className="min-w-0 lg:col-start-2">
+                        {hasMedia && <div data-landing-media className="w-full">
+                            {vsl ? <LandingVideo config={{...vsl, theme:'inherit'}}/> : <JakawiImage src={challengeProps.heroUrl!} alt={presentation.hero_alt || challengeProps.challenge.title} className="aspect-[4/3] w-full rounded-[var(--radius-card)] object-cover" loading="eager" priority/>}
+                        </div>}
+                        <div ref={heroCTA} className={hasMedia ? 'mt-4' : ''}><MarketingCTA action={primaryAction} location="hero" className="sm:w-full" /></div>
+                        <p className="mt-3 text-sm leading-5 font-semibold">{copy.confidence}</p>
+                        {copy.deadline && <p className="mt-2 text-xs leading-5 text-[var(--cream)]/70">Cierra el {formattedDate(copy.deadline)}</p>}
+                    </div>
+                </div>
+            </section>
+            <div className="challenge-funnel-light">
+                <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                    <section className="py-7" aria-label="Premio del reto">
+                        <div className="rounded-[var(--radius-card)] bg-energy p-5 text-energy-foreground">
+                            <p className="discovery-eyebrow">PREMIO DEL RETO</p>
+                            <h2 className="mt-2 text-xl leading-7 font-extrabold">{copy.reward}</h2>
+                            {copy.rewardDetail && <p className="mt-2 text-sm leading-6">{copy.rewardDetail}</p>}
+                            {copy.rewardNote && <p className="mt-2 text-sm leading-5">{copy.rewardNote}</p>}
+                            <p className="mt-3 text-sm leading-5"><span aria-hidden="true">✓ </span>{copy.confidence}</p>
+                        </div>
+                    </section>
+                <section className="border-t border-border py-10 sm:py-14"><p className="discovery-eyebrow text-brand">CÓMO FUNCIONA</p><h2 className="mt-3 text-3xl font-extrabold uppercase sm:text-4xl"><span className="text-brand">3 PASOS</span> PARA PARTICIPAR</h2><div className="mt-6 grid gap-5 md:grid-cols-3">{steps.map((step,index)=><article key={step.title} className="border-t border-border pt-5"><span className="text-sm font-extrabold text-brand">0{index+1}</span><h3 className="mt-2 text-xl font-extrabold uppercase">{step.title}</h3><p className="mt-2 leading-6 text-foreground-soft">{step.description}</p></article>)}</div></section>
 
-                <section id="mecanica" className="border-t border-border py-10 sm:py-14"><p className="discovery-eyebrow text-brand">MECÁNICA</p><h2 className="mt-3 text-3xl font-extrabold uppercase">{challengeProps.challenge.selection_type==='TOP_N'?'RANKING Y RESULTADO':challengeProps.challenge.selection_type==='FIRST_N'?'PRIMEROS EN CUMPLIR':'CÓMO SE DEFINE EL RESULTADO'}</h2><p className="mt-5 max-w-3xl text-lg leading-8">{copy.qualification} {copy.selection}</p>{challengeProps.slots&&<p className="mt-4 font-bold">{challengeProps.slots.awarded} premios otorgados · {Math.max(0,challengeProps.slots.limit-challengeProps.slots.reserved)} disponibles</p>}</section>
+                </div>
+                <section id="mecanica" className="bg-[var(--ink)] py-10 text-[var(--cream)] sm:py-14">
+                    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                        <p className="discovery-eyebrow">RESULTADO DEL RETO</p>
+                        <h2 className="mt-3 text-3xl font-extrabold uppercase text-energy">{allQualified ? 'NO ES SORTEO' : challengeProps.challenge.selection_type === 'TOP_N' ? 'RANKING Y RESULTADO' : challengeProps.challenge.selection_type === 'FIRST_N' ? 'PRIMEROS EN CUMPLIR' : 'CÓMO SE DEFINE EL RESULTADO'}</h2>
+                        {allQualified && <p className="mt-4 text-xl font-bold">Si cumples las reglas, calificas.</p>}
+                        <p className="mt-3 max-w-3xl text-lg leading-7">{allQualified ? 'Todos los participantes que califican reciben el premio.' : copy.selection}</p>
+                        <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--cream)]/75">{copy.qualification} {copy.membership}</p>
+                        {challengeProps.slots && <p className="mt-4 font-bold">{challengeProps.slots.awarded} premios otorgados · {Math.max(0,challengeProps.slots.limit-challengeProps.slots.reserved)} disponibles</p>}
+                    </div>
+                </section>
+                <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <section className="border-t border-border py-10 sm:py-14"><p className="discovery-eyebrow text-brand">REGLAS ESENCIALES</p><h2 className="mt-3 text-3xl font-extrabold uppercase">LO QUE DEBES SABER</h2><dl className="mt-8 grid gap-5 sm:grid-cols-2">{copy.rules.map(rule=><div key={rule.title} className="rounded-[var(--radius-card)] bg-surface-muted p-5"><dt className="font-extrabold">{rule.title}</dt><dd className="mt-2 text-foreground-soft">{rule.title==='Cierre'&&copy.deadline?formattedDate(copy.deadline):rule.description}</dd></div>)}</dl><details className="mt-7 border-t border-b border-border py-5"><summary className="cursor-pointer font-extrabold">REGLAS COMPLETAS</summary><div className="mt-4 space-y-3 text-sm leading-7"><p>{challengeProps.challenge.description}</p><p>{challengeProps.challenge.instructions}</p><p>{copy.qualification} {copy.selection} {copy.membership} {copy.review}</p>{challengeProps.challenge.allowed_platforms?.length>0&&<p>Plataformas: {challengeProps.challenge.allowed_platforms.join(', ')}</p>}{challengeProps.challenge.required_hashtags?.length>0&&<p>Etiquetas: {challengeProps.challenge.required_hashtags.join(' ')}</p>}{challengeProps.challenge.required_mentions?.length>0&&<p>Menciones: {challengeProps.challenge.required_mentions.join(' ')}</p>}<Link href={nativeUrl} className="font-bold text-brand underline">Ver ficha y reglas del producto</Link></div></details></section>
                 <section className="border-t border-border py-10 sm:py-14" aria-label="Tu participación"><p className="discovery-eyebrow text-brand">TU PARTICIPACIÓN</p><h2 className="mt-3 text-3xl font-extrabold uppercase">{participating?'SIGUE TU RETO':'PARTICIPA EN ESTE RETO'}</h2><Show {...challengeProps} embedded landingSlug={presentation.slug}/></section>
                 <MarketingFAQ items={copy.faq}/>
+                </div>
             </div>
-            <section ref={finalCTA} className="bg-foreground py-12 text-background sm:py-16"><div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"><p className="discovery-eyebrow text-background/70">JAKAWI</p><h2 className="mt-3 max-w-4xl text-4xl font-extrabold uppercase sm:text-6xl">{participating ? 'SIGUE TU PARTICIPACIÓN' : copy.finalHeadline}</h2><p className="mt-5 max-w-2xl text-background/75">{copy.reward} · {copy.selection}</p><div className="mt-8"><MarketingCTA action={primaryAction}/></div></div></section>
+            <section ref={finalCTA} className="bg-[var(--ink)] py-12 text-[var(--cream)] sm:py-16"><div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"><p className="discovery-eyebrow text-[var(--cream)]/70">JAKAWI</p><h2 className="mt-3 max-w-4xl text-4xl font-extrabold uppercase sm:text-6xl">{participating ? 'SIGUE TU PARTICIPACIÓN' : copy.finalHeadline}</h2><p className="mt-5 max-w-2xl text-[var(--cream)]/75">{copy.reward} · {copy.selection}</p><div className="mt-8"><MarketingCTA action={primaryAction}/></div></div></section>
             {stickyVisible&&<div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom)+var(--pwa-install-clearance,0px))] shadow-featured backdrop-blur lg:hidden">
                 <MarketingCTA action={primaryAction} location="body" />
             </div>}

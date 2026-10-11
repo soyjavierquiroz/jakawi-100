@@ -130,3 +130,15 @@
     --info: oklch(0.72 0.13 235);
     --info-foreground: oklch(0.12 0.018 235);
 }
+
+/* Challenge acquisition sections keep a cream reading surface in either app theme. */
+.challenge-funnel-light {
+    --background: var(--cream);
+    --foreground: var(--ink);
+    --foreground-soft: var(--ink);
+    --muted-foreground: var(--ink);
+    --surface-muted: color-mix(in srgb, var(--ink) 5%, var(--cream));
+    --border: color-mix(in srgb, var(--ink) 14%, var(--cream));
+    color: var(--foreground);
+    background: var(--background);
+}
