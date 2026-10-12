@@ -18,3 +18,20 @@ build Docker si falta una entrada de página Inertia, un asset o una dependencia
 Las entradas se derivan de los mismos directorios y extensiones del resolver
 React (`resources/js/{pages,Pages}/**/*.{tsx,jsx}`); se conservan como entradas
 explícitas aunque otra página las importe estáticamente.
+
+### Readiness antes de los gates de cutover
+
+HTTP `000` durante el arranque de contenedores es un estado transitorio de
+«todavía no listo», no un criterio de rollback inmediato. Antes del cutover debe
+pasar el guard del manifest de producción. Tras recrear coherentemente app, web
+y worker, confirmar que siguen running y realizar una única ventana de polling
+acotada a **120 segundos**, cada **2 segundos**. Los gates comienzan sólo cuando
+app está healthy, web está running y `/up` local devuelve HTTP 200.
+
+Después de readiness, comprobar `/up` público, las rutas nativas de Challenge,
+Experience y Benefit y las landings requeridas. Reintentar una petición que
+reciba `000` hasta tres veces, con dos segundos entre intentos; una excepción de
+manifest o HTTP 500 en una ruta nativa requiere rollback coherente. Si se agota
+la ventana de readiness, capturar estado, health, logs recientes de app/web/worker,
+error de curl y listener local antes de rollback. No reiniciar repetidamente ni
+reconstruir para resolver la espera de arranque.
