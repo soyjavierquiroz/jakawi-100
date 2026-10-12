@@ -1,0 +1,134 @@
+{
+  "scope": "Live current frontend and real Docker PHP auth/session, dedicated test DB; copies of only three existing representatives; no production writes.",
+  "cases": [
+    {
+      "domain": "Benefit",
+      "viewer": "guest/free",
+      "width": 390,
+      "sameLandingAfterAuth": true,
+      "nativeLandingFirst": true,
+      "locations": 3,
+      "membershipLandingId": 8,
+      "membershipLocationId": 2,
+      "result": "PASS"
+    },
+    {
+      "domain": "Benefit",
+      "viewer": "member",
+      "width": 390,
+      "nativeLandingFirst": true,
+      "existingConfirmation": true,
+      "noAutomaticRedemption": true,
+      "result": "PASS"
+    },
+    {
+      "domain": "Experience",
+      "width": 390,
+      "nativeLandingFirst": true,
+      "sameLandingAction": true,
+      "noAutomaticReservation": true,
+      "result": "PASS"
+    },
+    {
+      "domain": "Challenge",
+      "width": 390,
+      "nativeLandingFirst": true,
+      "noAutomaticParticipation": true,
+      "result": "PASS"
+    },
+    {
+      "domain": "Benefit",
+      "width": 1440,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/journey-intent/benefit/demo-beneficio-01",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-experience-desire/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-challenge-action/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    }
+  ],
+  "result": "PASS"
+}

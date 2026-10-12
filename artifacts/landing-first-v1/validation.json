@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "base_sha": "63a1751a4efaebecca681343de1d0dae33b5eedb",
+  "production_sha_unchanged": "8d913038984ae5eb6d40f3ba7477beae5d928ece",
+  "backend": {
+    "tests": 19,
+    "assertions": 1025
+  },
+  "typescript": "PASS",
+  "browser": "PASS",
+  "docs": "PASS",
+  "git_diff": "PASS",
+  "final_frontend_builds": 1,
+  "manifest": "101 Inertia pages PASS",
+  "production_published_landings": 0,
+  "production_migration_applied": false,
+  "production_deploy": false,
+  "v3_composition": "UNCHANGED",
+  "new_persistence": false,
+  "new_audiences": false,
+  "automatic_domain_mutations": 0,
+  "test_membership_fixture": 1
+}

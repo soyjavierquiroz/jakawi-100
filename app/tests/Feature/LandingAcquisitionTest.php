@@ -72,15 +72,73 @@ class LandingAcquisitionTest extends TestCase
         }
     }
 
-    public function test_authenticated_native_routes_stay_product_detail_and_direct_landing_stays_landing(): void
+    public function test_authenticated_free_and_active_members_resolve_all_landing_and_direct_landing_stays_landing(): void
+    {
+        $subjects = $this->subjects();
+        foreach ([false, true] as $member) {
+            $user = User::factory()->create();
+            if ($member) \App\Models\Membership::create(['user_id' => $user->id, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addYear(), 'amount_paid' => 100]);
+            foreach ($subjects as $subject) {
+                $landing = $subject->landingPresentations()->first() ?? $this->landing($subject, 'ALL');
+                $this->actingAs($user)->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertRedirect(route('landing-presentations.show', $landing));
+                $this->assertSame(route('landing-presentations.show', $landing), app(ProductLandingResolver::class)->navigationUrl($subject, true));
+                $this->get(route('landing-presentations.show', $landing))->assertOk()->assertInertia(fn (Assert $page) => $page->where('presentation.id', $landing->id));
+            }
+        }
+    }
+
+    public function test_authenticated_guest_only_default_and_no_default_use_product_detail(): void
     {
         $user = User::factory()->create();
         foreach ($this->subjects() as $subject) {
-            $landing = $this->landing($subject, 'ALL');
             $this->actingAs($user)->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertOk();
+            $this->landing($subject, 'GUESTS');
+            $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertOk();
             $this->assertSame(app(ProductLandingResolver::class)->nativeUrl($subject), app(ProductLandingResolver::class)->navigationUrl($subject, true));
-            $this->get(route('landing-presentations.show', $landing))->assertOk()->assertInertia(fn (Assert $page) => $page->where('presentation.id', $landing->id));
         }
+    }
+
+    public function test_membership_request_preserves_landing_and_location_and_returns_after_explicit_completion(): void
+    {
+        $benefit = $this->subjects()[0];
+        $landing = $this->landing($benefit, 'ALL');
+        $location = $benefit->availableLocations()->first();
+        $user = User::factory()->create();
+        $this->actingAs($user)->get('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id, 'location_id' => $location->id, 'landing_presentation_id' => $landing->id]))->assertOk();
+        $this->assertSame($landing->id, app(PublicJourneyContinuation::class)->get()['landing_presentation_id']);
+        $this->post(route('membership.request'))->assertRedirect(route('membership.show'));
+        $purchase = \App\Models\MembershipPurchaseRequest::sole();
+        $this->assertSame($landing->id, $purchase->intent()['landing_presentation_id']);
+        $this->assertSame($location->id, $purchase->intent()['context']['location_id']);
+        $this->assertDatabaseCount('memberships', 0);
+        $this->assertDatabaseCount('redemptions', 0);
+        \App\Models\Membership::create(['user_id' => $user->id, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addYear(), 'amount_paid' => 100]);
+        $purchase->update(['status' => 'COMPLETED', 'completed_at' => now()]);
+        $this->post(route('membership.return', $purchase))->assertRedirect(route('landing-presentations.show', $landing, false));
+        $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page->where('acquisitionResumed', true)->where('selectedLocationId', $location->id)->where('hasActiveMembership', true));
+        $this->assertDatabaseCount('redemptions', 0);
+    }
+
+    public function test_experience_membership_continuation_preserves_landing_and_selected_session(): void
+    {
+        $experience = $this->subjects()[1];
+        $landing = $this->landing($experience, 'ALL');
+        $session = $experience->upcomingSessions()->first();
+        $user = User::factory()->create();
+        $this->actingAs($user)->get('/membresia?'.http_build_query(['journey' => 'EXPERIENCE', 'action' => 'RESERVE', 'resource_id' => $experience->id, 'experience_session_id' => $session->id, 'landing_presentation_id' => $landing->id]))->assertOk();
+        $intent = app(PublicJourneyContinuation::class)->get();
+        $this->assertSame($landing->id, $intent['landing_presentation_id']);
+        $this->assertSame(route('landing-presentations.show', $landing, false), app(PublicJourneyContinuation::class)->destination($intent));
+        $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page->where('acquisitionResumed', true)->where('restoredSessionId', $session->id)->where('experience.id', $experience->id));
+        $this->assertNoDomainMutation();
+    }
+
+    public function test_membership_rejects_a_landing_from_a_different_subject(): void
+    {
+        [$benefit, $experience] = $this->subjects();
+        $landing = $this->landing($experience, 'ALL');
+        $this->actingAs(User::factory()->create())->get('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id, 'landing_presentation_id' => $landing->id]))->assertSessionHasErrors('journey');
+        $this->assertNoDomainMutation();
     }
 
     public function test_register_preserves_landing_subject_action_and_resumes_benefit_location_without_mutation(): void

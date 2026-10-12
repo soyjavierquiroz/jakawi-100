@@ -57,7 +57,8 @@ export default function BenefitShow({
     const demo = isDemoName(benefit.title);
     const title = displayBenefitName(benefit.title, demo);
     const name = (value: string) => displayBenefitName(value, demo);
-    const { auth, errors } = usePage().props;
+    const { auth, errors, presentation } = usePage().props;
+    const landingId = continuationOnly ? (presentation as { id: number } | undefined)?.id : undefined;
     const [confirming, setConfirming] = useState(
         redemptionIntent && availability.available,
     );
@@ -84,7 +85,7 @@ export default function BenefitShow({
         hasActiveMembership &&
         locations.length > 0;
     const [processing, setProcessing] = useState(false);
-    const membershipUrl = `/membresia?journey=BENEFIT&action=REDEEM&resource_id=${benefit.id}${locationId ? `&location_id=${locationId}` : ''}`;
+    const membershipUrl = `/membresia?journey=BENEFIT&action=REDEEM&resource_id=${benefit.id}${locationId ? `&location_id=${locationId}` : ''}${landingId ? `&landing_presentation_id=${landingId}` : ''}`;
     const beginAuth = (login = false) => {
         membershipIntent();
         router.get(`/beneficios/${benefit.slug}/canjear`, {

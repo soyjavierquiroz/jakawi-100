@@ -1,3 +1,4 @@
+import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
@@ -62,12 +63,12 @@ export default function BenefitOfferAdapter({
     presentation,
     copy,
     heroUrl,
-    nativeUrl,
     canonical,
     noindex,
     preview,
 }: BenefitOfferProps) {
     const acquire = useAcquisition();
+    const continueAction = useLandingAction();
     const sent = useRef(false);
     const disabled = preview || copy.action.kind === 'unavailable';
     const action = {
@@ -77,7 +78,7 @@ export default function BenefitOfferAdapter({
                 ? 'QUIERO MI BENEFICIO'
                 : copy.action.kind === 'native' &&
                     copy.action.label === 'USAR BENEFICIO'
-                  ? 'VER CÓMO CANJEAR'
+                  ? 'USAR MI BENEFICIO'
                   : copy.action.label,
         disabled,
         href: disabled ? '#condiciones' : copy.action.href,
@@ -90,6 +91,14 @@ export default function BenefitOfferAdapter({
                 event.preventDefault();
                 acquire();
                 return;
+            }
+            if (
+                copy.action.kind === 'membership' ||
+                (copy.action.kind === 'native' &&
+                    copy.action.label === 'USAR BENEFICIO')
+            ) {
+                event.preventDefault();
+                continueAction();
             }
             if (copy.action.kind === 'membership' && !sent.current) {
                 sent.current = true;
@@ -276,7 +285,7 @@ export default function BenefitOfferAdapter({
                                     </details>
                                 )}
                                 <Link
-                                    href={nativeUrl}
+                                    href="#condiciones"
                                     className="mt-4 inline-flex min-h-11 items-center text-base font-bold underline"
                                 >
                                     Ver ficha del beneficio

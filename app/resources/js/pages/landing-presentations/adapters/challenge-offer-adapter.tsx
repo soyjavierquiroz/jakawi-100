@@ -67,7 +67,6 @@ export default function ChallengeOfferAdapter({
     offerEditorial,
     presentation,
     copy,
-    nativeUrl,
     canonical,
     noindex,
     ...challengeProps
@@ -94,7 +93,7 @@ export default function ChallengeOfferAdapter({
               }
             : membershipRequired
               ? {
-                    href: `/membresia?journey=SOCIAL_CHALLENGE&action=PARTICIPATE&resource_id=${challengeProps.challenge.id}`,
+                    href: `/membresia?journey=SOCIAL_CHALLENGE&action=PARTICIPATE&resource_id=${challengeProps.challenge.id}&landing_presentation_id=${presentation.id}`,
                     label: 'ACTIVAR MEMBRESÍA',
                 }
               : participating
@@ -382,7 +381,7 @@ export default function ChallengeOfferAdapter({
                                             </p>
                                         )}
                                         <Link
-                                            href={nativeUrl}
+                                            href="#participar"
                                             className="font-bold text-foreground underline"
                                         >
                                             Ver ficha y reglas del producto

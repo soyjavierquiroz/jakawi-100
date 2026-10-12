@@ -62,7 +62,7 @@ Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-
 Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.unlock');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
 Route::get('/retos', [ChallengeController::class, 'index'])->name('social-challenges.index');
-Route::get('/retos/{challenge:slug}', [ChallengeController::class, 'show'])->middleware(\App\Http\Middleware\ResolveGuestLanding::class)->name('social-challenges.show');
+Route::get('/retos/{challenge:slug}', [ChallengeController::class, 'show'])->middleware(\App\Http\Middleware\ResolveProductLanding::class)->name('social-challenges.show');
 Route::post('/retos/{challenge:slug}/participar', [ChallengeController::class, 'intent'])->name('social-challenges.intent');
 Route::get('/partners', [PartnersLandingController::class, 'show'])->name('partners.index');
 Route::get('/partners/aplicar', [PartnersLandingController::class, 'apply'])->name('partners.apply');
@@ -76,7 +76,7 @@ Route::get('/ciudades/{city:slug}/partner', [PartnerApplicationController::class
 Route::post('/ciudades/{city:slug}/partner', [PartnerApplicationController::class, 'store'])->middleware('throttle:20,1')->name('cities.partner.store');
 Route::get('/ciudades/{city:slug}/partner/recibida', [PartnerApplicationController::class, 'success'])->name('cities.partner.success');
 Route::post('/ciudades/{city:slug}/seleccionar', [SelectedCityController::class, 'store'])->name('cities.select');
-Route::get('/d/{unlock:slug}', [UnlockController::class, 'show'])->middleware(\App\Http\Middleware\ResolveGuestLanding::class)->name('unlocks.show');
+Route::get('/d/{unlock:slug}', [UnlockController::class, 'show'])->middleware(\App\Http\Middleware\ResolveProductLanding::class)->name('unlocks.show');
 Route::post('/d/{unlock:slug}/shared', [UnlockController::class, 'share'])->name('unlocks.shared');
 Route::get('/partners/{partner:slug}', [PublicController::class, 'partners'])->name('partners.show');
 Route::get('/partners/{partner:slug}/whatsapp', [PublicController::class, 'partnerWhatsapp'])->name('partners.whatsapp');
@@ -84,9 +84,9 @@ Route::get('/lugares/{location:slug}', [PublicController::class, 'location'])->n
 Route::get('/lugares/{location:slug}/mapa', [PublicController::class, 'map'])->name('locations.map');
 Route::get('/lugares/{location:slug}/whatsapp', [PublicController::class, 'locationWhatsapp'])->name('locations.whatsapp');
 Route::get('/beneficios', [PublicController::class, 'benefits'])->name('benefits.index');
-Route::get('/beneficios/{benefit:slug}', [PublicController::class, 'benefit'])->middleware(\App\Http\Middleware\ResolveGuestLanding::class)->name('benefits.show');
+Route::get('/beneficios/{benefit:slug}', [PublicController::class, 'benefit'])->middleware(\App\Http\Middleware\ResolveProductLanding::class)->name('benefits.show');
 Route::get('/experiencias', [PublicController::class, 'experiences'])->name('experiences.index');
-Route::get('/experiencias/{experience:slug}', [PublicController::class, 'experience'])->middleware(\App\Http\Middleware\ResolveGuestLanding::class)->name('experiences.show');
+Route::get('/experiencias/{experience:slug}', [PublicController::class, 'experience'])->middleware(\App\Http\Middleware\ResolveProductLanding::class)->name('experiences.show');
 Route::get('/experiencias/{experience:slug}/reservar', [PublicController::class, 'reserve'])->name('experiences.reserve');
 Route::get('/partner/login', [PartnerLoginController::class, 'create'])->middleware('guest')->name('partner.login');
 Route::post('/partner/login', [PartnerLoginController::class, 'store'])->middleware('guest')->name('partner.login.store');

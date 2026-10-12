@@ -33,11 +33,15 @@ class MembershipPurchaseRequest extends Model
         if (! $this->journey_type || ! $this->journey_action || ! $this->journey_resource_id) {
             return null;
         }
+        $context = $this->journey_context ?? [];
+        $landingId = $context['landing_presentation_id'] ?? null;
+        unset($context['landing_presentation_id']);
         return [
             'journey' => $this->journey_type,
             'action' => $this->journey_action,
             'resource_id' => (int) $this->journey_resource_id,
-            ...($this->journey_context ? ['context' => $this->journey_context] : []),
+            ...($context ? ['context' => $context] : []),
+            ...(is_int($landingId) ? ['landing_presentation_id' => $landingId] : []),
         ];
     }
 }

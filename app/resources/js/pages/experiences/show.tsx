@@ -5,7 +5,7 @@ import { JakawiImage } from '@/components/jakawi-image';
 import { StatusBanner } from '@/components/state-panel';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
 
-type Session = { id: number; starts_at: string; venue_label?: string | null; location?: { slug: string; name: string; maps_url?: string | null } | null };
+type Session = { id: number; starts_at: string; venue_label?: string | null; reservation?: { public_id: string; status: string; party_size: number } | null; location?: { slug: string; name: string; maps_url?: string | null } | null };
 type Target = { method: 'whatsapp' | 'url' | 'external' | 'phone'; label: string };
 type Partner = { id: number; slug: string; name: string; role: string };
 type Experience = {
@@ -21,8 +21,9 @@ const date = (value: string) => new Intl.DateTimeFormat('es-BO', { weekday: 'lon
 const time = (value: string) => new Intl.DateTimeFormat('es-BO', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
 const place = (session?: Session | null) => session?.location?.name ?? session?.venue_label ?? null;
 
-export default function ExperienceShow({ experience, hasActiveMembership = false, restoredSessionId = null, availability = { available: true, reason: null } }: { experience: Experience; hasActiveMembership?: boolean; restoredSessionId?: number | null; availability?: { available: boolean; reason: string | null } }) {
-    const { auth } = usePage().props;
+export default function ExperienceShow({ experience, hasActiveMembership = false, restoredSessionId = null, availability = { available: true, reason: null }, continuationOnly = false }: { experience: Experience; hasActiveMembership?: boolean; restoredSessionId?: number | null; availability?: { available: boolean; reason: string | null }; continuationOnly?: boolean }) {
+    const { auth, presentation } = usePage().props;
+    const landingId = continuationOnly ? (presentation as { id: number } | undefined)?.id : undefined;
     const sessions = experience.sessions ?? [];
     const [selectedSession, setSelectedSession] = useState<Session | null>(sessions.find((session) => session.id === restoredSessionId) ?? (sessions.length === 1 ? sessions[0] : null));
     const [reservationOpen, setReservationOpen] = useState(false);
@@ -49,10 +50,21 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
                 intentSentFor.current = experience.slug;
                 trackJourneyIntent('experience', experience.slug);
             }
-            router.visit(`/membresia?journey=EXPERIENCE&action=RESERVE&resource_id=${experience.id}&experience_session_id=${selectedSession!.id}`); return;
+            router.visit(`/membresia?journey=EXPERIENCE&action=RESERVE&resource_id=${experience.id}&experience_session_id=${selectedSession!.id}${landingId ? `&landing_presentation_id=${landingId}` : ''}`); return;
         }
         router.post(`/experiencias/${experience.slug}/reservas`, { experience_session_id: selectedSession!.id });
     };
+
+    const sessionChoices = (sessions.length > 1 && availability.available ? <section className="mt-8 max-w-2xl" aria-labelledby="choose-session"><div className="flex items-baseline justify-between gap-4"><h2 id="choose-session" className="text-xl font-extrabold">ELIGE TU FECHA</h2>{selectionRequired ? <p className="text-sm font-semibold text-muted-foreground">Selecciona una para reservar</p> : null}</div><div className="mt-4 grid gap-3 sm:grid-cols-2">{sessions.map((session) => <button key={session.id} type="button" onClick={() => setSelectedSession(session)} aria-pressed={selectedSession?.id === session.id} className={`min-h-20 rounded-[var(--radius-control)] border p-4 text-left transition ${selectedSession?.id === session.id ? 'border-brand bg-brand-subtle ring-1 ring-brand' : 'border-border bg-surface hover:border-border-strong'}`}><span className="block font-bold capitalize">{date(session.starts_at)}</span><span className="mt-1 block text-sm text-muted-foreground">{time(session.starts_at)}{place(session) ? ` · ${place(session)}` : ''}</span></button>)}</div></section> : null);
+    const existingReservation = selectedSession?.reservation && ['pending', 'confirmed'].includes(selectedSession.reservation.status) ? selectedSession.reservation : null;
+    const reservationDialog = (reservationOpen ? <div className="fixed inset-0 z-50 flex items-end bg-overlay p-0 sm:items-center sm:justify-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="reservation-title"><section className="w-full rounded-t-[28px] bg-surface p-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-xl sm:max-w-lg sm:rounded-[28px]"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-extrabold tracking-[0.14em] text-brand uppercase">Experiencia JAKAWI</p><h2 id="reservation-title" className="mt-2 text-2xl font-extrabold">RESERVA TU LUGAR</h2></div><button type="button" onClick={() => setReservationOpen(false)} aria-label="Cerrar" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-border"><X className="size-5" /></button></div><p className="mt-4 leading-6 text-muted-foreground">Esta experiencia es gestionada directamente por {organizer?.name ?? 'el Partner'}.</p>{selectedSession ? <p className="mt-3 text-sm font-bold capitalize">{date(selectedSession.starts_at)} · {time(selectedSession.starts_at)}</p> : null}<div className="mt-6 space-y-3">{experience.reservation_targets?.map((target, index) => <a key={target.method} href={`/experiencias/${experience.slug}/reservar?method=${target.method}`} className={`flex min-h-13 items-center justify-center rounded-2xl px-4 text-sm font-extrabold ${index === 0 ? 'bg-brand text-brand-foreground' : 'border border-border bg-surface'}`}>{target.label}</a>)}</div></section></div> : null);
+    if (continuationOnly) return <div className="space-y-4">
+        <p className="font-bold">{experience.title}</p>
+        {sessionChoices}
+        {sessions.length === 1 && selectedSession ? <p>{date(selectedSession.starts_at)} · {time(selectedSession.starts_at)}</p> : null}
+        {existingReservation ? <p className="font-bold">Tu reserva: {existingReservation.public_id} · {existingReservation.status}</p> : canReserve && availability.available ? <button type="button" onClick={reserve} disabled={selectionRequired} className="funnel-primary-action min-h-12 w-full text-white">{internalReservation ? internalAction : 'VER OPCIONES DE RESERVA'}</button> : <p>{availability.reason ?? 'NO HAY RESERVAS DISPONIBLES'}</p>}
+        {reservationDialog}
+    </div>;
 
     return <><Head title={experience.title} /><main className="min-h-screen bg-background pb-48 font-discovery text-foreground lg:pb-32">
         <section className="mx-auto max-w-5xl">
@@ -77,7 +89,7 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
                     </div>
                 </section> : availability.available ? <StatusBanner title="NO HAY PRÓXIMAS FECHAS" description="Esta experiencia no tiene fechas disponibles ahora." className="mt-7" /> : null}
 
-                {sessions.length > 1 && availability.available ? <section className="mt-8 max-w-2xl" aria-labelledby="choose-session"><div className="flex items-baseline justify-between gap-4"><h2 id="choose-session" className="text-xl font-extrabold">ELIGE TU FECHA</h2>{selectionRequired ? <p className="text-sm font-semibold text-muted-foreground">Selecciona una para reservar</p> : null}</div><div className="mt-4 grid gap-3 sm:grid-cols-2">{sessions.map((session) => <button key={session.id} type="button" onClick={() => setSelectedSession(session)} aria-pressed={selectedSession?.id === session.id} className={`min-h-20 rounded-[var(--radius-control)] border p-4 text-left transition ${selectedSession?.id === session.id ? 'border-brand bg-brand-subtle ring-1 ring-brand' : 'border-border bg-surface hover:border-border-strong'}`}><span className="block font-bold capitalize">{date(session.starts_at)}</span><span className="mt-1 block text-sm text-muted-foreground">{time(session.starts_at)}{place(session) ? ` · ${place(session)}` : ''}</span></button>)}</div></section> : null}
+                {sessionChoices}
 
                 {experience.description ? <section className="mt-10 max-w-2xl"><h2 className="text-xl font-extrabold">QUÉ VAS A VIVIR</h2><p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{experience.description}</p></section> : null}
                 {experience.terms ? <section className="mt-10 max-w-2xl border-t border-border pt-7"><h2 className="text-xl font-extrabold">CONDICIONES</h2><p className="mt-3 whitespace-pre-line text-sm leading-6 text-muted-foreground">{experience.terms}</p></section> : null}
@@ -91,6 +103,6 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
             </div>
         </section>
         {canReserve && availability.available ? <div className="fixed right-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-0 z-30 border-t border-border bg-surface/95 p-4 backdrop-blur lg:bottom-0"><div className="mx-auto max-w-5xl"><button type="button" onClick={reserve} disabled={selectionRequired} className="min-h-14 w-full rounded-2xl bg-brand px-5 text-sm font-extrabold text-brand-foreground transition hover:bg-brand/90 disabled:cursor-not-allowed disabled:opacity-50 sm:max-w-sm">{internalReservation ? internalAction : 'RESERVAR'}</button></div></div> : null}
-        {reservationOpen ? <div className="fixed inset-0 z-50 flex items-end bg-overlay p-0 sm:items-center sm:justify-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="reservation-title"><section className="w-full rounded-t-[28px] bg-surface p-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-xl sm:max-w-lg sm:rounded-[28px]"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-extrabold tracking-[0.14em] text-brand uppercase">Experiencia JAKAWI</p><h2 id="reservation-title" className="mt-2 text-2xl font-extrabold">RESERVA TU LUGAR</h2></div><button type="button" onClick={() => setReservationOpen(false)} aria-label="Cerrar" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-border"><X className="size-5" /></button></div><p className="mt-4 leading-6 text-muted-foreground">Esta experiencia es gestionada directamente por {organizer?.name ?? 'el Partner'}.</p>{selectedSession ? <p className="mt-3 text-sm font-bold capitalize">{date(selectedSession.starts_at)} · {time(selectedSession.starts_at)}</p> : null}<div className="mt-6 space-y-3">{experience.reservation_targets?.map((target, index) => <a key={target.method} href={`/experiencias/${experience.slug}/reservar?method=${target.method}`} className={`flex min-h-13 items-center justify-center rounded-2xl px-4 text-sm font-extrabold ${index === 0 ? 'bg-brand text-brand-foreground' : 'border border-border bg-surface'}`}>{target.label}</a>)}</div></section></div> : null}
+        {reservationDialog}
     </main></>;
 }

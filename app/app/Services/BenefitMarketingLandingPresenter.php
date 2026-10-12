@@ -38,8 +38,8 @@ class BenefitMarketingLandingPresenter
             !$available => ['label'=>$props['availability']['reason'], 'href'=>'#condiciones', 'kind'=>'unavailable'],
             $grantOnly => ['label'=>'VER MI PREMIO', 'href'=>$props['rewardUrl'] ?? $native, 'kind'=>'native'],
             !$request->user() => ['label'=>'QUIERO ESTE BENEFICIO','href'=>route('redemptions.start',$benefit), 'kind'=>'guest'],
-            !$props['hasActiveMembership'] => ['label'=>'ACTIVAR MEMBRESÍA','href'=>'/membresia?'.http_build_query(['journey'=>'BENEFIT','action'=>'REDEEM','resource_id'=>$benefit->id]), 'kind'=>'membership'],
-            default => ['label'=>'USAR BENEFICIO','href'=>$native,'kind'=>'native'],
+            !$props['hasActiveMembership'] => ['label'=>'QUIERO MI BENEFICIO','href'=>'#condiciones', 'kind'=>'membership'],
+            default => ['label'=>'USAR BENEFICIO','href'=>'#condiciones','kind'=>'native'],
         };
         return [
             'eyebrow'=>$this->editorial($landing->eyebrow) ?: 'BENEFICIO JAKAWI',

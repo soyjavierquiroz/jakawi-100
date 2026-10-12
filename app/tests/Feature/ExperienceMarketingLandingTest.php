@@ -44,7 +44,7 @@ class ExperienceMarketingLandingTest extends TestCase
         $this->post(route('experiences.reservations.store',$experience),['experience_session_id'=>$session->id])->assertRedirect(route('register'));
         $this->assertSame('EXPERIENCE',session('public_journey.continuation.journey'));
         $user=User::factory()->create();$this->actingAs($user);
-        $this->get('/l/experience-plan')->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','ACTIVAR MEMBRESÍA')->where('copy.action.href','/membresia?'.http_build_query(['journey'=>'EXPERIENCE','action'=>'RESERVE','resource_id'=>$experience->id,'experience_session_id'=>$session->id])));
+        $this->get('/l/experience-plan')->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','QUIERO MI BENEFICIO')->where('copy.action.href','/membresia?'.http_build_query(['journey'=>'EXPERIENCE','action'=>'RESERVE','resource_id'=>$experience->id,'experience_session_id'=>$session->id])));
         Membership::create(['user_id'=>$user->id,'status'=>'active','starts_at'=>now()->subDay(),'ends_at'=>now()->addMonth(),'amount_paid'=>100]);
         $this->get('/l/experience-plan')->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','RESERVAR')->where('copy.action.href',route('experiences.show',$experience)));
         $this->post(route('experiences.reservations.store',$experience),['experience_session_id'=>$session->id])->assertRedirect();
@@ -78,10 +78,10 @@ class ExperienceMarketingLandingTest extends TestCase
             app(LandingPresentationDefaults::class)->choose($experience,$scope==='NONE'?null:$landing,$scope);
             foreach([false,true] as $authenticated){
                 if($authenticated)$this->actingAs(User::factory()->create());else auth()->forgetGuards();
-                $url=!$authenticated&&in_array($scope,['GUESTS','ALL'],true)?route('landing-presentations.show',$landing):route('experiences.show',$experience);
+                $url=($scope==='ALL'||(!$authenticated&&$scope==='GUESTS'))?route('landing-presentations.show',$landing):route('experiences.show',$experience);
                 $this->assertSame($url,app(ProductLandingResolver::class)->navigationUrl($experience,$authenticated));
                 $this->get('/explorar?type=experiences')->assertOk()->assertInertia(fn(Assert $p)=>$p->has('opportunities',1)->where('opportunities.0.destination_url',$url));
-                if (!$authenticated && in_array($scope,['GUESTS','ALL'],true)) {
+                if (($scope==='ALL'||(!$authenticated&&$scope==='GUESTS'))) {
                     $this->get(route('experiences.show',$experience))->assertRedirect(route('landing-presentations.show',$landing));
                 } else {
                     $this->get(route('experiences.show',$experience))->assertOk()->assertInertia(fn(Assert $p)=>$p->component('experiences/show'));

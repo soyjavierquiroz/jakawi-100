@@ -13,15 +13,16 @@ class ProductLandingResolver
 {
     public function navigationUrl(Model $subject, bool $authenticated): string
     {
-        $presentation = $authenticated ? null : $this->forGuest($subject);
+        $presentation = $this->forViewer($subject, $authenticated);
         return $presentation ? route('landing-presentations.show', $presentation->slug) : $this->nativeUrl($subject);
     }
 
-    public function forGuest(Model $subject): ?LandingPresentation
+    public function forViewer(Model $subject, bool $authenticated = false): ?LandingPresentation
     {
         return LandingPresentation::query()->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey())->where('status', 'PUBLISHED')
-            ->whereIn('default_scope', ['GUESTS', 'ALL'])->first();
+            ->whereIn('default_scope', $authenticated ? ['ALL'] : ['GUESTS', 'ALL'])
+            ->orderByRaw("CASE WHEN default_scope = 'GUESTS' THEN 0 ELSE 1 END")->orderBy('id')->first();
     }
 
     public function nativeUrl(Model $subject): string

@@ -80,10 +80,12 @@ class LandingPresentationController extends Controller
             }
             app(GrowthMeasurementService::class)->landingView($presentation, $touch);
         }
+        $resumed = ! $preview && $request->user() && $request->session()->get('landing_acquisition_resumed') === $presentation->id;
         $shared = [
             'vsl' => ! ($subject instanceof Unlock) && in_array($presentation->media_mode?->value, ['IMAGE', 'NONE'], true) ? null : app(LandingVideoConfiguration::class)->forPresentation($presentation),
             'presentation' => $presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']),
-            'acquisitionResumed' => ! $preview && $request->user() && $request->session()->get('landing_acquisition_resumed') === $presentation->id,
+            'selectedLocationId' => $resumed ? $request->session()->get('landing_continuation_context.location_id') : null,
+            'acquisitionResumed' => (bool) $resumed,
             'nativeUrl' => $resolver->nativeUrl($subject), 'preview' => $preview,
             'canonical' => $presentation->default_scope === 'ALL' ? route('landing-presentations.show', $presentation->slug) : $resolver->nativeUrl($subject),
             'noindex' => $presentation->default_scope !== 'ALL' || $preview,
@@ -100,13 +102,19 @@ class LandingPresentationController extends Controller
 
             return Inertia::render('landing-presentations/unlock', [
                 ...$shared,
+                'unlock' => app(UnlockController::class)->data($subject, true),
+                'participation' => $request->user()?->unlockParticipations()->where('unlock_id', $subject->id)->first()?->only(['status']),
+                'hasActiveMembership' => $request->user()?->hasActiveMembership() ?? false,
+                'jpBalance' => $request->user() ? app(\App\Services\JpBalanceService::class)->for($request->user()) : null,
                 'copy' => $copy, 'acquisition' => app(\App\Services\LandingAcquisition::class)->present($presentation, $copy),
             ]);
         }
         if ($subject instanceof Experience) {
+            $experienceProps = app(PublicController::class)->experiencePublicProps($subject, $request);
             return Inertia::render('landing-presentations/experience', [
-                ...$shared,
+                ...$experienceProps, ...$shared,
                 ...$this->offerCopy($presentation, app(ExperienceMarketingLandingPresenter::class)->present($subject, $presentation, $request)),
+                'restoredSessionId' => ($resumed ? $request->session()->get('landing_continuation_context.experience_session_id') : null) ?? $experienceProps['restoredSessionId'],
                 'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->cover_path ?: $subject->image_path, 'hero'),
             ]);
         }

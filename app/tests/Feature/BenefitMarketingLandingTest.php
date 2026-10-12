@@ -60,12 +60,12 @@ class BenefitMarketingLandingTest extends TestCase
     {
         [$benefit,$landing,$location]=$this->offer();
         $user=$this->member(); $this->actingAs($user);
-        $this->get('/l/benefit-campaign')->assertOk()->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','USAR BENEFICIO')->where('copy.action.href',route('benefits.show',$benefit)));
+        $this->get('/l/benefit-campaign')->assertOk()->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','USAR BENEFICIO')->where('copy.action.href','#condiciones'));
         $redemption=app(RedemptionService::class)->start($user,$benefit,$location);
         app(RedemptionService::class)->confirm($redemption->code,'123456');
         $this->get('/l/benefit-campaign')->assertOk()->assertInertia(fn(Assert $p)=>$p->where('copy.action.kind','unavailable')->where('copy.action.label','YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES'));
         $this->actingAs(User::factory()->create());
-        $this->get('/l/benefit-campaign')->assertOk()->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','ACTIVAR MEMBRESÍA')->where('copy.action.kind','membership'));
+        $this->get('/l/benefit-campaign')->assertOk()->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','QUIERO MI BENEFICIO')->where('copy.action.kind','membership'));
         $benefit->update(['ends_at'=>now()->subDay()]);
         $this->get('/l/benefit-campaign')->assertOk()->assertInertia(fn(Assert $p)=>$p->where('copy.action.kind','unavailable'));
         $benefit->update(['ends_at'=>null,'status'=>'paused']);
@@ -105,10 +105,10 @@ class BenefitMarketingLandingTest extends TestCase
             app(LandingPresentationDefaults::class)->choose($benefit,$scope==='NONE'?null:$landing,$scope);
             foreach([false,true] as $authenticated){
                 if($authenticated) $this->actingAs(User::factory()->create()); else auth()->forgetGuards();
-                $url=!$authenticated&&in_array($scope,['GUESTS','ALL'],true)?route('landing-presentations.show',$landing):route('benefits.show',$benefit);
+                $url=($scope==='ALL'||(!$authenticated&&$scope==='GUESTS'))?route('landing-presentations.show',$landing):route('benefits.show',$benefit);
                 $this->assertSame($url,app(ProductLandingResolver::class)->navigationUrl($benefit,$authenticated));
                 $this->get('/explorar?type=benefits')->assertOk()->assertInertia(fn(Assert $p)=>$p->has('opportunities',1)->where('opportunities.0.destination_url',$url));
-                if (!$authenticated && in_array($scope,['GUESTS','ALL'],true)) {
+                if (($scope==='ALL'||(!$authenticated&&$scope==='GUESTS'))) {
                     $this->get(route('benefits.show',$benefit))->assertRedirect(route('landing-presentations.show',$landing));
                 } else {
                     $this->get(route('benefits.show',$benefit))->assertOk()->assertInertia(fn(Assert $p)=>$p->component('benefits/show'));

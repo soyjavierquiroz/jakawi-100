@@ -13,11 +13,12 @@ type Detail = Unlock & {
     locations?: Array<{ name: string; slug: string; city?: string | null }>;
 };
 
-export default function Show({ unlock, participation, hasActiveMembership = false, jpBalance }: {
+export default function Show({ unlock, participation, hasActiveMembership = false, jpBalance, continuationOnly = false }: {
     unlock: Detail; participation?: { status: string } | null; hasActiveMembership?: boolean;
-    jpBalance?: { ledger_balance: number; held: number; available_balance: number } | null;
+    continuationOnly?: boolean; jpBalance?: { ledger_balance: number; held: number; available_balance: number } | null;
 }) {
-    const { auth } = usePage().props;
+    const { auth, presentation } = usePage().props;
+    const landingId = continuationOnly ? (presentation as { id: number } | undefined)?.id : undefined;
     const intentSentFor = useRef<string | null>(null);
     const membershipIntent = () => {
         if (intentSentFor.current === unlock.slug) return;
@@ -46,21 +47,7 @@ export default function Show({ unlock, participation, hasActiveMembership = fals
         post('comprometer');
     };
 
-    return <JourneyLayout>
-        <Head title={socialTitle}><meta name="description" content={socialDescription} /><meta property="og:title" content={socialTitle} /><meta property="og:description" content={socialDescription} /></Head>
-        <main className="mx-auto min-h-screen max-w-5xl px-4 pb-28 pt-8 text-foreground sm:px-8 sm:pt-12">
-            <Link href="/explorar?type=unlocks" className="inline-flex min-h-11 items-center text-sm font-bold text-muted-foreground hover:text-foreground">← Explorar</Link>
-            <div className="mt-5 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.7fr)]">
-                <div>
-                    <p className="discovery-eyebrow text-brand">DESBLOQUEO JAKAWI</p>
-                    <h1 className="mt-3 max-w-2xl text-[38px] leading-[0.98] font-extrabold tracking-tight sm:text-6xl">{unlock.title}</h1>
-                    {unlock.short_description ? <p className="mt-5 max-w-2xl text-lg leading-7 font-semibold text-foreground-soft">{unlock.short_description}</p> : null}
-                    {unlock.description ? <section className="mt-10 max-w-2xl"><h2 className="text-xl font-extrabold">QUÉ VAMOS A DESBLOQUEAR</h2><p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{unlock.description}</p></section> : null}
-                    {unlock.partner ? <section className="mt-9 border-t border-border pt-6"><h2 className="text-xl font-extrabold">CON QUIÉN</h2><Link href={`/partners/${unlock.partner.slug}`} className="mt-2 inline-flex min-h-11 items-center font-bold text-brand">{unlock.partner.name}</Link></section> : null}
-                    {unlock.locations?.length ? <section className="mt-8 border-t border-border pt-6"><h2 className="text-xl font-extrabold">DÓNDE</h2><p className="mt-2 text-muted-foreground">{unlock.locations.map((location) => `${location.name}${location.city ? ` · ${location.city}` : ''}`).join(' · ')}</p></section> : null}
-                    {unlock.terms ? <section className="mt-8 border-t border-border pt-6"><h2 className="text-xl font-extrabold">CONDICIONES</h2><p className="mt-3 whitespace-pre-line text-sm leading-6 text-muted-foreground">{unlock.terms}</p></section> : null}
-                </div>
-                <aside className="self-start rounded-[var(--radius-card)] border border-border bg-surface-elevated p-5 sm:p-7">
+    const actionPanel = (<aside className="self-start rounded-[var(--radius-card)] border border-border bg-surface-elevated p-5 sm:p-7">
                     <p className="discovery-eyebrow text-brand">LA COMUNIDAD LO HACE POSIBLE</p>
                     <p className="mt-4 text-3xl font-extrabold">{unlock.committed_count} / {unlock.minimum_commitments}</p>
                     <p className="mt-1 text-sm font-semibold text-muted-foreground">personas comprometidas · faltan {unlock.remaining}</p>
@@ -81,12 +68,29 @@ export default function Show({ unlock, participation, hasActiveMembership = fals
                         : status === 'NO_SHOW' ? <p>No registramos tu participación.</p>
                         : status === 'COMMITTED' ? <><p className="font-bold">✓ ESTÁS DENTRO</p><p>Faltan {unlock.remaining} personas. Haz que suceda.</p><button onClick={share} className="discovery-primary-action w-full">INVITAR AMIGOS</button><button onClick={() => post('cancelar')} className="discovery-secondary-action w-full">CANCELAR COMPROMISO</button></>
                         : !unavailable && !auth.user ? <button onClick={commit} className="discovery-primary-action w-full">CREAR CUENTA GRATIS PARA COMPROMETERTE</button>
-                        : !unavailable && !eligible && membershipRequired && !hasActiveMembership ? <Link href={`/membresia?journey=UNLOCK&action=COMMIT&resource_id=${unlock.id}`} onClick={membershipIntent} className="discovery-primary-action w-full">VER MEMBRESÍA</Link>
+                        : !unavailable && !eligible && membershipRequired && !hasActiveMembership ? <Link href={`/membresia?journey=UNLOCK&action=COMMIT&resource_id=${unlock.id}${landingId ? `&landing_presentation_id=${landingId}` : ''}`} onClick={membershipIntent} className="discovery-primary-action w-full">VER MEMBRESÍA</Link>
                         : !unavailable && eligible ? <button onClick={commit} className="discovery-primary-action w-full">SÍ, CUENTEN CONMIGO</button>
                         : !unavailable ? <p className="font-semibold">Tu estado actual no es elegible para este desbloqueo.</p> : null}
                     </div>
                     <button onClick={share} className="discovery-secondary-action mt-5 w-full">COMPARTIR DESBLOQUEO</button>
-                </aside>
+                </aside>);
+    if (continuationOnly) return actionPanel;
+
+    return <JourneyLayout>
+        <Head title={socialTitle}><meta name="description" content={socialDescription} /><meta property="og:title" content={socialTitle} /><meta property="og:description" content={socialDescription} /></Head>
+        <main className="mx-auto min-h-screen max-w-5xl px-4 pb-28 pt-8 text-foreground sm:px-8 sm:pt-12">
+            <Link href="/explorar?type=unlocks" className="inline-flex min-h-11 items-center text-sm font-bold text-muted-foreground hover:text-foreground">← Explorar</Link>
+            <div className="mt-5 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.7fr)]">
+                <div>
+                    <p className="discovery-eyebrow text-brand">DESBLOQUEO JAKAWI</p>
+                    <h1 className="mt-3 max-w-2xl text-[38px] leading-[0.98] font-extrabold tracking-tight sm:text-6xl">{unlock.title}</h1>
+                    {unlock.short_description ? <p className="mt-5 max-w-2xl text-lg leading-7 font-semibold text-foreground-soft">{unlock.short_description}</p> : null}
+                    {unlock.description ? <section className="mt-10 max-w-2xl"><h2 className="text-xl font-extrabold">QUÉ VAMOS A DESBLOQUEAR</h2><p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{unlock.description}</p></section> : null}
+                    {unlock.partner ? <section className="mt-9 border-t border-border pt-6"><h2 className="text-xl font-extrabold">CON QUIÉN</h2><Link href={`/partners/${unlock.partner.slug}`} className="mt-2 inline-flex min-h-11 items-center font-bold text-brand">{unlock.partner.name}</Link></section> : null}
+                    {unlock.locations?.length ? <section className="mt-8 border-t border-border pt-6"><h2 className="text-xl font-extrabold">DÓNDE</h2><p className="mt-2 text-muted-foreground">{unlock.locations.map((location) => `${location.name}${location.city ? ` · ${location.city}` : ''}`).join(' · ')}</p></section> : null}
+                    {unlock.terms ? <section className="mt-8 border-t border-border pt-6"><h2 className="text-xl font-extrabold">CONDICIONES</h2><p className="mt-3 whitespace-pre-line text-sm leading-6 text-muted-foreground">{unlock.terms}</p></section> : null}
+                </div>
+                {actionPanel}
             </div>
         </main>
     </JourneyLayout>;

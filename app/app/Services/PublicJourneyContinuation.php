@@ -88,6 +88,7 @@ class PublicJourneyContinuation
                 return null;
             }
             $this->session->flash('landing_acquisition_resumed', $presentation->id);
+            $this->session->flash('landing_continuation_context', $intent['context'] ?? []);
 
             return route('landing-presentations.show', $presentation, false);
         }
@@ -113,6 +114,21 @@ class PublicJourneyContinuation
         };
         $this->set($journey, $subject->id, $action);
         $this->session->put(self::KEY.'.landing_presentation_id', $presentation->id);
+    }
+
+    public function attachLanding(int $id): void
+    {
+        $intent = $this->get();
+        $presentation = \App\Models\LandingPresentation::find($id);
+        $type = match ($intent['journey'] ?? null) {
+            'BENEFIT' => Benefit::class, 'EXPERIENCE' => Experience::class,
+            'SOCIAL_CHALLENGE' => Challenge::class, 'UNLOCK' => Unlock::class, default => null,
+        };
+        if (! $presentation || $presentation->status !== 'PUBLISHED' || ! $type
+            || ! ($presentation->subject instanceof $type) || $presentation->subject_id !== $intent['resource_id']) {
+            throw new InvalidArgumentException('Invalid Landing continuation.');
+        }
+        $this->session->put(self::KEY.'.landing_presentation_id', $id);
     }
 
     public function restoredExperienceSessionId(Experience $experience): ?int

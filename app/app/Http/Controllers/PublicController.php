@@ -165,7 +165,16 @@ class PublicController extends Controller
             $analytics->journeyMembershipGateViewed($experience);
         }
 
-        return Inertia::render('experiences/show', ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $hasActiveMembership, 'restoredSessionId' => app(\App\Services\PublicJourneyContinuation::class)->restoredExperienceSessionId($experience), 'availability' => ['available' => $available, 'reason' => $available ? null : 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA']]);
+        return Inertia::render('experiences/show', $this->experiencePublicProps($experience, $request));
+    }
+
+    public function experiencePublicProps(Experience $experience, Request $request): array
+    {
+        $available = $experience->isPublished();
+        $experience->load(['partners', 'sessions' => fn ($query) => $available ? $query->upcoming()->with('location') : $query->whereRaw('1 = 0')]);
+        $reservations = $request->user() ? $request->user()->experienceReservations()->where('experience_id', $experience->id)->get()->keyBy('experience_session_id') : collect();
+        $hasActiveMembership = $request->user()?->hasActiveMembership() ?? false;
+        return ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $hasActiveMembership, 'restoredSessionId' => app(\App\Services\PublicJourneyContinuation::class)->restoredExperienceSessionId($experience), 'availability' => ['available' => $available, 'reason' => $available ? null : 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA']];
     }
 
     public function map(Location $location, AnalyticsTracker $analytics): RedirectResponse

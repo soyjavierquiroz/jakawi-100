@@ -2,9 +2,11 @@
 
 **READY FOR DEPLOY — 2026-10-12.** Implementación sobre `9c49421d0ba8792144bff852a72f8daa82064f48`. Producción de referencia: `8d913038984ae5eb6d40f3ba7477beae5d928ece`. Esta entrega no despliega ni publica registros de producción.
 
-Guest nativo → default `PUBLISHED` para `GUESTS|ALL` → `/l/{slug}`; sin default usa Product Detail. Authenticated nativo usa Product Detail. `/l` directo conserva visibilidad. El CTA abre registro/login contextual, vuelve a la misma Landing y habilita la acción del mismo dominio. Benefit reutiliza ubicación/membresía/confirmación existentes; no hay mutaciones automáticas.
+Guest nativo → default `PUBLISHED` para `GUESTS|ALL` → `/l/{slug}`; sin default usa Product Detail. Contrato refinado por Landing-first V1: authenticated nativo usa Landing `ALL` aplicable; sin ella usa Product Detail. Guest prioriza `GUESTS > ALL`. Acciones y retorno de membresía conservan la misma Landing. `/l` directo conserva visibilidad. El CTA abre registro/login contextual, vuelve a la misma Landing y habilita la acción del mismo dominio. Benefit reutiliza ubicación/membresía/confirmación existentes; no hay mutaciones automáticas.
 
 Dos campos nuevos: `acquisition_headline`, `acquisition_supporting_copy`, con fallback por dominio y una migración aditiva. Registro contextual: nombre, correo, teléfono/WhatsApp y contraseña elegida por el usuario según las reglas actuales; sin ubicación ni passwordless. V3, reservas, verificación de Challenge y disclosure de Unlock conservan sus contratos.
+
+Contrato y validación posteriores: [Landing-first Product Journey V1](../landing-first-v1/INDEX.md), pendiente de deploy.
 
 ## Validación
 

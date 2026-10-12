@@ -24,7 +24,7 @@ class MembershipOfferController extends Controller
             'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
         ]));
         if ($query) {
-            if (array_diff(array_keys($query), ['journey', 'action', 'resource_id', 'experience_session_id', 'location_id'])
+            if (array_diff(array_keys($query), ['journey', 'action', 'resource_id', 'experience_session_id', 'location_id', 'landing_presentation_id'])
                 || ! isset($query['journey'], $query['action'], $query['resource_id'])
                 || ! ctype_digit((string) $query['resource_id'])) {
                 throw ValidationException::withMessages(['journey' => 'Intención inválida.']);
@@ -51,6 +51,10 @@ class MembershipOfferController extends Controller
             }
             try {
                 $continuation->set($journey, $resourceId, $action, $context);
+                if (isset($query['landing_presentation_id'])) {
+                    if (! is_scalar($query['landing_presentation_id']) || ! ctype_digit((string) $query['landing_presentation_id'])) throw new \InvalidArgumentException();
+                    $continuation->attachLanding((int) $query['landing_presentation_id']);
+                }
                 if ($continuation->destination($continuation->get()) === null) {
                     throw new \InvalidArgumentException();
                 }
@@ -111,7 +115,7 @@ class MembershipOfferController extends Controller
                 'attribution_touch_id' => $touch?->id,
                 'journey_type' => $intent['journey'] ?? null, 'journey_action' => $intent['action'] ?? null,
                 'journey_resource_id' => $intent['resource_id'] ?? null,
-                'journey_context' => $intent['context'] ?? null, 'requested_at' => now(),
+                'journey_context' => isset($intent['landing_presentation_id']) ? ($intent['context'] ?? []) + ['landing_presentation_id' => $intent['landing_presentation_id']] : ($intent['context'] ?? null), 'requested_at' => now(),
             ]);
         });
         if ($created) {

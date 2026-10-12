@@ -1,3 +1,4 @@
+import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
@@ -76,7 +77,6 @@ export default function ExperienceOfferAdapter({
     offerEditorial,
     presentation,
     heroUrl,
-    nativeUrl,
     canonical,
     noindex,
     preview,
@@ -86,6 +86,7 @@ export default function ExperienceOfferAdapter({
         copy.reservationMethod && copy.reservationMethod !== 'jakawi',
     );
     const acquire = useAcquisition();
+    const continueAction = useLandingAction();
     const guest = !(usePage().props.auth as { user?: unknown })?.user;
     const sent = useRef(false);
     const disabled = preview || copy.action.kind === 'unavailable';
@@ -99,7 +100,7 @@ export default function ExperienceOfferAdapter({
                   ? 'VER FECHAS Y RESERVAR'
                   : copy.action.label,
         disabled,
-        onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+        onClick: (event: React.MouseEvent<Element>) => {
             if (disabled) {
                 event.preventDefault();
                 return;
@@ -108,6 +109,13 @@ export default function ExperienceOfferAdapter({
                 event.preventDefault();
                 acquire();
                 return;
+            }
+            if (
+                copy.action.kind === 'native' ||
+                copy.action.kind === 'membership'
+            ) {
+                event.preventDefault();
+                continueAction();
             }
             if (copy.action.kind === 'membership' && !sent.current) {
                 sent.current = true;
@@ -376,7 +384,8 @@ export default function ExperienceOfferAdapter({
                                     </details>
                                 )}
                                 <Link
-                                    href={nativeUrl}
+                                    href="#condiciones"
+                                    onClick={action.onClick}
                                     className="mt-5 inline-flex min-h-11 items-center text-base font-bold underline"
                                 >
                                     Ver ficha, fechas y reserva

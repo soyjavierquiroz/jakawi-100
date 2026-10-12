@@ -215,7 +215,7 @@ class LandingPresentationTest extends TestCase
             foreach (['NONE','GUESTS','ALL'] as $scope) {
                 $defaults->choose($subject,$scope==='NONE'?null:$landing,$scope);
                 foreach ([false,true] as $authenticated) {
-                    $expected=!$authenticated&&in_array($scope,['GUESTS','ALL'],true)?route('landing-presentations.show',$landing):$resolver->nativeUrl($subject);
+                    $expected=($scope==='ALL'||(!$authenticated&&$scope==='GUESTS'))?route('landing-presentations.show',$landing):$resolver->nativeUrl($subject);
                     $this->assertSame($expected,$resolver->navigationUrl($subject,$authenticated));
                 }
             }
@@ -304,7 +304,7 @@ class LandingPresentationTest extends TestCase
         $this->assertFalse(\Illuminate\Support\Facades\Schema::hasColumn('landing_presentations','is_default'));
     }
 
-    public function test_native_routes_resolve_guest_all_default_and_keep_authenticated_product_detail(): void
+    public function test_native_routes_resolve_all_default_for_every_viewer(): void
     {
         $subjects=[Benefit::factory()->published()->create(),Experience::factory()->published()->create(),
             Unlock::create(['title'=>'Native unlock','slug'=>'native-unlock','origin'=>'JAKAWI','type'=>'BENEFIT','minimum_commitments'=>2,'status'=>Unlock::ACTIVE])];
@@ -314,8 +314,7 @@ class LandingPresentationTest extends TestCase
                 if ($authenticated) $this->actingAs(User::factory()->create());
                 else auth()->forgetGuards();
                 $component=match (true) { $subject instanceof Benefit=>'benefits/show', $subject instanceof Experience=>'experiences/show', default=>'unlocks/show' };
-                if (!$authenticated) $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertRedirect(route('landing-presentations.show',$landing));
-                else $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertOk()->assertInertia(fn (Assert $page)=>$page->component($component));
+                $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertRedirect(route('landing-presentations.show',$landing));
             }
         }
     }
