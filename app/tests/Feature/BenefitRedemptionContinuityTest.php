@@ -34,6 +34,30 @@ class BenefitRedemptionContinuityTest extends TestCase
         return [$user, $benefit, $locations];
     }
 
+    public function test_benefit_context_is_visible_on_register_and_login_without_changing_intent(): void
+    {
+        [$user, $benefit, $locations] = $this->scenario();
+        $path = route('redemptions.intent', ['benefit' => $benefit->slug, 'location_id' => $locations->last()->id], false);
+        $this->get($path.'&auth=login')->assertRedirect('/login');
+        foreach (['login', 'register'] as $page) {
+            $this->get('/'.$page)->assertInertia(fn (Assert $view) => $view->component('auth/'.$page)
+                ->where('benefitJourney.title', $benefit->title)->where('benefitJourney.partner', $benefit->partner->name));
+        }
+        $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect($path);
+        $this->get($path)->assertInertia(fn (Assert $view) => $view->where('selectedLocationId', $locations->last()->id));
+        $this->assertDatabaseCount('redemptions', 0);
+    }
+
+    public function test_generic_auth_has_no_benefit_context_and_auth_choice_is_not_a_return_url(): void
+    {
+        foreach (['login', 'register'] as $page) {
+            $this->get('/'.$page)->assertInertia(fn (Assert $view) => $view->where('benefitJourney', null));
+        }
+        [, $benefit] = $this->scenario();
+        $this->get(route('redemptions.intent', ['benefit' => $benefit->slug, 'auth' => 'https://evil.test']))->assertRedirect('/register');
+        $this->assertDatabaseCount('redemptions', 0);
+    }
+
     public function test_guest_login_restores_benefit_intent_and_location_without_redeeming(): void
     {
         [$user, $benefit, $locations] = $this->scenario();
@@ -64,6 +88,7 @@ class BenefitRedemptionContinuityTest extends TestCase
         [, $benefit] = $this->scenario();
         $path = route('redemptions.intent', $benefit, false);
         $this->get($path)->assertRedirect('/register');
+        $this->get('/register')->assertInertia(fn (Assert $view) => $view->where('benefitJourney.title', $benefit->title));
         $this->post('/register', ['name' => 'Demo User', 'email' => 'demo@example.test', 'whatsapp' => '71234567'])->assertRedirect($path);
         $user = User::where('email', 'demo@example.test')->firstOrFail();
         $this->assertAuthenticatedAs($user);
@@ -133,7 +158,7 @@ class BenefitRedemptionContinuityTest extends TestCase
         [, $benefit, $locations] = $this->scenario();
         $user = User::factory()->create();
         $this->actingAs($user)->post(route('redemptions.start', $benefit), ['location_id' => $locations->last()->id])->assertRedirect('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id.'&location_id='.$locations->last()->id);
-        $this->get('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id.'&location_id='.$locations->last()->id)->assertOk();
+        $this->get('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id.'&location_id='.$locations->last()->id)->assertInertia(fn (Assert $view) => $view->where('benefitJourney.title', $benefit->title));
         $this->assertSame(['location_id' => $locations->last()->id], app(PublicJourneyContinuation::class)->get()['context']);
         $user->forceFill(['email_verified_at' => null])->save();
         $this->actingAs($user)->post(route('redemptions.start', $benefit), ['location_id' => $locations->last()->id])->assertRedirect('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id.'&location_id='.$locations->last()->id);

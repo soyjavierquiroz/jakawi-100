@@ -52,12 +52,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 app(PublicJourneyContinuation::class)->set('BENEFIT', $resource->id, 'REDEEM', $context);
             }
 
+            $authRoute = $resource instanceof Benefit && $request->query('auth') === 'login' ? 'login' : 'register';
             if ($resource) {
                 app(AnalyticsTracker::class)->journeyIntentStarted($resource);
-                app(AnalyticsTracker::class)->journeyAuthStarted($resource, 'register');
+                app(AnalyticsTracker::class)->journeyAuthStarted($resource, $authRoute);
             }
 
-            return $resource ? route('register') : route('login');
+            return $resource ? route($authRoute) : route('login');
         });
 
         $middleware->alias([

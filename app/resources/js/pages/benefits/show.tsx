@@ -1,3 +1,4 @@
+import { displayBenefitName, isDemoName } from '@/components/benefit-journey-context';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, MapPin, MessageCircle } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -48,6 +49,9 @@ export default function BenefitShow({
     redemptionIntent?: boolean;
     selectedLocationId?: number | null;
 }) {
+    const demo = isDemoName(benefit.title);
+    const title = displayBenefitName(benefit.title, demo);
+    const name = (value: string) => displayBenefitName(value, demo);
     const { auth, errors } = usePage().props;
     const [confirming, setConfirming] = useState(redemptionIntent && availability.available);
     const intentSentFor = useRef<string | null>(null);
@@ -70,24 +74,34 @@ export default function BenefitShow({
         locations.length > 0;
     const [processing, setProcessing] = useState(false);
     const membershipUrl = `/membresia?journey=BENEFIT&action=REDEEM&resource_id=${benefit.id}${locationId ? `&location_id=${locationId}` : ''}`;
+    const beginAuth = (login = false) => {
+        membershipIntent();
+        router.get(`/beneficios/${benefit.slug}/canjear`, {
+            ...(selectedLocationId && locations.some((location) => location.id === selectedLocationId) ? { location_id: selectedLocationId } : {}),
+            ...(login ? { auth: 'login' } : {}),
+        });
+    };
     const action = !availability.available ? null : (
+        <div className="w-full">
         <button
             type="button"
             onClick={() => {
                 membershipIntent();
                 if (!auth.user) {
-                    router.get(`/beneficios/${benefit.slug}/canjear`,
-                        selectedLocationId && locations.some((location) => location.id === selectedLocationId)
-                            ? { location_id: selectedLocationId } : {},
-                    );
+                    beginAuth();
                 } else {
                     setConfirming(true);
                 }
             }}
-            className="benefit-primary-action"
+            className="benefit-primary-action funnel-primary-action"
         >
-            {!auth.user ? 'CREAR CUENTA GRATIS' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'USAR BENEFICIO'}
+            {!auth.user ? 'QUIERO MI BENEFICIO' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'USAR BENEFICIO'}
         </button>
+        {!auth.user && <div className="mt-2 text-center text-sm leading-5">
+            <p className="text-muted-foreground">Crea tu cuenta en menos de un minuto y continúa aquí mismo.</p>
+            <button type="button" onClick={() => beginAuth(true)} className="mt-2 min-h-11 font-bold underline underline-offset-4">¿Ya tienes cuenta? Inicia sesión</button>
+        </div>}
+        </div>
     );
     const mobileAction = !availability.available
         ? null
@@ -100,7 +114,7 @@ export default function BenefitShow({
 
     return (
         <>
-            <Head title={benefit.title} />
+            <Head title={title} />
             <main className="min-h-screen bg-background pb-40 font-discovery text-foreground">
                 <section className="mx-auto w-full max-w-5xl">
                     <div
@@ -114,7 +128,7 @@ export default function BenefitShow({
                             src={benefit.hero_url ?? benefit.image_url}
                             srcset={benefit.hero_srcset ?? benefit.image_srcset}
                             sizes="(min-width: 1024px) 960px, 100vw"
-                            alt={benefit.title}
+                            alt={title}
                             className={
                                 hasMedia
                                     ? 'h-full w-full object-cover'
@@ -135,7 +149,7 @@ export default function BenefitShow({
                                     BENEFICIO JAKAWI
                                 </p>
                                 <h1 className="mt-3 max-w-[340px] text-[34px] leading-[0.95] font-extrabold tracking-tight sm:max-w-3xl sm:text-6xl">
-                                    {benefit.title}
+                                    {title}
                                 </h1>
                             </div>
                         )}
@@ -157,16 +171,17 @@ export default function BenefitShow({
                                 </p>
                                 <BrandEnergy className="mt-3" />
                                 <h1 className="mt-4 max-w-[340px] text-[34px] leading-[0.95] font-extrabold tracking-tight sm:max-w-3xl sm:text-6xl">
-                                    {benefit.title}
+                                    {title}
                                 </h1>
                             </>
                         ) : (
                             <BrandEnergy className="mt-1" />
                         )}
 
+                        {demo && <p className="mt-3 text-xs font-semibold">DEMO DE PRODUCTO · oferta simulada, no canjeable</p>}
                         {benefit.partner?.name ? (
                             <p className="text-foreground-soft mt-5 text-sm font-bold">
-                                En {benefit.partner.name}
+                                En {name(benefit.partner.name)}
                             </p>
                         ) : null}
                         {benefit.short_description ? (
@@ -237,7 +252,7 @@ export default function BenefitShow({
                                             className="py-5"
                                         >
                                             <p className="font-bold">
-                                                {location.name}
+                                                {name(location.name)}
                                             </p>
                                             {location.zone ||
                                             location.address ? (
@@ -314,23 +329,25 @@ export default function BenefitShow({
                     className="fixed inset-0 z-50 flex items-end bg-overlay sm:items-center sm:justify-center"
                 >
                     <div className="w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]">
-                        <p className="discovery-eyebrow text-brand">JAKAWI</p>
+                        <p className="discovery-eyebrow text-brand">CONTINÚA TU BENEFICIO</p>
                         <h2
                             id="activation-title"
                             className="mt-2 text-2xl font-extrabold"
                         >
-                            ¿ESTÁS EN EL ESTABLECIMIENTO?
+                            {locations.length > 1 ? 'Elige dónde usarás tu beneficio' : 'Sigue con tu beneficio'}
                         </h2>
                         <p className="mt-5 text-sm text-muted-foreground">
-                            Estás por activar:
+                            Sigues con:
                         </p>
-                        <p className="mt-1 font-bold">{benefit.title}</p>
+                        <p className="mt-1 font-bold">{title}</p>
                         <p className="text-sm text-muted-foreground">
-                            {benefit.partner?.name}{selectedLocation ? ` — ${selectedLocation.name}` : ''}
+                            {benefit.partner?.name ? name(benefit.partner.name) : ''}{selectedLocation ? ` — ${name(selectedLocation.name)}` : ''}
                         </p>
+                        {demo && <p className="mt-2 text-xs font-semibold">DEMO DE PRODUCTO · oferta simulada, no canjeable</p>}
+                        {auth.user && <p className="mt-3 inline-flex rounded-lg bg-success-surface px-2 py-1 text-xs font-semibold text-success-foreground">✓ Cuenta lista</p>}
                         {locations.length > 1 ? (
                             <label className="mt-5 block text-sm font-semibold">
-                                Elige tu sucursal
+                                Sucursal
                                 <select
                                     value={locationId ?? ''}
                                     onChange={(event) =>
@@ -346,7 +363,7 @@ export default function BenefitShow({
                                             key={location.id}
                                             value={location.id}
                                         >
-                                            {location.name}
+                                            {name(location.name)}
                                             {location.zone
                                                 ? ` · ${location.zone}`
                                                 : ''}
@@ -361,8 +378,7 @@ export default function BenefitShow({
                             </p>
                         ) : null}
                         <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                            Actívalo solamente cuando estés listo para
-                            utilizarlo.
+                            {!hasActiveMembership ? 'Selecciona la sucursal y continúa con tu acceso JAKAWI. Este beneficio es para miembros.' : 'Actívalo solamente cuando estés listo para utilizarlo.'}
                         </p>
                         <div className="mt-6 grid grid-cols-2 gap-3">
                             <button
@@ -388,9 +404,9 @@ export default function BenefitShow({
                                     }
                                 }}
                                 disabled={!locationId || processing}
-                                className="min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
+                                className="funnel-primary-action min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
                             >
-                                {processing ? 'ACTIVANDO…' : !auth.user ? 'CONTINUAR PARA CREAR CUENTA' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'ACTIVAR BENEFICIO'}
+                                {processing ? 'ACTIVANDO…' : !auth.user ? 'CONTINUAR PARA CREAR CUENTA' : !hasActiveMembership ? 'CONTINUAR' : 'ACTIVAR BENEFICIO'}
                             </button>
                         </div>
                     </div>

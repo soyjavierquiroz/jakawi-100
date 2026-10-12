@@ -1,3 +1,4 @@
+import BenefitJourneyContext, { type BenefitJourney } from '@/components/benefit-journey-context';
 import { Form, Head, setLayoutProps } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -17,15 +18,16 @@ import PasskeyVerify from '@/components/passkey-verify';
 /* @end-chisel-passkeys */
 
 type Props = {
+    benefitJourney?: BenefitJourney | null;
     status?: string;
     canResetPassword: boolean;
     partnerPortal?: boolean;
 };
 
-export default function Login({ status, canResetPassword, partnerPortal = false }: Props) {
+export default function Login({ status, canResetPassword, partnerPortal = false, benefitJourney }: Props) {
     setLayoutProps({
-        title: partnerPortal ? 'GESTIONA TU PORTAL PARTNER' : 'VUELVE A VIVIR MÁS TU CIUDAD',
-        description: partnerPortal
+        title: benefitJourney && !partnerPortal ? 'Inicia sesión y sigue con tu beneficio' : partnerPortal ? 'GESTIONA TU PORTAL PARTNER' : 'VUELVE A VIVIR MÁS TU CIUDAD',
+        description: benefitJourney && !partnerPortal ? 'Volverás a tu beneficio para continuar.' : partnerPortal
             ? 'Ingresa para gestionar reservas y validar beneficios.'
             : 'Ingresa para seguir descubriendo planes que valen la pena.',
     });
@@ -34,6 +36,7 @@ export default function Login({ status, canResetPassword, partnerPortal = false 
         <>
             <Head title={partnerPortal ? 'Portal Partner' : 'Iniciar sesión'} />
 
+            {benefitJourney && !partnerPortal && <BenefitJourneyContext journey={benefitJourney} />}
             {/* @chisel-passkeys */}
             <PasskeyVerify
                 label="Ingresar con passkey"
@@ -113,7 +116,7 @@ export default function Login({ status, canResetPassword, partnerPortal = false 
 
                             <Button
                                 type="submit"
-                                className="mt-2 h-13 w-full rounded-[var(--radius-control)] bg-brand font-discovery text-sm font-extrabold tracking-[0.08em] text-brand-foreground uppercase shadow-none hover:bg-brand/90"
+                                className="funnel-primary-action mt-2 h-13 w-full rounded-[var(--radius-control)] bg-brand font-discovery text-sm font-extrabold tracking-[0.08em] text-white uppercase shadow-none hover:bg-brand/90"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"

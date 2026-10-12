@@ -345,3 +345,12 @@
     [data-offer-density="COMPACT"] .offer-hero-v3 { padding-block: 2rem; }
     [data-offer-density="COMPACT"] [data-offer-operational] section { padding-block: 2rem; }
 }
+
+/* Funnel actions retain coral with sufficient contrast for white labels. */
+.funnel-primary-action {
+    color: #fff;
+    background-color: color-mix(in srgb, var(--brand) 80%, #000);
+}
+.funnel-primary-action:hover {
+    background-color: color-mix(in srgb, var(--brand) 76%, #000);
+}

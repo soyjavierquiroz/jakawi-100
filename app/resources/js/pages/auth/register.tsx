@@ -1,4 +1,5 @@
-import { Form, Head } from '@inertiajs/react';
+import BenefitJourneyContext, { type BenefitJourney } from '@/components/benefit-journey-context';
+import { Form, Head, setLayoutProps } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -9,13 +10,17 @@ import { login } from '@/routes';
 import { store } from '@/routes/register';
 
 type Props = {
+    benefitJourney?: BenefitJourney | null;
     referralCode?: string | null;
 };
 
-export default function Register({ referralCode }: Props) {
+export default function Register({ referralCode, benefitJourney }: Props) {
+    setLayoutProps({ title: benefitJourney ? 'Crea tu cuenta y sigue con tu beneficio' : 'Crea tu cuenta gratis', description: benefitJourney ? 'Son pocos pasos. Al terminar volverás exactamente donde estabas.' : 'Solo necesitamos tu nombre, correo y WhatsApp.' });
     return (
         <>
             <Head title="Crear cuenta gratis" />
+            {benefitJourney && <BenefitJourneyContext journey={benefitJourney} />}
+            {benefitJourney && <p className="mb-4 text-sm">¿Ya tienes cuenta? <TextLink href={login()} className="font-bold underline">Inicia sesión</TextLink></p>}
             <Form {...store.form()} disableWhileProcessing className="flex flex-col gap-6">
                 {({ processing, errors }) => (
                     <>
@@ -38,9 +43,9 @@ export default function Register({ referralCode }: Props) {
                                 <InputError message={errors.whatsapp} />
                             </div>
                             <label className="flex items-start gap-2 text-sm"><input type="checkbox" name="marketing_opt_in" value="1" defaultChecked />Quiero recibir novedades, beneficios y experiencias de JAKAWI por email.</label>
-                            <Button type="submit" className="mt-2 w-full" disabled={processing} data-test="register-user-button">
+                            <Button type="submit" className="funnel-primary-action mt-2 w-full" disabled={processing} data-test="register-user-button">
                                 {processing && <Spinner />}
-                                Crear cuenta gratis
+                                {benefitJourney ? 'Crear cuenta y continuar' : 'Crear cuenta gratis'}
                             </Button>
                         </div>
                         <div className="text-center text-sm text-muted-foreground">

@@ -42,6 +42,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'metaBrowser' => \Inertia\Inertia::always(fn () => app(\App\Services\Meta\MetaBrowserContext::class)->forRequest($request)),
             'name' => config('app.name'),
+            'benefitJourney' => fn () => $this->benefitJourney($request),
             'auth' => [
                 'user' => $request->user() ? $request->user()->toArray() + ['is_partner_only' => $request->user()->isPartnerOnly()] : null,
             ],
@@ -53,5 +54,17 @@ class HandleInertiaRequests extends Middleware
             'selectedCity' => fn () => $selectedCity->data($selectedCity->resolve($request)),
             'availableCities' => fn () => $selectedCity->available(),
         ];
+    }
+    private function benefitJourney(Request $request): ?array
+    {
+        if (! $request->is('login', 'register', 'membresia')) {
+            return null;
+        }
+        $intent = app(\App\Services\PublicJourneyContinuation::class)->get();
+        if (($intent['journey'] ?? null) !== 'BENEFIT') {
+            return null;
+        }
+        $benefit = \App\Models\Benefit::with('partner')->find($intent['resource_id']);
+        return $benefit ? ['title' => $benefit->title, 'partner' => $benefit->partner?->name] : null;
     }
 }
