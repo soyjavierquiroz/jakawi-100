@@ -136,33 +136,24 @@ export function OfferHero({
 
 export function MarketingFactStrip({
     facts,
-    treatment,
 }: {
     facts: OfferPresentationV1['facts'];
-    treatment: OfferTreatment;
 }) {
     if (!facts.length) return null;
-    if (treatment === 'compact')
-        return (
-            <dl className="offer-facts">
-                {facts.map((fact, index) => (
-                    <div
-                        key={index}
-                        className="mt-2 text-xs leading-5 text-[var(--cream)]/70"
-                    >
-                        <dt className="inline">{fact.label} </dt>
-                        <dd className="inline">{fact.value}</dd>
-                    </div>
-                ))}
-            </dl>
-        );
     return (
         <dl
             aria-label="Datos esenciales"
-            className={`${treatment === 'plain' ? 'mt-4 grid grid-cols-2 gap-4 border-y border-border py-3 text-sm' : 'grid grid-cols-[0.7fr_1.1fr_1.2fr] gap-3 border-y border-border py-3 text-sm leading-5'} offer-facts`}
+            className={`offer-facts mt-3 grid grid-cols-2 gap-3 border-y border-border py-3 text-sm leading-5`}
         >
             {facts.map((fact, index) => (
-                <div key={index} className="min-w-0">
+                <div
+                    key={index}
+                    className={
+                        facts.length % 2 && index === facts.length - 1
+                            ? 'col-span-2 min-w-0'
+                            : 'min-w-0'
+                    }
+                >
                     <dt className="text-[var(--marketing-text-secondary)]">
                         {fact.label}
                     </dt>
@@ -175,71 +166,30 @@ export function MarketingFactStrip({
 
 export function MarketingValueBlock({
     value,
-    compact = false,
     supplement,
 }: {
     value?: OfferPresentationV1['value'];
-    compact?: boolean;
     supplement?: ReactNode;
 }) {
     if (!value) return null;
-    if (compact)
-        return (
-            <section
-                className="offer-value py-8 sm:py-14"
-                aria-label={value.label}
-            >
-                <div className="grid gap-4 lg:grid-cols-[1fr_2fr] lg:gap-12">
-                    <div>
-                        <p
-                            className={`inline-flex rounded-full px-4 py-2 text-xs font-extrabold tracking-widest ${value.tone === 'reward' ? 'bg-[var(--marketing-reward)] text-[var(--marketing-reward-text)]' : 'bg-surface-muted text-foreground'}`}
-                        >
-                            {value.compactLabel ? (
-                                <>
-                                    <span className="lg:hidden">
-                                        {value.compactLabel}
-                                    </span>
-                                    <span className="hidden lg:inline">
-                                        {value.label}
-                                    </span>
-                                </>
-                            ) : (
-                                value.label
-                            )}
-                        </p>
-                    </div>
-                    <div>
-                        <h2 className="max-w-3xl text-3xl leading-[1.08] font-extrabold tracking-tight sm:text-5xl">
-                            {value.title}
-                        </h2>
-                        {value.description && (
-                            <p className="mt-3 text-base leading-6 font-semibold">
-                                {value.description}
-                            </p>
-                        )}
-                        {value.detail && (
-                            <p className="mt-4 max-w-2xl leading-6 text-[var(--marketing-text-secondary)]">
-                                {value.detail}
-                            </p>
-                        )}
-                        {value.note && (
-                            <p className="mt-3 text-sm leading-5 text-[var(--marketing-text-muted)]">
-                                {value.note}
-                            </p>
-                        )}
-                        {supplement}
-                    </div>
-                </div>
-            </section>
-        );
     return (
-        <div aria-label={value.label} className="border-t border-border pt-4">
+        <div
+            aria-label={value.label}
+            className="offer-value border-t border-border pt-3"
+        >
             <p className="text-sm text-[var(--marketing-text-secondary)]">
                 {value.label}
             </p>
             <p className="mt-1 text-2xl leading-tight font-extrabold">
                 {value.title}
             </p>
+            {value.description && (
+                <p className="mt-2 text-base leading-6">{value.description}</p>
+            )}
+            {value.detail && (
+                <p className="mt-2 text-base leading-6">{value.detail}</p>
+            )}
+            {supplement}
             {value.note && (
                 <p className="mt-2 text-base leading-6">{value.note}</p>
             )}
@@ -315,7 +265,7 @@ export function MarketingSteps({
             aria-label={steps.eyebrow}
             className={
                 compact
-                    ? 'border-t border-border py-10 sm:py-16'
+                    ? 'border-t border-border py-6 sm:py-8'
                     : 'border-t border-border py-12 sm:py-16'
             }
         >
@@ -331,7 +281,7 @@ export function MarketingSteps({
             <h2
                 className={
                     compact
-                        ? 'mt-3 text-4xl leading-none font-extrabold tracking-tight uppercase sm:text-6xl'
+                        ? 'mt-2 text-2xl leading-tight font-extrabold tracking-tight uppercase sm:text-3xl'
                         : 'mt-3 text-3xl font-extrabold tracking-tight uppercase sm:text-5xl'
                 }
             >
@@ -340,7 +290,7 @@ export function MarketingSteps({
             <div
                 className={
                     compact
-                        ? 'mt-8 grid gap-8 md:grid-cols-3 md:gap-10'
+                        ? 'mt-4 grid gap-4 md:grid-cols-3 md:gap-6'
                         : 'mt-8 grid gap-7 md:grid-cols-3'
                 }
             >
@@ -354,14 +304,14 @@ export function MarketingSteps({
                         <div
                             className={
                                 compact
-                                    ? 'offer-step-header'
+                                    ? 'offer-step-header-v3'
                                     : 'offer-step-header-simple'
                             }
                         >
                             <span
                                 className={
                                     compact
-                                        ? 'inline-flex h-14 min-w-18 items-center justify-center rounded-[var(--radius-control)] bg-[var(--marketing-action)] px-3 text-3xl font-extrabold tracking-tight text-[var(--marketing-action-text)]'
+                                        ? 'text-sm font-bold'
                                         : 'text-sm font-bold'
                                 }
                             >
@@ -370,7 +320,7 @@ export function MarketingSteps({
                             <h3
                                 className={
                                     compact
-                                        ? 'mt-4 text-3xl font-extrabold tracking-tight uppercase'
+                                        ? 'mt-1 text-lg font-extrabold tracking-tight uppercase'
                                         : 'mt-3 text-xl font-extrabold'
                                 }
                             >
@@ -413,7 +363,7 @@ export function MarketingFinalCTA({
             aria-label="CTA final"
             className={
                 compact
-                    ? 'bg-[var(--ink)] py-12 text-[var(--cream)] sm:py-16'
+                    ? 'bg-[var(--ink)] py-8 text-[var(--cream)] sm:py-10'
                     : 'bg-[var(--ink)] py-14 text-[var(--cream)] sm:py-20'
             }
         >
@@ -426,7 +376,7 @@ export function MarketingFinalCTA({
                 <h2
                     className={
                         compact
-                            ? 'mt-4 max-w-4xl text-5xl leading-[0.95] font-extrabold tracking-tight uppercase sm:text-7xl'
+                            ? 'max-w-4xl text-3xl leading-tight font-extrabold tracking-tight uppercase sm:text-5xl'
                             : `max-w-4xl text-4xl ${treatment === 'editorial' ? 'leading-[1.02]' : 'leading-tight'} font-extrabold tracking-tight uppercase sm:text-6xl`
                     }
                 >

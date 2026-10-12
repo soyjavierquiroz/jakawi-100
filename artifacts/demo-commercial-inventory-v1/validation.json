@@ -1,0 +1,16 @@
+{
+  "protected_controls": 44,
+  "protected_controls_equal": true,
+  "onboarding_unchanged": true,
+  "foreign_key_orphans": 0,
+  "landing_orphans": 0,
+  "failed_jobs_historical": 3,
+  "failed_jobs_new": 0,
+  "crm_enabled": true,
+  "meta_enabled": false,
+  "build_count": 0,
+  "deploy": false,
+  "non_demo_changed": false,
+  "date_storage": "UTC; browser America/La_Paz",
+  "benefit_blocker": "UNRESOLVED"
+}

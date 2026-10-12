@@ -1,3 +1,4 @@
+import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
 import type {
     OfferPresentationV1,
@@ -73,16 +74,6 @@ export default function ChallengeOfferAdapter({
     const { auth } = usePage().props as {
         auth: { user?: { id: number } | null };
     };
-    // Editorial demo only: never replace the configured domain reward or rules.
-    const commercialDemo =
-        presentation.slug === 'qa-bafabo-marketing' &&
-        challengeProps.challenge.id === 1 &&
-        challengeProps.challenge.slug === 'reto-de-prueba-jakawi-bafabo';
-    const demoDisclosure = 'Demo visual — premio ilustrativo, no canjeable.';
-    const displayedReward = commercialDemo ? 'Cena para dos' : copy.reward;
-    const confidence = commercialDemo
-        ? 'Si cumples las reglas, calificas. Premio QA sin valor comercial.'
-        : copy.confidence;
     const participating = Boolean(challengeProps.participation);
     const grant = challengeProps.grant;
     const qualified =
@@ -97,9 +88,7 @@ export default function ChallengeOfferAdapter({
         grant && ['granted', 'fulfilled'].includes(grant.status)
             ? {
                   href: '#participar',
-                  label: commercialDemo
-                      ? 'VER MI PARTICIPACIÓN'
-                      : 'VER MI PREMIO',
+                  label: 'VER MI PREMIO',
               }
             : membershipRequired
               ? {
@@ -156,14 +145,8 @@ export default function ChallengeOfferAdapter({
               ? 'participate'
               : 'other',
     };
-    const allQualified =
-        challengeProps.challenge.selection_type === 'ALL_QUALIFIED';
     const socialPost = challengeProps.challenge.evidence_type === 'SOCIAL_POST';
-    const supportCopy = commercialDemo
-        ? 'Publica un Reel mostrando un plan que valga la pena vivir en la ciudad. Usa #bafabo y envía tu enlace.'
-        : socialPost
-          ? `${copy.mechanism.split('. ')[0]}. JAKAWI verifica si cumpliste el reto.`
-          : copy.mechanism;
+    const supportCopy = copy.mechanism;
     const steps = socialPost
         ? [
               {
@@ -177,20 +160,20 @@ export default function ChallengeOfferAdapter({
               },
               { title: 'CALIFICA', description: copy.qualification },
           ]
-        : copy.steps;
+        : [
+              {
+                  title: 'PARTICIPA',
+                  description: copy.steps[0]?.description || copy.mechanism,
+              },
+              {
+                  title: 'CONFIRMA EL RESULTADO',
+                  description: `${copy.qualification} ${copy.selection}`,
+              },
+          ];
     const offer: OfferPresentationV1 = {
         hero: {
-            eyebrow: commercialDemo ? 'RETO JAKAWI · #BAFABO' : copy.eyebrow,
-            headline: commercialDemo
-                ? 'MUÉSTRANOS\nTU MEJOR PLAN\nEN COCHABAMBA'
-                : copy.headline.endsWith('LA ROMPA?')
-                  ? copy.headline.slice(0, -9) + '\nLA ROMPA?'
-                  : copy.headline,
-            emphasis: commercialDemo
-                ? 'EN COCHABAMBA'
-                : copy.headline.endsWith('LA ROMPA?')
-                  ? 'LA ROMPA?'
-                  : undefined,
+            eyebrow: copy.eyebrow,
+            headline: copy.headline,
             description: supportCopy,
         },
         media: vsl
@@ -208,39 +191,33 @@ export default function ChallengeOfferAdapter({
             : [],
         value: {
             tone: 'reward',
-            label: commercialDemo ? 'PREMIO DEMO' : 'PREMIO DEL RETO',
-            compactLabel: commercialDemo ? 'TU PREMIO' : undefined,
-            title: displayedReward,
-            description: commercialDemo ? demoDisclosure : undefined,
+            label: 'PREMIO DEL RETO',
+            title: copy.reward,
             detail: copy.rewardDetail || undefined,
             note: copy.rewardNote || undefined,
         },
-        essentialConditions: ['PUBLICA · ENVÍA · CALIFICA'],
-        actionExplanation: { description: confidence },
+        essentialConditions: [copy.qualification],
+        actionExplanation: { description: copy.membership },
         steps: {
             eyebrow: 'CÓMO FUNCIONA',
             headline: `${steps.length} PASOS PARA PARTICIPAR`,
             items: steps,
         },
-        faq: commercialDemo
-            ? [
-                  {
-                      question: '¿La cena se puede canjear?',
-                      answer:
-                          demoDisclosure +
-                          ' Este reto QA no ofrece una cena real ni un premio comercial.',
-                  },
-                  ...copy.faq,
-              ]
-            : copy.faq,
+        faq: distinctOfferFaq(copy.faq, [
+            copy.membership,
+            copy.selection,
+            copy.qualification,
+            copy.review,
+            'Personas con una cuenta JAKAWI.',
+            ...steps.map((step) => step.description),
+            ...copy.rules.map((rule) => rule.description),
+        ]),
         finalCta: {
             eyebrow: 'JAKAWI',
             headline: participating
                 ? 'SIGUE TU PARTICIPACIÓN'
                 : copy.finalHeadline,
-            description: commercialDemo
-                ? demoDisclosure
-                : `${copy.reward} · ${copy.selection}`,
+            description: `${copy.reward} · ${copy.selection}`,
         },
     };
     if (offerEditorial?.version === 1) {
@@ -257,15 +234,7 @@ export default function ChallengeOfferAdapter({
             offerEditorial.finalDescription ?? undefined;
     return (
         <>
-            <Head
-                title={
-                    offerEditorial?.version === 1
-                        ? offer.hero.headline
-                        : commercialDemo
-                          ? 'Muéstranos tu mejor plan en Cochabamba · Demo'
-                          : copy.headline
-                }
-            >
+            <Head title={offer.hero.headline}>
                 <link rel="canonical" href={canonical} />
                 {noindex && <meta name="robots" content="noindex,follow" />}
             </Head>
@@ -277,7 +246,7 @@ export default function ChallengeOfferAdapter({
                 action={primaryAction}
                 treatment="compact"
                 className="challenge-marketing-v3 challenge-mobile-polish pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"
-                hookClassName={`challenge-hook ${commercialDemo ? 'challenge-demo-hook' : ''}`}
+                hookClassName="challenge-hook"
                 heroActionRef={heroCTA}
                 finalActionRef={finalCTA}
                 renderNotice={() =>
@@ -290,132 +259,8 @@ export default function ChallengeOfferAdapter({
                         </div>
                     )
                 }
-                renderHeroAnnotation={() => (
-                    <>
-                        {commercialDemo && (
-                            <div
-                                data-demo-reward
-                                className="mt-5 border-l-4 border-[var(--marketing-reward)] pl-4"
-                            >
-                                <p className="challenge-compact-teaser hidden text-sm font-extrabold text-[var(--marketing-reward)]">
-                                    PREMIO DEMO · CENA PARA DOS
-                                </p>
-                                <p className="challenge-desktop-teaser text-xs font-extrabold tracking-widest text-[var(--marketing-reward)]">
-                                    PREMIO DEMO
-                                </p>
-                                <p className="challenge-desktop-teaser mt-1 text-2xl font-extrabold uppercase">
-                                    CENA PARA DOS
-                                </p>
-                                <p
-                                    className={`mt-2 text-sm leading-5 ${presentation.marketing_theme === 'LIGHT_CONVERSION' ? 'text-[var(--marketing-text-secondary)]' : 'text-[var(--cream)]'}`}
-                                >
-                                    <span className="lg:hidden">
-                                        Demo visual · no canjeable.
-                                    </span>
-                                    <span className="hidden lg:inline">
-                                        {demoDisclosure}
-                                    </span>
-                                </p>
-                            </div>
-                        )}
-                    </>
-                )}
-                renderHeroSupport={
-                    offerEditorial?.version === 1
-                        ? undefined
-                        : () => (
-                              <>
-                                  <p className="mt-3 max-w-xl text-sm leading-5 text-[var(--marketing-text-secondary)] sm:text-base sm:leading-6">
-                                      {commercialDemo ? (
-                                          <>
-                                              <span className="lg:hidden">
-                                                  Publica un Reel con #bafabo
-                                                  <br />y envíanos tu enlace.
-                                              </span>
-                                              <span className="hidden lg:inline">
-                                                  {supportCopy}
-                                              </span>
-                                          </>
-                                      ) : (
-                                          supportCopy
-                                      )}
-                                  </p>
-                              </>
-                          )
-                }
-                renderValueSupplement={() => (
-                    <p className="mt-5 hidden border-t border-border pt-4 text-sm leading-5 font-semibold lg:block">
-                        {confidence}
-                    </p>
-                )}
                 renderOperationalContent={() => (
                     <>
-                        <section
-                            data-marketing-surface="dark"
-                            id="mecanica"
-                            className="challenge-result bg-[var(--marketing-bg-dark)] py-12 text-[var(--cream)] sm:py-14"
-                        >
-                            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                                <p className="discovery-eyebrow">
-                                    RESULTADO DEL RETO
-                                </p>
-                                <h2 className="mt-4 text-5xl leading-none font-extrabold tracking-tight text-foreground uppercase sm:text-7xl">
-                                    {allQualified
-                                        ? 'NO ES SORTEO'
-                                        : challengeProps.challenge
-                                                .selection_type === 'TOP_N'
-                                          ? 'RANKING Y RESULTADO'
-                                          : challengeProps.challenge
-                                                  .selection_type === 'FIRST_N'
-                                            ? 'PRIMEROS EN CUMPLIR'
-                                            : 'CÓMO SE DEFINE EL RESULTADO'}
-                                </h2>
-                                {allQualified && (
-                                    <p className="mt-6 max-w-3xl text-3xl leading-tight font-extrabold tracking-tight sm:text-5xl">
-                                        Si cumples las reglas, calificas.
-                                    </p>
-                                )}
-                                <p className="mt-5 max-w-3xl text-lg leading-7 text-[var(--marketing-text-secondary)]">
-                                    {allQualified ? (
-                                        commercialDemo ? (
-                                            <>
-                                                <span className="lg:hidden">
-                                                    Todos los que califican
-                                                    reciben el premio QA, sin
-                                                    valor comercial.
-                                                </span>
-                                                <span className="hidden lg:inline">
-                                                    Todos los participantes que
-                                                    califican reciben el premio
-                                                    QA configurado, sin valor
-                                                    comercial. La cena es
-                                                    ilustrativa y no canjeable.
-                                                </span>
-                                            </>
-                                        ) : (
-                                            'Todos los participantes que califican reciben el premio.'
-                                        )
-                                    ) : (
-                                        copy.selection
-                                    )}
-                                </p>
-                                <p className="mt-4 hidden max-w-3xl text-sm leading-6 text-[var(--cream)]/75 lg:block">
-                                    {copy.qualification} {copy.membership}
-                                </p>
-                                {challengeProps.slots && (
-                                    <p className="mt-4 font-bold">
-                                        {challengeProps.slots.awarded} premios
-                                        otorgados ·{' '}
-                                        {Math.max(
-                                            0,
-                                            challengeProps.slots.limit -
-                                                challengeProps.slots.reserved,
-                                        )}{' '}
-                                        disponibles
-                                    </p>
-                                )}
-                            </div>
-                        </section>
                         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                             <section
                                 data-offer-chapter="rules"

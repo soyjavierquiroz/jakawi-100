@@ -313,3 +313,35 @@
 [data-offer-chapter="hero"][data-marketing-surface="light"] .offer-facts > div {
     color: var(--marketing-text-secondary);
 }
+
+/* Offer V3 composition is independent of subject and theme. */
+.offer-hero-v3 { display: grid; gap: 1rem; padding-block: 1.75rem 2.5rem; }
+.offer-hero-v3 .offer-intro { order: 1; }
+.offer-hero-v3.offer-first .offer-details { order: 2; }
+.offer-hero-v3.offer-first .offer-media { order: 3; }
+.offer-hero-v3.offer-media-led .offer-media { order: 2; }
+.offer-hero-v3.offer-media-led .offer-details { order: 3; }
+.offer-hero-v3 .offer-media img { aspect-ratio: 4 / 3; border-radius: 0; }
+.offer-hero-v3.offer-media-led .offer-media img { aspect-ratio: 16 / 10; }
+[data-offer-density="COMPACT"] .offer-hero-v3 { padding-block: 1.25rem 1.5rem; gap: .75rem; }
+[data-offer-density="COMPACT"] [data-offer-operational] section { padding-block: 1.5rem; }
+[data-offer-density="COMPACT"] [data-offer-operational] h2 { font-size: 1.75rem; line-height: 1.12; }
+[data-offer-density="COMPACT"] [data-offer-operational] section > p { margin-top: .75rem; }
+[data-offer-density="COMPACT"] [data-offer-chapter="steps"] { padding-block: 1.5rem; }
+[data-offer-density="COMPACT"] [data-offer-chapter="steps"] > div { margin-top: 1rem; gap: 1rem; }
+[data-offer-density="COMPACT"] [data-offer-chapter="steps"] article { display: block; padding-top: .5rem; }
+[data-offer-density="COMPACT"] [data-offer-chapter="steps"] h3 { margin-top: .25rem; font-size: 1.125rem; }
+[data-offer-density="COMPACT"] [data-offer-chapter="steps"] article p { margin-top: .5rem; font-size: 1rem; line-height: 1.5; }
+[data-offer-density="COMPACT"] [data-offer-chapter="steps"] h2 { font-size: 1.5rem; line-height: 1.2; }
+[data-offer-density="COMPACT"] [data-offer-chapter="rules"] > dl { margin-top: 1rem; }
+[data-offer-density="COMPACT"] [data-offer-chapter="rules"] > dl > div { padding-block: .75rem; }
+@media (min-width: 1024px) {
+    .offer-hero-v3 { max-width: 56rem; padding-block: 3rem; }
+    .offer-hero-v3.offer-with-media { max-width: none; grid-template-columns: 1fr 1.1fr; column-gap: 3rem; align-items: start; }
+    .offer-hero-v3 .offer-intro { grid-column: 1; grid-row: 1; }
+    .offer-hero-v3 .offer-details { grid-column: 1; grid-row: 2; }
+    .offer-hero-v3 .offer-media { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+    .offer-hero-v3.offer-media-led { grid-template-columns: 1fr 1.25fr; }
+    [data-offer-density="COMPACT"] .offer-hero-v3 { padding-block: 2rem; }
+    [data-offer-density="COMPACT"] [data-offer-operational] section { padding-block: 2rem; }
+}

@@ -5,6 +5,7 @@ import {
 } from '@/components/marketing/primitives';
 import type { ReactNode, Ref } from 'react';
 import type { OfferPresentationV1 } from './presentation';
+import { distinctOfferValue } from './composition';
 import {
     MarketingFactStrip,
     MarketingFinalCTA,
@@ -73,24 +74,21 @@ export function OfferConversionTemplate({
     const trackGrowthClick = useGrowthLandingClicks();
     const offerDetails = (
         <>
-            {!compact && <MarketingValueBlock value={p.value} />}
-            {!compact && (
-                <MarketingFactStrip facts={p.facts} treatment={treatment} />
-            )}
+            <MarketingValueBlock
+                value={distinctOfferValue(p)}
+                supplement={renderValueSupplement?.()}
+            />
+            <MarketingFactStrip facts={p.facts} />
             <MarketingPrices prices={p.prices} />
-            {!compact &&
-                p.essentialConditions.map((condition, index) => (
-                    <p
-                        key={index}
-                        className="mt-3 text-base leading-6 font-semibold"
-                    >
-                        {condition}
-                    </p>
-                ))}
-            <div
-                ref={heroActionRef}
-                className={compact ? (p.media ? 'mt-4' : '') : 'mt-4'}
-            >
+            {p.essentialConditions.map((condition, index) => (
+                <p
+                    key={index}
+                    className="mt-3 text-base leading-6 font-semibold"
+                >
+                    {condition}
+                </p>
+            ))}
+            <div ref={heroActionRef} className="mt-4">
                 <MarketingPrimaryCTA
                     action={action}
                     location="hero"
@@ -101,15 +99,6 @@ export function OfferConversionTemplate({
                     }
                 />
             </div>
-            {compact &&
-                p.essentialConditions.map((condition, index) => (
-                    <p
-                        key={index}
-                        className="mt-3 text-xs font-extrabold tracking-widest"
-                    >
-                        {condition}
-                    </p>
-                ))}
             {p.actionExplanation &&
                 (editorial ? (
                     <div
@@ -124,19 +113,10 @@ export function OfferConversionTemplate({
                         )}
                     </div>
                 ) : (
-                    <p
-                        className={
-                            compact
-                                ? 'mt-3 hidden text-sm leading-5 font-semibold lg:block'
-                                : 'mt-3 text-sm leading-5 text-[var(--marketing-text-secondary)]'
-                        }
-                    >
+                    <p className="mt-3 text-sm leading-5 text-[var(--marketing-text-secondary)]">
                         {p.actionExplanation.description}
                     </p>
                 ))}
-            {compact && (
-                <MarketingFactStrip facts={p.facts} treatment={treatment} />
-            )}
         </>
     );
     const intro = (
@@ -164,57 +144,22 @@ export function OfferConversionTemplate({
             )}
         </>
     );
-    const hero = compact ? (
+    const hero = (
         <section
-            data-marketing-surface={
-                theme === 'LIGHT_CONVERSION' ? 'light' : 'dark'
-            }
             data-offer-chapter="hero"
-            className={
-                theme === 'LIGHT_CONVERSION'
-                    ? 'bg-background text-foreground'
-                    : 'bg-[var(--ink)] text-[var(--cream)]'
-            }
-        >
-            <div className="mx-auto grid max-w-6xl gap-4 px-4 py-5 sm:px-6 sm:py-10 lg:grid-cols-2 lg:items-start lg:gap-x-12 lg:px-8 lg:pt-14 lg:pb-12">
-                <div className="min-w-0 lg:sticky lg:top-8">{intro}</div>
-                <div className="min-w-0 lg:col-start-2">
-                    {mediaLed && (
-                        <OptionalMarketingMedia media={p.media} compact />
-                    )}
-                    {offerDetails}
-                    {!mediaLed && (
-                        <OptionalMarketingMedia media={p.media} compact />
-                    )}
-                </div>
-            </div>
-        </section>
-    ) : (
-        <section
             aria-label={p.hero.eyebrow}
-            className={`offer-hero grid gap-y-4 pt-7 pb-12 ${editorial ? 'sm:pt-10 sm:pb-16 lg:gap-y-0' : ''} lg:gap-x-14 lg:pt-16 lg:pb-20 ${p.media ? 'lg:grid-cols-[0.9fr_1.1fr]' : editorial ? 'lg:max-w-4xl' : 'max-w-4xl'}`}
+            className={`offer-hero-v3 ${mediaLed ? 'offer-media-led' : 'offer-first'} ${p.media ? 'offer-with-media' : ''}`}
         >
-            <div
-                className={
-                    editorial
-                        ? 'min-w-0 lg:self-end lg:pb-8'
-                        : 'min-w-0 lg:pb-5'
-                }
-            >
-                {intro}
-            </div>
-            {mediaLed && <OptionalMarketingMedia media={p.media} />}
-            <div className="min-w-0 lg:col-start-1 lg:row-start-2">
-                {offerDetails}
-            </div>
-            {!mediaLed && p.media && (
-                <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-                    <OptionalMarketingMedia media={p.media} />
+            <div className="offer-intro min-w-0">{intro}</div>
+            {p.media && (
+                <div className="offer-media min-w-0">
+                    <OptionalMarketingMedia media={p.media} compact={compact} />
                 </div>
             )}
+            <div className="offer-details min-w-0">{offerDetails}</div>
         </section>
     );
-    const faq = (
+    const faq = p.faq.length > 0 && (
         <div className={faqClassName}>
             <MarketingFAQ
                 items={p.faq}
@@ -236,34 +181,15 @@ export function OfferConversionTemplate({
                       : 'light'
             }
         >
-            {compact ? (
-                <>
-                    {renderNotice?.()}
-                    {hero}
-                    <div data-marketing-surface="light">
-                        <div className={offerContainer(true)}>
-                            <MarketingValueBlock
-                                value={p.value}
-                                compact
-                                supplement={renderValueSupplement?.()}
-                            />
-                            <MarketingSteps steps={p.steps} compact />
-                        </div>
-                        {renderOperationalContent()}
-                        <div className={offerContainer(true)}>{faq}</div>
-                    </div>
-                </>
-            ) : (
-                <div className={offerContainer(false)}>
-                    {renderNotice?.()}
-                    {hero}
-                    {stepsPlacement === 'content' && (
-                        <MarketingSteps steps={p.steps} />
-                    )}
-                    {renderOperationalContent()}
-                    {faq}
-                </div>
-            )}
+            <div className={offerContainer(compact)}>
+                {renderNotice?.()}
+                {hero}
+                {stepsPlacement === 'content' && (
+                    <MarketingSteps steps={p.steps} compact={compact} />
+                )}
+                <div data-offer-operational>{renderOperationalContent()}</div>
+                {faq}
+            </div>
             <MarketingFinalCTA
                 finalCta={p.finalCta}
                 action={action}

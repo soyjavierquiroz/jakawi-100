@@ -1,0 +1,14 @@
+# Inventario demo comercial V1
+
+DEMO COMMERCIAL: datos sintéticos, no contractuales y no canjeables; no son inventario de lanzamiento. Sólo evaluación de producto, Admin y template. Inventario real: PENDING CONFIRMATION. Benefit guest/location: UNRESOLVED; piloto comercial Benefit: bloqueado.
+
+| DOMAIN | SUBJECT | PARTNER | SCENARIO | KEY VALUE | DATE/VALIDITY | MEDIA | LANDING MODE | STATUS | WHY IT EXISTS |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BENEFIT | Café de cortesía con brunch — DEMO | Altura Nube Café — DEMO | Cortesía tangible | 200 ml de café con brunch BOB 55; free_item; ahorro estimado 15 | 12 oct–31 dic 2026 · America/La_Paz | IMAGE sintética | OFFER_FIRST / STANDARD y COMPACT | published, 2 landings DRAFT | Valor simple, 3 sucursales, membresía activa, 1 canje/miembro |
+| BENEFIT | BOB 20 menos en cena de brasas — DEMO | Brasa Prisma — DEMO | Valor monetario | fixed_amount BOB 20 sobre alimentos desde BOB 160; ahorro estimado | 12 oct–31 dic 2026 · America/La_Paz | IMAGE sintética | OFFER_FIRST / STANDARD | published, landing DRAFT | 2 sucursales; membresía activa; 1 canje/miembro; mar–sáb 18:30–22 |
+| EXPERIENCE | Sunset JAKAWI en Mirador Cobalto — DEMO | Trama Viva / Andes Umbral / Brasa Prisma — DEMO | Premium / deseo | BOB 150 / miembro 120; 36 personas; URL demo.invalid | 7 y 21 nov 2026 · 17–20 · America/La_Paz | IMAGE sintética de terraza al atardecer | MEDIA_LED / STANDARD | published, landing DRAFT | Bebida sin alcohol y tabla de pan/queso/aceitunas; lugar y hora coherentes |
+| EXPERIENCE | Brunch y cata de café — DEMO | Altura Nube Café — DEMO | Directo / utilidad | BOB 75 / miembro 60; 12 personas; reserva jakawi | 24 oct y 14 nov 2026 · 09–10:15 · America/La_Paz | IMAGE sintética de brunch y café | OFFER_FIRST / STANDARD | published, landing DRAFT | Desayuno y 3 muestras; cuenta y membresía para reserva interna |
+| CHALLENGE | Reto Cena de Ciudad — DEMO | Brasa Prisma — DEMO | Premio significativo | Cena para dos simulada; MANUAL_PRIZE | 12 oct–30 nov 2026 · cierre 20:00 · America/La_Paz | IMAGE sintética de cena | OFFER_FIRST / STANDARD | open, landing DRAFT | SOCIAL_POST Instagram; 50 likes; FIRST_N 10; revisión REQUIRED; 1 publicación; ALL_USERS |
+| CHALLENGE | Reto Descubre el Café — DEMO | Altura Nube Café — DEMO | Baja fricción | Pase individual simulado a brunch/cata; MANUAL_PRIZE | 12 oct–30 nov 2026 · cierre 20:00 · America/La_Paz | NONE en landing; IMAGE sintética nativa | OFFER_FIRST / COMPACT | open, landing DRAFT | MANUAL evidencia/calificación; ALL_QUALIFIED; revisión REQUIRED; ALL_USERS |
+
+Todos los precios en BOB; capacidad configurada no garantiza disponibilidad en tiempo real. Los ahorros de Benefits son estimaciones, no ahorro realizado. Ambas mecánicas monetarias usan el dominio existente.

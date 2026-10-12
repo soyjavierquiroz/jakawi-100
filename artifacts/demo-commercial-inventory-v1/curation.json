@@ -1,0 +1,534 @@
+{
+  "result": "CURATED",
+  "changes": {
+    "reworked": [
+      {
+        "table": "partners",
+        "id": 1,
+        "slug": "demo-altura-nube"
+      },
+      {
+        "table": "partners",
+        "id": 2,
+        "slug": "demo-brasa-prisma"
+      },
+      {
+        "table": "partners",
+        "id": 10,
+        "slug": "demo-andes-umbral"
+      },
+      {
+        "table": "partners",
+        "id": 13,
+        "slug": "demo-trama-viva"
+      },
+      {
+        "table": "locations",
+        "id": 1,
+        "slug": "demo-altura-nube-cala-cala"
+      },
+      {
+        "table": "locations",
+        "id": 2,
+        "slug": "demo-altura-nube-recoleta"
+      },
+      {
+        "table": "locations",
+        "id": 3,
+        "slug": "demo-altura-nube-tiquipaya"
+      },
+      {
+        "table": "locations",
+        "id": 4,
+        "slug": "demo-brasa-prisma-norte"
+      },
+      {
+        "table": "locations",
+        "id": 5,
+        "slug": "demo-brasa-prisma-sur"
+      },
+      {
+        "table": "locations",
+        "id": 17,
+        "slug": "demo-mirador-cobalto"
+      },
+      {
+        "table": "benefits",
+        "id": 1,
+        "slug": "demo-beneficio-01"
+      },
+      {
+        "table": "benefits",
+        "id": 4,
+        "slug": "demo-beneficio-04"
+      },
+      {
+        "table": "experiences",
+        "id": 1,
+        "slug": "demo-sunset-jakawi"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 8,
+        "slug": "qa-calibration-benefit-value"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 9,
+        "slug": "qa-calibration-benefit-minimal"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 6,
+        "slug": "qa-dynamic-benefit-offer-v1-copy"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 10,
+        "slug": "qa-calibration-experience-desire"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 11,
+        "slug": "qa-calibration-experience-direct"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 12,
+        "slug": "qa-calibration-challenge-action"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 13,
+        "slug": "qa-calibration-challenge-minimal"
+      }
+    ],
+    "archived": [
+      {
+        "table": "partners",
+        "id": 3,
+        "slug": "demo-nomada-bocado"
+      },
+      {
+        "table": "partners",
+        "id": 4,
+        "slug": "demo-verde-paramo"
+      },
+      {
+        "table": "partners",
+        "id": 6,
+        "slug": "demo-kintu-calma"
+      },
+      {
+        "table": "partners",
+        "id": 7,
+        "slug": "demo-distrito-pulso"
+      },
+      {
+        "table": "partners",
+        "id": 8,
+        "slug": "demo-luna-lateral"
+      },
+      {
+        "table": "partners",
+        "id": 9,
+        "slug": "demo-miga-cometa"
+      },
+      {
+        "table": "partners",
+        "id": 11,
+        "slug": "demo-pixel-pinos"
+      },
+      {
+        "table": "partners",
+        "id": 12,
+        "slug": "demo-gelato-bruma"
+      },
+      {
+        "table": "locations",
+        "id": 6,
+        "slug": "demo-nomada-bocado-centro"
+      },
+      {
+        "table": "locations",
+        "id": 7,
+        "slug": "demo-nomada-bocado-oeste"
+      },
+      {
+        "table": "locations",
+        "id": 8,
+        "slug": "demo-verde-paramo-recoleta"
+      },
+      {
+        "table": "locations",
+        "id": 9,
+        "slug": "demo-verde-paramo-sacaba"
+      },
+      {
+        "table": "locations",
+        "id": 11,
+        "slug": "demo-kintu-calma"
+      },
+      {
+        "table": "locations",
+        "id": 12,
+        "slug": "demo-distrito-pulso"
+      },
+      {
+        "table": "locations",
+        "id": 13,
+        "slug": "demo-luna-lateral-estudio"
+      },
+      {
+        "table": "locations",
+        "id": 14,
+        "slug": "demo-miga-cometa"
+      },
+      {
+        "table": "locations",
+        "id": 15,
+        "slug": "demo-andes-umbral-punto"
+      },
+      {
+        "table": "locations",
+        "id": 16,
+        "slug": "demo-gelato-bruma"
+      },
+      {
+        "table": "locations",
+        "id": 18,
+        "slug": "demo-patio-orbita"
+      },
+      {
+        "table": "benefits",
+        "id": 2,
+        "slug": "demo-beneficio-02"
+      },
+      {
+        "table": "benefits",
+        "id": 3,
+        "slug": "demo-beneficio-03"
+      },
+      {
+        "table": "benefits",
+        "id": 5,
+        "slug": "demo-beneficio-05"
+      },
+      {
+        "table": "benefits",
+        "id": 6,
+        "slug": "demo-beneficio-06"
+      },
+      {
+        "table": "benefits",
+        "id": 7,
+        "slug": "demo-beneficio-07"
+      },
+      {
+        "table": "benefits",
+        "id": 8,
+        "slug": "demo-beneficio-08"
+      },
+      {
+        "table": "benefits",
+        "id": 9,
+        "slug": "demo-beneficio-09"
+      },
+      {
+        "table": "benefits",
+        "id": 10,
+        "slug": "demo-beneficio-10"
+      },
+      {
+        "table": "benefits",
+        "id": 11,
+        "slug": "demo-beneficio-11"
+      },
+      {
+        "table": "benefits",
+        "id": 12,
+        "slug": "demo-beneficio-12"
+      },
+      {
+        "table": "benefits",
+        "id": 13,
+        "slug": "demo-beneficio-13"
+      },
+      {
+        "table": "benefits",
+        "id": 14,
+        "slug": "demo-beneficio-14"
+      },
+      {
+        "table": "benefits",
+        "id": 15,
+        "slug": "demo-beneficio-15"
+      },
+      {
+        "table": "benefits",
+        "id": 16,
+        "slug": "demo-beneficio-16"
+      },
+      {
+        "table": "benefits",
+        "id": 17,
+        "slug": "demo-beneficio-17"
+      },
+      {
+        "table": "benefits",
+        "id": 18,
+        "slug": "demo-beneficio-18"
+      },
+      {
+        "table": "benefits",
+        "id": 19,
+        "slug": "demo-beneficio-19"
+      },
+      {
+        "table": "benefits",
+        "id": 20,
+        "slug": "demo-beneficio-20"
+      },
+      {
+        "table": "benefits",
+        "id": 21,
+        "slug": "demo-beneficio-21"
+      },
+      {
+        "table": "benefits",
+        "id": 22,
+        "slug": "demo-beneficio-22"
+      },
+      {
+        "table": "benefits",
+        "id": 23,
+        "slug": "demo-beneficio-23"
+      },
+      {
+        "table": "benefits",
+        "id": 24,
+        "slug": "demo-beneficio-24"
+      },
+      {
+        "table": "benefits",
+        "id": 25,
+        "slug": "demo-beneficio-25"
+      },
+      {
+        "table": "benefits",
+        "id": 26,
+        "slug": "demo-beneficio-26"
+      },
+      {
+        "table": "benefits",
+        "id": 27,
+        "slug": "demo-beneficio-27"
+      },
+      {
+        "table": "benefits",
+        "id": 28,
+        "slug": "demo-beneficio-28"
+      },
+      {
+        "table": "benefits",
+        "id": 29,
+        "slug": "demo-beneficio-29"
+      },
+      {
+        "table": "benefits",
+        "id": 30,
+        "slug": "demo-beneficio-30"
+      },
+      {
+        "table": "experiences",
+        "id": 2,
+        "slug": "demo-cata-cafe-boliviano"
+      },
+      {
+        "table": "experiences",
+        "id": 3,
+        "slug": "demo-arcilla-y-manos"
+      },
+      {
+        "table": "experiences",
+        "id": 4,
+        "slug": "demo-trekking-primera-luz"
+      },
+      {
+        "table": "experiences",
+        "id": 5,
+        "slug": "demo-pausa-en-movimiento"
+      },
+      {
+        "table": "experiences",
+        "id": 7,
+        "slug": "demo-collage-de-barrio"
+      },
+      {
+        "table": "experiences",
+        "id": 8,
+        "slug": "demo-ruta-de-patios"
+      },
+      {
+        "table": "challenges",
+        "id": 1,
+        "slug": "reto-de-prueba-jakawi-bafabo",
+        "action": "cancelled; immutable contract and all participation/history preserved"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 1,
+        "slug": "qa-bafabo-marketing"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 2,
+        "slug": "qa-benefit-marketing-demo-beneficio-01"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 3,
+        "slug": "qa-experience-marketing-sunset-jakawi"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 5,
+        "slug": "qa-dynamic-benefit-offer-v1"
+      },
+      {
+        "table": "landing_presentations",
+        "id": 7,
+        "slug": "qa-dynamic-experience-offer-v1"
+      }
+    ],
+    "created": [
+      {
+        "table": "experiences",
+        "id": 46,
+        "slug": "demo-brunch-cata-cafe"
+      },
+      {
+        "table": "challenges",
+        "id": 3,
+        "slug": "demo-reto-cena-ciudad"
+      },
+      {
+        "table": "challenges",
+        "id": 4,
+        "slug": "demo-reto-idea-cafe"
+      }
+    ],
+    "deleted": [
+      {
+        "table": "experience_sessions",
+        "id": 2,
+        "reference_key": "demo-sunset-01",
+        "reason": "Past session with no references"
+      }
+    ],
+    "kept_dependencies": [
+      "Partner #5",
+      "Location #10",
+      "Experience #6",
+      "Unlock #1",
+      "Challenge #2"
+    ]
+  },
+  "lab": [
+    {
+      "id": 8,
+      "slug": "qa-calibration-benefit-value",
+      "subject": "demo-beneficio-01",
+      "subject_id": 1,
+      "domain": "BENEFIT",
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "media": "IMAGE",
+      "theme": "LIGHT_CONVERSION",
+      "status": "DRAFT"
+    },
+    {
+      "id": 9,
+      "slug": "qa-calibration-benefit-minimal",
+      "subject": "demo-beneficio-01",
+      "subject_id": 1,
+      "domain": "BENEFIT",
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "media": "IMAGE",
+      "theme": "LIGHT_CONVERSION",
+      "status": "DRAFT"
+    },
+    {
+      "id": 6,
+      "slug": "qa-dynamic-benefit-offer-v1-copy",
+      "subject": "demo-beneficio-04",
+      "subject_id": 4,
+      "domain": "BENEFIT",
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "media": "IMAGE",
+      "theme": "LIGHT_CONVERSION",
+      "status": "DRAFT"
+    },
+    {
+      "id": 10,
+      "slug": "qa-calibration-experience-desire",
+      "subject": "demo-sunset-jakawi",
+      "subject_id": 1,
+      "domain": "EXPERIENCE",
+      "hero": "MEDIA_LED",
+      "density": "STANDARD",
+      "media": "IMAGE",
+      "theme": "LIGHT_CONVERSION",
+      "status": "DRAFT"
+    },
+    {
+      "id": 11,
+      "slug": "qa-calibration-experience-direct",
+      "subject": "demo-brunch-cata-cafe",
+      "subject_id": 46,
+      "domain": "EXPERIENCE",
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "media": "IMAGE",
+      "theme": "LIGHT_CONVERSION",
+      "status": "DRAFT"
+    },
+    {
+      "id": 12,
+      "slug": "qa-calibration-challenge-action",
+      "subject": "demo-reto-cena-ciudad",
+      "subject_id": 3,
+      "domain": "CHALLENGE",
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "media": "IMAGE",
+      "theme": "DARK_CONVERSION",
+      "status": "DRAFT"
+    },
+    {
+      "id": 13,
+      "slug": "qa-calibration-challenge-minimal",
+      "subject": "demo-reto-idea-cafe",
+      "subject_id": 4,
+      "domain": "CHALLENGE",
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "media": "NONE",
+      "theme": "DARK_CONVERSION",
+      "status": "DRAFT"
+    }
+  ],
+  "media_keys": [
+    "benefits/1/cover/7161576d-c2c7-456a-8779-8afc7d2996e8.png",
+    "benefits/4/cover/e44c7735-8518-4fb3-8a1c-3d606777a386.png",
+    "experiences/1/cover/4711bfb7-41cf-4878-8556-5ee7b322e5eb.png",
+    "experiences/46/cover/abc64ab5-d241-4d72-a70c-a04aae73baa9.png",
+    "challenges/3/cover/8120a91d-5965-4ef0-ab7c-7c1294754efe.png",
+    "challenges/4/cover/1372ba51-27d4-4b86-b98c-3dee7ec93b55.png"
+  ],
+  "failed_jobs": 3,
+  "date_correction": "Admin/controller persistence corrected using UTC values; presentation/browser validated in America/La_Paz",
+  "media_correction": "Landing 12 IMAGE; inherited televisions VSL suppressed, source reference retained"
+}

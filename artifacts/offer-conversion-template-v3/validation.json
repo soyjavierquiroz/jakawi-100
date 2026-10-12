@@ -1,0 +1,30 @@
+{
+  "result": "PASS",
+  "baseline_sha": "7542a5718ec1dbb936986fc4f3843e68d39dbdef",
+  "draft_count": 7,
+  "widths": [
+    390,
+    1440
+  ],
+  "before_screens": 14,
+  "after_screens": 14,
+  "typescript": "PASS",
+  "targeted_frontend_tests": 4,
+  "browser_errors": 0,
+  "preview_mutations": 0,
+  "overflow": false,
+  "install_prompt": false,
+  "headline_emphasis_exact": true,
+  "domain_cta_labels_unchanged": true,
+  "operational_truth_preserved": true,
+  "one_template": true,
+  "new_persistence": false,
+  "slug_specific_logic": false,
+  "build_count": 1,
+  "build_command": "docker build -f docker/Dockerfile --target build -t jakawi-frontend-check .",
+  "frontend_build": "PASS",
+  "manifest_guard": "PASS: 101 Inertia pages",
+  "image_id": "sha256:e758cb7fea34ed3e9b63626c1d900857b65448a3a21d5621a5cec195b9cd2081",
+  "deploy": false,
+  "decision": "TEMPLATE V3 GOOD ENOUGH — FREEZE"
+}

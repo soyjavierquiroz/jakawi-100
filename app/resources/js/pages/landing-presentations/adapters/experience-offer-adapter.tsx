@@ -1,3 +1,4 @@
+import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
 import { MarketingSteps } from '@/components/marketing/offer/blocks';
 import type {
@@ -69,8 +70,6 @@ export type ExperienceOfferProps = {
     };
 };
 
-// This editorial treatment belongs to the inspected QA presentation, not every event.
-// The duration-led offer requires the inspected duration and city; domain actions remain authoritative.
 export default function ExperienceOfferAdapter({
     vsl,
     offerEditorial,
@@ -82,14 +81,6 @@ export default function ExperienceOfferAdapter({
     preview,
     copy,
 }: ExperienceOfferProps) {
-    const qaSunset =
-        presentation.id === 3 &&
-        presentation.slug === 'qa-experience-marketing-sunset-jakawi' &&
-        copy.slug === 'demo-sunset-jakawi';
-    const sunset =
-        qaSunset &&
-        copy.durationMinutes === 180 &&
-        copy.next?.city === 'Cochabamba';
     const externalReservation = Boolean(
         copy.reservationMethod && copy.reservationMethod !== 'jakawi',
     );
@@ -123,12 +114,6 @@ export default function ExperienceOfferAdapter({
     };
     const place = (session: Session) =>
         [session.place, session.city].filter(Boolean).join(' · ');
-    const headline = sunset
-        ? '3 horas para vivir Cochabamba desde arriba.'
-        : copy.headline;
-    const promise = sunset
-        ? `Música suave, vista a la ciudad y un atardecer compartido${copy.next?.place ? ` en ${copy.next.place}` : ''}.`
-        : copy.subheadline;
     const compactDate = (date: string) => {
         const [day, month] = date.split('/');
         const name = [
@@ -148,36 +133,13 @@ export default function ExperienceOfferAdapter({
         return name ? `${Number(day)} ${name}` : date;
     };
     const priceLabel = (value: string) => value.replace(/\.00\b/g, '');
-    // Preserve the reservation condition without promoting unverified scarcity.
-    const terms =
-        qaSunset && copy.terms === 'Cupo limitado; reserva previa requerida.'
-            ? 'Reserva previa requerida.'
-            : copy.terms;
-    const points = sunset
-        ? [
-              {
-                  title: 'Música suave',
-                  description: 'El ritmo de una tarde compartida.',
-              },
-              {
-                  title: 'Vista a la ciudad',
-                  description: 'Un encuentro en altura.',
-              },
-              {
-                  title: 'Atardecer compartido',
-                  description: 'Una tarde para encontrarnos.',
-              },
-          ]
-        : [];
+    const terms = copy.terms;
     const offer: OfferPresentationV1 = {
         hero: {
-            eyebrow: sunset ? 'SUNSET JAKAWI' : copy.eyebrow,
-            context: !sunset ? copy.next?.city || undefined : undefined,
-            headline: sunset
-                ? '3 horas para vivir\nCochabamba desde arriba.'
-                : copy.headline,
-            emphasis: sunset ? 'Cochabamba' : undefined,
-            description: promise,
+            eyebrow: copy.eyebrow,
+            context: copy.next?.city || undefined,
+            headline: copy.headline,
+            description: copy.subheadline,
         },
         media: vsl
             ? { type: 'vsl', config: vsl }
@@ -212,23 +174,25 @@ export default function ExperienceOfferAdapter({
             description: externalReservation
                 ? 'La reserva continúa en la ficha y se gestiona con el partner.'
                 : copy.membership,
-            clarification: externalReservation
-                ? 'No necesitas membresía para asistir.'
-                : undefined,
         },
         steps: {
             eyebrow: 'CÓMO RESERVAR',
             headline: 'Cómo reservar',
             items: copy.steps,
         },
-        faq: copy.faq,
+        faq: distinctOfferFaq(copy.faq, [
+            copy.membership,
+            ...copy.steps.map((step) => step.description),
+            ...copy.sessions.flatMap((session) => [
+                `${session.date} a las ${session.time}`,
+                [session.place, session.address, session.city]
+                    .filter(Boolean)
+                    .join(' · '),
+            ]),
+        ]),
         finalCta: {
-            headline: sunset
-                ? 'Haz del atardecer tu próximo plan.'
-                : copy.finalHeadline,
-            description: sunset
-                ? 'Consulta la ficha y continúa tu reserva con el partner.'
-                : copy.title,
+            headline: copy.finalHeadline,
+            description: copy.title,
         },
     };
     if (offerEditorial?.version === 1) {
@@ -276,36 +240,14 @@ export default function ExperienceOfferAdapter({
                         >
                             <div>
                                 <h2 className="max-w-xl text-4xl leading-[1.04] font-extrabold tracking-tight uppercase sm:text-6xl">
-                                    {sunset ? 'Por qué este plan' : copy.title}
+                                    Lo que vas a vivir
                                 </h2>
                             </div>
                             <div className="mt-7 lg:mt-0">
-                                {!sunset && copy.description && (
+                                {copy.description && (
                                     <p className="max-w-xl text-lg leading-7 whitespace-pre-line text-[var(--marketing-text-secondary)]">
                                         {copy.description}
                                     </p>
-                                )}
-                                {points.length > 0 && (
-                                    <div className="divide-y divide-border">
-                                        {points.map((point, index) => (
-                                            <article
-                                                key={point.title}
-                                                className="flex gap-5 py-5"
-                                            >
-                                                <span className="pt-1 text-sm font-bold text-[var(--marketing-text-secondary)]">
-                                                    0{index + 1}
-                                                </span>
-                                                <div>
-                                                    <h3 className="text-xl font-extrabold">
-                                                        {point.title}
-                                                    </h3>
-                                                    <p className="mt-2 text-base leading-6 text-[var(--marketing-text-secondary)]">
-                                                        {point.description}
-                                                    </p>
-                                                </div>
-                                            </article>
-                                        ))}
-                                    </div>
                                 )}
                                 {copy.valueNote && (
                                     <p className="mt-6 text-base leading-7">
@@ -325,10 +267,6 @@ export default function ExperienceOfferAdapter({
                                 <h2 className="mt-4 text-3xl leading-tight font-extrabold tracking-tight uppercase sm:text-5xl">
                                     Antes de reservar
                                 </h2>
-                                <p className="mt-5 text-base leading-7 text-[var(--marketing-text-secondary)]">
-                                    Revisa los datos de la sesión y las
-                                    condiciones antes de continuar.
-                                </p>
                                 {copy.action.kind === 'unavailable' && (
                                     <StatusBanner
                                         title={copy.action.label}

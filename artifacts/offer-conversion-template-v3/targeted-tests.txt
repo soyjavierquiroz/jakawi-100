@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: omit repeated simple value; retain monetary value and distinct contractual fields
+ok 1 - omit repeated simple value; retain monetary value and distinct contractual fields
+  ---
+  duration_ms: 3.087535
+  type: 'test'
+  ...
+# Subtest: reward remains early; remove only a complete repeated supporting sentence
+ok 2 - reward remains early; remove only a complete repeated supporting sentence
+  ---
+  duration_ms: 0.36393
+  type: 'test'
+  ...
+# Subtest: FAQ retains novel limits, negation, pricing, sequence and objections
+ok 3 - FAQ retains novel limits, negation, pricing, sequence and objections
+  ---
+  duration_ms: 0.74614
+  type: 'test'
+  ...
+# Subtest: empty optional data never manufactures value or FAQ content
+ok 4 - empty optional data never manufactures value or FAQ content
+  ---
+  duration_ms: 0.247223
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 625.147893

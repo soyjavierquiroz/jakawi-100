@@ -1,0 +1,6 @@
+{
+  "file": "/home/jakawi.com/backups/jakawi-pre-demo-commercial-v1-20261012T052619Z.dump",
+  "bytes": 430311,
+  "pg_restore": "PASS",
+  "reason": "Broad archival of synthetic catalog; preserve current production before curation"
+}

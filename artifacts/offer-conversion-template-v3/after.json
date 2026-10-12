@@ -1,0 +1,2657 @@
+{
+  "native": [],
+  "previews": [
+    {
+      "id": 8,
+      "subject": "demo-beneficio-01",
+      "width": 390,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 2865,
+      "ctaY": 568.640625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de usarlo"
+        },
+        {
+          "tag": "SECTION",
+          "title": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Vigencia y requisitos"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREPARA TU BRUNCH.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 700.640625,
+      "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+      "copy": {
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "value": "Café de cortesía con brunch — DEMO",
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.",
+        "valueNote": null,
+        "partner": "Altura Nube Café — DEMO",
+        "places": [
+          {
+            "id": 1,
+            "name": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "zone": "Cala Cala",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 2,
+            "name": "Altura Nube Recoleta — DEMO",
+            "address": "Calle Demo 12, Recoleta",
+            "zone": "Recoleta",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 3,
+            "name": "Altura Nube Tiquipaya — DEMO",
+            "address": "Calle Demo 13, Tiquipaya",
+            "zone": "Tiquipaya",
+            "city": "Cochabamba"
+          }
+        ],
+        "deadline": "31/12/2026 23:59",
+        "membership": "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+        "rules": [
+          "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+          "Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.",
+          "Válido hasta el 31/12/2026 23:59.",
+          "Disponible desde el 12/10/2026 00:00.",
+          "Límite: 1 canjes por miembro.",
+          "DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código."
+        ],
+        "benefits": [
+          {
+            "title": "Café de cortesía con brunch — DEMO",
+            "description": "Café filtrado de cortesía al pedir brunch en Altura Nube Café — DEMO."
+          },
+          {
+            "title": "En Altura Nube Café — DEMO",
+            "description": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "title": "Vigencia clara",
+            "description": "Válido hasta el 31/12/2026 23:59."
+          }
+        ],
+        "steps": [
+          {
+            "title": "PREPARA TU VISITA",
+            "description": "Revisa las condiciones y elige una sucursal aplicable."
+          },
+          {
+            "title": "VISITA EL PARTNER",
+            "description": "Acércate a una de las sucursales aplicables de Altura Nube Café — DEMO."
+          },
+          {
+            "title": "CANJEA",
+            "description": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Cómo uso el beneficio?",
+            "answer": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "Necesitas una membresía JAKAWI activa para canjear este beneficio."
+          },
+          {
+            "question": "¿Dónde puedo canjearlo?",
+            "answer": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "question": "¿Hasta cuándo es válido?",
+            "answer": "Hasta el 31/12/2026 23:59."
+          },
+          {
+            "question": "¿Cuántas veces puedo usarlo?",
+            "answer": "Límite: 1 canjes por miembro."
+          }
+        ],
+        "action": {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "href": "#condiciones",
+          "kind": "unavailable"
+        },
+        "finalHeadline": "PREPARA TU BRUNCH."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "emphasis": "CAFÉ DE CORTESÍA",
+        "finalHeadline": "PREPARA TU BRUNCH.",
+        "finalDescription": "DEMO COMERCIAL — beneficio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        },
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "CAFÉ DE CORTESÍA"
+      ],
+      "interactionInert": null,
+      "operationalText": "Antes de usarloDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONESRevisa el estado en la ficha del beneficio.Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código.Altura Nube Café — DEMOAltura Nube Cala Cala — DEMO · CochabambaCala Cala · Calle Demo 11, Cala CalaAltura Nube Recoleta — DEMO · CochabambaRecoleta · Calle Demo 12, RecoletaAltura Nube Tiquipaya — DEMO · CochabambaTiquipaya · Calle Demo 13, TiquipayaVigencia y requisitosNecesitas una membresía JAKAWI activa para canjear este beneficio.Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.Válido hasta el 31/12/2026 23:59.Disponible desde el 12/10/2026 00:00.Límite: 1 canjes por miembro.DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Condiciones completasDEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Ver ficha del beneficio"
+    },
+    {
+      "id": 8,
+      "subject": "demo-beneficio-01",
+      "width": 1440,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 1937,
+      "ctaY": 604.15625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de usarlo"
+        },
+        {
+          "tag": "SECTION",
+          "title": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Vigencia y requisitos"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREPARA TU BRUNCH.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 201.921875,
+      "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+      "copy": {
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "value": "Café de cortesía con brunch — DEMO",
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.",
+        "valueNote": null,
+        "partner": "Altura Nube Café — DEMO",
+        "places": [
+          {
+            "id": 1,
+            "name": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "zone": "Cala Cala",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 2,
+            "name": "Altura Nube Recoleta — DEMO",
+            "address": "Calle Demo 12, Recoleta",
+            "zone": "Recoleta",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 3,
+            "name": "Altura Nube Tiquipaya — DEMO",
+            "address": "Calle Demo 13, Tiquipaya",
+            "zone": "Tiquipaya",
+            "city": "Cochabamba"
+          }
+        ],
+        "deadline": "31/12/2026 23:59",
+        "membership": "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+        "rules": [
+          "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+          "Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.",
+          "Válido hasta el 31/12/2026 23:59.",
+          "Disponible desde el 12/10/2026 00:00.",
+          "Límite: 1 canjes por miembro.",
+          "DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código."
+        ],
+        "benefits": [
+          {
+            "title": "Café de cortesía con brunch — DEMO",
+            "description": "Café filtrado de cortesía al pedir brunch en Altura Nube Café — DEMO."
+          },
+          {
+            "title": "En Altura Nube Café — DEMO",
+            "description": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "title": "Vigencia clara",
+            "description": "Válido hasta el 31/12/2026 23:59."
+          }
+        ],
+        "steps": [
+          {
+            "title": "PREPARA TU VISITA",
+            "description": "Revisa las condiciones y elige una sucursal aplicable."
+          },
+          {
+            "title": "VISITA EL PARTNER",
+            "description": "Acércate a una de las sucursales aplicables de Altura Nube Café — DEMO."
+          },
+          {
+            "title": "CANJEA",
+            "description": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Cómo uso el beneficio?",
+            "answer": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "Necesitas una membresía JAKAWI activa para canjear este beneficio."
+          },
+          {
+            "question": "¿Dónde puedo canjearlo?",
+            "answer": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "question": "¿Hasta cuándo es válido?",
+            "answer": "Hasta el 31/12/2026 23:59."
+          },
+          {
+            "question": "¿Cuántas veces puedo usarlo?",
+            "answer": "Límite: 1 canjes por miembro."
+          }
+        ],
+        "action": {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "href": "#condiciones",
+          "kind": "unavailable"
+        },
+        "finalHeadline": "PREPARA TU BRUNCH."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "emphasis": "CAFÉ DE CORTESÍA",
+        "finalHeadline": "PREPARA TU BRUNCH.",
+        "finalDescription": "DEMO COMERCIAL — beneficio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        },
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "CAFÉ DE CORTESÍA"
+      ],
+      "interactionInert": null,
+      "operationalText": "Antes de usarloDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONESRevisa el estado en la ficha del beneficio.Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código.Altura Nube Café — DEMOAltura Nube Cala Cala — DEMO · CochabambaCala Cala · Calle Demo 11, Cala CalaAltura Nube Recoleta — DEMO · CochabambaRecoleta · Calle Demo 12, RecoletaAltura Nube Tiquipaya — DEMO · CochabambaTiquipaya · Calle Demo 13, TiquipayaVigencia y requisitosNecesitas una membresía JAKAWI activa para canjear este beneficio.Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.Válido hasta el 31/12/2026 23:59.Disponible desde el 12/10/2026 00:00.Límite: 1 canjes por miembro.DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Condiciones completasDEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Ver ficha del beneficio"
+    },
+    {
+      "id": 9,
+      "subject": "demo-beneficio-01",
+      "width": 390,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 2452,
+      "ctaY": 470.71875,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de usarlo"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Sobre el beneficio"
+        },
+        {
+          "tag": "SECTION",
+          "title": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Vigencia y requisitos"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREPARA TU BRUNCH.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 598.71875,
+      "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+      "copy": {
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "value": "Café de cortesía con brunch — DEMO",
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.",
+        "valueNote": null,
+        "partner": "Altura Nube Café — DEMO",
+        "places": [
+          {
+            "id": 1,
+            "name": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "zone": "Cala Cala",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 2,
+            "name": "Altura Nube Recoleta — DEMO",
+            "address": "Calle Demo 12, Recoleta",
+            "zone": "Recoleta",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 3,
+            "name": "Altura Nube Tiquipaya — DEMO",
+            "address": "Calle Demo 13, Tiquipaya",
+            "zone": "Tiquipaya",
+            "city": "Cochabamba"
+          }
+        ],
+        "deadline": "31/12/2026 23:59",
+        "membership": "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+        "rules": [
+          "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+          "Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.",
+          "Válido hasta el 31/12/2026 23:59.",
+          "Disponible desde el 12/10/2026 00:00.",
+          "Límite: 1 canjes por miembro.",
+          "DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código."
+        ],
+        "benefits": [
+          {
+            "title": "Café de cortesía con brunch — DEMO",
+            "description": "Café filtrado de cortesía al pedir brunch en Altura Nube Café — DEMO."
+          },
+          {
+            "title": "En Altura Nube Café — DEMO",
+            "description": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "title": "Vigencia clara",
+            "description": "Válido hasta el 31/12/2026 23:59."
+          }
+        ],
+        "steps": [
+          {
+            "title": "PREPARA TU VISITA",
+            "description": "Revisa las condiciones y elige una sucursal aplicable."
+          },
+          {
+            "title": "VISITA EL PARTNER",
+            "description": "Acércate a una de las sucursales aplicables de Altura Nube Café — DEMO."
+          },
+          {
+            "title": "CANJEA",
+            "description": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Cómo uso el beneficio?",
+            "answer": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "Necesitas una membresía JAKAWI activa para canjear este beneficio."
+          },
+          {
+            "question": "¿Dónde puedo canjearlo?",
+            "answer": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "question": "¿Hasta cuándo es válido?",
+            "answer": "Hasta el 31/12/2026 23:59."
+          },
+          {
+            "question": "¿Cuántas veces puedo usarlo?",
+            "answer": "Límite: 1 canjes por miembro."
+          }
+        ],
+        "action": {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "href": "#condiciones",
+          "kind": "unavailable"
+        },
+        "finalHeadline": "PREPARA TU BRUNCH."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "emphasis": "CAFÉ DE CORTESÍA",
+        "finalHeadline": "PREPARA TU BRUNCH.",
+        "finalDescription": "DEMO COMERCIAL — beneficio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        },
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "CAFÉ DE CORTESÍA"
+      ],
+      "interactionInert": null,
+      "operationalText": "Antes de usarloSobre el beneficioDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONESRevisa el estado en la ficha del beneficio.Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código.Altura Nube Café — DEMOAltura Nube Cala Cala — DEMO · CochabambaCala Cala · Calle Demo 11, Cala CalaAltura Nube Recoleta — DEMO · CochabambaRecoleta · Calle Demo 12, RecoletaAltura Nube Tiquipaya — DEMO · CochabambaTiquipaya · Calle Demo 13, TiquipayaVigencia y requisitosNecesitas una membresía JAKAWI activa para canjear este beneficio.Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.Válido hasta el 31/12/2026 23:59.Disponible desde el 12/10/2026 00:00.Límite: 1 canjes por miembro.DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Condiciones completasDEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Ver ficha del beneficio"
+    },
+    {
+      "id": 9,
+      "subject": "demo-beneficio-01",
+      "width": 1440,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 1625,
+      "ctaY": 449.765625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de usarlo"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Sobre el beneficio"
+        },
+        {
+          "tag": "SECTION",
+          "title": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Vigencia y requisitos"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREPARA TU BRUNCH.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 146,
+      "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+      "copy": {
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "value": "Café de cortesía con brunch — DEMO",
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.",
+        "valueNote": null,
+        "partner": "Altura Nube Café — DEMO",
+        "places": [
+          {
+            "id": 1,
+            "name": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "zone": "Cala Cala",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 2,
+            "name": "Altura Nube Recoleta — DEMO",
+            "address": "Calle Demo 12, Recoleta",
+            "zone": "Recoleta",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 3,
+            "name": "Altura Nube Tiquipaya — DEMO",
+            "address": "Calle Demo 13, Tiquipaya",
+            "zone": "Tiquipaya",
+            "city": "Cochabamba"
+          }
+        ],
+        "deadline": "31/12/2026 23:59",
+        "membership": "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+        "rules": [
+          "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+          "Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.",
+          "Válido hasta el 31/12/2026 23:59.",
+          "Disponible desde el 12/10/2026 00:00.",
+          "Límite: 1 canjes por miembro.",
+          "DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código."
+        ],
+        "benefits": [
+          {
+            "title": "Café de cortesía con brunch — DEMO",
+            "description": "Café filtrado de cortesía al pedir brunch en Altura Nube Café — DEMO."
+          },
+          {
+            "title": "En Altura Nube Café — DEMO",
+            "description": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "title": "Vigencia clara",
+            "description": "Válido hasta el 31/12/2026 23:59."
+          }
+        ],
+        "steps": [
+          {
+            "title": "PREPARA TU VISITA",
+            "description": "Revisa las condiciones y elige una sucursal aplicable."
+          },
+          {
+            "title": "VISITA EL PARTNER",
+            "description": "Acércate a una de las sucursales aplicables de Altura Nube Café — DEMO."
+          },
+          {
+            "title": "CANJEA",
+            "description": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Cómo uso el beneficio?",
+            "answer": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "Necesitas una membresía JAKAWI activa para canjear este beneficio."
+          },
+          {
+            "question": "¿Dónde puedo canjearlo?",
+            "answer": "Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO"
+          },
+          {
+            "question": "¿Hasta cuándo es válido?",
+            "answer": "Hasta el 31/12/2026 23:59."
+          },
+          {
+            "question": "¿Cuántas veces puedo usarlo?",
+            "answer": "Límite: 1 canjes por miembro."
+          }
+        ],
+        "action": {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "href": "#condiciones",
+          "kind": "unavailable"
+        },
+        "finalHeadline": "PREPARA TU BRUNCH."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU BRUNCH CON CAFÉ DE CORTESÍA.",
+        "subheadline": "Café filtrado al pedir brunch en Altura Nube Café — DEMO.",
+        "emphasis": "CAFÉ DE CORTESÍA",
+        "finalHeadline": "PREPARA TU BRUNCH.",
+        "finalDescription": "DEMO COMERCIAL — beneficio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        },
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "CAFÉ DE CORTESÍA"
+      ],
+      "interactionInert": null,
+      "operationalText": "Antes de usarloSobre el beneficioDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de café de cortesía de 200 ml al pedir el brunch demo de huevos, tostadas y fruta. El brunch se paga por separado; la cortesía cubre sólo el café filtrado.YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONESRevisa el estado en la ficha del beneficio.Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código.Altura Nube Café — DEMOAltura Nube Cala Cala — DEMO · CochabambaCala Cala · Calle Demo 11, Cala CalaAltura Nube Recoleta — DEMO · CochabambaRecoleta · Calle Demo 12, RecoletaAltura Nube Tiquipaya — DEMO · CochabambaTiquipaya · Calle Demo 13, TiquipayaVigencia y requisitosNecesitas una membresía JAKAWI activa para canjear este beneficio.Úsalo en: Altura Nube Cala Cala — DEMO · Altura Nube Recoleta — DEMO · Altura Nube Tiquipaya — DEMO.Válido hasta el 31/12/2026 23:59.Disponible desde el 12/10/2026 00:00.Límite: 1 canjes por miembro.DEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Condiciones completasDEMO COMERCIAL — beneficio simulado, no canjeable. Membresía JAKAWI activa. Brunch demo de BOB 55; café filtrado regular, sin extras. Una cortesía por miembro durante la vigencia. Lunes a domingo, de 08:00 a 12:00, en las tres sucursales demo. No acumulable ni sustituible por efectivo. Activa el código únicamente al estar en el lugar para el flujo QA; el partner demo valida el código.Ver ficha del beneficio"
+    },
+    {
+      "id": 6,
+      "subject": "demo-beneficio-04",
+      "width": 390,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 2788,
+      "ctaY": 624.09375,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de usarlo"
+        },
+        {
+          "tag": "SECTION",
+          "title": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Vigencia y requisitos"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREPARA TU CENA.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 756.09375,
+      "headline": "TU CENA CON VALOR EXTRA.",
+      "copy": {
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU CENA CON VALOR EXTRA.",
+        "subheadline": "Revisa el descuento y sus condiciones en Brasa Prisma — DEMO.",
+        "value": "BOB 20 menos en cena de brasas — DEMO",
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de descuento fijo en platos a las brasas, entradas y postres de Brasa Prisma — DEMO. La imagen ilustra una cena para compartir; este beneficio no incluye un menú ni una cena gratuita.",
+        "valueNote": null,
+        "partner": "Brasa Prisma — DEMO",
+        "places": [
+          {
+            "id": 4,
+            "name": "Brasa Prisma Norte — DEMO",
+            "address": "Calle Demo 14, Queru Queru",
+            "zone": "Queru Queru",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 5,
+            "name": "Brasa Prisma Sur — DEMO",
+            "address": "Calle Demo 15, La Chimba",
+            "zone": "La Chimba",
+            "city": "Cochabamba"
+          }
+        ],
+        "deadline": "31/12/2026 23:59",
+        "membership": "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+        "rules": [
+          "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+          "Úsalo en: Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO.",
+          "Válido hasta el 31/12/2026 23:59.",
+          "Disponible desde el 12/10/2026 00:00.",
+          "Límite: 1 canjes por miembro.",
+          "DEMO COMERCIAL — descuento simulado, no canjeable. Membresía JAKAWI activa. BOB 20 de descuento fijo sobre una cuenta de alimentos desde BOB 160, de martes a sábado de 18:30 a 22:00. No incluye bebidas ni delivery. Una aplicación por miembro durante la vigencia; no acumulable. Muestra el código en caja para el flujo QA. El ahorro informado es estimado hasta la confirmación del canje."
+        ],
+        "benefits": [
+          {
+            "title": "BOB 20 menos en cena de brasas — DEMO",
+            "description": "Descuento fijo demo de BOB 20 en una cuenta de cena desde BOB 160."
+          },
+          {
+            "title": "En Brasa Prisma — DEMO",
+            "description": "Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO"
+          },
+          {
+            "title": "Vigencia clara",
+            "description": "Válido hasta el 31/12/2026 23:59."
+          }
+        ],
+        "steps": [
+          {
+            "title": "PREPARA TU VISITA",
+            "description": "Revisa las condiciones y elige una sucursal aplicable."
+          },
+          {
+            "title": "VISITA EL PARTNER",
+            "description": "Acércate a una de las sucursales aplicables de Brasa Prisma — DEMO."
+          },
+          {
+            "title": "CANJEA",
+            "description": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Cómo uso el beneficio?",
+            "answer": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "Necesitas una membresía JAKAWI activa para canjear este beneficio."
+          },
+          {
+            "question": "¿Dónde puedo canjearlo?",
+            "answer": "Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO"
+          },
+          {
+            "question": "¿Hasta cuándo es válido?",
+            "answer": "Hasta el 31/12/2026 23:59."
+          },
+          {
+            "question": "¿Cuántas veces puedo usarlo?",
+            "answer": "Límite: 1 canjes por miembro."
+          }
+        ],
+        "action": {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "href": "#condiciones",
+          "kind": "unavailable"
+        },
+        "finalHeadline": "PREPARA TU CENA."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU CENA CON VALOR EXTRA.",
+        "subheadline": "Revisa el descuento y sus condiciones en Brasa Prisma — DEMO.",
+        "emphasis": "VALOR EXTRA",
+        "finalHeadline": "PREPARA TU CENA.",
+        "finalDescription": "DEMO COMERCIAL — descuento simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        },
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "VALOR EXTRA"
+      ],
+      "interactionInert": null,
+      "operationalText": "Antes de usarloDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de descuento fijo en platos a las brasas, entradas y postres de Brasa Prisma — DEMO. La imagen ilustra una cena para compartir; este beneficio no incluye un menú ni una cena gratuita.YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONESRevisa el estado en la ficha del beneficio.Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código.Brasa Prisma — DEMOBrasa Prisma Norte — DEMO · CochabambaQueru Queru · Calle Demo 14, Queru QueruBrasa Prisma Sur — DEMO · CochabambaLa Chimba · Calle Demo 15, La ChimbaVigencia y requisitosNecesitas una membresía JAKAWI activa para canjear este beneficio.Úsalo en: Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO.Válido hasta el 31/12/2026 23:59.Disponible desde el 12/10/2026 00:00.Límite: 1 canjes por miembro.DEMO COMERCIAL — descuento simulado, no canjeable. Membresía JAKAWI activa. BOB 20 de descuento fijo sobre una cuenta de alimentos desde BOB 160, de martes a sábado de 18:30 a 22:00. No incluye bebidas ni delivery. Una aplicación por miembro durante la vigencia; no acumulable. Muestra el código en caja para el flujo QA. El ahorro informado es estimado hasta la confirmación del canje.Condiciones completasDEMO COMERCIAL — descuento simulado, no canjeable. Membresía JAKAWI activa. BOB 20 de descuento fijo sobre una cuenta de alimentos desde BOB 160, de martes a sábado de 18:30 a 22:00. No incluye bebidas ni delivery. Una aplicación por miembro durante la vigencia; no acumulable. Muestra el código en caja para el flujo QA. El ahorro informado es estimado hasta la confirmación del canje.Ver ficha del beneficio"
+    },
+    {
+      "id": 6,
+      "subject": "demo-beneficio-04",
+      "width": 1440,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 1886,
+      "ctaY": 638.4375,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de usarlo"
+        },
+        {
+          "tag": "SECTION",
+          "title": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Vigencia y requisitos"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREPARA TU CENA.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 219.0625,
+      "headline": "TU CENA CON VALOR EXTRA.",
+      "copy": {
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU CENA CON VALOR EXTRA.",
+        "subheadline": "Revisa el descuento y sus condiciones en Brasa Prisma — DEMO.",
+        "value": "BOB 20 menos en cena de brasas — DEMO",
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de descuento fijo en platos a las brasas, entradas y postres de Brasa Prisma — DEMO. La imagen ilustra una cena para compartir; este beneficio no incluye un menú ni una cena gratuita.",
+        "valueNote": null,
+        "partner": "Brasa Prisma — DEMO",
+        "places": [
+          {
+            "id": 4,
+            "name": "Brasa Prisma Norte — DEMO",
+            "address": "Calle Demo 14, Queru Queru",
+            "zone": "Queru Queru",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 5,
+            "name": "Brasa Prisma Sur — DEMO",
+            "address": "Calle Demo 15, La Chimba",
+            "zone": "La Chimba",
+            "city": "Cochabamba"
+          }
+        ],
+        "deadline": "31/12/2026 23:59",
+        "membership": "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+        "rules": [
+          "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+          "Úsalo en: Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO.",
+          "Válido hasta el 31/12/2026 23:59.",
+          "Disponible desde el 12/10/2026 00:00.",
+          "Límite: 1 canjes por miembro.",
+          "DEMO COMERCIAL — descuento simulado, no canjeable. Membresía JAKAWI activa. BOB 20 de descuento fijo sobre una cuenta de alimentos desde BOB 160, de martes a sábado de 18:30 a 22:00. No incluye bebidas ni delivery. Una aplicación por miembro durante la vigencia; no acumulable. Muestra el código en caja para el flujo QA. El ahorro informado es estimado hasta la confirmación del canje."
+        ],
+        "benefits": [
+          {
+            "title": "BOB 20 menos en cena de brasas — DEMO",
+            "description": "Descuento fijo demo de BOB 20 en una cuenta de cena desde BOB 160."
+          },
+          {
+            "title": "En Brasa Prisma — DEMO",
+            "description": "Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO"
+          },
+          {
+            "title": "Vigencia clara",
+            "description": "Válido hasta el 31/12/2026 23:59."
+          }
+        ],
+        "steps": [
+          {
+            "title": "PREPARA TU VISITA",
+            "description": "Revisa las condiciones y elige una sucursal aplicable."
+          },
+          {
+            "title": "VISITA EL PARTNER",
+            "description": "Acércate a una de las sucursales aplicables de Brasa Prisma — DEMO."
+          },
+          {
+            "title": "CANJEA",
+            "description": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Cómo uso el beneficio?",
+            "answer": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "Necesitas una membresía JAKAWI activa para canjear este beneficio."
+          },
+          {
+            "question": "¿Dónde puedo canjearlo?",
+            "answer": "Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO"
+          },
+          {
+            "question": "¿Hasta cuándo es válido?",
+            "answer": "Hasta el 31/12/2026 23:59."
+          },
+          {
+            "question": "¿Cuántas veces puedo usarlo?",
+            "answer": "Límite: 1 canjes por miembro."
+          }
+        ],
+        "action": {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "href": "#condiciones",
+          "kind": "unavailable"
+        },
+        "finalHeadline": "PREPARA TU CENA."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "TU CENA CON VALOR EXTRA.",
+        "subheadline": "Revisa el descuento y sus condiciones en Brasa Prisma — DEMO.",
+        "emphasis": "VALOR EXTRA",
+        "finalHeadline": "PREPARA TU CENA.",
+        "finalDescription": "DEMO COMERCIAL — descuento simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        },
+        {
+          "label": "YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONES",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "VALOR EXTRA"
+      ],
+      "interactionInert": null,
+      "operationalText": "Antes de usarloDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Escenario de descuento fijo en platos a las brasas, entradas y postres de Brasa Prisma — DEMO. La imagen ilustra una cena para compartir; este beneficio no incluye un menú ni una cena gratuita.YA USASTE ESTE BENEFICIO SEGÚN SUS CONDICIONESRevisa el estado en la ficha del beneficio.Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código.Brasa Prisma — DEMOBrasa Prisma Norte — DEMO · CochabambaQueru Queru · Calle Demo 14, Queru QueruBrasa Prisma Sur — DEMO · CochabambaLa Chimba · Calle Demo 15, La ChimbaVigencia y requisitosNecesitas una membresía JAKAWI activa para canjear este beneficio.Úsalo en: Brasa Prisma Norte — DEMO · Brasa Prisma Sur — DEMO.Válido hasta el 31/12/2026 23:59.Disponible desde el 12/10/2026 00:00.Límite: 1 canjes por miembro.DEMO COMERCIAL — descuento simulado, no canjeable. Membresía JAKAWI activa. BOB 20 de descuento fijo sobre una cuenta de alimentos desde BOB 160, de martes a sábado de 18:30 a 22:00. No incluye bebidas ni delivery. Una aplicación por miembro durante la vigencia; no acumulable. Muestra el código en caja para el flujo QA. El ahorro informado es estimado hasta la confirmación del canje.Condiciones completasDEMO COMERCIAL — descuento simulado, no canjeable. Membresía JAKAWI activa. BOB 20 de descuento fijo sobre una cuenta de alimentos desde BOB 160, de martes a sábado de 18:30 a 22:00. No incluye bebidas ni delivery. Una aplicación por miembro durante la vigencia; no acumulable. Muestra el código en caja para el flujo QA. El ahorro informado es estimado hasta la confirmación del canje.Ver ficha del beneficio"
+    },
+    {
+      "id": 10,
+      "subject": "demo-sunset-jakawi",
+      "width": 390,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 3277,
+      "ctaY": 876.890625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Lo que vas a vivir"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Cómo reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Quién lo hace posible"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Puedo elegir otro horario?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "HAZ DEL ATARDECER TU PRÓXIMO PLAN.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 410.640625,
+      "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+      "copy": {
+        "title": "Sunset JAKAWI en Mirador Cobalto — DEMO",
+        "slug": "demo-sunset-jakawi",
+        "experienceType": "event",
+        "durationMinutes": 180,
+        "reservationMethod": "url",
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+        "subheadline": "Terraza, música suave, tabla para compartir y bebida sin alcohol.",
+        "valueNote": null,
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro demo de tres horas, de 17:00 a 20:00, en la terraza ficticia Mirador Cobalto, Cochabamba. Incluye una bebida sin alcohol por persona y una tabla pequeña de pan, queso y aceitunas para compartir entre dos personas. Música ambiental; no es una cena completa ni un concierto.",
+        "terms": "DEMO COMERCIAL — experiencia simulada, sin reserva comercial real. BOB 150 por persona; precio miembro BOB 120. Capacidad configurada: 36 personas por sesión; no garantiza disponibilidad en tiempo real. Reserva previa por el enlace demo.invalid; el enlace no procesa una reserva comercial. Consulta alergias y condiciones de clima en el flujo de prueba. No incluye transporte ni bebidas alcohólicas.",
+        "organizers": [
+          {
+            "name": "Trama Viva — DEMO",
+            "slug": "demo-trama-viva"
+          }
+        ],
+        "partners": [
+          {
+            "name": "Trama Viva — DEMO",
+            "slug": "demo-trama-viva",
+            "role": "organizer"
+          },
+          {
+            "name": "Andes Umbral — DEMO",
+            "slug": "demo-andes-umbral",
+            "role": "host"
+          },
+          {
+            "name": "Brasa Prisma — DEMO",
+            "slug": "demo-brasa-prisma",
+            "role": "provider"
+          }
+        ],
+        "prices": [
+          {
+            "label": "Precio normal",
+            "value": "BOB 150.00"
+          },
+          {
+            "label": "Miembro JAKAWI",
+            "value": "BOB 120.00"
+          }
+        ],
+        "next": {
+          "id": 3,
+          "date": "07/11/2026",
+          "time": "17:00",
+          "endTime": "20:00",
+          "capacity": 36,
+          "place": "Mirador Cobalto — DEMO",
+          "address": "Calle Demo 27, Alalay",
+          "city": "Cochabamba"
+        },
+        "sessions": [
+          {
+            "id": 3,
+            "date": "07/11/2026",
+            "time": "17:00",
+            "endTime": "20:00",
+            "capacity": 36,
+            "place": "Mirador Cobalto — DEMO",
+            "address": "Calle Demo 27, Alalay",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 56,
+            "date": "21/11/2026",
+            "time": "17:00",
+            "endTime": "20:00",
+            "capacity": 36,
+            "place": "Mirador Cobalto — DEMO",
+            "address": "Calle Demo 27, Alalay",
+            "city": "Cochabamba"
+          }
+        ],
+        "sessionCount": 2,
+        "membership": "La reserva se gestiona directamente con el partner desde la ficha de la experiencia.",
+        "viewer": {
+          "authenticated": true,
+          "hasActiveMembership": true,
+          "reservationStatus": null
+        },
+        "action": {
+          "label": "RESERVAR",
+          "href": "https://jakawi.com/experiencias/demo-sunset-jakawi",
+          "kind": "native",
+          "sessionId": null
+        },
+        "faq": [
+          {
+            "question": "¿Cómo reservo?",
+            "answer": "Elige una fecha en la ficha de la experiencia y continúa con la reserva. La reserva se gestiona directamente con el partner desde la ficha de la experiencia."
+          },
+          {
+            "question": "¿Qué día y a qué hora?",
+            "answer": "07/11/2026 a las 17:00."
+          },
+          {
+            "question": "¿Dónde es?",
+            "answer": "Mirador Cobalto — DEMO · Calle Demo 27, Alalay · Cochabamba"
+          },
+          {
+            "question": "¿Puedo elegir otro horario?",
+            "answer": "Sí. Revisa las próximas sesiones y selecciona tu fecha en la ficha de la experiencia."
+          }
+        ],
+        "steps": [
+          {
+            "title": "ELIGE TU FECHA",
+            "description": "Elige una fecha en la ficha de la experiencia y continúa con la reserva."
+          },
+          {
+            "title": "RESERVA TU LUGAR",
+            "description": "La reserva se gestiona directamente con el partner desde la ficha de la experiencia."
+          },
+          {
+            "title": "VIVE LA EXPERIENCIA",
+            "description": "07/11/2026 · 17:00 · Mirador Cobalto — DEMO"
+          }
+        ],
+        "finalHeadline": "HAZ DEL ATARDECER TU PRÓXIMO PLAN."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+        "subheadline": "Terraza, música suave, tabla para compartir y bebida sin alcohol.",
+        "emphasis": "ATARDECER",
+        "finalHeadline": "HAZ DEL ATARDECER TU PRÓXIMO PLAN.",
+        "finalDescription": "DEMO COMERCIAL — experiencia simulada, sin reserva comercial real."
+      },
+      "hero": "MEDIA_LED",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "ATARDECER"
+      ],
+      "interactionInert": null,
+      "operationalText": "Lo que vas a vivirDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro demo de tres horas, de 17:00 a 20:00, en la terraza ficticia Mirador Cobalto, Cochabamba. Incluye una bebida sin alcohol por persona y una tabla pequeña de pan, queso y aceitunas para compartir entre dos personas. Música ambiental; no es una cena completa ni un concierto.PREPARA TU PLANAntes de reservarCuándo y dónde07/11/2026 · 17:00–20:00Mirador Cobalto — DEMO · CochabambaCalle Demo 27, AlalayCapacidad de la sesión: 36 personas.21/11/2026 · 17:00–20:00Mirador Cobalto — DEMO · CochabambaCalle Demo 27, AlalayCapacidad de la sesión: 36 personas.Cómo reservarELIGE TU FECHAElige una fecha en la ficha de la experiencia y continúa con la reserva.RESERVA TU LUGARLa reserva se gestiona directamente con el partner desde la ficha de la experiencia.VIVE LA EXPERIENCIA07/11/2026 · 17:00 · Mirador Cobalto — DEMOCondiciones completasDEMO COMERCIAL — experiencia simulada, sin reserva comercial real. BOB 150 por persona; precio miembro BOB 120. Capacidad configurada: 36 personas por sesión; no garantiza disponibilidad en tiempo real. Reserva previa por el enlace demo.invalid; el enlace no procesa una reserva comercial. Consulta alergias y condiciones de clima en el flujo de prueba. No incluye transporte ni bebidas alcohólicas.Quién lo hace posibleOrganizaTrama Viva — DEMOPartner · hostAndes Umbral — DEMOPartner · providerBrasa Prisma — DEMOJAKAWI conecta esta experiencia contigo.Ver ficha, fechas y reserva"
+    },
+    {
+      "id": 10,
+      "subject": "demo-sunset-jakawi",
+      "width": 1440,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 2790,
+      "ctaY": 709.65625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Lo que vas a vivir"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Cómo reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Quién lo hace posible"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Puedo elegir otro horario?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "HAZ DEL ATARDECER TU PRÓXIMO PLAN.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 280.59375,
+      "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+      "copy": {
+        "title": "Sunset JAKAWI en Mirador Cobalto — DEMO",
+        "slug": "demo-sunset-jakawi",
+        "experienceType": "event",
+        "durationMinutes": 180,
+        "reservationMethod": "url",
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+        "subheadline": "Terraza, música suave, tabla para compartir y bebida sin alcohol.",
+        "valueNote": null,
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro demo de tres horas, de 17:00 a 20:00, en la terraza ficticia Mirador Cobalto, Cochabamba. Incluye una bebida sin alcohol por persona y una tabla pequeña de pan, queso y aceitunas para compartir entre dos personas. Música ambiental; no es una cena completa ni un concierto.",
+        "terms": "DEMO COMERCIAL — experiencia simulada, sin reserva comercial real. BOB 150 por persona; precio miembro BOB 120. Capacidad configurada: 36 personas por sesión; no garantiza disponibilidad en tiempo real. Reserva previa por el enlace demo.invalid; el enlace no procesa una reserva comercial. Consulta alergias y condiciones de clima en el flujo de prueba. No incluye transporte ni bebidas alcohólicas.",
+        "organizers": [
+          {
+            "name": "Trama Viva — DEMO",
+            "slug": "demo-trama-viva"
+          }
+        ],
+        "partners": [
+          {
+            "name": "Trama Viva — DEMO",
+            "slug": "demo-trama-viva",
+            "role": "organizer"
+          },
+          {
+            "name": "Andes Umbral — DEMO",
+            "slug": "demo-andes-umbral",
+            "role": "host"
+          },
+          {
+            "name": "Brasa Prisma — DEMO",
+            "slug": "demo-brasa-prisma",
+            "role": "provider"
+          }
+        ],
+        "prices": [
+          {
+            "label": "Precio normal",
+            "value": "BOB 150.00"
+          },
+          {
+            "label": "Miembro JAKAWI",
+            "value": "BOB 120.00"
+          }
+        ],
+        "next": {
+          "id": 3,
+          "date": "07/11/2026",
+          "time": "17:00",
+          "endTime": "20:00",
+          "capacity": 36,
+          "place": "Mirador Cobalto — DEMO",
+          "address": "Calle Demo 27, Alalay",
+          "city": "Cochabamba"
+        },
+        "sessions": [
+          {
+            "id": 3,
+            "date": "07/11/2026",
+            "time": "17:00",
+            "endTime": "20:00",
+            "capacity": 36,
+            "place": "Mirador Cobalto — DEMO",
+            "address": "Calle Demo 27, Alalay",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 56,
+            "date": "21/11/2026",
+            "time": "17:00",
+            "endTime": "20:00",
+            "capacity": 36,
+            "place": "Mirador Cobalto — DEMO",
+            "address": "Calle Demo 27, Alalay",
+            "city": "Cochabamba"
+          }
+        ],
+        "sessionCount": 2,
+        "membership": "La reserva se gestiona directamente con el partner desde la ficha de la experiencia.",
+        "viewer": {
+          "authenticated": true,
+          "hasActiveMembership": true,
+          "reservationStatus": null
+        },
+        "action": {
+          "label": "RESERVAR",
+          "href": "https://jakawi.com/experiencias/demo-sunset-jakawi",
+          "kind": "native",
+          "sessionId": null
+        },
+        "faq": [
+          {
+            "question": "¿Cómo reservo?",
+            "answer": "Elige una fecha en la ficha de la experiencia y continúa con la reserva. La reserva se gestiona directamente con el partner desde la ficha de la experiencia."
+          },
+          {
+            "question": "¿Qué día y a qué hora?",
+            "answer": "07/11/2026 a las 17:00."
+          },
+          {
+            "question": "¿Dónde es?",
+            "answer": "Mirador Cobalto — DEMO · Calle Demo 27, Alalay · Cochabamba"
+          },
+          {
+            "question": "¿Puedo elegir otro horario?",
+            "answer": "Sí. Revisa las próximas sesiones y selecciona tu fecha en la ficha de la experiencia."
+          }
+        ],
+        "steps": [
+          {
+            "title": "ELIGE TU FECHA",
+            "description": "Elige una fecha en la ficha de la experiencia y continúa con la reserva."
+          },
+          {
+            "title": "RESERVA TU LUGAR",
+            "description": "La reserva se gestiona directamente con el partner desde la ficha de la experiencia."
+          },
+          {
+            "title": "VIVE LA EXPERIENCIA",
+            "description": "07/11/2026 · 17:00 · Mirador Cobalto — DEMO"
+          }
+        ],
+        "finalHeadline": "HAZ DEL ATARDECER TU PRÓXIMO PLAN."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+        "subheadline": "Terraza, música suave, tabla para compartir y bebida sin alcohol.",
+        "emphasis": "ATARDECER",
+        "finalHeadline": "HAZ DEL ATARDECER TU PRÓXIMO PLAN.",
+        "finalDescription": "DEMO COMERCIAL — experiencia simulada, sin reserva comercial real."
+      },
+      "hero": "MEDIA_LED",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "ATARDECER"
+      ],
+      "interactionInert": null,
+      "operationalText": "Lo que vas a vivirDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro demo de tres horas, de 17:00 a 20:00, en la terraza ficticia Mirador Cobalto, Cochabamba. Incluye una bebida sin alcohol por persona y una tabla pequeña de pan, queso y aceitunas para compartir entre dos personas. Música ambiental; no es una cena completa ni un concierto.PREPARA TU PLANAntes de reservarCuándo y dónde07/11/2026 · 17:00–20:00Mirador Cobalto — DEMO · CochabambaCalle Demo 27, AlalayCapacidad de la sesión: 36 personas.21/11/2026 · 17:00–20:00Mirador Cobalto — DEMO · CochabambaCalle Demo 27, AlalayCapacidad de la sesión: 36 personas.Cómo reservarELIGE TU FECHAElige una fecha en la ficha de la experiencia y continúa con la reserva.RESERVA TU LUGARLa reserva se gestiona directamente con el partner desde la ficha de la experiencia.VIVE LA EXPERIENCIA07/11/2026 · 17:00 · Mirador Cobalto — DEMOCondiciones completasDEMO COMERCIAL — experiencia simulada, sin reserva comercial real. BOB 150 por persona; precio miembro BOB 120. Capacidad configurada: 36 personas por sesión; no garantiza disponibilidad en tiempo real. Reserva previa por el enlace demo.invalid; el enlace no procesa una reserva comercial. Consulta alergias y condiciones de clima en el flujo de prueba. No incluye transporte ni bebidas alcohólicas.Quién lo hace posibleOrganizaTrama Viva — DEMOPartner · hostAndes Umbral — DEMOPartner · providerBrasa Prisma — DEMOJAKAWI conecta esta experiencia contigo.Ver ficha, fechas y reserva"
+    },
+    {
+      "id": 11,
+      "subject": "demo-brunch-cata-cafe",
+      "width": 390,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 3346,
+      "ctaY": 642.140625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Lo que vas a vivir"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Cómo reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Quién lo hace posible"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Puedo elegir otro horario?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "ELIGE TU FECHA Y PREPARA TU VISITA.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 762.140625,
+      "headline": "BRUNCH Y CAFÉ PARA EMPEZAR EL DÍA.",
+      "copy": {
+        "title": "Brunch y cata de café — DEMO",
+        "slug": "demo-brunch-cata-cafe",
+        "experienceType": "tasting",
+        "durationMinutes": 75,
+        "reservationMethod": "jakawi",
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "BRUNCH Y CAFÉ PARA EMPEZAR EL DÍA.",
+        "subheadline": "Desayuno servido y degustación guiada en Altura Nube Café — DEMO.",
+        "valueNote": null,
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro práctico de 09:00 a 10:15 en Altura Nube Café — DEMO, Cala Cala. Incluye huevos, tostadas y fruta, un café filtrado de 200 ml y degustación de tres pequeñas muestras de café. No requiere experiencia previa.",
+        "terms": "DEMO COMERCIAL — experiencia simulada, sin servicio comercial real. BOB 75 regular; precio miembro BOB 60. La reserva interna de JAKAWI requiere cuenta y membresía activa. Capacidad configurada: 12 personas por sesión; no garantiza disponibilidad en tiempo real. El desayuno contiene huevo, gluten y fruta; consultar restricciones en el flujo QA. Reserva para una fecha; no incluye transporte.",
+        "organizers": [],
+        "partners": [
+          {
+            "name": "Altura Nube Café — DEMO",
+            "slug": "demo-altura-nube",
+            "role": "host"
+          },
+          {
+            "name": "Altura Nube Café — DEMO",
+            "slug": "demo-altura-nube",
+            "role": "provider"
+          }
+        ],
+        "prices": [
+          {
+            "label": "Precio normal",
+            "value": "BOB 75.00"
+          },
+          {
+            "label": "Miembro JAKAWI",
+            "value": "BOB 60.00"
+          }
+        ],
+        "next": {
+          "id": 57,
+          "date": "24/10/2026",
+          "time": "09:00",
+          "endTime": "10:15",
+          "capacity": 12,
+          "place": "Altura Nube Cala Cala — DEMO",
+          "address": "Calle Demo 11, Cala Cala",
+          "city": "Cochabamba"
+        },
+        "sessions": [
+          {
+            "id": 57,
+            "date": "24/10/2026",
+            "time": "09:00",
+            "endTime": "10:15",
+            "capacity": 12,
+            "place": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 58,
+            "date": "14/11/2026",
+            "time": "09:00",
+            "endTime": "10:15",
+            "capacity": 12,
+            "place": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "city": "Cochabamba"
+          }
+        ],
+        "sessionCount": 2,
+        "membership": "La reserva en JAKAWI requiere una cuenta y una membresía activa.",
+        "viewer": {
+          "authenticated": true,
+          "hasActiveMembership": true,
+          "reservationStatus": null
+        },
+        "action": {
+          "label": "RESERVAR",
+          "href": "https://jakawi.com/experiencias/demo-brunch-cata-cafe",
+          "kind": "native",
+          "sessionId": null
+        },
+        "faq": [
+          {
+            "question": "¿Cómo reservo?",
+            "answer": "Elige una fecha en la ficha de la experiencia y continúa con la reserva. La reserva en JAKAWI requiere una cuenta y una membresía activa."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "La reserva en JAKAWI requiere una cuenta y una membresía activa."
+          },
+          {
+            "question": "¿Qué día y a qué hora?",
+            "answer": "24/10/2026 a las 09:00."
+          },
+          {
+            "question": "¿Dónde es?",
+            "answer": "Altura Nube Cala Cala — DEMO · Calle Demo 11, Cala Cala · Cochabamba"
+          },
+          {
+            "question": "¿Puedo elegir otro horario?",
+            "answer": "Sí. Revisa las próximas sesiones y selecciona tu fecha en la ficha de la experiencia."
+          }
+        ],
+        "steps": [
+          {
+            "title": "ELIGE TU FECHA",
+            "description": "Elige una fecha en la ficha de la experiencia y continúa con la reserva."
+          },
+          {
+            "title": "RESERVA TU LUGAR",
+            "description": "La reserva en JAKAWI requiere una cuenta y una membresía activa."
+          },
+          {
+            "title": "VIVE LA EXPERIENCIA",
+            "description": "24/10/2026 · 09:00 · Altura Nube Cala Cala — DEMO"
+          }
+        ],
+        "finalHeadline": "ELIGE TU FECHA Y PREPARA TU VISITA."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "BRUNCH Y CAFÉ PARA EMPEZAR EL DÍA.",
+        "subheadline": "Desayuno servido y degustación guiada en Altura Nube Café — DEMO.",
+        "emphasis": "BRUNCH Y CAFÉ",
+        "finalHeadline": "ELIGE TU FECHA Y PREPARA TU VISITA.",
+        "finalDescription": "DEMO COMERCIAL — experiencia simulada, sin servicio comercial real."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "BRUNCH Y CAFÉ"
+      ],
+      "interactionInert": null,
+      "operationalText": "Lo que vas a vivirDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro práctico de 09:00 a 10:15 en Altura Nube Café — DEMO, Cala Cala. Incluye huevos, tostadas y fruta, un café filtrado de 200 ml y degustación de tres pequeñas muestras de café. No requiere experiencia previa.PREPARA TU PLANAntes de reservarCuándo y dónde24/10/2026 · 09:00–10:15Altura Nube Cala Cala — DEMO · CochabambaCalle Demo 11, Cala CalaCapacidad de la sesión: 12 personas.14/11/2026 · 09:00–10:15Altura Nube Cala Cala — DEMO · CochabambaCalle Demo 11, Cala CalaCapacidad de la sesión: 12 personas.Cómo reservarELIGE TU FECHAElige una fecha en la ficha de la experiencia y continúa con la reserva.RESERVA TU LUGARLa reserva en JAKAWI requiere una cuenta y una membresía activa.VIVE LA EXPERIENCIA24/10/2026 · 09:00 · Altura Nube Cala Cala — DEMOCondiciones completasDEMO COMERCIAL — experiencia simulada, sin servicio comercial real. BOB 75 regular; precio miembro BOB 60. La reserva interna de JAKAWI requiere cuenta y membresía activa. Capacidad configurada: 12 personas por sesión; no garantiza disponibilidad en tiempo real. El desayuno contiene huevo, gluten y fruta; consultar restricciones en el flujo QA. Reserva para una fecha; no incluye transporte.Quién lo hace posiblePartner · hostAltura Nube Café — DEMOPartner · providerAltura Nube Café — DEMOJAKAWI conecta esta experiencia contigo.Ver ficha, fechas y reserva"
+    },
+    {
+      "id": 11,
+      "subject": "demo-brunch-cata-cafe",
+      "width": 1440,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 2782,
+      "ctaY": 701.65625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Lo que vas a vivir"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Antes de reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Cómo reservar"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Condiciones completas"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "Quién lo hace posible"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Puedo elegir otro horario?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "ELIGE TU FECHA Y PREPARA TU VISITA.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 250.671875,
+      "headline": "BRUNCH Y CAFÉ PARA EMPEZAR EL DÍA.",
+      "copy": {
+        "title": "Brunch y cata de café — DEMO",
+        "slug": "demo-brunch-cata-cafe",
+        "experienceType": "tasting",
+        "durationMinutes": 75,
+        "reservationMethod": "jakawi",
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "BRUNCH Y CAFÉ PARA EMPEZAR EL DÍA.",
+        "subheadline": "Desayuno servido y degustación guiada en Altura Nube Café — DEMO.",
+        "valueNote": null,
+        "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro práctico de 09:00 a 10:15 en Altura Nube Café — DEMO, Cala Cala. Incluye huevos, tostadas y fruta, un café filtrado de 200 ml y degustación de tres pequeñas muestras de café. No requiere experiencia previa.",
+        "terms": "DEMO COMERCIAL — experiencia simulada, sin servicio comercial real. BOB 75 regular; precio miembro BOB 60. La reserva interna de JAKAWI requiere cuenta y membresía activa. Capacidad configurada: 12 personas por sesión; no garantiza disponibilidad en tiempo real. El desayuno contiene huevo, gluten y fruta; consultar restricciones en el flujo QA. Reserva para una fecha; no incluye transporte.",
+        "organizers": [],
+        "partners": [
+          {
+            "name": "Altura Nube Café — DEMO",
+            "slug": "demo-altura-nube",
+            "role": "host"
+          },
+          {
+            "name": "Altura Nube Café — DEMO",
+            "slug": "demo-altura-nube",
+            "role": "provider"
+          }
+        ],
+        "prices": [
+          {
+            "label": "Precio normal",
+            "value": "BOB 75.00"
+          },
+          {
+            "label": "Miembro JAKAWI",
+            "value": "BOB 60.00"
+          }
+        ],
+        "next": {
+          "id": 57,
+          "date": "24/10/2026",
+          "time": "09:00",
+          "endTime": "10:15",
+          "capacity": 12,
+          "place": "Altura Nube Cala Cala — DEMO",
+          "address": "Calle Demo 11, Cala Cala",
+          "city": "Cochabamba"
+        },
+        "sessions": [
+          {
+            "id": 57,
+            "date": "24/10/2026",
+            "time": "09:00",
+            "endTime": "10:15",
+            "capacity": 12,
+            "place": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "city": "Cochabamba"
+          },
+          {
+            "id": 58,
+            "date": "14/11/2026",
+            "time": "09:00",
+            "endTime": "10:15",
+            "capacity": 12,
+            "place": "Altura Nube Cala Cala — DEMO",
+            "address": "Calle Demo 11, Cala Cala",
+            "city": "Cochabamba"
+          }
+        ],
+        "sessionCount": 2,
+        "membership": "La reserva en JAKAWI requiere una cuenta y una membresía activa.",
+        "viewer": {
+          "authenticated": true,
+          "hasActiveMembership": true,
+          "reservationStatus": null
+        },
+        "action": {
+          "label": "RESERVAR",
+          "href": "https://jakawi.com/experiencias/demo-brunch-cata-cafe",
+          "kind": "native",
+          "sessionId": null
+        },
+        "faq": [
+          {
+            "question": "¿Cómo reservo?",
+            "answer": "Elige una fecha en la ficha de la experiencia y continúa con la reserva. La reserva en JAKAWI requiere una cuenta y una membresía activa."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "La reserva en JAKAWI requiere una cuenta y una membresía activa."
+          },
+          {
+            "question": "¿Qué día y a qué hora?",
+            "answer": "24/10/2026 a las 09:00."
+          },
+          {
+            "question": "¿Dónde es?",
+            "answer": "Altura Nube Cala Cala — DEMO · Calle Demo 11, Cala Cala · Cochabamba"
+          },
+          {
+            "question": "¿Puedo elegir otro horario?",
+            "answer": "Sí. Revisa las próximas sesiones y selecciona tu fecha en la ficha de la experiencia."
+          }
+        ],
+        "steps": [
+          {
+            "title": "ELIGE TU FECHA",
+            "description": "Elige una fecha en la ficha de la experiencia y continúa con la reserva."
+          },
+          {
+            "title": "RESERVA TU LUGAR",
+            "description": "La reserva en JAKAWI requiere una cuenta y una membresía activa."
+          },
+          {
+            "title": "VIVE LA EXPERIENCIA",
+            "description": "24/10/2026 · 09:00 · Altura Nube Cala Cala — DEMO"
+          }
+        ],
+        "finalHeadline": "ELIGE TU FECHA Y PREPARA TU VISITA."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "DEMO COMERCIAL · COCHABAMBA",
+        "headline": "BRUNCH Y CAFÉ PARA EMPEZAR EL DÍA.",
+        "subheadline": "Desayuno servido y degustación guiada en Altura Nube Café — DEMO.",
+        "emphasis": "BRUNCH Y CAFÉ",
+        "finalHeadline": "ELIGE TU FECHA Y PREPARA TU VISITA.",
+        "finalDescription": "DEMO COMERCIAL — experiencia simulada, sin servicio comercial real."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "light-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "BRUNCH Y CAFÉ"
+      ],
+      "interactionInert": null,
+      "operationalText": "Lo que vas a vivirDEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro práctico de 09:00 a 10:15 en Altura Nube Café — DEMO, Cala Cala. Incluye huevos, tostadas y fruta, un café filtrado de 200 ml y degustación de tres pequeñas muestras de café. No requiere experiencia previa.PREPARA TU PLANAntes de reservarCuándo y dónde24/10/2026 · 09:00–10:15Altura Nube Cala Cala — DEMO · CochabambaCalle Demo 11, Cala CalaCapacidad de la sesión: 12 personas.14/11/2026 · 09:00–10:15Altura Nube Cala Cala — DEMO · CochabambaCalle Demo 11, Cala CalaCapacidad de la sesión: 12 personas.Cómo reservarELIGE TU FECHAElige una fecha en la ficha de la experiencia y continúa con la reserva.RESERVA TU LUGARLa reserva en JAKAWI requiere una cuenta y una membresía activa.VIVE LA EXPERIENCIA24/10/2026 · 09:00 · Altura Nube Cala Cala — DEMOCondiciones completasDEMO COMERCIAL — experiencia simulada, sin servicio comercial real. BOB 75 regular; precio miembro BOB 60. La reserva interna de JAKAWI requiere cuenta y membresía activa. Capacidad configurada: 12 personas por sesión; no garantiza disponibilidad en tiempo real. El desayuno contiene huevo, gluten y fruta; consultar restricciones en el flujo QA. Reserva para una fecha; no incluye transporte.Quién lo hace posiblePartner · hostAltura Nube Café — DEMOPartner · providerAltura Nube Café — DEMOJAKAWI conecta esta experiencia contigo.Ver ficha, fechas y reserva"
+    },
+    {
+      "id": 12,
+      "subject": "demo-reto-cena-ciudad",
+      "width": 390,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 3969,
+      "ctaY": 867.1875,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "3 PASOS PARA PARTICIPAR",
+          "chapter": "steps"
+        },
+        {
+          "tag": "SECTION",
+          "title": "LO ESENCIALLO QUE DEBES SABER",
+          "chapter": "rules"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "VER REGLAS COMPLETASREGLAS COMPLETAS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PARTICIPA EN ESTE RETO"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREMIOS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREMIOS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Cuándo se verifica mi publicación?+"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Cuándo recibo el premio?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "CONSULTA LAS REGLAS Y PARTICIPA.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 987.1875,
+      "headline": "PUBLICA, CALIFICA Y COMPARTE LA CENA.",
+      "copy": {
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "PUBLICA, CALIFICA Y COMPARTE LA CENA.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Publica tu plan gastronómico y cumple las reglas del reto.",
+        "mechanism": "Publica en Instagram con #jakawidemocena. Envía tu enlace para que JAKAWI verifique el reto.",
+        "confidence": "Los primeros 10 participantes verificados reciben el premio.",
+        "reward": "Cena demo para dos: entrada para compartir, dos platos a las brasas y dos postres. DEMO DE PRODUCTO — premio simulado, no canjeable.",
+        "rewardType": "MANUAL_PRIZE",
+        "rewardNote": null,
+        "rewardDetail": null,
+        "deadline": "2026-12-01T00:00:00+00:00",
+        "qualification": "Consigue al menos 50 likes en una publicación válida.",
+        "selection": "Los primeros 10 participantes verificados reciben el premio.",
+        "membership": "No necesitas membresía activa para participar ni para recibir el premio.",
+        "review": "JAKAWI revisa los resultados.",
+        "benefits": [
+          {
+            "title": "Haz el reto",
+            "description": "Publica según las instrucciones del reto."
+          },
+          {
+            "title": "Sigue tu avance",
+            "description": "Consigue al menos 50 likes en una publicación válida."
+          },
+          {
+            "title": "Conoce el resultado",
+            "description": "Los primeros 10 participantes verificados reciben el premio."
+          }
+        ],
+        "steps": [
+          {
+            "title": "Publica",
+            "description": "Publica según las instrucciones del reto."
+          },
+          {
+            "title": "Envía tu enlace",
+            "description": "Ingresa con tu cuenta y correo verificado. Comparte la URL de tu publicación para verificarla."
+          },
+          {
+            "title": "JAKAWI verifica",
+            "description": "Sigue el estado de tu publicación y recibe el resultado después de la verificación."
+          }
+        ],
+        "rules": [
+          {
+            "title": "Qué hacer",
+            "description": "Publica según las instrucciones del reto."
+          },
+          {
+            "title": "Cómo calificas",
+            "description": "Consigue al menos 50 likes en una publicación válida."
+          },
+          {
+            "title": "Cómo se eligen ganadores",
+            "description": "Los primeros 10 participantes verificados reciben el premio."
+          },
+          {
+            "title": "Cierre",
+            "description": "2026-12-01T00:00:00+00:00"
+          },
+          {
+            "title": "Quién recibe el premio",
+            "description": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "title": "Entradas máximas",
+            "description": "1"
+          },
+          {
+            "title": "Revisión",
+            "description": "JAKAWI revisa el resultado antes de confirmar ganadores."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Quién puede participar?",
+            "answer": "Personas con una cuenta JAKAWI."
+          },
+          {
+            "question": "¿Cuándo se verifica mi publicación?",
+            "answer": "Se verifica después de enviar el enlace. Puedes seguir el estado de cada publicación aquí."
+          },
+          {
+            "question": "¿Cómo se eligen ganadores?",
+            "answer": "Los primeros 10 participantes verificados reciben el premio."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "question": "¿Cuándo recibo el premio?",
+            "answer": "Después de verificar el cumplimiento y confirmar el resultado del reto."
+          }
+        ],
+        "finalHeadline": "CONSULTA LAS REGLAS Y PARTICIPA."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "PUBLICA, CALIFICA Y COMPARTE LA CENA.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Publica tu plan gastronómico y cumple las reglas del reto.",
+        "emphasis": "COMPARTE LA CENA",
+        "finalHeadline": "CONSULTA LAS REGLAS Y PARTICIPA.",
+        "finalDescription": "DEMO DE PRODUCTO — premio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "dark-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        },
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "COMPARTE LA CENA"
+      ],
+      "interactionInert": true,
+      "operationalText": "REGLAS ESENCIALESLO ESENCIALLO QUE DEBES SABERQué hacerPublica según las instrucciones del reto.Cómo calificasConsigue al menos 50 likes en una publicación válida.Cómo se eligen ganadoresLos primeros 10 participantes verificados reciben el premio.Cierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.VER REGLAS COMPLETASREGLAS COMPLETASCierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.DEMO DE PRODUCTO — premio simulado, no canjeable. Comparte un plan gastronómico de tu ciudad; el reto usa publicaciones públicas y verificación real de la mecánica, pero no entrega un premio comercial.Publica una foto original de un plan gastronómico propio en Instagram con #jakawidemocena. Mantén la publicación pública y registra su enlace en JAKAWI. Alcanza 50 likes y cumple las reglas; los primeros 10 participantes verificados califican como candidatos. Revisión requerida antes de confirmar. DEMO DE PRODUCTO — premio simulado, no canjeable.Consigue al menos 50 likes en una publicación válida. Los primeros 10 participantes verificados reciben el premio. No necesitas membresía activa para participar ni para recibir el premio. JAKAWI revisa los resultados.Plataformas: instagramEtiquetas: #jakawidemocenaVer ficha y reglas del productoTU PARTICIPACIÓNPARTICIPA EN ESTE RETOPREMIOS0 / 10 otorgadosQuedan 10 premios disponibles.PARTICIPAREnlace de tu publicaciónENVIAR PUBLICACIÓN"
+    },
+    {
+      "id": 12,
+      "subject": "demo-reto-cena-ciudad",
+      "width": 1440,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 3678,
+      "ctaY": 793.875,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "3 PASOS PARA PARTICIPAR",
+          "chapter": "steps"
+        },
+        {
+          "tag": "SECTION",
+          "title": "LO ESENCIALLO QUE DEBES SABER",
+          "chapter": "rules"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "VER REGLAS COMPLETASREGLAS COMPLETAS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PARTICIPA EN ESTE RETO"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREMIOS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PREMIOS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Cuándo se verifica mi publicación?+"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Cuándo recibo el premio?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "CONSULTA LAS REGLAS Y PARTICIPA.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": 296.78125,
+      "headline": "PUBLICA, CALIFICA Y COMPARTE LA CENA.",
+      "copy": {
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "PUBLICA, CALIFICA Y COMPARTE LA CENA.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Publica tu plan gastronómico y cumple las reglas del reto.",
+        "mechanism": "Publica en Instagram con #jakawidemocena. Envía tu enlace para que JAKAWI verifique el reto.",
+        "confidence": "Los primeros 10 participantes verificados reciben el premio.",
+        "reward": "Cena demo para dos: entrada para compartir, dos platos a las brasas y dos postres. DEMO DE PRODUCTO — premio simulado, no canjeable.",
+        "rewardType": "MANUAL_PRIZE",
+        "rewardNote": null,
+        "rewardDetail": null,
+        "deadline": "2026-12-01T00:00:00+00:00",
+        "qualification": "Consigue al menos 50 likes en una publicación válida.",
+        "selection": "Los primeros 10 participantes verificados reciben el premio.",
+        "membership": "No necesitas membresía activa para participar ni para recibir el premio.",
+        "review": "JAKAWI revisa los resultados.",
+        "benefits": [
+          {
+            "title": "Haz el reto",
+            "description": "Publica según las instrucciones del reto."
+          },
+          {
+            "title": "Sigue tu avance",
+            "description": "Consigue al menos 50 likes en una publicación válida."
+          },
+          {
+            "title": "Conoce el resultado",
+            "description": "Los primeros 10 participantes verificados reciben el premio."
+          }
+        ],
+        "steps": [
+          {
+            "title": "Publica",
+            "description": "Publica según las instrucciones del reto."
+          },
+          {
+            "title": "Envía tu enlace",
+            "description": "Ingresa con tu cuenta y correo verificado. Comparte la URL de tu publicación para verificarla."
+          },
+          {
+            "title": "JAKAWI verifica",
+            "description": "Sigue el estado de tu publicación y recibe el resultado después de la verificación."
+          }
+        ],
+        "rules": [
+          {
+            "title": "Qué hacer",
+            "description": "Publica según las instrucciones del reto."
+          },
+          {
+            "title": "Cómo calificas",
+            "description": "Consigue al menos 50 likes en una publicación válida."
+          },
+          {
+            "title": "Cómo se eligen ganadores",
+            "description": "Los primeros 10 participantes verificados reciben el premio."
+          },
+          {
+            "title": "Cierre",
+            "description": "2026-12-01T00:00:00+00:00"
+          },
+          {
+            "title": "Quién recibe el premio",
+            "description": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "title": "Entradas máximas",
+            "description": "1"
+          },
+          {
+            "title": "Revisión",
+            "description": "JAKAWI revisa el resultado antes de confirmar ganadores."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Quién puede participar?",
+            "answer": "Personas con una cuenta JAKAWI."
+          },
+          {
+            "question": "¿Cuándo se verifica mi publicación?",
+            "answer": "Se verifica después de enviar el enlace. Puedes seguir el estado de cada publicación aquí."
+          },
+          {
+            "question": "¿Cómo se eligen ganadores?",
+            "answer": "Los primeros 10 participantes verificados reciben el premio."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "question": "¿Cuándo recibo el premio?",
+            "answer": "Después de verificar el cumplimiento y confirmar el resultado del reto."
+          }
+        ],
+        "finalHeadline": "CONSULTA LAS REGLAS Y PARTICIPA."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "PUBLICA, CALIFICA Y COMPARTE LA CENA.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Publica tu plan gastronómico y cumple las reglas del reto.",
+        "emphasis": "COMPARTE LA CENA",
+        "finalHeadline": "CONSULTA LAS REGLAS Y PARTICIPA.",
+        "finalDescription": "DEMO DE PRODUCTO — premio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "theme": "dark-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        },
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [
+        "true"
+      ],
+      "loadedImages": true,
+      "emphasis": [
+        "COMPARTE LA CENA"
+      ],
+      "interactionInert": true,
+      "operationalText": "REGLAS ESENCIALESLO ESENCIALLO QUE DEBES SABERQué hacerPublica según las instrucciones del reto.Cómo calificasConsigue al menos 50 likes en una publicación válida.Cómo se eligen ganadoresLos primeros 10 participantes verificados reciben el premio.Cierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.VER REGLAS COMPLETASREGLAS COMPLETASCierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.DEMO DE PRODUCTO — premio simulado, no canjeable. Comparte un plan gastronómico de tu ciudad; el reto usa publicaciones públicas y verificación real de la mecánica, pero no entrega un premio comercial.Publica una foto original de un plan gastronómico propio en Instagram con #jakawidemocena. Mantén la publicación pública y registra su enlace en JAKAWI. Alcanza 50 likes y cumple las reglas; los primeros 10 participantes verificados califican como candidatos. Revisión requerida antes de confirmar. DEMO DE PRODUCTO — premio simulado, no canjeable.Consigue al menos 50 likes en una publicación válida. Los primeros 10 participantes verificados reciben el premio. No necesitas membresía activa para participar ni para recibir el premio. JAKAWI revisa los resultados.Plataformas: instagramEtiquetas: #jakawidemocenaVer ficha y reglas del productoTU PARTICIPACIÓNPARTICIPA EN ESTE RETOPREMIOS0 / 10 otorgadosQuedan 10 premios disponibles.PARTICIPAREnlace de tu publicaciónENVIAR PUBLICACIÓN"
+    },
+    {
+      "id": 13,
+      "subject": "demo-reto-idea-cafe",
+      "width": 390,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 2990,
+      "ctaY": 710.140625,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "2 PASOS PARA PARTICIPAR",
+          "chapter": "steps"
+        },
+        {
+          "tag": "SECTION",
+          "title": "LO ESENCIALLO QUE DEBES SABER",
+          "chapter": "rules"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "VER REGLAS COMPLETASREGLAS COMPLETAS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PARTICIPA EN ESTE RETO"
+        },
+        {
+          "tag": "SECTION"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes",
+          "chapter": "faq"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Cuándo recibo el premio?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PARTICIPA EN EL RETO DEMO.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": null,
+      "headline": "INSCRÍBETE Y DESCUBRE EL CAFÉ.",
+      "copy": {
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "INSCRÍBETE Y DESCUBRE EL CAFÉ.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Inscripción simple y revisión manual del registro.",
+        "mechanism": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable.",
+        "confidence": "Todas las personas que califiquen reciben el premio.",
+        "reward": "Pase demo individual a Brunch y cata de café. DEMO DE PRODUCTO — premio simulado, no canjeable.",
+        "rewardType": "MANUAL_PRIZE",
+        "rewardNote": null,
+        "rewardDetail": null,
+        "deadline": "2026-12-01T00:00:00+00:00",
+        "qualification": "JAKAWI revisará el cumplimiento de las instrucciones del reto.",
+        "selection": "Todas las personas que califiquen reciben el premio.",
+        "membership": "No necesitas membresía activa para participar ni para recibir el premio.",
+        "review": "JAKAWI revisa los resultados.",
+        "benefits": [
+          {
+            "title": "Haz el reto",
+            "description": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable."
+          },
+          {
+            "title": "Sigue tu avance",
+            "description": "JAKAWI revisará el cumplimiento de las instrucciones del reto."
+          },
+          {
+            "title": "Conoce el resultado",
+            "description": "Todas las personas que califiquen reciben el premio."
+          }
+        ],
+        "steps": [
+          {
+            "title": "Participa",
+            "description": "Ingresa con tu cuenta JAKAWI y participa."
+          },
+          {
+            "title": "Cumple el reto",
+            "description": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable."
+          },
+          {
+            "title": "Recibe tu resultado",
+            "description": "JAKAWI revisará el cumplimiento de las instrucciones del reto. Todas las personas que califiquen reciben el premio."
+          }
+        ],
+        "rules": [
+          {
+            "title": "Qué hacer",
+            "description": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable."
+          },
+          {
+            "title": "Cómo calificas",
+            "description": "JAKAWI revisará el cumplimiento de las instrucciones del reto."
+          },
+          {
+            "title": "Cómo se eligen ganadores",
+            "description": "Todas las personas que califiquen reciben el premio."
+          },
+          {
+            "title": "Cierre",
+            "description": "2026-12-01T00:00:00+00:00"
+          },
+          {
+            "title": "Quién recibe el premio",
+            "description": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "title": "Entradas máximas",
+            "description": "1"
+          },
+          {
+            "title": "Revisión",
+            "description": "JAKAWI revisa el resultado antes de confirmar ganadores."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Quién puede participar?",
+            "answer": "Personas con una cuenta JAKAWI."
+          },
+          {
+            "question": "¿Cómo se eligen ganadores?",
+            "answer": "Todas las personas que califiquen reciben el premio."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "question": "¿Cuándo recibo el premio?",
+            "answer": "Después de verificar el cumplimiento y confirmar el resultado del reto."
+          }
+        ],
+        "finalHeadline": "PARTICIPA EN EL RETO DEMO."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "INSCRÍBETE Y DESCUBRE EL CAFÉ.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Inscripción simple y revisión manual del registro.",
+        "emphasis": "DESCUBRE EL CAFÉ",
+        "finalHeadline": "PARTICIPA EN EL RETO DEMO.",
+        "finalDescription": "DEMO DE PRODUCTO — premio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "theme": "dark-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        },
+        {
+          "label": "PARTICIPAR",
+          "disabled": "true"
+        },
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [],
+      "loadedImages": true,
+      "emphasis": [
+        "DESCUBRE EL CAFÉ"
+      ],
+      "interactionInert": true,
+      "operationalText": "REGLAS ESENCIALESLO ESENCIALLO QUE DEBES SABERQué hacerInscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable.Cómo calificasJAKAWI revisará el cumplimiento de las instrucciones del reto.Cómo se eligen ganadoresTodas las personas que califiquen reciben el premio.Cierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.VER REGLAS COMPLETASREGLAS COMPLETASCierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.DEMO DE PRODUCTO — premio simulado, no canjeable. Inscripción simple para evaluar participación manual sin publicar en redes sociales.Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable.JAKAWI revisará el cumplimiento de las instrucciones del reto. Todas las personas que califiquen reciben el premio. No necesitas membresía activa para participar ni para recibir el premio. JAKAWI revisa los resultados.Ver ficha y reglas del productoTU PARTICIPACIÓNPARTICIPA EN ESTE RETOPARTICIPAR"
+    },
+    {
+      "id": 13,
+      "subject": "demo-reto-idea-cafe",
+      "width": 1440,
+      "http": 200,
+      "fontFamily": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontStatus": "loaded",
+      "height": 2745,
+      "ctaY": 554.453125,
+      "sections": [
+        {
+          "tag": "SECTION",
+          "title": "VISTA PREVIA"
+        },
+        {
+          "tag": "SECTION",
+          "chapter": "hero"
+        },
+        {
+          "tag": "SECTION",
+          "title": "2 PASOS PARA PARTICIPAR",
+          "chapter": "steps"
+        },
+        {
+          "tag": "SECTION",
+          "title": "LO ESENCIALLO QUE DEBES SABER",
+          "chapter": "rules"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "VER REGLAS COMPLETASREGLAS COMPLETAS"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PARTICIPA EN ESTE RETO"
+        },
+        {
+          "tag": "SECTION"
+        },
+        {
+          "tag": "SECTION",
+          "title": "Preguntas frecuentes",
+          "chapter": "faq"
+        },
+        {
+          "tag": "DETAILS",
+          "title": "¿Cuándo recibo el premio?+"
+        },
+        {
+          "tag": "SECTION",
+          "title": "PARTICIPA EN EL RETO DEMO.",
+          "chapter": "final"
+        }
+      ],
+      "mediaY": null,
+      "headline": "INSCRÍBETE Y DESCUBRE EL CAFÉ.",
+      "copy": {
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "INSCRÍBETE Y DESCUBRE EL CAFÉ.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Inscripción simple y revisión manual del registro.",
+        "mechanism": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable.",
+        "confidence": "Todas las personas que califiquen reciben el premio.",
+        "reward": "Pase demo individual a Brunch y cata de café. DEMO DE PRODUCTO — premio simulado, no canjeable.",
+        "rewardType": "MANUAL_PRIZE",
+        "rewardNote": null,
+        "rewardDetail": null,
+        "deadline": "2026-12-01T00:00:00+00:00",
+        "qualification": "JAKAWI revisará el cumplimiento de las instrucciones del reto.",
+        "selection": "Todas las personas que califiquen reciben el premio.",
+        "membership": "No necesitas membresía activa para participar ni para recibir el premio.",
+        "review": "JAKAWI revisa los resultados.",
+        "benefits": [
+          {
+            "title": "Haz el reto",
+            "description": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable."
+          },
+          {
+            "title": "Sigue tu avance",
+            "description": "JAKAWI revisará el cumplimiento de las instrucciones del reto."
+          },
+          {
+            "title": "Conoce el resultado",
+            "description": "Todas las personas que califiquen reciben el premio."
+          }
+        ],
+        "steps": [
+          {
+            "title": "Participa",
+            "description": "Ingresa con tu cuenta JAKAWI y participa."
+          },
+          {
+            "title": "Cumple el reto",
+            "description": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable."
+          },
+          {
+            "title": "Recibe tu resultado",
+            "description": "JAKAWI revisará el cumplimiento de las instrucciones del reto. Todas las personas que califiquen reciben el premio."
+          }
+        ],
+        "rules": [
+          {
+            "title": "Qué hacer",
+            "description": "Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable."
+          },
+          {
+            "title": "Cómo calificas",
+            "description": "JAKAWI revisará el cumplimiento de las instrucciones del reto."
+          },
+          {
+            "title": "Cómo se eligen ganadores",
+            "description": "Todas las personas que califiquen reciben el premio."
+          },
+          {
+            "title": "Cierre",
+            "description": "2026-12-01T00:00:00+00:00"
+          },
+          {
+            "title": "Quién recibe el premio",
+            "description": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "title": "Entradas máximas",
+            "description": "1"
+          },
+          {
+            "title": "Revisión",
+            "description": "JAKAWI revisa el resultado antes de confirmar ganadores."
+          }
+        ],
+        "faq": [
+          {
+            "question": "¿Quién puede participar?",
+            "answer": "Personas con una cuenta JAKAWI."
+          },
+          {
+            "question": "¿Cómo se eligen ganadores?",
+            "answer": "Todas las personas que califiquen reciben el premio."
+          },
+          {
+            "question": "¿Necesito membresía?",
+            "answer": "No necesitas membresía activa para participar ni para recibir el premio."
+          },
+          {
+            "question": "¿Cuándo recibo el premio?",
+            "answer": "Después de verificar el cumplimiento y confirmar el resultado del reto."
+          }
+        ],
+        "finalHeadline": "PARTICIPA EN EL RETO DEMO."
+      },
+      "editorial": {
+        "version": 1,
+        "eyebrow": "RETO DEMO JAKAWI",
+        "headline": "INSCRÍBETE Y DESCUBRE EL CAFÉ.",
+        "subheadline": "DEMO DE PRODUCTO — premio simulado, no canjeable. Inscripción simple y revisión manual del registro.",
+        "emphasis": "DESCUBRE EL CAFÉ",
+        "finalHeadline": "PARTICIPA EN EL RETO DEMO.",
+        "finalDescription": "DEMO DE PRODUCTO — premio simulado, no canjeable."
+      },
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "theme": "dark-conversion",
+      "overflow": false,
+      "install": false,
+      "ctas": [
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        },
+        {
+          "label": "PARTICIPAR",
+          "disabled": "true"
+        },
+        {
+          "label": "PARTICIPAR EN EL RETO",
+          "disabled": "true"
+        }
+      ],
+      "disclosure": true,
+      "media": [],
+      "loadedImages": true,
+      "emphasis": [
+        "DESCUBRE EL CAFÉ"
+      ],
+      "interactionInert": true,
+      "operationalText": "REGLAS ESENCIALESLO ESENCIALLO QUE DEBES SABERQué hacerInscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable.Cómo calificasJAKAWI revisará el cumplimiento de las instrucciones del reto.Cómo se eligen ganadoresTodas las personas que califiquen reciben el premio.Cierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.VER REGLAS COMPLETASREGLAS COMPLETASCierre30 de noviembre de 2026 a las 8:00 p. m.Quién recibe el premioNo necesitas membresía activa para participar ni para recibir el premio.Entradas máximas1RevisiónJAKAWI revisa el resultado antes de confirmar ganadores.DEMO DE PRODUCTO — premio simulado, no canjeable. Inscripción simple para evaluar participación manual sin publicar en redes sociales.Inscríbete con tu cuenta JAKAWI. No necesitas publicar en redes ni alcanzar métricas. El equipo revisa manualmente el registro antes de confirmar que cumple el reto. Todas las personas que califiquen reciben el pase simulado. DEMO DE PRODUCTO — premio simulado, no canjeable.JAKAWI revisará el cumplimiento de las instrucciones del reto. Todas las personas que califiquen reciben el premio. No necesitas membresía activa para participar ni para recibir el premio. JAKAWI revisa los resultados.Ver ficha y reglas del productoTU PARTICIPACIÓNPARTICIPA EN ESTE RETOPARTICIPAR"
+    }
+  ],
+  "errors": [],
+  "mutations": [],
+  "authentication": "Verified Admin in memory, GET responses generated in read-only production transaction",
+  "result": "PASS"
+}

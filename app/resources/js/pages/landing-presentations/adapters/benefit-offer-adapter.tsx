@@ -1,3 +1,4 @@
+import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
 import type {
     OfferPresentationV1,
@@ -95,14 +96,6 @@ export default function BenefitOfferAdapter({
             }
         },
     };
-    const qaCoffee =
-        presentation.id === 2 &&
-        presentation.slug === 'qa-benefit-marketing-demo-beneficio-01' &&
-        benefit.slug === 'demo-beneficio-01' &&
-        copy.value === 'Café de cortesía con tu brunch';
-    const headline = qaCoffee
-        ? 'Tu brunch, con café de cortesía.'
-        : copy.headline;
     const cities = [
         ...new Set(copy.places.map((place) => place.city).filter(Boolean)),
     ].join(' · ');
@@ -113,9 +106,8 @@ export default function BenefitOfferAdapter({
     const offer: OfferPresentationV1 = {
         hero: {
             eyebrow: `Beneficio en ${copy.partner}`,
-            headline: qaCoffee ? 'Tu brunch,\ncon café de cortesía.' : headline,
-            emphasis: qaCoffee ? 'café de cortesía.' : undefined,
-            description: qaCoffee ? 'Para miembros JAKAWI.' : copy.subheadline,
+            headline: copy.headline,
+            description: copy.subheadline,
         },
         media: vsl
             ? { type: 'vsl', config: vsl }
@@ -130,14 +122,10 @@ export default function BenefitOfferAdapter({
         value: {
             tone: 'offer',
             label: 'Qué obtienes',
-            title: qaCoffee ? 'Café de cortesía' : copy.value,
+            title: copy.value,
             note: copy.valueNote || undefined,
         },
-        essentialConditions: [
-            qaCoffee
-                ? 'Con tu brunch. Membresía activa requerida.'
-                : copy.membership,
-        ],
+        essentialConditions: [copy.membership],
         actionExplanation: {
             description:
                 (copy.action.kind === 'guest'
@@ -147,17 +135,16 @@ export default function BenefitOfferAdapter({
                       : 'Continúa en la ficha para revisar cómo usarlo.') +
                 ' El partner valida tu código.',
         },
-        steps: {
-            eyebrow: 'CÓMO USARLO',
-            headline: 'De tu cuenta al canje',
-            items: copy.steps,
-        },
-        faq: copy.faq,
+        // A short domain-bound redemption explanation replaces the three generic introductions.
+        faq: distinctOfferFaq(copy.faq, [
+            copy.membership,
+            ...copy.rules,
+            ...copy.steps.map((step) => step.description),
+            copy.places.map((place) => place.name).join(' · '),
+        ]),
         finalCta: {
-            headline: qaCoffee
-                ? 'Tu brunch merece ese café.'
-                : copy.finalHeadline,
-            description: `${copy.value} en ${copy.partner}. ${qaCoffee ? 'Con tu brunch. Membresía activa requerida.' : copy.membership}`,
+            headline: copy.finalHeadline,
+            description: `${copy.value} en ${copy.partner}. ${copy.membership}`,
         },
     };
     if (offerEditorial?.version === 1) {
@@ -206,11 +193,21 @@ export default function BenefitOfferAdapter({
                                 <h2 className="text-3xl font-extrabold tracking-tight uppercase sm:text-5xl">
                                     Antes de usarlo
                                 </h2>
-                                {copy.description && (
-                                    <p className="mt-5 text-base leading-7 text-[var(--marketing-text-secondary)]">
-                                        {copy.description}
-                                    </p>
-                                )}
+                                {copy.description &&
+                                    (presentation.density === 'COMPACT' ? (
+                                        <details className="mt-4 border-y border-border py-4">
+                                            <summary className="cursor-pointer text-base font-bold">
+                                                Sobre el beneficio
+                                            </summary>
+                                            <p className="mt-3 text-base leading-7 text-[var(--marketing-text-secondary)]">
+                                                {copy.description}
+                                            </p>
+                                        </details>
+                                    ) : (
+                                        <p className="mt-5 text-base leading-7 text-[var(--marketing-text-secondary)]">
+                                            {copy.description}
+                                        </p>
+                                    ))}
                                 {copy.action.kind === 'unavailable' && (
                                     <StatusBanner
                                         title={copy.action.label}
@@ -220,6 +217,9 @@ export default function BenefitOfferAdapter({
                                 )}
                             </div>
                             <div className="mt-7 lg:mt-0">
+                                <p className="mb-5 text-base leading-6 text-[var(--marketing-text-secondary)]">
+                                    {copy.steps.at(-1)?.description}
+                                </p>
                                 <h3 className="text-xl font-extrabold">
                                     {copy.partner}
                                 </h3>
