@@ -1,0 +1,206 @@
+{
+  "release_sha": "df0476f38f469cd063e5b97bee2d19dfa4f17a84",
+  "previous_sha": "e848b9f4833b514ea64b1b337bdd426235273100",
+  "clean_git_export": true,
+  "production_builds": 1,
+  "app_image": "sha256:968f5685a79d6a0a067fe95184838aaf7b1975910810335c1c61fcdaf190449d",
+  "web_image": "sha256:55b707d16ff3b4f9be7564a50c0792af4799ddb2d0636c5af3dd3f051df9ebec",
+  "worker_same_app_image": true,
+  "migrations_executed": false,
+  "public_hot": "ABSENT",
+  "manifest": "PASS \u2014 101 pages",
+  "dev_asset_references": false,
+  "cutover": {
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "rollback": false,
+    "polls": [
+      {
+        "seconds": 0.36,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200",
+        "curl_error": ""
+      }
+    ],
+    "routes": [
+      {
+        "name": "up local",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "up public",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Benefit demo-beneficio-01",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Experience demo-sunset-jakawi",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Challenge demo-reto-cena-ciudad",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-challenge-action",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-benefit-value",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-experience-desire",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      }
+    ],
+    "polling_started_utc": "2026-10-12T22:57:00.960583+00:00",
+    "seconds_until_ready": 0.36,
+    "ready": true
+  },
+  "initial_rollback": "Coherent precautionary rollback: operator HTML gate did not follow native 302. Gate corrected; same immutable images cut over successfully, no rebuild.",
+  "browser": {
+    "scope": "Actual production compiled frontend; no signup and no domain mutations; established existing QA guard/LoginResponse session procedure.",
+    "signupLive": false,
+    "signupReason": "SAFE NON-MUTATING DEPLOY SMOKE; account creation already validated pre-deploy",
+    "cases": [
+      {
+        "name": "Caf\u00e9 guest Name/Email/WhatsApp",
+        "pass": true,
+        "colors": {
+          "text": "rgb(255, 255, 255)",
+          "background": "color(srgb 0.8 0.282353 0.247843)"
+        },
+        "oneFieldPerStep": true,
+        "sameLanding": true,
+        "noPageJump": true,
+        "noPassword": true,
+        "signupSubmitted": false
+      },
+      {
+        "name": "Caf\u00e9 existing QA session/LoginResponse/location",
+        "pass": true,
+        "credentialOrAccountChanged": false
+      },
+      {
+        "name": "Sunset authenticated Landing-first",
+        "pass": true
+      },
+      {
+        "name": "Challenge verification contextual, no participation",
+        "pass": true
+      },
+      {
+        "name": "Product Detail fallback",
+        "pass": true
+      },
+      {
+        "name": "Sunset guest acquisition",
+        "pass": true
+      },
+      {
+        "name": "Reto Cena guest acquisition",
+        "pass": true
+      }
+    ],
+    "errors": [],
+    "blockedMutations": [],
+    "requests": [
+      "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "/l/qa-calibration-benefit-value/acquisition",
+      "/analytics/landing-presentations/qa-calibration-challenge-action/cta"
+    ],
+    "result": "PASS"
+  },
+  "delivery": {
+    "owned_existing_redemption": 200,
+    "foreign_redemption_denied": true,
+    "reservation_records": 4,
+    "participation_records": 2,
+    "unlock_guest_source_protected": true
+  },
+  "temporary_sessions": {
+    "temporary_sessions_revoked": true,
+    "count": 6
+  },
+  "counts_before": {
+    "users": 6,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 2,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3
+  },
+  "counts_after": {
+    "users": 6,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 2,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3
+  },
+  "domain_mutations": 0,
+  "published_inventory_unchanged": true,
+  "health": {
+    "/jakawicom-app-1": {
+      "status": "running",
+      "health": "healthy",
+      "image": "sha256:968f5685a79d6a0a067fe95184838aaf7b1975910810335c1c61fcdaf190449d"
+    },
+    "/jakawicom-web-1": {
+      "status": "running",
+      "health": null,
+      "image": "sha256:55b707d16ff3b4f9be7564a50c0792af4799ddb2d0636c5af3dd3f051df9ebec"
+    },
+    "/jakawicom-social-worker-1": {
+      "status": "running",
+      "health": null,
+      "image": "sha256:968f5685a79d6a0a067fe95184838aaf7b1975910810335c1c61fcdaf190449d"
+    },
+    "/jakawicom-db-1": {
+      "status": "running",
+      "health": "healthy",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    "/jakawi_v2proof-app-1": {
+      "status": "running",
+      "health": "healthy",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632"
+    }
+  },
+  "unrelated_containers_preserved": true,
+  "up_local_public": [
+    200,
+    200
+  ],
+  "scheduler": "cron active; schedule dispatch logs successful",
+  "crm": true,
+  "meta": false,
+  "disk_before": "78G total / 63G used / 15G available / 81%",
+  "disk_after": "78G total / 64G used / 15G available / 82%",
+  "welcome_courtesy": "FUTURE / OFF / NOT IMPLEMENTED",
+  "result": "LIVE \u2014 READY FOR PRODUCT REVIEW"
+}

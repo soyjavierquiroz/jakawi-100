@@ -1,6 +1,8 @@
 # JAKAWI Micro opt-in + Delivery V1
 
-Local/test only. Producción permanece en `e848b9f`; sin deploy ni cambios a los tres demos publicados.
+**LIVE — 2026-10-12**, aplicación `df0476f38f469cd063e5b97bee2d19dfa4f17a84`. Los tres demos publicados permanecen sin cambios.
+
+[Release productivo](production-release.json): un build limpio, guards PASS, smoke 390 PASS, sesión QA existente revocada; sin signup ni mutaciones de dominio. Delivery existente autorizado y source Unlock protegido. Rollback preventivo inicial por gate operativo de redirect, seguido de cutover exitoso con las mismas imágenes. Documentación posterior sin rebuild/redeploy.
 
 - Modal único: nombre → correo → WhatsApp → sesión existente → requisitos / acción explícita → Delivery.
 - Contraseña permanente diferida; reset seguro por cola no bloqueante. Identidades existentes requieren login/recuperación.

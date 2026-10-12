@@ -123,7 +123,7 @@ Preview admin-authorized usa el controller público, subject, adapter y renderer
 
 ## Acquisition Funnel V1
 
-**LIVE con Landing-first Journey V1 — 2026-10-12**, release `e848b9f`. Producción pre-launch tiene tres representantes PUBLISHED / ALL exclusivamente DEMO, sintéticas y no comerciales; no son inventario de lanzamiento.
+**LIVE con Micro opt-in + Delivery V1 — 2026-10-12**, release `df0476f`; mantiene Landing-first Journey V1. Producción pre-launch tiene tres representantes PUBLISHED / ALL exclusivamente DEMO, sintéticas y no comerciales; no son inventario de lanzamiento.
 
 `Landing → micro opt-in → sesión autenticada → requisitos / acción explícita de dominio → Delivery`.
 
