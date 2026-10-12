@@ -3,9 +3,10 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vp build",
+        "build": "vp build && npm run check:manifest",
         "test:vsl": "bash tests/media/run-vsl-tests.sh",
-        "build:ssr": "vp build && vp build --ssr",
+        "check:manifest": "node scripts/check-vite-manifest.mjs",
+        "build:ssr": "npm run build && vp build --ssr",
         "dev": "vp dev",
         "check": "vp check",
         "check:fix": "vp check --fix",

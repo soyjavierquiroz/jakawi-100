@@ -9,3 +9,12 @@ Frontend requiere rebuild/recreación coherente `app` + `web`. `social-worker` c
 Revisar disco (`df -h /`), Git, servicios y rollback antes de ejecutar procedimiento autorizado. No borrar containerd, imágenes activas ni general-prune indiscriminado. Detalle de imagen temporal de verificación y limpieza explícita en operaciones.
 
 El procedimiento anterior permanece en Git como histórico; este documento enlaza el runbook vigente para evitar instrucciones operativas duplicadas.
+
+### Guard del manifest de frontend
+
+Antes del cutover, el manifest de producción debe pasar `npm run check:manifest`
+(desde `app/`). `npm run build` ejecuta este guard automáticamente y detiene el
+build Docker si falta una entrada de página Inertia, un asset o una dependencia.
+Las entradas se derivan de los mismos directorios y extensiones del resolver
+React (`resources/js/{pages,Pages}/**/*.{tsx,jsx}`); se conservan como entradas
+explícitas aunque otra página las importe estáticamente.

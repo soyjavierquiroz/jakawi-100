@@ -1,4 +1,5 @@
 import inertia from '@inertiajs/vite';
+import { inertiaPages } from './scripts/inertia-pages.mjs';
 import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
@@ -10,7 +11,9 @@ import { defineConfig, lazyPlugins } from 'vite-plus';
 export default defineConfig({
     plugins: lazyPlugins(() => [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
+            // Blade requests each resolved page by source path. Static imports
+            // must not merge those pages out of the production manifest.
+            input: ['resources/css/app.css', 'resources/js/app.tsx', ...inertiaPages()],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {
