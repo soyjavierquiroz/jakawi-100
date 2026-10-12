@@ -107,7 +107,7 @@ public/build/assets/reservations-DqJn-bNU.js                     2.20 kB │ gzi
 public/build/assets/index-BQOIhkF5.js                            2.20 kB │ gzip:   1.13 kB
 public/build/assets/check-in-review-B3XR9pdO.js                  2.27 kB │ gzip:   1.12 kB
 public/build/assets/layout-bGJm7u0r.js                           2.30 kB │ gzip:   0.84 kB
-public/build/assets/conversion-BsKiZbsi.js                       2.34 kB │ gzip:   1.18 kB
+public/build/assets/conversion-CielKyrv.js                       2.34 kB │ gzip:   1.18 kB
 public/build/assets/reset-password-cxlLHuNg.js                   2.38 kB │ gzip:   0.96 kB
 public/build/assets/confirm-password-C4e-xCVT.js                 2.43 kB │ gzip:   1.03 kB
 public/build/assets/validate-Da7KCVZy.js                         2.47 kB │ gzip:   1.19 kB
@@ -162,9 +162,9 @@ public/build/assets/create-BnxXbc6n.js                           7.78 kB │ gzi
 public/build/assets/index-BH28wNrA.js                            7.82 kB │ gzip:   2.68 kB
 public/build/assets/index-B0Uqksaa.js                            7.83 kB │ gzip:   3.13 kB
 public/build/assets/opportunity-card-ENLO7N9X.js                 8.01 kB │ gzip:   2.81 kB
-public/build/assets/show-DWnXogtY.js                             8.13 kB │ gzip:   2.84 kB
 public/build/assets/meta-browser-tracker-DN96wbOg.js             8.29 kB │ gzip:   3.56 kB
 public/build/assets/experience-offer-adapter-Bg3q-za7.js         8.42 kB │ gzip:   3.46 kB
+public/build/assets/show-DubRFQce.js                             8.62 kB │ gzip:   3.03 kB
 public/build/assets/dashboard-BrzkXmVW.js                        8.74 kB │ gzip:   3.25 kB
 public/build/assets/explore-DU3IaEpS.js                          8.87 kB │ gzip:   2.84 kB
 public/build/assets/show-DVo0J-0Y.js                             9.23 kB │ gzip:   3.33 kB
@@ -179,33 +179,39 @@ public/build/assets/OfferConversionTemplate-Bn7KTT9v.js         11.48 kB │ gzi
 public/build/assets/unlock-DdUvYdTY.js                          13.34 kB │ gzip:   4.97 kB
 public/build/assets/react-DrH1j9xG.js                           13.86 kB │ gzip:   4.60 kB
 public/build/assets/mi-jakawi-CyoIK-kk.js                       14.38 kB │ gzip:   4.55 kB
-public/build/assets/show-BZB_IlyD.js                            15.56 kB │ gzip:   4.72 kB
 public/build/assets/welcome-DlJo-Swq.js                         15.59 kB │ gzip:   4.96 kB
+public/build/assets/show-CxIC1XtV.js                            16.55 kB │ gzip:   4.84 kB
 public/build/assets/use-two-factor-auth-BInMBAlT.js             17.17 kB │ gzip:   6.22 kB
 public/build/assets/index-BzTha4SX.js                           17.64 kB │ gzip:   5.19 kB
-public/build/assets/show-DAMpG7Er.js                            20.21 kB │ gzip:   6.99 kB
+public/build/assets/show-CLs9EQI2.js                            20.23 kB │ gzip:   7.00 kB
 public/build/assets/utils-CQk6LZJn.js                           27.68 kB │ gzip:   8.76 kB
 public/build/assets/LandingVideo-C2_sDakH.js                    30.65 kB │ gzip:  11.82 kB
 public/build/assets/show-DxHyo15c.js                            31.01 kB │ gzip:  11.58 kB
 public/build/assets/security-Bi1KDIZr.js                        31.63 kB │ gzip:   9.88 kB
 public/build/assets/dialog-uyXmyVKM.js                          32.04 kB │ gzip:  10.73 kB
 public/build/assets/member-profile-D6Asr4ev.js                  34.61 kB │ gzip:  10.59 kB
-public/build/assets/app-B_2Aoc05.js                            155.51 kB │ gzip:  46.47 kB
+public/build/assets/app-CLCVU6Zm.js                            155.51 kB │ gzip:  46.47 kB
 public/build/assets/jsx-runtime-BbC6BnSA.js                    345.85 kB │ gzip: 108.18 kB
 public/build/assets/hls-C5BlXkvT.js                            575.76 kB │ gzip: 179.37 kB
 
-[plugin builtin:vite-reporter] 
+[plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 16.13s
-[33m[PLUGIN_TIMINGS] [0mYour build spent 95% of 16.1s inside plugin hooks (15.3s).
+✓ built in 12.79s
+[PLUGIN_TIMINGS] Your build spent 94% of 12.8s inside plugin hooks (12.0s).
 Measured inside the callback, so queue time is excluded and time the callback itself awaited is not:
-  - @rolldown/plugin-babel transform (75%, 12.0s, 218 calls)
-  - @laravel/vite-plugin-wayfinder buildStart (12%, 2.0s, 1 call)
+  - @rolldown/plugin-babel transform (73%, 9.3s, 218 calls)
+  - @tailwindcss/vite:generate:build transform (15%, 2.0s, 2 calls)
+  - @laravel/vite-plugin-wayfinder buildStart (12%, 1.6s, 1 call)
 See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
 
+
+> check:manifest
+> node scripts/check-vite-manifest.mjs
+
+Production artifact FAIL: public/hot must not exist
 
 > check:manifest
 > node scripts/check-vite-manifest.mjs

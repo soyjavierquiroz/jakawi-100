@@ -46,7 +46,12 @@ class LandingPresentationController extends Controller
         $subject = $presentation->subject;
         // A result page requires an actual outcome owned by this viewer.
         if ($subject instanceof Experience) {
-            abort_unless(\App\Models\ExperienceReservation::where('experience_id', $subject->id)->where('user_id', $request->user()->id)->whereIn('status', ['pending', 'confirmed'])->exists(), 404);
+            if ($subject->reservation_method === 'jakawi') {
+                abort_unless(\App\Models\ExperienceReservation::where('experience_id', $subject->id)->where('user_id', $request->user()->id)->whereIn('status', ['pending', 'confirmed'])->exists(), 404);
+            } else {
+                // External handoff is informational; it never claims a reservation.
+                abort_unless($subject->isPublished() && $subject->upcomingSessions()->whereKey($request->integer('session'))->exists(), 404);
+            }
         } elseif ($subject instanceof Challenge) {
             abort_unless($subject->participations()->where('user_id', $request->user()->id)->exists(), 404);
         } elseif ($subject instanceof Unlock) {
@@ -143,7 +148,14 @@ class LandingPresentationController extends Controller
         }
         if ($subject instanceof Experience) {
             $experienceProps = app(PublicController::class)->experiencePublicProps($subject, $request);
-            if ($stage === 'result') {
+            $externalReservationReady = $stage === 'result' && $subject->reservation_method !== 'jakawi';
+            if ($externalReservationReady) {
+                abort_unless(count($experienceProps['experience']['reservation_targets']) > 0, 404);
+                $session = collect($experienceProps['experience']['sessions'])->firstWhere('id', $request->integer('session'));
+                abort_unless($session, 404);
+                $experienceProps['experience']['sessions'] = [$session];
+                $experienceProps['restoredSessionId'] = $session['id'];
+            } elseif ($stage === 'result') {
                 $reservation = \App\Models\ExperienceReservation::where('user_id', $request->user()->id)->whereHas('session', fn ($q) => $q->where('experience_id', $subject->id))->whereIn('status', ['pending', 'confirmed'])->when($request->integer('session'), fn ($q) => $q->where('experience_session_id', $request->integer('session')))->latest()->firstOrFail();
                 $session = $reservation->session()->with('location')->firstOrFail();
                 $experienceProps['experience']['sessions'] = [$session->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $session->location?->only(['slug', 'name', 'address', 'maps_url']), 'reservation' => $reservation->only(['public_id', 'status', 'party_size'])]];
@@ -151,6 +163,7 @@ class LandingPresentationController extends Controller
             }
             return Inertia::render($stage ? 'landing-presentations/conversion' : 'landing-presentations/experience', [
                 ...$experienceProps, ...$shared,
+                'externalReservationReady' => $externalReservationReady,
                 'landingDirectAction' => ! $stage && $request->user() && $experienceProps['hasActiveMembership'] && $experienceProps['availability']['available'] && $subject->reservation_method === 'jakawi' && count($experienceProps['experience']['sessions']) === 1 && ! $experienceProps['experience']['sessions'][0]['reservation'] ? ['endpoint' => route('experiences.reservations.store', $subject, false), 'data' => ['experience_session_id' => $experienceProps['experience']['sessions'][0]['id'], 'landing_presentation_id' => $presentation->id]] : null,
                 ...$this->offerCopy($presentation, app(ExperienceMarketingLandingPresenter::class)->present($subject, $presentation, $request)),
                 'restoredSessionId' => $stage === 'result' ? $experienceProps['restoredSessionId'] : (($resumed ? $request->session()->get('landing_continuation_context.experience_session_id') : null) ?? $experienceProps['restoredSessionId']),

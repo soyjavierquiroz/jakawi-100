@@ -158,6 +158,35 @@ class MicroOptInJourneyTest extends TestCase
         $this->post(route('social-challenges.submit',$landing->subject),['url'=>'https://instagram.com/p/qa'])->assertSessionHasErrors('url');
         $this->noMutation();
     }
+    public function test_external_experience_handoff_delivers_selected_session_without_claiming_or_creating_a_reservation(): void
+    {
+        $experience = $this->subjects()[1];
+        $experience->update(['reservation_method' => 'external', 'reservation_url' => 'https://example.test/reserve']);
+        $landing = $this->landing($experience, 'ALL');
+        $session = $experience->upcomingSessions()->first();
+        $result = route('landing-presentations.result', ['presentation' => $landing, 'session' => $session->id]);
+        $this->get($result)->assertRedirect('/login');
+        $this->actingAs(User::factory()->create())->get($result)->assertInertia(fn (Assert $page) => $page
+            ->component('landing-presentations/conversion')
+            ->where('conversionStage', 'result')
+            ->where('externalReservationReady', true)
+            ->where('restoredSessionId', $session->id)
+            ->has('experience.sessions', 1)
+            ->where('experience.sessions.0.id', $session->id)
+            ->where('experience.sessions.0.reservation', null)
+            ->where('experience.reservation_targets.0.method', 'external'));
+        $this->get(route('landing-presentations.result', $landing))->assertNotFound();
+        $foreignSession = ExperienceSession::factory()->upcoming()->create();
+        $this->get(route('landing-presentations.result', ['presentation' => $landing, 'session' => $foreignSession->id]))->assertNotFound();
+        $session->update(['starts_at' => now()->subDay()]);
+        $this->get($result)->assertNotFound();
+        $session->update(['starts_at' => now()->addDay()]);
+        $experience->update(['reservation_url' => null]);
+        $this->get($result)->assertNotFound();
+        $experience->update(['reservation_method' => 'jakawi']);
+        $this->get($result)->assertNotFound();
+        $this->noMutation();
+    }
     public function test_verified_challenge_explicit_participation_delivers_instructions_and_state(): void {
         $challenge=$this->subjects()[2];$challenge->update(['evidence_type'=>'MANUAL','instructions'=>'Cocina y presenta tu cena.','ends_at'=>now()->addDays(5)]);
         $landing=$this->landing($challenge,'ALL');$user=User::factory()->create();

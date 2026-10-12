@@ -3,7 +3,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { type Unlock } from '@/components/unlock-card';
 import JourneyLayout from '@/layouts/journey-layout';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 type Detail = Unlock & {
     description?: string | null;
@@ -46,6 +46,7 @@ export default function Show({
         ? (presentation as { id: number } | undefined)?.id
         : undefined;
     const intentSentFor = useRef<string | null>(null);
+    const [commitAcknowledged, setCommitAcknowledged] = useState(false);
     const membershipIntent = () => {
         if (intentSentFor.current === unlock.slug) return;
         intentSentFor.current = unlock.slug;
@@ -84,7 +85,10 @@ export default function Show({
         else await navigator.clipboard.writeText(url);
     };
     const commit = () => {
+        if (continuationOnly && unlock.jp_deposit > 0 && !commitAcknowledged)
+            return;
         if (
+            !continuationOnly &&
             unlock.jp_deposit > 0 &&
             !window.confirm(
                 `¿DE VERDAD IRÍAS?\n\nGarantía: ${unlock.jp_deposit} JP`,
@@ -242,12 +246,37 @@ export default function Show({
                         VER MEMBRESÍA
                     </Link>
                 ) : !unavailable && eligible ? (
-                    <button
-                        onClick={commit}
-                        className="discovery-primary-action w-full"
-                    >
-                        SÍ, CUENTEN CONMIGO
-                    </button>
+                    <>
+                        {continuationOnly && unlock.jp_deposit > 0 && (
+                            <label className="flex min-h-11 items-start gap-3 text-sm">
+                                <input
+                                    type="checkbox"
+                                    checked={commitAcknowledged}
+                                    onChange={(event) =>
+                                        setCommitAcknowledged(
+                                            event.target.checked,
+                                        )
+                                    }
+                                    className="mt-1 size-5 shrink-0 accent-brand"
+                                />
+                                Entiendo que al continuar me comprometo y se
+                                retienen {unlock.jp_deposit} JP como garantía.
+                            </label>
+                        )}
+                        <button
+                            onClick={commit}
+                            disabled={
+                                continuationOnly &&
+                                unlock.jp_deposit > 0 &&
+                                !commitAcknowledged
+                            }
+                            className="discovery-primary-action w-full text-white disabled:opacity-50"
+                        >
+                            {continuationOnly
+                                ? 'DESBLOQUEAR AHORA'
+                                : 'SÍ, CUENTEN CONMIGO'}
+                        </button>
+                    </>
                 ) : !unavailable ? (
                     <p className="font-semibold">
                         Tu estado actual no es elegible para este desbloqueo.

@@ -71,12 +71,14 @@ export default function ExperienceShow({
     restoredSessionId = null,
     availability = { available: true, reason: null },
     continuationOnly = false,
+    externalReservationReady = false,
 }: {
     experience: Experience;
     hasActiveMembership?: boolean;
     restoredSessionId?: number | null;
     availability?: { available: boolean; reason: string | null };
     continuationOnly?: boolean;
+    externalReservationReady?: boolean;
 }) {
     const { auth, presentation } = usePage().props;
     const landingId = continuationOnly
@@ -114,6 +116,12 @@ export default function ExperienceShow({
             if (intentSentFor.current !== experience.slug) {
                 intentSentFor.current = experience.slug;
                 trackJourneyIntent('experience', experience.slug);
+            }
+            if (continuationOnly && selectedSession) {
+                router.visit(
+                    `/l/${(presentation as { slug: string }).slug}/resultado?session=${selectedSession.id}`,
+                );
+                return;
             }
             setReservationOpen(true);
             return;
@@ -245,7 +253,67 @@ export default function ExperienceShow({
     if (continuationOnly)
         return (
             <div className="space-y-5">
-                {existingReservation ? (
+                {externalReservationReady && selectedSession ? (
+                    <Delivery
+                        heading="TODO LISTO PARA RESERVAR"
+                        subject={experience.title}
+                    >
+                        {organizer && (
+                            <p className="font-bold">{organizer.name}</p>
+                        )}
+                        <h3 className="font-extrabold">QUÉ TIENES QUE HACER</h3>
+                        <ol className="list-decimal pl-5">
+                            <li>
+                                Continúa con el partner usando una de las
+                                opciones de reserva.
+                            </li>
+                        </ol>
+                        <p>
+                            La reserva se gestiona directamente con{' '}
+                            {organizer?.name ?? 'el partner'}. Aún no tienes una
+                            reserva confirmada.
+                        </p>
+                        <dl className="space-y-2">
+                            <div>
+                                <dt className="font-bold">
+                                    Fecha y hora elegidas
+                                </dt>
+                                <dd>
+                                    {date(selectedSession.starts_at)} ·{' '}
+                                    {time(selectedSession.starts_at)}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt className="font-bold">Lugar</dt>
+                                <dd>
+                                    {place(selectedSession)}
+                                    {selectedSession.location?.address
+                                        ? ` · ${selectedSession.location.address}`
+                                        : ''}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt className="font-bold">Estado</dt>
+                                <dd>
+                                    Reserva externa · pendiente de gestionar con
+                                    el partner
+                                </dd>
+                            </div>
+                        </dl>
+                        {experience.terms && <p>{experience.terms}</p>}
+                        <div className="grid gap-3">
+                            {experience.reservation_targets?.map((target) => (
+                                <a
+                                    key={target.method}
+                                    href={`/experiencias/${experience.slug}/reservar?method=${target.method}`}
+                                    className="funnel-primary-action flex min-h-12 items-center justify-center rounded-xl px-4 text-center font-extrabold text-white"
+                                >
+                                    {target.label}
+                                </a>
+                            ))}
+                        </div>
+                    </Delivery>
+                ) : existingReservation ? (
                     <Delivery
                         heading={
                             existingReservation.status === 'confirmed'
@@ -387,29 +455,6 @@ export default function ExperienceShow({
                                 elegida se conservará.
                             </p>
                         )}
-                        {reservationOpen && !internalReservation ? (
-                            <section className="space-y-3 rounded-2xl border border-border p-5">
-                                <h2 className="text-xl font-extrabold">
-                                    TODO LISTO PARA RESERVAR
-                                </h2>
-                                <p>
-                                    La reserva se gestiona directamente con{' '}
-                                    {organizer?.name ?? 'el partner'}. Aún no
-                                    tienes una reserva confirmada.
-                                </p>
-                                {experience.reservation_targets?.map(
-                                    (target) => (
-                                        <a
-                                            key={target.method}
-                                            href={`/experiencias/${experience.slug}/reservar?method=${target.method}`}
-                                            className="funnel-primary-action flex min-h-12 items-center justify-center text-white"
-                                        >
-                                            {target.label}
-                                        </a>
-                                    ),
-                                )}
-                            </section>
-                        ) : null}
                         {canReserve && availability.available ? (
                             <div className="sticky bottom-0 border-t border-border bg-background py-4">
                                 <button

@@ -32,6 +32,26 @@
     {
       "name": "Sunset desktop activation/selected/hover",
       "pass": true
+    },
+    {
+      "name": "Sunset desktop 1440 Delivery pending truth and no action back",
+      "pass": true
+    },
+    {
+      "name": "External Experience exits Activation to truthful full-page Delivery without reservation mutation",
+      "pass": true
+    },
+    {
+      "name": "Challenge explicit ENTRAR AL RETO action CTA",
+      "pass": true
+    },
+    {
+      "name": "Unlock explicit DESBLOQUEAR AHORA CTA and protected content absent",
+      "pass": true
+    },
+    {
+      "name": "Unlock JP consent inline, explicit white CTA disabled until acknowledgment, no extra modal",
+      "pass": true
     }
   ],
   "errors": [],
@@ -75,6 +95,10 @@
     {
       "path": "/login",
       "status": 302
+    },
+    {
+      "path": "/analytics/journey-intent/experience/qa-sunset-external",
+      "status": 204
     }
   ],
   "result": "PASS"
