@@ -6,6 +6,7 @@ import { inertiaPages } from './inertia-pages.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = resolve(process.argv[2] ?? `${root}/public/build/manifest.json`);
 try {
+    if (existsSync(resolve(dirname(manifestPath), '../hot'))) throw new Error('Production artifact FAIL: public/hot must not exist');
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
     const errors = [];
     for (const source of ['resources/css/app.css', 'resources/js/app.tsx', ...inertiaPages(root)]) {

@@ -11,3 +11,6 @@ app/storage/logs
 
 .env.*
 .vsl-state
+
+# Laravel must never switch release HTML to a local Vite development server.
+app/public/hot

@@ -26,6 +26,24 @@ curl -f http://127.0.0.1:8080/up
 curl -f https://jakawi.com/up
 ```
 
+### Gates de Marketing y assets de producción
+
+Derivar los gates de Marketing de las LandingPresentations actuales, no de slugs QA históricos. PUBLISHED y públicamente direccionable → `/l/{slug}` debe responder 200. DRAFT → sólo preview Admin autenticado. ARCHIVED → 404 público esperado; nunca gate positivo. Cero PUBLISHED es un estado válido antes del lanzamiento; no publicar ni restaurar registros para completar QA.
+
+Construir releases desde una exportación limpia del SHA confirmado (`git archive`) o worktree detached limpio, sin archivos ignorados/untracked. `app/public/hot` está excluido en `.dockerignore`; el guard de artefacto debe pasar en build y en las imágenes finales app/web. No basta con borrar el archivo local ni con un manifest PASS.
+
+Antes del cutover, inspeccionar las imágenes exactas: `public/hot` ausente, manifest y assets presentes. Renderizar una ficha nativa Inertia con la imagen candidata mediante el smoke de sólo lectura (transacción READ ONLY, analytics desactivado sólo para esa petición, sin mutaciones). Comprobar el HTML guardado contra el manifest extraído de esa misma imagen:
+
+```bash
+node app/scripts/check-vite-manifest.mjs /ruta/candidate/public/build/manifest.json
+sh app/scripts/check-production-artifact.sh /ruta/candidate/public
+node app/scripts/check-production-html.mjs /ruta/candidate/page.html /ruta/candidate/public/build/manifest.json
+```
+
+El HTML debe incluir los assets compilados de app y página actuales; se rechazan `127.0.0.1:`, `localhost:`, `@vite/client` y fuentes de desarrollo. Una respuesta HTTP 200 sin render de frontend no basta. Repetir el guard sobre HTML público real inmediatamente después del cutover y comprobar tres previews Admin representativos en navegador. Referencias de desarrollo en producción exigen rollback coherente de app/web/worker.
+
+Readiness: hasta 120 segundos, cada 2 segundos; app healthy + web running + `/up` local 200. HTTP 000 transitorio significa aún no listo. App y worker usan la misma imagen; web corresponde al mismo SHA. No recrear DB ni contenedores ajenos al release.
+
 Una migración normal, si ha sido aprobada como parte del release, se ejecuta sólo desde `app` con `--force`. Está prohibido `migrate:fresh`, `db:wipe`, seed/reset contra producción. No borrar volúmenes, no hacer `docker compose down -v` como operación normal y no regenerar `.env` durante un deploy.
 
 Después de cambiar `.env`, recrear cada servicio que consume ese entorno y comprobar la configuración efectiva dentro del contenedor. Esto es especialmente importante para `app` e `imgproxy`; editar el archivo no modifica un contenedor ya creado.

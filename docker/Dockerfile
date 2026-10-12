@@ -40,7 +40,8 @@ COPY app/package.json app/package-lock.json ./
 RUN npm ci
 
 COPY app/ ./
-RUN php artisan route:clear \
+RUN sh scripts/check-production-artifact.sh public \
+    && php artisan route:clear \
     && npm run types:check \
     && npm run build \
     && composer dump-autoload --no-dev --optimize \
@@ -55,7 +56,8 @@ COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
 COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
 
-RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+RUN sh scripts/check-production-artifact.sh public \
+    && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && find storage bootstrap/cache -type d -exec chmod 775 {} + \
     && find storage bootstrap/cache -type f -exec chmod 664 {} +
@@ -91,3 +93,6 @@ FROM nginx:1.27-alpine AS web
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /var/www/html/public /var/www/html/public
+
+COPY app/scripts/check-production-artifact.sh /usr/local/bin/check-production-artifact
+RUN sh /usr/local/bin/check-production-artifact /var/www/html/public
