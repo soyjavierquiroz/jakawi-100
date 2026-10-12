@@ -23,8 +23,7 @@ void createInertiaApp({
                 name === 'landing-presentations/challenge' ||
                 name === 'landing-presentations/benefit':
                 return MarketingLayout;
-            case name === 'social-challenges/show' ||
-                name === 'social-challenges/index':
+            case name === 'social-challenges/index':
                 return null;
             case [
                 'welcome',
@@ -32,6 +31,7 @@ void createInertiaApp({
                 'cities/show',
                 'benefits/index',
                 'benefits/show',
+                'social-challenges/show',
                 'experiences/index',
                 'experiences/show',
                 'partners/show',

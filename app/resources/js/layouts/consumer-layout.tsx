@@ -1,6 +1,5 @@
 import { Link } from '@inertiajs/react';
 import MobileBottomNav from '@/components/mobile-bottom-nav';
-import { PublicFooter } from '@/components/public-footer';
 import ThemeToggle from '@/components/theme-toggle';
 
 /** Consumer pages never inherit staff or partner navigation. */
@@ -41,7 +40,6 @@ export default function ConsumerLayout({ children }: { children: React.ReactNode
             </Link>
         </header>
         {children}
-        <PublicFooter />
         <MobileBottomNav />
     </div>;
 }

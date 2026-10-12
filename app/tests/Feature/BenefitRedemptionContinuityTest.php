@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Services\MembershipService;
 use App\Services\PublicJourneyContinuation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\URL;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -51,6 +50,7 @@ class BenefitRedemptionContinuityTest extends TestCase
     public function test_guest_without_location_resumes_selection_not_a_redemption(): void
     {
         [$user, $benefit] = $this->scenario();
+        $user->forceFill(['email_verified_at' => null])->save();
         $this->post(route('redemptions.start', $benefit))->assertRedirect('/register');
         $path = route('redemptions.intent', $benefit, false);
         $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect($path);
@@ -59,20 +59,19 @@ class BenefitRedemptionContinuityTest extends TestCase
         $this->assertDatabaseCount('redemptions', 0);
     }
 
-    public function test_signup_and_verification_preserve_the_safe_get_destination(): void
+    public function test_signup_without_a_location_returns_to_benefit_without_verification_blocker(): void
     {
-        [, $benefit, $locations] = $this->scenario();
-        $path = route('redemptions.intent', ['benefit' => $benefit->slug, 'location_id' => $locations->first()->id], false);
+        [, $benefit] = $this->scenario();
+        $path = route('redemptions.intent', $benefit, false);
         $this->get($path)->assertRedirect('/register');
         $this->post('/register', ['name' => 'Demo User', 'email' => 'demo@example.test', 'whatsapp' => '71234567'])->assertRedirect($path);
-        $this->get($path)->assertRedirect(route('verification.notice'));
-        $this->assertSame(url($path), session('url.intended'));
         $user = User::where('email', 'demo@example.test')->firstOrFail();
-        $verification = URL::temporarySignedRoute('verification.verify', now()->addMinutes(10), ['id' => $user->id, 'hash' => sha1($user->email)]);
-        $this->actingAs($user)->get($verification)->assertRedirect(url($path));
-        $this->assertTrue($user->fresh()->hasVerifiedEmail());
-        $this->actingAs($user->fresh())->get($path)->assertInertia(fn (Assert $page) => $page->where('selectedLocationId', $locations->first()->id)->where('hasActiveMembership', false));
+        $this->assertAuthenticatedAs($user);
+        $this->assertFalse($user->hasVerifiedEmail());
+        $this->get($path)->assertInertia(fn (Assert $page) => $page->where('benefit.id', $benefit->id)->where('redemptionIntent', true)->where('selectedLocationId', null)->where('hasActiveMembership', false));
+        $this->get(route('verification.notice'))->assertOk();
         $this->assertDatabaseCount('redemptions', 0);
+        $this->assertDatabaseMissing('analytics_events', ['event_name' => 'redeem_confirmed']);
     }
 
     public function test_multi_location_requires_selection_and_rejects_foreign_or_unusable_locations(): void
@@ -129,7 +128,7 @@ class BenefitRedemptionContinuityTest extends TestCase
         $this->assertDatabaseCount('redemptions', 0);
     }
 
-    public function test_non_member_context_survives_membership_gate_and_unverified_post_is_blocked(): void
+    public function test_non_member_context_survives_membership_gate_and_unverified_member_can_redeem(): void
     {
         [, $benefit, $locations] = $this->scenario();
         $user = User::factory()->create();
@@ -137,8 +136,12 @@ class BenefitRedemptionContinuityTest extends TestCase
         $this->get('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id.'&location_id='.$locations->last()->id)->assertOk();
         $this->assertSame(['location_id' => $locations->last()->id], app(PublicJourneyContinuation::class)->get()['context']);
         $user->forceFill(['email_verified_at' => null])->save();
-        $this->actingAs($user)->post(route('redemptions.start', $benefit), ['location_id' => $locations->last()->id])->assertRedirect(route('verification.notice'));
+        $this->actingAs($user)->post(route('redemptions.start', $benefit), ['location_id' => $locations->last()->id])->assertRedirect('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id.'&location_id='.$locations->last()->id);
         $this->assertDatabaseCount('redemptions', 0);
+        app(MembershipService::class)->activate($user, User::factory()->create());
+        $this->post(route('redemptions.start', $benefit), ['location_id' => $locations->last()->id])->assertRedirect();
+        $this->assertSame($locations->last()->id, Redemption::sole()->location_id);
+        $this->assertDatabaseMissing('analytics_events', ['event_name' => 'redeem_confirmed']);
     }
 
     public function test_inactive_and_future_benefits_cannot_redeem(): void
@@ -149,6 +152,15 @@ class BenefitRedemptionContinuityTest extends TestCase
             $this->actingAs($user)->get(route('redemptions.intent', $benefit))->assertInertia(fn (Assert $page) => $page->where('availability.available', false)->where('redemptionIntent', false));
             $this->post(route('redemptions.start', $benefit), ['location_id' => $locations->first()->id])->assertSessionHasErrors('redemption');
         }
+        $this->assertDatabaseCount('redemptions', 0);
+    }
+
+    public function test_challenge_grant_verification_is_not_removed(): void
+    {
+        [$user, $benefit] = $this->scenario();
+        $benefit->update(['access_mode' => 'social_challenge_grant']);
+        $user->forceFill(['email_verified_at' => null])->save();
+        $this->actingAs($user)->get(route('redemptions.intent', $benefit))->assertRedirect(route('verification.notice'));
         $this->assertDatabaseCount('redemptions', 0);
     }
 

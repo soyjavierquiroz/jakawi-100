@@ -4,7 +4,6 @@ import { useRef, useState } from 'react';
 import { BrandEnergy } from '@/components/brand-energy';
 import { JakawiImage } from '@/components/jakawi-image';
 import { StatusBanner } from '@/components/state-panel';
-import JourneyLayout from '@/layouts/journey-layout';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
 import type { BenefitSummary } from '@/types';
 
@@ -76,7 +75,14 @@ export default function BenefitShow({
             type="button"
             onClick={() => {
                 membershipIntent();
-                setConfirming(true);
+                if (!auth.user) {
+                    router.get(`/beneficios/${benefit.slug}/canjear`,
+                        selectedLocationId && locations.some((location) => location.id === selectedLocationId)
+                            ? { location_id: selectedLocationId } : {},
+                    );
+                } else {
+                    setConfirming(true);
+                }
             }}
             className="benefit-primary-action"
         >
@@ -93,7 +99,7 @@ export default function BenefitShow({
     const value = savings(benefit.estimated_savings);
 
     return (
-        <JourneyLayout>
+        <>
             <Head title={benefit.title} />
             <main className="min-h-screen bg-background pb-40 font-discovery text-foreground">
                 <section className="mx-auto w-full max-w-5xl">
@@ -370,7 +376,7 @@ export default function BenefitShow({
                                 type="button"
                                 onClick={() => {
                                     if (!locationId || processing) return;
-                                    if (!auth.user || !auth.user.email_verified_at) {
+                                    if (!auth.user) {
                                         router.get(`/beneficios/${benefit.slug}/canjear`, { location_id: locationId });
                                     } else if (!hasActiveMembership) {
                                         router.visit(membershipUrl);
@@ -384,12 +390,12 @@ export default function BenefitShow({
                                 disabled={!locationId || processing}
                                 className="min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
                             >
-                                {processing ? 'ACTIVANDO…' : !auth.user ? 'CONTINUAR PARA CREAR CUENTA' : !auth.user.email_verified_at ? 'VERIFICAR CUENTA' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'ACTIVAR BENEFICIO'}
+                                {processing ? 'ACTIVANDO…' : !auth.user ? 'CONTINUAR PARA CREAR CUENTA' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'ACTIVAR BENEFICIO'}
                             </button>
                         </div>
                     </div>
                 </div>
             ) : null}
-        </JourneyLayout>
+        </>
     );
 }

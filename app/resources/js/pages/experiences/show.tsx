@@ -3,7 +3,6 @@ import { ArrowLeft, CalendarDays, Clock3, MapPin, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { JakawiImage } from '@/components/jakawi-image';
 import { StatusBanner } from '@/components/state-panel';
-import JourneyLayout from '@/layouts/journey-layout';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
 
 type Session = { id: number; starts_at: string; venue_label?: string | null; location?: { slug: string; name: string; maps_url?: string | null } | null };
@@ -55,7 +54,7 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
         router.post(`/experiencias/${experience.slug}/reservas`, { experience_session_id: selectedSession!.id });
     };
 
-    return <JourneyLayout><Head title={experience.title} /><main className="min-h-screen bg-background pb-48 font-discovery text-foreground lg:pb-32">
+    return <><Head title={experience.title} /><main className="min-h-screen bg-background pb-48 font-discovery text-foreground lg:pb-32">
         <section className="mx-auto max-w-5xl">
             <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted sm:aspect-[16/8] sm:rounded-b-[32px]">
                 <JakawiImage src={experience.cover_url || experience.image_url} srcset={experience.cover_url ? experience.cover_srcset : experience.image_srcset} sizes="(min-width: 1024px) 960px, 100vw" alt={experience.title} className="h-full w-full object-cover" fallbackClassName="border-0 bg-surface-muted" loading="eager" priority />
@@ -93,5 +92,5 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
         </section>
         {canReserve && availability.available ? <div className="fixed right-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-0 z-30 border-t border-border bg-surface/95 p-4 backdrop-blur lg:bottom-0"><div className="mx-auto max-w-5xl"><button type="button" onClick={reserve} disabled={selectionRequired} className="min-h-14 w-full rounded-2xl bg-brand px-5 text-sm font-extrabold text-brand-foreground transition hover:bg-brand/90 disabled:cursor-not-allowed disabled:opacity-50 sm:max-w-sm">{internalReservation ? internalAction : 'RESERVAR'}</button></div></div> : null}
         {reservationOpen ? <div className="fixed inset-0 z-50 flex items-end bg-overlay p-0 sm:items-center sm:justify-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="reservation-title"><section className="w-full rounded-t-[28px] bg-surface p-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-xl sm:max-w-lg sm:rounded-[28px]"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-extrabold tracking-[0.14em] text-brand uppercase">Experiencia JAKAWI</p><h2 id="reservation-title" className="mt-2 text-2xl font-extrabold">RESERVA TU LUGAR</h2></div><button type="button" onClick={() => setReservationOpen(false)} aria-label="Cerrar" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-border"><X className="size-5" /></button></div><p className="mt-4 leading-6 text-muted-foreground">Esta experiencia es gestionada directamente por {organizer?.name ?? 'el Partner'}.</p>{selectedSession ? <p className="mt-3 text-sm font-bold capitalize">{date(selectedSession.starts_at)} · {time(selectedSession.starts_at)}</p> : null}<div className="mt-6 space-y-3">{experience.reservation_targets?.map((target, index) => <a key={target.method} href={`/experiencias/${experience.slug}/reservar?method=${target.method}`} className={`flex min-h-13 items-center justify-center rounded-2xl px-4 text-sm font-extrabold ${index === 0 ? 'bg-brand text-brand-foreground' : 'border border-border bg-surface'}`}>{target.label}</a>)}</div></section></div> : null}
-    </main></JourneyLayout>;
+    </main></>;
 }

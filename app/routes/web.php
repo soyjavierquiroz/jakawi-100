@@ -152,8 +152,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->name('member.profile.update');
     Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->name('experiences.reservations.store');
     Route::post('/reservas/{reservation:public_id}/cancelar', [ExperienceReservationController::class, 'cancel'])->name('experiences.reservations.cancel');
-    Route::get('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'intent'])->middleware(\App\Http\Middleware\EnsureBenefitRedemptionVerified::class)->name('redemptions.intent');
-    Route::post('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'start'])->middleware(\App\Http\Middleware\EnsureBenefitRedemptionVerified::class)->name('redemptions.start');
+    Route::get('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'intent'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureBenefitRedemptionVerified::class)->name('redemptions.intent');
+    Route::post('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'start'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureBenefitRedemptionVerified::class)->name('redemptions.start');
     Route::post('/d/{unlock:slug}/interes', [UnlockController::class, 'interest'])->name('unlocks.interest');
     Route::post('/d/{unlock:slug}/comprometer', [UnlockController::class, 'commit'])->name('unlocks.commit');
     Route::post('/d/{unlock:slug}/cancelar', [UnlockController::class, 'cancel'])->name('unlocks.cancel');

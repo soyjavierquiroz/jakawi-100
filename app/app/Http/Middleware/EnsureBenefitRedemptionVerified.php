@@ -6,13 +6,13 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/** Scope verification enforcement to Benefit redemption, without changing global auth. */
+/** Preserve verification for challenge grants; normal Benefit redemption is non-blocking. */
 class EnsureBenefitRedemptionVerified
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user()->hasVerifiedEmail()) {
-            $benefit = $request->route('benefit');
+        $benefit = $request->route('benefit');
+        if ($benefit->access_mode === 'social_challenge_grant' && ! $request->user()->hasVerifiedEmail()) {
             $locationId = $request->input('location_id');
             $context = is_scalar($locationId) && ctype_digit((string) $locationId)
                 ? ['location_id' => (int) $locationId] : [];

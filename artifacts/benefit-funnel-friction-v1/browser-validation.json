@@ -1,0 +1,103 @@
+{
+  "scope": "Local current frontend using real demo domain props captured read-only. Auth endpoints are intercepted fixtures; real auth/session/domain behavior covered by isolated Docker backend tests.",
+  "cases": [
+    {
+      "slug": "demo-beneficio-01",
+      "authFlow": "register",
+      "before": {
+        "headers": 1,
+        "footer": 0,
+        "bottom": 1,
+        "overflow": false
+      },
+      "after": {
+        "headers": 1,
+        "footer": 0,
+        "bottom": 1,
+        "overflow": false
+      },
+      "registrationRequiresLocation": false,
+      "unverifiedReturned": true,
+      "locations": 3,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-04",
+      "authFlow": "login",
+      "before": {
+        "headers": 1,
+        "footer": 0,
+        "bottom": 1,
+        "overflow": false
+      },
+      "after": {
+        "headers": 1,
+        "footer": 0,
+        "bottom": 1,
+        "overflow": false
+      },
+      "registrationRequiresLocation": false,
+      "unverifiedReturned": true,
+      "locations": 2,
+      "result": "PASS"
+    },
+    {
+      "kind": "unverified-member-valid-selection",
+      "selected": 3,
+      "result": "PASS"
+    },
+    {
+      "kind": "Experience",
+      "headers": 1,
+      "footer": 0,
+      "bottom": 1,
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "kind": "Challenge",
+      "headers": 1,
+      "footer": 0,
+      "bottom": 1,
+      "overflow": false,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": ""
+    },
+    {
+      "method": "POST",
+      "path": "/register"
+    },
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": ""
+    },
+    {
+      "method": "POST",
+      "path": "/login"
+    },
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": ""
+    }
+  ],
+  "result": "PASS"
+}
