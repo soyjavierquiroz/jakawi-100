@@ -104,7 +104,7 @@ El contrato contiene texto y datos derivados; la acción ligada se entrega por s
 
 Media opcional: VSL con LandingVideo/JakawiVslPlayer, imagen con JakawiImage, o ausencia sin wrapper. `renderOperationalContent` es un slot frontend obligatorio, no un esquema genérico ni React serializado: participación/reglas, sesiones/reserva y sucursales/requisitos/código pertenecen a sus dominios. Las anotaciones demo y el sticky de Challenge también permanecen locales. Las acciones de dominio siguen en sus rutas; Acquisition Funnel V1 añade resolución de entradas nativas guest según el contrato siguiente.
 
-Marketing Landing Admin V1 extiende la administración compartida existente con una sola clave persistida `OFFER_CONVERSION`; no hay builder, registry ni orden libre de secciones. **Benefit guest/location continuity: RESOLVED** en producción (`60feb98`). La sesión conserva Benefit, intención y `location_id`; un GET canónico retoma la ficha tras auth, la ubicación se resuelve antes de membresía/confirmación y sólo el POST crea el canje con los guards de dominio existentes. Desde `8d91303`, el Benefit normal no exige correo verificado; el grant de Challenge conserva verificación.
+Marketing Landing Admin V1 extiende la administración compartida existente con una sola clave persistida `OFFER_CONVERSION`; no hay builder, registry ni orden libre de secciones. **Benefit guest/location continuity: RESOLVED** en producción (`60feb98`). La sesión conserva Benefit, intención y `location_id`; un GET canónico retoma el contexto del Benefit tras auth, la ubicación se resuelve antes de membresía/confirmación y sólo el POST crea el canje con los guards de dominio existentes. Desde `8d91303`, el Benefit normal no exige correo verificado; el grant de Challenge conserva verificación.
 
 
 ## Marketing Landing Admin V1
@@ -122,6 +122,8 @@ Preview admin-authorized usa el controller público, subject, adapter y renderer
 **Continuidad guest de Benefit: RESOLVED** en producción (`60feb98`); autenticación/verificación, membresía y selección `location_id` mantienen el contexto hasta el canje. Admin y plantilla permanecen sin cambios. Las pruebas se ejecutan exclusivamente en el entorno Docker aislado; la entrega original de Admin no incluía migración productiva, push ni deploy.
 
 ## Acquisition Funnel V1
+
+**LIVE con Landing-first Journey V1 — 2026-10-12**, release `e848b9f`. Producción pre-launch tiene tres representantes PUBLISHED / ALL exclusivamente DEMO, sintéticas y no comerciales; no son inventario de lanzamiento.
 
 `Subject → LandingPresentation → captación contextual → auth → mismo Subject / acción de dominio`.
 

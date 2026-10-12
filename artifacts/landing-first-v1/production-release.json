@@ -1,0 +1,259 @@
+{
+  "candidate": "e848b9f4833b514ea64b1b337bdd426235273100",
+  "previous_production": "8d913038984ae5eb6d40f3ba7477beae5d928ece",
+  "production_builds": 1,
+  "images": {
+    "app": "sha256:183181983c3bd30c7055a40c4eb041c5de7dc154c86f65b9f0735379f368f86e",
+    "web": "sha256:049d5943e3c147a3df8dca8f88c2f5b062adbb29c6188ebd7c6c9b9f449ab9fd"
+  },
+  "worker_same_app": true,
+  "rollback": false,
+  "backup": {
+    "filename": "/home/jakawi.com/backups/jakawi-pre-landing-first-v1-20261012T195412Z.dump",
+    "size": 445624,
+    "pg_restore": "PASS"
+  },
+  "migration": {
+    "name": "2026_10_12_000003_add_acquisition_copy_to_landing_presentations.php",
+    "applied": true,
+    "all_existing_fields_preserved": true,
+    "rows": 13,
+    "statuses": {
+      "PUBLISHED": 0,
+      "DRAFT": 8,
+      "ARCHIVED": 5
+    }
+  },
+  "precutover": {
+    "manifest": "PASS",
+    "hot": "ABSENT",
+    "routes": [
+      {
+        "path": "/beneficios/demo-beneficio-01",
+        "status": 200,
+        "production_html": "PASS"
+      },
+      {
+        "path": "/experiencias/demo-sunset-jakawi",
+        "status": 200,
+        "production_html": "PASS"
+      },
+      {
+        "path": "/retos/demo-reto-cena-ciudad",
+        "status": 200,
+        "production_html": "PASS"
+      }
+    ]
+  },
+  "readiness": {
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "rollback": false,
+    "polls": [
+      {
+        "seconds": 0.37,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200",
+        "curl_error": ""
+      }
+    ],
+    "routes": [
+      {
+        "name": "up local",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "up public",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Benefit demo-beneficio-01",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Experience demo-sunset-jakawi",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Challenge demo-reto-cena-ciudad",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "archived semantics",
+        "http": "404",
+        "attempts": 1,
+        "pass": true
+      }
+    ],
+    "polling_started_utc": "2026-10-12T19:56:47.403053+00:00",
+    "seconds_until_ready": 0.37,
+    "ready": true
+  },
+  "published": [
+    {
+      "id": 12,
+      "subject": "Reto Cena de Ciudad — DEMO",
+      "slug": "qa-calibration-challenge-action",
+      "scope": "ALL",
+      "status": "PUBLISHED"
+    },
+    {
+      "id": 8,
+      "subject": "Café de cortesía con brunch — DEMO",
+      "slug": "qa-calibration-benefit-value",
+      "scope": "ALL",
+      "status": "PUBLISHED"
+    },
+    {
+      "id": 10,
+      "subject": "Sunset JAKAWI en Mirador Cobalto — DEMO",
+      "slug": "qa-calibration-experience-desire",
+      "scope": "ALL",
+      "status": "PUBLISHED"
+    }
+  ],
+  "inventory_and_mutations": {
+    "counts": {
+      "redemptions": 9,
+      "experience_reservations": 4,
+      "challenge_participations": 2,
+      "unlock_participations": 1,
+      "memberships": 1,
+      "jp_holds": 0,
+      "failed_jobs": 3
+    },
+    "failed_jobs_new": 0,
+    "landings": {
+      "DRAFT": 5,
+      "ARCHIVED": 5,
+      "PUBLISHED": 3
+    },
+    "crm": true,
+    "meta": false,
+    "new_mutations": {
+      "redemptions": 0,
+      "experience_reservations": 0,
+      "challenge_participations": 0,
+      "unlock_participations": 0,
+      "memberships": 0,
+      "jp_holds": 0,
+      "failed_jobs": 0
+    }
+  },
+  "temporary_sessions": {
+    "temporary_sessions_revoked": true,
+    "count": 15
+  },
+  "health": {
+    "app": {
+      "running": true,
+      "health": "healthy",
+      "image": "sha256:183181983c3bd30c7055a40c4eb041c5de7dc154c86f65b9f0735379f368f86e"
+    },
+    "db": {
+      "running": true,
+      "health": "healthy",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    "web": {
+      "running": true,
+      "health": null,
+      "image": "sha256:049d5943e3c147a3df8dca8f88c2f5b062adbb29c6188ebd7c6c9b9f449ab9fd"
+    },
+    "social-worker": {
+      "running": true,
+      "health": null,
+      "image": "sha256:183181983c3bd30c7055a40c4eb041c5de7dc154c86f65b9f0735379f368f86e"
+    },
+    "unrelated_preserved": true,
+    "up_local": 200,
+    "up_public": 200,
+    "scheduler": "active",
+    "disk_after": "Filesystem       1B-blocks        Used   Available Use% Mounted on\n/dev/vda1      83053432832 66873171968 16163483648  81% /\n"
+  },
+  "runtime_contracts": {
+    "source_matches_candidate": true,
+    "files": {
+      "app/app/Services/ProductLandingResolver.php": "81b4a2a52658c0cc05646d15978e88fa1a980aa26f4fb34556e9009f3777fba2",
+      "app/resources/js/pages/landing-presentations/unlock.tsx": "d5c2458c3ac789f0b5b4b38f0a5a84837c8af4ee65e0eca70597603b07cf6187",
+      "app/app/Http/Controllers/UnlockController.php": "e8caa924b2c06d0873b435159b3775013bd1230fc0f214d8daa2d55d363139d8",
+      "app/resources/js/components/marketing/offer/OfferConversionTemplate.tsx": "91099375e35ba6a1ee453c53d907f0cc0cf8503046e941f9c4e822b35619a2c5"
+    },
+    "unlock_renderer": "existing non-V3 renderer",
+    "restricted_projection": "existing authorization-backed UnlockController::data",
+    "app_public_hot_absent": true
+  },
+  "disk_before_bytes": 16711172096,
+  "demo_only": true,
+  "noncommercial": true,
+  "launch_inventory": false,
+  "docs_only_commit_no_redeploy": true,
+  "visual": [
+    {
+      "slug": "qa-calibration-benefit-value",
+      "mains": 1,
+      "headings": 1,
+      "headers": 0,
+      "footers": 1,
+      "bottomNav": 0,
+      "overflow": false,
+      "cta": {
+        "color": "rgb(17, 17, 17)",
+        "background": "rgb(255, 90, 79)"
+      },
+      "ctaWhite": false,
+      "reviewItem": "Existing V3 primary Landing CTA has dark text on coral; modal CTA is white. No live code modification.",
+      "result": "FUNCTIONAL PASS; CTA COLOR FOR HUMAN REVIEW"
+    },
+    {
+      "slug": "qa-calibration-experience-desire",
+      "mains": 1,
+      "headings": 1,
+      "headers": 0,
+      "footers": 1,
+      "bottomNav": 0,
+      "overflow": false,
+      "cta": {
+        "color": "rgb(17, 17, 17)",
+        "background": "rgb(255, 90, 79)"
+      },
+      "ctaWhite": false,
+      "reviewItem": "Existing V3 primary Landing CTA has dark text on coral; modal CTA is white. No live code modification.",
+      "result": "FUNCTIONAL PASS; CTA COLOR FOR HUMAN REVIEW"
+    },
+    {
+      "slug": "qa-calibration-challenge-action",
+      "mains": 1,
+      "headings": 1,
+      "headers": 0,
+      "footers": 1,
+      "bottomNav": 0,
+      "overflow": false,
+      "cta": {
+        "color": "rgb(17, 17, 17)",
+        "background": "rgb(255, 90, 79)"
+      },
+      "ctaWhite": false,
+      "reviewItem": "Existing V3 primary Landing CTA has dark text on coral; modal CTA is white. No live code modification.",
+      "result": "FUNCTIONAL PASS; CTA COLOR FOR HUMAN REVIEW"
+    }
+  ],
+  "meta_flags": {
+    "meta": false,
+    "browser": false,
+    "capi": false,
+    "crm": true
+  },
+  "visual_review_item": "Landing primary CTA uses existing V3 dark text on coral; modal CTA white. Reported for human review; no code changed."
+}

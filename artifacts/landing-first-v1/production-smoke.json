@@ -1,0 +1,115 @@
+{
+  "scope": "Actual production compiled frontend; existing unverified non-member QA identity in temporary sessions through native LoginResponse. No credential/account changes.",
+  "cases": [
+    {
+      "domain": "Benefit",
+      "width": 390,
+      "guestNative": "Landing",
+      "authenticatedNative": "Landing",
+      "sameLandingAfterAuth": true,
+      "registerAvailable": true,
+      "loginVisible": true,
+      "noLocationDuringAuth": true,
+      "modalOverLanding": true,
+      "colors": {
+        "color": "rgb(255, 255, 255)",
+        "background": "color(srgb 0.8 0.282353 0.247843)"
+      },
+      "locations": [
+        {
+          "id": 1,
+          "label": "Altura Nube Cala Cala · Cala Cala"
+        },
+        {
+          "id": 2,
+          "label": "Altura Nube Recoleta · Recoleta"
+        },
+        {
+          "id": 3,
+          "label": "Altura Nube Tiquipaya · Tiquipaya"
+        }
+      ],
+      "locationAfterAuth": true,
+      "membershipContext": true,
+      "result": "PASS"
+    },
+    {
+      "domain": "Experience",
+      "width": 390,
+      "guestNative": "Landing",
+      "authenticatedNative": "Landing",
+      "sameLandingAfterAuth": true,
+      "registerAvailable": true,
+      "loginVisible": true,
+      "noLocationDuringAuth": true,
+      "modalOverLanding": true,
+      "colors": {
+        "color": "rgb(255, 255, 255)",
+        "background": "color(srgb 0.8 0.282353 0.247843)"
+      },
+      "existingDateSelection": true,
+      "reservationMethod": "url",
+      "result": "PASS"
+    },
+    {
+      "domain": "Challenge",
+      "width": 390,
+      "guestNative": "Landing",
+      "authenticatedNative": "Landing",
+      "sameLandingAfterAuth": true,
+      "registerAvailable": true,
+      "loginVisible": true,
+      "noLocationDuringAuth": true,
+      "modalOverLanding": true,
+      "colors": {
+        "color": "rgb(255, 255, 255)",
+        "background": "color(srgb 0.8 0.282353 0.247843)"
+      },
+      "participation": null,
+      "verificationPreserved": true,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "blockedMutations": [],
+  "requests": [
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "method": "POST"
+    },
+    {
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "method": "POST"
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "method": "POST"
+    },
+    {
+      "path": "/analytics/journey-intent/benefit/demo-beneficio-01",
+      "method": "POST"
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "method": "POST"
+    },
+    {
+      "path": "/l/qa-calibration-experience-desire/acquisition",
+      "method": "POST"
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "method": "POST"
+    },
+    {
+      "path": "/l/qa-calibration-challenge-action/acquisition",
+      "method": "POST"
+    }
+  ],
+  "fallback": {
+    "url": "https://jakawi.com/beneficios/demo-beneficio-04",
+    "component": "benefits/show",
+    "result": "PASS"
+  },
+  "result": "PASS"
+}

@@ -1,8 +1,8 @@
 # JAKAWI — estado actual de producción
 
 **STATUS: CURRENT / AUTHORITATIVE.** Referencia operativa: 2026-10-12.
-Código productivo de referencia entregado para esta tarea: `8d913038984ae5eb6d40f3ba7477beae5d928ece`.
-Los estados de runtime/automations conservan el contexto operativo documentado. No se ejecutaron deploys; Acquisition Funnel V1 se validó únicamente en infraestructura aislada y permanece pendiente de publicación.
+Código productivo LIVE: `e848b9f4833b514ea64b1b337bdd426235273100`.
+Acquisition Funnel V1 y Landing-first Journey V1 están LIVE. Producción pre-launch contiene tres LandingPresentations DEMO publicadas como ALL para evaluación de producto; son sintéticas y no comerciales, no inventario de lanzamiento.
 
 ## Runtime y producción
 
@@ -109,7 +109,7 @@ Growth Analytics conserva los nueve eventos canónicos y contexto de Attribution
 
 ## Preparación operativa V1.1
 
-El piloto sigue **NOT STARTED**, con **REAL INVENTORY** como bloqueador primario. [PILOT_READINESS](operations/PILOT_READINESS.md) es el gate vigente; [RUNBOOKS](operations/RUNBOOKS.md) organiza recuperación y [GLOSSARY](GLOSSARY.md) fija términos. Esta revisión documental no ejecutó QA de producto ni revalidación live de CRM/cron/automations: conserva el estado suministrado, CRM_SYNC_ENABLED=true, Partner Applicant ACTIVE, consumidor 1–4 INACTIVE y Meta OFF.
+El piloto sigue **NOT STARTED**, con **REAL INVENTORY** como bloqueador primario. [PILOT_READINESS](operations/PILOT_READINESS.md) es el gate vigente; [RUNBOOKS](operations/RUNBOOKS.md) organiza recuperación y [GLOSSARY](GLOSSARY.md) fija términos. La revisión documental previa no ejecutó QA de producto ni revalidación live de CRM/cron/automations: conserva el estado suministrado, CRM_SYNC_ENABLED=true, Partner Applicant ACTIVE, consumidor 1–4 INACTIVE y Meta OFF.
 
 
 ## Marketing Landing Admin V1 — implementación local para revisión
@@ -120,8 +120,14 @@ Dominio conserva economía, reglas, elegibilidad y acciones. No hay CTA arbitrar
 
 Alcance: validación aislada y commit local; sin push, migración productiva ni deploy. Ver [arquitectura](ARCHITECTURE.md#marketing-landing-admin-v1), [diseño](DESIGN-SYSTEM.md#marketing-landing-admin-v1) y [manual](product/MANUAL_DE_FUNCIONES.md#marketing-landing-admin-v1).
 
-## Acquisition Funnel V1 — implementación pendiente de deploy (2026-10-12)
+## Landing-first Product Journey V1 — LIVE (2026-10-12)
 
-Esta entrega parte de repo `9c49421d0ba8792144bff852a72f8daa82064f48`; producción indicada para el trabajo: `8d913038984ae5eb6d40f3ba7477beae5d928ece`, con cero Marketing Landings publicadas. No se despliega el commit previo por separado ni se publican registros productivos.
+Release `e848b9f4833b514ea64b1b337bdd426235273100`, desde producción `8d913038984ae5eb6d40f3ba7477beae5d928ece`: un build productivo, backup PostgreSQL validado y sólo la migración aditiva `2026_10_12_000003_add_acquisition_copy_to_landing_presentations`. App/web/worker recreados coherentemente; DB y demás contenedores preservados.
 
-Landing-first Product Journey V1 refina el candidato `63a1751`: Landing publicada es la presentación principal aplicable; guest resuelve `GUESTS > ALL`, autenticados gratuitos y miembros activos resuelven `ALL`. Sin Landing aplicable se conserva Product Detail como fallback mínimo. Se incorpora resolución de entradas nativas hacia default publicado, modal contextual de registro/login y retorno a la misma Landing/acción. [Contrato de arquitectura](ARCHITECTURE.md#acquisition-funnel-v1). La nueva migración añade sólo los dos textos de captación. Las acciones de dominio permanecen sobre la Landing y el retorno explícito de membresía conserva su contexto. Se recomienda audiencia `ALL` para marketing normal, sin modificar registros existentes. Este bloque describe código preparado para un único deploy posterior, no funcionalidad ya publicada. El release iniciado se detuvo por la nueva decisión de producto antes de migración/cutover/publicación; sólo se creó un backup y se inició un build cancelado.
+Landing publicada aplicable es la presentación persuasiva principal: guest resuelve `GUESTS > ALL`; cuentas gratuitas y miembros activos resuelven `ALL`. Sin Landing aplicable, Product Detail es el fallback funcional mínimo. Auth y el retorno explícito de membresía conservan Landing/subject y sucursal/fecha. Para servir guest/free/member con la misma presentación, la política normal es `ALL`; no existen audiencias nuevas. [Contrato](ARCHITECTURE.md#acquisition-funnel-v1).
+
+Únicamente las representantes DEMO 8 / `qa-calibration-benefit-value`, 10 / `qa-calibration-experience-desire` y 12 / `qa-calibration-challenge-action` están PUBLISHED / ALL. Inventario actual: **3 PUBLISHED, 5 DRAFT, 5 ARCHIVED**. Son escenarios sintéticos no comerciales, para revisión pre-launch; no constituyen inventario real de lanzamiento. Unlock permanece sin publicar.
+
+Smoke productivo 390 PASS: guest y autenticado Landing-first en Café/Sunset/Reto Cena, Café con tres sucursales después de auth y contexto conservado hacia membresía, Experience con selección existente y Challenge sin bypass de verificación. Fallback: `/beneficios/demo-beneficio-04`. Cero mutaciones nuevas de dominio/membresía y sesiones temporales revocadas. `/up` local/público 200; app/DB healthy, web/worker y scheduler activos; failed jobs 3 históricos / 0 nuevos, CRM TRUE, Meta OFF. V3 LIVE + FROZEN. [Evidencia de release](../artifacts/landing-first-v1/production-release.json).
+
+Revisión visual 390: sin overflow ni shell duplicado; login visible y CTA del modal coral con texto blanco. El CTA principal de las Landings conserva texto oscuro sobre coral en V3: pendiente de revisión humana, sin modificación de código durante este release.
