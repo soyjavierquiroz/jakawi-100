@@ -67,7 +67,7 @@ class RedemptionController extends Controller
 
         $membership = $redemption->membership;
 
-        return Inertia::render('redemptions/show', ['redemption' => $redemption->only(['public_id', 'code', 'partner_name', 'location_name', 'benefit_title', 'status', 'expires_at', 'confirmed_at', 'savings_amount']) + ['benefit_slug' => $redemption->benefit?->slug, 'qr_url' => $redemption->isPending() && $redemption->expires_at->isFuture() ? URL::temporarySignedRoute('partner.redemptions.scan', $redemption->expires_at, ['partner' => $redemption->partner->slug, 'redemption_public_id' => $redemption->public_id]) : null, 'membership' => $membership ? ['amount_paid' => $membership->amount_paid, 'confirmed_savings' => $membership->confirmedSavings(), 'has_paid_for_itself' => $membership->hasPaidForItself()] : null]]);
+        return Inertia::render('redemptions/show', ['redemption' => $redemption->only(['public_id', 'code', 'partner_name', 'location_name', 'benefit_title', 'status', 'expires_at', 'confirmed_at', 'savings_amount']) + ['address' => $redemption->location?->address, 'terms' => $redemption->benefit?->terms, 'benefit_slug' => $redemption->benefit?->slug, 'qr_url' => $redemption->isPending() && $redemption->expires_at->isFuture() ? URL::temporarySignedRoute('partner.redemptions.scan', $redemption->expires_at, ['partner' => $redemption->partner->slug, 'redemption_public_id' => $redemption->public_id]) : null, 'membership' => $membership ? ['amount_paid' => $membership->amount_paid, 'confirmed_savings' => $membership->confirmedSavings(), 'has_paid_for_itself' => $membership->hasPaidForItself()] : null]]);
     }
 
     public function form(Partner $partner): Response

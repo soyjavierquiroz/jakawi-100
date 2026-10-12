@@ -30,6 +30,7 @@ class FortifyServiceProvider extends ServiceProvider
     {
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
         $this->app->singleton(RegisterResponseContract::class, RegisterResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\VerifyEmailResponse::class, \App\Http\Responses\VerifyEmailResponse::class);
     }
 
     /**

@@ -30,6 +30,10 @@ class ChallengeController extends Controller {
     public function publicProps(Request $request, Challenge $challenge, \App\Services\ChallengeRanking $ranking, SocialEntryState $state): array {
         $p = $request->user() ? ChallengeParticipation::where('challenge_id',$challenge->id)->where('user_id',$request->user()->id)->with(['socialEntries','grant.jpCredit.reversal'])->first() : null;
         $grant = $p?->grant;
+        $landing = $request->route('presentation');
+        if ($request->user() && ! $request->user()->hasVerifiedEmail() && $landing instanceof \App\Models\LandingPresentation) {
+            app(PublicJourneyContinuation::class)->setLanding($landing);
+        }
         return [
             'challenge'=>$challenge, 'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null, 'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'), 'rules'=>$challenge->rulesContract(),
             'participation'=>$p?->only(['id','qualification_status','qualified_entry_id','qualified_at','selection_status','selected_entry_id','review_status']),
@@ -48,7 +52,15 @@ class ChallengeController extends Controller {
     public function intent(Request $request, Challenge $challenge, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, ChallengeService $service) {
         abort_unless($challenge->acceptsParticipation(), 404);
         if (!$request->user()) { $continuation->set('SOCIAL_CHALLENGE',$challenge->id,'PARTICIPATE'); return to_route('register'); }
-        if (!$request->user()->hasVerifiedEmail()) return to_route('verification.notice');
+        if (!$request->user()->hasVerifiedEmail()) {
+            $landing = $challenge->landingPresentations()->where('slug', $request->input('landing_presentation_slug'))->where('status', 'PUBLISHED')->first();
+            if ($landing) {
+                $continuation->setLanding($landing);
+                $request->session()->flash('landing_acquisition_resumed', $landing->id);
+                return to_route('landing-presentations.show', $landing)->withErrors(['participation' => 'Confirma tu correo para entrar al reto.']);
+            }
+            return to_route('verification.notice');
+        }
         $this->assertParticipationEligible($challenge, $request);
         if ($challenge->evidence_type === 'MANUAL') {
             $p = ChallengeParticipation::firstOrCreate(['challenge_id'=>$challenge->id,'user_id'=>$request->user()->id]);
@@ -62,6 +74,9 @@ class ChallengeController extends Controller {
     public function submit(Request $request, Challenge $challenge, AnalyticsTracker $analytics) {
         $data = $request->validate(['url'=>['required','url','max:2048','starts_with:https://,http://']]);
         if ($challenge->evidence_type !== 'SOCIAL_POST' || !$challenge->acceptsParticipation()) throw ValidationException::withMessages(['url'=>'Este reto no acepta publicaciones.']);
+        if (! $request->user()->hasVerifiedEmail()) {
+            throw ValidationException::withMessages(['url' => 'Confirma tu correo para entrar al reto.']);
+        }
         $this->assertParticipationEligible($challenge, $request);
         $hash = hash('sha256', $this->normalizeUrl($data['url']));
         $participationStarted = false;

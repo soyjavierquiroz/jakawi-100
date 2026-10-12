@@ -1,3 +1,4 @@
+import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
@@ -75,6 +76,7 @@ export default function ChallengeOfferAdapter({
         auth: { user?: { id: number } | null };
     };
     const acquire = useAcquisition();
+    const continueAction = useLandingAction();
     const participating = Boolean(challengeProps.participation);
     const grant = challengeProps.grant;
     const qualified =
@@ -144,7 +146,7 @@ export default function ChallengeOfferAdapter({
             if (!auth.user && !closed) {
                 event.preventDefault();
                 acquire();
-            }
+            } else if (auth.user && !membershipRequired) { event.preventDefault(); continueAction(); }
         },
         ...action,
         kind: membershipRequired

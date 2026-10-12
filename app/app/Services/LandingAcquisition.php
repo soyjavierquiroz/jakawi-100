@@ -10,10 +10,10 @@ class LandingAcquisition
     {
         return [
             'acquisition_headline' => match ($type) {
-                'BENEFIT' => "Crea tu cuenta y continúa con tu beneficio: {$title}",
-                'EXPERIENCE' => "Crea tu cuenta y vive esta experiencia: {$title}",
-                'CHALLENGE' => "Crea tu cuenta y continúa con el reto: {$title}",
-                default => "Crea tu cuenta y continúa con este desbloqueo: {$title}",
+                'BENEFIT' => "Vamos por tu beneficio: {$title}",
+                'EXPERIENCE' => "Vamos por esta experiencia: {$title}",
+                'CHALLENGE' => "Vamos por este reto: {$title}",
+                default => "Vamos por este desbloqueo: {$title}",
             },
             'acquisition_supporting_copy' => 'Dinos quién eres. Te toma menos de un minuto y seguimos con este mismo '.match ($type) {
                 'BENEFIT' => 'beneficio.', 'EXPERIENCE' => 'plan.', 'CHALLENGE' => 'reto.', default => 'desbloqueo.',
@@ -36,7 +36,6 @@ class LandingAcquisition
         if ($type === 'CHALLENGE') $provider = $subject->partner?->name;
 
         return [
-            'passwordRules' => \Illuminate\Validation\Rules\Password::default()->toPasswordRulesString(),
             'type' => $type, 'subjectId' => $subject->id, 'title' => $subject->title, 'provider' => $provider,
             'headline' => $presentation->acquisition_headline ?: $defaults['acquisition_headline'],
             'supportingCopy' => $presentation->acquisition_supporting_copy ?: $defaults['acquisition_supporting_copy'],

@@ -50,7 +50,7 @@ class LandingVideoConfiguration
     {
         $subject = $presentation->subject;
         // Never serialize the configuration (including poster) while disclosure is locked.
-        if ($subject instanceof Unlock && !$subject->revealable()) return null;
+        if ($subject instanceof Unlock && (! $subject->revealable() || ! app(\App\Http\Controllers\UnlockController::class)->authorizedReveal($subject))) return null;
         return $presentation->vsl;
     }
 }

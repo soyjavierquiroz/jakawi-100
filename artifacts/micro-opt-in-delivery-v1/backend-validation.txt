@@ -1,0 +1,174 @@
+ Image jakawi-app-test Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 526B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.50kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#3 DONE 0.1s
+
+#4 [internal] load metadata for docker.io/library/composer:2
+#4 DONE 0.1s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 278B done
+#5 DONE 0.0s
+
+#6 [php-base 1/4] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#6 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.0s done
+#6 DONE 0.0s
+
+#7 FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#7 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 124.74kB 0.0s done
+#8 DONE 0.1s
+
+#9 [php-base 2/4] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-install         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#9 CACHED
+
+#10 [php-base 3/4] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#10 CACHED
+
+#11 [php-base 4/4] WORKDIR /var/www/html
+#11 CACHED
+
+#12 [test 1/5] COPY app/composer.json app/composer.lock* ./
+#12 CACHED
+
+#13 [test 2/5] RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#13 CACHED
+
+#14 [test 3/5] COPY --chown=www-data:www-data app/ ./
+#14 DONE 0.2s
+
+#15 [test 4/5] RUN cp .env.example .env     && composer dump-autoload --optimize
+#15 0.516 Generating optimized autoload files
+#15 3.307 > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+#15 3.336 > @php artisan package:discover --ansi
+#15 3.553 
+#15 3.553   [37;44m INFO [39;49m Discovering packages.  
+#15 3.553 
+#15 3.556   inertiajs/inertia-laravel [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.559   laravel/fortify [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.559   laravel/pail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.559   laravel/pao [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.559   laravel/passkeys [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.559   laravel/sail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.559   laravel/tinker [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.560   laravel/wayfinder [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.562   nesbot/carbon [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.562   nunomaduro/collision [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.562   nunomaduro/termwind [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#15 3.562 
+#15 3.568 Generated optimized autoload files containing 10163 classes
+#15 DONE 3.7s
+
+#16 [test 5/5] RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && touch .phpunit.result.cache     && chown www-data:www-data .phpunit.result.cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#16 DONE 0.5s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 0.8s done
+#17 exporting manifest sha256:aba74f9eaaf191c162844d13d9a9661d01ae037c8acd0f4109db1dafa8283334 done
+#17 exporting config sha256:2349499a4f9546f8658f6e2105ee43aa311f88123cbaab2a0c0c8cb5769a860b done
+#17 exporting attestation manifest sha256:5480d6606fb81b9ae218b469edf743742ce0b9dc834b6c9f659506b0e3f2392f done
+#17 exporting manifest list sha256:b77c605adeeb1b54c8ccbf374514c99764d2065c0b3e416dc0c7219654fe864d done
+#17 naming to docker.io/library/jakawi-app-test:latest done
+#17 unpacking to docker.io/library/jakawi-app-test:latest
+#17 unpacking to docker.io/library/jakawi-app-test:latest 0.2s done
+#17 DONE 1.1s
+
+#18 resolving provenance for metadata file
+#18 DONE 0.0s
+ Image jakawi-app-test Built 
+ Container jakawi-test-db-test-1 Running 
+ Container jakawi-test-app-test-1 Recreate 
+ Container jakawi-test-app-test-1 Recreated 
+ Container jakawi-test-db-test-1 Waiting 
+ Container jakawi-test-db-test-1 Healthy 
+ Container jakawi-test-app-test-1 Starting 
+ Container jakawi-test-app-test-1 Started 
+
+  Dropping all tables .......................................... 314.18ms DONE
+
+   INFO  Preparing database.  
+
+  Creating migration table ...................................... 25.95ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table .......................... 41.39ms DONE
+  0001_01_01_000001_create_cache_table .......................... 18.82ms DONE
+  0001_01_01_000002_create_jobs_table ........................... 43.40ms DONE
+  2024_01_01_000000_create_passkeys_table ....................... 24.59ms DONE
+  2025_08_14_170933_add_two_factor_columns_to_users_table ........ 2.97ms DONE
+  2026_09_21_000001_add_is_admin_to_users_table .................. 2.03ms DONE
+  2026_09_21_000004_create_memberships_table .................... 25.21ms DONE
+  2026_09_22_000001_create_partners_table ....................... 18.32ms DONE
+  2026_09_22_000002_create_locations_table ...................... 25.84ms DONE
+  2026_09_22_000003_create_benefits_table ....................... 21.56ms DONE
+  2026_09_22_000004_create_benefit_location_table ............... 10.35ms DONE
+  2026_09_22_000005_create_redemptions_table .................... 46.30ms DONE
+  2026_09_22_000006_create_experiences_table .................... 19.61ms DONE
+  2026_09_22_000007_create_experience_partner_table .............. 9.12ms DONE
+  2026_09_22_000008_create_experience_sessions_table ............ 20.69ms DONE
+  2026_09_22_000009_create_analytics_events_table ............... 49.74ms DONE
+  2026_09_23_000001_create_partner_user_table ................... 13.82ms DONE
+  2026_09_23_000002_add_internal_experience_reservations ........ 31.26ms DONE
+  2026_09_23_000003_add_party_size_to_experience_reservations .... 2.00ms DONE
+  2026_09_23_000004_add_check_in_to_experience_reservations ..... 10.89ms DONE
+  2026_09_24_000001_add_content_review_metadata ................. 26.82ms DONE
+  2026_09_24_000005_create_user_profiles_table .................. 12.51ms DONE
+  2026_09_25_000001_add_theme_preference_to_users_table .......... 1.82ms DONE
+  2026_09_26_000001_add_referral_code_to_users_table ............. 6.12ms DONE
+  2026_09_26_000002_create_attribution_foundation_tables ....... 101.49ms DONE
+  2026_09_26_000003_create_manual_membership_sales_tables ....... 91.24ms DONE
+  2026_09_26_000004_create_reward_payouts_tables ................ 41.44ms DONE
+  2026_09_26_000008_add_partner_acquisition_attribution ......... 25.26ms DONE
+  2026_09_26_000009_add_generic_reward_beneficiaries ............ 16.58ms DONE
+  2026_09_26_000010_create_campaigns ............................ 38.07ms DONE
+  2026_09_26_000011_create_operational_adjustments_table ........ 20.02ms DONE
+  2026_09_27_000012_add_requested_by_to_reward_payouts ........... 6.10ms DONE
+  2026_09_27_000013_create_unlocks_tables ....................... 58.05ms DONE
+  2026_09_27_000014_add_unlock_to_analytics_events ............... 6.91ms DONE
+  2026_09_27_000015_create_jp_holds_table ....................... 17.93ms DONE
+  2026_09_27_000016_add_unlock_fulfillment_lifecycle ............ 19.95ms DONE
+  2026_09_27_000017_add_unlock_growth_context ................... 12.51ms DONE
+  2026_09_30_000001_create_cities_table ......................... 18.22ms DONE
+  2026_10_01_000001_add_city_id_to_locations_and_seed_canonical_cities  8.43ms DONE
+  2026_10_02_000001_create_city_interests_table ................. 25.62ms DONE
+  2026_10_03_000001_create_partner_applications_table ........... 25.07ms DONE
+  2026_10_05_000001_add_whatsapp_to_user_profiles ................ 1.65ms DONE
+  2026_10_05_000001_create_program_applications_table ........... 18.84ms DONE
+  2026_10_06_000001_create_ownership_assignments_table .......... 21.49ms DONE
+  2026_10_06_000002_add_public_journey_attribution_to_touches .... 6.81ms DONE
+  2026_10_07_000001_create_membership_purchase_requests ......... 25.68ms DONE
+  2026_10_07_000002_create_social_challenges .................... 70.06ms DONE
+  2026_10_07_000003_add_jp_ledger_references .................... 28.20ms DONE
+  2026_10_07_000004_add_social_challenge_jp_rewards .............. 9.79ms DONE
+  2026_10_07_000005_generalize_challenges ....................... 53.94ms DONE
+  2026_10_07_000006_challenge_product_experience ................. 7.89ms DONE
+  2026_10_08_000001_create_landing_presentations ................ 17.25ms DONE
+  2026_10_08_000002_add_challenge_marketing_editorial ............ 3.84ms DONE
+  2026_10_08_000003_add_landing_default_scope .................... 7.97ms DONE
+  2026_10_09_000001_extend_analytics_events_for_growth .......... 22.94ms DONE
+  2026_10_09_000002_add_acquisition_provider ..................... 6.96ms DONE
+  2026_10_09_000003_create_growth_provider_deliveries ........... 17.68ms DONE
+  2026_10_09_180000_create_crm_foundation ....................... 30.98ms DONE
+  2026_10_11_000001_add_vsl_to_landing_presentations ............. 1.33ms DONE
+  2026_10_12_000001_add_offer_presentation_settings ............. 14.03ms DONE
+  2026_10_12_000002_add_offer_layout_controls .................... 2.28ms DONE
+  2026_10_12_000003_add_acquisition_copy_to_landing_presentations  1.74ms DONE
+
+
+  [90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m[90;1m.[39;22m
+
+  [90mTests:[39m    [32;1m12 passed[39;22m[90m (270 assertions)[39m
+  [90mDuration:[39m [39m4.86s[39m
+

@@ -1,3 +1,4 @@
+import { Delivery } from '@/components/marketing/delivery';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { type Unlock } from '@/components/unlock-card';
 import JourneyLayout from '@/layouts/journey-layout';
@@ -74,7 +75,7 @@ export default function Show({ unlock, participation, hasActiveMembership = fals
                     </div>
                     <button onClick={share} className="discovery-secondary-action mt-5 w-full">COMPARTIR DESBLOQUEO</button>
                 </aside>);
-    if (continuationOnly) return actionPanel;
+    if (continuationOnly) return <>{unlock.revealable && auth.user && eligible && <Delivery heading="DESBLOQUEADO" subject={unlock.title}><p>{unlock.description}</p><p>{hasActiveMembership ? unlock.member_offer : unlock.free_user_offer}</p><p>{unlock.terms}</p></Delivery>}{actionPanel}</>;
 
     return <JourneyLayout>
         <Head title={socialTitle}><meta name="description" content={socialDescription} /><meta property="og:title" content={socialTitle} /><meta property="og:description" content={socialDescription} /></Head>

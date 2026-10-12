@@ -17,3 +17,7 @@ Pagos internos de Experiences, operación comercial de booking interno en piloto
 ## Verificación pendiente
 
 Este documento no acredita readiness comercial ni una ejecución nueva de pruebas. El piloto requiere inventario real y operación comercial; estado y baseline conocidos en [CURRENT](CURRENT.md), checklist en el [Manual de Inventario](operations/MANUAL_DE_INVENTARIO.md). PHP del host nunca se usa ni inspecciona.
+
+## Welcome Courtesy / Cortesía JAKAWI
+
+**FUTURE / OFF / NOT IMPLEMENTED.** Concepto: ciertos items para miembros pagados podrían habilitar explícitamente UNA cortesía global para una persona/cuenta genuinamente nueva sin membresía pagada. El dominio revalidaría al confirmar: persona nueva, sin cortesía anterior, item elegible y vigente, y demás requisitos satisfechos. Mensaje futuro: «Tu primera experiencia con JAKAWI va por nuestra cuenta». No hay schema, flags, UI, código de elegibilidad ni bypass de membresía implementado.

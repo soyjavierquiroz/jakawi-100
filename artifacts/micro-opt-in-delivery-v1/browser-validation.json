@@ -1,0 +1,101 @@
+{
+  "scope": "Dedicated jakawi_test DB, Docker PHP 8.4 and current Vite frontend; no production writes.",
+  "cases": [
+    {
+      "name": "Café complete identification through location",
+      "pass": true,
+      "oneFieldPerStep": true,
+      "noPassword": true,
+      "sameLanding": true,
+      "noPageJump": true,
+      "personalized": true
+    },
+    {
+      "name": "Sunset micro opt-in smoke",
+      "pass": true
+    },
+    {
+      "name": "Reto Cena contextual verification",
+      "pass": true
+    },
+    {
+      "name": "Benefit Delivery actual redemption fixture",
+      "pass": true
+    },
+    {
+      "name": "Experience Delivery actual pending reservation fixture",
+      "pass": true
+    },
+    {
+      "name": "Challenge Delivery participation instructions fixture",
+      "pass": true
+    },
+    {
+      "name": "Desktop Café micro opt-in",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "status": 204
+    },
+    {
+      "path": "/register",
+      "status": 302
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "status": 204
+    },
+    {
+      "path": "/l/qa-calibration-experience-desire/acquisition",
+      "status": 204
+    },
+    {
+      "path": "/register",
+      "status": 302
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "status": 204
+    },
+    {
+      "path": "/l/qa-calibration-challenge-action/acquisition",
+      "status": 204
+    },
+    {
+      "path": "/register",
+      "status": 302
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "status": 204
+    },
+    {
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "status": 204
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "status": 204
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    }
+  ]
+}

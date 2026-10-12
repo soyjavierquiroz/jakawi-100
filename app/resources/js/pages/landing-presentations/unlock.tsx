@@ -33,12 +33,13 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
     const continueAction = useLandingAction();
     const landingId = (usePage().props.presentation as { id: number }).id;
     const intentSent = useRef(false);
+    const authenticated = Boolean(usePage().props.auth.user);
     const disabled = preview || copy.action.kind === 'unavailable';
     const action = { ...copy.action, href: copy.action.kind === 'membership' ? copy.action.href + `&landing_presentation_id=${landingId}` : copy.action.href, label: copy.action.kind === 'guest' ? 'QUIERO DESBLOQUEARLO' : copy.action.label, disabled, onClick: (event: MouseEvent<Element>) => {
         if (disabled) { event.preventDefault(); return; }
         // Auth and explicit domain actions remain over this Landing.
         if (copy.action.kind === 'guest') { event.preventDefault(); acquire(); return; }
-        if (copy.action.kind === 'native') { event.preventDefault(); continueAction(); return; }
+        if (copy.action.kind === 'native') { event.preventDefault(); if (!authenticated) acquire(); else continueAction(); return; }
         if (copy.action.kind === 'membership' && !intentSent.current) {
             intentSent.current = true;
             trackJourneyIntent('unlock', copy.slug);

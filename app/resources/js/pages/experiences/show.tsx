@@ -1,3 +1,4 @@
+import { Delivery } from '@/components/marketing/delivery';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, CalendarDays, Clock3, MapPin, X } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -5,7 +6,7 @@ import { JakawiImage } from '@/components/jakawi-image';
 import { StatusBanner } from '@/components/state-panel';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
 
-type Session = { id: number; starts_at: string; venue_label?: string | null; reservation?: { public_id: string; status: string; party_size: number } | null; location?: { slug: string; name: string; maps_url?: string | null } | null };
+type Session = { id: number; starts_at: string; venue_label?: string | null; reservation?: { public_id: string; status: string; party_size: number } | null; location?: { slug: string; name: string; address?: string | null; maps_url?: string | null } | null };
 type Target = { method: 'whatsapp' | 'url' | 'external' | 'phone'; label: string };
 type Partner = { id: number; slug: string; name: string; role: string };
 type Experience = {
@@ -17,8 +18,8 @@ type Experience = {
     reservation_targets?: Target[];
 };
 
-const date = (value: string) => new Intl.DateTimeFormat('es-BO', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(value));
-const time = (value: string) => new Intl.DateTimeFormat('es-BO', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
+const date = (value: string) => new Intl.DateTimeFormat('es-BO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/La_Paz' }).format(new Date(value));
+const time = (value: string) => new Intl.DateTimeFormat('es-BO', { hour: '2-digit', minute: '2-digit', timeZone: 'America/La_Paz' }).format(new Date(value));
 const place = (session?: Session | null) => session?.location?.name ?? session?.venue_label ?? null;
 
 export default function ExperienceShow({ experience, hasActiveMembership = false, restoredSessionId = null, availability = { available: true, reason: null }, continuationOnly = false }: { experience: Experience; hasActiveMembership?: boolean; restoredSessionId?: number | null; availability?: { available: boolean; reason: string | null }; continuationOnly?: boolean }) {
@@ -52,17 +53,18 @@ export default function ExperienceShow({ experience, hasActiveMembership = false
             }
             router.visit(`/membresia?journey=EXPERIENCE&action=RESERVE&resource_id=${experience.id}&experience_session_id=${selectedSession!.id}${landingId ? `&landing_presentation_id=${landingId}` : ''}`); return;
         }
-        router.post(`/experiencias/${experience.slug}/reservas`, { experience_session_id: selectedSession!.id });
+        router.post(`/experiencias/${experience.slug}/reservas`, { experience_session_id: selectedSession!.id, landing_presentation_id: landingId }, { preserveScroll: true });
     };
 
     const sessionChoices = (sessions.length > 1 && availability.available ? <section className="mt-8 max-w-2xl" aria-labelledby="choose-session"><div className="flex items-baseline justify-between gap-4"><h2 id="choose-session" className="text-xl font-extrabold">ELIGE TU FECHA</h2>{selectionRequired ? <p className="text-sm font-semibold text-muted-foreground">Selecciona una para reservar</p> : null}</div><div className="mt-4 grid gap-3 sm:grid-cols-2">{sessions.map((session) => <button key={session.id} type="button" onClick={() => setSelectedSession(session)} aria-pressed={selectedSession?.id === session.id} className={`min-h-20 rounded-[var(--radius-control)] border p-4 text-left transition ${selectedSession?.id === session.id ? 'border-brand bg-brand-subtle ring-1 ring-brand' : 'border-border bg-surface hover:border-border-strong'}`}><span className="block font-bold capitalize">{date(session.starts_at)}</span><span className="mt-1 block text-sm text-muted-foreground">{time(session.starts_at)}{place(session) ? ` · ${place(session)}` : ''}</span></button>)}</div></section> : null);
-    const existingReservation = selectedSession?.reservation && ['pending', 'confirmed'].includes(selectedSession.reservation.status) ? selectedSession.reservation : null;
+    const currentReservation = sessions.find(session => session.id === selectedSession?.id)?.reservation;
+    const existingReservation = currentReservation && ['pending', 'confirmed'].includes(currentReservation.status) ? currentReservation : null;
     const reservationDialog = (reservationOpen ? <div className="fixed inset-0 z-50 flex items-end bg-overlay p-0 sm:items-center sm:justify-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="reservation-title"><section className="w-full rounded-t-[28px] bg-surface p-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-xl sm:max-w-lg sm:rounded-[28px]"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-extrabold tracking-[0.14em] text-brand uppercase">Experiencia JAKAWI</p><h2 id="reservation-title" className="mt-2 text-2xl font-extrabold">RESERVA TU LUGAR</h2></div><button type="button" onClick={() => setReservationOpen(false)} aria-label="Cerrar" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-border"><X className="size-5" /></button></div><p className="mt-4 leading-6 text-muted-foreground">Esta experiencia es gestionada directamente por {organizer?.name ?? 'el Partner'}.</p>{selectedSession ? <p className="mt-3 text-sm font-bold capitalize">{date(selectedSession.starts_at)} · {time(selectedSession.starts_at)}</p> : null}<div className="mt-6 space-y-3">{experience.reservation_targets?.map((target, index) => <a key={target.method} href={`/experiencias/${experience.slug}/reservar?method=${target.method}`} className={`flex min-h-13 items-center justify-center rounded-2xl px-4 text-sm font-extrabold ${index === 0 ? 'bg-brand text-brand-foreground' : 'border border-border bg-surface'}`}>{target.label}</a>)}</div></section></div> : null);
     if (continuationOnly) return <div className="space-y-4">
-        <p className="font-bold">{experience.title}</p>
-        {sessionChoices}
-        {sessions.length === 1 && selectedSession ? <p>{date(selectedSession.starts_at)} · {time(selectedSession.starts_at)}</p> : null}
-        {existingReservation ? <p className="font-bold">Tu reserva: {existingReservation.public_id} · {existingReservation.status}</p> : canReserve && availability.available ? <button type="button" onClick={reserve} disabled={selectionRequired} className="funnel-primary-action min-h-12 w-full text-white">{internalReservation ? internalAction : 'VER OPCIONES DE RESERVA'}</button> : <p>{availability.reason ?? 'NO HAY RESERVAS DISPONIBLES'}</p>}
+        {!existingReservation && <p className="font-bold">{experience.title}</p>}
+        {!existingReservation && sessionChoices}
+        {!existingReservation && sessions.length === 1 && selectedSession ? <p>{date(selectedSession.starts_at)} · {time(selectedSession.starts_at)}</p> : null}
+        {existingReservation ? <Delivery heading="TU EXPERIENCIA ESTÁ LISTA" subject={experience.title}><p>{date(selectedSession!.starts_at)} · {time(selectedSession!.starts_at)}</p><p>{place(selectedSession)}</p><p>{selectedSession?.location?.address}</p><p>Reserva {existingReservation.public_id} · {existingReservation.status === 'confirmed' ? 'Confirmada' : 'Pendiente de confirmación'}</p><p>{existingReservation.party_size} persona(s)</p><p>{existingReservation.status === 'pending' ? 'Espera la confirmación del partner antes de asistir.' : 'Presenta la referencia de tu reserva al llegar.'}</p>{experience.description && <p>{experience.description}</p>}{experience.terms && <p>{experience.terms}</p>}{selectedSession?.location?.maps_url && <a href={selectedSession.location.maps_url} className="inline-flex min-h-11 items-center underline" target="_blank" rel="noreferrer">Cómo llegar</a>}</Delivery> : canReserve && availability.available ? <button type="button" onClick={reserve} disabled={selectionRequired} className="funnel-primary-action min-h-12 w-full text-white">{internalReservation ? internalAction : 'VER OPCIONES DE RESERVA'}</button> : <p>{availability.reason ?? 'NO HAY RESERVAS DISPONIBLES'}</p>}
         {reservationDialog}
     </div>;
 

@@ -154,7 +154,7 @@ class LandingAcquisitionTest extends TestCase
             ->assertRedirect(route('landing-presentations.show', $landing, false));
         $user = User::where('email', 'cafe@example.test')->sole();
         $this->assertAuthenticatedAs($user);
-        $this->assertTrue(Hash::check('Valid-Cafe-2026!', $user->password));
+        $this->assertFalse(Hash::check('Valid-Cafe-2026!', $user->password));
         $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page
             ->where('acquisitionResumed', true)->where('benefit.id', $benefit->id)->has('locations', 2)->where('hasActiveMembership', false));
         $this->assertNoDomainMutation();
@@ -188,11 +188,11 @@ class LandingAcquisitionTest extends TestCase
         $this->assertNoDomainMutation();
     }
 
-    public function test_contextual_registration_requires_a_user_password_and_invalid_login_keeps_intent(): void
+    public function test_contextual_registration_rejects_invalid_phone_and_invalid_login_keeps_intent(): void
     {
         $landing = $this->landing($this->subjects()[0]);
         $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'register']);
-        $this->from(route('landing-presentations.show', $landing))->post('/register', ['name' => 'Guest', 'email' => 'guest@example.test', 'whatsapp' => '71234567'])->assertSessionHasErrors('password');
+        $this->from(route('landing-presentations.show', $landing))->post('/register', ['name' => 'Guest', 'email' => 'guest@example.test', 'whatsapp' => 'invalid'])->assertSessionHasErrors('whatsapp');
         $this->assertGuest();
         $this->from(route('landing-presentations.show', $landing))->post('/login', ['email' => 'guest@example.test', 'password' => 'incorrect'])->assertSessionHasErrors('email');
         $this->assertSame($landing->id, app(PublicJourneyContinuation::class)->get()['landing_presentation_id']);

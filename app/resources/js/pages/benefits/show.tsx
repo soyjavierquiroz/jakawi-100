@@ -144,12 +144,12 @@ export default function BenefitShow({
 
     const confirmation = confirming ? (
         <div
-            role="dialog"
-            aria-modal="true"
+            role={continuationOnly ? undefined : "dialog"}
+            aria-modal={continuationOnly ? undefined : true}
             aria-labelledby="activation-title"
-            className="fixed inset-0 z-50 flex items-end bg-overlay sm:items-center sm:justify-center"
+            className={continuationOnly ? "" : "fixed inset-0 z-50 flex items-end bg-overlay sm:items-center sm:justify-center"}
         >
-            <div className="w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]">
+            <div className={continuationOnly ? "w-full" : "w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]"}>
                 <p className="discovery-eyebrow text-brand">
                     CONTINÚA TU BENEFICIO
                 </p>
@@ -176,7 +176,7 @@ export default function BenefitShow({
                         DEMO DE PRODUCTO · oferta simulada, no canjeable
                     </p>
                 )}
-                {auth.user && (
+                {auth.user && !continuationOnly && (
                     <p className="mt-3 inline-flex rounded-lg bg-success-surface px-2 py-1 text-xs font-semibold text-success-foreground">
                         ✓ Cuenta lista
                     </p>
@@ -217,14 +217,14 @@ export default function BenefitShow({
                         ? 'Selecciona la sucursal y continúa con tu acceso JAKAWI. Este beneficio es para miembros.'
                         : 'Actívalo solamente cuando estés listo para utilizarlo.'}
                 </p>
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                    <button
+                <div className={continuationOnly ? "mt-6 grid gap-3" : "mt-6 grid grid-cols-2 gap-3"}>
+                    {!continuationOnly && <button
                         type="button"
                         onClick={() => setConfirming(false)}
                         className="min-h-12 rounded-xl border border-border text-sm font-bold"
                     >
                         Cancelar
-                    </button>
+                    </button>}
                     <button
                         type="button"
                         onClick={() => {

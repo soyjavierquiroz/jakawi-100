@@ -1,0 +1,26 @@
+{
+  "scope": "LOCAL / TEST ONLY; NO DEPLOY",
+  "previousHead": "9df80eaf3ad94c0f4d3968a7442c804ad74b3353",
+  "productionApplicationUnchanged": "e848b9f4833b514ea64b1b337bdd426235273100",
+  "focusedBackend": {
+    "result": "PASS",
+    "scenarios": 12,
+    "assertions": 270,
+    "command": "./bin/jakawi-test php artisan test --compact --filter=MicroOptInJourneyTest"
+  },
+  "typescript": "PASS: npx tsc --noEmit",
+  "browser": "PASS: seven focused checks, 390 px and one 1440 px check",
+  "deliveryScreenshots": 3,
+  "docs": "PASS",
+  "diffCheck": "PASS",
+  "frontendBuild": {
+    "result": "PASS",
+    "finalBuildCount": 1,
+    "manifestPages": 101
+  },
+  "productionMutations": 0,
+  "welcomeCourtesy": "FUTURE / OFF / NOT IMPLEMENTED",
+  "newSchema": false,
+  "temporaryAuth": false,
+  "v3Changed": false
+}
