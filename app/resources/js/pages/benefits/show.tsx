@@ -1,4 +1,7 @@
-import { displayBenefitName, isDemoName } from '@/components/benefit-journey-context';
+import {
+    displayBenefitName,
+    isDemoName,
+} from '@/components/benefit-journey-context';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, MapPin, MessageCircle } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -41,6 +44,7 @@ export default function BenefitShow({
     availability = { available: true, reason: null },
     redemptionIntent = false,
     selectedLocationId = null,
+    continuationOnly = false,
 }: {
     benefit: BenefitSummary;
     hasActiveMembership: boolean;
@@ -48,12 +52,15 @@ export default function BenefitShow({
     availability?: Availability;
     redemptionIntent?: boolean;
     selectedLocationId?: number | null;
+    continuationOnly?: boolean;
 }) {
     const demo = isDemoName(benefit.title);
     const title = displayBenefitName(benefit.title, demo);
     const name = (value: string) => displayBenefitName(value, demo);
     const { auth, errors } = usePage().props;
-    const [confirming, setConfirming] = useState(redemptionIntent && availability.available);
+    const [confirming, setConfirming] = useState(
+        redemptionIntent && availability.available,
+    );
     const intentSentFor = useRef<string | null>(null);
     const membershipIntent = () => {
         if (intentSentFor.current === benefit.slug) return;
@@ -63,9 +70,13 @@ export default function BenefitShow({
     const [locationId, setLocationId] = useState<number | null>(
         locations.some((location) => location.id === selectedLocationId)
             ? selectedLocationId
-            : locations.length === 1 ? locations[0].id : null,
+            : locations.length === 1
+              ? locations[0].id
+              : null,
     );
-    const selectedLocation = locations.find((location) => location.id === locationId);
+    const selectedLocation = locations.find(
+        (location) => location.id === locationId,
+    );
     const hasMedia = Boolean(benefit.hero_url ?? benefit.image_url);
     const canUse =
         availability.available &&
@@ -77,30 +88,48 @@ export default function BenefitShow({
     const beginAuth = (login = false) => {
         membershipIntent();
         router.get(`/beneficios/${benefit.slug}/canjear`, {
-            ...(selectedLocationId && locations.some((location) => location.id === selectedLocationId) ? { location_id: selectedLocationId } : {}),
+            ...(selectedLocationId &&
+            locations.some((location) => location.id === selectedLocationId)
+                ? { location_id: selectedLocationId }
+                : {}),
             ...(login ? { auth: 'login' } : {}),
         });
     };
     const action = !availability.available ? null : (
         <div className="w-full">
-        <button
-            type="button"
-            onClick={() => {
-                membershipIntent();
-                if (!auth.user) {
-                    beginAuth();
-                } else {
-                    setConfirming(true);
-                }
-            }}
-            className="benefit-primary-action funnel-primary-action"
-        >
-            {!auth.user ? 'QUIERO MI BENEFICIO' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'USAR BENEFICIO'}
-        </button>
-        {!auth.user && <div className="mt-2 text-center text-sm leading-5">
-            <p className="text-muted-foreground">Crea tu cuenta en menos de un minuto y continúa aquí mismo.</p>
-            <button type="button" onClick={() => beginAuth(true)} className="mt-2 min-h-11 font-bold underline underline-offset-4">¿Ya tienes cuenta? Inicia sesión</button>
-        </div>}
+            <button
+                type="button"
+                onClick={() => {
+                    membershipIntent();
+                    if (!auth.user) {
+                        beginAuth();
+                    } else {
+                        setConfirming(true);
+                    }
+                }}
+                className="funnel-primary-action benefit-primary-action"
+            >
+                {!auth.user
+                    ? 'QUIERO MI BENEFICIO'
+                    : !hasActiveMembership
+                      ? 'VER MEMBRESÍA'
+                      : 'USAR BENEFICIO'}
+            </button>
+            {!auth.user && (
+                <div className="mt-2 text-center text-sm leading-5">
+                    <p className="text-muted-foreground">
+                        Crea tu cuenta en menos de un minuto y continúa aquí
+                        mismo.
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() => beginAuth(true)}
+                        className="mt-2 min-h-11 font-bold underline underline-offset-4"
+                    >
+                        ¿Ya tienes cuenta? Inicia sesión
+                    </button>
+                </div>
+            )}
         </div>
     );
     const mobileAction = !availability.available
@@ -111,6 +140,128 @@ export default function BenefitShow({
             ? action
             : null;
     const value = savings(benefit.estimated_savings);
+
+    const confirmation = confirming ? (
+        <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="activation-title"
+            className="fixed inset-0 z-50 flex items-end bg-overlay sm:items-center sm:justify-center"
+        >
+            <div className="w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]">
+                <p className="discovery-eyebrow text-brand">
+                    CONTINÚA TU BENEFICIO
+                </p>
+                <h2
+                    id="activation-title"
+                    className="mt-2 text-2xl font-extrabold"
+                >
+                    {locations.length > 1
+                        ? 'Elige dónde usarás tu beneficio'
+                        : 'Sigue con tu beneficio'}
+                </h2>
+                <p className="mt-5 text-sm text-muted-foreground">
+                    Sigues con:
+                </p>
+                <p className="mt-1 font-bold">{title}</p>
+                <p className="text-sm text-muted-foreground">
+                    {benefit.partner?.name ? name(benefit.partner.name) : ''}
+                    {selectedLocation
+                        ? ` — ${name(selectedLocation.name)}`
+                        : ''}
+                </p>
+                {demo && (
+                    <p className="mt-2 text-xs font-semibold">
+                        DEMO DE PRODUCTO · oferta simulada, no canjeable
+                    </p>
+                )}
+                {auth.user && (
+                    <p className="mt-3 inline-flex rounded-lg bg-success-surface px-2 py-1 text-xs font-semibold text-success-foreground">
+                        ✓ Cuenta lista
+                    </p>
+                )}
+                {locations.length > 1 ? (
+                    <label className="mt-5 block text-sm font-semibold">
+                        Sucursal
+                        <select
+                            value={locationId ?? ''}
+                            onChange={(event) =>
+                                setLocationId(
+                                    event.target.value
+                                        ? Number(event.target.value)
+                                        : null,
+                                )
+                            }
+                            className="mt-2 min-h-11 w-full rounded-xl border border-border bg-background px-3"
+                        >
+                            <option value="" disabled>
+                                Selecciona una sucursal
+                            </option>
+                            {locations.map((location) => (
+                                <option key={location.id} value={location.id}>
+                                    {name(location.name)}
+                                    {location.zone ? ` · ${location.zone}` : ''}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                ) : null}
+                {errors.redemption || errors.location_id ? (
+                    <p role="alert" className="mt-4 text-sm text-destructive">
+                        {errors.redemption ?? errors.location_id}
+                    </p>
+                ) : null}
+                <p className="mt-4 text-sm leading-6 text-muted-foreground">
+                    {!hasActiveMembership
+                        ? 'Selecciona la sucursal y continúa con tu acceso JAKAWI. Este beneficio es para miembros.'
+                        : 'Actívalo solamente cuando estés listo para utilizarlo.'}
+                </p>
+                <div className="mt-6 grid grid-cols-2 gap-3">
+                    <button
+                        type="button"
+                        onClick={() => setConfirming(false)}
+                        className="min-h-12 rounded-xl border border-border text-sm font-bold"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (!locationId || processing) return;
+                            if (!auth.user) {
+                                router.get(
+                                    `/beneficios/${benefit.slug}/canjear`,
+                                    { location_id: locationId },
+                                );
+                            } else if (!hasActiveMembership) {
+                                router.visit(membershipUrl);
+                            } else {
+                                router.post(
+                                    `/beneficios/${benefit.slug}/canjear`,
+                                    { location_id: locationId },
+                                    {
+                                        onStart: () => setProcessing(true),
+                                        onFinish: () => setProcessing(false),
+                                    },
+                                );
+                            }
+                        }}
+                        disabled={!locationId || processing}
+                        className="funnel-primary-action min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
+                    >
+                        {processing
+                            ? 'ACTIVANDO…'
+                            : !auth.user
+                              ? 'CONTINUAR PARA CREAR CUENTA'
+                              : !hasActiveMembership
+                                ? 'CONTINUAR'
+                                : 'ACTIVAR BENEFICIO'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    ) : null;
+    if (continuationOnly) return confirmation;
 
     return (
         <>
@@ -178,7 +329,11 @@ export default function BenefitShow({
                             <BrandEnergy className="mt-1" />
                         )}
 
-                        {demo && <p className="mt-3 text-xs font-semibold">DEMO DE PRODUCTO · oferta simulada, no canjeable</p>}
+                        {demo && (
+                            <p className="mt-3 text-xs font-semibold">
+                                DEMO DE PRODUCTO · oferta simulada, no canjeable
+                            </p>
+                        )}
                         {benefit.partner?.name ? (
                             <p className="text-foreground-soft mt-5 text-sm font-bold">
                                 En {name(benefit.partner.name)}
@@ -189,7 +344,15 @@ export default function BenefitShow({
                                 {benefit.short_description}
                             </p>
                         ) : null}
-                        {auth.user && !hasActiveMembership && availability.available ? <StatusBanner title="SE REQUIERE MEMBRESÍA" description="Necesitas una membresía activa para usar este beneficio. Consulta la membresía para continuar." className="mt-7" /> : null}
+                        {auth.user &&
+                        !hasActiveMembership &&
+                        availability.available ? (
+                            <StatusBanner
+                                title="SE REQUIERE MEMBRESÍA"
+                                description="Necesitas una membresía activa para usar este beneficio. Consulta la membresía para continuar."
+                                className="mt-7"
+                            />
+                        ) : null}
 
                         <section className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface-elevated">
                             <div className="bg-brand px-5 py-4 text-brand-foreground">
@@ -321,97 +484,7 @@ export default function BenefitShow({
                 </div>
             ) : null}
 
-            {confirming ? (
-                <div
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="activation-title"
-                    className="fixed inset-0 z-50 flex items-end bg-overlay sm:items-center sm:justify-center"
-                >
-                    <div className="w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]">
-                        <p className="discovery-eyebrow text-brand">CONTINÚA TU BENEFICIO</p>
-                        <h2
-                            id="activation-title"
-                            className="mt-2 text-2xl font-extrabold"
-                        >
-                            {locations.length > 1 ? 'Elige dónde usarás tu beneficio' : 'Sigue con tu beneficio'}
-                        </h2>
-                        <p className="mt-5 text-sm text-muted-foreground">
-                            Sigues con:
-                        </p>
-                        <p className="mt-1 font-bold">{title}</p>
-                        <p className="text-sm text-muted-foreground">
-                            {benefit.partner?.name ? name(benefit.partner.name) : ''}{selectedLocation ? ` — ${name(selectedLocation.name)}` : ''}
-                        </p>
-                        {demo && <p className="mt-2 text-xs font-semibold">DEMO DE PRODUCTO · oferta simulada, no canjeable</p>}
-                        {auth.user && <p className="mt-3 inline-flex rounded-lg bg-success-surface px-2 py-1 text-xs font-semibold text-success-foreground">✓ Cuenta lista</p>}
-                        {locations.length > 1 ? (
-                            <label className="mt-5 block text-sm font-semibold">
-                                Sucursal
-                                <select
-                                    value={locationId ?? ''}
-                                    onChange={(event) =>
-                                        setLocationId(
-                                            event.target.value ? Number(event.target.value) : null,
-                                        )
-                                    }
-                                    className="mt-2 min-h-11 w-full rounded-xl border border-border bg-background px-3"
-                                >
-                                    <option value="" disabled>Selecciona una sucursal</option>
-                                    {locations.map((location) => (
-                                        <option
-                                            key={location.id}
-                                            value={location.id}
-                                        >
-                                            {name(location.name)}
-                                            {location.zone
-                                                ? ` · ${location.zone}`
-                                                : ''}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                        ) : null}
-                        {errors.redemption || errors.location_id ? (
-                            <p role="alert" className="mt-4 text-sm text-destructive">
-                                {errors.redemption ?? errors.location_id}
-                            </p>
-                        ) : null}
-                        <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                            {!hasActiveMembership ? 'Selecciona la sucursal y continúa con tu acceso JAKAWI. Este beneficio es para miembros.' : 'Actívalo solamente cuando estés listo para utilizarlo.'}
-                        </p>
-                        <div className="mt-6 grid grid-cols-2 gap-3">
-                            <button
-                                type="button"
-                                onClick={() => setConfirming(false)}
-                                className="min-h-12 rounded-xl border border-border text-sm font-bold"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    if (!locationId || processing) return;
-                                    if (!auth.user) {
-                                        router.get(`/beneficios/${benefit.slug}/canjear`, { location_id: locationId });
-                                    } else if (!hasActiveMembership) {
-                                        router.visit(membershipUrl);
-                                    } else {
-                                        router.post(`/beneficios/${benefit.slug}/canjear`, { location_id: locationId }, {
-                                            onStart: () => setProcessing(true),
-                                            onFinish: () => setProcessing(false),
-                                        });
-                                    }
-                                }}
-                                disabled={!locationId || processing}
-                                className="funnel-primary-action min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
-                            >
-                                {processing ? 'ACTIVANDO…' : !auth.user ? 'CONTINUAR PARA CREAR CUENTA' : !hasActiveMembership ? 'CONTINUAR' : 'ACTIVAR BENEFICIO'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            ) : null}
+            {confirmation}
         </>
     );
 }

@@ -32,19 +32,21 @@ class CreateNewUser implements CreatesNewUsers
         $whatsapp = isset($input['whatsapp']) && is_string($input['whatsapp'])
             ? app(PhoneNormalizer::class)->whatsapp($input['whatsapp']) : null;
 
+        $contextual = isset(app(\App\Services\PublicJourneyContinuation::class)->get()['landing_presentation_id']);
         Validator::make([...$input, 'whatsapp' => $whatsapp], [
             ...$this->profileRules(),
             'whatsapp' => ['required', 'string', 'max:16'],
+            ...($contextual ? ['password' => ['required', 'string', \Illuminate\Validation\Rules\Password::default()]] : []),
             'referral_code' => ['nullable', 'string', 'max:64'],
             'marketing_opt_in' => ['sometimes', 'boolean'],
         ], ['whatsapp.required' => 'Ingresa un número de WhatsApp válido.'])->validate();
         /** @var Request $request */
         $request = app(Request::class);
-        $user = DB::transaction(function () use ($input, $request, $whatsapp): User {
+        $user = DB::transaction(function () use ($input, $request, $whatsapp, $contextual): User {
             $user = User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
-                'password' => Str::password(64),
+                'password' => $contextual ? $input['password'] : Str::password(64),
                 'marketing_opt_in' => filter_var($input['marketing_opt_in'] ?? false, FILTER_VALIDATE_BOOLEAN),
                 'marketing_opt_in_at' => now(),
                 'marketing_opt_in_source' => 'register',

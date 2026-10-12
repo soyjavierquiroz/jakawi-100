@@ -1,3 +1,4 @@
+import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
 import type {
@@ -5,7 +6,7 @@ import type {
     LandingOfferEditorial,
 } from '@/components/marketing/offer/presentation';
 import { type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useRef } from 'react';
 import { StatusBanner } from '@/components/state-panel';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
@@ -66,13 +67,14 @@ export default function BenefitOfferAdapter({
     noindex,
     preview,
 }: BenefitOfferProps) {
+    const acquire = useAcquisition();
     const sent = useRef(false);
     const disabled = preview || copy.action.kind === 'unavailable';
     const action = {
         ...copy.action,
         label:
             copy.action.kind === 'guest'
-                ? 'CONTINUAR CON MI CUENTA'
+                ? 'QUIERO MI BENEFICIO'
                 : copy.action.kind === 'native' &&
                     copy.action.label === 'USAR BENEFICIO'
                   ? 'VER CÓMO CANJEAR'
@@ -84,10 +86,9 @@ export default function BenefitOfferAdapter({
                 event.preventDefault();
                 return;
             }
-            // TODO: Resolve guest redemption continuity (auth/verification + location_id) at domain flow level before real commercial launch.
             if (copy.action.kind === 'guest') {
                 event.preventDefault();
-                router.post(copy.action.href);
+                acquire();
                 return;
             }
             if (copy.action.kind === 'membership' && !sent.current) {
@@ -129,7 +130,7 @@ export default function BenefitOfferAdapter({
         actionExplanation: {
             description:
                 (copy.action.kind === 'guest'
-                    ? 'Continúa con tu cuenta JAKAWI. El canje requiere membresía activa.'
+                    ? 'Crea tu cuenta en menos de un minuto y continúa aquí mismo. El canje requiere membresía activa.'
                     : copy.action.kind === 'membership'
                       ? 'Activa tu membresía para continuar.'
                       : 'Continúa en la ficha para revisar cómo usarlo.') +

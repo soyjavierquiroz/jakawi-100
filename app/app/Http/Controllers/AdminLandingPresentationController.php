@@ -77,6 +77,8 @@ class AdminLandingPresentationController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'alpha_dash', 'max:255', Rule::unique('landing_presentations', 'slug')->ignore($presentation?->id)],
             'campaign_key' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
+            'acquisition_headline' => ['nullable', 'string', 'max:180', $plain],
+            'acquisition_supporting_copy' => ['nullable', 'string', 'max:1000', $plain],
             'eyebrow' => ['nullable', 'string', 'max:100', $plain],
             'headline' => ['nullable', 'string', 'max:180', $plain, $editorial],
             'headline_emphasis' => ['nullable', 'string', 'max:180', $plain],

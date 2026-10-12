@@ -215,7 +215,7 @@ class LandingPresentationTest extends TestCase
             foreach (['NONE','GUESTS','ALL'] as $scope) {
                 $defaults->choose($subject,$scope==='NONE'?null:$landing,$scope);
                 foreach ([false,true] as $authenticated) {
-                    $expected=$scope==='ALL'||($scope==='GUESTS'&&!$authenticated)?route('landing-presentations.show',$landing):$resolver->nativeUrl($subject);
+                    $expected=!$authenticated&&in_array($scope,['GUESTS','ALL'],true)?route('landing-presentations.show',$landing):$resolver->nativeUrl($subject);
                     $this->assertSame($expected,$resolver->navigationUrl($subject,$authenticated));
                 }
             }
@@ -236,7 +236,8 @@ class LandingPresentationTest extends TestCase
                 $this->get($url)->assertOk()->assertInertia(fn (Assert $page)=>$page->has('opportunities',1)->where('opportunities.0.destination_url',$expected));
             }
             $this->get('/l/audience')->assertOk()->assertInertia(fn (Assert $page)=>$page->component('landing-presentations/challenge')->where('noindex',true)->where('canonical',route('social-challenges.show',$challenge))->where('presentation.default_scope','GUESTS'));
-            $this->get('/retos/'.$challenge->slug)->assertOk()->assertInertia(fn (Assert $page)=>$page->component('social-challenges/show'));
+            if (!$authenticated) $this->get('/retos/'.$challenge->slug)->assertRedirect(route('landing-presentations.show',$landing));
+            else $this->get('/retos/'.$challenge->slug)->assertOk()->assertInertia(fn (Assert $page)=>$page->component('social-challenges/show'));
         }
         foreach (['NONE','ALL'] as $scope) {
             app(LandingPresentationDefaults::class)->choose($challenge,$scope==='NONE'?null:$landing,$scope);
@@ -244,7 +245,8 @@ class LandingPresentationTest extends TestCase
                 if ($authenticated) $this->actingAs(User::factory()->create());
                 else auth()->forgetGuards();
                 $this->get('/l/audience')->assertOk()->assertInertia(fn (Assert $page)=>$page->component('landing-presentations/challenge')->where('noindex',$scope!=='ALL')->where('canonical',$scope==='ALL'?route('landing-presentations.show',$landing):route('social-challenges.show',$challenge)));
-                $this->get('/retos/'.$challenge->slug)->assertOk()->assertInertia(fn (Assert $page)=>$page->component('social-challenges/show'));
+                if (!$authenticated && $scope === 'ALL') $this->get('/retos/'.$challenge->slug)->assertRedirect(route('landing-presentations.show',$landing));
+                else $this->get('/retos/'.$challenge->slug)->assertOk()->assertInertia(fn (Assert $page)=>$page->component('social-challenges/show'));
             }
         }
         $this->assertDatabaseHas('attribution_touches',['campaign_key'=>'guest-campaign']);
@@ -302,7 +304,7 @@ class LandingPresentationTest extends TestCase
         $this->assertFalse(\Illuminate\Support\Facades\Schema::hasColumn('landing_presentations','is_default'));
     }
 
-    public function test_native_routes_for_other_products_ignore_all_default(): void
+    public function test_native_routes_resolve_guest_all_default_and_keep_authenticated_product_detail(): void
     {
         $subjects=[Benefit::factory()->published()->create(),Experience::factory()->published()->create(),
             Unlock::create(['title'=>'Native unlock','slug'=>'native-unlock','origin'=>'JAKAWI','type'=>'BENEFIT','minimum_commitments'=>2,'status'=>Unlock::ACTIVE])];
@@ -312,7 +314,8 @@ class LandingPresentationTest extends TestCase
                 if ($authenticated) $this->actingAs(User::factory()->create());
                 else auth()->forgetGuards();
                 $component=match (true) { $subject instanceof Benefit=>'benefits/show', $subject instanceof Experience=>'experiences/show', default=>'unlocks/show' };
-                $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertOk()->assertInertia(fn (Assert $page)=>$page->component($component));
+                if (!$authenticated) $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertRedirect(route('landing-presentations.show',$landing));
+                else $this->get(app(ProductLandingResolver::class)->nativeUrl($subject))->assertOk()->assertInertia(fn (Assert $page)=>$page->component($component));
             }
         }
     }

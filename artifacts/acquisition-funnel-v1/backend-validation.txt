@@ -1,0 +1,40 @@
+   PASS  Tests\Feature\LandingAcquisitionTest
+  ✓ guest native routes resolve published guest or all default and pres… 2.87s
+  ✓ guest native routes without published default render product detail  0.24s
+  ✓ authenticated native routes stay product detail and direct landing…  0.25s
+  ✓ register preserves landing subject action and resumes benefit locat… 0.19s
+  ✓ login preserves each landing context without reserving joining or c… 1.12s
+  ✓ challenge registration returns to the same landing without joining…  0.16s
+  ✓ contextual registration requires a user password and invalid login…  0.33s
+  ✓ acquisition copy fallback and saved copy are projected without unlo… 0.28s
+  ✓ stale foreign and nonpublic landing context cannot resume            0.09s
+
+   PASS  Tests\Feature\BenefitRedemptionContinuityTest
+  ✓ benefit context is visible on register and login without changing i… 0.38s
+  ✓ generic auth has no benefit context and auth choice is not a return… 0.11s
+  ✓ guest login restores benefit intent and location without redeeming   0.34s
+  ✓ guest without location resumes selection not a redemption            0.35s
+  ✓ signup without a location returns to benefit without verification b… 0.17s
+  ✓ multi location requires selection and rejects foreign or unusable l… 0.20s
+  ✓ single location resolves deterministically                           0.13s
+  ✓ zero locations disables action and cannot redeem                     0.10s
+  ✓ stale auth context is not authorization                              0.36s
+  ✓ non member context survives membership gate and unverified member c… 0.18s
+  ✓ inactive and future benefits cannot redeem                           0.15s
+  ✓ challenge grant verification is not removed                          0.11s
+  ✓ context rejects foreign locations and arbitrary return urls          0.10s
+
+   PASS  Tests\Feature\MarketingLandingAdminV1Test
+  ✓ admin saves only two acquisition copy values and preview projects t… 0.14s
+
+   PASS  Tests\Feature\BenefitMarketingLandingTest
+  ✓ audience navigation one item direct native and seo                   0.49s
+
+   PASS  Tests\Feature\ExperienceMarketingLandingTest
+  ✓ defaults discovery unique native marketing and seo                   0.51s
+
+   PASS  Tests\Feature\UnlockMarketingLandingTest
+  ✓ defaults discovery unique direct routes and seo                      0.50s
+
+  Tests:    26 passed (1090 assertions)
+  Duration: 10.33s

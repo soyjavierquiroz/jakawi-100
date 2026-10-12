@@ -1,0 +1,7 @@
+   PASS  Tests\Feature\LandingPresentationTest
+  ✓ audience matrix for every product type                               2.51s
+  ✓ guests navigation direct urls and seo do not leak between viewers    0.56s
+  ✓ native routes resolve guest all default and keep authenticated prod… 0.17s
+
+  Tests:    3 passed (290 assertions)
+  Duration: 3.42s

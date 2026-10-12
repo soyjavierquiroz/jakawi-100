@@ -1,0 +1,31 @@
+{
+  "scope": "Live current frontend and real Docker PHP auth/session, dedicated test DB; copies of only three existing representatives; no production writes.",
+  "cases": [
+    {
+      "domain": "Benefit",
+      "width": 390,
+      "accent": "rgb(255, 200, 61)",
+      "result": "PASS"
+    },
+    {
+      "domain": "Benefit",
+      "width": 1440,
+      "accent": "rgb(255, 200, 61)",
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    }
+  ],
+  "result": "PASS"
+}

@@ -60,7 +60,7 @@ class LandingPresentationEditor
 
         return [
             'id' => $subject->id, 'type' => $type, 'title' => $subject->title, 'slug' => $subject->slug,
-            'defaults' => ['eyebrow' => $copy['eyebrow'] ?? '', 'headline' => $subject->title, 'subheadline' => $subject->short_description ?? '', 'hero_path' => $type === 'UNLOCK' ? '' : ($subject->hero_path ?? $subject->cover_path ?? $subject->image_path ?? ''), 'hero_alt' => $subject->title, 'marketing_theme' => $type === 'CHALLENGE' ? 'DARK_CONVERSION' : 'LIGHT_CONVERSION'],
+            'defaults' => [...app(LandingAcquisition::class)->defaults($type, $subject->title), 'eyebrow' => $copy['eyebrow'] ?? '', 'headline' => $subject->title, 'subheadline' => $subject->short_description ?? '', 'hero_path' => $type === 'UNLOCK' ? '' : ($subject->hero_path ?? $subject->cover_path ?? $subject->image_path ?? ''), 'hero_alt' => $subject->title, 'marketing_theme' => $type === 'CHALLENGE' ? 'DARK_CONVERSION' : 'LIGHT_CONVERSION'],
             'truth' => $truth,
         ];
     }

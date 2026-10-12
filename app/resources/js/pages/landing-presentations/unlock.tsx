@@ -1,6 +1,7 @@
+import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { LandingVideo, type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useRef, type MouseEvent } from 'react';
 import { JakawiImage } from '@/components/jakawi-image';
 import { MarketingBenefits, MarketingCTA, MarketingFAQ, MarketingHero } from '@/components/marketing/primitives';
@@ -27,12 +28,13 @@ type Props = {
 };
 
 export default function UnlockLanding({ vsl, nativeUrl, canonical, noindex, preview, copy }: Props) {
+    const acquire = useAcquisition();
     const intentSent = useRef(false);
     const disabled = preview || copy.action.kind === 'unavailable';
-    const action = { ...copy.action, disabled, onClick: (event: MouseEvent<HTMLAnchorElement>) => {
+    const action = { ...copy.action, label: copy.action.kind === 'guest' ? 'QUIERO DESBLOQUEARLO' : copy.action.label, disabled, onClick: (event: MouseEvent<HTMLAnchorElement>) => {
         if (disabled) { event.preventDefault(); return; }
         // Guest POST uses the existing signup continuation; authenticated commitments stay in Product Detail.
-        if (copy.action.kind === 'guest') { event.preventDefault(); router.post(copy.action.href); return; }
+        if (copy.action.kind === 'guest') { event.preventDefault(); acquire(); return; }
         if (copy.action.kind === 'membership' && !intentSent.current) {
             intentSent.current = true;
             trackJourneyIntent('unlock', copy.slug);

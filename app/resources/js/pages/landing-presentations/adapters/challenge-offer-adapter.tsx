@@ -1,3 +1,4 @@
+import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
 import type {
@@ -74,6 +75,7 @@ export default function ChallengeOfferAdapter({
     const { auth } = usePage().props as {
         auth: { user?: { id: number } | null };
     };
+    const acquire = useAcquisition();
     const participating = Boolean(challengeProps.participation);
     const grant = challengeProps.grant;
     const qualified =
@@ -103,7 +105,7 @@ export default function ChallengeOfferAdapter({
                         href: '#participar',
                         label: auth.user
                             ? 'PARTICIPAR EN EL RETO'
-                            : 'CREAR CUENTA Y PARTICIPAR',
+                            : 'QUIERO PARTICIPAR',
                     };
     const heroCTA = useRef<HTMLDivElement>(null);
     const finalCTA = useRef<HTMLElement>(null);
@@ -136,7 +138,14 @@ export default function ChallengeOfferAdapter({
     const primaryAction = {
         disabled: challengeProps.preview,
         onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
-            if (challengeProps.preview) event.preventDefault();
+            if (challengeProps.preview) {
+                event.preventDefault();
+                return;
+            }
+            if (!auth.user && !closed) {
+                event.preventDefault();
+                acquire();
+            }
         },
         ...action,
         kind: membershipRequired
@@ -396,6 +405,7 @@ export default function ChallengeOfferAdapter({
                                 <Show
                                     {...challengeProps}
                                     embedded
+                                    onAcquire={() => acquire()}
                                     landingSlug={presentation.slug}
                                 />
                             </section>

@@ -38,6 +38,8 @@ const empty = {
     reward_display_override: '',
     final_cta_headline: '',
     final_cta_description: '',
+    acquisition_headline: '',
+    acquisition_supporting_copy: '',
     hero_layout: 'OFFER_FIRST',
     density: 'STANDARD',
     template_key: 'OFFER_CONVERSION',
@@ -601,6 +603,10 @@ export default function Index({
                                     </div>
                                 </>
                             )}
+                            {section('COPY DE CAPTACIÓN')}
+                            {field('acquisition_headline', 'Headline al crear cuenta')}
+                            {field('acquisition_supporting_copy', 'Texto de apoyo', true)}
+                            <p className="text-sm text-muted-foreground">{form.acquisition_headline || formSubject?.defaults.acquisition_headline}<br />{form.acquisition_supporting_copy || formSubject?.defaults.acquisition_supporting_copy}</p>
                             {section('Mensaje')}
                             {field('eyebrow', 'Eyebrow')}
                             {field('headline', 'Headline')}

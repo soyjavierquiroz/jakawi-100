@@ -44,14 +44,14 @@ class PublicJourneyContinuation
         $this->session->put(self::KEY, $context ? $intent + ['context' => $context] : $intent);
     }
 
-    /** @return array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id?: int, location_id?: int}}|null */
+    /** @return array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, context?: array{experience_session_id?: int, location_id?: int}}|null */
     public function get(): ?array
     {
         $intent = $this->session->get(self::KEY);
         if (! is_array($intent) || ! isset($intent['journey'], $intent['resource_id'], $intent['action'])
             || ! is_string($intent['journey']) || ! (is_int($intent['resource_id']) || is_string($intent['resource_id'])) || ! is_string($intent['action'])
             || ! $this->allowed($intent['journey'], $intent['resource_id'], $intent['action'])
-            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context'])
+            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context', 'landing_presentation_id'])
             || ! $this->allowedContext($intent['journey'], $intent['action'], $intent['context'] ?? [])) {
             return null;
         }
@@ -59,7 +59,7 @@ class PublicJourneyContinuation
         return $intent;
     }
 
-    /** @return array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id?: int, location_id?: int}}|null */
+    /** @return array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, context?: array{experience_session_id?: int, location_id?: int}}|null */
     public function consume(): ?array
     {
         $intent = $this->get();
@@ -68,13 +68,28 @@ class PublicJourneyContinuation
         return $intent;
     }
 
-    /** @param array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id?: int, location_id?: int}} $intent */
+    /** @param array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, context?: array{experience_session_id?: int, location_id?: int}} $intent */
     public function destination(array $intent): ?string
     {
         if (! $this->allowed($intent['journey'], $intent['resource_id'], $intent['action'])
-            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context'])
+            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context', 'landing_presentation_id'])
             || ! $this->allowedContext($intent['journey'], $intent['action'], $intent['context'] ?? [])) {
             return null;
+        }
+
+        if (isset($intent['landing_presentation_id'])) {
+            $presentation = is_int($intent['landing_presentation_id']) ? \App\Models\LandingPresentation::find($intent['landing_presentation_id']) : null;
+            $expectedType = match ($intent['journey']) {
+                'BENEFIT' => Benefit::class, 'EXPERIENCE' => Experience::class,
+                'SOCIAL_CHALLENGE' => Challenge::class, 'UNLOCK' => Unlock::class, default => null,
+            };
+            if (! $presentation || $presentation->status !== 'PUBLISHED' || ! $expectedType
+                || ! ($presentation->subject instanceof $expectedType) || $presentation->subject_id !== $intent['resource_id']) {
+                return null;
+            }
+            $this->session->flash('landing_acquisition_resumed', $presentation->id);
+
+            return route('landing-presentations.show', $presentation, false);
         }
 
         return match ($intent['journey']) {
@@ -87,6 +102,17 @@ class PublicJourneyContinuation
             }], false).'#solicitud',
             'SOCIAL_CHALLENGE' => ($challenge = Challenge::find($intent['resource_id'])) && $challenge->isPublic() ? route('social-challenges.show', $challenge->slug, false) : null,
         };
+    }
+
+    public function setLanding(\App\Models\LandingPresentation $presentation): void
+    {
+        $subject = $presentation->subject;
+        [$journey, $action] = match (app(LandingPresentationEditor::class)->type($subject)) {
+            'BENEFIT' => ['BENEFIT', 'REDEEM'], 'EXPERIENCE' => ['EXPERIENCE', 'RESERVE'],
+            'CHALLENGE' => ['SOCIAL_CHALLENGE', 'PARTICIPATE'], default => ['UNLOCK', 'COMMIT'],
+        };
+        $this->set($journey, $subject->id, $action);
+        $this->session->put(self::KEY.'.landing_presentation_id', $presentation->id);
     }
 
     public function restoredExperienceSessionId(Experience $experience): ?int

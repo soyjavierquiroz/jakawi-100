@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "backend": {
+    "tests": 29,
+    "assertions": 1380,
+    "main_targeted_tests": 26,
+    "existing_routing_regression_tests": 3
+  },
+  "typescript": "PASS (tsc --noEmit)",
+  "browser": "PASS (real PHP auth/session; current Vite frontend; isolated copies of three existing representatives)",
+  "frontend_final_build": "PASS (one npm run build; Wayfinder PHP executes inside Docker PHP 8.4 via PATH shim)",
+  "manifest": "PASS (101 Inertia pages; all assets and dependencies exist)",
+  "docs": "PASS (334 relative targets; zero broken)",
+  "git_diff_check": "PASS",
+  "production_deploy": false,
+  "production_database_writes": false,
+  "production_landings_published": false
+}

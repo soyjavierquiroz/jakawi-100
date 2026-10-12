@@ -1,8 +1,8 @@
 # JAKAWI — estado actual de producción
 
-**STATUS: CURRENT / AUTHORITATIVE.** Referencia operativa: 2026-10-09.
-Código productivo de referencia: `e9d420870fa6d44802ceb52e4f253f84333b0071`.
-Los estados de runtime/automations se documentan conforme al contexto de producción entregado para esta consolidación; no se ejecutaron deploys ni pruebas nuevas.
+**STATUS: CURRENT / AUTHORITATIVE.** Referencia operativa: 2026-10-12.
+Código productivo de referencia entregado para esta tarea: `8d913038984ae5eb6d40f3ba7477beae5d928ece`.
+Los estados de runtime/automations conservan el contexto operativo documentado. No se ejecutaron deploys; Acquisition Funnel V1 se validó únicamente en infraestructura aislada y permanece pendiente de publicación.
 
 ## Runtime y producción
 
@@ -119,3 +119,9 @@ Una sola plantilla persistida `OFFER_CONVERSION`, adapters Benefit/Experience/Ch
 Dominio conserva economía, reglas, elegibilidad y acciones. No hay CTA arbitraria, HTML/CSS/HEX, drag/drop ni orden libre. Unlock conserva su renderer/Admin y restricciones existentes; no tiene adapter Offer Conversion V1. Audiencia, `/l/{slug}`, rutas nativas, SEO y campaign_key guardado mantienen su semántica. Preview es Admin/noindex y no muta negocio ni atribución. **Benefit guest/location continuity: RESOLVED** en producción (`60feb98`). El flujo guest → auth → ubicación → membresía si corresponde → confirmación → canje conserva Benefit e intención (`8d91303`). El registro no exige sucursal y el Benefit normal no bloquea por correo no verificado; la verificación de premios Challenge se conserva. Este bloqueo específico está cerrado. Inventario comercial confirmado y demás requisitos de onboarding siguen pendientes.
 
 Alcance: validación aislada y commit local; sin push, migración productiva ni deploy. Ver [arquitectura](ARCHITECTURE.md#marketing-landing-admin-v1), [diseño](DESIGN-SYSTEM.md#marketing-landing-admin-v1) y [manual](product/MANUAL_DE_FUNCIONES.md#marketing-landing-admin-v1).
+
+## Acquisition Funnel V1 — implementación pendiente de deploy (2026-10-12)
+
+Esta entrega parte de repo `9c49421d0ba8792144bff852a72f8daa82064f48`; producción indicada para el trabajo: `8d913038984ae5eb6d40f3ba7477beae5d928ece`, con cero Marketing Landings publicadas. No se despliega el commit previo por separado ni se publican registros productivos.
+
+Se incorpora resolución guest de entradas nativas hacia default publicado, modal contextual de registro/login y retorno a la misma Landing/acción. [Contrato de arquitectura](ARCHITECTURE.md#acquisition-funnel-v1). La nueva migración añade sólo los dos textos de captación. Este bloque describe código preparado para un único deploy posterior, no funcionalidad ya publicada.

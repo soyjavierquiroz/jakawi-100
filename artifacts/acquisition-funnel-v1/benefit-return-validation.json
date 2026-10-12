@@ -1,0 +1,32 @@
+{
+  "scope": "Live current frontend and real Docker PHP auth/session, dedicated test DB; copies of only three existing representatives; no production writes.",
+  "cases": [
+    {
+      "domain": "Benefit",
+      "width": 390,
+      "sameLanding": true,
+      "authModalClosed": true,
+      "existingLocationDialogOnly": true,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/register",
+      "status": 302
+    }
+  ],
+  "result": "PASS"
+}

@@ -41,6 +41,21 @@ class MarketingLandingAdminV1Test extends TestCase
         return array_replace(['name' => 'Oferta editorial', 'slug' => 'oferta-editorial', 'template_key' => 'OFFER_CONVERSION', 'marketing_theme' => 'LIGHT_CONVERSION', 'media_mode' => 'NONE', 'headline' => 'TU CAFÉ DE CORTESÍA.', 'headline_emphasis' => 'CAFÉ DE CORTESÍA.', 'eyebrow' => 'BENEFICIO JAKAWI', 'subheadline' => 'Disfruta tu próximo plan.', 'final_cta_headline' => 'PREPARA TU VISITA.', 'final_cta_description' => 'Continúa con JAKAWI.', 'campaign_key' => 'cafe-piloto', 'default_scope' => 'GUESTS'], $overrides);
     }
 
+    public function test_admin_saves_only_two_acquisition_copy_values_and_preview_projects_them(): void
+    {
+        $subject = $this->subject();
+        $this->admin();
+        $this->post($this->base($subject), $this->fields([
+            'acquisition_headline' => 'Tu café está a un paso',
+            'acquisition_supporting_copy' => 'Dinos quién eres y seguimos exactamente aquí.',
+        ]))->assertRedirect($this->base($subject));
+        $landing = LandingPresentation::where('slug', 'oferta-editorial')->sole();
+        $this->get($this->base($subject).'/'.$landing->slug.'/preview')->assertInertia(fn (Assert $page) => $page
+            ->where('acquisition.headline', 'Tu café está a un paso')
+            ->where('acquisition.supportingCopy', 'Dinos quién eres y seguimos exactamente aquí.'));
+        $this->put($this->base($subject).'/'.$landing->slug, $this->fields(['acquisition_headline' => '<script>unsafe</script>']))->assertSessionHasErrors('acquisition_headline');
+    }
+
     public function test_saved_editorial_is_rendered_verbatim_and_layout_controls_are_validated(): void
     {
         $subject = $this->subject();

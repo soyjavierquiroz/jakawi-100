@@ -1,0 +1,94 @@
+{
+  "scope": "Live current frontend and real Docker PHP auth/session, dedicated test DB; copies of only three existing representatives; no production writes.",
+  "cases": [
+    {
+      "domain": "Benefit",
+      "width": 390,
+      "register": true,
+      "loginAlternative": true,
+      "sameLanding": true,
+      "locations": 3,
+      "noAutomaticRedemption": true,
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "background": "color(srgb 0.8 0.282353 0.247843)"
+      },
+      "result": "PASS"
+    },
+    {
+      "domain": "Experience",
+      "width": 390,
+      "login": true,
+      "sameLanding": true,
+      "externalReservationSemanticsPreserved": true,
+      "result": "PASS"
+    },
+    {
+      "domain": "Challenge",
+      "width": 390,
+      "login": true,
+      "sameLanding": true,
+      "noAutomaticParticipation": true,
+      "result": "PASS"
+    },
+    {
+      "domain": "Benefit",
+      "width": 1440,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/register",
+      "status": 302
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-experience-desire/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-challenge-action/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    }
+  ],
+  "result": "PASS"
+}

@@ -156,10 +156,14 @@ class UnlockMarketingLandingTest extends TestCase
             app(LandingPresentationDefaults::class)->choose($unlock,$scope==='NONE'?null:$landing,$scope);
             foreach ([false,true] as $authenticated) {
                 if ($authenticated) $this->actingAs(User::factory()->create()); else auth()->forgetGuards();
-                $url = $scope==='ALL' || ($scope==='GUESTS' && !$authenticated) ? route('landing-presentations.show',$landing) : route('unlocks.show',$unlock);
+                $url = !$authenticated && in_array($scope,['GUESTS','ALL'],true) ? route('landing-presentations.show',$landing) : route('unlocks.show',$unlock);
                 $this->assertSame($url,app(ProductLandingResolver::class)->navigationUrl($unlock,$authenticated));
                 $this->get('/explorar?type=unlocks')->assertOk()->assertInertia(fn (Assert $p) => $p->has('opportunities',1)->where('opportunities.0.destination_url',$url));
-                $this->get(route('unlocks.show',$unlock))->assertOk()->assertInertia(fn (Assert $p) => $p->component('unlocks/show'));
+                if (!$authenticated && in_array($scope,['GUESTS','ALL'],true)) {
+                    $this->get(route('unlocks.show',$unlock))->assertRedirect(route('landing-presentations.show',$landing));
+                } else {
+                    $this->get(route('unlocks.show',$unlock))->assertOk()->assertInertia(fn (Assert $p) => $p->component('unlocks/show'));
+                }
                 $this->get('/l/unlock-plan')->assertOk()->assertInertia(fn (Assert $p) => $p->component('landing-presentations/unlock')->where('noindex',$scope!=='ALL')->where('canonical',$scope==='ALL'?route('landing-presentations.show',$landing):route('unlocks.show',$unlock)));
             }
         }

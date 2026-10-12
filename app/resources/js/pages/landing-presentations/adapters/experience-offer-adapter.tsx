@@ -1,3 +1,4 @@
+import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
 import { MarketingSteps } from '@/components/marketing/offer/blocks';
@@ -6,7 +7,7 @@ import type {
     LandingOfferEditorial,
 } from '@/components/marketing/offer/presentation';
 import { type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useRef } from 'react';
 import { StatusBanner } from '@/components/state-panel';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
@@ -84,26 +85,28 @@ export default function ExperienceOfferAdapter({
     const externalReservation = Boolean(
         copy.reservationMethod && copy.reservationMethod !== 'jakawi',
     );
+    const acquire = useAcquisition();
+    const guest = !(usePage().props.auth as { user?: unknown })?.user;
     const sent = useRef(false);
     const disabled = preview || copy.action.kind === 'unavailable';
     const action = {
         ...copy.action,
         label:
-            copy.action.kind === 'native' &&
-            ['QUIERO IR', 'RESERVAR'].includes(copy.action.label)
-                ? 'VER FECHAS Y RESERVAR'
-                : copy.action.label,
+            guest && copy.action.kind !== 'unavailable'
+                ? 'QUIERO VIVIR ESTA EXPERIENCIA'
+                : copy.action.kind === 'native' &&
+                    ['QUIERO IR', 'RESERVAR'].includes(copy.action.label)
+                  ? 'VER FECHAS Y RESERVAR'
+                  : copy.action.label,
         disabled,
         onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
             if (disabled) {
                 event.preventDefault();
                 return;
             }
-            if (copy.action.kind === 'guest') {
+            if (guest) {
                 event.preventDefault();
-                router.post(copy.action.href, {
-                    experience_session_id: copy.action.sessionId,
-                });
+                acquire();
                 return;
             }
             if (copy.action.kind === 'membership' && !sent.current) {
