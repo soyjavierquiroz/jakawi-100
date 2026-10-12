@@ -17,12 +17,35 @@ use Inertia\Response;
 
 class RedemptionController extends Controller
 {
+    public function intent(Request $request, Benefit $benefit, PublicController $public): Response
+    {
+        $props = $public->benefitPublicProps($benefit, $request);
+        $locations = $props['locations'];
+        $selected = $locations->firstWhere('id', $request->integer('location_id'));
+        $locationId = $selected['id'] ?? ($locations->count() === 1 ? $locations->first()['id'] : null);
+
+        return Inertia::render('benefits/show', $props + [
+            'redemptionIntent' => $props['availability']['available'],
+            'selectedLocationId' => $locationId,
+        ]);
+    }
+
     public function start(Request $r, Benefit $benefit, RedemptionService $service, AnalyticsTracker $analytics)
     {
+        if (! $r->filled('location_id')) {
+            $locations = $benefit->availableLocations()->get()->filter->hasRedemptionPin();
+            if ($locations->count() === 1) {
+                $r->merge(['location_id' => $locations->first()->id]);
+            }
+        }
         $data = $r->validate(['location_id' => ['required', 'integer', 'exists:locations,id'], 'social_challenge_reward_grant_id'=>['nullable','integer']]);
+        $location = Location::findOrFail($data['location_id']);
+        if (! $benefit->isAvailableAt($location) || ! $location->hasRedemptionPin()) {
+            return back()->withErrors(['redemption' => 'Este beneficio no está disponible en esa sucursal.']);
+        }
         $analytics->journeyIntentStarted($benefit);
         if ($benefit->access_mode !== 'social_challenge_grant' && ! $r->user()->hasActiveMembership()) {
-            return redirect('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id]));
+            return redirect('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id, 'location_id' => $location->id]));
         }
         try {
             $redemption = $service->start($r->user(), $benefit, Location::findOrFail($data['location_id']), isset($data['social_challenge_reward_grant_id']) ? \App\Models\ChallengeRewardGrant::find($data['social_challenge_reward_grant_id']) : null);

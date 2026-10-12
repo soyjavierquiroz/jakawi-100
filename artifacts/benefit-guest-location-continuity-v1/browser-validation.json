@@ -1,0 +1,273 @@
+{
+  "scope": "Actual curated demo domain props captured read-only; guest/member auth projections in local Vite render; all submissions intercepted. Backend HTTP tests separately validate auth and domain success.",
+  "cases": [
+    {
+      "slug": "demo-beneficio-01",
+      "width": 390,
+      "mode": "guest",
+      "locations": 3,
+      "selected": 3,
+      "submission": {
+        "method": "GET",
+        "path": "/beneficios/demo-beneficio-01/canjear",
+        "query": "?location_id=3"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-01",
+      "width": 390,
+      "mode": "member",
+      "locations": 3,
+      "selected": 3,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-01/canjear",
+        "query": "",
+        "data": "{\"location_id\":3}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-01",
+      "width": 390,
+      "mode": "restored",
+      "locations": 3,
+      "selected": 3,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-01/canjear",
+        "query": "",
+        "data": "{\"location_id\":3}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-01",
+      "width": 1440,
+      "mode": "guest",
+      "locations": 3,
+      "selected": 3,
+      "submission": {
+        "method": "GET",
+        "path": "/beneficios/demo-beneficio-01/canjear",
+        "query": "?location_id=3"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-01",
+      "width": 1440,
+      "mode": "member",
+      "locations": 3,
+      "selected": 3,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-01/canjear",
+        "query": "",
+        "data": "{\"location_id\":3}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-01",
+      "width": 1440,
+      "mode": "restored",
+      "locations": 3,
+      "selected": 3,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-01/canjear",
+        "query": "",
+        "data": "{\"location_id\":3}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-04",
+      "width": 390,
+      "mode": "guest",
+      "locations": 2,
+      "selected": 5,
+      "submission": {
+        "method": "GET",
+        "path": "/beneficios/demo-beneficio-04/canjear",
+        "query": "?location_id=5"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-04",
+      "width": 390,
+      "mode": "member",
+      "locations": 2,
+      "selected": 5,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-04/canjear",
+        "query": "",
+        "data": "{\"location_id\":5}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-04",
+      "width": 390,
+      "mode": "restored",
+      "locations": 2,
+      "selected": 5,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-04/canjear",
+        "query": "",
+        "data": "{\"location_id\":5}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-04",
+      "width": 1440,
+      "mode": "guest",
+      "locations": 2,
+      "selected": 5,
+      "submission": {
+        "method": "GET",
+        "path": "/beneficios/demo-beneficio-04/canjear",
+        "query": "?location_id=5"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-04",
+      "width": 1440,
+      "mode": "member",
+      "locations": 2,
+      "selected": 5,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-04/canjear",
+        "query": "",
+        "data": "{\"location_id\":5}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "slug": "demo-beneficio-04",
+      "width": 1440,
+      "mode": "restored",
+      "locations": 2,
+      "selected": 5,
+      "submission": {
+        "method": "POST",
+        "path": "/beneficios/demo-beneficio-04/canjear",
+        "query": "",
+        "data": "{\"location_id\":5}"
+      },
+      "overflow": false,
+      "result": "PASS"
+    },
+    {
+      "kind": "single",
+      "width": 390,
+      "result": "PASS"
+    },
+    {
+      "kind": "zero",
+      "width": 390,
+      "result": "PASS"
+    },
+    {
+      "kind": "nonmember",
+      "width": 390,
+      "result": "PASS"
+    },
+    {
+      "kind": "unverified",
+      "width": 390,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": "?location_id=3"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": "",
+      "data": "{\"location_id\":3}"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": "",
+      "data": "{\"location_id\":3}"
+    },
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": "?location_id=3"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": "",
+      "data": "{\"location_id\":3}"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-01/canjear",
+      "query": "",
+      "data": "{\"location_id\":3}"
+    },
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": "?location_id=5"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": "",
+      "data": "{\"location_id\":5}"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": "",
+      "data": "{\"location_id\":5}"
+    },
+    {
+      "method": "GET",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": "?location_id=5"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": "",
+      "data": "{\"location_id\":5}"
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/demo-beneficio-04/canjear",
+      "query": "",
+      "data": "{\"location_id\":5}"
+    }
+  ],
+  "result": "PASS"
+}

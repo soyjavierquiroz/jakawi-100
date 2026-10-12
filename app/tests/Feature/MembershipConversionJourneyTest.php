@@ -89,7 +89,7 @@ class MembershipConversionJourneyTest extends TestCase
         $this->assertSame($admin->id, $sale->recorded_by_user_id);
         $this->assertNull($sale->collected_by_user_id);
         $this->actingAs($user)->get('/membresia')->assertInertia(fn (Assert $page) => $page->where('returnIntent.id', $item->id)->etc());
-        $this->post('/membresia/volver/'.$item->id)->assertRedirect(route('benefits.show', $benefit->slug, false));
+        $this->post('/membresia/volver/'.$item->id)->assertRedirect(route('redemptions.intent', $benefit->slug, false));
         $this->post('/membresia/volver/'.$item->id)->assertNotFound();
         $this->get('/membresia')->assertInertia(fn (Assert $page) => $page->where('returnIntent', null));
         $this->assertSame(1, AnalyticsEvent::where('event_name', 'membership_purchase_confirmed')->count());
@@ -134,12 +134,16 @@ class MembershipConversionJourneyTest extends TestCase
     {
         $user = User::factory()->create();
         $benefit = Benefit::factory()->published()->create();
-        $location = Location::factory()->create();
+        $benefit->partner->update(['status' => 'published']);
+        $benefit->update(['applies_to_all_locations' => true]);
+        $location = Location::factory()->published()->withPartner($benefit->partner)->create();
+        $location->setRedemptionPin('123456');
+        $location->save();
         $unlock = Unlock::create(['title' => 'Member unlock', 'slug' => 'member-unlock', 'origin' => 'JAKAWI',
             'type' => 'BENEFIT', 'minimum_commitments' => 5, 'free_user_eligible' => false, 'member_eligible' => true,
             'jp_deposit' => 0, 'status' => Unlock::ACTIVE]);
         $this->actingAs($user)->post(route('redemptions.start', $benefit), ['location_id' => $location->id])
-            ->assertRedirect('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id);
+            ->assertRedirect('/membresia?journey=BENEFIT&action=REDEEM&resource_id='.$benefit->id.'&location_id='.$location->id);
         $this->post(route('unlocks.commit', $unlock))
             ->assertRedirect('/membresia?journey=UNLOCK&action=COMMIT&resource_id='.$unlock->id);
         $this->get('/membresia?journey=UNLOCK&action=COMMIT&resource_id='.$unlock->id)->assertOk();

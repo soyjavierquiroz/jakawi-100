@@ -32,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'experiences.reservations.store' => Experience::where('slug', $route->parameter('experience'))->first(),
                 'unlocks.commit' => Unlock::where('slug', $route->parameter('unlock'))
                     ->whereIn('status', [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED])->first(),
-                'redemptions.start' => Benefit::where('slug', $route->parameter('benefit'))->first(),
+                'redemptions.start', 'redemptions.intent' => Benefit::where('slug', $route->parameter('benefit'))->first(),
                 default => null,
             };
 
@@ -45,7 +45,11 @@ return Application::configure(basePath: dirname(__DIR__))
             } elseif ($resource instanceof Unlock) {
                 app(PublicJourneyContinuation::class)->set('UNLOCK', $resource->id, 'COMMIT');
             } elseif ($resource instanceof Benefit) {
-                app(PublicJourneyContinuation::class)->set('BENEFIT', $resource->id, 'REDEEM');
+                $locationId = $request->input('location_id');
+                $context = is_scalar($locationId) && ctype_digit((string) $locationId)
+                    && $resource->availableLocations()->whereKey((int) $locationId)->get()->contains(fn ($location) => $location->hasRedemptionPin())
+                    ? ['location_id' => (int) $locationId] : [];
+                app(PublicJourneyContinuation::class)->set('BENEFIT', $resource->id, 'REDEEM', $context);
             }
 
             if ($resource) {

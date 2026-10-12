@@ -39,21 +39,29 @@ export default function BenefitShow({
     hasActiveMembership,
     locations = [],
     availability = { available: true, reason: null },
+    redemptionIntent = false,
+    selectedLocationId = null,
 }: {
     benefit: BenefitSummary;
     hasActiveMembership: boolean;
     locations?: Location[];
     availability?: Availability;
+    redemptionIntent?: boolean;
+    selectedLocationId?: number | null;
 }) {
-    const { auth } = usePage().props;
-    const [confirming, setConfirming] = useState(false);
+    const { auth, errors } = usePage().props;
+    const [confirming, setConfirming] = useState(redemptionIntent && availability.available);
     const intentSentFor = useRef<string | null>(null);
     const membershipIntent = () => {
         if (intentSentFor.current === benefit.slug) return;
         intentSentFor.current = benefit.slug;
         trackJourneyIntent('benefit', benefit.slug);
     };
-    const [locationId, setLocationId] = useState<number | null>(null);
+    const [locationId, setLocationId] = useState<number | null>(
+        locations.some((location) => location.id === selectedLocationId)
+            ? selectedLocationId
+            : locations.length === 1 ? locations[0].id : null,
+    );
     const selectedLocation = locations.find((location) => location.id === locationId);
     const hasMedia = Boolean(benefit.hero_url ?? benefit.image_url);
     const canUse =
@@ -61,15 +69,9 @@ export default function BenefitShow({
         !!auth.user &&
         hasActiveMembership &&
         locations.length > 0;
-    const action = !availability.available ? null : !auth.user ? (
-        <button type="button" onClick={() => router.post(`/beneficios/${benefit.slug}/canjear`)} className="benefit-primary-action">
-            CREAR CUENTA GRATIS
-        </button>
-    ) : !hasActiveMembership ? (
-        <Link href={`/membresia?journey=BENEFIT&action=REDEEM&resource_id=${benefit.id}`} onClick={membershipIntent} className="benefit-primary-action">
-            VER MEMBRESÍA
-        </Link>
-    ) : (
+    const [processing, setProcessing] = useState(false);
+    const membershipUrl = `/membresia?journey=BENEFIT&action=REDEEM&resource_id=${benefit.id}${locationId ? `&location_id=${locationId}` : ''}`;
+    const action = !availability.available ? null : (
         <button
             type="button"
             onClick={() => {
@@ -78,7 +80,7 @@ export default function BenefitShow({
             }}
             className="benefit-primary-action"
         >
-            USAR BENEFICIO
+            {!auth.user ? 'CREAR CUENTA GRATIS' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'USAR BENEFICIO'}
         </button>
     );
     const mobileAction = !availability.available
@@ -221,7 +223,7 @@ export default function BenefitShow({
                             <h2 className="text-xl font-extrabold">
                                 DÓNDE APROVECHARLO
                             </h2>
-                            {locations.length ? (
+                            {locations.length > 1 ? (
                                 <div className="mt-3 divide-y divide-border">
                                     {locations.map((location) => (
                                         <article
@@ -320,14 +322,14 @@ export default function BenefitShow({
                         <p className="text-sm text-muted-foreground">
                             {benefit.partner?.name}{selectedLocation ? ` — ${selectedLocation.name}` : ''}
                         </p>
-                        {locations.length ? (
+                        {locations.length > 1 ? (
                             <label className="mt-5 block text-sm font-semibold">
                                 Elige tu sucursal
                                 <select
                                     value={locationId ?? ''}
                                     onChange={(event) =>
                                         setLocationId(
-                                            Number(event.target.value),
+                                            event.target.value ? Number(event.target.value) : null,
                                         )
                                     }
                                     className="mt-2 min-h-11 w-full rounded-xl border border-border bg-background px-3"
@@ -347,6 +349,11 @@ export default function BenefitShow({
                                 </select>
                             </label>
                         ) : null}
+                        {errors.redemption || errors.location_id ? (
+                            <p role="alert" className="mt-4 text-sm text-destructive">
+                                {errors.redemption ?? errors.location_id}
+                            </p>
+                        ) : null}
                         <p className="mt-4 text-sm leading-6 text-muted-foreground">
                             Actívalo solamente cuando estés listo para
                             utilizarlo.
@@ -361,17 +368,23 @@ export default function BenefitShow({
                             </button>
                             <button
                                 type="button"
-                                onClick={() =>
-                                    locationId &&
-                                    router.post(
-                                        `/beneficios/${benefit.slug}/canjear`,
-                                        { location_id: locationId },
-                                    )
-                                }
-                                disabled={!locationId}
+                                onClick={() => {
+                                    if (!locationId || processing) return;
+                                    if (!auth.user || !auth.user.email_verified_at) {
+                                        router.get(`/beneficios/${benefit.slug}/canjear`, { location_id: locationId });
+                                    } else if (!hasActiveMembership) {
+                                        router.visit(membershipUrl);
+                                    } else {
+                                        router.post(`/beneficios/${benefit.slug}/canjear`, { location_id: locationId }, {
+                                            onStart: () => setProcessing(true),
+                                            onFinish: () => setProcessing(false),
+                                        });
+                                    }
+                                }}
+                                disabled={!locationId || processing}
                                 className="min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
                             >
-                                ACTIVAR BENEFICIO
+                                {processing ? 'ACTIVANDO…' : !auth.user ? 'CONTINUAR PARA CREAR CUENTA' : !auth.user.email_verified_at ? 'VERIFICAR CUENTA' : !hasActiveMembership ? 'VER MEMBRESÍA' : 'ACTIVAR BENEFICIO'}
                             </button>
                         </div>
                     </div>

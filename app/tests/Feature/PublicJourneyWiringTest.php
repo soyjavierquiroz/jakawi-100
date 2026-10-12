@@ -103,7 +103,7 @@ class PublicJourneyWiringTest extends TestCase
         $benefit = Benefit::factory()->published()->create();
         $this->post(route('redemptions.start', $benefit))->assertRedirect(route('register'));
         $this->assertSame(['journey' => 'BENEFIT', 'resource_id' => $benefit->id, 'action' => 'REDEEM'], app(PublicJourneyContinuation::class)->get());
-        $this->post('/register', ['name' => 'New User', 'email' => 'new@example.test', 'whatsapp' => '71234567'])->assertRedirect(route('benefits.show', $benefit->slug, false));
+        $this->post('/register', ['name' => 'New User', 'email' => 'new@example.test', 'whatsapp' => '71234567'])->assertRedirect(route('redemptions.intent', $benefit->slug, false));
         $this->assertNull(app(PublicJourneyContinuation::class)->get());
         $this->assertSame(0, Redemption::count());
         $this->get(route('benefits.show', $benefit))->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page->where('hasActiveMembership', false));
@@ -125,7 +125,7 @@ class PublicJourneyWiringTest extends TestCase
         $benefit = Benefit::factory()->published()->create();
         $this->post(route('redemptions.start', $benefit))->assertRedirect(route('register'));
         $this->post(route('login.store'), ['email' => $user->email, 'password' => 'password'])
-            ->assertRedirect(route('benefits.show', $benefit->slug, false));
+            ->assertRedirect(route('redemptions.intent', $benefit->slug, false));
         $this->assertNull(app(PublicJourneyContinuation::class)->get());
         $this->assertSame(0, Redemption::count());
     }

@@ -24,7 +24,7 @@ class MembershipOfferController extends Controller
             'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
         ]));
         if ($query) {
-            if (array_diff(array_keys($query), ['journey', 'action', 'resource_id', 'experience_session_id'])
+            if (array_diff(array_keys($query), ['journey', 'action', 'resource_id', 'experience_session_id', 'location_id'])
                 || ! isset($query['journey'], $query['action'], $query['resource_id'])
                 || ! ctype_digit((string) $query['resource_id'])) {
                 throw ValidationException::withMessages(['journey' => 'Intención inválida.']);
@@ -42,6 +42,12 @@ class MembershipOfferController extends Controller
                     throw ValidationException::withMessages(['experience_session_id' => 'Fecha inválida.']);
                 }
                 $context = ['experience_session_id' => (int) $query['experience_session_id']];
+            }
+            if (isset($query['location_id'])) {
+                if ($journey !== 'BENEFIT' || ! is_scalar($query['location_id']) || ! ctype_digit((string) $query['location_id'])) {
+                    throw ValidationException::withMessages(['location_id' => 'Sucursal inválida.']);
+                }
+                $context = ['location_id' => (int) $query['location_id']];
             }
             try {
                 $continuation->set($journey, $resourceId, $action, $context);

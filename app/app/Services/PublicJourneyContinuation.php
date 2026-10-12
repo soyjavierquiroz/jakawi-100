@@ -31,16 +31,20 @@ class PublicJourneyContinuation
             throw new InvalidArgumentException('Invalid public journey continuation.');
         }
 
-        if ($context && ! ExperienceSession::query()->whereKey($context['experience_session_id'])
+        if ($journey === 'EXPERIENCE' && $context && ! ExperienceSession::query()->whereKey($context['experience_session_id'])
             ->where('experience_id', $resourceId)->upcoming()->exists()) {
             throw new InvalidArgumentException('Invalid experience session.');
+        }
+
+        if ($journey === 'BENEFIT' && $context && ! Benefit::find($resourceId)?->availableLocations()->whereKey($context['location_id'])->get()->contains(fn ($location) => $location->hasRedemptionPin())) {
+            throw new InvalidArgumentException('Invalid benefit location.');
         }
 
         $intent = ['journey' => $journey, 'resource_id' => $resourceId, 'action' => $action];
         $this->session->put(self::KEY, $context ? $intent + ['context' => $context] : $intent);
     }
 
-    /** @return array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id: int}}|null */
+    /** @return array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id?: int, location_id?: int}}|null */
     public function get(): ?array
     {
         $intent = $this->session->get(self::KEY);
@@ -55,7 +59,7 @@ class PublicJourneyContinuation
         return $intent;
     }
 
-    /** @return array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id: int}}|null */
+    /** @return array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id?: int, location_id?: int}}|null */
     public function consume(): ?array
     {
         $intent = $this->get();
@@ -64,7 +68,7 @@ class PublicJourneyContinuation
         return $intent;
     }
 
-    /** @param array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id: int}} $intent */
+    /** @param array{journey: string, resource_id: int|string, action: string, context?: array{experience_session_id?: int, location_id?: int}} $intent */
     public function destination(array $intent): ?string
     {
         if (! $this->allowed($intent['journey'], $intent['resource_id'], $intent['action'])
@@ -75,7 +79,7 @@ class PublicJourneyContinuation
 
         return match ($intent['journey']) {
             'EXPERIENCE' => $this->experienceDestination($intent),
-            'BENEFIT' => ($benefit = Benefit::find($intent['resource_id'])) ? route('benefits.show', $benefit->slug, false) : null,
+            'BENEFIT' => ($benefit = Benefit::find($intent['resource_id'])) ? route('redemptions.intent', ['benefit' => $benefit->slug] + ($intent['context'] ?? []), false) : null,
             'UNLOCK' => ($unlock = Unlock::find($intent['resource_id'])) && in_array($unlock->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true)
                 ? route('unlocks.show', $unlock->slug, false) : null,
             'ACQUISITION' => route('programs.show', ['program' => match ($intent['resource_id']) {
@@ -118,6 +122,10 @@ class PublicJourneyContinuation
         }
         if ($context === []) {
             return true;
+        }
+
+        if ($journey === 'BENEFIT' && $action === 'REDEEM') {
+            return array_keys($context) === ['location_id'] && is_int($context['location_id']) && $context['location_id'] > 0;
         }
 
         return $journey === 'EXPERIENCE' && $action === 'RESERVE'
