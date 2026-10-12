@@ -9,4 +9,4 @@ Seis casos sintéticos y siete drafts representativos. Condiciones, precios, fec
 - [Cambios y conservación histórica](../../artifacts/demo-commercial-inventory-v1/deleted-or-archived.md)
 - [Capturas](../../artifacts/demo-commercial-inventory-v1/screenshots/index.md)
 
-La [fuente autoritativa de onboarding](onboarding/README.md) continúa vacía hasta la confirmación de partners. No registrar este catálogo como inventario confirmado. Benefit permite QA nativa/Admin/template y de miembro autenticado; la continuidad guest/location está RESOLVED: guest → auth/verificación/membresía → ubicación → canje. Permanecen los requisitos de inventario y onboarding comercial confirmado.
+La [fuente autoritativa de onboarding](onboarding/README.md) continúa vacía hasta la confirmación de partners. No registrar este catálogo como inventario confirmado. Benefit permite QA nativa/Admin/template y de miembro autenticado; la continuidad guest/location está RESOLVED: guest → auth → ubicación → membresía si corresponde → confirmación → canje (Benefit normal sin bloqueo por verificación de correo). Permanecen los requisitos de inventario y onboarding comercial confirmado.

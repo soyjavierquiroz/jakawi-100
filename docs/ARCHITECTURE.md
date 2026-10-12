@@ -104,7 +104,7 @@ El contrato contiene texto y datos derivados; la acción ligada se entrega por s
 
 Media opcional: VSL con LandingVideo/JakawiVslPlayer, imagen con JakawiImage, o ausencia sin wrapper. `renderOperationalContent` es un slot frontend obligatorio, no un esquema genérico ni React serializado: participación/reglas, sesiones/reserva y sucursales/requisitos/código pertenecen a sus dominios. Las anotaciones demo y el sticky de Challenge también permanecen locales. No cambian rutas nativas, `/go` ni redirects.
 
-Marketing Landing Admin V1 extiende la administración compartida existente con una sola clave persistida `OFFER_CONVERSION`; no hay builder, registry ni orden libre de secciones. **Benefit guest/location continuity: RESOLVED** en producción (`60feb98`). La sesión conserva Benefit, intención y `location_id`; un GET canónico retoma la ficha/confirmación tras auth/verificación/membresía, y sólo el POST crea el canje con los guards de dominio existentes.
+Marketing Landing Admin V1 extiende la administración compartida existente con una sola clave persistida `OFFER_CONVERSION`; no hay builder, registry ni orden libre de secciones. **Benefit guest/location continuity: RESOLVED** en producción (`60feb98`). La sesión conserva Benefit, intención y `location_id`; un GET canónico retoma la ficha tras auth, la ubicación se resuelve antes de membresía/confirmación y sólo el POST crea el canje con los guards de dominio existentes. Desde `8d91303`, el Benefit normal no exige correo verificado; el grant de Challenge conserva verificación.
 
 
 ## Marketing Landing Admin V1
