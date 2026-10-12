@@ -179,6 +179,8 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('landings/subject', [AdminLandingPresentationController::class, 'subjectContext'])->name('admin.marketing-landings.subject');
+    Route::get('landings', [AdminLandingPresentationController::class, 'index'])->name('admin.marketing-landings.index');
     Route::get('desbloqueos/{unlock:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.unlock-landing-presentations.index');
     Route::post('desbloqueos/{unlock:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.unlock-landing-presentations.store');
     Route::put('desbloqueos/{unlock:slug}/landings/{presentation:slug}', [AdminLandingPresentationController::class, 'save'])->name('admin.unlock-landing-presentations.update');
@@ -186,6 +188,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.unlock-landing-presentations.publish');
     Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.unlock-landing-presentations.archive');
     Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.unlock-landing-presentations.default');
+    Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/duplicate', [AdminLandingPresentationController::class, 'duplicate'])->name('admin.unlock-landing-presentations.duplicate');
+    Route::post('desbloqueos/{unlock:slug}/landings/{presentation:slug}/unpublish', [AdminLandingPresentationController::class, 'unpublish'])->name('admin.unlock-landing-presentations.unpublish');
     Route::post('desbloqueos/{unlock:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.unlock-landing-presentations.default-product');
     Route::get('experiencias/{experience:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.experience-landing-presentations.index');
     Route::post('experiencias/{experience:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.experience-landing-presentations.store');
@@ -194,6 +198,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.experience-landing-presentations.publish');
     Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.experience-landing-presentations.archive');
     Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.experience-landing-presentations.default');
+    Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/duplicate', [AdminLandingPresentationController::class, 'duplicate'])->name('admin.experience-landing-presentations.duplicate');
+    Route::post('experiencias/{experience:slug}/landings/{presentation:slug}/unpublish', [AdminLandingPresentationController::class, 'unpublish'])->name('admin.experience-landing-presentations.unpublish');
     Route::post('experiencias/{experience:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.experience-landing-presentations.default-product');
     Route::get('beneficios/{benefit:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.benefit-landing-presentations.index');
     Route::post('beneficios/{benefit:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.benefit-landing-presentations.store');
@@ -202,6 +208,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.benefit-landing-presentations.publish');
     Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.benefit-landing-presentations.archive');
     Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.benefit-landing-presentations.default');
+    Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/duplicate', [AdminLandingPresentationController::class, 'duplicate'])->name('admin.benefit-landing-presentations.duplicate');
+    Route::post('beneficios/{benefit:slug}/landings/{presentation:slug}/unpublish', [AdminLandingPresentationController::class, 'unpublish'])->name('admin.benefit-landing-presentations.unpublish');
     Route::post('beneficios/{benefit:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.benefit-landing-presentations.default-product');
     Route::get('retos/{challenge:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.landing-presentations.index');
     Route::post('retos/{challenge:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.landing-presentations.store');
@@ -210,6 +218,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('retos/{challenge:slug}/landings/{presentation:slug}/publish', [AdminLandingPresentationController::class, 'publish'])->name('admin.landing-presentations.publish');
     Route::post('retos/{challenge:slug}/landings/{presentation:slug}/archive', [AdminLandingPresentationController::class, 'archive'])->name('admin.landing-presentations.archive');
     Route::post('retos/{challenge:slug}/landings/{presentation:slug}/default', [AdminLandingPresentationController::class, 'useDefault'])->name('admin.landing-presentations.default');
+    Route::post('retos/{challenge:slug}/landings/{presentation:slug}/duplicate', [AdminLandingPresentationController::class, 'duplicate'])->name('admin.challenge-landing-presentations.duplicate');
+    Route::post('retos/{challenge:slug}/landings/{presentation:slug}/unpublish', [AdminLandingPresentationController::class, 'unpublish'])->name('admin.challenge-landing-presentations.unpublish');
     Route::post('retos/{challenge:slug}/landings/default-product', [AdminLandingPresentationController::class, 'productDefault'])->name('admin.landing-presentations.default-product');
     Route::get('retos', [AdminChallengeController::class, 'index'])->name('admin.social-challenges.index');
     Route::get('retos/crear', [AdminChallengeController::class, 'form'])->name('admin.social-challenges.create');

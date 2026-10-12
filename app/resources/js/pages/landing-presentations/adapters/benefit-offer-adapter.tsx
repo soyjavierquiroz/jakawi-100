@@ -1,5 +1,8 @@
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
-import type { OfferPresentationV1 } from '@/components/marketing/offer/presentation';
+import type {
+    OfferPresentationV1,
+    LandingOfferEditorial,
+} from '@/components/marketing/offer/presentation';
 import { type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { Head, Link, router } from '@inertiajs/react';
 import { useRef } from 'react';
@@ -8,8 +11,15 @@ import { trackJourneyIntent } from '@/lib/journey-analytics';
 
 export type BenefitOfferProps = {
     vsl?: LandingVideoConfig | null;
+    offerEditorial?: LandingOfferEditorial;
     benefit: { slug: string; title: string; terms: string | null };
-    presentation: { id?: number; slug?: string; hero_alt: string | null };
+    presentation: {
+        id?: number;
+        slug?: string;
+        marketing_theme?: 'DARK_CONVERSION' | 'LIGHT_CONVERSION' | null;
+        template_key?: 'OFFER_CONVERSION' | null;
+        hero_alt: string | null;
+    };
     copy: {
         eyebrow: string;
         headline: string;
@@ -43,6 +53,7 @@ export type BenefitOfferProps = {
 
 export default function BenefitOfferAdapter({
     vsl,
+    offerEditorial,
     benefit,
     presentation,
     copy,
@@ -147,14 +158,26 @@ export default function BenefitOfferAdapter({
             description: `${copy.value} en ${copy.partner}. ${qaCoffee ? 'Con tu brunch. Membresía activa requerida.' : copy.membership}`,
         },
     };
+    if (offerEditorial?.version === 1) {
+        offer.hero = {
+            eyebrow: offerEditorial.eyebrow,
+            headline: offerEditorial.headline,
+            emphasis: offerEditorial.emphasis || undefined,
+            description: offerEditorial.subheadline,
+        };
+        offer.finalCta.headline = offerEditorial.finalHeadline;
+    }
+    if (offerEditorial?.finalDescription)
+        offer.finalCta.description = offerEditorial.finalDescription;
     return (
         <>
-            <Head title={headline}>
+            <Head title={offer.hero.headline}>
                 <link rel="canonical" href={canonical} />
                 {noindex && <meta name="robots" content="noindex,follow" />}
             </Head>
             <OfferConversionTemplate
                 presentation={offer}
+                theme={presentation.marketing_theme || undefined}
                 action={action}
                 treatment="plain"
                 className="benefit-discovery-v1 overflow-x-clip font-discovery break-words"

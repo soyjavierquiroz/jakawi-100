@@ -62,8 +62,10 @@ export function OfferHero({
     const editorial = treatment === 'editorial';
     // Emphasis must match text already present in the headline. Invalid spans fall back to plain text.
     const lines = hero.headline.split('\n');
+    let emphasized = false;
     const content = lines.map((line, index) => {
-        const offset = hero.emphasis ? line.indexOf(hero.emphasis) : -1;
+        const offset =
+            hero.emphasis && !emphasized ? line.indexOf(hero.emphasis) : -1;
         const text =
             offset < 0 ? (
                 line
@@ -76,8 +78,9 @@ export function OfferHero({
                     {line.slice(offset + hero.emphasis!.length)}
                 </>
             );
+        if (offset >= 0) emphasized = true;
         if (compact)
-            return line === hero.emphasis ? (
+            return line === hero.emphasis && offset >= 0 ? (
                 <span
                     key={index}
                     className="block text-[var(--marketing-emphasis)]"

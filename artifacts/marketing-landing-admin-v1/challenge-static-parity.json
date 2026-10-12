@@ -1,0 +1,12 @@
+{
+  "domain": "challenge",
+  "width": 390,
+  "excluded": "Existing VSL decoded frame rectangle, which varies with asynchronous playback/paint; player source and internals unchanged.",
+  "rectangle": [
+    16,
+    277,
+    358,
+    478
+  ],
+  "changedStaticPixels": 0
+}

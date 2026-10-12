@@ -1,0 +1,58 @@
+PASS  Tests\Feature\BenefitMarketingLandingTest
+  ✓ renderer real value partner places conditions contextual faq and at… 2.89s
+  ✓ editorial overrides never replace the offer and hero fallback        0.15s
+  ✓ member membership expired unavailable and redeemed states            0.29s
+  ✓ social challenge offer is not public even with published all landin… 0.14s
+  ✓ entitled challenge winner gets existing reward path without members… 0.14s
+  ✓ audience navigation one item direct native and seo                   0.47s
+  ✓ admin reuses management create edit preview publish defaults and ar… 0.22s
+
+   PASS  Tests\Feature\ExperienceMarketingLandingTest
+  ✓ renderer facts editorial conditions faq and campaign isolation       0.14s
+  ✓ guest membership member multiple sessions and existing booking       0.23s
+  ✓ price missing free external unavailable past and media fallback      0.20s
+  ✓ defaults discovery unique native marketing and seo                   0.52s
+  ✓ other types compact sessions and no invented capacity claims         0.12s
+  ✓ generic admin lifecycle and preview subject guard                    0.20s
+
+   PASS  Tests\Feature\LandingPresentationTest
+  ✓ video configuration is nullable and projected only when unlock is r… 0.17s
+  ✓ video configuration validates allowlists and null removal            0.05s
+  ✓ admin persists valid video rejects invalid configuration and remove… 0.10s
+  ✓ multiple presentations atomic default and native fallback            0.06s
+  ✓ draft and archived cannot be default or public                       0.07s
+  ✓ published non default is public and captures campaign without econo… 0.09s
+  ✓ default changes challenge navigation without duplicating the item    0.12s
+  ✓ admin can preview publish and restore product default                0.11s
+  ✓ landing exposes participant state and immediate verification contex… 0.09s
+  ✓ presenter uses domain values for top first and manual                0.06s
+  ✓ other product native urls remain available                           0.05s
+  ✓ audience matrix for every product type                               0.12s
+  ✓ guests navigation direct urls and seo do not leak between viewers    0.48s
+  ✓ admin visitors everyone archive and invalid scope                    0.10s
+  ✓ database rejects invalid scopes unpublished defaults and duplicate…  0.07s
+  ✓ incremental migration preserves legacy and qa non default            0.13s
+  ✓ native routes for other products ignore all default                  0.17s
+
+   PASS  Tests\Feature\MarketingLandingAdminV1Test
+  ✓ create edit publish unpublish and live domain truth                  0.17s
+  ✓ allowlists plain text emphasis subject and no action editor          0.23s
+  ✓ media switching keeps stored config and duplicate is new draft       0.20s
+  ✓ existing admin subject picker summary and reassignment               0.18s
+  ✓ preview is authorized noindex and has no business or growth writes   0.17s
+  ✓ unlock editorial admin keeps legacy validation without offer settin… 0.09s
+  ✓ migration is deterministic reversible preserves editorial and unloc… 0.10s
+
+   PASS  Tests\Feature\UnlockMarketingLandingTest
+  ✓ renderer real reward progress editorial conditions faq and attribut… 0.16s
+  ✓ guest continuation eligible auth membership and existing participat… 0.40s
+  ✓ not eligible jp guard balance deadline and capacity disable actions  0.36s
+  ✓ success uses native result and does not solicit contribution         0.16s
+  ✓ visibility terminal preview and secret disclosures cannot be bypass… 0.30s
+  ✓ guarantee copy matches release and forfeit semantics without mutati… 0.10s
+  ✓ progress zero target over target and media fallback without fake de… 0.14s
+  ✓ defaults discovery unique direct routes and seo                      0.44s
+  ✓ generic admin create edit preview publish defaults archive and subj… 0.21s
+
+  Tests:    46 passed (2261 assertions)
+  Duration: 11.52s

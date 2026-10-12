@@ -23,6 +23,7 @@ type Props = {
     presentation: OfferPresentationV1;
     action: MarketingAction;
     treatment: OfferTreatment;
+    theme?: 'DARK_CONVERSION' | 'LIGHT_CONVERSION';
     className?: string;
     hookClassName?: string;
     faqClassName?: string;
@@ -41,6 +42,7 @@ export function OfferConversionTemplate({
     presentation: p,
     action,
     treatment,
+    theme,
     className = '',
     hookClassName,
     faqClassName = '',
@@ -152,9 +154,15 @@ export function OfferConversionTemplate({
     );
     const hero = compact ? (
         <section
-            data-marketing-surface="dark"
+            data-marketing-surface={
+                theme === 'LIGHT_CONVERSION' ? 'light' : 'dark'
+            }
             data-offer-chapter="hero"
-            className="bg-[var(--ink)] text-[var(--cream)]"
+            className={
+                theme === 'LIGHT_CONVERSION'
+                    ? 'bg-background text-foreground'
+                    : 'bg-[var(--ink)] text-[var(--cream)]'
+            }
         >
             <div className="mx-auto grid max-w-6xl gap-4 px-4 py-5 sm:px-6 sm:py-10 lg:grid-cols-2 lg:items-start lg:gap-x-12 lg:px-8 lg:pt-14 lg:pb-12">
                 <div className="min-w-0 lg:sticky lg:top-8">{intro}</div>
@@ -196,7 +204,13 @@ export function OfferConversionTemplate({
         <main
             onClickCapture={trackGrowthClick}
             className={className}
-            data-marketing-surface={compact ? undefined : 'light'}
+            data-marketing-surface={
+                compact
+                    ? undefined
+                    : theme === 'DARK_CONVERSION'
+                      ? 'dark'
+                      : 'light'
+            }
         >
             {compact ? (
                 <>

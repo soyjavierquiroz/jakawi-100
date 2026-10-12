@@ -1,0 +1,11 @@
+{
+  "beforeBuildAvailableBytes": 10760998912,
+  "beforeBuildAvailableGiB": 10.022,
+  "thresholdGiB": 10,
+  "buildPermitted": true,
+  "cleanup": "Only task-downloaded Chrome 155 browsers and isolated Puppeteer npm dependencies.",
+  "afterBuildAvailableBytes": 10706788352,
+  "afterBuildAvailableGiB": 9.971,
+  "buildResult": "PASS",
+  "buildRuns": 1
+}

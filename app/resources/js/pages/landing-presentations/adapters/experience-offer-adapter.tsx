@@ -1,6 +1,9 @@
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
 import { MarketingSteps } from '@/components/marketing/offer/blocks';
-import type { OfferPresentationV1 } from '@/components/marketing/offer/presentation';
+import type {
+    OfferPresentationV1,
+    LandingOfferEditorial,
+} from '@/components/marketing/offer/presentation';
 import { type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { Head, Link, router } from '@inertiajs/react';
 import { useRef } from 'react';
@@ -20,7 +23,14 @@ type Session = {
 type Partner = { name: string; slug: string; role?: string };
 export type ExperienceOfferProps = {
     vsl?: LandingVideoConfig | null;
-    presentation: { id?: number; slug?: string; hero_alt: string | null };
+    offerEditorial?: LandingOfferEditorial;
+    presentation: {
+        id?: number;
+        slug?: string;
+        marketing_theme?: 'DARK_CONVERSION' | 'LIGHT_CONVERSION' | null;
+        template_key?: 'OFFER_CONVERSION' | null;
+        hero_alt: string | null;
+    };
     heroUrl: string | null;
     nativeUrl: string;
     canonical: string;
@@ -61,6 +71,7 @@ export type ExperienceOfferProps = {
 // The duration-led offer requires the inspected duration and city; domain actions remain authoritative.
 export default function ExperienceOfferAdapter({
     vsl,
+    offerEditorial,
     presentation,
     heroUrl,
     nativeUrl,
@@ -218,14 +229,26 @@ export default function ExperienceOfferAdapter({
                 : copy.title,
         },
     };
+    if (offerEditorial?.version === 1) {
+        offer.hero = {
+            eyebrow: offerEditorial.eyebrow,
+            headline: offerEditorial.headline,
+            emphasis: offerEditorial.emphasis || undefined,
+            description: offerEditorial.subheadline,
+        };
+        offer.finalCta.headline = offerEditorial.finalHeadline;
+    }
+    if (offerEditorial?.finalDescription)
+        offer.finalCta.description = offerEditorial.finalDescription;
     return (
         <>
-            <Head title={headline}>
+            <Head title={offer.hero.headline}>
                 <link rel="canonical" href={canonical} />
                 {noindex && <meta name="robots" content="noindex,follow" />}
             </Head>
             <OfferConversionTemplate
                 presentation={offer}
+                theme={presentation.marketing_theme || undefined}
                 action={action}
                 treatment="editorial"
                 stepsPlacement="operational"

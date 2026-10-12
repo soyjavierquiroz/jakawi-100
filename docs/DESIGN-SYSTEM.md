@@ -22,7 +22,7 @@ En móvil se ofrecen cámara (`capture="user"`) y galería. Tras elegir hay reco
 
 Product UI conserva la preferencia del usuario/sistema y el comportamiento global `.dark`. Marketing UI usa composición explícita local, sin toggle ni cambios de preferencia: `DARK_CONVERSION` (`dark-conversion`) y `LIGHT_CONVERSION` (`light-conversion`).
 
-[MarketingLayout](../app/resources/js/layouts/marketing-layout.tsx) acepta `theme` y resuelve defaults del renderer: Challenge oscuro; Benefit, Experience y Unlock claros. Son defaults actuales, no reglas permanentes. No existe campo de tema en LandingPresentation, migración ni Landing Engine implementado.
+[MarketingLayout](../app/resources/js/layouts/marketing-layout.tsx) acepta `theme` y resuelve defaults del renderer: Challenge oscuro; Benefit, Experience y Unlock claros. Son defaults actuales, no reglas permanentes. Marketing Landing Admin V1 persiste marketing_theme con esos dos valores permitidos; no hay Landing Engine ni personalización libre.
 
 [theme.css](../app/resources/css/theme.css) contiene referencias fijas a las variantes existentes de la paleta, roles `--marketing-*` y contextos completos `data-marketing-theme` / `data-marketing-surface="light|dark"`. Cada contexto vuelve a enlazar superficie, texto, tarjeta, muted, borde, estados y el puente Tailwind `--color-*`; cambiar sólo background/foreground no basta porque los aliases heredados pueden estar resueltos en otro contexto. Las utilidades `dark:*` de producto excluyen descendientes marketing. El footer y sticky pertenecen al contexto local; el CTA final establece contexto oscuro.
 
@@ -36,4 +36,13 @@ La composición funciona con VSL, imagen y sin media donde el renderer lo admite
 
 Las opciones frontend `compact`, `editorial` y `plain` preservan densidad, tipografía y colocación de los prototipos aprobados dentro del mismo renderer; no constituyen un registry de plantillas ni tipos de dominio. Se mantienen los temas explícitos DARK_CONVERSION/LIGHT_CONVERSION y los contextos de superficie existentes, aislados de Product UI. Los facts admiten listas vacías o de cualquier longitud con wrapping; media ausente no crea un contenedor vacío. FAQ conserva controles verdes funcionales; ofertas y recompensas pendientes no se presentan como success.
 
-Cada adapter conserva los estados y la acción ligada; hero y cierre usan la misma. Operaciones y anotaciones de dominio se componen mediante slots frontend, sin meter nodos React en el contrato. El sticky permanece local a Challenge. Ver [arquitectura](ARCHITECTURE.md#marketing-landing-template-v1). La verdad del subject es autoritativa: copy editorial no redefine economía/reglas. Nuevo Admin y persistencia de la plantilla aún no están implementados.
+Cada adapter conserva los estados y la acción ligada; hero y cierre usan la misma. Operaciones y anotaciones de dominio se componen mediante slots frontend, sin meter nodos React en el contrato. El sticky permanece local a Challenge. Ver [arquitectura](ARCHITECTURE.md#marketing-landing-template-v1). La verdad del subject es autoritativa: copy editorial no redefine economía/reglas. Marketing Landing Admin V1 persiste una sola plantilla y los dos temas explícitos; no expone personalización libre.
+
+
+## Marketing Landing Admin V1
+
+El formulario compartido organiza Landing, Mensaje, Media, Atribución, Cierre y Publicación. Benefit/Experience/Challenge seleccionan Offer Conversion; los defaults son Dark Conversion para Challenge y Light Conversion para Experience/Benefit. El tema es marketing explícito, aislado de la preferencia Product UI. Unlock conserva su UI/rendering existente.
+
+Copy es texto plano: un destacado debe estar contenido en headline y se pinta una sola vez con el token de énfasis. El editor no elige colores. Media Imagen/Video/Sin media activa un solo contenido; cambiar de modo conserva hero_path y configuración VSL. Se reutilizan LandingVideoFields y YouTube/MP4/Bunny, framing y player existentes, sin modificar internals.
+
+La verdad del producto aparece como resumen de sólo lectura. No hay inputs de economía, reglas, acción/URL, orden o ocultamiento de condiciones. Preview muestra la presentación guardada en el renderer real, con controles 390/430/Desktop y scroll interno para escritorio; no hay renderer simplificado. Duplicación solicita nuevo nombre/slug y permite revisar campaign_key; la copia queda DRAFT. Ver [arquitectura](ARCHITECTURE.md#marketing-landing-admin-v1).

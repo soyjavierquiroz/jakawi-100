@@ -1,5 +1,8 @@
 import { OfferConversionTemplate } from '@/components/marketing/offer/OfferConversionTemplate';
-import type { OfferPresentationV1 } from '@/components/marketing/offer/presentation';
+import type {
+    OfferPresentationV1,
+    LandingOfferEditorial,
+} from '@/components/marketing/offer/presentation';
 import { type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { MarketingCTA } from '@/components/marketing/primitives';
@@ -9,11 +12,14 @@ import { useEffect, useRef, useState, type ComponentProps } from 'react';
 
 export type ChallengeOfferProps = ComponentProps<typeof Show> & {
     vsl?: LandingVideoConfig | null;
+    offerEditorial?: LandingOfferEditorial;
     presentation: {
         id: number;
         name: string;
         slug: string;
         default_scope: 'NONE' | 'GUESTS' | 'ALL';
+        marketing_theme?: 'DARK_CONVERSION' | 'LIGHT_CONVERSION' | null;
+        template_key?: 'OFFER_CONVERSION' | null;
         hero_alt: string | null;
     };
     copy: {
@@ -54,6 +60,7 @@ function formattedDate(value: string | null) {
 
 export default function ChallengeOfferAdapter({
     vsl,
+    offerEditorial,
     presentation,
     copy,
     nativeUrl,
@@ -136,6 +143,10 @@ export default function ChallengeOfferAdapter({
         };
     }, []);
     const primaryAction = {
+        disabled: challengeProps.preview,
+        onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+            if (challengeProps.preview) event.preventDefault();
+        },
         ...action,
         kind: membershipRequired
             ? 'membership'
@@ -230,13 +241,26 @@ export default function ChallengeOfferAdapter({
                 : `${copy.reward} · ${copy.selection}`,
         },
     };
+    if (offerEditorial?.version === 1) {
+        offer.hero = {
+            eyebrow: offerEditorial.eyebrow,
+            headline: offerEditorial.headline,
+            emphasis: offerEditorial.emphasis || undefined,
+            description: offerEditorial.subheadline,
+        };
+        offer.finalCta.headline = offerEditorial.finalHeadline;
+    }
+    if (offerEditorial?.finalDescription)
+        offer.finalCta.description = offerEditorial.finalDescription;
     return (
         <>
             <Head
                 title={
-                    commercialDemo
-                        ? 'Muéstranos tu mejor plan en Cochabamba · Demo'
-                        : copy.headline
+                    offerEditorial?.version === 1
+                        ? offer.hero.headline
+                        : commercialDemo
+                          ? 'Muéstranos tu mejor plan en Cochabamba · Demo'
+                          : copy.headline
                 }
             >
                 <link rel="canonical" href={canonical} />
@@ -244,6 +268,7 @@ export default function ChallengeOfferAdapter({
             </Head>
             <OfferConversionTemplate
                 presentation={offer}
+                theme={presentation.marketing_theme || undefined}
                 action={primaryAction}
                 treatment="compact"
                 className="challenge-marketing-v3 challenge-mobile-polish pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"
@@ -276,7 +301,9 @@ export default function ChallengeOfferAdapter({
                                 <p className="challenge-desktop-teaser mt-1 text-2xl font-extrabold uppercase">
                                     CENA PARA DOS
                                 </p>
-                                <p className="mt-2 text-sm leading-5 text-[var(--cream)]">
+                                <p
+                                    className={`mt-2 text-sm leading-5 ${presentation.marketing_theme === 'LIGHT_CONVERSION' ? 'text-[var(--marketing-text-secondary)]' : 'text-[var(--cream)]'}`}
+                                >
                                     <span className="lg:hidden">
                                         Demo visual · no canjeable.
                                     </span>
@@ -288,25 +315,29 @@ export default function ChallengeOfferAdapter({
                         )}
                     </>
                 )}
-                renderHeroSupport={() => (
-                    <>
-                        <p className="mt-3 max-w-xl text-sm leading-5 text-[var(--marketing-text-secondary)] sm:text-base sm:leading-6">
-                            {commercialDemo ? (
-                                <>
-                                    <span className="lg:hidden">
-                                        Publica un Reel con #bafabo
-                                        <br />y envíanos tu enlace.
-                                    </span>
-                                    <span className="hidden lg:inline">
-                                        {supportCopy}
-                                    </span>
-                                </>
-                            ) : (
-                                supportCopy
-                            )}
-                        </p>
-                    </>
-                )}
+                renderHeroSupport={
+                    offerEditorial?.version === 1
+                        ? undefined
+                        : () => (
+                              <>
+                                  <p className="mt-3 max-w-xl text-sm leading-5 text-[var(--marketing-text-secondary)] sm:text-base sm:leading-6">
+                                      {commercialDemo ? (
+                                          <>
+                                              <span className="lg:hidden">
+                                                  Publica un Reel con #bafabo
+                                                  <br />y envíanos tu enlace.
+                                              </span>
+                                              <span className="hidden lg:inline">
+                                                  {supportCopy}
+                                              </span>
+                                          </>
+                                      ) : (
+                                          supportCopy
+                                      )}
+                                  </p>
+                              </>
+                          )
+                }
                 renderValueSupplement={() => (
                     <p className="mt-5 hidden border-t border-border pt-4 text-sm leading-5 font-semibold lg:block">
                         {confidence}

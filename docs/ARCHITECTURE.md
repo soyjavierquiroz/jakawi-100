@@ -92,7 +92,7 @@ Estado y límites: [CURRENT](CURRENT.md). Uso: [Manual de Funciones](product/MAN
 
 ## Temas de conversión marketing
 
-MarketingLayout establece temas frontend explícitos `dark-conversion` / `light-conversion`, aislados de la preferencia Product UI. Challenge usa el primero; Benefit, Experience y Unlock el segundo como defaults actuales. Las secciones claras/oscuras establecen pares completos mediante `data-marketing-surface`. El contrato y reglas de contraste están en [Sistema de diseño](DESIGN-SYSTEM.md#marketing-theme-foundation-v1). No se añadió persistencia del tema ni Landing Engine; media sigue siendo opcional.
+MarketingLayout establece temas frontend explícitos `dark-conversion` / `light-conversion`, aislados de la preferencia Product UI. Challenge usa el primero; Benefit, Experience y Unlock el segundo como defaults actuales. Las secciones claras/oscuras establecen pares completos mediante `data-marketing-surface`. El contrato y reglas de contraste están en [Sistema de diseño](DESIGN-SYSTEM.md#marketing-theme-foundation-v1). Marketing Landing Admin V1 persiste los dos temas permitidos; media sigue siendo opcional. No hay Landing Engine ni personalización de colores.
 
 ## Marketing Landing Template V1
 
@@ -104,4 +104,19 @@ El contrato contiene texto y datos derivados; la acción ligada se entrega por s
 
 Media opcional: VSL con LandingVideo/JakawiVslPlayer, imagen con JakawiImage, o ausencia sin wrapper. `renderOperationalContent` es un slot frontend obligatorio, no un esquema genérico ni React serializado: participación/reglas, sesiones/reserva y sucursales/requisitos/código pertenecen a sus dominios. Las anotaciones demo y el sticky de Challenge también permanecen locales. No cambian rutas nativas, `/go` ni redirects.
 
-V1 no implementa un nuevo Admin, builder, registry, migración ni columnas/configuración persistida de plantilla/tema. Las opciones visuales acotadas conservan las composiciones descubiertas; no son plantillas seleccionables. **Pendiente antes del lanzamiento comercial Benefit:** resolver continuidad guest en el flujo de dominio (autenticación/verificación y `location_id`); el POST actual sin payload permanece sin workaround en el renderer.
+Marketing Landing Admin V1 extiende la administración compartida existente con una sola clave persistida `OFFER_CONVERSION`; no hay builder, registry ni orden libre de secciones. **Pendiente antes del lanzamiento comercial Benefit:** resolver continuidad guest en el flujo de dominio (autenticación/verificación y `location_id`); el POST actual sin payload permanece sin workaround en el renderer.
+
+
+## Marketing Landing Admin V1
+
+La entrada `/admin/landings` selecciona Benefit, Experience o Challenge y usa el mismo [controller Admin](../app/app/Http/Controllers/AdminLandingPresentationController.php), formulario y rutas subject-scoped existentes. Unlock conserva su renderer, administración y restricciones de disclosure; no tiene adapter Offer Conversion ni aparece en la creación marketing V1.
+
+[LandingPresentation](../app/app/Models/LandingPresentation.php) almacena presentación: enums `template_key`, `marketing_theme`, `media_mode`, `headline_emphasis` contenido en headline, y `final_cta_description`, además de las columnas editoriales/media/atribución existentes. [Migración reversible](../app/database/migrations/2026_10_12_000001_add_offer_presentation_settings.php): mapea los tres dominios a Offer Conversion y sus temas actuales, selecciona VSL sólo cuando existe configuración y conserva todos los campos originales; no se ejecuta contra producción en esta entrega. `editorial_version=0` preserva los tratamientos discovery existentes; pasa a 1 al crear o modificar copy/subject. Cambiar sólo media/tema no resetea el mensaje aprobado.
+
+`default_scope` sigue siendo audiencia activa y exige PUBLISHED. `publish_scope` guarda la intención NONE/GUESTS/ALL de borradores y duplicados; publicar aplica esa intención con el servicio transaccional de defaults existente. Despublicar vuelve a DRAFT/NONE sin perder configuración. Duplicar copia presentación/subject/media e intención, exige nombre y slug únicos nuevos y deja campaign_key explícito/editable; nunca duplica el producto ni publica la copia.
+
+El [editor de presentación](../app/app/Services/LandingPresentationEditor.php) proyecta defaults editables y resumen de verdad de sólo lectura usando presenters/subject actuales. No persiste precios, premios, fechas, elegibilidad, reglas, capacidad ni límites. El renderer recibe la configuración visual y copy validado; operaciones y acciones siguen ligadas por el dominio. No se admiten URL/POST/payload de CTA, HTML, Markdown, CSS, HEX o secciones arbitrarias.
+
+Preview admin-authorized usa el controller público, subject, adapter y renderer reales, con noindex y guards de preview; no registra adquisición/Growth ni ejecuta canjes, reservas, participación o activación. El formulario muestra el preview guardado en iframe a 390/430/1440. `/l/{slug}`, rutas nativas, NONE/GUESTS/ALL, canonical y attribution conservan su comportamiento; campaign_key procede exclusivamente de la configuración guardada y no activa una Campaign económica.
+
+**Bloqueador de piloto comercial Benefit:** continuidad guest de canje/auth/verificación y selección `location_id`. Admin y plantilla no ofrecen workaround ni cambian ese flujo. Las pruebas se ejecutan exclusivamente en el entorno Docker aislado; esta entrega no incluye migración productiva, push ni deploy.

@@ -308,3 +308,8 @@
     .offer-step-header-simple { display: flex; min-height: 4rem; align-items: flex-end; gap: 0.875rem; }
     .offer-step-header-simple h3 { margin-top: 0; }
 }
+
+/* Offer Conversion light hero keeps compact facts readable using existing marketing roles. */
+[data-offer-chapter="hero"][data-marketing-surface="light"] .offer-facts > div {
+    color: var(--marketing-text-secondary);
+}

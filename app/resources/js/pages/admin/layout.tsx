@@ -11,18 +11,25 @@ export default function AdminLayout({
             <Head title={title} />
             <nav className="flex flex-wrap gap-4 text-sm">
                 <Link href="/admin">Admin</Link>
+                <Link href="/admin/landings">Marketing Landings</Link>
                 <Link href="/admin/review">Revisión</Link>
                 <Link href="/admin/ciudades">Ciudades</Link>
                 <Link href="/admin/expansion">Expansión</Link>
-                <Link href="/admin/solicitudes-partner">Solicitudes Partner</Link>
-                <Link href="/admin/solicitudes-programas">Solicitudes de programas</Link>
+                <Link href="/admin/solicitudes-partner">
+                    Solicitudes Partner
+                </Link>
+                <Link href="/admin/solicitudes-programas">
+                    Solicitudes de programas
+                </Link>
                 <Link href="/admin/partners">Partners</Link>
                 <Link href="/admin/locations">Locations</Link>
                 <Link href="/admin/benefits">Beneficios</Link>
                 <Link href="/admin/experiences">Experiencias</Link>
                 <Link href="/admin/memberships">Membresías</Link>
                 <Link href="/admin/sales">Ventas</Link>
-                <Link href="/admin/solicitudes-membresia">Solicitudes de membresía</Link>
+                <Link href="/admin/solicitudes-membresia">
+                    Solicitudes de membresía
+                </Link>
                 <Link href="/admin/promoters">Promotores</Link>
                 <Link href="/admin/affiliates">Afiliados</Link>
                 <Link href="/admin/creators">Creadores</Link>

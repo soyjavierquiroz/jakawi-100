@@ -1,0 +1,878 @@
+{
+  "reports": [
+    {
+      "domain": "benefit",
+      "adminWidth": 390,
+      "viewport": 390,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 390,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          },
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "benefit",
+      "adminWidth": 390,
+      "viewport": 430,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 430,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          },
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "benefit",
+      "adminWidth": 390,
+      "viewport": 1440,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 1440,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          },
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 390,
+      "clone": {
+        "name": "Landing editorial QA — copia",
+        "slug": "admin-benefit-qa-copia",
+        "campaign": "admin-piloto"
+      }
+    },
+    {
+      "domain": "benefit",
+      "adminWidth": 1440,
+      "viewport": 390,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 390,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          },
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "benefit",
+      "adminWidth": 1440,
+      "viewport": 430,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 430,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          },
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "benefit",
+      "adminWidth": 1440,
+      "viewport": 1440,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 1440,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          },
+          {
+            "disabled": "true",
+            "href": "#condiciones",
+            "label": "ESTE BENEFICIO NO TIENE UNA UBICACIÓN DISPONIBLE AHORA"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 1440,
+      "clone": {
+        "name": "Landing editorial QA — copia",
+        "slug": "admin-benefit-qa-copia",
+        "campaign": "admin-piloto"
+      }
+    },
+    {
+      "domain": "experience",
+      "adminWidth": 390,
+      "viewport": 390,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 390,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          },
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "experience",
+      "adminWidth": 390,
+      "viewport": 430,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 430,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          },
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "experience",
+      "adminWidth": 390,
+      "viewport": 1440,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 1440,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          },
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "experience",
+      "width": 390,
+      "clone": {
+        "name": "Landing editorial QA — copia",
+        "slug": "admin-experience-qa-copia",
+        "campaign": "admin-piloto"
+      }
+    },
+    {
+      "domain": "experience",
+      "adminWidth": 1440,
+      "viewport": 390,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 390,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          },
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "experience",
+      "adminWidth": 1440,
+      "viewport": 430,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 430,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          },
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "experience",
+      "adminWidth": 1440,
+      "viewport": 1440,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "LIGHT_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 1440,
+        "overflow": false,
+        "theme": "light-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          },
+          {
+            "disabled": "true",
+            "href": "/experiencias/vero-et-culpa-7116",
+            "label": "VER FECHAS Y RESERVAR"
+          }
+        ],
+        "media": false,
+        "faq": 4,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "experience",
+      "width": 1440,
+      "clone": {
+        "name": "Landing editorial QA — copia",
+        "slug": "admin-experience-qa-copia",
+        "campaign": "admin-piloto"
+      }
+    },
+    {
+      "domain": "challenge",
+      "adminWidth": 390,
+      "viewport": 390,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "DARK_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 390,
+        "overflow": false,
+        "theme": "dark-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          },
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          }
+        ],
+        "media": false,
+        "faq": 6,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "challenge",
+      "adminWidth": 390,
+      "viewport": 430,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "DARK_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 430,
+        "overflow": false,
+        "theme": "dark-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          },
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          }
+        ],
+        "media": false,
+        "faq": 6,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "challenge",
+      "adminWidth": 390,
+      "viewport": 1440,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "DARK_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 1440,
+        "overflow": false,
+        "theme": "dark-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          },
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          }
+        ],
+        "media": false,
+        "faq": 6,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "challenge",
+      "width": 390,
+      "clone": {
+        "name": "Landing editorial QA — copia",
+        "slug": "admin-challenge-qa-copia",
+        "campaign": "admin-piloto"
+      }
+    },
+    {
+      "domain": "challenge",
+      "adminWidth": 1440,
+      "viewport": 390,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "DARK_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 390,
+        "overflow": false,
+        "theme": "dark-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          },
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          }
+        ],
+        "media": false,
+        "faq": 6,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "challenge",
+      "adminWidth": 1440,
+      "viewport": 430,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "DARK_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 430,
+        "overflow": false,
+        "theme": "dark-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          },
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          }
+        ],
+        "media": false,
+        "faq": 6,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "challenge",
+      "adminWidth": 1440,
+      "viewport": 1440,
+      "form": {
+        "overflow": false,
+        "readonly": true,
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasis": "PRÓXIMO PLAN.",
+        "theme": "DARK_CONVERSION",
+        "mode": "Sin media",
+        "arbitraryAction": false
+      },
+      "imageKept": true,
+      "preview": {
+        "width": 1440,
+        "overflow": false,
+        "theme": "dark-conversion",
+        "headline": "DESCUBRE TU PRÓXIMO PLAN.",
+        "emphasisCount": 1,
+        "noindex": true,
+        "actions": [
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          },
+          {
+            "disabled": "true",
+            "href": "#mecanica",
+            "label": "VER RESULTADOS"
+          }
+        ],
+        "media": false,
+        "faq": 6,
+        "operational": true,
+        "mutationBlocked": true,
+        "parentOverflow": false,
+        "faqFunctional": true
+      }
+    },
+    {
+      "domain": "challenge",
+      "width": 1440,
+      "clone": {
+        "name": "Landing editorial QA — copia",
+        "slug": "admin-challenge-qa-copia",
+        "campaign": "admin-piloto"
+      }
+    },
+    {
+      "domain": "challenge",
+      "width": 390,
+      "legacy": {
+        "overflow": false,
+        "headline": "MUÉSTRANOSTU MEJOR PLANEN COCHABAMBA",
+        "theme": "dark-conversion"
+      }
+    },
+    {
+      "domain": "challenge",
+      "width": 430,
+      "legacy": {
+        "overflow": false,
+        "headline": "MUÉSTRANOSTU MEJOR PLANEN COCHABAMBA",
+        "theme": "dark-conversion"
+      }
+    },
+    {
+      "domain": "challenge",
+      "width": 1440,
+      "legacy": {
+        "overflow": false,
+        "headline": "MUÉSTRANOSTU MEJOR PLANEN COCHABAMBA",
+        "theme": "dark-conversion"
+      }
+    },
+    {
+      "domain": "experience",
+      "width": 390,
+      "legacy": {
+        "overflow": false,
+        "headline": "3 horas para vivirCochabamba desde arriba.",
+        "theme": "light-conversion"
+      }
+    },
+    {
+      "domain": "experience",
+      "width": 430,
+      "legacy": {
+        "overflow": false,
+        "headline": "3 horas para vivirCochabamba desde arriba.",
+        "theme": "light-conversion"
+      }
+    },
+    {
+      "domain": "experience",
+      "width": 1440,
+      "legacy": {
+        "overflow": false,
+        "headline": "3 horas para vivirCochabamba desde arriba.",
+        "theme": "light-conversion"
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 390,
+      "legacy": {
+        "overflow": false,
+        "headline": "Tu brunch,con café de cortesía.",
+        "theme": "light-conversion"
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 430,
+      "legacy": {
+        "overflow": false,
+        "headline": "Tu brunch,con café de cortesía.",
+        "theme": "light-conversion"
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 1440,
+      "legacy": {
+        "overflow": false,
+        "headline": "Tu brunch,con café de cortesía.",
+        "theme": "light-conversion"
+      }
+    }
+  ],
+  "errors": []
+}

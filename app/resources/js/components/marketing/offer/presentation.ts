@@ -33,3 +33,14 @@ export type OfferPresentationV1 = {
     faq: Array<{ question: string; answer: string }>;
     finalCta: { eyebrow?: string; headline: string; description?: string };
 };
+
+/** Validated editorial projection; separate from authoritative offer/action data. */
+export type LandingOfferEditorial = {
+    version: number;
+    eyebrow: string;
+    headline: string;
+    subheadline: string;
+    emphasis: string | null;
+    finalHeadline: string;
+    finalDescription: string | null;
+};

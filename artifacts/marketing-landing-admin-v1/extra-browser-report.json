@@ -1,0 +1,140 @@
+{
+  "reports": [
+    {
+      "domain": "challenge",
+      "theme": "dark-conversion",
+      "width": 390,
+      "overflow": false,
+      "heroBackground": "rgb(17, 17, 17)",
+      "factColor": "oklab(0.982882 0.00495514 0.00980985 / 0.7)",
+      "media": false
+    },
+    {
+      "domain": "challenge",
+      "theme": "dark-conversion",
+      "width": 1440,
+      "overflow": false,
+      "heroBackground": "rgb(17, 17, 17)",
+      "factColor": "oklab(0.982882 0.00495514 0.00980985 / 0.7)",
+      "media": false
+    },
+    {
+      "domain": "challenge",
+      "theme": "light-conversion",
+      "width": 390,
+      "overflow": false,
+      "heroBackground": "rgb(255, 248, 242)",
+      "factColor": "rgb(81, 74, 69)",
+      "media": false
+    },
+    {
+      "domain": "challenge",
+      "theme": "light-conversion",
+      "width": 1440,
+      "overflow": false,
+      "heroBackground": "rgb(255, 248, 242)",
+      "factColor": "rgb(81, 74, 69)",
+      "media": false
+    },
+    {
+      "domain": "experience",
+      "theme": "dark-conversion",
+      "width": 390,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(255, 248, 242)",
+      "media": false
+    },
+    {
+      "domain": "experience",
+      "theme": "dark-conversion",
+      "width": 1440,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(255, 248, 242)",
+      "media": false
+    },
+    {
+      "domain": "experience",
+      "theme": "light-conversion",
+      "width": 390,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(17, 17, 17)",
+      "media": false
+    },
+    {
+      "domain": "experience",
+      "theme": "light-conversion",
+      "width": 1440,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(17, 17, 17)",
+      "media": false
+    },
+    {
+      "domain": "benefit",
+      "theme": "dark-conversion",
+      "width": 390,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(255, 248, 242)",
+      "media": false
+    },
+    {
+      "domain": "benefit",
+      "theme": "dark-conversion",
+      "width": 1440,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(255, 248, 242)",
+      "media": false
+    },
+    {
+      "domain": "benefit",
+      "theme": "light-conversion",
+      "width": 390,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(17, 17, 17)",
+      "media": false
+    },
+    {
+      "domain": "benefit",
+      "theme": "light-conversion",
+      "width": 1440,
+      "overflow": false,
+      "heroBackground": "rgba(0, 0, 0, 0)",
+      "factColor": "rgb(17, 17, 17)",
+      "media": false
+    },
+    {
+      "vsl": {
+        "ready": 4,
+        "paused": false,
+        "muted": true,
+        "time": 2.336736
+      },
+      "initial": {
+        "ready": 4,
+        "paused": true
+      }
+    },
+    {
+      "adminCreateDefaults": {
+        "headline": "Café de cortesía",
+        "image": "",
+        "theme": "LIGHT_CONVERSION",
+        "newDraft": true
+      },
+      "payload": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:8781/admin/beneficios/ut-vero-in-omnis-5015/landings",
+          "body": "{\"name\":\"Nueva landing QA\",\"slug\":\"nueva-landing-qa\",\"campaign_key\":null,\"eyebrow\":\"BENEFICIO JAKAWI\",\"headline\":\"Café de cortesía\",\"headline_emphasis\":null,\"subheadline\":\"Disfruta tu próximo plan.\",\"hero_path\":null,\"hero_alt\":\"Café de cortesía\",\"reward_display_override\":null,\"final_cta_headline\":null,\"final_cta_description\":null,\"template_key\":\"OFFER_CONVERSION\",\"marketing_theme\":\"LIGHT_CONVERSION\",\"media_mode\":\"NONE\",\"default_scope\":\"NONE\",\"vsl\":{\"source\":{\"type\":\"youtube\",\"url\":\"https://www.youtube.com/watch?v=hI-Ecy2D8pg\"}},\"subject_type\":\"BENEFIT\",\"subject_id\":16}"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
