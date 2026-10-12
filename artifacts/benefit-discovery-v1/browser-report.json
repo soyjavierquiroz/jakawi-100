@@ -1,0 +1,98 @@
+{
+  "errors": [],
+  "reports": [
+    {
+      "width": 390,
+      "overflow": false,
+      "headline": "Tu brunch,con café de cortesía.",
+      "cta": "CONTINUAR CON MI CUENTA",
+      "ctaBottom": 812.140625,
+      "imageLoaded": true,
+      "header": false,
+      "theme": "light-conversion",
+      "bodyFont": "16px"
+    },
+    {
+      "width": 430,
+      "overflow": false,
+      "headline": "Tu brunch,con café de cortesía.",
+      "cta": "CONTINUAR CON MI CUENTA",
+      "ctaBottom": 818.140625,
+      "imageLoaded": true,
+      "header": false,
+      "theme": "light-conversion",
+      "bodyFont": "16px"
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "headline": "Tu brunch,con café de cortesía.",
+      "cta": "CONTINUAR CON MI CUENTA",
+      "ctaBottom": 630.78125,
+      "imageLoaded": true,
+      "header": false,
+      "theme": "light-conversion",
+      "bodyFont": "16px"
+    },
+    {
+      "scenario": "no-media",
+      "media": false,
+      "overflow": false,
+      "cta": "CONTINUAR CON MI CUENTA",
+      "final": "CONTINUAR CON MI CUENTA",
+      "disabled": null,
+      "href": "http://127.0.0.1:8780/beneficios/demo-beneficio-01/canjear"
+    },
+    {
+      "scenario": "preview",
+      "media": true,
+      "overflow": false,
+      "cta": "CONTINUAR CON MI CUENTA",
+      "final": "CONTINUAR CON MI CUENTA",
+      "disabled": "true",
+      "href": "#condiciones"
+    },
+    {
+      "scenario": "unavailable",
+      "media": true,
+      "overflow": false,
+      "cta": "NO DISPONIBLE",
+      "final": "NO DISPONIBLE",
+      "disabled": "true",
+      "href": "#condiciones"
+    },
+    {
+      "scenario": "membership",
+      "media": true,
+      "overflow": false,
+      "cta": "ACTIVAR MEMBRESÍA",
+      "final": "ACTIVAR MEMBRESÍA",
+      "disabled": null,
+      "href": "/membresia?journey=BENEFIT&action=REDEEM&resource_id=1"
+    },
+    {
+      "scenario": "native",
+      "media": true,
+      "overflow": false,
+      "cta": "VER CÓMO CANJEAR",
+      "final": "VER CÓMO CANJEAR",
+      "disabled": null,
+      "href": "http://127.0.0.1:8080/beneficios/demo-beneficio-01"
+    },
+    {
+      "scenario": "guest",
+      "media": true,
+      "overflow": false,
+      "cta": "CONTINUAR CON MI CUENTA",
+      "final": "CONTINUAR CON MI CUENTA",
+      "disabled": null,
+      "href": "http://127.0.0.1:8780/beneficios/demo-beneficio-01/canjear"
+    }
+  ],
+  "interceptedPosts": [
+    {
+      "url": "http://127.0.0.1:8780/beneficios/demo-beneficio-01/canjear",
+      "body": "{}"
+    }
+  ]
+}

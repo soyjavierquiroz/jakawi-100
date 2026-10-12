@@ -11,7 +11,7 @@ export function marketingThemeForPage(component: string): MarketingTheme {
 
 export default function MarketingLayout({ children, theme }: { children: React.ReactNode; theme?: MarketingTheme }) {
     const component = usePage().component;
-    const acquisition = component === 'landing-presentations/challenge' || component === 'landing-presentations/experience';
+    const acquisition = component === 'landing-presentations/challenge' || component === 'landing-presentations/experience' || component === 'landing-presentations/benefit';
     return <div data-marketing-theme={theme ?? marketingThemeForPage(component)} className="min-h-screen bg-background pb-[var(--pwa-install-clearance,0px)] font-discovery text-foreground">
         <MetaBrowserEvents />
         {!acquisition && <header className="border-b border-border bg-background">

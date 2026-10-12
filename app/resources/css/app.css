@@ -296,3 +296,7 @@
 .experience-faq summary > span { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--marketing-value); color: var(--ink); }
 .experience-faq details > p { font-size: 1rem; }
 .experience-marketing-v3 a[data-growth-kind] { font-size: 1rem; }
+
+/* Benefit: functional FAQ controls, never offered savings. */
+.benefit-faq summary { display:flex; align-items:center; justify-content:space-between; gap:1.5rem; padding-right:0; }
+.benefit-faq summary > span { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; width:2rem; height:2rem; border-radius:50%; background:var(--marketing-value); color:var(--ink); }

@@ -1,0 +1,432 @@
+{
+  "benefit": {
+    "id": 1,
+    "slug": "demo-beneficio-01",
+    "title": "Café de cortesía con tu brunch",
+    "short_description": "Un beneficio para miembros JAKAWI en tu próxima visita.",
+    "description": "Disfruta este detalle pensado para descubrir el espacio con más calma y valor.",
+    "terms": "Válido para membresías activas. Sujeto a disponibilidad del lugar; no acumulable con otras promociones.",
+    "category": "cafe",
+    "benefit_type": "free_item",
+    "estimated_savings": "15.00",
+    "redemption_limit_per_member": null,
+    "featured": true,
+    "starts_at": "2026-08-25T16:21:10.000000Z",
+    "ends_at": "2027-03-25T16:21:10.000000Z",
+    "destination_url": "http://127.0.0.1:8080/beneficios/demo-beneficio-01",
+    "partner": {
+      "id": 1,
+      "slug": "demo-altura-nube",
+      "name": "Altura Nube Café",
+      "description": "Café de altura, pan recién hecho y conversaciones lentas.",
+      "category": "cafe",
+      "website": "https://demo.invalid/altura",
+      "instagram": "@alturanube.demo",
+      "facebook": null,
+      "tiktok": null,
+      "phone": null,
+      "whatsapp": "+59170010001",
+      "email": null,
+      "featured": true,
+      "logo_url": "https://jakawi.com/storage/demo/partners/demo-altura-nube-logo.svg",
+      "logo_srcset": [],
+      "cover_url": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+      "cover_srcset": [
+        {
+          "src": "https://img.jakawi.com/Tx2w9OXTUOjOWNuQCPL35ktp1foB5quBfdCbINbWd4g/rs:fill:320:213/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+          "width": 320
+        },
+        {
+          "src": "https://img.jakawi.com/GILbO3c7Q3nH5umIoNE4RnKSqmSFe27tkJpIMyFIw-0/rs:fill:480:320/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+          "width": 480
+        },
+        {
+          "src": "https://img.jakawi.com/_r8wVL4zWuH4cHq4euLL9GlMkvE8McrfesK1gf6wszM/rs:fill:640:427/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+          "width": 640
+        },
+        {
+          "src": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+          "width": 960
+        }
+      ]
+    },
+    "image_url": "https://img.jakawi.com/wpNlN8leL7wMBuW0ZIxZfec31PrDlMTGX8t92Z67ZAo/rs:fill:640:480/q:80/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+    "image_srcset": [
+      {
+        "src": "https://img.jakawi.com/QgizR3GYgOpx3g5d7_G5bUR1ohTe5l_J4XoGD-VDCG8/rs:fill:320:240/q:80/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 320
+      },
+      {
+        "src": "https://img.jakawi.com/w_nGt2b3dkUOUzDLIvb8qTf4yr0UpChK16sZkmKvPAg/rs:fill:480:360/q:80/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 480
+      },
+      {
+        "src": "https://img.jakawi.com/wpNlN8leL7wMBuW0ZIxZfec31PrDlMTGX8t92Z67ZAo/rs:fill:640:480/q:80/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 640
+      }
+    ],
+    "hero_url": "https://img.jakawi.com/SR3b_zAc0ETeqP_HZ0w9trgQt7pcJNGK-2UzFxSISUM/rs:fill:1280:800/q:82/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+    "hero_srcset": [
+      {
+        "src": "https://img.jakawi.com/4j6zLYuhqMyllnoE8ggR0PlGYq1HnpvsqEK23vzDuk8/rs:fill:320:200/q:82/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 320
+      },
+      {
+        "src": "https://img.jakawi.com/2OF1zXQEKV5h8SH1Gdpm5Q5G4Rgmxeo7HcJg8YM3jNw/rs:fill:480:300/q:82/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 480
+      },
+      {
+        "src": "https://img.jakawi.com/WpC7iPXx3a25L7sW_Bs1IFH4F6vTdAphaJwXzIm3J2E/rs:fill:640:400/q:82/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 640
+      },
+      {
+        "src": "https://img.jakawi.com/MsPmupNpw2T3Nw7WVo6rMnnucFo6g9jeWlEazn_627I/rs:fill:960:600/q:82/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 960
+      },
+      {
+        "src": "https://img.jakawi.com/SR3b_zAc0ETeqP_HZ0w9trgQt7pcJNGK-2UzFxSISUM/rs:fill:1280:800/q:82/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+        "width": 1280
+      }
+    ]
+  },
+  "locations": [
+    {
+      "id": 1,
+      "slug": "demo-altura-nube-cala-cala",
+      "name": "Altura Nube Cala Cala",
+      "location_type": "branch",
+      "city": "Cochabamba",
+      "zone": "Cala Cala",
+      "address": "Calle Demo 11, Cala Cala",
+      "address_reference": "A pasos de la plaza de la zona",
+      "opening_hours": {
+        "mon": [
+          "08:00-18:00"
+        ],
+        "tue": [
+          "08:00-18:00"
+        ],
+        "wed": [
+          "08:00-18:00"
+        ],
+        "thu": [
+          "08:00-18:00"
+        ],
+        "fri": [
+          "08:00-19:00"
+        ],
+        "sat": [
+          "09:00-15:00"
+        ]
+      },
+      "phone": null,
+      "whatsapp": null,
+      "website": null,
+      "instagram": null,
+      "facebook": null,
+      "tiktok": null,
+      "maps_url": "https://www.openstreetmap.org/?mlat=-17.3879&mlon=-66.1583",
+      "partner": {
+        "id": 1,
+        "slug": "demo-altura-nube",
+        "name": "Altura Nube Café",
+        "description": "Café de altura, pan recién hecho y conversaciones lentas.",
+        "category": "cafe",
+        "website": "https://demo.invalid/altura",
+        "instagram": "@alturanube.demo",
+        "facebook": null,
+        "tiktok": null,
+        "phone": null,
+        "whatsapp": "+59170010001",
+        "email": null,
+        "featured": true,
+        "logo_url": "https://jakawi.com/storage/demo/partners/demo-altura-nube-logo.svg",
+        "logo_srcset": [],
+        "cover_url": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+        "cover_srcset": [
+          {
+            "src": "https://img.jakawi.com/Tx2w9OXTUOjOWNuQCPL35ktp1foB5quBfdCbINbWd4g/rs:fill:320:213/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 320
+          },
+          {
+            "src": "https://img.jakawi.com/GILbO3c7Q3nH5umIoNE4RnKSqmSFe27tkJpIMyFIw-0/rs:fill:480:320/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 480
+          },
+          {
+            "src": "https://img.jakawi.com/_r8wVL4zWuH4cHq4euLL9GlMkvE8McrfesK1gf6wszM/rs:fill:640:427/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 640
+          },
+          {
+            "src": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 960
+          }
+        ]
+      },
+      "image_url": "https://jakawi.com/storage/demo/locations/demo-altura-nube-cala-cala.svg",
+      "image_srcset": []
+    },
+    {
+      "id": 2,
+      "slug": "demo-altura-nube-recoleta",
+      "name": "Altura Nube Recoleta",
+      "location_type": "branch",
+      "city": "Cochabamba",
+      "zone": "Recoleta",
+      "address": "Calle Demo 12, Recoleta",
+      "address_reference": "A pasos de la plaza de la zona",
+      "opening_hours": {
+        "mon": [
+          "08:00-18:00"
+        ],
+        "tue": [
+          "08:00-18:00"
+        ],
+        "wed": [
+          "08:00-18:00"
+        ],
+        "thu": [
+          "08:00-18:00"
+        ],
+        "fri": [
+          "08:00-19:00"
+        ],
+        "sat": [
+          "09:00-15:00"
+        ]
+      },
+      "phone": null,
+      "whatsapp": "+59170020002",
+      "website": null,
+      "instagram": null,
+      "facebook": null,
+      "tiktok": null,
+      "maps_url": "https://www.openstreetmap.org/?mlat=-17.3858&mlon=-66.1566",
+      "partner": {
+        "id": 1,
+        "slug": "demo-altura-nube",
+        "name": "Altura Nube Café",
+        "description": "Café de altura, pan recién hecho y conversaciones lentas.",
+        "category": "cafe",
+        "website": "https://demo.invalid/altura",
+        "instagram": "@alturanube.demo",
+        "facebook": null,
+        "tiktok": null,
+        "phone": null,
+        "whatsapp": "+59170010001",
+        "email": null,
+        "featured": true,
+        "logo_url": "https://jakawi.com/storage/demo/partners/demo-altura-nube-logo.svg",
+        "logo_srcset": [],
+        "cover_url": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+        "cover_srcset": [
+          {
+            "src": "https://img.jakawi.com/Tx2w9OXTUOjOWNuQCPL35ktp1foB5quBfdCbINbWd4g/rs:fill:320:213/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 320
+          },
+          {
+            "src": "https://img.jakawi.com/GILbO3c7Q3nH5umIoNE4RnKSqmSFe27tkJpIMyFIw-0/rs:fill:480:320/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 480
+          },
+          {
+            "src": "https://img.jakawi.com/_r8wVL4zWuH4cHq4euLL9GlMkvE8McrfesK1gf6wszM/rs:fill:640:427/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 640
+          },
+          {
+            "src": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 960
+          }
+        ]
+      },
+      "image_url": "https://jakawi.com/storage/demo/locations/demo-altura-nube-recoleta.svg",
+      "image_srcset": []
+    },
+    {
+      "id": 3,
+      "slug": "demo-altura-nube-tiquipaya",
+      "name": "Altura Nube Tiquipaya",
+      "location_type": "branch",
+      "city": "Cochabamba",
+      "zone": "Tiquipaya",
+      "address": "Calle Demo 13, Tiquipaya",
+      "address_reference": "A pasos de la plaza de la zona",
+      "opening_hours": {
+        "mon": [
+          "08:00-18:00"
+        ],
+        "tue": [
+          "08:00-18:00"
+        ],
+        "wed": [
+          "08:00-18:00"
+        ],
+        "thu": [
+          "08:00-18:00"
+        ],
+        "fri": [
+          "08:00-19:00"
+        ],
+        "sat": [
+          "09:00-15:00"
+        ]
+      },
+      "phone": "+59144020003",
+      "whatsapp": null,
+      "website": null,
+      "instagram": null,
+      "facebook": null,
+      "tiktok": null,
+      "maps_url": "https://www.openstreetmap.org/?mlat=-17.3837&mlon=-66.1549",
+      "partner": {
+        "id": 1,
+        "slug": "demo-altura-nube",
+        "name": "Altura Nube Café",
+        "description": "Café de altura, pan recién hecho y conversaciones lentas.",
+        "category": "cafe",
+        "website": "https://demo.invalid/altura",
+        "instagram": "@alturanube.demo",
+        "facebook": null,
+        "tiktok": null,
+        "phone": null,
+        "whatsapp": "+59170010001",
+        "email": null,
+        "featured": true,
+        "logo_url": "https://jakawi.com/storage/demo/partners/demo-altura-nube-logo.svg",
+        "logo_srcset": [],
+        "cover_url": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+        "cover_srcset": [
+          {
+            "src": "https://img.jakawi.com/Tx2w9OXTUOjOWNuQCPL35ktp1foB5quBfdCbINbWd4g/rs:fill:320:213/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 320
+          },
+          {
+            "src": "https://img.jakawi.com/GILbO3c7Q3nH5umIoNE4RnKSqmSFe27tkJpIMyFIw-0/rs:fill:480:320/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 480
+          },
+          {
+            "src": "https://img.jakawi.com/_r8wVL4zWuH4cHq4euLL9GlMkvE8McrfesK1gf6wszM/rs:fill:640:427/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 640
+          },
+          {
+            "src": "https://img.jakawi.com/LT3t-K9j8crqi54FH7zevY_Zw4U5oC8mG9X7PzbIlMw/rs:fill:960:640/q:82/f:webp/plain/s3://jakawi-media/partners/1/cover/75ad0826-4fd6-421e-b0db-9bac162983c5.png",
+            "width": 960
+          }
+        ]
+      },
+      "image_url": "https://jakawi.com/storage/demo/locations/demo-altura-nube-tiquipaya.svg",
+      "image_srcset": []
+    }
+  ],
+  "availability": {
+    "available": true,
+    "reason": null
+  },
+  "hasActiveMembership": false,
+  "vsl": null,
+  "presentation": {
+    "id": 2,
+    "name": "QA Benefit Landing — Café de cortesía con tu brunch",
+    "slug": "qa-benefit-marketing-demo-beneficio-01",
+    "status": "PUBLISHED",
+    "default_scope": "NONE",
+    "campaign_key": null,
+    "hero_alt": "Café de cortesía con tu brunch"
+  },
+  "copy": {
+    "eyebrow": "BENEFICIO JAKAWI",
+    "headline": "Café de cortesía con tu brunch",
+    "subheadline": "Un beneficio para miembros JAKAWI en tu próxima visita.",
+    "value": "Café de cortesía con tu brunch",
+    "description": "Disfruta este detalle pensado para descubrir el espacio con más calma y valor.",
+    "valueNote": null,
+    "partner": "Altura Nube Café",
+    "places": [
+      {
+        "id": 1,
+        "name": "Altura Nube Cala Cala",
+        "address": "Calle Demo 11, Cala Cala",
+        "zone": "Cala Cala",
+        "city": "Cochabamba"
+      },
+      {
+        "id": 2,
+        "name": "Altura Nube Recoleta",
+        "address": "Calle Demo 12, Recoleta",
+        "zone": "Recoleta",
+        "city": "Cochabamba"
+      },
+      {
+        "id": 3,
+        "name": "Altura Nube Tiquipaya",
+        "address": "Calle Demo 13, Tiquipaya",
+        "zone": "Tiquipaya",
+        "city": "Cochabamba"
+      }
+    ],
+    "deadline": "25/03/2027 12:21",
+    "membership": "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+    "rules": [
+      "Necesitas una membresía JAKAWI activa para canjear este beneficio.",
+      "Úsalo en: Altura Nube Cala Cala · Altura Nube Recoleta · Altura Nube Tiquipaya.",
+      "Válido hasta el 25/03/2027 12:21.",
+      "Disponible desde el 25/08/2026 12:21.",
+      "Válido para membresías activas. Sujeto a disponibilidad del lugar; no acumulable con otras promociones."
+    ],
+    "benefits": [
+      {
+        "title": "Café de cortesía con tu brunch",
+        "description": "Un beneficio para miembros JAKAWI en tu próxima visita."
+      },
+      {
+        "title": "En Altura Nube Café",
+        "description": "Altura Nube Cala Cala · Altura Nube Recoleta · Altura Nube Tiquipaya"
+      },
+      {
+        "title": "Vigencia clara",
+        "description": "Válido hasta el 25/03/2027 12:21."
+      }
+    ],
+    "steps": [
+      {
+        "title": "CREA TU CUENTA",
+        "description": "Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio."
+      },
+      {
+        "title": "VISITA EL PARTNER",
+        "description": "Acércate a una de las sucursales aplicables de Altura Nube Café."
+      },
+      {
+        "title": "CANJEA",
+        "description": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+      }
+    ],
+    "faq": [
+      {
+        "question": "¿Cómo uso el beneficio?",
+        "answer": "Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código."
+      },
+      {
+        "question": "¿Necesito membresía?",
+        "answer": "Necesitas una membresía JAKAWI activa para canjear este beneficio."
+      },
+      {
+        "question": "¿Dónde puedo canjearlo?",
+        "answer": "Altura Nube Cala Cala · Altura Nube Recoleta · Altura Nube Tiquipaya"
+      },
+      {
+        "question": "¿Hasta cuándo es válido?",
+        "answer": "Hasta el 25/03/2027 12:21."
+      }
+    ],
+    "action": {
+      "label": "QUIERO ESTE BENEFICIO",
+      "href": "http://127.0.0.1:8080/beneficios/demo-beneficio-01/canjear",
+      "kind": "guest"
+    },
+    "finalHeadline": "¿LISTO PARA APROVECHARLO?"
+  },
+  "heroUrl": "https://img.jakawi.com/SR3b_zAc0ETeqP_HZ0w9trgQt7pcJNGK-2UzFxSISUM/rs:fill:1280:800/q:82/f:webp/plain/s3://jakawi-media/benefits/1/cover/248fcdcc-bb3b-415a-9809-9a9326e8e08b.png",
+  "nativeUrl": "http://127.0.0.1:8080/beneficios/demo-beneficio-01",
+  "canonical": "http://127.0.0.1:8080/beneficios/demo-beneficio-01",
+  "noindex": true,
+  "preview": false
+}
