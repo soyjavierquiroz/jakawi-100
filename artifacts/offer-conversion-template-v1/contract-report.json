@@ -1,0 +1,203 @@
+{
+  "errors": [],
+  "reports": [
+    {
+      "treatment": "compact",
+      "count": 0,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "compact",
+      "count": 0,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "compact",
+      "count": 1,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "compact",
+      "count": 1,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "compact",
+      "count": 7,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "compact",
+      "count": 7,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "editorial",
+      "count": 0,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "editorial",
+      "count": 0,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "editorial",
+      "count": 1,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "editorial",
+      "count": 1,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "editorial",
+      "count": 7,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "editorial",
+      "count": 7,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "plain",
+      "count": 0,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "plain",
+      "count": 0,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "plain",
+      "count": 1,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "plain",
+      "count": 1,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "plain",
+      "count": 7,
+      "width": 390,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    },
+    {
+      "treatment": "plain",
+      "count": 7,
+      "width": 1440,
+      "overflow": false,
+      "literal": "<em>Texto literal</em>",
+      "emInjected": false,
+      "mediaWrappers": 0,
+      "boundCalls": 2,
+      "operational": true
+    }
+  ]
+}

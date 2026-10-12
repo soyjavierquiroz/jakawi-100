@@ -1,0 +1,1432 @@
+{
+  "errors": [],
+  "reports": [
+    {
+      "domain": "challenge",
+      "state": "default",
+      "before": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "participating",
+      "before": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "other",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "other",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "other",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "other",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "membership",
+      "before": {
+        "actions": [
+          {
+            "href": "/membresia?journey=SOCIAL_CHALLENGE&action=PARTICIPATE&resource_id=1",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/membresia?journey=SOCIAL_CHALLENGE&action=PARTICIPATE&resource_id=1",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "hero",
+              "destination": "/membresia"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "final",
+              "destination": "/membresia"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/membresia?journey=SOCIAL_CHALLENGE&action=PARTICIPATE&resource_id=1",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/membresia?journey=SOCIAL_CHALLENGE&action=PARTICIPATE&resource_id=1",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "hero",
+              "destination": "/membresia"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "final",
+              "destination": "/membresia"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "closed",
+      "before": {
+        "actions": [
+          {
+            "href": "#mecanica",
+            "label": "VER RESULTADOS",
+            "kind": "other",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#mecanica",
+            "label": "VER RESULTADOS",
+            "kind": "other",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#mecanica",
+            "label": "VER RESULTADOS",
+            "kind": "other",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#mecanica",
+            "label": "VER RESULTADOS",
+            "kind": "other",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "other",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "grant",
+      "before": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "fulfilled",
+      "before": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "VER MI PARTICIPACIÓN",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "reversed",
+      "before": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "hero",
+              "destination": "/"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-bafabo-marketing/cta",
+            "body": {
+              "cta_kind": "participate",
+              "cta_location": "final",
+              "destination": "/"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "preview",
+      "before": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": []
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "#participar",
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": []
+      }
+    },
+    {
+      "domain": "experience",
+      "state": "default",
+      "before": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "experience",
+      "state": "guest",
+      "before": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi/reservar",
+            "label": "CONTINUAR",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi/reservar",
+            "label": "CONTINUAR",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "signup",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi/reservar"
+            }
+          },
+          {
+            "path": "/experiencias/demo-sunset-jakawi/reservar",
+            "body": {
+              "experience_session_id": 3
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi/reservar",
+            "label": "CONTINUAR",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi/reservar",
+            "label": "CONTINUAR",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "signup",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi/reservar"
+            }
+          },
+          {
+            "path": "/experiencias/demo-sunset-jakawi/reservar",
+            "body": {
+              "experience_session_id": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "experience",
+      "state": "native",
+      "before": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "experience",
+      "state": "membership",
+      "before": {
+        "actions": [
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "hero",
+              "destination": "/membresia"
+            }
+          },
+          {
+            "path": "/analytics/journey-intent/experience/demo-sunset-jakawi",
+            "body": null
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "final",
+              "destination": "/membresia"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "hero",
+              "destination": "/membresia"
+            }
+          },
+          {
+            "path": "/analytics/journey-intent/experience/demo-sunset-jakawi",
+            "body": null
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "final",
+              "destination": "/membresia"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "experience",
+      "state": "unavailable",
+      "before": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      }
+    },
+    {
+      "domain": "experience",
+      "state": "preview",
+      "before": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER FECHAS Y RESERVAR",
+            "kind": "native",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      }
+    },
+    {
+      "domain": "experience",
+      "state": "reserved",
+      "before": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER MI RESERVA",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER MI RESERVA",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER MI RESERVA",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/experiencias/demo-sunset-jakawi",
+            "label": "VER MI RESERVA",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/experiencias/demo-sunset-jakawi"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "benefit",
+      "state": "default",
+      "before": {
+        "actions": [
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "signup",
+              "cta_location": "hero",
+              "destination": "/beneficios/demo-beneficio-01/canjear"
+            }
+          },
+          {
+            "path": "/beneficios/demo-beneficio-01/canjear",
+            "body": {}
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "signup",
+              "cta_location": "hero",
+              "destination": "/beneficios/demo-beneficio-01/canjear"
+            }
+          },
+          {
+            "path": "/beneficios/demo-beneficio-01/canjear",
+            "body": {}
+          }
+        ]
+      }
+    },
+    {
+      "domain": "benefit",
+      "state": "guest",
+      "before": {
+        "actions": [
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "signup",
+              "cta_location": "hero",
+              "destination": "/beneficios/demo-beneficio-01/canjear"
+            }
+          },
+          {
+            "path": "/beneficios/demo-beneficio-01/canjear",
+            "body": {}
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "signup",
+              "cta_location": "hero",
+              "destination": "/beneficios/demo-beneficio-01/canjear"
+            }
+          },
+          {
+            "path": "/beneficios/demo-beneficio-01/canjear",
+            "body": {}
+          }
+        ]
+      }
+    },
+    {
+      "domain": "benefit",
+      "state": "native",
+      "before": {
+        "actions": [
+          {
+            "href": "/beneficios/demo-beneficio-01",
+            "label": "VER CÓMO CANJEAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/beneficios/demo-beneficio-01",
+            "label": "VER CÓMO CANJEAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/beneficios/demo-beneficio-01"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/beneficios/demo-beneficio-01"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/beneficios/demo-beneficio-01",
+            "label": "VER CÓMO CANJEAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/beneficios/demo-beneficio-01",
+            "label": "VER CÓMO CANJEAR",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "hero",
+              "destination": "/beneficios/demo-beneficio-01"
+            }
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "product_detail",
+              "cta_location": "final",
+              "destination": "/beneficios/demo-beneficio-01"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "benefit",
+      "state": "membership",
+      "before": {
+        "actions": [
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "hero",
+              "destination": "/membresia"
+            }
+          },
+          {
+            "path": "/analytics/journey-intent/benefit/demo-beneficio-01",
+            "body": null
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "final",
+              "destination": "/membresia"
+            }
+          }
+        ]
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "href": "/membresia",
+            "label": "ACTIVAR MEMBRESÍA",
+            "kind": "membership",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "requests": [
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "hero",
+              "destination": "/membresia"
+            }
+          },
+          {
+            "path": "/analytics/journey-intent/benefit/demo-beneficio-01",
+            "body": null
+          },
+          {
+            "path": "/analytics/landing-presentations/qa-benefit-marketing-demo-beneficio-01/cta",
+            "body": {
+              "cta_kind": "membership",
+              "cta_location": "final",
+              "destination": "/membresia"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "domain": "benefit",
+      "state": "unavailable",
+      "before": {
+        "actions": [
+          {
+            "href": "#condiciones",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "#condiciones",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#condiciones",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "#condiciones",
+            "label": "NO DISPONIBLE",
+            "kind": "unavailable",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      }
+    },
+    {
+      "domain": "benefit",
+      "state": "preview",
+      "before": {
+        "actions": [
+          {
+            "href": "#condiciones",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "#condiciones",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      },
+      "after": {
+        "actions": [
+          {
+            "href": "#condiciones",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": "true",
+            "location": "hero"
+          },
+          {
+            "href": "#condiciones",
+            "label": "CONTINUAR CON MI CUENTA",
+            "kind": "guest",
+            "disabled": "true",
+            "location": "final"
+          }
+        ],
+        "requests": []
+      }
+    },
+    {
+      "domain": "challenge",
+      "state": "sticky",
+      "pass": true
+    }
+  ]
+}

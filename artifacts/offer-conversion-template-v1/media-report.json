@@ -1,0 +1,198 @@
+{
+  "errors": [],
+  "reports": [
+    {
+      "domain": "experience",
+      "width": 390,
+      "variant": "no-media",
+      "before": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA.",
+        "cta": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 481.6875
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 2597.21875
+          }
+        ]
+      },
+      "after": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA.",
+        "cta": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 481.6875
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 2597.21875
+          }
+        ]
+      }
+    },
+    {
+      "domain": "experience",
+      "width": 1440,
+      "variant": "no-media",
+      "before": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA.",
+        "cta": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 563.65625
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 2539.03125
+          }
+        ]
+      },
+      "after": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA.",
+        "cta": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 563.65625
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "y": 2539.03125
+          }
+        ]
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 390,
+      "variant": "no-media",
+      "before": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "TU BRUNCH, CON CAFÉ DE CORTESÍA.",
+        "cta": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 481.640625
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 3000.640625
+          }
+        ]
+      },
+      "after": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "TU BRUNCH, CON CAFÉ DE CORTESÍA.",
+        "cta": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 481.640625
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 3000.640625
+          }
+        ]
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 1440,
+      "variant": "no-media",
+      "before": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "TU BRUNCH, CON CAFÉ DE CORTESÍA.",
+        "cta": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 514.4375
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 2590.4375
+          }
+        ]
+      },
+      "after": {
+        "wrapperCount": 0,
+        "mediaCount": 0,
+        "overflow": false,
+        "headline": "TU BRUNCH, CON CAFÉ DE CORTESÍA.",
+        "cta": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 514.4375
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "y": 2590.4375
+          }
+        ]
+      }
+    },
+    {
+      "domain": "challenge",
+      "width": 390,
+      "variant": "existing-vsl",
+      "after": {
+        "wrapperCount": 1,
+        "playing": true,
+        "muted": false,
+        "readyState": 4,
+        "currentTime": 0.205683,
+        "overflow": false
+      }
+    }
+  ]
+}

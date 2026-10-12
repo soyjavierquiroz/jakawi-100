@@ -1,0 +1,1381 @@
+{
+  "errors": [],
+  "reports": [
+    {
+      "domain": "challenge",
+      "width": 390,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "dark-conversion",
+        "headline": {
+          "x": 16,
+          "y": 48,
+          "width": 358,
+          "height": 89.484375,
+          "bottom": 137.484375
+        },
+        "media": {
+          "x": 16,
+          "y": 277.484375,
+          "width": 358,
+          "height": 477.328125,
+          "bottom": 754.8125
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 16,
+          "y": 770.8125,
+          "width": 358,
+          "height": 60,
+          "bottom": 830.8125
+        },
+        "final": {
+          "x": 0,
+          "y": 1564.703125,
+          "width": 390,
+          "height": 375,
+          "bottom": 1939.703125
+        },
+        "faq": {
+          "x": 16,
+          "y": 2566.203125,
+          "width": 358,
+          "height": 652,
+          "bottom": 3218.203125
+        },
+        "actions": [
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "RETO JAKAWI · #BAFABO MUÉSTRANOS TU MEJOR PLAN EN COCHABAMBA PREMIO DEMO · CENA PARA DOS Demo visual · no canjeable. Publica un Reel con #bafabo y envíanos tu enlace. Ver video CREAR CUENTA Y PARTICIPAR PUBLICA · ENVÍA · CALIFICA Cierra el 14 de octubre de 2026 a las 3:45 p. m. TU PREMIO Cena para dos Demo visual — premio ilustrativo, no canjeable. CÓMO FUNCIONA 3 PASOS PARA PARTICIPAR 01 PUBLICA Publica en Instagram con #bafabo. 02 ENVÍA Con tu cuenta y correo verificado, envía el enlace de tu publicación. 03 CALIFICA Cumple las reglas del reto con una publicación válida. RESULTADO DEL RETO NO ES SORTEO Si cumples las reglas, calificas. Todos los que califican reciben el premio QA, sin valor comercial. REGLAS ESENCIALES LO ESENCIAL Qué hacer Publica según las instrucciones del reto. Cómo calificas Cumple las reglas del reto con una publicación válida. Cómo se eligen ganadores Todas las personas que califiquen reciben el premio. VER REGLAS COMPLETAS CREAR CUENTA O INGRESAR SIN DUDAS PREGUNTAS FRECUENTES ¿La cena se puede canjear? + ¿Quién puede participar? + ¿Cuándo se verifica mi publicación? + ¿Cómo se eligen ganadores? + ¿Necesito membresía? + ¿Cuándo recibo el premio? + JAKAWI ¿LISTO PARA PROBARLO? Demo visual — premio ilustrativo, no canjeable. CREAR CUENTA Y PARTICIPAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "29.25px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "dark-conversion",
+        "headline": {
+          "x": 16,
+          "y": 48,
+          "width": 358,
+          "height": 89.484375,
+          "bottom": 137.484375
+        },
+        "media": {
+          "x": 16,
+          "y": 277.484375,
+          "width": 358,
+          "height": 477.328125,
+          "bottom": 754.8125
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 16,
+          "y": 770.8125,
+          "width": 358,
+          "height": 60,
+          "bottom": 830.8125
+        },
+        "final": {
+          "x": 0,
+          "y": 1564.703125,
+          "width": 390,
+          "height": 375,
+          "bottom": 1939.703125
+        },
+        "faq": {
+          "x": 16,
+          "y": 2566.203125,
+          "width": 358,
+          "height": 652,
+          "bottom": 3218.203125
+        },
+        "actions": [
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "RETO JAKAWI · #BAFABO MUÉSTRANOS TU MEJOR PLAN EN COCHABAMBA PREMIO DEMO · CENA PARA DOS Demo visual · no canjeable. Publica un Reel con #bafabo y envíanos tu enlace. Ver video CREAR CUENTA Y PARTICIPAR PUBLICA · ENVÍA · CALIFICA Cierra el 14 de octubre de 2026 a las 3:45 p. m. TU PREMIO Cena para dos Demo visual — premio ilustrativo, no canjeable. CÓMO FUNCIONA 3 PASOS PARA PARTICIPAR 01 PUBLICA Publica en Instagram con #bafabo. 02 ENVÍA Con tu cuenta y correo verificado, envía el enlace de tu publicación. 03 CALIFICA Cumple las reglas del reto con una publicación válida. RESULTADO DEL RETO NO ES SORTEO Si cumples las reglas, calificas. Todos los que califican reciben el premio QA, sin valor comercial. REGLAS ESENCIALES LO ESENCIAL Qué hacer Publica según las instrucciones del reto. Cómo calificas Cumple las reglas del reto con una publicación válida. Cómo se eligen ganadores Todas las personas que califiquen reciben el premio. VER REGLAS COMPLETAS CREAR CUENTA O INGRESAR SIN DUDAS PREGUNTAS FRECUENTES ¿La cena se puede canjear? + ¿Quién puede participar? + ¿Cuándo se verifica mi publicación? + ¿Cómo se eligen ganadores? + ¿Necesito membresía? + ¿Cuándo recibo el premio? + JAKAWI ¿LISTO PARA PROBARLO? Demo visual — premio ilustrativo, no canjeable. CREAR CUENTA Y PARTICIPAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "29.25px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "challenge",
+      "width": 430,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "dark-conversion",
+        "headline": {
+          "x": 16,
+          "y": 48,
+          "width": 398,
+          "height": 98.671875,
+          "bottom": 146.671875
+        },
+        "media": {
+          "x": 16,
+          "y": 286.671875,
+          "width": 398,
+          "height": 480,
+          "bottom": 766.671875
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 16,
+          "y": 782.671875,
+          "width": 398,
+          "height": 60,
+          "bottom": 842.671875
+        },
+        "final": {
+          "x": 0,
+          "y": 1552.5625,
+          "width": 430,
+          "height": 327,
+          "bottom": 1879.5625
+        },
+        "faq": {
+          "x": 16,
+          "y": 2483.5625,
+          "width": 398,
+          "height": 652,
+          "bottom": 3135.5625
+        },
+        "actions": [
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "RETO JAKAWI · #BAFABO MUÉSTRANOS TU MEJOR PLAN EN COCHABAMBA PREMIO DEMO · CENA PARA DOS Demo visual · no canjeable. Publica un Reel con #bafabo y envíanos tu enlace. Ver video CREAR CUENTA Y PARTICIPAR PUBLICA · ENVÍA · CALIFICA Cierra el 14 de octubre de 2026 a las 3:45 p. m. TU PREMIO Cena para dos Demo visual — premio ilustrativo, no canjeable. CÓMO FUNCIONA 3 PASOS PARA PARTICIPAR 01 PUBLICA Publica en Instagram con #bafabo. 02 ENVÍA Con tu cuenta y correo verificado, envía el enlace de tu publicación. 03 CALIFICA Cumple las reglas del reto con una publicación válida. RESULTADO DEL RETO NO ES SORTEO Si cumples las reglas, calificas. Todos los que califican reciben el premio QA, sin valor comercial. REGLAS ESENCIALES LO ESENCIAL Qué hacer Publica según las instrucciones del reto. Cómo calificas Cumple las reglas del reto con una publicación válida. Cómo se eligen ganadores Todas las personas que califiquen reciben el premio. VER REGLAS COMPLETAS CREAR CUENTA O INGRESAR SIN DUDAS PREGUNTAS FRECUENTES ¿La cena se puede canjear? + ¿Quién puede participar? + ¿Cuándo se verifica mi publicación? + ¿Cómo se eligen ganadores? + ¿Necesito membresía? + ¿Cuándo recibo el premio? + JAKAWI ¿LISTO PARA PROBARLO? Demo visual — premio ilustrativo, no canjeable. CREAR CUENTA Y PARTICIPAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "32.25px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "dark-conversion",
+        "headline": {
+          "x": 16,
+          "y": 48,
+          "width": 398,
+          "height": 98.671875,
+          "bottom": 146.671875
+        },
+        "media": {
+          "x": 16,
+          "y": 286.671875,
+          "width": 398,
+          "height": 480,
+          "bottom": 766.671875
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 16,
+          "y": 782.671875,
+          "width": 398,
+          "height": 60,
+          "bottom": 842.671875
+        },
+        "final": {
+          "x": 0,
+          "y": 1552.5625,
+          "width": 430,
+          "height": 327,
+          "bottom": 1879.5625
+        },
+        "faq": {
+          "x": 16,
+          "y": 2483.5625,
+          "width": 398,
+          "height": 652,
+          "bottom": 3135.5625
+        },
+        "actions": [
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "RETO JAKAWI · #BAFABO MUÉSTRANOS TU MEJOR PLAN EN COCHABAMBA PREMIO DEMO · CENA PARA DOS Demo visual · no canjeable. Publica un Reel con #bafabo y envíanos tu enlace. Ver video CREAR CUENTA Y PARTICIPAR PUBLICA · ENVÍA · CALIFICA Cierra el 14 de octubre de 2026 a las 3:45 p. m. TU PREMIO Cena para dos Demo visual — premio ilustrativo, no canjeable. CÓMO FUNCIONA 3 PASOS PARA PARTICIPAR 01 PUBLICA Publica en Instagram con #bafabo. 02 ENVÍA Con tu cuenta y correo verificado, envía el enlace de tu publicación. 03 CALIFICA Cumple las reglas del reto con una publicación válida. RESULTADO DEL RETO NO ES SORTEO Si cumples las reglas, calificas. Todos los que califican reciben el premio QA, sin valor comercial. REGLAS ESENCIALES LO ESENCIAL Qué hacer Publica según las instrucciones del reto. Cómo calificas Cumple las reglas del reto con una publicación válida. Cómo se eligen ganadores Todas las personas que califiquen reciben el premio. VER REGLAS COMPLETAS CREAR CUENTA O INGRESAR SIN DUDAS PREGUNTAS FRECUENTES ¿La cena se puede canjear? + ¿Quién puede participar? + ¿Cuándo se verifica mi publicación? + ¿Cómo se eligen ganadores? + ¿Necesito membresía? + ¿Cuándo recibo el premio? + JAKAWI ¿LISTO PARA PROBARLO? Demo visual — premio ilustrativo, no canjeable. CREAR CUENTA Y PARTICIPAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "32.25px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "challenge",
+      "width": 1440,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "dark-conversion",
+        "headline": {
+          "x": 176,
+          "y": 84,
+          "width": 520,
+          "height": 214.90625,
+          "bottom": 298.90625
+        },
+        "media": {
+          "x": 744,
+          "y": 56,
+          "width": 520,
+          "height": 560,
+          "bottom": 616
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 744,
+          "y": 632,
+          "width": 520,
+          "height": 60,
+          "bottom": 692
+        },
+        "final": {
+          "x": 0,
+          "y": 1509.828125,
+          "width": 1440,
+          "height": 448,
+          "bottom": 1957.828125
+        },
+        "faq": {
+          "x": 176,
+          "y": 2939.828125,
+          "width": 1088,
+          "height": 768,
+          "bottom": 3707.828125
+        },
+        "actions": [
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "RETO JAKAWI · #BAFABO MUÉSTRANOS TU MEJOR PLAN EN COCHABAMBA PREMIO DEMO CENA PARA DOS Demo visual — premio ilustrativo, no canjeable. Publica un Reel mostrando un plan que valga la pena vivir en la ciudad. Usa #bafabo y envía tu enlace. Ver video CREAR CUENTA Y PARTICIPAR PUBLICA · ENVÍA · CALIFICA Si cumples las reglas, calificas. Premio QA sin valor comercial. Cierra el 14 de octubre de 2026 a las 3:45 p. m. PREMIO DEMO Cena para dos Demo visual — premio ilustrativo, no canjeable. Si cumples las reglas, calificas. Premio QA sin valor comercial. CÓMO FUNCIONA 3 PASOS PARA PARTICIPAR 01 PUBLICA Publica en Instagram con #bafabo. 02 ENVÍA Con tu cuenta y correo verificado, envía el enlace de tu publicación. 03 CALIFICA Cumple las reglas del reto con una publicación válida. RESULTADO DEL RETO NO ES SORTEO Si cumples las reglas, calificas. Todos los participantes que califican reciben el premio QA configurado, sin valor comercial. La cena es ilustrativa y no canjeable. Cumple las reglas del reto con una publicación válida. No necesitas membresía activa para participar ni para recibir el premio. REGLAS ESENCIALES LO QUE DEBES SABER Qué hacer Publica según las instrucciones del reto. Cómo calificas Cumple las reglas del reto con una publicación válida. Cómo se eligen ganadores Todas las personas que califiquen reciben el premio. Cierre 14 de octubre de 2026 a las 3:45 p. m. Quién recibe el premio No necesitas membresía activa para participar ni para recibir el premio. Entradas máximas 3 REGLAS COMPLETAS TU PARTICIPACIÓN PARTICIPA EN ESTE RETO CREAR CUENTA O INGRESAR SIN DUDAS PREGUNTAS FRECUENTES ¿La cena se puede canjear? + ¿Quién puede participar? + ¿Cuándo se verifica mi publicación? + ¿Cómo se eligen ganadores? + ¿Necesito membresía? + ¿Cuándo recibo el premio? + JAKAWI ¿LISTO PARA PROBARLO? Demo visual — premio ilustrativo, no canjeable. CREAR CUENTA Y PARTICIPAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "48.96px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "dark-conversion",
+        "headline": {
+          "x": 176,
+          "y": 84,
+          "width": 520,
+          "height": 214.90625,
+          "bottom": 298.90625
+        },
+        "media": {
+          "x": 744,
+          "y": 56,
+          "width": 520,
+          "height": 560,
+          "bottom": 616
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 744,
+          "y": 632,
+          "width": 520,
+          "height": 60,
+          "bottom": 692
+        },
+        "final": {
+          "x": 0,
+          "y": 1509.828125,
+          "width": 1440,
+          "height": 448,
+          "bottom": 1957.828125
+        },
+        "faq": {
+          "x": 176,
+          "y": 2939.828125,
+          "width": 1088,
+          "height": 768,
+          "bottom": 3707.828125
+        },
+        "actions": [
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CREAR CUENTA Y PARTICIPAR",
+            "href": "#participar",
+            "kind": "participate",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "RETO JAKAWI · #BAFABO MUÉSTRANOS TU MEJOR PLAN EN COCHABAMBA PREMIO DEMO CENA PARA DOS Demo visual — premio ilustrativo, no canjeable. Publica un Reel mostrando un plan que valga la pena vivir en la ciudad. Usa #bafabo y envía tu enlace. Ver video CREAR CUENTA Y PARTICIPAR PUBLICA · ENVÍA · CALIFICA Si cumples las reglas, calificas. Premio QA sin valor comercial. Cierra el 14 de octubre de 2026 a las 3:45 p. m. PREMIO DEMO Cena para dos Demo visual — premio ilustrativo, no canjeable. Si cumples las reglas, calificas. Premio QA sin valor comercial. CÓMO FUNCIONA 3 PASOS PARA PARTICIPAR 01 PUBLICA Publica en Instagram con #bafabo. 02 ENVÍA Con tu cuenta y correo verificado, envía el enlace de tu publicación. 03 CALIFICA Cumple las reglas del reto con una publicación válida. RESULTADO DEL RETO NO ES SORTEO Si cumples las reglas, calificas. Todos los participantes que califican reciben el premio QA configurado, sin valor comercial. La cena es ilustrativa y no canjeable. Cumple las reglas del reto con una publicación válida. No necesitas membresía activa para participar ni para recibir el premio. REGLAS ESENCIALES LO QUE DEBES SABER Qué hacer Publica según las instrucciones del reto. Cómo calificas Cumple las reglas del reto con una publicación válida. Cómo se eligen ganadores Todas las personas que califiquen reciben el premio. Cierre 14 de octubre de 2026 a las 3:45 p. m. Quién recibe el premio No necesitas membresía activa para participar ni para recibir el premio. Entradas máximas 3 REGLAS COMPLETAS TU PARTICIPACIÓN PARTICIPA EN ESTE RETO CREAR CUENTA O INGRESAR SIN DUDAS PREGUNTAS FRECUENTES ¿La cena se puede canjear? + ¿Quién puede participar? + ¿Cuándo se verifica mi publicación? + ¿Cómo se eligen ganadores? + ¿Necesito membresía? + ¿Cuándo recibo el premio? + JAKAWI ¿LISTO PARA PROBARLO? Demo visual — premio ilustrativo, no canjeable. CREAR CUENTA Y PARTICIPAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "48.96px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "experience",
+      "width": 390,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 350,
+          "height": 170.1875,
+          "bottom": 234.1875
+        },
+        "media": {
+          "x": 20,
+          "y": 318.1875,
+          "width": 350,
+          "height": 262.5,
+          "bottom": 580.6875
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 760.1875,
+          "width": 350,
+          "height": 52,
+          "bottom": 812.1875
+        },
+        "final": {
+          "x": 0,
+          "y": 2601.5625,
+          "width": 390,
+          "height": 382.15625,
+          "bottom": 2983.71875
+        },
+        "faq": {
+          "x": 20,
+          "y": 2128.5625,
+          "width": 350,
+          "height": 473,
+          "bottom": 2601.5625
+        },
+        "actions": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "SUNSET JAKAWI 3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA. Música suave, vista a la ciudad y un atardecer compartido en Mirador Cobalto. Fecha 18 OCT Hora 13:00–16:00 Lugar Mirador Cobalto Precio normal BOB 80 Miembro JAKAWI BOB 60 VER FECHAS Y RESERVAR La reserva continúa en la ficha y se gestiona con el partner. No necesitas membresía para asistir. POR QUÉ ESTE PLAN 01 Música suave El ritmo de una tarde compartida. 02 Vista a la ciudad Un encuentro en altura. 03 Atardecer compartido Una tarde para encontrarnos. PREPARA TU PLAN ANTES DE RESERVAR Revisa los datos de la sesión y las condiciones antes de continuar. Cuándo y dónde 18/10/2026 · 13:00–16:00 Mirador Cobalto · Cochabamba Calle Demo 27, Alalay Cómo reservar Condiciones completas Quién lo hace posible Ver ficha, fechas y reserva PREGUNTAS FRECUENTES ¿Cómo reservo? + ¿Qué día y a qué hora? + ¿Dónde es? + HAZ DEL ATARDECER TU PRÓXIMO PLAN. Consulta la ficha y continúa tu reserva con el partner. VER FECHAS Y RESERVAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 350,
+          "height": 170.1875,
+          "bottom": 234.1875
+        },
+        "media": {
+          "x": 20,
+          "y": 318.1875,
+          "width": 350,
+          "height": 262.5,
+          "bottom": 580.6875
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 760.1875,
+          "width": 350,
+          "height": 52,
+          "bottom": 812.1875
+        },
+        "final": {
+          "x": 0,
+          "y": 2601.5625,
+          "width": 390,
+          "height": 382.15625,
+          "bottom": 2983.71875
+        },
+        "faq": {
+          "x": 20,
+          "y": 2128.5625,
+          "width": 350,
+          "height": 473,
+          "bottom": 2601.5625
+        },
+        "actions": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "SUNSET JAKAWI 3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA. Música suave, vista a la ciudad y un atardecer compartido en Mirador Cobalto. Fecha 18 OCT Hora 13:00–16:00 Lugar Mirador Cobalto Precio normal BOB 80 Miembro JAKAWI BOB 60 VER FECHAS Y RESERVAR La reserva continúa en la ficha y se gestiona con el partner. No necesitas membresía para asistir. POR QUÉ ESTE PLAN 01 Música suave El ritmo de una tarde compartida. 02 Vista a la ciudad Un encuentro en altura. 03 Atardecer compartido Una tarde para encontrarnos. PREPARA TU PLAN ANTES DE RESERVAR Revisa los datos de la sesión y las condiciones antes de continuar. Cuándo y dónde 18/10/2026 · 13:00–16:00 Mirador Cobalto · Cochabamba Calle Demo 27, Alalay Cómo reservar Condiciones completas Quién lo hace posible Ver ficha, fechas y reserva PREGUNTAS FRECUENTES ¿Cómo reservo? + ¿Qué día y a qué hora? + ¿Dónde es? + HAZ DEL ATARDECER TU PRÓXIMO PLAN. Consulta la ficha y continúa tu reserva con el partner. VER FECHAS Y RESERVAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "experience",
+      "width": 430,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 390,
+          "height": 170.1875,
+          "bottom": 234.1875
+        },
+        "media": {
+          "x": 20,
+          "y": 318.1875,
+          "width": 390,
+          "height": 292.5,
+          "bottom": 610.6875
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 790.1875,
+          "width": 390,
+          "height": 52,
+          "bottom": 842.1875
+        },
+        "final": {
+          "x": 0,
+          "y": 2594.125,
+          "width": 430,
+          "height": 382.15625,
+          "bottom": 2976.28125
+        },
+        "faq": {
+          "x": 20,
+          "y": 2121.125,
+          "width": 390,
+          "height": 473,
+          "bottom": 2594.125
+        },
+        "actions": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "SUNSET JAKAWI 3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA. Música suave, vista a la ciudad y un atardecer compartido en Mirador Cobalto. Fecha 18 OCT Hora 13:00–16:00 Lugar Mirador Cobalto Precio normal BOB 80 Miembro JAKAWI BOB 60 VER FECHAS Y RESERVAR La reserva continúa en la ficha y se gestiona con el partner. No necesitas membresía para asistir. POR QUÉ ESTE PLAN 01 Música suave El ritmo de una tarde compartida. 02 Vista a la ciudad Un encuentro en altura. 03 Atardecer compartido Una tarde para encontrarnos. PREPARA TU PLAN ANTES DE RESERVAR Revisa los datos de la sesión y las condiciones antes de continuar. Cuándo y dónde 18/10/2026 · 13:00–16:00 Mirador Cobalto · Cochabamba Calle Demo 27, Alalay Cómo reservar Condiciones completas Quién lo hace posible Ver ficha, fechas y reserva PREGUNTAS FRECUENTES ¿Cómo reservo? + ¿Qué día y a qué hora? + ¿Dónde es? + HAZ DEL ATARDECER TU PRÓXIMO PLAN. Consulta la ficha y continúa tu reserva con el partner. VER FECHAS Y RESERVAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 390,
+          "height": 170.1875,
+          "bottom": 234.1875
+        },
+        "media": {
+          "x": 20,
+          "y": 318.1875,
+          "width": 390,
+          "height": 292.5,
+          "bottom": 610.6875
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 790.1875,
+          "width": 390,
+          "height": 52,
+          "bottom": 842.1875
+        },
+        "final": {
+          "x": 0,
+          "y": 2594.125,
+          "width": 430,
+          "height": 382.15625,
+          "bottom": 2976.28125
+        },
+        "faq": {
+          "x": 20,
+          "y": 2121.125,
+          "width": 390,
+          "height": 473,
+          "bottom": 2594.125
+        },
+        "actions": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "SUNSET JAKAWI 3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA. Música suave, vista a la ciudad y un atardecer compartido en Mirador Cobalto. Fecha 18 OCT Hora 13:00–16:00 Lugar Mirador Cobalto Precio normal BOB 80 Miembro JAKAWI BOB 60 VER FECHAS Y RESERVAR La reserva continúa en la ficha y se gestiona con el partner. No necesitas membresía para asistir. POR QUÉ ESTE PLAN 01 Música suave El ritmo de una tarde compartida. 02 Vista a la ciudad Un encuentro en altura. 03 Atardecer compartido Una tarde para encontrarnos. PREPARA TU PLAN ANTES DE RESERVAR Revisa los datos de la sesión y las condiciones antes de continuar. Cuándo y dónde 18/10/2026 · 13:00–16:00 Mirador Cobalto · Cochabamba Calle Demo 27, Alalay Cómo reservar Condiciones completas Quién lo hace posible Ver ficha, fechas y reserva PREGUNTAS FRECUENTES ¿Cómo reservo? + ¿Qué día y a qué hora? + ¿Dónde es? + HAZ DEL ATARDECER TU PRÓXIMO PLAN. Consulta la ficha y continúa tu reserva con el partner. VER FECHAS Y RESERVAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "experience",
+      "width": 1440,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 128,
+          "y": 100,
+          "width": 507.59375,
+          "height": 254.875,
+          "bottom": 354.875
+        },
+        "media": {
+          "x": 691.59375,
+          "y": 88.984375,
+          "width": 620.40625,
+          "height": 620.40625,
+          "bottom": 709.390625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 128,
+          "y": 626.375,
+          "width": 507.59375,
+          "height": 52,
+          "bottom": 678.375
+        },
+        "final": {
+          "x": 0,
+          "y": 2319.375,
+          "width": 1440,
+          "height": 414.375,
+          "bottom": 2733.75
+        },
+        "faq": {
+          "x": 128,
+          "y": 1822.375,
+          "width": 1184,
+          "height": 497,
+          "bottom": 2319.375
+        },
+        "actions": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "SUNSET JAKAWI 3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA. Música suave, vista a la ciudad y un atardecer compartido en Mirador Cobalto. Fecha 18 OCT Hora 13:00–16:00 Lugar Mirador Cobalto Precio normal BOB 80 Miembro JAKAWI BOB 60 VER FECHAS Y RESERVAR La reserva continúa en la ficha y se gestiona con el partner. No necesitas membresía para asistir. POR QUÉ ESTE PLAN 01 Música suave El ritmo de una tarde compartida. 02 Vista a la ciudad Un encuentro en altura. 03 Atardecer compartido Una tarde para encontrarnos. PREPARA TU PLAN ANTES DE RESERVAR Revisa los datos de la sesión y las condiciones antes de continuar. Cuándo y dónde 18/10/2026 · 13:00–16:00 Mirador Cobalto · Cochabamba Calle Demo 27, Alalay Cómo reservar Condiciones completas Quién lo hace posible Ver ficha, fechas y reserva PREGUNTAS FRECUENTES ¿Cómo reservo? + ¿Qué día y a qué hora? + ¿Dónde es? + HAZ DEL ATARDECER TU PRÓXIMO PLAN. Consulta la ficha y continúa tu reserva con el partner. VER FECHAS Y RESERVAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "64px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 128,
+          "y": 100,
+          "width": 507.59375,
+          "height": 254.875,
+          "bottom": 354.875
+        },
+        "media": {
+          "x": 691.59375,
+          "y": 88.984375,
+          "width": 620.40625,
+          "height": 620.40625,
+          "bottom": 709.390625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 128,
+          "y": 626.375,
+          "width": 507.59375,
+          "height": 52,
+          "bottom": 678.375
+        },
+        "final": {
+          "x": 0,
+          "y": 2319.375,
+          "width": 1440,
+          "height": 414.375,
+          "bottom": 2733.75
+        },
+        "faq": {
+          "x": 128,
+          "y": 1822.375,
+          "width": 1184,
+          "height": 497,
+          "bottom": 2319.375
+        },
+        "actions": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "SUNSET JAKAWI 3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA. Música suave, vista a la ciudad y un atardecer compartido en Mirador Cobalto. Fecha 18 OCT Hora 13:00–16:00 Lugar Mirador Cobalto Precio normal BOB 80 Miembro JAKAWI BOB 60 VER FECHAS Y RESERVAR La reserva continúa en la ficha y se gestiona con el partner. No necesitas membresía para asistir. POR QUÉ ESTE PLAN 01 Música suave El ritmo de una tarde compartida. 02 Vista a la ciudad Un encuentro en altura. 03 Atardecer compartido Una tarde para encontrarnos. PREPARA TU PLAN ANTES DE RESERVAR Revisa los datos de la sesión y las condiciones antes de continuar. Cuándo y dónde 18/10/2026 · 13:00–16:00 Mirador Cobalto · Cochabamba Calle Demo 27, Alalay Cómo reservar Condiciones completas Quién lo hace posible Ver ficha, fechas y reserva PREGUNTAS FRECUENTES ¿Cómo reservo? + ¿Qué día y a qué hora? + ¿Dónde es? + HAZ DEL ATARDECER TU PRÓXIMO PLAN. Consulta la ficha y continúa tu reserva con el partner. VER FECHAS Y RESERVAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "64px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "benefit",
+      "width": 390,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 350,
+          "height": 124.640625,
+          "bottom": 188.640625
+        },
+        "media": {
+          "x": 20,
+          "y": 248.640625,
+          "width": 350,
+          "height": 262.5,
+          "bottom": 511.140625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 760.140625,
+          "width": 350,
+          "height": 52,
+          "bottom": 812.140625
+        },
+        "final": {
+          "x": 0,
+          "y": 2952.140625,
+          "width": 390,
+          "height": 435,
+          "bottom": 3387.140625
+        },
+        "faq": {
+          "x": 20,
+          "y": 2442.140625,
+          "width": 350,
+          "height": 510,
+          "bottom": 2952.140625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 350,
+          "height": 124.640625,
+          "bottom": 188.640625
+        },
+        "media": {
+          "x": 20,
+          "y": 248.640625,
+          "width": 350,
+          "height": 262.5,
+          "bottom": 511.140625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 760.140625,
+          "width": 350,
+          "height": 52,
+          "bottom": 812.140625
+        },
+        "final": {
+          "x": 0,
+          "y": 2952.140625,
+          "width": 390,
+          "height": 435,
+          "bottom": 3387.140625
+        },
+        "faq": {
+          "x": 20,
+          "y": 2442.140625,
+          "width": 350,
+          "height": 510,
+          "bottom": 2952.140625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "benefit",
+      "width": 430,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 390,
+          "height": 124.640625,
+          "bottom": 188.640625
+        },
+        "media": {
+          "x": 20,
+          "y": 248.640625,
+          "width": 390,
+          "height": 292.5,
+          "bottom": 541.140625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 766.140625,
+          "width": 390,
+          "height": 52,
+          "bottom": 818.140625
+        },
+        "final": {
+          "x": 0,
+          "y": 2922.140625,
+          "width": 430,
+          "height": 390,
+          "bottom": 3312.140625
+        },
+        "faq": {
+          "x": 20,
+          "y": 2412.140625,
+          "width": 390,
+          "height": 510,
+          "bottom": 2922.140625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 390,
+          "height": 124.640625,
+          "bottom": 188.640625
+        },
+        "media": {
+          "x": 20,
+          "y": 248.640625,
+          "width": 390,
+          "height": 292.5,
+          "bottom": 541.140625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 766.140625,
+          "width": 390,
+          "height": 52,
+          "bottom": 818.140625
+        },
+        "final": {
+          "x": 0,
+          "y": 2922.140625,
+          "width": 430,
+          "height": 390,
+          "bottom": 3312.140625
+        },
+        "faq": {
+          "x": 20,
+          "y": 2412.140625,
+          "width": 390,
+          "height": 510,
+          "bottom": 2922.140625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "benefit",
+      "width": 1440,
+      "before": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 128,
+          "y": 100,
+          "width": 507.59375,
+          "height": 188.15625,
+          "bottom": 288.15625
+        },
+        "media": {
+          "x": 691.59375,
+          "y": 64,
+          "width": 620.40625,
+          "height": 620.40625,
+          "bottom": 684.40625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 128,
+          "y": 578.78125,
+          "width": 507.59375,
+          "height": 52,
+          "bottom": 630.78125
+        },
+        "final": {
+          "x": 0,
+          "y": 2338.40625,
+          "width": 1440,
+          "height": 470,
+          "bottom": 2808.40625
+        },
+        "faq": {
+          "x": 128,
+          "y": 1804.40625,
+          "width": 1184,
+          "height": 534,
+          "bottom": 2338.40625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "64px",
+        "player": false
+      },
+      "faqBefore": true,
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 128,
+          "y": 100,
+          "width": 507.59375,
+          "height": 188.15625,
+          "bottom": 288.15625
+        },
+        "media": {
+          "x": 691.59375,
+          "y": 64,
+          "width": 620.40625,
+          "height": 620.40625,
+          "bottom": 684.40625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 128,
+          "y": 578.78125,
+          "width": 507.59375,
+          "height": 52,
+          "bottom": 630.78125
+        },
+        "final": {
+          "x": 0,
+          "y": 2338.40625,
+          "width": 1440,
+          "height": 470,
+          "bottom": 2808.40625
+        },
+        "faq": {
+          "x": 128,
+          "y": 1804.40625,
+          "width": 1184,
+          "height": 534,
+          "bottom": 2338.40625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "64px",
+        "player": false
+      },
+      "faqAfter": true,
+      "copyEqual": true,
+      "actionsEqual": true
+    },
+    {
+      "domain": "experience",
+      "width": 390,
+      "variant": "no-media",
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 350,
+          "height": 170.1875,
+          "bottom": 234.1875
+        },
+        "media": null,
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 481.6875,
+          "width": 350,
+          "height": 52,
+          "bottom": 533.6875
+        },
+        "final": {
+          "x": 0,
+          "y": 2323.0625,
+          "width": 390,
+          "height": 382.15625,
+          "bottom": 2705.21875
+        },
+        "faq": {
+          "x": 20,
+          "y": 1850.0625,
+          "width": 350,
+          "height": 473,
+          "bottom": 2323.0625
+        },
+        "actions": [
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "VER FECHAS Y RESERVAR",
+            "href": "/experiencias/demo-sunset-jakawi",
+            "kind": "native",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "SUNSET JAKAWI 3 HORAS PARA VIVIR COCHABAMBA DESDE ARRIBA. Música suave, vista a la ciudad y un atardecer compartido en Mirador Cobalto. Fecha 18 OCT Hora 13:00–16:00 Lugar Mirador Cobalto Precio normal BOB 80 Miembro JAKAWI BOB 60 VER FECHAS Y RESERVAR La reserva continúa en la ficha y se gestiona con el partner. No necesitas membresía para asistir. POR QUÉ ESTE PLAN 01 Música suave El ritmo de una tarde compartida. 02 Vista a la ciudad Un encuentro en altura. 03 Atardecer compartido Una tarde para encontrarnos. PREPARA TU PLAN ANTES DE RESERVAR Revisa los datos de la sesión y las condiciones antes de continuar. Cuándo y dónde 18/10/2026 · 13:00–16:00 Mirador Cobalto · Cochabamba Calle Demo 27, Alalay Cómo reservar Condiciones completas Quién lo hace posible Ver ficha, fechas y reserva PREGUNTAS FRECUENTES ¿Cómo reservo? + ¿Qué día y a qué hora? + ¿Dónde es? + HAZ DEL ATARDECER TU PRÓXIMO PLAN. Consulta la ficha y continúa tu reserva con el partner. VER FECHAS Y RESERVAR",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      }
+    },
+    {
+      "domain": "benefit",
+      "width": 390,
+      "variant": "no-media",
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 350,
+          "height": 124.640625,
+          "bottom": 188.640625
+        },
+        "media": null,
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 481.640625,
+          "width": 350,
+          "height": 52,
+          "bottom": 533.640625
+        },
+        "final": {
+          "x": 0,
+          "y": 2673.640625,
+          "width": 390,
+          "height": 435,
+          "bottom": 3108.640625
+        },
+        "faq": {
+          "x": 20,
+          "y": 2163.640625,
+          "width": 350,
+          "height": 510,
+          "bottom": 2673.640625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      }
+    },
+    {
+      "domain": "benefit",
+      "variant": "product-dark",
+      "after": {
+        "overflow": false,
+        "header": false,
+        "theme": "light-conversion",
+        "headline": {
+          "x": 20,
+          "y": 64,
+          "width": 350,
+          "height": 124.640625,
+          "bottom": 188.640625
+        },
+        "media": {
+          "x": 20,
+          "y": 248.640625,
+          "width": 350,
+          "height": 262.5,
+          "bottom": 511.140625
+        },
+        "imageLoaded": true,
+        "heroAction": {
+          "x": 20,
+          "y": 760.140625,
+          "width": 350,
+          "height": 52,
+          "bottom": 812.140625
+        },
+        "final": {
+          "x": 0,
+          "y": 2952.140625,
+          "width": 390,
+          "height": 435,
+          "bottom": 3387.140625
+        },
+        "faq": {
+          "x": 20,
+          "y": 2442.140625,
+          "width": 350,
+          "height": 510,
+          "bottom": 2952.140625
+        },
+        "actions": [
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "hero"
+          },
+          {
+            "label": "CONTINUAR CON MI CUENTA",
+            "href": "/beneficios/demo-beneficio-01/canjear",
+            "kind": "guest",
+            "disabled": null,
+            "location": "final"
+          }
+        ],
+        "visibleCopy": "BENEFICIO EN ALTURA NUBE CAFÉ TU BRUNCH, CON CAFÉ DE CORTESÍA. Para miembros JAKAWI. Qué obtienes Café de cortesía Lugar Cochabamba Vigencia 25/03/2027 12:21 Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA Continúa con tu cuenta JAKAWI. El canje requiere membresía activa. El partner valida tu código. CÓMO USARLO DE TU CUENTA AL CANJE 01 CREA TU CUENTA Continúa con tu cuenta JAKAWI. Necesitas una membresía JAKAWI activa para canjear este beneficio. 02 VISITA EL PARTNER Acércate a una de las sucursales aplicables de Altura Nube Café. 03 CANJEA Visita una sucursal aplicable y activa el beneficio desde su ficha cuando estés listo para usarlo. El partner valida tu código. ANTES DE USARLO Disfruta este detalle pensado para descubrir el espacio con más calma y valor. Altura Nube Café Altura Nube Cala Cala · Cochabamba Cala Cala · Calle Demo 11, Cala Cala Altura Nube Recoleta · Cochabamba Recoleta · Calle Demo 12, Recoleta Altura Nube Tiquipaya · Cochabamba Tiquipaya · Calle Demo 13, Tiquipaya Vigencia y requisitos Condiciones completas Ver ficha del beneficio PREGUNTAS FRECUENTES ¿Cómo uso el beneficio? + ¿Necesito membresía? + ¿Dónde puedo canjearlo? + ¿Hasta cuándo es válido? + TU BRUNCH MERECE ESE CAFÉ. Café de cortesía con tu brunch en Altura Nube Café. Con tu brunch. Membresía activa requerida. CONTINUAR CON MI CUENTA",
+        "operations": true,
+        "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "headlineFont": "42.4px",
+        "player": false
+      }
+    }
+  ]
+}

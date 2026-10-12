@@ -1,0 +1,35 @@
+import type { LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
+
+/** Ephemeral projection of authoritative props, never an economic/rules record. */
+export type OfferPresentationV1 = {
+    hero: {
+        eyebrow: string;
+        headline: string;
+        emphasis?: string;
+        description: string;
+        context?: string;
+    };
+    media?:
+        | { type: 'vsl'; config: LandingVideoConfig }
+        | { type: 'image'; src: string; alt: string };
+    facts: Array<{ label: string; value: string }>;
+    value?: {
+        tone: 'offer' | 'reward';
+        label: string;
+        compactLabel?: string;
+        title: string;
+        description?: string;
+        detail?: string;
+        note?: string;
+    };
+    prices?: Array<{ label: string; formattedAmount: string }>;
+    essentialConditions: string[];
+    actionExplanation?: { description: string; clarification?: string };
+    steps?: {
+        eyebrow: string;
+        headline: string;
+        items: Array<{ title: string; description: string }>;
+    };
+    faq: Array<{ question: string; answer: string }>;
+    finalCta: { eyebrow?: string; headline: string; description?: string };
+};

@@ -93,3 +93,15 @@ Estado y límites: [CURRENT](CURRENT.md). Uso: [Manual de Funciones](product/MAN
 ## Temas de conversión marketing
 
 MarketingLayout establece temas frontend explícitos `dark-conversion` / `light-conversion`, aislados de la preferencia Product UI. Challenge usa el primero; Benefit, Experience y Unlock el segundo como defaults actuales. Las secciones claras/oscuras establecen pares completos mediante `data-marketing-surface`. El contrato y reglas de contraste están en [Sistema de diseño](DESIGN-SYSTEM.md#marketing-theme-foundation-v1). No se añadió persistencia del tema ni Landing Engine; media sigue siendo opcional.
+
+## Marketing Landing Template V1
+
+`LandingPresentation + Subject → Domain Adapter → OfferPresentationV1 → OfferConversionTemplate → /l/{slug}`.
+
+Una sola plantilla frontend compone oferta, media, facts/valor o precios, CTA, pasos, operaciones, FAQ y cierre. [Contrato](../app/resources/js/components/marketing/offer/presentation.ts) y [renderer](../app/resources/js/components/marketing/offer/OfferConversionTemplate.tsx). Los adapters de [Challenge](../app/resources/js/pages/landing-presentations/adapters/challenge-offer-adapter.tsx), [Experience](../app/resources/js/pages/landing-presentations/adapters/experience-offer-adapter.tsx) y [Benefit](../app/resources/js/pages/landing-presentations/adapters/benefit-offer-adapter.tsx) proyectan los props de sus presenters; no crean otra fuente de verdad. La presentación editorial no redefine economía, reglas, elegibilidad, capacidad ni disponibilidad. Los tratamientos QA permanecen acotados al adapter correspondiente.
+
+El contrato contiene texto y datos derivados; la acción ligada se entrega por separado usando `MarketingAction`. El renderer reutiliza esa misma acción en hero y cierre, sin deducir POST, journey, sesión, grant o membresía desde `kind`/label. Los guards y handlers permanecen en dominio. Growth conserva `landing_view`, `landing_cta_click` y los outcomes `challenge_joined`, `experience_reserved`, `benefit_redeemed` en sus puntos actuales de éxito; la plantilla sólo reutiliza la instrumentación delegada de clicks.
+
+Media opcional: VSL con LandingVideo/JakawiVslPlayer, imagen con JakawiImage, o ausencia sin wrapper. `renderOperationalContent` es un slot frontend obligatorio, no un esquema genérico ni React serializado: participación/reglas, sesiones/reserva y sucursales/requisitos/código pertenecen a sus dominios. Las anotaciones demo y el sticky de Challenge también permanecen locales. No cambian rutas nativas, `/go` ni redirects.
+
+V1 no implementa un nuevo Admin, builder, registry, migración ni columnas/configuración persistida de plantilla/tema. Las opciones visuales acotadas conservan las composiciones descubiertas; no son plantillas seleccionables. **Pendiente antes del lanzamiento comercial Benefit:** resolver continuidad guest en el flujo de dominio (autenticación/verificación y `location_id`); el POST actual sin payload permanece sin workaround en el renderer.

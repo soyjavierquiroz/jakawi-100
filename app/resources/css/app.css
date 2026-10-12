@@ -139,7 +139,7 @@
 .challenge-marketing-v3 .challenge-hook > span {
     font-size: 1.24em;
 }
-.challenge-marketing-v3 .challenge-action {
+.challenge-marketing-v3 .offer-action {
     min-height: 3.75rem;
     font-size: 1rem;
     border-radius: var(--radius-card);
@@ -176,24 +176,24 @@
         line-height: 1.5;
     }
     .challenge-mobile-polish [data-growth-location="hero"] + p { font-size: 0.875rem; }
-    .challenge-mobile-polish [data-challenge-chapter="hero"] .text-xs:last-child {
+    .challenge-mobile-polish [data-offer-chapter="hero"] .text-xs:last-child {
         font-size: 0.875rem;
     }
-    .challenge-mobile-polish .challenge-offer { padding-block: 2rem; }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] { padding-block: 2rem; }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] h2 { font-size: 2rem; }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] > div {
+    .challenge-mobile-polish .offer-value { padding-block: 2rem; }
+    .challenge-mobile-polish [data-offer-chapter="steps"] { padding-block: 2rem; }
+    .challenge-mobile-polish [data-offer-chapter="steps"] h2 { font-size: 2rem; }
+    .challenge-mobile-polish [data-offer-chapter="steps"] > div {
         margin-top: 1.5rem;
         gap: 1.25rem;
         grid-template-columns: 1fr;
     }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article {
+    .challenge-mobile-polish [data-offer-chapter="steps"] article {
         display: grid;
         grid-template-columns: 2.75rem 1fr;
         gap: 0.25rem 0.875rem;
         padding-top: 0;
     }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article > span {
+    .challenge-mobile-polish [data-offer-chapter="steps"] article > span {
         grid-row: 1 / 3;
         align-self: start;
         min-width: 0;
@@ -201,23 +201,23 @@
         padding: 0;
         font-size: 1.25rem;
     }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] h3 {
+    .challenge-mobile-polish [data-offer-chapter="steps"] h3 {
         margin-top: 0;
         font-size: 1.25rem;
         line-height: 1.4;
     }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article p {
+    .challenge-mobile-polish [data-offer-chapter="steps"] article p {
         margin-top: 0;
         font-size: 0.9375rem;
         line-height: 1.5;
     }
     .challenge-mobile-polish .challenge-result { padding-block: 2rem; }
     .challenge-mobile-polish .challenge-result > div > p:last-of-type { font-size: 1rem; }
-    .challenge-mobile-polish [data-challenge-chapter="rules"] { padding-block: 2rem; }
-    .challenge-mobile-polish [data-challenge-chapter="rules"] > dl { margin-top: 1.5rem; grid-template-columns: 1fr; }
-    .challenge-mobile-polish [data-challenge-chapter="rules"] > dl > div { padding-block: 1rem; }
-    .challenge-mobile-polish [data-challenge-chapter="rules"] dd { font-size: 0.9375rem; line-height: 1.5; }
-    .challenge-mobile-polish [data-challenge-chapter="rules"] details > div { font-size: 0.9375rem; }
+    .challenge-mobile-polish [data-offer-chapter="rules"] { padding-block: 2rem; }
+    .challenge-mobile-polish [data-offer-chapter="rules"] > dl { margin-top: 1.5rem; grid-template-columns: 1fr; }
+    .challenge-mobile-polish [data-offer-chapter="rules"] > dl > div { padding-block: 1rem; }
+    .challenge-mobile-polish [data-offer-chapter="rules"] dd { font-size: 0.9375rem; line-height: 1.5; }
+    .challenge-mobile-polish [data-offer-chapter="rules"] details > div { font-size: 0.9375rem; }
     .challenge-mobile-polish .challenge-guest-participation { padding-block: 1rem; }
     .challenge-mobile-polish .challenge-guest-participation > p,
     .challenge-mobile-polish .challenge-guest-participation > h2 { display: none; }
@@ -230,10 +230,10 @@
         text-underline-offset: 0.25rem;
         font-size: 0.875rem;
     }
-    .challenge-mobile-polish [data-challenge-chapter="faq"] { padding-block: 2rem; }
-    .challenge-mobile-polish [data-challenge-chapter="faq"] > div { margin-top: 1.5rem; }
-    .challenge-mobile-polish [data-challenge-chapter="faq"] details { padding-block: 1rem; }
-    .challenge-mobile-polish [data-challenge-chapter="faq"] summary { font-size: 1rem; min-height: 2.75rem; align-items: center; }
+    .challenge-mobile-polish [data-offer-chapter="faq"] { padding-block: 2rem; }
+    .challenge-mobile-polish [data-offer-chapter="faq"] > div { margin-top: 1.5rem; }
+    .challenge-mobile-polish [data-offer-chapter="faq"] details { padding-block: 1rem; }
+    .challenge-mobile-polish [data-offer-chapter="faq"] summary { font-size: 1rem; min-height: 2.75rem; align-items: center; }
     [data-marketing-theme]:has(.challenge-mobile-polish) > footer > div {
         padding-top: 1.5rem;
         padding-bottom: calc(2rem + env(safe-area-inset-bottom));
@@ -245,24 +245,24 @@
 .challenge-mobile-polish [data-landing-media] [data-vsl-progress="decorative"] {
     --jakawi-video-accent: var(--marketing-value);
 }
-.challenge-mobile-polish [data-challenge-chapter="faq"] summary > span {
+.challenge-mobile-polish [data-offer-chapter="faq"] summary > span {
     background: var(--marketing-value);
     color: var(--ink);
 }
 @media (max-width: 1023px) {
-    .challenge-mobile-polish [data-challenge-chapter="steps"] > div { gap: 0.875rem; }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article {
+    .challenge-mobile-polish [data-offer-chapter="steps"] > div { gap: 0.875rem; }
+    .challenge-mobile-polish [data-offer-chapter="steps"] article {
         grid-template-columns: 2rem 1fr;
         gap: 0.125rem 0.875rem;
     }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article > span {
+    .challenge-mobile-polish [data-offer-chapter="steps"] article > span {
         grid-row: 1;
         align-self: center;
         height: 2rem;
         font-size: 1rem;
     }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] h3 { align-self: center; }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article p { grid-column: 2; }
+    .challenge-mobile-polish [data-offer-chapter="steps"] h3 { align-self: center; }
+    .challenge-mobile-polish [data-offer-chapter="steps"] article p { grid-column: 2; }
     .challenge-mobile-polish [data-growth-location="hero"] + p {
         letter-spacing: 0.1em;
         color: var(--marketing-text-secondary);
@@ -271,15 +271,15 @@
 }
 
 /* Explicit badge/title header; display:contents preserves desktop composition. */
-.challenge-mobile-polish .challenge-step-header { display: contents; }
+.offer-step-header { display: contents; }
 @media (max-width: 1023px) {
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article { display: block; }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] .challenge-step-header {
+    .challenge-mobile-polish [data-offer-chapter="steps"] article { display: block; }
+    .offer-step-header {
         display: flex;
         align-items: center;
         gap: 0.875rem;
     }
-    .challenge-mobile-polish .challenge-step-header > span {
+    .offer-step-header > span {
         width: 2.75rem;
         min-width: 2.75rem;
         height: 2.75rem;
@@ -287,8 +287,8 @@
         flex-shrink: 0;
         font-size: 1.125rem;
     }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] h3 { margin: 0; }
-    .challenge-mobile-polish [data-challenge-chapter="steps"] article p { margin: 0 0 0 3.625rem; }
+    .offer-step-header h3 { margin: 0; }
+    .offer-step-header + p { margin: 0 0 0 3.625rem; }
 }
 
 /* Experience V3: editorial reading rhythm; FAQ controls use the existing value token. */
@@ -300,3 +300,11 @@
 /* Benefit: functional FAQ controls, never offered savings. */
 .benefit-faq summary { display:flex; align-items:center; justify-content:space-between; gap:1.5rem; padding-right:0; }
 .benefit-faq summary > span { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; width:2rem; height:2rem; border-radius:50%; background:var(--marketing-value); color:var(--ink); }
+
+/* Generic facts wrap any number of items without changing the approved 2/3-column defaults. */
+.offer-facts > div { overflow-wrap: anywhere; }
+.offer-step-header-simple { display: contents; }
+@media (max-width: 767px) {
+    .offer-step-header-simple { display: flex; min-height: 4rem; align-items: flex-end; gap: 0.875rem; }
+    .offer-step-header-simple h3 { margin-top: 0; }
+}

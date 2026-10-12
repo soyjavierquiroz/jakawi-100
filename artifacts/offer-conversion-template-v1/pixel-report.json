@@ -1,0 +1,167 @@
+[
+  {
+    "domain": "challenge",
+    "width": 390,
+    "beforeSize": [
+      390,
+      3845
+    ],
+    "afterSize": [
+      390,
+      3845
+    ],
+    "changedPixels": 108,
+    "changedPercent": 0.0072,
+    "bounds": [
+      231,
+      1176,
+      257,
+      1198
+    ]
+  },
+  {
+    "domain": "challenge",
+    "width": 430,
+    "beforeSize": [
+      430,
+      3739
+    ],
+    "afterSize": [
+      430,
+      3739
+    ],
+    "changedPixels": 108,
+    "changedPercent": 0.0067,
+    "bounds": [
+      231,
+      1164,
+      257,
+      1186
+    ]
+  },
+  {
+    "domain": "challenge",
+    "width": 1440,
+    "beforeSize": [
+      1440,
+      4289
+    ],
+    "afterSize": [
+      1440,
+      4289
+    ],
+    "changedPixels": 236,
+    "changedPercent": 0.0038,
+    "bounds": [
+      976,
+      768,
+      1015,
+      1228
+    ]
+  },
+  {
+    "domain": "experience",
+    "width": 390,
+    "beforeSize": [
+      390,
+      3248
+    ],
+    "afterSize": [
+      390,
+      3248
+    ],
+    "changedPixels": 0,
+    "changedPercent": 0,
+    "bounds": null
+  },
+  {
+    "domain": "experience",
+    "width": 430,
+    "beforeSize": [
+      430,
+      3240
+    ],
+    "afterSize": [
+      430,
+      3240
+    ],
+    "changedPixels": 0,
+    "changedPercent": 0,
+    "bounds": null
+  },
+  {
+    "domain": "experience",
+    "width": 1440,
+    "beforeSize": [
+      1440,
+      2882
+    ],
+    "afterSize": [
+      1440,
+      2882
+    ],
+    "changedPixels": 0,
+    "changedPercent": 0,
+    "bounds": null
+  },
+  {
+    "domain": "benefit",
+    "width": 390,
+    "beforeSize": [
+      390,
+      3651
+    ],
+    "afterSize": [
+      390,
+      3651
+    ],
+    "changedPixels": 6392,
+    "changedPercent": 0.4489,
+    "bounds": [
+      19,
+      851,
+      311,
+      3209
+    ]
+  },
+  {
+    "domain": "benefit",
+    "width": 430,
+    "beforeSize": [
+      430,
+      3576
+    ],
+    "afterSize": [
+      430,
+      3576
+    ],
+    "changedPixels": 6125,
+    "changedPercent": 0.3983,
+    "bounds": [
+      19,
+      857,
+      308,
+      3106
+    ]
+  },
+  {
+    "domain": "benefit",
+    "width": 1440,
+    "beforeSize": [
+      1440,
+      2956
+    ],
+    "afterSize": [
+      1440,
+      2956
+    ],
+    "changedPixels": 160,
+    "changedPercent": 0.0038,
+    "bounds": [
+      415,
+      2594,
+      651,
+      2606
+    ]
+  }
+]

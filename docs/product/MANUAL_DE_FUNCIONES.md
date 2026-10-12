@@ -134,3 +134,9 @@ Referencias de autoridad: [GLOSSARY](../GLOSSARY.md), [ARCHITECTURE](../ARCHITEC
 Product UI respeta la apariencia elegida por usuario/sistema. Las páginas de conversión no muestran toggle: usan `DARK_CONVERSION` / `LIGHT_CONVERSION`, definidos localmente por MarketingLayout. Defaults actuales: Challenge oscuro; Benefit, Experience y Unlock claros, con cierre oscuro. No modifican la preferencia guardada ni la economía del producto; no existe campo DB de tema ni Landing Engine.
 
 Coral identifica acción; verde sólo valor/success verificado; amarillo premio/oportunidad. Promesas condicionales y premios cancelados/revertidos no se presentan como success. Media es opcional y el player hereda el contexto. Ver [Sistema de diseño](../DESIGN-SYSTEM.md#marketing-theme-foundation-v1).
+
+## Renderizado Marketing Landing Template V1
+
+`LandingPresentation + Subject → Domain Adapter → OfferPresentationV1 → OfferConversionTemplate → /l/{slug}`. Challenge, Experience y Benefit comparten una sola plantilla de conversión frontend; conservan sus rutas nativas, operaciones, estados y acción de dominio. Media puede ser VSL, imagen o ninguna. Hero y cierre reutilizan la misma acción, con los guards de preview/disponibilidad, membresía y estados existentes.
+
+El subject sigue siendo la fuente autoritativa. La presentación editorial no redefine precios, premios, reglas, elegibilidad ni capacidad; los bloques operativos siguen siendo de cada dominio. No hay nuevo Admin/builder ni persistencia de template/config/tema en esta V1. Ver [arquitectura](../ARCHITECTURE.md#marketing-landing-template-v1) y [diseño](../DESIGN-SYSTEM.md#offer-conversion-template-v1). La continuidad guest del canje Benefit está pendiente de resolución en el flujo de dominio antes de lanzamiento comercial; el renderer no la resuelve ni altera.
