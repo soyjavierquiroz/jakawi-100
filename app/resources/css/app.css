@@ -290,3 +290,9 @@
     .challenge-mobile-polish [data-challenge-chapter="steps"] h3 { margin: 0; }
     .challenge-mobile-polish [data-challenge-chapter="steps"] article p { margin: 0 0 0 3.625rem; }
 }
+
+/* Experience V3: editorial reading rhythm; FAQ controls use the existing value token. */
+.experience-faq summary { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 2.75rem; padding-right: 0; }
+.experience-faq summary > span { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--marketing-value); color: var(--ink); }
+.experience-faq details > p { font-size: 1rem; }
+.experience-marketing-v3 a[data-growth-kind] { font-size: 1rem; }

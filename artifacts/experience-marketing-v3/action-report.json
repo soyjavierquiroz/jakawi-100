@@ -1,0 +1,24 @@
+{
+  "guestPostSession": 3,
+  "disabledActionsBlocked": true,
+  "membershipIntentOnce": true,
+  "analyticsLocalMocksOnly": true,
+  "errors": [],
+  "requests": [
+    {
+      "path": "/experiencias/demo-sunset-jakawi/reservas",
+      "data": "{\"experience_session_id\":3}"
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+      "data": "{\"event_id\":\"3b2645ad-8f7d-4e47-82ca-e612cafdfec7\",\"cta_kind\":\"membership\",\"cta_location\":\"hero\",\"destination\":\"/membresia\"}"
+    },
+    {
+      "path": "/analytics/journey-intent/experience/demo-sunset-jakawi"
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-experience-marketing-sunset-jakawi/cta",
+      "data": "{\"event_id\":\"6e11ced1-f36b-487c-b7ee-4851d67d9545\",\"cta_kind\":\"membership\",\"cta_location\":\"final\",\"destination\":\"/membresia\"}"
+    }
+  ]
+}

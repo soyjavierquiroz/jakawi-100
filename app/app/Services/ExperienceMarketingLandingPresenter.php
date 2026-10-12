@@ -15,6 +15,8 @@ class ExperienceMarketingLandingPresenter
             'id'=>$session->id,
             'date'=>$session->starts_at->timezone('America/La_Paz')->format('d/m/Y'),
             'time'=>$session->starts_at->timezone('America/La_Paz')->format('H:i'),
+            'endTime'=>$session->ends_at?->timezone('America/La_Paz')->format('H:i'),
+            'capacity'=>$session->capacity,
             'place'=>$session->location?->name ?: $session->venue_label,
             'address'=>$session->location?->address,
             'city'=>$session->location?->cityEntity?->name ?: $session->location?->city,
@@ -58,6 +60,7 @@ class ExperienceMarketingLandingPresenter
         if ($sessions->count() > 1) $faq[] = ['question'=>'¿Puedo elegir otro horario?','answer'=>'Sí. Revisa las próximas sesiones y selecciona tu fecha en la ficha de la experiencia.'];
         return [
             'title'=>$experience->title,'slug'=>$experience->slug,'experienceType'=>$experience->experience_type,
+            'durationMinutes'=>$experience->duration_minutes,'reservationMethod'=>$experience->reservation_method,
             'eyebrow'=>$this->editorial($landing->eyebrow) ?: 'EXPERIENCIA JAKAWI',
             'headline'=>$this->editorial($landing->headline) ?: $experience->title,
             'subheadline'=>$this->editorial($landing->subheadline) ?: ($experience->short_description ?: $experience->description ?: $experience->title),

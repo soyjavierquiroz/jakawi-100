@@ -5,12 +5,13 @@ export type MarketingTheme = 'dark-conversion' | 'light-conversion';
 
 // Renderer defaults only; presentation-level selection is not persisted yet.
 export function marketingThemeForPage(component: string): MarketingTheme {
+    if (component === 'landing-presentations/experience') return 'light-conversion';
     return component === 'landing-presentations/challenge' ? 'dark-conversion' : 'light-conversion';
 }
 
 export default function MarketingLayout({ children, theme }: { children: React.ReactNode; theme?: MarketingTheme }) {
     const component = usePage().component;
-    const acquisition = component === 'landing-presentations/challenge';
+    const acquisition = component === 'landing-presentations/challenge' || component === 'landing-presentations/experience';
     return <div data-marketing-theme={theme ?? marketingThemeForPage(component)} className="min-h-screen bg-background pb-[var(--pwa-install-clearance,0px)] font-discovery text-foreground">
         <MetaBrowserEvents />
         {!acquisition && <header className="border-b border-border bg-background">

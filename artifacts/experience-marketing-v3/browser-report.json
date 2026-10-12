@@ -1,0 +1,252 @@
+{
+  "errors": [],
+  "reports": [
+    {
+      "width": 390,
+      "overflow": false,
+      "theme": "light-conversion",
+      "header": false,
+      "headline": {
+        "x": 20,
+        "y": 64,
+        "width": 350,
+        "height": 170.1875,
+        "bottom": 234.1875,
+        "font": "42.4px"
+      },
+      "media": {
+        "x": 20,
+        "y": 318.1875,
+        "width": 350,
+        "height": 262.5,
+        "bottom": 580.6875,
+        "font": "16px"
+      },
+      "facts": {
+        "x": 20,
+        "y": 596.6875,
+        "width": 350,
+        "height": 70,
+        "bottom": 666.6875,
+        "font": "14px"
+      },
+      "cta": {
+        "x": 20,
+        "y": 760.1875,
+        "width": 350,
+        "height": 52,
+        "bottom": 812.1875,
+        "font": "16px"
+      },
+      "imageLoaded": true,
+      "bodyFont": "16px",
+      "final": {
+        "x": 0,
+        "y": 2621.5625,
+        "width": 390,
+        "height": 382.15625,
+        "bottom": 3003.71875,
+        "font": "16px"
+      },
+      "cards": 0
+    },
+    {
+      "width": 430,
+      "overflow": false,
+      "theme": "light-conversion",
+      "header": false,
+      "headline": {
+        "x": 20,
+        "y": 64,
+        "width": 390,
+        "height": 170.1875,
+        "bottom": 234.1875,
+        "font": "42.4px"
+      },
+      "media": {
+        "x": 20,
+        "y": 318.1875,
+        "width": 390,
+        "height": 292.5,
+        "bottom": 610.6875,
+        "font": "16px"
+      },
+      "facts": {
+        "x": 20,
+        "y": 626.6875,
+        "width": 390,
+        "height": 70,
+        "bottom": 696.6875,
+        "font": "14px"
+      },
+      "cta": {
+        "x": 20,
+        "y": 790.1875,
+        "width": 390,
+        "height": 52,
+        "bottom": 842.1875,
+        "font": "16px"
+      },
+      "imageLoaded": true,
+      "bodyFont": "16px",
+      "final": {
+        "x": 0,
+        "y": 2614.125,
+        "width": 430,
+        "height": 382.15625,
+        "bottom": 2996.28125,
+        "font": "16px"
+      },
+      "cards": 0
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "theme": "light-conversion",
+      "header": false,
+      "headline": {
+        "x": 128,
+        "y": 100,
+        "width": 507.59375,
+        "height": 254.875,
+        "bottom": 354.875,
+        "font": "64px"
+      },
+      "media": {
+        "x": 691.59375,
+        "y": 88.984375,
+        "width": 620.40625,
+        "height": 620.40625,
+        "bottom": 709.390625,
+        "font": "16px"
+      },
+      "facts": {
+        "x": 128,
+        "y": 462.875,
+        "width": 507.59375,
+        "height": 70,
+        "bottom": 532.875,
+        "font": "14px"
+      },
+      "cta": {
+        "x": 128,
+        "y": 626.375,
+        "width": 507.59375,
+        "height": 52,
+        "bottom": 678.375,
+        "font": "16px"
+      },
+      "imageLoaded": true,
+      "bodyFont": "18px",
+      "final": {
+        "x": 0,
+        "y": 2339.375,
+        "width": 1440,
+        "height": 414.375,
+        "bottom": 2753.75,
+        "font": "16px"
+      },
+      "cards": 0
+    },
+    {
+      "scenario": "no-media",
+      "media": false,
+      "player": false,
+      "cta": "VER FECHAS Y RESERVAR",
+      "finalCTA": "VER FECHAS Y RESERVAR",
+      "membershipFree": true,
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "vsl",
+      "media": true,
+      "player": true,
+      "cta": "VER FECHAS Y RESERVAR",
+      "finalCTA": "VER FECHAS Y RESERVAR",
+      "membershipFree": true,
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "unavailable",
+      "media": true,
+      "player": false,
+      "cta": "NO DISPONIBLE",
+      "finalCTA": "NO DISPONIBLE",
+      "membershipFree": true,
+      "disabled": "true",
+      "overflow": false
+    },
+    {
+      "scenario": "reserved",
+      "media": true,
+      "player": false,
+      "cta": "VER MI RESERVA",
+      "finalCTA": "VER MI RESERVA",
+      "membershipFree": true,
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "membership",
+      "media": true,
+      "player": false,
+      "cta": "ACTIVAR MEMBRESÍA",
+      "finalCTA": "ACTIVAR MEMBRESÍA",
+      "membershipFree": false,
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "guest",
+      "media": true,
+      "player": false,
+      "cta": "QUIERO IR",
+      "finalCTA": "QUIERO IR",
+      "membershipFree": false,
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "preview",
+      "media": true,
+      "player": false,
+      "cta": "VER FECHAS Y RESERVAR",
+      "finalCTA": "VER FECHAS Y RESERVAR",
+      "membershipFree": true,
+      "disabled": "true",
+      "overflow": false
+    },
+    {
+      "scenario": "authenticated",
+      "media": true,
+      "player": false,
+      "cta": "VER FECHAS Y RESERVAR",
+      "finalCTA": "VER FECHAS Y RESERVAR",
+      "membershipFree": true,
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "choose-membership",
+      "media": true,
+      "player": false,
+      "cta": "ELEGIR FECHA Y ACTIVAR MEMBRESÍA",
+      "finalCTA": "ELEGIR FECHA Y ACTIVAR MEMBRESÍA",
+      "membershipFree": false,
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "no-next",
+      "media": true,
+      "player": false,
+      "cta": "NO HAY PRÓXIMAS FECHAS",
+      "finalCTA": "NO HAY PRÓXIMAS FECHAS",
+      "membershipFree": true,
+      "disabled": "true",
+      "overflow": false
+    }
+  ]
+}

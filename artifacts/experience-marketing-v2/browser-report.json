@@ -1,0 +1,200 @@
+{
+  "errors": [],
+  "reports": [
+    {
+      "width": 390,
+      "overflow": false,
+      "theme": "light-conversion",
+      "header": false,
+      "headline": {
+        "x": 20,
+        "y": 88,
+        "width": 350,
+        "height": 128.640625,
+        "bottom": 216.640625,
+        "font": "42.4px"
+      },
+      "media": {
+        "x": 20,
+        "y": 304.640625,
+        "width": 350,
+        "height": 262.5,
+        "bottom": 567.140625,
+        "font": "16px"
+      },
+      "facts": {
+        "x": 20,
+        "y": 587.140625,
+        "width": 350,
+        "height": 78,
+        "bottom": 665.140625,
+        "font": "14px"
+      },
+      "cta": {
+        "x": 20,
+        "y": 749.140625,
+        "width": 350,
+        "height": 52,
+        "bottom": 801.140625,
+        "font": "16px"
+      },
+      "imageLoaded": true,
+      "bodyFont": "16px",
+      "final": {
+        "x": 0,
+        "y": 2747.953125,
+        "width": 390,
+        "height": 382.15625,
+        "bottom": 3130.109375,
+        "font": "16px"
+      },
+      "cards": 0
+    },
+    {
+      "width": 430,
+      "overflow": false,
+      "theme": "light-conversion",
+      "header": false,
+      "headline": {
+        "x": 20,
+        "y": 88,
+        "width": 390,
+        "height": 128.640625,
+        "bottom": 216.640625,
+        "font": "42.4px"
+      },
+      "media": {
+        "x": 20,
+        "y": 304.640625,
+        "width": 390,
+        "height": 292.5,
+        "bottom": 597.140625,
+        "font": "16px"
+      },
+      "facts": {
+        "x": 20,
+        "y": 617.140625,
+        "width": 390,
+        "height": 78,
+        "bottom": 695.140625,
+        "font": "14px"
+      },
+      "cta": {
+        "x": 20,
+        "y": 779.140625,
+        "width": 390,
+        "height": 52,
+        "bottom": 831.140625,
+        "font": "16px"
+      },
+      "imageLoaded": true,
+      "bodyFont": "16px",
+      "final": {
+        "x": 0,
+        "y": 2777.953125,
+        "width": 430,
+        "height": 382.15625,
+        "bottom": 3160.109375,
+        "font": "16px"
+      },
+      "cards": 0
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "theme": "light-conversion",
+      "header": false,
+      "headline": {
+        "x": 128,
+        "y": 145.125,
+        "width": 507.59375,
+        "height": 192.15625,
+        "bottom": 337.28125,
+        "font": "64px"
+      },
+      "media": {
+        "x": 691.59375,
+        "y": 64,
+        "width": 620.40625,
+        "height": 620.40625,
+        "bottom": 684.40625,
+        "font": "16px"
+      },
+      "facts": {
+        "x": 128,
+        "y": 445.28125,
+        "width": 507.59375,
+        "height": 78,
+        "bottom": 523.28125,
+        "font": "14px"
+      },
+      "cta": {
+        "x": 128,
+        "y": 579.28125,
+        "width": 507.59375,
+        "height": 52,
+        "bottom": 631.28125,
+        "font": "16px"
+      },
+      "imageLoaded": true,
+      "bodyFont": "18px",
+      "final": {
+        "x": 0,
+        "y": 2349.40625,
+        "width": 1440,
+        "height": 414.375,
+        "bottom": 2763.78125,
+        "font": "16px"
+      },
+      "cards": 0
+    },
+    {
+      "scenario": "no-media",
+      "media": false,
+      "player": false,
+      "cta": "QUIERO IR",
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "vsl",
+      "media": true,
+      "player": true,
+      "cta": "QUIERO IR",
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "unavailable",
+      "media": true,
+      "player": false,
+      "cta": "NO DISPONIBLE",
+      "disabled": "true",
+      "overflow": false
+    },
+    {
+      "scenario": "reserved",
+      "media": true,
+      "player": false,
+      "cta": "VER MI RESERVA",
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "membership",
+      "media": true,
+      "player": false,
+      "cta": "ACTIVAR MEMBRESÍA",
+      "disabled": null,
+      "overflow": false
+    },
+    {
+      "scenario": "guest",
+      "media": true,
+      "player": false,
+      "cta": "QUIERO IR",
+      "disabled": null,
+      "overflow": false
+    }
+  ]
+}
