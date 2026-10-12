@@ -14,6 +14,8 @@ export type ChallengeOfferProps = ComponentProps<typeof Show> & {
     vsl?: LandingVideoConfig | null;
     offerEditorial?: LandingOfferEditorial;
     presentation: {
+        hero_layout?: 'OFFER_FIRST' | 'MEDIA_LED' | null;
+        density?: 'STANDARD' | 'COMPACT' | null;
         id: number;
         name: string;
         slug: string;
@@ -250,8 +252,9 @@ export default function ChallengeOfferAdapter({
         };
         offer.finalCta.headline = offerEditorial.finalHeadline;
     }
-    if (offerEditorial?.finalDescription)
-        offer.finalCta.description = offerEditorial.finalDescription;
+    if (offerEditorial?.version === 1)
+        offer.finalCta.description =
+            offerEditorial.finalDescription ?? undefined;
     return (
         <>
             <Head
@@ -267,6 +270,8 @@ export default function ChallengeOfferAdapter({
                 {noindex && <meta name="robots" content="noindex,follow" />}
             </Head>
             <OfferConversionTemplate
+                hero={presentation.hero_layout ?? undefined}
+                density={presentation.density ?? undefined}
                 presentation={offer}
                 theme={presentation.marketing_theme || undefined}
                 action={primaryAction}
@@ -280,7 +285,7 @@ export default function ChallengeOfferAdapter({
                         <div className="mx-auto max-w-6xl px-4 pt-5">
                             <StatusBanner
                                 title="VISTA PREVIA"
-                                description="Esta presentación aún no está disponible públicamente."
+                                description="Las acciones están desactivadas en esta vista. El estado del reto corresponde al dominio."
                             />
                         </div>
                     )

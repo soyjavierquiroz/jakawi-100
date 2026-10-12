@@ -38,6 +38,8 @@ const empty = {
     reward_display_override: '',
     final_cta_headline: '',
     final_cta_description: '',
+    hero_layout: 'OFFER_FIRST',
+    density: 'STANDARD',
     template_key: 'OFFER_CONVERSION',
     marketing_theme: 'LIGHT_CONVERSION',
     media_mode: 'IMAGE',
@@ -404,6 +406,8 @@ export default function Index({
                                 }
                                 if (!offer)
                                     for (const key of [
+                                        'hero_layout',
+                                        'density',
                                         'template_key',
                                         'marketing_theme',
                                         'media_mode',
@@ -613,6 +617,61 @@ export default function Index({
                             {field(
                                 'reward_display_override',
                                 'Copy complementario del valor',
+                            )}
+                            {offer && (
+                                <>
+                                    {(['hero_layout', 'density'] as const).map(
+                                        (key) => (
+                                            <label
+                                                key={key}
+                                                className="flex flex-col gap-1 text-sm font-bold"
+                                            >
+                                                {key === 'hero_layout'
+                                                    ? 'Hero'
+                                                    : 'Densidad'}
+                                                <select
+                                                    name={key}
+                                                    className={control}
+                                                    value={form[key]}
+                                                    onChange={(event) =>
+                                                        setForm((f) => ({
+                                                            ...f,
+                                                            [key]: event.target
+                                                                .value,
+                                                        }))
+                                                    }
+                                                >
+                                                    {(key === 'hero_layout'
+                                                        ? [
+                                                              'OFFER_FIRST',
+                                                              'MEDIA_LED',
+                                                          ]
+                                                        : [
+                                                              'STANDARD',
+                                                              'COMPACT',
+                                                          ]
+                                                    ).map((value) => (
+                                                        <option key={value}>
+                                                            {value}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {errors[key] && (
+                                                    <span className="text-danger">
+                                                        {errors[key]}
+                                                    </span>
+                                                )}
+                                            </label>
+                                        ),
+                                    )}
+                                    <p className="col-span-full text-sm text-muted-foreground">
+                                        Los campos editoriales vacíos usan el
+                                        texto del producto. La descripción de
+                                        cierre vacía se omite. El texto guardado
+                                        se muestra sin sustituciones
+                                        automáticas.
+                                    </p>
+                                </>
                             )}
                             {section('Media')}
                             {offer && (

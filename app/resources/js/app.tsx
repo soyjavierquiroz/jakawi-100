@@ -18,15 +18,35 @@ void createInertiaApp({
         switch (true) {
             case name === 'partners/index' || name === 'programs/index':
                 return MarketingLayout;
-            case name === 'landing-presentations/unlock' || name === 'landing-presentations/experience' || name === 'landing-presentations/challenge' || name === 'landing-presentations/benefit':
+            case name === 'landing-presentations/unlock' ||
+                name === 'landing-presentations/experience' ||
+                name === 'landing-presentations/challenge' ||
+                name === 'landing-presentations/benefit':
                 return MarketingLayout;
-            case name === 'social-challenges/show' || name === 'social-challenges/index':
+            case name === 'social-challenges/show' ||
+                name === 'social-challenges/index':
                 return null;
-            case ['welcome', 'explore', 'cities/show', 'benefits/index', 'benefits/show', 'experiences/index', 'experiences/show', 'partners/show', 'locations/show', 'unlocks/show', 'mi-jakawi', 'membresia', 'member-profile', 'redemptions/show'].includes(name):
+            case [
+                'welcome',
+                'explore',
+                'cities/show',
+                'benefits/index',
+                'benefits/show',
+                'experiences/index',
+                'experiences/show',
+                'partners/show',
+                'locations/show',
+                'unlocks/show',
+                'mi-jakawi',
+                'membresia',
+                'member-profile',
+                'redemptions/show',
+            ].includes(name):
                 return ConsumerLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;
-            case name.startsWith('partner/') || ['redemptions/validate', 'redemptions/scan'].includes(name):
+            case name.startsWith('partner/') ||
+                ['redemptions/validate', 'redemptions/scan'].includes(name):
                 return PartnerLayout;
             case name.startsWith('settings/'):
                 return [AppLayout, SettingsLayout];
@@ -35,11 +55,11 @@ void createInertiaApp({
         }
     },
     strictMode: true,
-    withApp(app) {
+    withApp(app, { page }) {
         return (
             <TooltipProvider delayDuration={0}>
                 {app}
-                <PwaInstall />
+                <PwaInstall preview={page.props.preview === true} />
                 <Toaster />
             </TooltipProvider>
         );

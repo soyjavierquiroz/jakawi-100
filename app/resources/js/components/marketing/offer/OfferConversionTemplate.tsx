@@ -23,6 +23,8 @@ type Props = {
     presentation: OfferPresentationV1;
     action: MarketingAction;
     treatment: OfferTreatment;
+    hero?: 'OFFER_FIRST' | 'MEDIA_LED';
+    density?: 'STANDARD' | 'COMPACT';
     theme?: 'DARK_CONVERSION' | 'LIGHT_CONVERSION';
     className?: string;
     hookClassName?: string;
@@ -41,7 +43,9 @@ type Props = {
 export function OfferConversionTemplate({
     presentation: p,
     action,
-    treatment,
+    treatment: legacyTreatment,
+    hero: heroLayout,
+    density,
     theme,
     className = '',
     hookClassName,
@@ -56,7 +60,15 @@ export function OfferConversionTemplate({
     heroActionRef,
     finalActionRef,
 }: Props) {
+    const treatment = density
+        ? density === 'COMPACT'
+            ? 'compact'
+            : heroLayout === 'MEDIA_LED'
+              ? 'editorial'
+              : 'plain'
+        : legacyTreatment;
     const compact = treatment === 'compact';
+    const mediaLed = heroLayout ? heroLayout === 'MEDIA_LED' : true;
     const editorial = treatment === 'editorial';
     const trackGrowthClick = useGrowthLandingClicks();
     const offerDetails = (
@@ -65,7 +77,7 @@ export function OfferConversionTemplate({
             {!compact && (
                 <MarketingFactStrip facts={p.facts} treatment={treatment} />
             )}
-            {!compact && <MarketingPrices prices={p.prices} />}
+            <MarketingPrices prices={p.prices} />
             {!compact &&
                 p.essentialConditions.map((condition, index) => (
                     <p
@@ -167,8 +179,13 @@ export function OfferConversionTemplate({
             <div className="mx-auto grid max-w-6xl gap-4 px-4 py-5 sm:px-6 sm:py-10 lg:grid-cols-2 lg:items-start lg:gap-x-12 lg:px-8 lg:pt-14 lg:pb-12">
                 <div className="min-w-0 lg:sticky lg:top-8">{intro}</div>
                 <div className="min-w-0 lg:col-start-2">
-                    <OptionalMarketingMedia media={p.media} compact />
+                    {mediaLed && (
+                        <OptionalMarketingMedia media={p.media} compact />
+                    )}
                     {offerDetails}
+                    {!mediaLed && (
+                        <OptionalMarketingMedia media={p.media} compact />
+                    )}
                 </div>
             </div>
         </section>
@@ -186,10 +203,15 @@ export function OfferConversionTemplate({
             >
                 {intro}
             </div>
-            <OptionalMarketingMedia media={p.media} />
+            {mediaLed && <OptionalMarketingMedia media={p.media} />}
             <div className="min-w-0 lg:col-start-1 lg:row-start-2">
                 {offerDetails}
             </div>
+            {!mediaLed && p.media && (
+                <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+                    <OptionalMarketingMedia media={p.media} />
+                </div>
+            )}
         </section>
     );
     const faq = (
@@ -202,6 +224,8 @@ export function OfferConversionTemplate({
     );
     return (
         <main
+            data-offer-hero={mediaLed ? 'MEDIA_LED' : 'OFFER_FIRST'}
+            data-offer-density={compact ? 'COMPACT' : 'STANDARD'}
             onClickCapture={trackGrowthClick}
             className={className}
             data-marketing-surface={

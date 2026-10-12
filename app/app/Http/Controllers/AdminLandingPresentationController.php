@@ -88,6 +88,8 @@ class AdminLandingPresentationController extends Controller
             'default_scope' => ['sometimes', Rule::in(LandingPresentation::SCOPES)],
             'template_key' => $offer ? ['sometimes', 'required', Rule::enum(LandingTemplate::class)] : ['prohibited'],
             'marketing_theme' => $offer ? ['sometimes', 'required', Rule::enum(MarketingTheme::class)] : ['prohibited'],
+            'hero_layout' => $offer ? ['sometimes', 'required', Rule::in(['OFFER_FIRST', 'MEDIA_LED'])] : ['prohibited'],
+            'density' => $offer ? ['sometimes', 'required', Rule::in(['STANDARD', 'COMPACT'])] : ['prohibited'],
             'media_mode' => $offer ? ['sometimes', 'required', Rule::enum(LandingMediaMode::class)] : ['prohibited'],
         ];
         if (! $offer) {
@@ -111,8 +113,18 @@ class AdminLandingPresentationController extends Controller
             $rules['vsl.theme'][] = Rule::in(['inherit', $presentation?->vsl['theme'] ?? 'inherit']);
         }
         $data = $request->validate($rules);
-        $headline = $data['headline'] ?? null;
-        if (! empty($data['headline_emphasis']) && (! $headline || ! str_contains($headline, $data['headline_emphasis']))) {
+        // Project the candidate through the same presenter used by preview.
+        $candidate = $presentation ? clone $presentation : new LandingPresentation;
+        $candidate->fill($data + ['editorial_version' => 1]);
+        $candidate->editorial_version = 1;
+        $copy = match (true) {
+            $target instanceof Benefit => app(\App\Services\BenefitMarketingLandingPresenter::class)->present($target, $candidate, $request, app(PublicController::class)->benefitPublicProps($target, $request, true)),
+            $target instanceof Experience => app(\App\Services\ExperienceMarketingLandingPresenter::class)->present($target, $candidate, $request),
+            $target instanceof Challenge => app(\App\Services\ChallengeMarketingLandingPresenter::class)->present($target, $candidate),
+            default => [],
+        };
+        $headline = $offer ? ($editor->effectiveCopy($candidate, $copy)['headline'] ?? null) : null;
+        if ($offer && filled($candidate->headline_emphasis) && (! $headline || ! str_contains($headline, $candidate->headline_emphasis))) {
             throw ValidationException::withMessages(['headline_emphasis' => 'El texto destacado debe estar contenido en el headline.']);
         }
         $scope = $data['default_scope'] ?? ($presentation?->status === 'PUBLISHED' ? $presentation->default_scope : ($presentation?->publish_scope ?? 'NONE'));

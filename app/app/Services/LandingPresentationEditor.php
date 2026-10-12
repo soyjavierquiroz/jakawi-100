@@ -65,10 +65,19 @@ class LandingPresentationEditor
         ];
     }
 
+    public function effectiveCopy(LandingPresentation $presentation, array $copy): array
+    {
+        if ($presentation->editorial_version !== 1) return $copy;
+        foreach (['eyebrow' => 'eyebrow', 'headline' => 'headline', 'subheadline' => 'subheadline', 'final_cta_headline' => 'finalHeadline', 'reward_display_override' => isset($copy['reward']) ? 'rewardNote' : 'valueNote'] as $field => $key) {
+            if (filled($presentation->$field)) $copy[$key] = $presentation->$field;
+        }
+        return $copy;
+    }
+
     public function publicEditorial(LandingPresentation $presentation, array $copy): array
     {
-        // Existing presenters retain their editorial/economics boundaries. The new closing copy
-        // is validated on write; persisted economics and action semantics never enter this projection.
+        // V1 copy is validated on write and projected verbatim. Domain facts and actions
+        // stay in the presenter; an empty closing description is intentionally omitted.
         return ['version' => $presentation->editorial_version, 'eyebrow' => $copy['eyebrow'], 'headline' => $copy['headline'], 'subheadline' => $copy['subheadline'],
             'emphasis' => $presentation->headline_emphasis, 'finalHeadline' => $copy['finalHeadline'], 'finalDescription' => $presentation->final_cta_description];
     }

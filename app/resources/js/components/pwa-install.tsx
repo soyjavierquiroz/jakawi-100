@@ -1,12 +1,28 @@
+import { router } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { Download, Share, X } from 'lucide-react';
 import { usePwaInstall } from '@/hooks/use-pwa-install';
 
-export function PwaInstall() {
+export function PwaInstall({
+    preview: initialPreview = false,
+}: {
+    preview?: boolean;
+}) {
     const pwa = usePwaInstall();
     const [hasMobileBottomNav, setHasMobileBottomNav] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
-    const isVisible = !pwa.dismissed && (pwa.canInstall || pwa.canShowIosHelp);
+    const [preview, setPreview] = useState(initialPreview);
+    useEffect(
+        () =>
+            router.on('navigate', (event) =>
+                setPreview(event.detail.page.props.preview === true),
+            ),
+        [],
+    );
+    const isVisible =
+        preview !== true &&
+        !pwa.dismissed &&
+        (pwa.canInstall || pwa.canShowIosHelp);
 
     useEffect(() => {
         const syncMobileBottomNav = () => {
@@ -77,7 +93,10 @@ export function PwaInstall() {
                         onClick={() => void pwa.install()}
                         className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand/90"
                     >
-                        <Download className="size-4 shrink-0" aria-hidden="true" />
+                        <Download
+                            className="size-4 shrink-0"
+                            aria-hidden="true"
+                        />
                         Instalar JAKAWI
                     </button>
                 ) : (

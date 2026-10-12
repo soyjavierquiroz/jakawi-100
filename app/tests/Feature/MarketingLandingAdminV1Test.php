@@ -41,6 +41,43 @@ class MarketingLandingAdminV1Test extends TestCase
         return array_replace(['name' => 'Oferta editorial', 'slug' => 'oferta-editorial', 'template_key' => 'OFFER_CONVERSION', 'marketing_theme' => 'LIGHT_CONVERSION', 'media_mode' => 'NONE', 'headline' => 'TU CAFÉ DE CORTESÍA.', 'headline_emphasis' => 'CAFÉ DE CORTESÍA.', 'eyebrow' => 'BENEFICIO JAKAWI', 'subheadline' => 'Disfruta tu próximo plan.', 'final_cta_headline' => 'PREPARA TU VISITA.', 'final_cta_description' => 'Continúa con JAKAWI.', 'campaign_key' => 'cafe-piloto', 'default_scope' => 'GUESTS'], $overrides);
     }
 
+    public function test_saved_editorial_is_rendered_verbatim_and_layout_controls_are_validated(): void
+    {
+        $subject = $this->subject();
+        $this->admin();
+        $base = $this->base($subject);
+        $this->post($base, $this->fields(['headline' => 'DISFRUTA EN TU CIUDAD.', 'headline_emphasis' => 'EN TU CIUDAD', 'hero_layout' => 'MEDIA_LED', 'density' => 'COMPACT']))->assertRedirect($base);
+        $landing = LandingPresentation::where('slug', 'oferta-editorial')->firstOrFail();
+        $this->get($base.'/'.$landing->slug.'/preview')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('copy.headline', 'DISFRUTA EN TU CIUDAD.')
+            ->where('offerEditorial.headline', 'DISFRUTA EN TU CIUDAD.')
+            ->where('presentation.hero_layout', 'MEDIA_LED')->where('presentation.density', 'COMPACT'));
+        $this->put($base.'/'.$landing->slug, $this->fields(['hero_layout' => 'INVALID', 'density' => 'INVALID']))->assertSessionHasErrors(['hero_layout', 'density']);
+    }
+
+    public function test_experience_editorial_containing_en_is_not_silently_replaced(): void
+    {
+        $subject = Experience::factory()->published()->create();
+        $this->admin();
+        $base = '/admin/experiencias/'.$subject->slug.'/landings';
+        $this->post($base, $this->fields(['headline' => 'VIVE EL ATARDECER EN COCHABAMBA.', 'headline_emphasis' => 'ATARDECER', 'subheadline' => 'Música suave y vista a la ciudad en Mirador Cobalto.']))->assertRedirect($base);
+        $landing = LandingPresentation::where('slug', 'oferta-editorial')->firstOrFail();
+        $this->get($base.'/'.$landing->slug.'/preview')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('copy.headline', 'VIVE EL ATARDECER EN COCHABAMBA.')
+            ->where('offerEditorial.headline', 'VIVE EL ATARDECER EN COCHABAMBA.')
+            ->where('offerEditorial.subheadline', 'Música suave y vista a la ciudad en Mirador Cobalto.')
+            ->where('offerEditorial.emphasis', 'ATARDECER'));
+    }
+
+    public function test_emphasis_uses_effective_product_headline_when_editorial_headline_is_empty(): void
+    {
+        $subject = $this->subject();
+        $this->admin();
+        $this->post($this->base($subject), $this->fields(['headline' => null, 'headline_emphasis' => 'Café']))->assertRedirect($this->base($subject));
+        $landing = LandingPresentation::where('slug', 'oferta-editorial')->firstOrFail();
+        $this->put($this->base($subject).'/'.$landing->slug, $this->fields(['headline' => null, 'headline_emphasis' => 'Ausente']))->assertSessionHasErrors('headline_emphasis');
+    }
+
     public function test_create_edit_publish_unpublish_and_live_domain_truth(): void
     {
         $subject = $this->subject();

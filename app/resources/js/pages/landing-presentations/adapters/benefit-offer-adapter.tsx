@@ -14,6 +14,8 @@ export type BenefitOfferProps = {
     offerEditorial?: LandingOfferEditorial;
     benefit: { slug: string; title: string; terms: string | null };
     presentation: {
+        hero_layout?: 'OFFER_FIRST' | 'MEDIA_LED' | null;
+        density?: 'STANDARD' | 'COMPACT' | null;
         id?: number;
         slug?: string;
         marketing_theme?: 'DARK_CONVERSION' | 'LIGHT_CONVERSION' | null;
@@ -167,8 +169,9 @@ export default function BenefitOfferAdapter({
         };
         offer.finalCta.headline = offerEditorial.finalHeadline;
     }
-    if (offerEditorial?.finalDescription)
-        offer.finalCta.description = offerEditorial.finalDescription;
+    if (offerEditorial?.version === 1)
+        offer.finalCta.description =
+            offerEditorial.finalDescription ?? undefined;
     return (
         <>
             <Head title={offer.hero.headline}>
@@ -176,6 +179,8 @@ export default function BenefitOfferAdapter({
                 {noindex && <meta name="robots" content="noindex,follow" />}
             </Head>
             <OfferConversionTemplate
+                hero={presentation.hero_layout ?? undefined}
+                density={presentation.density ?? undefined}
                 presentation={offer}
                 theme={presentation.marketing_theme || undefined}
                 action={action}

@@ -59,7 +59,7 @@ class LandingPresentationController extends Controller
         }
         $shared = [
             'vsl' => ! ($subject instanceof Unlock) && in_array($presentation->media_mode?->value, ['IMAGE', 'NONE'], true) ? null : app(LandingVideoConfiguration::class)->forPresentation($presentation),
-            'presentation' => $presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode']),
+            'presentation' => $presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']),
             'nativeUrl' => $resolver->nativeUrl($subject), 'preview' => $preview,
             'canonical' => $presentation->default_scope === 'ALL' ? route('landing-presentations.show', $presentation->slug) : $resolver->nativeUrl($subject),
             'noindex' => $presentation->default_scope !== 'ALL' || $preview,
@@ -93,11 +93,10 @@ class LandingPresentationController extends Controller
                 'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->image_path, 'hero'),
             ]);
         }
-        $props = $preview ? ['challenge' => $subject, 'rewardLabel' => $subject->benefit?->title, 'heroUrl' => app(MediaUrl::class)->url($subject->hero_path, 'hero'), 'participation' => null, 'entries' => [], 'grant' => null, 'canParticipate' => false, 'canSubmit' => false, 'isMember' => false, 'slots' => null, 'ranking' => null, 'verificationUrl' => route('verification.notice')]
-            : app(ChallengeController::class)->publicProps($request, $subject, $ranking, $state);
+        $props = app(ChallengeController::class)->publicProps($request, $subject, $ranking, $state);
 
         return Inertia::render('landing-presentations/challenge', [
-            ...$props, ...$shared, 'presentation' => array_replace($presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode']), ['hero_alt' => $presentation->hero_alt ?: $subject->hero_alt]),
+            ...$props, ...$shared, 'presentation' => array_replace($presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']), ['hero_alt' => $presentation->hero_alt ?: $subject->hero_alt]),
             ...$this->offerCopy($presentation, $presenter->present($subject, $presentation)),
             'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path, 'hero'),
         ]);
@@ -107,6 +106,8 @@ class LandingPresentationController extends Controller
     {
         // Null supports records created through legacy/domain code; V1 has one allowlisted renderer.
         abort_if($presentation->template_key && $presentation->template_key !== LandingTemplate::OFFER_CONVERSION, 404);
+
+        $copy = app(LandingPresentationEditor::class)->effectiveCopy($presentation, $copy);
 
         return ['copy' => $copy, 'offerEditorial' => app(LandingPresentationEditor::class)->publicEditorial($presentation, $copy)];
     }

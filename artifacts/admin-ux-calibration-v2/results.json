@@ -1,0 +1,189 @@
+{
+  "scope": "Local render of three captured QA drafts, not persisted live; challenge acceptsParticipation fixture is open",
+  "results": [
+    {
+      "key": "benefit-value",
+      "width": 390,
+      "headline": "CAFÉ DE CORTESÍA CON TU BRUNCH.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "ctas": [
+        {
+          "label": "VER CÓMO CANJEAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER CÓMO CANJEAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "benefit-value",
+      "width": 430,
+      "headline": "CAFÉ DE CORTESÍA CON TU BRUNCH.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "ctas": [
+        {
+          "label": "VER CÓMO CANJEAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER CÓMO CANJEAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "benefit-value",
+      "width": 1440,
+      "headline": "CAFÉ DE CORTESÍA CON TU BRUNCH.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "OFFER_FIRST",
+      "density": "STANDARD",
+      "ctas": [
+        {
+          "label": "VER CÓMO CANJEAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER CÓMO CANJEAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "experience-desire",
+      "width": 390,
+      "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "MEDIA_LED",
+      "density": "STANDARD",
+      "ctas": [
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "experience-desire",
+      "width": 430,
+      "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "MEDIA_LED",
+      "density": "STANDARD",
+      "ctas": [
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "experience-desire",
+      "width": 1440,
+      "headline": "VIVE EL ATARDECER EN COCHABAMBA.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "MEDIA_LED",
+      "density": "STANDARD",
+      "ctas": [
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        },
+        {
+          "label": "VER FECHAS Y RESERVAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "challenge-minimal",
+      "width": 390,
+      "headline": "PARTICIPA EN EL RETO #BAFABO.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "ctas": [
+        {
+          "label": "CREAR CUENTA Y PARTICIPAR",
+          "disabled": "true"
+        },
+        {
+          "label": "CREAR CUENTA O INGRESAR",
+          "disabled": "true"
+        },
+        {
+          "label": "CREAR CUENTA Y PARTICIPAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "challenge-minimal",
+      "width": 430,
+      "headline": "PARTICIPA EN EL RETO #BAFABO.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "ctas": [
+        {
+          "label": "CREAR CUENTA Y PARTICIPAR",
+          "disabled": "true"
+        },
+        {
+          "label": "CREAR CUENTA O INGRESAR",
+          "disabled": "true"
+        },
+        {
+          "label": "CREAR CUENTA Y PARTICIPAR",
+          "disabled": "true"
+        }
+      ]
+    },
+    {
+      "key": "challenge-minimal",
+      "width": 1440,
+      "headline": "PARTICIPA EN EL RETO #BAFABO.",
+      "overflow": false,
+      "installPrompt": false,
+      "hero": "OFFER_FIRST",
+      "density": "COMPACT",
+      "ctas": [
+        {
+          "label": "CREAR CUENTA Y PARTICIPAR",
+          "disabled": "true"
+        },
+        {
+          "label": "CREAR CUENTA O INGRESAR",
+          "disabled": "true"
+        },
+        {
+          "label": "CREAR CUENTA Y PARTICIPAR",
+          "disabled": "true"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

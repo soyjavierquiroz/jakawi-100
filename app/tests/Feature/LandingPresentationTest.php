@@ -19,6 +19,17 @@ class LandingPresentationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_preview_preserves_real_challenge_participation_state(): void
+    {
+        $challenge = $this->challenge();
+        $landing = $this->landing($challenge, 'preview-domain-state', ['status' => 'DRAFT']);
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        $url = '/admin/retos/'.$challenge->slug.'/landings/'.$landing->slug.'/preview';
+        $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where('preview', true)->where('canParticipate', $challenge->acceptsParticipation()));
+        $challenge->update(['status' => 'closed']);
+        $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where('preview', true)->where('canParticipate', false));
+    }
+
     public function test_video_configuration_is_nullable_and_projected_only_when_unlock_is_revealable(): void
     {
         $challenge = $this->challenge();
