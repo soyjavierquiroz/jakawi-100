@@ -93,12 +93,9 @@ export default function ExperienceOfferAdapter({
     const action = {
         ...copy.action,
         label:
-            guest && copy.action.kind !== 'unavailable'
-                ? 'QUIERO VIVIR ESTA EXPERIENCIA'
-                : copy.action.kind === 'native' &&
-                    ['QUIERO IR', 'RESERVAR'].includes(copy.action.label)
-                  ? 'VER FECHAS Y RESERVAR'
-                  : copy.action.label,
+            copy.action.kind === 'unavailable'
+                ? copy.action.label
+                : 'QUIERO VIVIR ESTA EXPERIENCIA',
         disabled,
         onClick: (event: React.MouseEvent<Element>) => {
             if (disabled) {

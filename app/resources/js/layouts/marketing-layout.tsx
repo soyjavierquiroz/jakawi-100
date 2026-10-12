@@ -1,9 +1,4 @@
 import { AcquisitionProvider } from '@/components/marketing/acquisition-context';
-import ExperienceShow from '@/pages/experiences/show';
-import UnlockShow from '@/pages/unlocks/show';
-import BenefitShow from '@/pages/benefits/show';
-import { type ComponentProps } from 'react';
-import ChallengeShow from '@/pages/social-challenges/show';
 import { MetaBrowserEvents } from '@/components/meta-browser-events';
 import { Link, usePage } from '@inertiajs/react';
 import { PublicFooter } from '@/components/public-footer';
@@ -40,33 +35,8 @@ export default function MarketingLayout({
         component === 'landing-presentations/challenge' ||
         component === 'landing-presentations/experience' ||
         component === 'landing-presentations/benefit';
-    const domainContent = component.endsWith('/benefit') ? (
-        <BenefitShow
-            {...(page.props as unknown as ComponentProps<typeof BenefitShow>)}
-            redemptionIntent
-            continuationOnly
-        />
-    ) : component.endsWith('/experience') ? (
-        <ExperienceShow
-            {...(page.props as unknown as ComponentProps<
-                typeof ExperienceShow
-            >)}
-            continuationOnly
-        />
-    ) : component.endsWith('/unlock') ? (
-        <UnlockShow
-            {...(page.props as unknown as ComponentProps<typeof UnlockShow>)}
-            continuationOnly
-        />
-    ) : (
-        <ChallengeShow
-            {...(page.props as unknown as ComponentProps<typeof ChallengeShow>)}
-            embedded
-            landingSlug={(page.props.presentation as { slug: string })?.slug}
-        />
-    );
     return (
-        <AcquisitionProvider domainContent={domainContent}>
+        <AcquisitionProvider>
             <div
                 data-marketing-theme={
                     theme ?? persistedTheme ?? marketingThemeForPage(component)

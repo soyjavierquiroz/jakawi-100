@@ -354,3 +354,10 @@
 .funnel-primary-action:hover {
     background-color: color-mix(in srgb, var(--brand) 76%, #000);
 }
+
+/* Conversion controls: explicit selection, keyboard focus and touch feedback. */
+.activation-option { transition: border-color .15s, box-shadow .15s, transform .15s; }
+.activation-option:hover { border-color: var(--brand); box-shadow: 0 4px 12px #00000012; }
+.activation-option:focus-visible, .funnel-primary-action:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.activation-option:active, .funnel-primary-action:active { transform: translateY(1px); }
+.funnel-primary-action:hover { box-shadow: 0 3px 10px #00000020; }

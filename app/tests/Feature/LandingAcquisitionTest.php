@@ -114,8 +114,8 @@ class LandingAcquisitionTest extends TestCase
         $this->assertDatabaseCount('redemptions', 0);
         \App\Models\Membership::create(['user_id' => $user->id, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addYear(), 'amount_paid' => 100]);
         $purchase->update(['status' => 'COMPLETED', 'completed_at' => now()]);
-        $this->post(route('membership.return', $purchase))->assertRedirect(route('landing-presentations.show', $landing, false));
-        $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page->where('acquisitionResumed', true)->where('selectedLocationId', $location->id)->where('hasActiveMembership', true));
+        $this->post(route('membership.return', $purchase))->assertRedirect(route('landing-presentations.activation', $landing, false));
+        $this->get(route('landing-presentations.activation', $landing))->assertInertia(fn (Assert $page) => $page->where('acquisitionResumed', true)->where('selectedLocationId', $location->id)->where('hasActiveMembership', true));
         $this->assertDatabaseCount('redemptions', 0);
     }
 
@@ -128,8 +128,8 @@ class LandingAcquisitionTest extends TestCase
         $this->actingAs($user)->get('/membresia?'.http_build_query(['journey' => 'EXPERIENCE', 'action' => 'RESERVE', 'resource_id' => $experience->id, 'experience_session_id' => $session->id, 'landing_presentation_id' => $landing->id]))->assertOk();
         $intent = app(PublicJourneyContinuation::class)->get();
         $this->assertSame($landing->id, $intent['landing_presentation_id']);
-        $this->assertSame(route('landing-presentations.show', $landing, false), app(PublicJourneyContinuation::class)->destination($intent));
-        $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page->where('acquisitionResumed', true)->where('restoredSessionId', $session->id)->where('experience.id', $experience->id));
+        $this->assertSame(route('landing-presentations.activation', $landing, false), app(PublicJourneyContinuation::class)->destination($intent));
+        $this->get(route('landing-presentations.activation', $landing))->assertInertia(fn (Assert $page) => $page->where('acquisitionResumed', true)->where('restoredSessionId', $session->id)->where('experience.id', $experience->id));
         $this->assertNoDomainMutation();
     }
 
@@ -151,7 +151,7 @@ class LandingAcquisitionTest extends TestCase
         $this->assertSame($benefit->id, $intent['resource_id']);
         $this->assertSame('REDEEM', $intent['action']);
         $this->post('/register', ['name' => 'Café Guest', 'email' => 'cafe@example.test', 'whatsapp' => '71234567', 'password' => 'Valid-Cafe-2026!'])
-            ->assertRedirect(route('landing-presentations.show', $landing, false));
+            ->assertRedirect(route('landing-presentations.activation', $landing, false));
         $user = User::where('email', 'cafe@example.test')->sole();
         $this->assertAuthenticatedAs($user);
         $this->assertFalse(Hash::check('Valid-Cafe-2026!', $user->password));
@@ -166,7 +166,7 @@ class LandingAcquisitionTest extends TestCase
         foreach ($this->subjects() as $subject) {
             $landing = $this->landing($subject);
             $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'login'])->assertNoContent();
-            $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect(route('landing-presentations.show', $landing, false));
+            $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect(route('landing-presentations.activation', $landing, false));
             $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page
                 ->where('acquisitionResumed', true)->where('acquisition.subjectId', $subject->id)->where('acquisition.title', $subject->title));
             $this->post('/logout');
@@ -180,7 +180,7 @@ class LandingAcquisitionTest extends TestCase
         $landing = $this->landing($challenge);
         $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'register'])->assertNoContent();
         $this->post('/register', ['name' => 'Challenge Guest', 'email' => 'challenge@example.test', 'whatsapp' => '71234567', 'password' => 'Valid-Challenge-2026!'])
-            ->assertRedirect(route('landing-presentations.show', $landing, false));
+            ->assertRedirect(route('landing-presentations.activation', $landing, false));
         $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page
             ->where('acquisitionResumed', true)->where('challenge.id', $challenge->id)
             ->where('canSubmit', false)->where('participation', null));

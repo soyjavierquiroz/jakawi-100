@@ -163,7 +163,7 @@
     --marketing-text-on-dark: var(--cream);
     --marketing-text-on-light: var(--ink);
     --marketing-action: var(--brand);
-    --marketing-action-text: var(--ink);
+    --marketing-action-text: #fff;
     --marketing-emphasis: var(--brand);
     --marketing-value: var(--success);
     --marketing-value-text: var(--ink);

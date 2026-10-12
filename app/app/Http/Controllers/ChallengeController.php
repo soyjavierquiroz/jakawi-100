@@ -57,7 +57,7 @@ class ChallengeController extends Controller {
             if ($landing) {
                 $continuation->setLanding($landing);
                 $request->session()->flash('landing_acquisition_resumed', $landing->id);
-                return to_route('landing-presentations.show', $landing)->withErrors(['participation' => 'Confirma tu correo para entrar al reto.']);
+                return to_route('landing-presentations.activation', $landing)->withErrors(['participation' => 'Confirma tu correo para entrar al reto.']);
             }
             return to_route('verification.notice');
         }
@@ -69,7 +69,7 @@ class ChallengeController extends Controller {
         }
         $landingSlug = $request->input('landing_presentation_slug');
         $landing = is_string($landingSlug) ? \App\Models\LandingPresentation::query()->where('slug',$landingSlug)->where('subject_type',$challenge->getMorphClass())->where('subject_id',$challenge->id)->where('status','PUBLISHED')->first() : null;
-        return redirect()->to(($landing ? route('landing-presentations.show',$landing->slug) : route('social-challenges.show',$challenge->slug)).'#participar');
+        return redirect()->to(($landing ? route($challenge->participations()->where('user_id', $request->user()->id)->exists() ? 'landing-presentations.result' : 'landing-presentations.activation',$landing->slug) : route('social-challenges.show',$challenge->slug)).'#participar');
     }
     public function submit(Request $request, Challenge $challenge, AnalyticsTracker $analytics) {
         $data = $request->validate(['url'=>['required','url','max:2048','starts_with:https://,http://']]);
@@ -97,7 +97,7 @@ class ChallengeController extends Controller {
         $analytics->record('challenge_entry_submitted',[],['challenge_id'=>$challenge->id]);
         $landingSlug = $request->input('landing_presentation_slug');
         $landing = is_string($landingSlug) ? \App\Models\LandingPresentation::query()->where('slug',$landingSlug)->where('subject_type',$challenge->getMorphClass())->where('subject_id',$challenge->id)->where('status','PUBLISHED')->first() : null;
-        return redirect()->to($landing ? route('landing-presentations.show',$landing->slug) : route('social-challenges.show',$challenge->slug))->with('success','Estamos verificando tu publicación.')->with('submitted_entry_id',$entry->id);
+        return redirect()->to($landing ? route($challenge->participations()->where('user_id', $request->user()->id)->exists() ? 'landing-presentations.result' : 'landing-presentations.activation',$landing->slug) : route('social-challenges.show',$challenge->slug))->with('success','Estamos verificando tu publicación.')->with('submitted_entry_id',$entry->id);
     }
     public function entryStatus(Request $request, Challenge $challenge, ChallengeSocialEntry $entry, SocialEntryState $state) {
         abort_unless($entry->challenge_id === $challenge->id && $entry->participation()->where('user_id', $request->user()->id)->exists(), 404);

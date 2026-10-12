@@ -146,7 +146,7 @@ export default function ChallengeOfferAdapter({
             if (!auth.user && !closed) {
                 event.preventDefault();
                 acquire();
-            } else if (auth.user && !membershipRequired) { event.preventDefault(); continueAction(); }
+            } else if (auth.user) { event.preventDefault(); continueAction(); }
         },
         ...action,
         kind: membershipRequired
@@ -403,12 +403,7 @@ export default function ChallengeOfferAdapter({
                                         ? 'SIGUE TU RETO'
                                         : 'PARTICIPA EN ESTE RETO'}
                                 </h2>
-                                <Show
-                                    {...challengeProps}
-                                    embedded
-                                    onAcquire={() => acquire()}
-                                    landingSlug={presentation.slug}
-                                />
+                                <MarketingCTA action={primaryAction} location="body" className="offer-action mt-5" />
                             </section>
                         </div>
                     </>

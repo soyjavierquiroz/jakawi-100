@@ -55,6 +55,8 @@ Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/membresia', [MembershipOfferController::class, 'show'])->name('membership.show');
 Route::get('/membresia/registro', [MembershipOfferController::class, 'register'])->middleware('guest')->name('membership.register');
 Route::get('/go/{slug}', [ExternalRedirectController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('external-redirect.show');
+Route::get('/l/{presentation:slug}/activar', [LandingPresentationController::class, 'activation'])->middleware('auth')->name('landing-presentations.activation');
+Route::get('/l/{presentation:slug}/resultado', [LandingPresentationController::class, 'result'])->middleware('auth')->name('landing-presentations.result');
 Route::post('/l/{presentation:slug}/acquisition', [LandingPresentationController::class, 'acquisition'])->middleware('guest')->name('landing-presentations.acquisition');
 Route::get('/l/{presentation:slug}', [LandingPresentationController::class, 'show'])->name('landing-presentations.show');
 Route::post('/analytics/public-landings/{key}/cta', [PublicJourneyLandingController::class, 'cta'])->where('key', '[a-z0-9]+(?:-[a-z0-9]+)*')->middleware('throttle:60,1')->name('public-landings.cta');

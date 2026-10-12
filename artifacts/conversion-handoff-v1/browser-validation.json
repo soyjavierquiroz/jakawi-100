@@ -1,0 +1,81 @@
+{
+  "scope": "Isolated jakawi_test only; Docker PHP 8.4 and current local Vite frontend.",
+  "cases": [
+    {
+      "name": "Sunset guest 33/66/100 identity-only → full-page Activation + selected date CTA",
+      "pass": true
+    },
+    {
+      "name": "Authenticated Sunset skips micro opt-in",
+      "pass": true
+    },
+    {
+      "name": "Benefit full-page location/membership requirement",
+      "pass": true
+    },
+    {
+      "name": "Challenge full-page contextual verification",
+      "pass": true
+    },
+    {
+      "name": "Benefit real authorized Delivery fixture",
+      "pass": true
+    },
+    {
+      "name": "Experience pending Delivery truthful, full page",
+      "pass": true
+    },
+    {
+      "name": "Challenge real participation Delivery instructions",
+      "pass": true
+    },
+    {
+      "name": "Sunset desktop activation/selected/hover",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "status": 204
+    },
+    {
+      "path": "/l/qa-calibration-experience-desire/acquisition",
+      "status": 204
+    },
+    {
+      "path": "/register",
+      "status": 302
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "status": 204
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "path": "/analytics/journey-intent/benefit/demo-beneficio-01",
+      "status": 204
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "status": 204
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "status": 204
+    },
+    {
+      "path": "/l/qa-calibration-benefit-value/acquisition",
+      "status": 204
+    },
+    {
+      "path": "/login",
+      "status": 302
+    }
+  ],
+  "result": "PASS"
+}

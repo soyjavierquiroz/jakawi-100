@@ -39,6 +39,7 @@ class LandingAcquisition
             'type' => $type, 'subjectId' => $subject->id, 'title' => $subject->title, 'provider' => $provider,
             'headline' => $presentation->acquisition_headline ?: $defaults['acquisition_headline'],
             'supportingCopy' => $presentation->acquisition_supporting_copy ?: $defaults['acquisition_supporting_copy'],
+            'activationUrl' => route('landing-presentations.activation', $presentation, false),
             'endpoint' => route('landing-presentations.acquisition', $presentation, false),
         ];
     }

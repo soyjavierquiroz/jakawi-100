@@ -58,7 +58,9 @@ export default function BenefitShow({
     const title = displayBenefitName(benefit.title, demo);
     const name = (value: string) => displayBenefitName(value, demo);
     const { auth, errors, presentation } = usePage().props;
-    const landingId = continuationOnly ? (presentation as { id: number } | undefined)?.id : undefined;
+    const landingId = continuationOnly
+        ? (presentation as { id: number } | undefined)?.id
+        : undefined;
     const [confirming, setConfirming] = useState(
         redemptionIntent && availability.available,
     );
@@ -144,12 +146,22 @@ export default function BenefitShow({
 
     const confirmation = confirming ? (
         <div
-            role={continuationOnly ? undefined : "dialog"}
+            role={continuationOnly ? undefined : 'dialog'}
             aria-modal={continuationOnly ? undefined : true}
             aria-labelledby="activation-title"
-            className={continuationOnly ? "" : "fixed inset-0 z-50 flex items-end bg-overlay sm:items-center sm:justify-center"}
+            className={
+                continuationOnly
+                    ? ''
+                    : 'fixed inset-0 z-50 flex items-end bg-overlay sm:items-center sm:justify-center'
+            }
         >
-            <div className={continuationOnly ? "w-full" : "w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]"}>
+            <div
+                className={
+                    continuationOnly
+                        ? 'w-full'
+                        : 'w-full rounded-t-[28px] bg-surface p-6 shadow-xl sm:max-w-md sm:rounded-[28px]'
+                }
+            >
                 <p className="discovery-eyebrow text-brand">
                     CONTINÚA TU BENEFICIO
                 </p>
@@ -174,11 +186,6 @@ export default function BenefitShow({
                 {demo && (
                     <p className="mt-2 text-xs font-semibold">
                         DEMO DE PRODUCTO · oferta simulada, no canjeable
-                    </p>
-                )}
-                {auth.user && !continuationOnly && (
-                    <p className="mt-3 inline-flex rounded-lg bg-success-surface px-2 py-1 text-xs font-semibold text-success-foreground">
-                        ✓ Cuenta lista
                     </p>
                 )}
                 {locations.length > 1 ? (
@@ -214,17 +221,25 @@ export default function BenefitShow({
                 ) : null}
                 <p className="mt-4 text-sm leading-6 text-muted-foreground">
                     {!hasActiveMembership
-                        ? 'Selecciona la sucursal y continúa con tu acceso JAKAWI. Este beneficio es para miembros.'
+                        ? 'Este beneficio requiere membresía activa. La sucursal elegida se conservará.'
                         : 'Actívalo solamente cuando estés listo para utilizarlo.'}
                 </p>
-                <div className={continuationOnly ? "mt-6 grid gap-3" : "mt-6 grid grid-cols-2 gap-3"}>
-                    {!continuationOnly && <button
-                        type="button"
-                        onClick={() => setConfirming(false)}
-                        className="min-h-12 rounded-xl border border-border text-sm font-bold"
-                    >
-                        Cancelar
-                    </button>}
+                <div
+                    className={
+                        continuationOnly
+                            ? 'mt-6 grid gap-3'
+                            : 'mt-6 grid grid-cols-2 gap-3'
+                    }
+                >
+                    {!continuationOnly && (
+                        <button
+                            type="button"
+                            onClick={() => setConfirming(false)}
+                            className="min-h-12 rounded-xl border border-border text-sm font-bold"
+                        >
+                            Cancelar
+                        </button>
+                    )}
                     <button
                         type="button"
                         onClick={() => {
@@ -248,7 +263,7 @@ export default function BenefitShow({
                             }
                         }}
                         disabled={!locationId || processing}
-                        className="funnel-primary-action min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
+                        className="funnel-primary-action min-h-12 rounded-xl bg-brand px-3 text-sm font-bold text-white disabled:opacity-50"
                     >
                         {processing
                             ? 'ACTIVANDO…'
@@ -256,13 +271,28 @@ export default function BenefitShow({
                               ? 'CONTINUAR PARA CREAR CUENTA'
                               : !hasActiveMembership
                                 ? 'CONTINUAR'
-                                : 'ACTIVAR BENEFICIO'}
+                                : continuationOnly
+                                  ? selectedLocation
+                                      ? `ACTIVAR EN ${name(selectedLocation.name).toUpperCase()}`
+                                      : 'ELIGE UNA SUCURSAL'
+                                  : 'ACTIVAR BENEFICIO'}
                     </button>
                 </div>
             </div>
         </div>
     ) : null;
-    if (continuationOnly) return confirmation;
+    if (continuationOnly)
+        return availability.available ? (
+            confirmation
+        ) : (
+            <StatusBanner
+                title="BENEFICIO NO DISPONIBLE"
+                description={
+                    availability.reason ??
+                    'No puedes activar este beneficio ahora.'
+                }
+            />
+        );
 
     return (
         <>

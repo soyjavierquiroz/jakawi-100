@@ -90,7 +90,7 @@ class PublicJourneyContinuation
             $this->session->flash('landing_acquisition_resumed', $presentation->id);
             $this->session->flash('landing_continuation_context', $intent['context'] ?? []);
 
-            return route('landing-presentations.show', $presentation, false);
+            return route('landing-presentations.activation', $presentation, false);
         }
 
         return match ($intent['journey']) {

@@ -36,7 +36,7 @@ class ExperienceReservationController extends Controller
             app(\App\Services\PublicJourneyContinuation::class)->setLanding($landing);
             $request->session()->flash('landing_acquisition_resumed', $landing->id);
             $request->session()->flash('landing_continuation_context', ['experience_session_id' => $reservation->experience_session_id]);
-            return redirect()->route('landing-presentations.show', $landing);
+            return redirect()->route('landing-presentations.result', ['presentation' => $landing, 'session' => $reservation->experience_session_id]);
         }
         return back();
     }

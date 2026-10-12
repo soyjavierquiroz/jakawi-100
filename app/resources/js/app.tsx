@@ -23,6 +23,7 @@ void createInertiaApp({
                 name === 'landing-presentations/challenge' ||
                 name === 'landing-presentations/benefit':
                 return MarketingLayout;
+            case name === 'landing-presentations/conversion':
             case name === 'social-challenges/index':
                 return null;
             case [

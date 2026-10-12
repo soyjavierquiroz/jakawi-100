@@ -10,8 +10,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LandingAction } from '@/components/marketing/landing-action-context';
-import { useForm, usePage } from '@inertiajs/react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { router, useForm, usePage } from '@inertiajs/react';
+import { createContext, useContext, useState } from 'react';
 
 export type AcquisitionContext = {
     type: 'BENEFIT' | 'EXPERIENCE' | 'CHALLENGE' | 'UNLOCK';
@@ -21,6 +21,7 @@ export type AcquisitionContext = {
     headline: string;
     supportingCopy: string;
     endpoint: string;
+    activationUrl: string;
 };
 const Acquisition = createContext<(mode?: 'register' | 'login') => void>(
     () => {},
@@ -29,25 +30,19 @@ export const useAcquisition = () => useContext(Acquisition);
 
 export function AcquisitionProvider({
     children,
-    domainContent,
 }: {
     children: React.ReactNode;
-    domainContent: React.ReactNode;
 }) {
     const page = usePage();
     const context = page.props.acquisition as AcquisitionContext | undefined;
     const user = (page.props.auth as { user?: { name: string } })?.user;
-    const resumed = Boolean(page.props.acquisitionResumed);
-    const [open, setOpen] = useState(resumed);
+    const [open, setOpen] = useState(false);
     const [mode, setMode] = useState<'register' | 'login'>('register');
     const [step, setStep] = useState(1);
     const [preparing, setPreparing] = useState(false);
     const [failure, setFailure] = useState('');
     const [collision, setCollision] = useState(false);
     const form = useForm({ name: '', email: '', whatsapp: '', password: '' });
-    useEffect(() => {
-        if (resumed) setOpen(true);
-    }, [resumed]);
     const theme =
         (page.props.presentation as { marketing_theme?: string })
             ?.marketing_theme === 'DARK_CONVERSION'
@@ -61,6 +56,14 @@ export function AcquisitionProvider({
         setCollision(false);
     };
     const begin = (next: 'register' | 'login' = 'register') => {
+        if (user && context) {
+            const action = page.props.landingDirectAction as
+                | { endpoint: string; data: Record<string, string | number> }
+                | undefined;
+            if (action) router.post(action.endpoint, action.data);
+            else router.visit(context.activationUrl);
+            return;
+        }
         switchMode(next);
         setOpen(true);
     };
@@ -136,40 +139,31 @@ export function AcquisitionProvider({
         }
     };
     const busy = preparing || form.processing;
-    const finalAction = context
-        ? {
-              BENEFIT: /café/i.test(promise)
-                  ? 'DAME MI CAFÉ'
-                  : 'QUIERO MI BENEFICIO',
-              EXPERIENCE: 'QUIERO VIVIR ESTA EXPERIENCIA',
-              CHALLENGE: 'QUIERO PARTICIPAR',
-              UNLOCK: 'QUIERO DESBLOQUEARLO',
-          }[context.type]
-        : '';
     const itemName = context
         ? {
               BENEFIT: /café/i.test(promise) ? 'CAFÉ' : 'BENEFICIO',
-              EXPERIENCE: 'EXPERIENCIA',
+              EXPERIENCE: /sunset/i.test(promise) ? 'SUNSET' : 'EXPERIENCIA',
               CHALLENGE: 'RETO',
               UNLOCK: 'DESBLOQUEO',
           }[context.type]
         : '';
-    const heading = user
-        ? `TU ${itemName} SIGUE AQUÍ`
-        : collision
-          ? 'YA TIENES JAKAWI'
-          : mode === 'login'
-            ? 'INICIA SESIÓN PARA CONTINUAR'
-            : step === 1
-              ? context?.headline
-              : step === 2
-                ? `PERFECTO, ${firstName.toUpperCase()}. TU ${itemName} SIGUE AQUÍ.`
-                : `ÚLTIMO PASO, ${firstName.toUpperCase()}.`;
+    const finalAction = `CONTINUAR CON MI ${itemName}`;
+    const heading = collision
+        ? 'YA TIENES JAKAWI'
+        : mode === 'login'
+          ? 'SIGAMOS CON TU PLAN'
+          : step === 1
+            ? context?.type === 'UNLOCK'
+                ? 'VAMOS A DESBLOQUEARLO.'
+                : `VAMOS POR TU ${itemName}.`
+            : step === 2
+              ? `PERFECTO, ${firstName.toUpperCase()}.`
+              : `ÚLTIMO PASO, ${firstName.toUpperCase()}.`;
     return (
-        <LandingAction.Provider value={() => setOpen(true)}>
+        <LandingAction.Provider value={() => begin()}>
             <Acquisition.Provider value={begin}>
                 {children}
-                {context && (
+                {context && !user && (
                     <Dialog
                         open={open}
                         onOpenChange={(value) => {
@@ -180,29 +174,43 @@ export function AcquisitionProvider({
                             data-marketing-theme={theme}
                             className="max-h-[90dvh] overflow-y-auto bg-background font-discovery text-foreground sm:max-w-md"
                         >
-                            {!user && mode === 'register' && (
-                                <p className="border-l-2 border-[var(--marketing-reward)] pl-2 text-xs font-extrabold">
-                                    {step} de 3
-                                </p>
-                            )}
-                            {user && resumed && (
-                                <p className="text-sm font-extrabold text-success">
-                                    ✓ CUENTA LISTA
-                                </p>
+                            {mode === 'register' && (
+                                <div className="space-y-2">
+                                    <p className="text-xs font-extrabold">
+                                        {step} de 3
+                                    </p>
+                                    <div
+                                        role="progressbar"
+                                        aria-label="Tu progreso"
+                                        aria-valuemin={0}
+                                        aria-valuemax={100}
+                                        aria-valuenow={[33, 66, 100][step - 1]}
+                                        className="flex h-2 gap-1"
+                                    >
+                                        {[1, 2, 3].map((segment) => (
+                                            <span
+                                                key={segment}
+                                                className={`flex-1 rounded-full ${segment <= step ? 'bg-[var(--marketing-reward)]' : 'bg-muted'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
                             )}
                             <DialogTitle className="pr-6 text-2xl leading-tight font-extrabold">
                                 {heading}
                             </DialogTitle>
                             <DialogDescription>
-                                {user
-                                    ? `${firstName}, ${promise} sigue aquí.`
-                                    : mode === 'login'
-                                      ? `Inicia sesión para continuar con ${promise}.`
-                                      : step === 1
-                                        ? context.supportingCopy
-                                        : step === 3
-                                          ? 'Te tomará solo unos segundos más.'
-                                          : 'Tu acceso te permite volver cuando quieras.'}
+                                {mode === 'login'
+                                    ? 'Inicia sesión para continuar.'
+                                    : step === 1
+                                      ? 'Solo unos segundos para seguir.'
+                                      : step === 2
+                                        ? context.type === 'EXPERIENCE'
+                                            ? 'Tu experiencia sigue aquí.'
+                                            : context.type === 'BENEFIT'
+                                              ? 'Tu beneficio sigue aquí.'
+                                              : 'Tu oportunidad sigue aquí.'
+                                        : 'Ya casi terminamos.'}
                             </DialogDescription>
                             <div className="border-l-4 border-[var(--marketing-reward)] pl-3">
                                 <p className="font-bold">{promise}</p>
@@ -212,9 +220,7 @@ export function AcquisitionProvider({
                                     </p>
                                 )}
                             </div>
-                            {user ? (
-                                domainContent
-                            ) : (
+                            {
                                 <>
                                     <form
                                         onSubmit={submit}
@@ -223,7 +229,7 @@ export function AcquisitionProvider({
                                         {mode === 'register' && step === 1 && (
                                             <div className="grid gap-2">
                                                 <Label htmlFor="acquisition-name">
-                                                    Primero, ¿cómo te llamas?
+                                                    ¿Cómo te llamas?
                                                 </Label>
                                                 <Input
                                                     key="name"
@@ -250,7 +256,7 @@ export function AcquisitionProvider({
                                                 <Label htmlFor="acquisition-email">
                                                     {mode === 'login'
                                                         ? 'Correo'
-                                                        : '¿A qué correo te enviamos tu acceso a JAKAWI para que puedas volver cuando quieras?'}
+                                                        : '¿Cuál es tu correo?'}
                                                 </Label>
                                                 <Input
                                                     key="email"
@@ -300,12 +306,6 @@ export function AcquisitionProvider({
                                                         form.errors.whatsapp
                                                     }
                                                 />
-                                                <p className="text-xs text-muted-foreground">
-                                                    Al continuar dejamos tu
-                                                    cuenta lista. Después
-                                                    revisarás los requisitos y
-                                                    confirmarás tu acción.
-                                                </p>
                                             </div>
                                         )}
                                         {mode === 'login' && (
@@ -385,7 +385,7 @@ export function AcquisitionProvider({
                                         >
                                             {mode === 'register'
                                                 ? 'INICIA SESIÓN'
-                                                : 'CREA TU CUENTA'}
+                                                : 'CONTINUAR CON MI PLAN'}
                                         </button>
                                     </p>
                                     {mode === 'login' && (
@@ -397,7 +397,7 @@ export function AcquisitionProvider({
                                         </a>
                                     )}
                                 </>
-                            )}
+                            }
                         </DialogContent>
                     </Dialog>
                 )}

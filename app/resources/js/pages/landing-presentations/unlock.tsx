@@ -40,6 +40,7 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
         // Auth and explicit domain actions remain over this Landing.
         if (copy.action.kind === 'guest') { event.preventDefault(); acquire(); return; }
         if (copy.action.kind === 'native') { event.preventDefault(); if (!authenticated) acquire(); else continueAction(); return; }
+        if (copy.action.kind === 'membership') { event.preventDefault(); continueAction(); }
         if (copy.action.kind === 'membership' && !intentSent.current) {
             intentSent.current = true;
             trackJourneyIntent('unlock', copy.slug);

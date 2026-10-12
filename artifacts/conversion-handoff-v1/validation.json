@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "scope": "Local/test only; NO DEPLOY; production untouched",
+  "implementation_base": "df0476f38f469cd063e5b97bee2d19dfa4f17a84",
+  "actual_previous_head": "b49282d6a15c570cf289a12caa2bc85aba724829",
+  "backend": {
+    "scenarios": 12,
+    "assertions": 303,
+    "result": "PASS",
+    "broad_suite": false
+  },
+  "typescript": "PASS",
+  "browser_cases": 8,
+  "browser": "PASS",
+  "browser_domain_mutations": 0,
+  "fixtures": "isolated jakawi_test only, database reset by final backend validation",
+  "frontend_validation_builds": 1,
+  "manifest_pages": 102,
+  "docs": "PASS",
+  "diff": "PASS",
+  "new_schema": false,
+  "welcome_courtesy": "FUTURE / OFF / NOT IMPLEMENTED"
+}
