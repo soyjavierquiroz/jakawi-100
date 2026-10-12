@@ -104,7 +104,7 @@ El contrato contiene texto y datos derivados; la acción ligada se entrega por s
 
 Media opcional: VSL con LandingVideo/JakawiVslPlayer, imagen con JakawiImage, o ausencia sin wrapper. `renderOperationalContent` es un slot frontend obligatorio, no un esquema genérico ni React serializado: participación/reglas, sesiones/reserva y sucursales/requisitos/código pertenecen a sus dominios. Las anotaciones demo y el sticky de Challenge también permanecen locales. No cambian rutas nativas, `/go` ni redirects.
 
-Marketing Landing Admin V1 extiende la administración compartida existente con una sola clave persistida `OFFER_CONVERSION`; no hay builder, registry ni orden libre de secciones. **Pendiente antes del lanzamiento comercial Benefit:** resolver continuidad guest en el flujo de dominio (autenticación/verificación y `location_id`); el POST actual sin payload permanece sin workaround en el renderer.
+Marketing Landing Admin V1 extiende la administración compartida existente con una sola clave persistida `OFFER_CONVERSION`; no hay builder, registry ni orden libre de secciones. **Benefit guest/location continuity: RESOLVED** en producción (`60feb98`). La sesión conserva Benefit, intención y `location_id`; un GET canónico retoma la ficha/confirmación tras auth/verificación/membresía, y sólo el POST crea el canje con los guards de dominio existentes.
 
 
 ## Marketing Landing Admin V1
@@ -119,4 +119,4 @@ El [editor de presentación](../app/app/Services/LandingPresentationEditor.php) 
 
 Preview admin-authorized usa el controller público, subject, adapter y renderer reales, con noindex y guards de preview; no registra adquisición/Growth ni ejecuta canjes, reservas, participación o activación. El formulario muestra el preview guardado en iframe a 390/430/1440. `/l/{slug}`, rutas nativas, NONE/GUESTS/ALL, canonical y attribution conservan su comportamiento; campaign_key procede exclusivamente de la configuración guardada y no activa una Campaign económica.
 
-**Bloqueador de piloto comercial Benefit:** continuidad guest de canje/auth/verificación y selección `location_id`. Admin y plantilla no ofrecen workaround ni cambian ese flujo. Las pruebas se ejecutan exclusivamente en el entorno Docker aislado; esta entrega no incluye migración productiva, push ni deploy.
+**Continuidad guest de Benefit: RESOLVED** en producción (`60feb98`); autenticación/verificación, membresía y selección `location_id` mantienen el contexto hasta el canje. Admin y plantilla permanecen sin cambios. Las pruebas se ejecutan exclusivamente en el entorno Docker aislado; la entrega original de Admin no incluía migración productiva, push ni deploy.
