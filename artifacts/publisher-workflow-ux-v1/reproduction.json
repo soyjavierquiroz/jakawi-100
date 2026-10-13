@@ -1,0 +1,178 @@
+[
+  {
+    "case": "rejected",
+    "imported": {
+      "name": "Arcilla y manos — adquisición demo",
+      "slug": "arcilla-y-manos-demo",
+      "marketing_theme": "DARK_CONVERSION",
+      "acquisition_headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+      "acquisition_supporting_copy": "Crea tu cuenta y sigue aquí.",
+      "eyebrow": "CREA CON TUS MANOS",
+      "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+      "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+      "subheadline": "Descubre una forma de crear con arcilla.",
+      "reward_display_override": "Un plan para crear.",
+      "hero_layout": "MEDIA_LED",
+      "density": "COMPACT",
+      "media_mode": "on",
+      "hero_path": "",
+      "hero_alt": "Manos trabajando arcilla",
+      "campaign_key": "",
+      "default_scope": "GUESTS",
+      "final_cta_headline": "MENOS PANTALLA. MÁS ARCILLA.",
+      "final_cta_description": "Dale espacio a tu creatividad."
+    },
+    "responses": [
+      {
+        "method": "PUT",
+        "status": 303,
+        "url": "http://127.0.0.1:8098/admin/experiencias/publisher-arcilla-qa/landings/publisher-old-draft",
+        "request": {
+          "name": "Arcilla y manos — adquisición demo",
+          "slug": "arcilla-y-manos-demo",
+          "campaign_key": null,
+          "eyebrow": "CREA CON TUS MANOS",
+          "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+          "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+          "subheadline": "Descubre una forma de crear con arcilla.",
+          "hero_path": null,
+          "hero_alt": "Manos trabajando arcilla",
+          "reward_display_override": "Un plan para crear.",
+          "final_cta_headline": "MENOS PANTALLA. MÁS ARCILLA.",
+          "final_cta_description": "Dale espacio a tu creatividad.",
+          "acquisition_headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+          "acquisition_supporting_copy": "Crea tu cuenta y sigue aquí.",
+          "hero_layout": "MEDIA_LED",
+          "density": "COMPACT",
+          "template_key": "OFFER_CONVERSION",
+          "marketing_theme": "DARK_CONVERSION",
+          "media_mode": "IMAGE",
+          "default_scope": "GUESTS",
+          "vsl": null,
+          "subject_type": "EXPERIENCE",
+          "subject_id": 1
+        },
+        "validationErrors": null
+      },
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "http://127.0.0.1:8098/admin/experiencias/publisher-arcilla-qa/landings",
+        "request": null,
+        "validationErrors": {
+          "subheadline": "Los importes, cantidades y condiciones de acceso pertenecen al producto."
+        }
+      }
+    ],
+    "editorOpenAfterSave": true,
+    "previewStillContainsOldHeadline": true,
+    "newEditor": {
+      "name": "",
+      "slug": ""
+    },
+    "browserErrors": [],
+    "savedPresentationReturnedAfterRequest": {
+      "name": "Old draft",
+      "slug": "publisher-old-draft",
+      "headline": "PREVIOUS SAVED COPY",
+      "subheadline": null,
+      "final_cta_headline": null,
+      "marketing_theme": "LIGHT_CONVERSION",
+      "media_mode": "IMAGE",
+      "headline_emphasis": null,
+      "final_cta_description": null,
+      "editorial_version": 1,
+      "hero_layout": "OFFER_FIRST",
+      "density": "STANDARD",
+      "acquisition_headline": null,
+      "acquisition_supporting_copy": null
+    }
+  },
+  {
+    "case": "accepted",
+    "imported": {
+      "name": "Arcilla y manos — adquisición demo",
+      "slug": "arcilla-y-manos-demo",
+      "marketing_theme": "DARK_CONVERSION",
+      "acquisition_headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+      "acquisition_supporting_copy": "Crea tu cuenta y sigue aquí.",
+      "eyebrow": "CREA CON TUS MANOS",
+      "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+      "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+      "subheadline": "Descubre tu forma de crear con arcilla.",
+      "reward_display_override": "Un plan para crear.",
+      "hero_layout": "MEDIA_LED",
+      "density": "COMPACT",
+      "media_mode": "on",
+      "hero_path": "",
+      "hero_alt": "Manos trabajando arcilla",
+      "campaign_key": "",
+      "default_scope": "GUESTS",
+      "final_cta_headline": "MENOS PANTALLA. MÁS ARCILLA.",
+      "final_cta_description": "Dale espacio a tu creatividad."
+    },
+    "responses": [
+      {
+        "method": "PUT",
+        "status": 303,
+        "url": "http://127.0.0.1:8098/admin/experiencias/publisher-arcilla-qa/landings/publisher-old-draft",
+        "request": {
+          "name": "Arcilla y manos — adquisición demo",
+          "slug": "arcilla-y-manos-demo",
+          "campaign_key": null,
+          "eyebrow": "CREA CON TUS MANOS",
+          "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+          "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+          "subheadline": "Descubre tu forma de crear con arcilla.",
+          "hero_path": null,
+          "hero_alt": "Manos trabajando arcilla",
+          "reward_display_override": "Un plan para crear.",
+          "final_cta_headline": "MENOS PANTALLA. MÁS ARCILLA.",
+          "final_cta_description": "Dale espacio a tu creatividad.",
+          "acquisition_headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+          "acquisition_supporting_copy": "Crea tu cuenta y sigue aquí.",
+          "hero_layout": "MEDIA_LED",
+          "density": "COMPACT",
+          "template_key": "OFFER_CONVERSION",
+          "marketing_theme": "DARK_CONVERSION",
+          "media_mode": "IMAGE",
+          "default_scope": "GUESTS",
+          "vsl": null,
+          "subject_type": "EXPERIENCE",
+          "subject_id": 1
+        },
+        "validationErrors": null
+      },
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "http://127.0.0.1:8098/admin/experiencias/publisher-arcilla-qa/landings",
+        "request": null,
+        "validationErrors": {}
+      }
+    ],
+    "editorOpenAfterSave": false,
+    "previewStillContainsOldHeadline": true,
+    "newEditor": {
+      "name": "",
+      "slug": ""
+    },
+    "browserErrors": [],
+    "savedPresentationReturnedAfterRequest": {
+      "name": "Arcilla y manos — adquisición demo",
+      "slug": "arcilla-y-manos-demo",
+      "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+      "subheadline": "Descubre tu forma de crear con arcilla.",
+      "final_cta_headline": "MENOS PANTALLA. MÁS ARCILLA.",
+      "marketing_theme": "DARK_CONVERSION",
+      "media_mode": "IMAGE",
+      "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+      "final_cta_description": "Dale espacio a tu creatividad.",
+      "editorial_version": 1,
+      "hero_layout": "MEDIA_LED",
+      "density": "COMPACT",
+      "acquisition_headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+      "acquisition_supporting_copy": "Crea tu cuenta y sigue aquí."
+    }
+  }
+]

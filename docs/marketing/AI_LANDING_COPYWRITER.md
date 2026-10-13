@@ -127,3 +127,5 @@ Devuelve ahora únicamente el JSON editorial de este producto.
 ## Contrato de importación
 
 El contrato técnico completo está en [LANDING_JSON_V1.md](LANDING_JSON_V1.md) y se implementa en el [parser](../../app/resources/js/lib/landing-json.ts). El prompt exige nombre y slug para que cada resultado sea un borrador utilizable; el parser continúa admitiendo imports parciales. No cambia la validación de Save ni añade generación dentro de JAKAWI.
+
+Operator workflow after receiving JSON: IMPORTAR JSON → review unsaved editor → GUARDAR Y PREVISUALIZAR → inspect saved Preview → PUBLICAR. Import does not save. Server validation can reject copy or slug collisions; correct the highlighted fields without discarding imported values. See [Publisher workflow UX V1](PUBLISHER_WORKFLOW_UX_V1.md).

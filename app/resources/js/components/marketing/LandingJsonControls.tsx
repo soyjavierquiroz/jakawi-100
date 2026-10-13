@@ -61,7 +61,7 @@ export function LandingJsonControls({
             ([key, value]) => form[key] !== value,
         ).length;
         setMessage(
-            `✓ JSON aplicado · ${count} campos actualizados. Revisa y pulsa GUARDAR.${!((result.patch.media_mode ?? form.media_mode) === 'VSL' ? hasVideo : hasImage) && (result.patch.media_mode ?? form.media_mode) !== 'NONE' ? ' ⚠ Falta seleccionar/subir media.' : ''}`,
+            `✓ JSON APLICADO · ${count} campos editoriales actualizados. Importar no guarda. Revisa y pulsa GUARDAR Y PREVISUALIZAR.${!((result.patch.media_mode ?? form.media_mode) === 'VSL' ? hasVideo : hasImage) && (result.patch.media_mode ?? form.media_mode) !== 'NONE' ? ' ⚠ Falta seleccionar/subir media.' : ''}`,
         );
         setMode(null);
     };
@@ -108,7 +108,10 @@ export function LandingJsonControls({
                 </p>
             )}
             {message && (
-                <p role="status" className="w-full text-sm">
+                <p
+                    role="status"
+                    className="w-full rounded border border-border bg-background p-3 text-sm"
+                >
                     {message}
                 </p>
             )}

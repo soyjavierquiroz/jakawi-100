@@ -4,7 +4,7 @@
 
 ## Purpose and workflow
 
-Normal production workflow: JAKAWI → COPIAR BRIEF PARA IA → external GPT configured once with the [master prompt](AI_LANDING_COPYWRITER.md) → jakawi-landing-v1 → IMPORTAR JSON → review → media → preview → save/publish. Operators normally paste only the [product brief](AI_PRODUCT_BRIEF_V1.md), without manually composing JSON. Manual JSON and partial imports remain supported. No AI API, server upload, automatic save, preview or publication. Select an existing product in JAKAWI first; importing cannot select or change it.
+Normal production workflow: JAKAWI → COPIAR BRIEF PARA IA → external GPT configured once with the [master prompt](AI_LANDING_COPYWRITER.md) → jakawi-landing-v1 → IMPORTAR JSON → UNSAVED EDITOR → review/media → GUARDAR Y PREVISUALIZAR → saved Preview → PUBLICAR. Operators normally paste only the [product brief](AI_PRODUCT_BRIEF_V1.md), without manually composing JSON. Manual JSON and partial imports remain supported. No AI API, server upload, automatic save on import or publication. Select an existing product in JAKAWI first; importing cannot select or change it.
 
 In the editor, IMPORTAR JSON opens a paste dialog. VALIDAR Y APLICAR validates the entire candidate before changing React form state. Errors list incompatible paths; no field changes on failure. CANCELAR discards the import. A differing nonempty `subject_hint` shows both titles before applying; APLICAR DE TODAS FORMAS permits it without changing the subject. Matching ignores case, accents and repeated whitespace.
 
@@ -40,7 +40,7 @@ Only `schema_version` is required. All other keys, including groups, are optiona
 
 Missing key: leave the current field unchanged. Present optional text key with `""`: explicitly clear the editable override. Empty name, slug or enum is invalid. Empty editorial fields retain existing renderer semantics: product fallback where applicable; empty closing description is omitted. Export emits every allowed form field, including empty overrides. It does not export effective domain-derived fallback values instead of those overrides.
 
-Validation uses the merged candidate: omitted headline/emphasis still participates in the existing substring rule; a cleared headline uses the selected product's default headline. Text uses the existing Admin HTML/Markdown rejection patterns. Server Save remains authoritative for commercial claims, slug uniqueness and configured VSL. Import is a convenience, not a security boundary or a promise that Save will accept commercial claims. Existing server errors and Save/Preview/Publish paths are unchanged.
+Validation uses the merged candidate: omitted headline/emphasis still participates in the existing substring rule; a cleared headline uses the selected product's default headline. Text uses the existing Admin HTML/Markdown rejection patterns. Server Save remains authoritative for commercial claims, slug uniqueness and configured VSL. Import is a convenience, not a security boundary or a promise that Save will accept commercial claims. Existing server validation remains authoritative. Workflow UX V1 adds clear error summaries and saved Preview refresh; see [Publisher workflow](PUBLISHER_WORKFLOW_UX_V1.md).
 
 ## Forbidden and domain safety
 

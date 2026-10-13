@@ -14,6 +14,7 @@ type Subject = {
     defaults: Record<string, string>;
     truth: { label: string; value: string }[];
     aiBrief: Record<string, unknown> | null;
+    heroUrl?: string | null;
 };
 type Presentation = {
     id: number;
@@ -49,6 +50,22 @@ const empty = {
     media_mode: 'IMAGE',
     default_scope: 'NONE',
 };
+const fieldLabels: Record<string, string> = {
+    name: 'Nombre interno',
+    slug: 'Slug único',
+    headline: 'Headline',
+    headline_emphasis: 'Texto destacado',
+    subheadline: 'Descripción editorial',
+    media_mode: 'Media',
+    vsl: 'Video',
+    final_cta_headline: 'Titular final',
+    final_cta_description: 'Texto de apoyo final',
+};
+const signature = (
+    form: Record<string, string>,
+    video: LandingVideoConfig | null,
+    subject: Subject | null,
+) => JSON.stringify([form, video, subject?.type, subject?.id]);
 const control =
     'w-full min-w-0 rounded border border-border bg-surface p-3 font-normal';
 const button =
@@ -70,7 +87,7 @@ export default function Index({
     baseUrl?: string;
     productUrl?: string;
 }) {
-    const { errors = {} } = usePage().props as {
+    const { errors: pageErrors = {} } = usePage().props as {
         errors: Record<string, string>;
     };
     const [type, setType] = useState<SubjectType>(
@@ -87,6 +104,35 @@ export default function Index({
         ...subject?.defaults,
     });
     const [preview, setPreview] = useState<Presentation | null>(null);
+    const [baseline, setBaseline] = useState(() =>
+        signature({ ...empty, ...subject?.defaults }, null, subject),
+    );
+    const [saveErrors, setSaveErrors] = useState<Record<string, string>>({});
+    const [saving, setSaving] = useState(false);
+    const [saved, setSaved] = useState(false);
+    const [publishWarning, setPublishWarning] = useState('');
+    const [previewRevision, setPreviewRevision] = useState(0);
+    const errors = open ? saveErrors : pageErrors;
+    const dirty = signature(form, video, formSubject) !== baseline;
+    const previewDirty =
+        open && dirty && (!editing || preview?.id === editing.id);
+    const currentMediaUrl =
+        editing &&
+        formSubject?.id === subject?.id &&
+        formSubject?.type === subject?.type &&
+        form.hero_path === String(editing.hero_path ?? '')
+            ? editing.editorHeroUrl
+            : !form.hero_path ||
+                form.hero_path === formSubject?.defaults.hero_path
+              ? formSubject?.heroUrl
+              : null;
+    const publish = (item: Presentation) => {
+        if (open && dirty) {
+            setPublishWarning('GUARDA TUS CAMBIOS ANTES DE PUBLICAR.');
+            return;
+        }
+        router.post(`${baseUrl}/${item.slug}/publish`);
+    };
     const [width, setWidth] = useState(390);
     const [clone, setClone] = useState<Presentation | null>(null);
     const [duplicate, setDuplicate] = useState({
@@ -106,21 +152,23 @@ export default function Index({
         setEditing(item);
         setVideo(item?.vsl ?? null);
         setOpen(true);
-        setForm(
-            item
-                ? Object.fromEntries(
-                      Object.keys(empty).map((key) => [
-                          key,
-                          String(
-                              key === 'default_scope'
-                                  ? (item.publish_scope ?? item.default_scope)
-                                  : (item[key] ??
-                                        empty[key as keyof typeof empty]),
-                          ),
-                      ]),
-                  )
-                : { ...empty, ...subject?.defaults },
-        );
+        const nextForm = item
+            ? Object.fromEntries(
+                  Object.keys(empty).map((key) => [
+                      key,
+                      String(
+                          key === 'default_scope'
+                              ? (item.publish_scope ?? item.default_scope)
+                              : (item[key] ?? empty[key as keyof typeof empty]),
+                      ),
+                  ]),
+              )
+            : { ...empty, ...subject?.defaults };
+        setForm(nextForm);
+        setBaseline(signature(nextForm, item?.vsl ?? null, subject));
+        setSaveErrors({});
+        setSaved(false);
+        setPublishWarning('');
     };
     const field = (key: string, label: string, multiline = false) => (
         <label className="flex min-w-0 flex-col gap-1 text-sm font-bold">
@@ -128,7 +176,8 @@ export default function Index({
             {multiline ? (
                 <textarea
                     name={key}
-                    className={`${control} min-h-24`}
+                    aria-invalid={!!errors[key]}
+                    className={`${control} min-h-24 ${errors[key] ? 'border-danger' : ''}`}
                     value={form[key] ?? ''}
                     onChange={(e) =>
                         setForm((f) => ({ ...f, [key]: e.target.value }))
@@ -137,7 +186,8 @@ export default function Index({
             ) : (
                 <input
                     name={key}
-                    className={control}
+                    aria-invalid={!!errors[key]}
+                    className={`${control} ${errors[key] ? 'border-danger' : ''}`}
                     value={form[key] ?? ''}
                     onChange={(e) =>
                         setForm((f) => ({ ...f, [key]: e.target.value }))
@@ -358,11 +408,7 @@ export default function Index({
                                     ) : (
                                         <button
                                             className="underline"
-                                            onClick={() =>
-                                                router.post(
-                                                    `${baseUrl}/${item.slug}/publish`,
-                                                )
-                                            }
+                                            onClick={() => publish(item)}
                                         >
                                             PUBLICAR
                                         </button>
@@ -383,9 +429,14 @@ export default function Index({
                             </article>
                         ))}
                     </div>
-                    {errors.presentation && (
+                    {publishWarning && (
                         <p role="alert" className="mt-4 text-danger">
-                            {errors.presentation}
+                            {publishWarning}
+                        </p>
+                    )}
+                    {pageErrors.presentation && (
+                        <p role="alert" className="mt-4 text-danger">
+                            {pageErrors.presentation}
                         </p>
                     )}
                     {open && (
@@ -393,6 +444,7 @@ export default function Index({
                             className="mt-8 grid max-w-4xl min-w-0 gap-4 rounded border border-border bg-surface p-4 sm:grid-cols-2 sm:p-6"
                             onSubmit={(e) => {
                                 e.preventDefault();
+                                if (saving) return;
                                 const payload: Record<string, unknown> = {
                                     ...Object.fromEntries(
                                         Object.entries(form).map(
@@ -419,8 +471,72 @@ export default function Index({
                                         'final_cta_description',
                                     ])
                                         delete payload[key];
+                                const submittedBaseline = signature(
+                                    form,
+                                    video,
+                                    formSubject,
+                                );
+                                const submittedSlug = form.slug.trim();
+                                setSaving(true);
+                                setSaved(false);
+                                setSaveErrors({});
+                                setPublishWarning('');
                                 const options = {
-                                    onSuccess: () => setOpen(false),
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    onSuccess: (page: {
+                                        props: Record<string, unknown>;
+                                    }) => {
+                                        const items = page.props
+                                            .presentations as Presentation[];
+                                        const persisted = items.find((item) =>
+                                            editing
+                                                ? item.id === editing.id
+                                                : item.slug === submittedSlug,
+                                        );
+                                        if (!persisted) {
+                                            setSaveErrors({
+                                                presentation:
+                                                    'No se pudo confirmar la versión guardada. Recarga la lista antes de continuar.',
+                                            });
+                                            return;
+                                        }
+                                        setEditing(persisted);
+                                        setBaseline(submittedBaseline);
+                                        setSaved(true);
+                                        setPreview(persisted);
+                                        setPreviewRevision(
+                                            (revision) => revision + 1,
+                                        );
+                                    },
+                                    onError: (
+                                        errors: Record<string, string>,
+                                    ) => {
+                                        setSaveErrors(errors);
+                                        requestAnimationFrame(() => {
+                                            const summary =
+                                                document.getElementById(
+                                                    'landing-save-errors',
+                                                );
+                                            summary?.scrollIntoView({
+                                                block: 'center',
+                                                behavior: 'smooth',
+                                            });
+                                            const field =
+                                                document.querySelector<HTMLElement>(
+                                                    `[name="${Object.keys(errors)[0]}"]`,
+                                                );
+                                            if (field)
+                                                field.focus({
+                                                    preventScroll: true,
+                                                });
+                                            else
+                                                summary?.focus({
+                                                    preventScroll: true,
+                                                });
+                                        });
+                                    },
+                                    onFinish: () => setSaving(false),
                                 };
                                 editing
                                     ? router.put(
@@ -442,6 +558,59 @@ export default function Index({
                             <h2 className="col-span-full text-xl font-extrabold">
                                 {editing ? 'Editar landing' : 'Nueva landing'}
                             </h2>
+                            <div
+                                className="col-span-full flex flex-wrap items-center gap-3 text-sm font-bold"
+                                aria-live="polite"
+                            >
+                                <span>
+                                    {editing?.status ?? 'DRAFT'} · Audience:{' '}
+                                    {form.default_scope}
+                                </span>
+                                <span
+                                    className={
+                                        dirty
+                                            ? 'rounded border border-amber-500 bg-amber-50 px-3 py-2 text-amber-900'
+                                            : 'text-muted-foreground'
+                                    }
+                                >
+                                    {dirty
+                                        ? '● CAMBIOS SIN GUARDAR'
+                                        : saved
+                                          ? '✓ CAMBIOS GUARDADOS'
+                                          : editing
+                                            ? 'VERSIÓN GUARDADA'
+                                            : 'BORRADOR SIN GUARDAR'}
+                                </span>
+                                {saved && !dirty && (
+                                    <span role="status">
+                                        ✓ LANDING GUARDADA
+                                    </span>
+                                )}
+                            </div>
+                            {!!Object.keys(saveErrors).length && (
+                                <div
+                                    id="landing-save-errors"
+                                    role="alert"
+                                    tabIndex={-1}
+                                    className="col-span-full rounded border border-danger p-4 text-danger"
+                                >
+                                    <strong>NO SE PUDO GUARDAR</strong>
+                                    <p>
+                                        Hay {Object.keys(saveErrors).length}{' '}
+                                        campos que requieren atención.
+                                    </p>
+                                    <ul className="mt-2 list-disc pl-5">
+                                        {Object.entries(saveErrors).map(
+                                            ([key, message]) => (
+                                                <li key={key}>
+                                                    {fieldLabels[key] ?? key}:{' '}
+                                                    {message}
+                                                </li>
+                                            ),
+                                        )}
+                                    </ul>
+                                </div>
+                            )}
                             {offer && formSubject && (
                                 <LandingJsonControls
                                     key={`${editing?.id ?? 'new'}:${formSubject.type}:${formSubject.id}`}
@@ -458,14 +627,26 @@ export default function Index({
                                         )
                                     }
                                     hasVideo={!!video}
-                                    onApply={(patch) =>
+                                    onApply={(patch) => {
                                         setForm((current) => ({
                                             ...current,
                                             ...patch,
-                                        }))
-                                    }
+                                        }));
+                                        setSaveErrors({});
+                                        setSaved(false);
+                                    }}
                                 />
                             )}
+                            <div className="col-span-full">
+                                <button
+                                    disabled={saving}
+                                    className={`${button} disabled:opacity-50`}
+                                >
+                                    {saving
+                                        ? 'GUARDANDO…'
+                                        : 'GUARDAR Y PREVISUALIZAR'}
+                                </button>
+                            </div>
                             {section('Landing')}
                             {field('name', 'Nombre interno')}
                             {field('slug', 'Slug único')}
@@ -648,6 +829,13 @@ export default function Index({
                                         .acquisition_supporting_copy}
                             </p>
                             {section('Mensaje')}
+                            <p
+                                data-editorial-help
+                                className="col-span-full text-sm text-muted-foreground"
+                            >
+                                Los importes, cantidades y condiciones de acceso
+                                pertenecen al producto.
+                            </p>
                             {field('eyebrow', 'Eyebrow')}
                             {field('headline', 'Headline')}
                             {offer &&
@@ -677,7 +865,8 @@ export default function Index({
                                                     : 'Densidad'}
                                                 <select
                                                     name={key}
-                                                    className={control}
+                                                    aria-invalid={!!errors[key]}
+                                                    className={`${control} ${errors[key] ? 'border-danger' : ''}`}
                                                     value={form[key]}
                                                     onChange={(event) =>
                                                         setForm((f) => ({
@@ -735,6 +924,9 @@ export default function Index({
                                             <input
                                                 type="radio"
                                                 name="media_mode"
+                                                aria-invalid={
+                                                    !!errors.media_mode
+                                                }
                                                 checked={
                                                     form.media_mode === value
                                                 }
@@ -757,6 +949,28 @@ export default function Index({
                             )}
                             {(!offer || form.media_mode === 'IMAGE') && (
                                 <>
+                                    {currentMediaUrl ? (
+                                        <figure className="col-span-full">
+                                            <img
+                                                src={String(currentMediaUrl)}
+                                                alt={
+                                                    form.hero_alt ||
+                                                    'Imagen actual del producto'
+                                                }
+                                                className="max-h-40 max-w-xs rounded object-contain"
+                                            />
+                                            <figcaption className="mt-2 text-sm text-muted-foreground">
+                                                Imagen actual · Cambia la
+                                                referencia del visual para
+                                                reemplazarla.
+                                            </figcaption>
+                                        </figure>
+                                    ) : (
+                                        <p className="col-span-full text-sm text-muted-foreground">
+                                            Guarda la referencia del visual para
+                                            comprobar la imagen actual.
+                                        </p>
+                                    )}
                                     {field(
                                         'hero_path',
                                         'Referencia del visual',
@@ -780,7 +994,8 @@ export default function Index({
                                 Audiencia al publicar
                                 <select
                                     name="default_scope"
-                                    className={control}
+                                    aria-invalid={!!errors.default_scope}
+                                    className={`${control} ${errors.default_scope ? 'border-danger' : ''}`}
                                     value={form.default_scope}
                                     onChange={(e) =>
                                         setForm((f) => ({
@@ -798,6 +1013,11 @@ export default function Index({
                                     <option value="ALL">ALL · Todos</option>
                                 </select>
                             </label>
+                            {errors.default_scope && (
+                                <p className="text-danger">
+                                    {errors.default_scope}
+                                </p>
+                            )}
                             <p className="col-span-full text-sm text-muted-foreground">
                                 Un borrador no cambia la navegación. La
                                 audiencia elegida se aplica al publicar.
@@ -818,7 +1038,14 @@ export default function Index({
                                 cambios antes de abrir el preview o publicar.
                             </p>
                             <div className="col-span-full flex flex-wrap gap-4">
-                                <button className={button}>GUARDAR</button>
+                                <button
+                                    disabled={saving}
+                                    className={`${button} disabled:opacity-50`}
+                                >
+                                    {saving
+                                        ? 'GUARDANDO…'
+                                        : 'GUARDAR Y PREVISUALIZAR'}
+                                </button>
                                 {editing && (
                                     <button
                                         type="button"
@@ -908,7 +1135,10 @@ export default function Index({
                         <section className="mt-8 min-w-0 rounded border border-border bg-surface p-3">
                             <div className="flex flex-wrap items-center gap-4">
                                 <h2 className="font-extrabold">
-                                    Preview: {preview.name}
+                                    {previewDirty
+                                        ? 'PREVIEW · VERSIÓN GUARDADA'
+                                        : 'PREVIEW'}
+                                    : {preview.name}
                                 </h2>
                                 {[390, 430, 1440].map((size) => (
                                     <button
@@ -928,14 +1158,16 @@ export default function Index({
                                 </button>
                             </div>
                             <p className="my-3 text-sm text-muted-foreground">
+                                {previewDirty &&
+                                    'Tienes cambios sin guardar que todavía no aparecen aquí. '}
                                 Presentación guardada. Acciones de negocio
                                 desactivadas.
                             </p>
                             <div className="w-full overflow-x-auto">
                                 <iframe
                                     title={`Preview ${preview.name}`}
-                                    key={preview.slug}
-                                    src={`${baseUrl}/${preview.slug}/preview`}
+                                    key={`${preview.id}:${previewRevision}`}
+                                    src={`${baseUrl}/${preview.slug}/preview?revision=${previewRevision}`}
                                     style={{
                                         width,
                                         height: 780,

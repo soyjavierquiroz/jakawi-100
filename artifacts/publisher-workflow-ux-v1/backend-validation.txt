@@ -1,0 +1,8 @@
+
+   PASS  Tests\Feature\LandingPublisherWorkflowTest
+  ✓ mapped import fields persist reload and project into saved preview   4.96s  
+  ✓ editorial rejection is an actual field error and preserves persiste… 0.10s  
+
+  Tests:    2 passed (121 assertions)
+  Duration: 5.98s
+

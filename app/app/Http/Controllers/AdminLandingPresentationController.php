@@ -33,7 +33,7 @@ class AdminLandingPresentationController extends Controller
             'autoCreate' => $request->boolean('create'),
             'baseUrl' => $subject ? $this->baseUrl($subject) : '/admin/landings',
             'productUrl' => ! $subject ? '/admin' : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug))),
-            'presentations' => $subject ? $subject->landingPresentations()->orderBy('id')->get() : [],
+            'presentations' => $subject ? $subject->landingPresentations()->orderBy('id')->get()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(\App\Services\MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'hero')]) : [],
         ]);
     }
 
@@ -114,7 +114,12 @@ class AdminLandingPresentationController extends Controller
             };
             $rules['vsl.theme'][] = Rule::in(['inherit', $presentation?->vsl['theme'] ?? 'inherit']);
         }
-        $data = $request->validate($rules);
+        $data = $request->validate($rules, [
+            'name.required' => 'El nombre interno es obligatorio.',
+            'slug.required' => 'El slug es obligatorio.',
+            'slug.unique' => 'El slug "'.$request->input('slug').'" ya está en uso.',
+            'slug.alpha_dash' => 'El slug solo admite letras, números, guiones y guiones bajos.',
+        ]);
         // Project the candidate through the same presenter used by preview.
         $candidate = $presentation ? clone $presentation : new LandingPresentation;
         $candidate->fill($data + ['editorial_version' => 1]);
