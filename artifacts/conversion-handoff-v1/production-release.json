@@ -279,9 +279,10 @@
     false,
     false
   ],
-  "disk_before_bytes": 25155117056,
-  "disk_after_bytes": 23666733056,
+  "disk_before_bytes": 25951629312,
+  "disk_after_bytes": 23647031296,
   "minor_copy_review": "Café nonmember QA: selected location is visible and retained, CTA is CONTINUAR rather than naming the location.",
   "welcome_courtesy": "FUTURE / OFF / NOT IMPLEMENTED",
-  "result": "LIVE — READY FOR PRODUCT REVIEW"
+  "result": "LIVE — READY FOR PRODUCT REVIEW",
+  "disk_measurement_scope": "Before: initial pre-build reconciliation df. After: final post-docs health df. No cleanup."
 }
