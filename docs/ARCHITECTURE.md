@@ -158,3 +158,7 @@ La validación detectó que `User` no implementa `MustVerifyEmail`, por lo que l
 ## Modo público de pre-lanzamiento
 
 **PRELAUNCH MODE V1 LIVE.** `PRELAUNCH_MODE=true`: raíz Coming Soon estática e indexable; recorridos públicos directos disponibles con aviso permanente y `noindex,nofollow`. Admin/preview/auth sin cambios. Default `false` restaura Home/navegación/SEO existentes. Catálogo clean slate, ejemplos reales pendientes; Welcome Courtesy FUTURE / OFF. [Contrato y operación](operations/PRELAUNCH_MODE_V1.md).
+
+## Partner public profile + acquisition V1 — pending deploy
+
+Partner public identity reuses `Partner.slug` and `partner_user` assignments. Root `/{slug}` is canonical; `/p/{slug}` and legacy `/partners/{slug}` redirect. Profile/inventory derive from domain data, with no CMS or schema change. Registered application prefixes are reserved on writes/resolution. Anonymous Partner touches persist through visitor/session into downstream new registration, where existing first-referral-touch ownership applies; latest conversion measurement remains independent. Existing login consumes anonymous candidates for measurement only. Authenticated visits never acquire or reassign. Confirmed `membership_purchased` alone invokes the existing configured reward/payout economy. [Full contract](PARTNER-ACQUISITION.md).

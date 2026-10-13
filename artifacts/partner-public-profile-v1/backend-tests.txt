@@ -1,0 +1,61 @@
+   PASS  Tests\Feature\LandingAcquisitionTest
+  ✓ guest native routes resolve published guest or all default and pres… 2.51s
+  ✓ guest native routes without published default render product detail  0.24s
+  ✓ authenticated free and active members resolve all landing and direc… 0.33s
+  ✓ authenticated guest only default and no default use product detail   0.24s
+  ✓ membership request preserves landing and location and returns after… 0.19s
+  ✓ experience membership continuation preserves landing and selected s… 0.15s
+  ✓ membership rejects a landing from a different subject                0.10s
+  ✓ register preserves landing subject action and resumes benefit locat… 0.26s
+  ✓ login preserves each landing context without reserving joining or c… 1.12s
+  ✓ challenge explicit registration returns to delivery without bypassi… 0.18s
+  ✓ contextual registration rejects invalid phone and invalid login kee… 0.32s
+  ✓ acquisition copy fallback and saved copy are projected without unlo… 0.25s
+  ✓ stale foreign and nonpublic landing context cannot resume            0.08s
+
+   PASS  Tests\Feature\PartnerAccessTest
+  ✓ partner user can open portal and member cannot                       0.13s
+  ✓ partner cannot validate another partners redemption                  0.11s
+  ✓ admin without partner relation cannot access partner portal or vali… 0.14s
+  ✓ multi partner user can only open related partner context             0.10s
+
+   PASS  Tests\Feature\PartnerAcquisitionTest
+  ✓ partner code is global and referral records partner source           0.10s
+  ✓ first partner remains and confirmed purchase is aggregated without…  0.16s
+  ✓ partner does not replace user referrer and expired policy can repla… 0.06s
+
+   PASS  Tests\Feature\PartnerLoginTest
+  ✓ partner login renders                                                0.05s
+  ✓ partner login uses fortify credentials and redirects to portal       0.28s
+  ✓ partner login respects an intended partner url                       0.28s
+  ✓ member cannot use partner login                                      0.27s
+  ✓ root login redirects by role                                         0.71s
+  ✓ partner only member page and stale intended urls use the right cont… 0.57s
+  ✓ automated tests are configured for the isolated database             0.04s
+
+   PASS  Tests\Feature\PartnerPublicProfileTest
+  ✓ public identity inventory locations canonical and prelaunch          0.17s
+  ✓ empty profile and only current public inventory                      0.11s
+  ✓ reserved rule covers registered routes and invalid slugs on creatio… 0.07s
+  ✓ primary downstream new signup owns partner without partner signup b… 0.28s
+  ✓ direct signup returns to public profile                              0.16s
+  ✓ existing login consumes candidate without ownership even after logo… 0.41s
+  ✓ existing identity cannot signup and existing owner is never reassig… 0.38s
+  ✓ first valid partner wins even when landing latest touch is differen… 0.23s
+  ✓ stale and unscoped anonymous touches do not become new ownership     0.11s
+  ✓ partner management shows public url and other accounts cannot manag… 0.19s
+
+   PASS  Tests\Feature\PartnerRewardTest
+  ✓ partner attribution earns configured cash as partner and specific r… 0.13s
+  ✓ no partner rule does not block conversion and promoter wins without… 0.17s
+  ✓ refund cancels unpaid partner reward and retry does not duplicate i… 0.13s
+
+   PASS  Tests\Feature\PartnerTest
+  ✓ it creates organization and individual partners                      0.05s
+  ✓ partner rules accept configured types and reject unknown ones        0.05s
+  ✓ published scope excludes drafts                                      0.05s
+  ✓ featured cast and internal fields persist correctly                  0.05s
+  ✓ partner has many locations                                           0.06s
+
+  Tests:    45 passed (710 assertions)
+  Duration: 12.24s

@@ -14,6 +14,15 @@ class Partner extends Model
     /** @use HasFactory<PartnerFactory> */
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::saving(function (Partner $partner): void {
+            if ($partner->isDirty('slug') && ! \App\Support\PartnerSlug::valid($partner->slug)) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['slug' => 'El slug público es inválido o está reservado por JAKAWI.']);
+            }
+        });
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

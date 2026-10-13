@@ -41,7 +41,7 @@ class AdminController extends Controller
 
     public function partnerForm(?Partner $partner = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner]);
+        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
     }
 
     public function savePartner(Request $request, ?Partner $partner = null)
@@ -232,7 +232,7 @@ class AdminController extends Controller
 
     private function partnerRules(?Partner $p): array
     {
-        return array_merge($this->base('partners', $p), ['name' => 'required|string|max:255', 'entity_type' => 'required|in:organization,individual', 'partner_type' => 'required|in:business,professional,creator,organizer,brand,other', 'legal_name' => 'nullable|string|max:255', 'tax_id' => 'nullable|string|max:255', 'description' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'contact_name' => 'nullable|string', 'contact_phone' => 'nullable|string', 'contact_email' => 'nullable|email', 'featured' => 'boolean', 'internal_notes' => 'nullable|string', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'logo' => 'nullable|image|mimes:jpeg,png,webp|max:10240', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
+        return array_merge($this->base('partners', $p), ['slug' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('partners', 'slug')->ignore($p?->id), \App\Support\PartnerSlug::rule()], 'name' => 'required|string|max:255', 'entity_type' => 'required|in:organization,individual', 'partner_type' => 'required|in:business,professional,creator,organizer,brand,other', 'legal_name' => 'nullable|string|max:255', 'tax_id' => 'nullable|string|max:255', 'description' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'contact_name' => 'nullable|string', 'contact_phone' => 'nullable|string', 'contact_email' => 'nullable|email', 'featured' => 'boolean', 'internal_notes' => 'nullable|string', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'logo' => 'nullable|image|mimes:jpeg,png,webp|max:10240', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function locationRules(?Location $l): array

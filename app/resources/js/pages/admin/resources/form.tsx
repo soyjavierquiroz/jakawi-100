@@ -124,6 +124,7 @@ export default function ResourceForm({
     item,
     partners = [],
     cities = [],
+    publicUrl,
 }: any) {
     const form = useForm<any>({ ...defaults, ...item });
     const submit = (e: any) => {
@@ -164,6 +165,7 @@ export default function ResourceForm({
                     : [];
     return (
         <AdminLayout title={title}>
+            {resource === 'partners' && publicUrl && <section className="mb-5 rounded-xl border border-border p-5"><h2 className="font-bold">PUBLIC PROFILE</h2><a href={publicUrl} className="mt-2 block break-all text-brand underline">{publicUrl}</a><button type="button" className="mt-3 min-h-11 rounded border border-border px-4 font-bold" onClick={() => navigator.clipboard?.writeText(publicUrl)}>COPIAR ENLACE</button></section>}
             {resource === 'experiences' && item?.slug && <Link href={`/admin/experiencias/${item.slug}/landings`} className="mb-5 inline-flex min-h-11 items-center font-bold text-brand underline">MARKETING LANDINGS</Link>}
             {resource === 'benefits' && item?.slug && <Link href={`/admin/beneficios/${item.slug}/landings`} className="mb-5 inline-flex min-h-11 items-center font-bold text-brand underline">MARKETING LANDINGS</Link>}
             <form onSubmit={submit} className="grid max-w-2xl gap-4">

@@ -80,7 +80,7 @@ Route::get('/ciudades/{city:slug}/partner/recibida', [PartnerApplicationControll
 Route::post('/ciudades/{city:slug}/seleccionar', [SelectedCityController::class, 'store'])->name('cities.select');
 Route::get('/d/{unlock:slug}', [UnlockController::class, 'show'])->middleware(\App\Http\Middleware\ResolveProductLanding::class)->name('unlocks.show');
 Route::post('/d/{unlock:slug}/shared', [UnlockController::class, 'share'])->name('unlocks.shared');
-Route::get('/partners/{partner:slug}', [PublicController::class, 'partners'])->name('partners.show');
+Route::get('/partners/{partner:slug}', [\App\Http\Controllers\PartnerPublicController::class, 'redirect'])->name('partners.show');
 Route::get('/partners/{partner:slug}/whatsapp', [PublicController::class, 'partnerWhatsapp'])->name('partners.whatsapp');
 Route::get('/lugares/{location:slug}', [PublicController::class, 'location'])->name('locations.show');
 Route::get('/lugares/{location:slug}/mapa', [PublicController::class, 'map'])->name('locations.map');
@@ -280,9 +280,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('partners', [AdminController::class, 'partners'])->name('admin.partners.index');
     Route::get('partners/create', [AdminController::class, 'partnerForm'])->name('admin.partners.create');
     Route::post('partners', [AdminController::class, 'savePartner'])->name('admin.partners.store');
-    Route::get('partners/{partner}/edit', [AdminController::class, 'partnerForm'])->name('admin.partners.edit');
-    Route::put('partners/{partner}', [AdminController::class, 'savePartner'])->name('admin.partners.update');
-    Route::post('partners/{partner}/referral-code', [AdminController::class, 'partnerReferralCode'])->name('admin.partners.referral-code');
+    Route::get('partners/{partner:id}/edit', [AdminController::class, 'partnerForm'])->name('admin.partners.edit');
+    Route::put('partners/{partner:id}', [AdminController::class, 'savePartner'])->name('admin.partners.update');
+    Route::post('partners/{partner:id}/referral-code', [AdminController::class, 'partnerReferralCode'])->name('admin.partners.referral-code');
     Route::get('locations', [AdminController::class, 'locations'])->name('admin.locations.index');
     Route::get('locations/create', [AdminController::class, 'locationForm'])->name('admin.locations.create');
     Route::post('locations', [AdminController::class, 'saveLocation'])->name('admin.locations.store');
@@ -358,3 +358,8 @@ require __DIR__.'/settings.php';
 app(PublicJourneyConfig::class)->registerRoutes();
 
 Route::post('/analytics/landing-presentations/{presentation:slug}/cta', [\App\Http\Controllers\GrowthLandingCtaController::class, 'store'])->middleware('throttle:120,1')->name('analytics.landing-presentations.cta');
+
+// Explicit routes precede the vanity resolver; reserved slugs are also enforced on writes/resolution.
+Route::get('/p/{partner:slug}/auth/{method}', [\App\Http\Controllers\PartnerPublicController::class, 'authenticate'])->whereIn('method', ['register', 'login'])->middleware('guest')->name('partners.public.auth');
+Route::get('/p/{partner:slug}', [\App\Http\Controllers\PartnerPublicController::class, 'redirect'])->name('partners.public.resolver');
+Route::get('/{partner:slug}', [PublicController::class, 'partners'])->where('partner', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('partners.public');

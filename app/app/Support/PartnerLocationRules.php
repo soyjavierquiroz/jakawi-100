@@ -9,7 +9,7 @@ class PartnerLocationRules
     public static function partner(): array
     {
         return [
-            'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
+            'slug' => ['required', 'string', 'max:255', PartnerSlug::rule()],
             'entity_type' => ['required', Rule::in(config('jakawi.partner_entity_types'))],
             'partner_type' => ['required', Rule::in(config('jakawi.partner_types'))],
             'category' => ['nullable', Rule::in(config('jakawi.categories'))],

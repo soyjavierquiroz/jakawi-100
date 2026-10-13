@@ -1,6 +1,6 @@
 # Partner Acquisition V1
 
-Partners are acquisition sources, never program-enrolled users. An eligible Partner has one globally checked referral code and canonical `/r/{CODE}` link. The link records an anonymous attribution touch, approved UTMs, and is associated to the registering user.
+Partners are acquisition sources, never program-enrolled users. An eligible Partner has one globally checked referral code and legacy `/r/{CODE}` acquisition link. The link records an anonymous attribution touch, approved UTMs, and is associated to the registering user.
 
 The first valid touch creates one active relationship. It records either a User referrer or `acquisition_partner_id`; it never substitutes a Partner owner or manager. Partner dashboard metrics are aggregate only: valid referral opens, attributed registrations, confirmed `membership_purchased` conversions, and their gross revenue. Refunded conversions remain in history but are excluded from current totals.
 
@@ -10,3 +10,23 @@ Partner rewards use the generic `RewardRule`/`RewardTransaction` subject `PARTNE
 Partner attribution (`acquisition_partner_id`) is marketing attribution, not a guaranteed reward. A confirmed membership may earn one CASH reward only after acquisition precedence: promoter, creator, affiliate, member, then eligible published Partner.
 
 Specific Partner rules override PARTNER defaults, which override global rules. CREDIT remains deferred pending an explicit credit ledger and consumption model. `partner_minimum_payout` is an independently configurable BOB threshold; it is not the affiliate threshold or membership price.
+
+## Public profile + acquisition V1 (implemented, pending deploy)
+
+Canonical share URL: `https://jakawi.com/{slug}`; technical `/p/{slug}` and legacy `/partners/{slug}` redirect 301 to it. The profile is a public projection of the existing Partner, with existing persisted unique slug and `partner_user` account assignments (`owner`, `manager`, `staff`). No separate CMS, account relation, migration, referral engine or payout ledger. Admin keeps global management; Partner users remain restricted to assigned entities.
+
+An ordinary guest profile visit records `AttributionTouch.acquisition_partner_id` and existing visitor/session touch IDs. No referral relationship or commission is created on a page view. Partial Inertia reloads/prefetch do not create acquisition candidates. Cards navigate to native Benefit, Experience and Challenge routes; their existing Landing-first resolver remains authoritative. Server-side context survives Product → Marketing Landing → Micro Opt-in → new registration without numeric Partner query parameters and without clicking the Partner signup button.
+
+`CreateNewUser` is the sole account-creation ownership boundary. Among anonymous/session-associated touches inside the configured attribution window (default 30 days), the **first referral-bearing touch ordered by occurred_at, then id wins**, including User referrals and Partners. Thus Partner A → Partner B → signup credits A; subsequent Landing/UTM analytics may use the latest touch independently. Manual referral code remains the existing fallback after earlier captured valid referrals. On ownership creation, a Partner without a referral code gets one via the existing global `ReferralCodeService`; visiting does not provision one. An existing valid referral relationship is retained by `applyFirstValidReferrer`; its existing expiry policy is unchanged. Partner page visits and existing logins never call ownership assignment, even for expired relationships.
+
+Successful existing login consumes pending anonymous touches by associating them to the already-existing account for measurement and clearing session candidates; it creates no relationship or economic entitlement. Later logout/signup cannot reuse those consumed candidates. Authenticated visits render inventory with no signup/login block and no acquisition touch. Email uniqueness and contextual WhatsApp identity checks preserve existing recovery/login safety.
+
+Direct profile signup/login uses the existing auth forms via a server-resolved `/p/{slug}/auth/{register|login}` entry; successful auth returns to the active canonical profile. A downstream journey takes precedence if one was selected afterward. No new registration form. The profile shows a public URL and copy action in existing Admin/Partner management.
+
+Signup establishes ownership only. A later **confirmed manual membership purchase** emits `membership_purchased` through `MembershipPurchaseService`; existing `RewardBeneficiaryResolver` precedence and configured `RewardRule` produce `RewardTransaction`/`RewardPayout` as before. No new amount, percentage, economic event or reward engine.
+
+Only published Partners resolve publicly; unknown, reserved or inactive profiles return 404. Slugs are lowercase ASCII letters/numbers separated by single hyphens; registered static top-level routes, constrained root programs and protected prefixes are reserved on Admin validation, model writes and resolution. Unique persistence already exists. No slug history. Public inventory uses current public Benefit availability, upcoming published Experience sessions and approved open Challenges inside their participation/publication windows; locations are published only. Empty active profiles still render.
+
+Prelaunch profiles remain directly accessible with shared PrelaunchNotice and `noindex,nofollow`; Coming Soon has no Partner links. Canonical is the root slug. **Before the first real controlled offer is loaded**, product must replace the absolute commercially-unavailable notice with truthful controlled-prelaunch wording, for example: “MODO PRE-LANZAMIENTO. JAKAWI está en pruebas. Algunas experiencias, beneficios y premios pueden estar disponibles únicamente para participantes invitados. Revisa las condiciones de cada propuesta.” Production notice is unchanged by V1.
+
+Validation and isolated QA: [Partner profile V1](../artifacts/partner-public-profile-v1/validation.md). DOSIS 43 — QA exists only in `jakawi_test`; no production Partner/inventory writes or deploy are part of this implementation.

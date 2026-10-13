@@ -12,6 +12,9 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
+        app(\App\Services\AttributionService::class)->consumeExistingLogin($request->user(), $request);
+        $partnerReturn = \App\Http\Controllers\PartnerPublicController::consumeReturn($request);
+
         if ($request->session()->pull('partner_login')) {
             $partners = $request->user()?->partners()->orderBy('name')->get(['partners.id', 'partners.slug']);
             if ($partners === null || $partners->isEmpty()) {
@@ -40,6 +43,8 @@ class LoginResponse implements LoginResponseContract
                 return redirect()->to($destination);
             }
         }
+
+        if ($partnerReturn && ! $request->wantsJson()) return redirect()->to($partnerReturn);
 
         return $request->wantsJson()
             ? response()->noContent()

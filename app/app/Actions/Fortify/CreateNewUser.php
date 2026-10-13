@@ -32,7 +32,8 @@ class CreateNewUser implements CreatesNewUsers
         $whatsapp = isset($input['whatsapp']) && is_string($input['whatsapp'])
             ? app(PhoneNormalizer::class)->whatsapp($input['whatsapp']) : null;
 
-        $contextual = isset(app(\App\Services\PublicJourneyContinuation::class)->get()['landing_presentation_id']);
+        $contextual = isset(app(\App\Services\PublicJourneyContinuation::class)->get()['landing_presentation_id'])
+            || request()->session()->has('partner_profile_return');
         if ($contextual && is_string($input['email']) && User::whereRaw('lower(email) = ?', [$input['email']])->exists()) {
             throw \Illuminate\Validation\ValidationException::withMessages(['email' => 'YA TIENES JAKAWI. Inicia sesión para continuar.']);
         }

@@ -12,6 +12,7 @@ class RegisterResponse implements RegisterResponseContract
 {
     public function toResponse($request)
     {
+        $partnerReturn = \App\Http\Controllers\PartnerPublicController::consumeReturn($request);
         if ($request->wantsJson()) {
             return response()->json('', 201);
         }
@@ -29,6 +30,8 @@ class RegisterResponse implements RegisterResponseContract
 
             return redirect()->to($destination);
         }
+
+        if ($partnerReturn) return redirect()->to($partnerReturn);
 
         $intended = $request->session()->get('url.intended');
         if (is_string($intended) && $this->validIntended($request, $intended)) {

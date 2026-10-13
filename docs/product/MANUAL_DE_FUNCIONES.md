@@ -165,3 +165,11 @@ Referencia: [audit V1](../architecture/MARKETING_SYSTEM_AUDIT.md). El Publisher 
 Guest: nombre → correo → WhatsApp, o login; no contraseña al registrar ni pantalla intermedia de cuenta lista. El final explícito QUIERO PARTICIPAR conserva la intención y puede ejecutar join Challenge al autenticar; el signup genérico y GET no participan. Join permite correo no verificado; evidencia social y recompensa requieren verificación. Activación sólo para elección genuina es la política: Challenge la cumple; otros dominios aún presentan algunas confirmaciones con una única opción.
 
 Los permisos generales anteriores deben leerse con estas excepciones: Benefit start normal omite verified, grants lo conservan; `/canjes` resultado sigue verified, inconsistencia pendiente. Experience interno y Unlock mutaciones siguen verified. Delivery informa estados reales; su navegación al ecosistema está implementada en Benefit y pendiente de unificar en los resultados de Landing. Welcome Courtesy: FUTURE / OFF / NOT IMPLEMENTED.
+
+## Perfil público Partner V1 — pendiente de deploy
+
+Cada Partner comparte `jakawi.com/{slug}` desde PUBLIC PROFILE → COPIAR ENLACE en su gestión existente. `/p/{slug}` redirige al enlace público. La cuenta asignada opera su Partner mediante `partner_user`; Admin conserva gestión global. Identidad, descripción, sucursales y oferta provienen del catálogo; no existe otro CMS ni portal nuevo.
+
+El visitante puede ver Beneficios, Experiencias y Retos sin registrarse; CREAR MI CUENTA e INICIA SESIÓN están visibles. Al crear una cuenta nueva desde cualquier Landing posterior se conserva el origen Partner, aunque nunca use el botón del perfil. El primer referido válido de la ventana gana. Una cuenta existente que inicia sesión no se atribuye al Partner; cuentas autenticadas no ven los botones de adquisición y conservan su propietario previo. Visita/registro no generan comisión: la compra de membresía confirmada sigue las reglas vigentes.
+
+Partner publicado sin oferta muestra “PRÓXIMAMENTE HABRÁ MÁS PARA VIVIR AQUÍ.” Inactivo/desconocido: 404. Prelaunch admite acceso directo, aviso y noindex; Home no enlaza perfiles. Antes de cargar oferta real controlada debe actualizarse el copy absoluto de indisponibilidad comercial. [Contrato](../PARTNER-ACQUISITION.md).

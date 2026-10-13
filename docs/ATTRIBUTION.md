@@ -11,3 +11,7 @@ Véase [CURRENT.md](CURRENT.md) para estados económicos y payouts.
 AttributionTouch sólo nace de señal de adquisición explícita; una visita directa conserva touch efectivo previo dentro de ventana. Providers NONE/META/TIKTOK/GOOGLE. LandingPresentation configura campaign_key; no es query input arbitrario ni activa Campaign económica. Cinco UTMs y landing_slug acompañan contexto sin otorgar rewards.
 
 Membership admite cinco UTMs opcionales sin cambiar intención; rechaza queries arbitrarias/campaign_key/acq como override. Email fluentcrm/email tiene provider NONE. Eventos analíticos y provider OFF: [Growth](growth-measurement-v1.md). FIRST/LATEST de contacto: [CRM](CRM_FOUNDATION_V1.md).
+
+## Partner origin continuity V1 — pending deploy
+
+Root Partner profiles create anonymous `acquisition_partner_id` touches in existing visitor/session infrastructure. Native inventory routes and Marketing Landing/Micro Opt-in preserve that origin without public numeric IDs. Only server-confirmed new account creation establishes a relationship; first referral-bearing touch within the existing window wins, with id as deterministic tie-breaker. Existing login consumes pending touches as measurement only; authenticated visits do not acquire. ConversionRecorder latest-touch measurement does not redefine referral ownership. [Full profile and economy contract](PARTNER-ACQUISITION.md).

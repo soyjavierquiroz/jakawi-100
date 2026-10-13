@@ -71,9 +71,7 @@ class AttributionService
 
     public function associateRegisteredUser(User $user, Request $request, ?string $manualCode = null): void
     {
-        $anonymousId = $this->anonymousId($request);
-        $ids = $request->session()->get('attribution_touch_ids', []);
-        $touches = AttributionTouch::query()->whereNull('user_id')->where(fn ($query) => $query->where('anonymous_id', $anonymousId)->orWhereIn('id', is_array($ids) ? $ids : []))->orderBy('occurred_at')->get();
+        $touches = $this->pendingTouches($request)->orderBy('occurred_at')->orderBy('id')->get();
         foreach ($touches as $touch) { $touch->update(['user_id' => $user->id]); }
         if ($manualCode !== null) {
             $referrer = $this->findReferrer($manualCode);
@@ -83,6 +81,27 @@ class AttributionService
         }
         $candidate = $touches->first(fn (AttributionTouch $touch) => $touch->referrer_user_id !== null || $touch->acquisition_partner_id !== null);
         if ($candidate) { $this->applyFirstValidReferrer($user, $candidate); }
+        $request->session()->forget('attribution_touch_ids');
+    }
+
+    /** Existing login consumes anonymous candidates as measurement only, never referral ownership. */
+    public function consumeExistingLogin(User $user, Request $request): void
+    {
+        $this->pendingTouches($request)->update(['user_id' => $user->id]);
+        $request->session()->forget('attribution_touch_ids');
+    }
+
+    private function pendingTouches(Request $request): \Illuminate\Database\Eloquent\Builder
+    {
+        $anonymousId = $this->anonymousId($request);
+        $ids = $request->session()->get('attribution_touch_ids', []);
+        return AttributionTouch::query()->whereNull('user_id')
+            ->where('occurred_at', '>=', now()->subDays($this->windowDays()))
+            ->where(function ($query) use ($anonymousId, $ids) {
+                $query->whereRaw('1 = 0');
+                if ($anonymousId) $query->orWhere('anonymous_id', $anonymousId);
+                if (is_array($ids) && $ids) $query->orWhereIn('id', $ids);
+            });
     }
 
     public function applyFirstValidReferrer(User $referred, AttributionTouch $touch): ?ReferralRelationship
@@ -90,6 +109,11 @@ class AttributionService
         if ($touch->referrer_user_id === $referred->id) { return null; }
         $existing = ReferralRelationship::query()->where('referred_user_id', $referred->id)->where('status', ReferralRelationship::STATUS_ACTIVE)->latest('attributed_at')->first();
         if ($existing?->isValid()) { return $existing; }
+        if (! $touch->referral_code && $touch->acquisition_partner_id) {
+            $partner = Partner::find($touch->acquisition_partner_id);
+            if (! $partner) return null;
+            $touch->update(['referral_code' => app(ReferralCodeService::class)->ensureFor($partner)]);
+        }
         if ($existing) { $existing->update(['status' => 'expired']); }
         return ReferralRelationship::create(['referrer_user_id' => $touch->referrer_user_id, 'acquisition_partner_id' => $touch->acquisition_partner_id, 'referred_user_id' => $referred->id, 'referral_code' => $touch->referral_code, 'attribution_touch_id' => $touch->id, 'attributed_at' => $touch->occurred_at, 'expires_at' => $touch->occurred_at->copy()->addDays($this->windowDays()), 'status' => ReferralRelationship::STATUS_ACTIVE]);
     }

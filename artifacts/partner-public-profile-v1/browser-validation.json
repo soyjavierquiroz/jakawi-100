@@ -1,0 +1,178 @@
+{
+  "checks": [
+    "390 guest identity/location/all three inventory types, account/login visible, native Benefit URL, notice/noindex/root canonical, no overflow, context only/no rewards",
+    "PRIMARY: Partner → native Benefit → applicable Marketing Landing → three-step Micro Opt-in → real NEW account; DOSIS 43 referral ownership, no Partner signup click, zero commissions/domain actions",
+    "390 authenticated inventory visible; signup/login block hidden; owner unchanged",
+    "Real existing-account login returns to profile; no acquisition/referral/reward; pending candidate consumed; authenticated inventory and no account block",
+    "Direct profile signup uses existing register form, credits Partner only for NEW account, returns to root profile",
+    "1440 guest profile regression: three truthful inventory cards, no overflow",
+    "Coming Soon remains isolated with no Partner links"
+  ],
+  "errors": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/l/dosis-benefit-landing-qa/acquisition"
+    },
+    {
+      "method": "POST",
+      "path": "/register"
+    },
+    {
+      "method": "POST",
+      "path": "/login"
+    },
+    {
+      "method": "POST",
+      "path": "/register"
+    }
+  ],
+  "responses": [
+    {
+      "status": 204,
+      "path": "/l/dosis-benefit-landing-qa/acquisition"
+    },
+    {
+      "status": 302,
+      "path": "/register"
+    },
+    {
+      "status": 302,
+      "path": "/login"
+    },
+    {
+      "status": 302,
+      "path": "/register"
+    }
+  ],
+  "states": {
+    "guest": {
+      "partner_id": 44,
+      "user_id": null,
+      "pending": [
+        21
+      ],
+      "users": [
+        {
+          "id": 64,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "newSignup": {
+      "partner_id": 44,
+      "user_id": 65,
+      "pending": [],
+      "users": [
+        {
+          "id": 65,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 44,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        },
+        {
+          "id": 64,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "authenticatedNew": {
+      "partner_id": 44,
+      "user_id": 65,
+      "pending": [],
+      "users": [
+        {
+          "id": 65,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 44,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        },
+        {
+          "id": 64,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "existingLogin": {
+      "partner_id": 44,
+      "user_id": 64,
+      "pending": [],
+      "users": [
+        {
+          "id": 65,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 44,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        },
+        {
+          "id": 64,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "directSignup": {
+      "partner_id": 44,
+      "user_id": 66,
+      "pending": [],
+      "users": [
+        {
+          "id": 65,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 44,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        },
+        {
+          "id": 66,
+          "email": "partner-browser-direct@example.test",
+          "relationship": {
+            "acquisition_partner_id": 44,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        },
+        {
+          "id": 64,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    }
+  },
+  "pass": true
+}
