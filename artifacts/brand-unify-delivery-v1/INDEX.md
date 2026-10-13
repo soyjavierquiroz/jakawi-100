@@ -1,6 +1,6 @@
-# Brand + Unify Delivery V1 — candidate handoff
+# Brand + Unify Delivery V1 — LIVE handoff
 
-2026-10-13 (America/La_Paz). Baseline `1474de2899a1d6ee7a1c59d58ec722a2a7698e75`. **READY FOR DEPLOY / NOT DEPLOYED**. Production remains `715af599073e359509ef7c68e188d2aba4b4da20`.
+2026-10-13 (America/La_Paz). Baseline `1474de2899a1d6ee7a1c59d58ec722a2a7698e75`. **LIVE** at `79f2ed7dfd9f792e94bc659136a02e809699fbaa`, from protected previous runtime `715af599073e359509ef7c68e188d2aba4b4da20`.
 
 Shared fixed DeliveryLayout, linked brand, domain-owned outcome/instructions/actions, secondary account/security and bottom ecosystem routes. Consumer Benefit results reuse the shell without duplicate mobile navigation. Floating PWA installation prompt is suppressed during Delivery so it cannot cover QR or instructions. Challenge order: instructions → deadline → reward → state → evidence action → secondary verification → ecosystem.
 
@@ -13,3 +13,6 @@ Browser QA uses representative isolated domain fixtures, not production funnel m
 - [Challenge Delivery 390](challenge-delivery-390.png) / [desktop 1440](challenge-delivery-1440.png)
 - [Sunset Landing](sunset-landing-390.png) / [pending Delivery](sunset-pending-delivery-390.png) / [external Delivery](sunset-external-delivery-390.png)
 - [Café Landing](cafe-landing-390.png) / [owned QR Delivery](cafe-delivery-390.png)
+
+
+[Production release](production-release.json): one clean production build, no migrations, zero new domain/Growth outcomes, `/up` 200/200, DB/V2PROOF unchanged. [Production runtime browser report](live/browser-validation.json) and captures: [Reto Cena](live/challenge-delivery-390.png), [Sunset Landing](live/sunset-landing-390.png), [external pending Delivery](live/sunset-external-delivery-390.png), [Café Landing](live/cafe-landing-390.png), [confirmed owned Delivery](live/cafe-confirmed-delivery-390.png), [QR expiry projected in memory only](live/cafe-qr-readonly-projection-390.png). No new participation, reservation or redemption. Docs-only status update without rebuild/redeploy. The earlier candidate validation remains historical pre-release evidence.

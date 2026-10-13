@@ -1,0 +1,76 @@
+{
+  "scope": "Deployed application 79f2ed7; production compiled assets; read-only runtime render under existing owner. Public Landings also gated via prefetched HTTPS GET. Café QR expiry projected in memory only because production pending code expired; no save/redemption. No login, participation, evidence, reservation or mutation requests.",
+  "cases": [
+    {
+      "name": "Reto Cena Delivery 390",
+      "pass": true,
+      "shell": {
+        "logo": "/",
+        "mi": "IR A MI JAKAWI",
+        "explore": "EXPLORAR MÁS",
+        "after": true,
+        "navigationCount": 1,
+        "pwa": false
+      },
+      "order": {
+        "instructions": 150,
+        "verification": 1409,
+        "ecosystem": 1543,
+        "counter": false
+      },
+      "colors": {
+        "green": {
+          "background": "rgb(36, 180, 126)",
+          "text": "rgb(17, 17, 17)"
+        },
+        "yellow": {
+          "background": "rgb(255, 200, 61)",
+          "text": "rgb(17, 17, 17)"
+        },
+        "coral": {
+          "background": "color(srgb 0.8 0.282353 0.247843)",
+          "text": "rgb(255, 255, 255)"
+        }
+      }
+    },
+    {
+      "name": "Sunset Landing 390, existing V3 composition, yellow date/coral action; green only if domain supplies price advantage",
+      "pass": true,
+      "memberAdvantageProjected": true,
+      "color": {
+        "background": "color(srgb 0.8 0.282353 0.247843)",
+        "text": "rgb(255, 255, 255)"
+      }
+    },
+    {
+      "name": "Sunset external pending Delivery 390",
+      "pass": true,
+      "shell": {
+        "logo": "/",
+        "mi": "IR A MI JAKAWI",
+        "explore": "EXPLORAR MÁS",
+        "after": true,
+        "navigationCount": 1,
+        "pwa": false
+      },
+      "fakeConfirmed": false
+    },
+    {
+      "name": "Café Landing 390",
+      "pass": true,
+      "domainValidityAccent": true
+    },
+    {
+      "name": "Café existing confirmed owned Delivery",
+      "pass": true
+    },
+    {
+      "name": "Café QR/instructions/address/validity/navigation, deployed renderer, expiry projection only",
+      "pass": true,
+      "pwaObstruction": false
+    }
+  ],
+  "errors": [],
+  "blockedRequests": [],
+  "result": "PASS"
+}

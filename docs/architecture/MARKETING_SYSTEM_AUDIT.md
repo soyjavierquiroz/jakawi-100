@@ -1,6 +1,6 @@
 # Marketing / Acquisition / Activation / Delivery — audit V1
 
-**CURRENT CODE / AUTHORITATIVE.** Verification Continuity V1 LIVE update, 2026-10-13 (America/La_Paz). Original static audit checkout: `9c1708f`; implementation baseline `7cdc8c1`. The original audit was documentation only. Verification Continuity V1 starts from clean `origin/main` `158769f01010e521377a47e0e3e62858fd51cdc1` and adds scoped runtime changes plus isolated validation. Now LIVE at `715af599073e359509ef7c68e188d2aba4b4da20`, deployed from actual runtime `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`. “Active” means a current route/import/caller exists, not measured production traffic. The original static audit did not inspect saved production records, applied migrations, environment overrides or current deployment; the subsequent scoped release evidence is linked below. Release artifacts are historical evidence, not a new health check.
+**CURRENT CODE / AUTHORITATIVE.** Branded Delivery + Semantic Color V1 LIVE update, 2026-10-13 (America/La_Paz). Original static audit checkout: `9c1708f`; implementation baseline `7cdc8c1`. The original audit was documentation only. Verification Continuity V1 starts from clean `origin/main` `158769f01010e521377a47e0e3e62858fd51cdc1` and adds scoped runtime changes plus isolated validation. Current production is `79f2ed7dfd9f792e94bc659136a02e809699fbaa`, deployed from actual runtime `715af599073e359509ef7c68e188d2aba4b4da20` with that rollback protected. Verification Continuity was previously deployed from `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`. “Active” means a current route/import/caller exists, not measured production traffic. The original static audit did not inspect saved production records, applied migrations, environment overrides or current deployment; the subsequent scoped release evidence is linked below. Release artifacts are historical evidence, not a new health check.
 
 ## 1. Current architecture and verdict
 
@@ -23,7 +23,7 @@ Domain mutation / external Experience informational handoff
     ↓
 Delivery (authorized outcome / explicit external-reservation instructions)
     ↓
-JAKAWI ecosystem [shared fixed shell in Brand + Unify Delivery V1; pending deploy]
+JAKAWI ecosystem [shared fixed shell in Brand + Unify Delivery V1; LIVE]
 ```
 
 Unlock substitutes `UnlockMarketingLandingPresenter → landing-presentations/unlock.tsx` for the Offer adapter/template. Product Detail is a **functional fallback**, with operational renderers also reused in conversion. Welcome Courtesy is **FUTURE / OFF / NOT IMPLEMENTED**; no implementation or membership bypass was found.
@@ -150,7 +150,7 @@ Native Benefit confirmation overlay and Experience reservation dialog are still 
 
 ## 8. Delivery capabilities / gap matrix
 
-Brand + Unify Delivery V1 (2026-10-13, America/La_Paz), **CURRENT REPO / NOT DEPLOYED**: shared [Delivery + DeliveryLayout](../../app/resources/js/components/marketing/delivery.tsx) provides a fixed operational shell. Benefit enters through ConsumerLayout's redemption branch; Experience/Challenge/Unlock through conversion. Both use the same minimal linked JAKAWI header (`/`) and authenticated ecosystem block after all domain fulfillment/actions and secondary AccountAccessMessage: **SIGUE VIVIENDO TU CIUDAD**, **IR A MI JAKAWI** (`/mi-jakawi`), **EXPLORAR MÁS** (`/explorar`). Delivery suppresses the floating PWA installation prompt so it cannot obscure QR/instructions. No duplicated ConsumerLayout/MobileBottomNav, acquisition menu, registry, persisted configuration, Delivery DB model or CMS.
+Brand + Unify Delivery V1 (2026-10-13, America/La_Paz), **LIVE at `79f2ed7`**: shared [Delivery + DeliveryLayout](../../app/resources/js/components/marketing/delivery.tsx) provides a fixed operational shell. Benefit enters through ConsumerLayout's redemption branch; Experience/Challenge/Unlock through conversion. Both use the same minimal linked JAKAWI header (`/`) and authenticated ecosystem block after all domain fulfillment/actions and secondary AccountAccessMessage: **SIGUE VIVIENDO TU CIUDAD**, **IR A MI JAKAWI** (`/mi-jakawi`), **EXPLORAR MÁS** (`/explorar`). Delivery suppresses the floating PWA installation prompt so it cannot obscure QR/instructions. No duplicated ConsumerLayout/MobileBottomNav, acquisition menu, registry, persisted configuration, Delivery DB model or CMS.
 
 | Capability | Current repo contract |
 | --- | --- |
@@ -163,7 +163,7 @@ Brand + Unify Delivery V1 (2026-10-13, America/La_Paz), **CURRENT REPO / NOT DEP
 | Account/security | Secondary, after operational fulfillment; shared AccountAccessMessage follows domain actions/verification. |
 | Instructional media | Existing optional node slot retained; no caller supplies media, no new field or fake content. |
 
-LandingPresentation/presenters/adapters remain KEEP CORE. Domain-owned instructions and projections remain specialized. Welcome Courtesy remains **FUTURE / OFF / NOT IMPLEMENTED**. Production is still `715af599073e359509ef7c68e188d2aba4b4da20`; this shell is a candidate change, not a deployed claim.
+LandingPresentation/presenters/adapters remain KEEP CORE. Domain-owned instructions and projections remain specialized. Welcome Courtesy remains **FUTURE / OFF / NOT IMPLEMENTED**. Production is `79f2ed7dfd9f792e94bc659136a02e809699fbaa`; the shell and semantic color contract are LIVE.
 
 ## 9. Product Detail fallback — keep all four
 
@@ -255,7 +255,7 @@ Landing visual meaning = **domain-derived facts + existing editorial fields + fi
 | GLOSSARY | Missing LandingPresentation, activation vs membership activation, Delivery semantics | Add current terms and canonical audit link. |
 | ROADMAP | Courtesy already accurately FUTURE/OFF | Preserve; add ranked current-system work reference. |
 | ADR-001 | Product Detail vs marketing accurate but primary landing/fallback preference implicit | Make viewer-aware primary/fallback explicit. |
-| DESIGN-SYSTEM | Historical neutral value/reward and partial branding finding | Current contract now documents consumed tone and shared shell; production awaits deploy. |
+| DESIGN-SYSTEM | Historical neutral value/reward and partial branding finding | Current contract now documents consumed tone and shared shell LIVE. |
 | VSL alpha / older artifacts | Alpha “not imported” and historical screenshots include old acquisition/activation | Historical alpha/iteration scope, not current player/flow. Add scope notice; preserve evidence. |
 | ADR-002 / ADR-005 / ADR-006; operations RUNBOOKS; VSL_INTEGRATION; CONVERSION | Campaign/key separation, provider/runtime boundaries, player and economic conversion remain valid | No runtime reinterpretation; architecture audit governs current funnel. |
 
@@ -267,14 +267,14 @@ Older artifact screenshots/releases are intentionally retained as evidence, not 
 | --- | --- | --- |
 | P0 RESOLVED / LIVE | Verification Continuity V1: Benefit owned Delivery; contextual Experience/Unlock mutation verification | Focused backend and 390px isolated browser validation; preserve grant/reward/disclosure guards. |
 | P1 | Saved acquisition copy unused | Consume existing fields or explicitly retire their promise; no replacement Publisher. |
-| P1 IMPLEMENTED / NOT DEPLOYED | Brand + Unify Delivery V1 | Fixed shared linked shell and ecosystem navigation; domain truth/security preserved. |
+| P1 RESOLVED / LIVE | Brand + Unify Delivery V1 | Fixed shared linked shell and ecosystem navigation; domain truth/security preserved. |
 | P1 | Choice-only activation not universal | Explicit domain choice/action projection; bypass confirmation-only continuation when safe, preserve membership/JP consent. |
 | P1 | Cold signup gets random password without contextual access email | Reuse secure access path for generic signup; keep login/collision recovery. |
 | P2 | Dead interstitial/layout branches and test-only config landing infrastructure | Remove proven dead branches first; decide config subsystem retirement separately with tests/config inventory. |
 | P2 | Optional structured marketing editorial content / bounded journey previews | Extend existing form/adapter only for accepted missing content; keep truth derived. |
 | P2 PARTIALLY RESOLVED | Semantic tone consumed; duplicated domain delivery projections remain | Existing tone/date/member-value rules implemented; no Unlock Offer integration. |
 
-**Brand/Unify Delivery is implemented in current repo, pending deploy**, following the deployed P0 continuity fix. Publisher is already substantially built; the most visible missing structure is consistent post-conversion ecosystem navigation. Small proven dead branches can be cleaned independently, but broad legacy retirement must not delay or erase working fallbacks.
+**Brand/Unify Delivery is LIVE**, following the deployed P0 continuity fix. Publisher is already substantially built; the most visible missing structure is consistent post-conversion ecosystem navigation. Small proven dead branches can be cleaned independently, but broad legacy retirement must not delay or erase working fallbacks.
 
 Cleanup order: confirm data-dependent legacy usage → remove unreachable Challenge/MarketingLayout branches and unused starter layouts → decide test-only config subsystem retirement → unify duplicated domain projections → retire compatibility only after record audit. Preserve migration history, generic auth/verification, fallbacks and operational states throughout.
 
@@ -294,3 +294,6 @@ Production release 2026-10-13 (America/La_Paz): **LIVE**, SHA `715af599073e35950
 
 
 Brand + Unify Delivery V1 candidate validation (2026-10-13, America/La_Paz): **PASS / NOT DEPLOYED**. 25 targeted Docker PHP 8.4 backend tests (281 assertions), 10 frontend component/composition contracts, TypeScript and final frontend build/103-page manifest. Minimal isolated browser QA: Challenge Delivery 390, Sunset Landing + pending/external Delivery, Café Landing/QR Delivery and one 1440 Delivery. Final screenshots confirm no floating install obstruction, correct Challenge action hierarchy, truthful pending state and bottom navigation. Contrast coral/white 4.60:1, yellow/ink 12.21:1, green/ink 7.11:1, visible focus. Initial compiled QA required two visual corrections; a single final build followed those corrections. No deploy, production mutations, Admin/schema changes or broad funnel retest. [Candidate evidence](../../artifacts/brand-unify-delivery-v1/INDEX.md). Welcome Courtesy remains FUTURE / OFF.
+
+
+Branded Delivery + Semantic Color V1 production release (2026-10-13, America/La_Paz): **LIVE**, `79f2ed7dfd9f792e94bc659136a02e809699fbaa`, actual previous/rollback `715af599073e359509ef7c68e188d2aba4b4da20`. One production build from clean Git export; no migrations, backup, seed or DB recreation. App/web/worker only recreated; immutable images and rollback tags verified. Readiness accepted transient 000 then 200 after 2.34s. Local/public `/up` 200/200; Café/Sunset/Reto Cena Landings 200; compiled HTML and manifest PASS, hot/dev refs absent. Read-only runtime browser smoke at 390 confirms brand/links, semantic accents, fulfillment-first hierarchy and bottom ecosystem navigation without duplicate mobile nav. Sunset actual external state remains pending; Café actual confirmed Delivery plus QR expiry projected only in memory because no pending code is currently valid. No new domain/Growth outcomes; failed jobs 3 historical/0 new. DB/V2PROOF unchanged and healthy; app healthy, web/worker running, scheduler active, CRM TRUE, Meta provider/browser/CAPI OFF. Publisher/Admin/template V3 and Unlock source/JP guards unchanged. [Production evidence](../../artifacts/brand-unify-delivery-v1/production-release.json). Docs-only followup, no rebuild/redeploy. Welcome Courtesy: **FUTURE / OFF / NOT IMPLEMENTED**.

@@ -1,0 +1,267 @@
+{
+  "previous": "715af599073e359509ef7c68e188d2aba4b4da20",
+  "deployed": "79f2ed7dfd9f792e94bc659136a02e809699fbaa",
+  "production_builds": 1,
+  "clean_git_export": true,
+  "images": {
+    "app": "sha256:0567ab08bfc59fabf0fe62b4399c1fa2c333641b26efe445d05dfaf7560dff1d",
+    "web": "sha256:51f8a5fc45ef4e4ad100fe4ff923208ceffd4e2f320d04b2c8a4627cf0e61276",
+    "worker": "sha256:0567ab08bfc59fabf0fe62b4399c1fa2c333641b26efe445d05dfaf7560dff1d"
+  },
+  "canonical_image_aliases": "jakawi-app:latest and jakawi-web:latest point to deployed immutable IDs",
+  "rollback": {
+    "app": {
+      "id": "sha256:6daa818565875da0e660fd34c9d1fedfa5d5df50432240ebc36d5b21a756e701",
+      "tag": "jakawi-app:rollback-715af599073e359509ef7c68e188d2aba4b4da20"
+    },
+    "web": {
+      "id": "sha256:18f169110f7ac99c919f0bf19d47070a2ce5700f7a681606eb0827df0e9e4c92",
+      "tag": "jakawi-web:rollback-715af599073e359509ef7c68e188d2aba4b4da20"
+    }
+  },
+  "rolled_back": false,
+  "delta": [
+    "1474de2 docs-only reconciliation",
+    "79f2ed7 branded Delivery/semantic styling"
+  ],
+  "database": {
+    "migration_files": [],
+    "pending_migrations": [],
+    "migrate": false,
+    "seed": false,
+    "backup": false,
+    "recreated": false,
+    "writes_from_deploy": false
+  },
+  "assets": {
+    "manifest": "PASS, 103 Inertia pages",
+    "compiled": true,
+    "public_hot": "ABSENT",
+    "localhost": "ABSENT",
+    "127.0.0.1": "ABSENT",
+    "vite_client": "ABSENT"
+  },
+  "candidate_smoke": [
+    {
+      "case": "cafe",
+      "http": 200,
+      "html": "PASS",
+      "scope": "read-only existing domain/owner"
+    },
+    {
+      "case": "sunset",
+      "http": 200,
+      "html": "PASS",
+      "scope": "read-only existing domain/owner"
+    },
+    {
+      "case": "reto",
+      "http": 200,
+      "html": "PASS",
+      "scope": "read-only existing domain/owner"
+    },
+    {
+      "case": "challenge",
+      "http": 200,
+      "html": "PASS",
+      "scope": "read-only existing domain/owner"
+    },
+    {
+      "case": "external",
+      "http": 200,
+      "html": "PASS",
+      "scope": "read-only existing domain/owner"
+    },
+    {
+      "case": "benefit",
+      "http": 200,
+      "html": "PASS",
+      "scope": "read-only existing domain/owner"
+    },
+    {
+      "case": "benefitqr",
+      "http": 200,
+      "html": "PASS",
+      "scope": "read-only existing owner/domain; QR expiry projected in memory only"
+    }
+  ],
+  "readiness": {
+    "ready": true,
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "polls": [
+      {
+        "seconds": 0.04,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "000"
+      },
+      {
+        "seconds": 2.34,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200"
+      }
+    ]
+  },
+  "routes": [
+    {
+      "name": "up-local",
+      "url": "http://127.0.0.1:8080/up",
+      "http": 200
+    },
+    {
+      "name": "up-public",
+      "url": "https://jakawi.com/up",
+      "http": 200
+    },
+    {
+      "name": "cafe",
+      "url": "https://jakawi.com/l/qa-calibration-benefit-value",
+      "http": 200
+    },
+    {
+      "name": "sunset",
+      "url": "https://jakawi.com/l/qa-calibration-experience-desire",
+      "http": 200
+    },
+    {
+      "name": "reto",
+      "url": "https://jakawi.com/l/qa-calibration-challenge-action",
+      "http": 200
+    }
+  ],
+  "browser": {
+    "result": "PASS",
+    "report": "live/browser-validation.json",
+    "runtime": "Deployed production PHP/compiled assets, read-only existing domain/owner render",
+    "limits": "No current Caf\u00e9 QR: expiry projected in memory only, no save; actual owned confirmed Delivery also reviewed. Sunset actual external handoff, no reservation; authorized Unlock shell checked in deployed source only, no broad browser QA."
+  },
+  "invariants": {
+    "offer_v3_composition": "UNCHANGED",
+    "publisher": "UNCHANGED",
+    "admin_fields": "NO NEW FIELDS",
+    "template_engine": "NOT REPLACED",
+    "arbitrary_colors": "NONE",
+    "unlock_source": "PROTECTED, existing reveal/auth/eligibility guard retained",
+    "unlock_jp_security_changed": false
+  },
+  "before": {
+    "counts": {
+      "redemptions": 9,
+      "experience_reservations": 4,
+      "challenge_participations": 4,
+      "challenge_social_entries": 4,
+      "challenge_reward_grants": 0,
+      "reward_payouts": 0,
+      "unlock_participations": 1,
+      "memberships": 1,
+      "jp_holds": 0,
+      "growth_outcomes": 11
+    },
+    "failed_jobs": 3,
+    "crm": true,
+    "meta": [
+      false,
+      false,
+      false
+    ]
+  },
+  "after": {
+    "counts": {
+      "redemptions": 9,
+      "experience_reservations": 4,
+      "challenge_participations": 4,
+      "challenge_social_entries": 4,
+      "challenge_reward_grants": 0,
+      "reward_payouts": 0,
+      "unlock_participations": 1,
+      "memberships": 1,
+      "jp_holds": 0,
+      "growth_outcomes": 11
+    },
+    "failed_jobs": 3,
+    "crm": true,
+    "meta": [
+      false,
+      false,
+      false
+    ]
+  },
+  "new_domain_mutations": {
+    "redemptions": 0,
+    "reservations": 0,
+    "participations": 0,
+    "evidence": 0,
+    "rewards": 0,
+    "unlock_commits": 0,
+    "memberships": 0,
+    "jp_holds": 0,
+    "growth_outcomes": 0
+  },
+  "health": {
+    "jakawicom-app-1": {
+      "id": "0890b321151a4addc9efd46095f7cffdf1609bb09eb185d94dc501dc40db7a62",
+      "image": "sha256:0567ab08bfc59fabf0fe62b4399c1fa2c333641b26efe445d05dfaf7560dff1d",
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:58:33.20659934Z"
+    },
+    "jakawicom-web-1": {
+      "id": "1b33f458e20c376e4dc29882b65a7da989b36bd445d50734d5c14070f4813a34",
+      "image": "sha256:51f8a5fc45ef4e4ad100fe4ff923208ceffd4e2f320d04b2c8a4627cf0e61276",
+      "status": "running",
+      "health": null,
+      "started": "2026-10-13T04:58:39.046228567Z"
+    },
+    "jakawicom-social-worker-1": {
+      "id": "2a240909b39cc12de20b25aa6a0ff30b56135ad2e8b484600773bea574191b79",
+      "image": "sha256:0567ab08bfc59fabf0fe62b4399c1fa2c333641b26efe445d05dfaf7560dff1d",
+      "status": "running",
+      "health": null,
+      "started": "2026-10-13T04:58:38.885312028Z"
+    },
+    "jakawicom-db-1": {
+      "id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.548796374Z"
+    },
+    "jakawi_v2proof-app-1": {
+      "id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.629992337Z"
+    },
+    "jakawi_v2proof-db-1": {
+      "id": "8af1e6f99993ef47d3a14a34c3c3c7fab0cc7b53af89b6ab8f25fa3d82b6a38d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.511570146Z"
+    }
+  },
+  "db_changed": false,
+  "v2proof_changed": false,
+  "scheduler": "cron active; configured each minute; scheduler log refreshed",
+  "up": "200/200",
+  "failed_jobs": {
+    "historical": 3,
+    "new": 0
+  },
+  "crm": true,
+  "meta": {
+    "provider": false,
+    "browser": false,
+    "capi": false
+  },
+  "disk_before_bytes": 22020501504,
+  "disk_after_bytes": 21436891136,
+  "cleanup_prune": false,
+  "docs_only_followup": true,
+  "redeploy_for_docs": false,
+  "welcome_courtesy": "FUTURE / OFF / NOT IMPLEMENTED",
+  "result": "LIVE \u2014 READY FOR PRODUCT REVIEW"
+}

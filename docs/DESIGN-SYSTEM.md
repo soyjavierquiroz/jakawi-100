@@ -49,7 +49,7 @@ La verdad del producto aparece como resumen de sólo lectura. No hay inputs de e
 
 ## Uso real de tokens en el funnel
 
-Brand + Unify Delivery V1 está implementado en el repo, pendiente de deploy. [DeliveryLayout + Delivery](../app/resources/js/components/marketing/delivery.tsx) es una shell fija con marca enlazada al inicio, resultado, instrucciones/acciones de dominio, media opcional existente, cuenta/seguridad secundaria y navegación final. Benefit reutiliza la shell desde ConsumerLayout sin MobileBottomNav duplicado; Experience, Challenge y Unlock desde conversion. Al final: SIGUE VIVIENDO TU CIUDAD → IR A MI JAKAWI (`/mi-jakawi`) / EXPLORAR MÁS (`/explorar`) para el usuario autenticado autorizado.
+Brand + Unify Delivery V1 y el contrato semántico están **LIVE** en `79f2ed7dfd9f792e94bc659136a02e809699fbaa` (2026-10-13, America/La_Paz). [DeliveryLayout + Delivery](../app/resources/js/components/marketing/delivery.tsx) es una shell fija con marca enlazada al inicio, resultado, instrucciones/acciones de dominio, media opcional existente, cuenta/seguridad secundaria y navegación final. Benefit reutiliza la shell desde ConsumerLayout sin MobileBottomNav duplicado; Experience, Challenge y Unlock desde conversion. Al final: SIGUE VIVIENDO TU CIUDAD → IR A MI JAKAWI (`/mi-jakawi`) / EXPLORAR MÁS (`/explorar`) para el usuario autenticado autorizado.
 
 Coral = acción con texto blanco y el tratamiento de contraste existente. Amarillo = oportunidad, premio o fecha límite con texto ink. Verde = resultado realmente completado o valor confirmado; superficies sólidas usan ink y superficies success-surface usan foreground. Ink/cream = estructura e instrucciones. Foco visible y marca con nombre accesible permanecen obligatorios.
 
