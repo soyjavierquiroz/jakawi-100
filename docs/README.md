@@ -107,3 +107,5 @@ Los documentos breves remiten a su fuente canónica; no sustituyen los manuales.
 ## QA documental local
 
 QA automatizado: [.github/workflows/docs.yml](../.github/workflows/docs.yml) ejecuta sólo enlaces y whitespace para cambios documentales en push/PR. Reutiliza el pin de checkout del workflow heredado app/.github; no activa sus checks de producto. Ejecutar `python3 bin/check-docs.py` desde cualquier directorio y `git diff --check` en cada repo. El checker usa sólo Python estándar y comprueba destinos relativos de Markdown en README raíz, docs/ y app/docs/; admite archivos explícitos de otro repo. No hace red, builds, PHP ni pruebas de producto. Comprueba archivos/directorios, no anchors, enlaces externos ni render Mermaid. Revisar manualmente el diff para secretos/PII; no se añade un escáner genérico con falsos positivos.
+
+- [Marketing System Audit V1](architecture/MARKETING_SYSTEM_AUDIT.md): arquitectura actual, field map, fallbacks, candidatos de limpieza y gaps; código como fuente de verdad.

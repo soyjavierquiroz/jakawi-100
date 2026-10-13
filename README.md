@@ -22,3 +22,5 @@ docker build -f docker/Dockerfile   --target build   -t jakawi-frontend-check .
 La imagen de verificación es temporal. El baseline conocido de `CampaignTest::admin_can_create_campaign_and_non_admin_cannot` es redirect esperado frente a 403 recibido; no es una regresión nueva.
 
 Empieza por el [índice de documentación](docs/README.md), el [estado actual](docs/CURRENT.md) y los manuales de [funciones](docs/product/MANUAL_DE_FUNCIONES.md) e [inventario](docs/operations/MANUAL_DE_INVENTARIO.md). Desarrollo, backups y política de despliegue: [operaciones](docs/OPERATIONS.md).
+
+Arquitectura de conversión y deuda comprobada en código: [Marketing / Acquisition / Activation / Delivery Audit V1](docs/architecture/MARKETING_SYSTEM_AUDIT.md). Documentación de realidad actual; no implica deploy.

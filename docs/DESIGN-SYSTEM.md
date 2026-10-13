@@ -46,3 +46,7 @@ El formulario compartido organiza Landing, Mensaje, Media, Atribución, Cierre y
 Copy es texto plano: un destacado debe estar contenido en headline y se pinta una sola vez con el token de énfasis. El editor no elige colores. Media Imagen/Video/Sin media activa un solo contenido; cambiar de modo conserva hero_path y configuración VSL. Se reutilizan LandingVideoFields y YouTube/MP4/Bunny, framing y player existentes, sin modificar internals.
 
 La verdad del producto aparece como resumen de sólo lectura. No hay inputs de economía, reglas, acción/URL, orden o ocultamiento de condiciones. Preview muestra la presentación guardada en el renderer real, con controles 390/430/Desktop y scroll interno para escritorio; no hay renderer simplificado. Duplicación solicita nuevo nombre/slug y permite revisar campaign_key; la copia queda DRAFT. Ver [arquitectura](ARCHITECTURE.md#marketing-landing-admin-v1).
+
+## Uso real de tokens en el funnel
+
+El [audit V1](architecture/MARKETING_SYSTEM_AUDIT.md) distingue intención semántica de implementación: coral/amarillo/verde/ink/cream existen. MarketingValueBlock aún ignora value.tone, por lo que valor/premio quedan neutros; no implica tokens globales muertos. Delivery usa success/coral pero su branding/navegación está parcialmente compartido. Mejorar dentro del sistema existente sólo en una entrega autorizada; no añadir colores libres al Admin.

@@ -42,3 +42,15 @@
 | Mi JAKAWI | Superficie autenticada /mi-jakawi para estado y actividad del usuario. Entrar no exige ser Member ni activa membresía. | [Referencia](product/MANUAL_DE_FUNCIONES.md) |
 | City | Contexto territorial y estado de ciudad para disponibilidad, selección e interés/aplicaciones. No equivale a una Location del Partner. | [Referencia](cities-v1.md) |
 | Discovery | Exploración agregada de oferta disponible por ciudad y reglas del dominio. No es una tabla de inventario ni un permiso de publicación. | [Referencia](product/MANUAL_DE_FUNCIONES.md) |
+
+## Marketing y conversión (audit V1)
+
+- **LandingPresentation:** presentación persistida del subject; copy/media/atribución, no economía ni reglas.
+- **OfferConversionTemplate:** una plantilla configurable para Benefit/Experience/Challenge, composición V3 congelada; OfferPresentationV1 es su contrato frontend, no otro template.
+- **Acquisition:** identidad guest mediante micro opt-in o login sobre la Landing; no resultado de producto.
+- **Activation de journey:** elección operativa antes de mutación; distinta de activar Membership. Política cumplida en Challenge sin elección, parcial en otros dominios.
+- **Delivery:** resultado/instrucciones de dominio; participación no implica premio, reserva pendiente no implica confirmación. Navegación compartida al ecosistema aún parcial.
+- **Product Detail:** fallback funcional cuando no existe Landing publicada aplicable; también aporta operaciones a conversion.
+- **Welcome Courtesy:** FUTURE / OFF / NOT IMPLEMENTED.
+
+Mapas y límites actuales: [Marketing System Audit](architecture/MARKETING_SYSTEM_AUDIT.md).

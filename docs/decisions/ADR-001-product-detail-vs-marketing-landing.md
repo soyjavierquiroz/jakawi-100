@@ -10,7 +10,7 @@ Product Detail es verdad operativa. Marketing Landing es presentación de adquis
 
 ## Consequences
 
-Conservar detalle nativo y revalidación del dominio. Publicar/archivar una landing no sustituye las operaciones de producto.
+Una Landing PUBLISHED con default_scope aplicable es presentación primaria: guest GUESTS/ALL, autenticados ALL. Sin Landing aplicable se conserva Product Detail como fallback funcional. El acceso directo a /l no es guest-only. Conservar detalle nativo y revalidación del dominio. Publicar/archivar una landing no sustituye las operaciones de producto.
 
 ## Status
 
@@ -20,3 +20,5 @@ ACCEPTED — documenta el contrato existente, cotejado con el código/config del
 
 - [ARCHITECTURE.md](../ARCHITECTURE.md)
 - [operations/MANUAL_DE_INVENTARIO.md](../operations/MANUAL_DE_INVENTARIO.md)
+
+Contrato actual y excepciones: [Marketing System Audit V1](../architecture/MARKETING_SYSTEM_AUDIT.md).

@@ -21,3 +21,7 @@ Este documento no acredita readiness comercial ni una ejecución nueva de prueba
 ## Welcome Courtesy / Cortesía JAKAWI
 
 **FUTURE / OFF / NOT IMPLEMENTED.** Concepto: ciertos items para miembros pagados podrían habilitar explícitamente UNA cortesía global para una persona/cuenta genuinamente nueva sin membresía pagada. El dominio revalidaría al confirmar: persona nueva, sin cortesía anterior, item elegible y vigente, y demás requisitos satisfechos. Mensaje futuro: «Tu primera experiencia con JAKAWI va por nuestra cuenta». No hay schema, flags, UI, código de elegibilidad ni bypass de membresía implementado.
+
+## Próximo trabajo del sistema existente
+
+[Audit V1 y orden P0/P1/P2](architecture/MARKETING_SYSTEM_AUDIT.md): verificar continuidad/guards, unificar branding/navegación Delivery y completar conexiones faltantes del Publisher ya existente. Son recomendaciones futuras, no capacidades desplegadas. No reconstruir template, Admin ni VSL.

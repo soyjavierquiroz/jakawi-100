@@ -1,9 +1,15 @@
 # JAKAWI — estado actual de producción
 
-**STATUS: CURRENT / AUTHORITATIVE.** Referencia operativa: 2026-10-13 UTC.
+**STATUS: CURRENT / AUTHORITATIVE.** Última referencia operativa registrada: 2026-10-13 UTC (2026-10-12 America/La_Paz). El audit documental de 2026-10-12 no revalidó runtime ni despliegue.
 Código productivo LIVE: `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`.
 Base productiva anterior y rollback protegido: `f2b488b7e634782d3aa21dae987596d96b30d28c`.
 Acquisition Funnel V1 y Landing-first Journey V1 están LIVE. Producción pre-launch contiene tres LandingPresentations DEMO publicadas como ALL para evaluación de producto; son sintéticas y no comerciales, no inventario de lanzamiento.
+
+## Arquitectura actual auditada
+
+[Marketing System Audit V1](architecture/MARKETING_SYSTEM_AUDIT.md) coteja código en `9c1708f`: plantilla única configurable OFFER_CONVERSION para Benefit/Experience/Challenge; Unlock separado; Publisher existente; Landing-first según viewer y Product Detail funcional. AcquisitionProvider pide nombre/correo/WhatsApp sin contraseña de registro. Challenge final opt-in con PARTICIPATE autoriza join tras auth; signup genérico/GET no participan. Activation sin elección está eliminada del flujo Challenge, pero conserva JSX inalcanzable; otros dominios aún tienen excepciones. Delivery comparte contenido mínimo, con branding/navegación parcial.
+
+Gaps comprobados: copy de adquisición guardado pero no consumido por modal; `/canjes` conserva verified aunque iniciar Benefit normal lo omite; Experience interno/Unlock conservan verified; acceso por correo encolado sólo para signup con Landing. Welcome Courtesy sigue FUTURE / OFF / NOT IMPLEMENTED. Las secciones de releases abajo son evidencia histórica ordenada, no múltiples SHAs vigentes ni checks nuevos. El audit no acredita migraciones aplicadas ni salud productiva.
 
 ## Runtime y producción
 
@@ -115,7 +121,7 @@ El piloto sigue **NOT STARTED**, con **REAL INVENTORY** como bloqueador primario
 
 ## Marketing Landing Admin V1 — implementación local para revisión
 
-Una sola plantilla persistida `OFFER_CONVERSION`, adapters Benefit/Experience/Challenge y temas explícitos DARK_CONVERSION/LIGHT_CONVERSION. Se extendió la administración LandingPresentation existente: selector de subject, defaults editoriales, resumen autoritativo de sólo lectura, énfasis seguro, cierre, media IMAGE/VSL/NONE, campaign_key/audiencia, create/edit/duplicate DRAFT, preview real 390/430/Desktop y publish/unpublish. La migración reversible preserva los tratamientos legacy y configuración media; no se ejecutó contra producción.
+Una sola plantilla persistida `OFFER_CONVERSION`, adapters Benefit/Experience/Challenge y temas explícitos DARK_CONVERSION/LIGHT_CONVERSION. Se extendió la administración LandingPresentation existente: selector de subject, defaults editoriales, resumen autoritativo de sólo lectura, énfasis seguro, cierre, media IMAGE/VSL/NONE, campaign_key/audiencia, create/edit/duplicate DRAFT, preview real 390/430/Desktop y publish/unpublish. La migración reversible preserva los tratamientos legacy y configuración media; la entrega original no la ejecutó contra producción; referencia histórica, no inventario actual de migraciones aplicadas.
 
 Dominio conserva economía, reglas, elegibilidad y acciones. No hay CTA arbitraria, HTML/CSS/HEX, drag/drop ni orden libre. Unlock conserva su renderer/Admin y restricciones existentes; no tiene adapter Offer Conversion V1. Audiencia, `/l/{slug}`, rutas nativas, SEO y campaign_key guardado mantienen su semántica. Preview es Admin/noindex y no muta negocio ni atribución. **Benefit guest/location continuity: RESOLVED** en producción (`60feb98`). El flujo guest → auth → ubicación → membresía si corresponde → confirmación → canje conserva Benefit e intención (`8d91303`). El registro no exige sucursal y el Benefit normal no bloquea por correo no verificado; la verificación de premios Challenge se conserva. Este bloqueo específico está cerrado. Inventario comercial confirmado y demás requisitos de onboarding siguen pendientes.
 
@@ -143,7 +149,7 @@ Modal guest sólo para nombre/correo/WhatsApp, progreso 33/66/100 y copy de la p
 
 ## Delivery / Conversion V1.1 — LIVE (2026-10-13 UTC)
 
-Challenge permite join explícito sin email verificado; no hay auto-participación. Delivery prioriza logro, misión, instrucciones, fecha límite, acción, premio y estado antes de seguridad/cuenta. Email se exige al enviar evidencia social y antes de seleccionar/otorgar recompensa, incluido el reto manual. Confirmar email vuelve a la Delivery del mismo reto con participación propia; sin participación no la crea. Sin schema ni nuevo player: no se muestra media instructiva cuando el dominio no la provee. Micro Opt-in y composición Offer V3 congelados; sólo se integra el label autenticado «ENTRAR AL RETO». Release productiva `f2b488b7e634782d3aa21dae987596d96b30d28c`, desde `b3c00e`, con un build limpio e imágenes inmutables; sin migraciones ni cambios de publicación. Smoke de entrada con identidad QA no verificada por inspección read-only del runtime; Delivery a 390 con la misma imagen/compilados y participación aislada existente, sin fabricar una en producción. Benefit confirmado existente y Experience externa pendiente PASS. Cero nuevas conversiones, evidencia o premios; DB y v2proof sin recreación. Welcome Courtesy: FUTURE / OFF / NOT IMPLEMENTED. [QA y release](../artifacts/delivery-v1-1/INDEX.md).
+Challenge permite join explícito sin email verificado; el final opt-in con intended_action=PARTICIPATE puede ejecutar ese join después de auth. No hay participación por signup genérico o GET. Delivery prioriza logro, misión, instrucciones, fecha límite, acción, premio y estado antes de seguridad/cuenta. Email se exige al enviar evidencia social y antes de seleccionar/otorgar recompensa, incluido el reto manual. Confirmar email vuelve a la Delivery del mismo reto con participación propia; sin participación no la crea. Sin schema ni nuevo player: no se muestra media instructiva cuando el dominio no la provee. Micro Opt-in y composición Offer V3 congelados; sólo se integra el label autenticado «ENTRAR AL RETO». Release productiva `f2b488b7e634782d3aa21dae987596d96b30d28c`, desde `b3c00e`, con un build limpio e imágenes inmutables; sin migraciones ni cambios de publicación. Smoke de entrada con identidad QA no verificada por inspección read-only del runtime; Delivery a 390 con la misma imagen/compilados y participación aislada existente, sin fabricar una en producción. Benefit confirmado existente y Experience externa pendiente PASS. Cero nuevas conversiones, evidencia o premios; DB y v2proof sin recreación. Welcome Courtesy: FUTURE / OFF / NOT IMPLEMENTED. [QA y release](../artifacts/delivery-v1-1/INDEX.md).
 
 ## Challenge direct join — LIVE
 

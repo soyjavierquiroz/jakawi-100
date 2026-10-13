@@ -103,3 +103,7 @@ Infrastructure is committed at the SHA above. Alpha work is left uncommitted for
 ## Phase 3B review
 
 The current review and manual browser acceptance matrix are in [VSL_HTML5_REVIEW.md](VSL_HTML5_REVIEW.md). Phase 3B adds native buffering state, idempotent play on confirmed playback, preserved media-error recovery during preference pauses, guarded fullscreen promises and correct zero-volume messaging. The demo adds source/focal controls and its own TypeScript project. The reviewed Alpha is committed locally during Phase 3B; the uncommitted state described above is historical. The suite now has 20 passing simulated tests. Browser acceptance remains pending.
+
+## Historical scope
+
+The alpha integration status above describes its original iteration. Current LandingVideo/JakawiVslPlayer integration is documented in [VSL integration](VSL_INTEGRATION.md) and the [current marketing audit](architecture/MARKETING_SYSTEM_AUDIT.md); it is not an unintegrated player today.
