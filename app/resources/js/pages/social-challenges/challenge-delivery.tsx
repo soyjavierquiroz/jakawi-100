@@ -100,7 +100,7 @@ export function ChallengeDelivery({
                 )}
             </section>
             {content.deadline && (
-                <section className="rounded-2xl bg-[var(--marketing-reward)] p-4 text-foreground">
+                <section className="rounded-2xl bg-reward p-4 text-[var(--ink)]">
                     <h3 className="text-xs font-extrabold tracking-wider">
                         TIENES HASTA
                     </h3>
@@ -117,22 +117,8 @@ export function ChallengeDelivery({
                     </p>
                 </section>
             )}
-            {primaryAction && (
-                <a
-                    href={
-                        primaryAction === 'evidence'
-                            ? '#challenge-evidence'
-                            : '#challenge-instructions'
-                    }
-                    className="funnel-primary-action flex min-h-14 items-center justify-center rounded-xl px-4 text-center font-extrabold text-white"
-                >
-                    {primaryAction === 'evidence'
-                        ? 'ENVIAR MI EVIDENCIA'
-                        : 'VER MIS INSTRUCCIONES'}
-                </a>
-            )}
-            <section className="rounded-2xl border border-border bg-surface p-4">
-                <h3 className="text-xs font-extrabold tracking-wider">
+            <section className="rounded-2xl border border-reward bg-surface p-4">
+                <h3 className="inline-flex rounded-lg bg-reward px-2 py-1 text-xs font-extrabold tracking-wider text-[var(--ink)]">
                     QUÉ PUEDES GANAR
                 </h3>
                 <p className="mt-2 font-bold">
@@ -161,6 +147,20 @@ export function ChallengeDelivery({
                 </h3>
                 <p className="mt-2 font-extrabold">{state}</p>
             </section>
+            {primaryAction && (
+                <a
+                    href={
+                        primaryAction === 'evidence'
+                            ? '#challenge-evidence'
+                            : '#challenge-instructions'
+                    }
+                    className="funnel-primary-action flex min-h-14 items-center justify-center rounded-xl px-4 text-center font-extrabold text-white"
+                >
+                    {primaryAction === 'evidence'
+                        ? 'ENVIAR MI EVIDENCIA'
+                        : 'VER MIS INSTRUCCIONES'}
+                </a>
+            )}
         </Delivery>
     );
 }

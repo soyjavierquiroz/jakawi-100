@@ -28,7 +28,7 @@ class ExperienceMarketingLandingPresenter
         $partners = $experience->partners->map(fn ($partner) => ['name'=>$partner->name,'slug'=>$partner->slug,'role'=>$partner->pivot->role])->unique(fn ($p)=>$p['slug'].'|'.$p['role'])->values()->all();
         $prices = [];
         foreach (['regular_price'=>'Precio normal', 'member_price'=>'Miembro JAKAWI'] as $field=>$label) {
-            if ($experience->$field !== null) $prices[] = ['label'=>$label,'value'=>(float) $experience->$field === 0.0 ? 'GRATIS' : $experience->currency.' '.$experience->$field];
+            if ($experience->$field !== null) $prices[] = ['label'=>$label,'value'=>(float) $experience->$field === 0.0 ? 'GRATIS' : $experience->currency.' '.$experience->$field, 'memberAdvantage'=>$field === 'member_price' && $experience->regular_price !== null && (float) $experience->member_price < (float) $experience->regular_price];
         }
         $native = route('experiences.show', $experience);
         $bookable = $internal

@@ -1,0 +1,35 @@
+   PASS  Tests\Feature\ChallengeDeliveryTest
+  ✓ unverified user explicitly joins social challenge and reaches deliv… 2.04s
+  ✓ delivery has authoritative instructions and title once without veri… 0.08s
+  ✓ gets never participate and result requires owned participation       0.12s
+  ✓ unverified submission remains blocked at evidence boundary           0.09s
+  ✓ verified participant can submit evidence without automatic reward    0.10s
+  ✓ manual reward still requires verified identity                       0.10s
+  ✓ signed verification returns to same delivery and updates capability  0.13s
+  ✓ membership dates and manual instructions remain authoritative        0.06s
+  ✓ unlock restricted source stays protected                             0.08s
+
+   PASS  Tests\Feature\ExperienceMarketingLandingTest
+  ✓ member price accent requires authoritative lower price               0.20s
+
+   PASS  Tests\Feature\ExperienceReservationTest
+  ✓ active member requests once and the event is recorded once           0.12s
+  ✓ party size persists and existing active reservation keeps its origi… 0.11s
+  ✓ party size must be between one and ten                               0.08s
+  ✓ guest and member without membership cannot request                   0.08s
+  ✓ external and invalid or past sessions cannot create internal reserv… 0.09s
+  ✓ partner can confirm or reject only its own reservations and member…  0.13s
+  ✓ partner view shows only member name party size and confirmed attend… 0.13s
+  ✓ partner cannot view another partners member data                     0.11s
+
+   PASS  Tests\Feature\RedemptionHttpTest
+  ✓ start requires auth membership and an explicit valid location        0.11s
+  ✓ start creates and reuses pending redemption without double tracking  0.12s
+  ✓ invalid locations and missing pin are rejected without a redemption  0.14s
+  ✓ member redemption page enforces ownership and never exposes pin      0.13s
+  ✓ validation confirms once and handles wrong or expired codes private… 0.16s
+  ✓ expired redemption and member limits reject safely                   0.18s
+  ✓ validation endpoint is throttled after twenty requests               0.21s
+
+  Tests:    25 passed (281 assertions)
+  Duration: 5.35s

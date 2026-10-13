@@ -1,0 +1,33 @@
+{
+  "baseline": "1474de2899a1d6ee7a1c59d58ec722a2a7698e75",
+  "production_unchanged": "715af599073e359509ef7c68e188d2aba4b4da20",
+  "deployed": false,
+  "backend": {
+    "command": "./bin/jakawi-test php artisan test --filter='ChallengeDeliveryTest|RedemptionHttpTest|ExperienceReservationTest|test_member_price_accent_requires_authoritative_lower_price'",
+    "passed": 25,
+    "assertions": 281,
+    "php": "Docker 8.4 only"
+  },
+  "frontend": {
+    "command": "node --test tests/frontend/delivery-brand.test.mjs tests/frontend/offer-composition.test.mjs",
+    "passed": 10
+  },
+  "typescript": "npx tsc --noEmit PASS",
+  "build": {
+    "final": "npm run build PASS; 103 Inertia pages and manifest dependencies validated",
+    "runs": 2,
+    "reason": "Initial compiled QA exposed floating PWA obstruction and Challenge CTA hierarchy. One final build after those corrections; no subsequent code changes."
+  },
+  "browser": "PASS; 390px Challenge/Sunset/Cafe and 1440px Delivery; isolated domain fixtures; no production writes",
+  "architecture": {
+    "template_v3_modified": false,
+    "admin_modified": false,
+    "migrations_added": false,
+    "new_models": false,
+    "publisher_rebuilt": false,
+    "arbitrary_colors_added": false
+  },
+  "diff_check": "PASS",
+  "docs_check": "PASS",
+  "welcome_courtesy": "FUTURE / OFF"
+}

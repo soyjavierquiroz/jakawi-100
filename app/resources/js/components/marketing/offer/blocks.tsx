@@ -148,13 +148,15 @@ export function MarketingFactStrip({
             {facts.map((fact, index) => (
                 <div
                     key={index}
-                    className={
-                        facts.length % 2 && index === facts.length - 1
-                            ? 'col-span-2 min-w-0'
-                            : 'min-w-0'
-                    }
+                    className={`min-w-0 ${facts.length % 2 && index === facts.length - 1 ? 'col-span-2' : ''} ${fact.tone === 'reward' ? 'rounded-xl bg-reward px-3 py-2 text-[var(--ink)]' : ''}`}
                 >
-                    <dt className="text-[var(--marketing-text-secondary)]">
+                    <dt
+                        className={
+                            fact.tone === 'reward'
+                                ? 'text-[var(--ink)]'
+                                : 'text-[var(--marketing-text-secondary)]'
+                        }
+                    >
                         {fact.label}
                     </dt>
                     <dd className="mt-1 font-bold">{fact.value}</dd>
@@ -175,9 +177,12 @@ export function MarketingValueBlock({
     return (
         <div
             aria-label={value.label}
-            className="offer-value border-t border-border pt-3"
+            data-value-tone={value.tone}
+            className={`offer-value ${value.tone === 'reward' ? 'rounded-2xl bg-reward p-4 text-[var(--ink)]' : 'border-t border-border pt-3'}`}
         >
-            <p className="text-sm text-[var(--marketing-text-secondary)]">
+            <p
+                className={`text-sm ${value.tone === 'reward' ? 'text-[var(--ink)]' : 'text-[var(--marketing-text-secondary)]'}`}
+            >
                 {value.label}
             </p>
             <p className="mt-1 text-2xl leading-tight font-extrabold">
@@ -212,12 +217,16 @@ export function MarketingPrices({
                 <div
                     key={index}
                     className={
-                        index % 2
-                            ? 'min-w-0 border-l border-border pl-5'
-                            : 'min-w-0'
+                        price.memberAdvantage
+                            ? 'min-w-0 rounded-xl bg-success p-3 text-success-foreground'
+                            : index % 2
+                              ? 'min-w-0 border-l border-border pl-5'
+                              : 'min-w-0'
                     }
                 >
-                    <dt className="text-sm leading-5 text-[var(--marketing-text-secondary)]">
+                    <dt
+                        className={`text-sm leading-5 ${price.memberAdvantage ? 'text-success-foreground' : 'text-[var(--marketing-text-secondary)]'}`}
+                    >
                         {price.label}
                     </dt>
                     <dd className="mt-1 text-3xl leading-tight font-extrabold tracking-tight">

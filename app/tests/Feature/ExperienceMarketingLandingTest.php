@@ -22,6 +22,16 @@ class ExperienceMarketingLandingTest extends TestCase
         return [$experience,$landing,$session];
     }
 
+    public function test_member_price_accent_requires_authoritative_lower_price(): void
+    {
+        [$experience, $landing] = $this->plan();
+        foreach ([[120, 80, true], [120, 120, false], [80, 120, false], [null, 80, false], [120, 0, true]] as [$regular, $member, $advantage]) {
+            $experience->update(['regular_price' => $regular, 'member_price' => $member]);
+            $index = $regular === null ? 0 : 1;
+            $this->get('/l/experience-plan')->assertInertia(fn (Assert $p) => $p->where("copy.prices.{$index}.memberAdvantage", $advantage));
+        }
+    }
+
     public function test_renderer_facts_editorial_conditions_faq_and_campaign_isolation(): void
     {
         [$experience,$landing,$session]=$this->plan();

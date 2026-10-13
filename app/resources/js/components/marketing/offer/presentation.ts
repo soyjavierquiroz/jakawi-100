@@ -12,8 +12,9 @@ export type OfferPresentationV1 = {
     media?:
         | { type: 'vsl'; config: LandingVideoConfig }
         | { type: 'image'; src: string; alt: string };
-    facts: Array<{ label: string; value: string }>;
+    facts: Array<{ label: string; value: string; tone?: 'reward' }>;
     value?: {
+        // An offer is informational; a reward is an opportunity, never a won prize.
         tone: 'offer' | 'reward';
         label: string;
         compactLabel?: string;
@@ -22,7 +23,11 @@ export type OfferPresentationV1 = {
         detail?: string;
         note?: string;
     };
-    prices?: Array<{ label: string; formattedAmount: string }>;
+    prices?: Array<{
+        label: string;
+        formattedAmount: string;
+        memberAdvantage?: boolean;
+    }>;
     essentialConditions: string[];
     actionExplanation?: { description: string; clarification?: string };
     steps?: {

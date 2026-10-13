@@ -255,7 +255,7 @@ export default function ExperienceShow({
             <div className="space-y-5">
                 {externalReservationReady && selectedSession ? (
                     <Delivery
-                        heading="TODO LISTO PARA RESERVAR"
+                        heading="TODO LISTO PARA CONTINUAR TU RESERVA"
                         subject={experience.title}
                     >
                         {organizer && (
@@ -273,7 +273,7 @@ export default function ExperienceShow({
                             {organizer?.name ?? 'el partner'}. Aún no tienes una
                             reserva confirmada.
                         </p>
-                        <dl className="space-y-2">
+                        <dl className="space-y-2 rounded-2xl bg-reward p-4 text-[var(--ink)]">
                             <div>
                                 <dt className="font-bold">
                                     Fecha y hora elegidas
@@ -315,6 +315,7 @@ export default function ExperienceShow({
                     </Delivery>
                 ) : existingReservation ? (
                     <Delivery
+                        completed={existingReservation.status === 'confirmed'}
                         heading={
                             existingReservation.status === 'confirmed'
                                 ? 'TU EXPERIENCIA ESTÁ RESERVADA'
@@ -333,7 +334,7 @@ export default function ExperienceShow({
                                     : 'Presenta la referencia de tu reserva al llegar.'}
                             </li>
                         </ol>
-                        <dl className="space-y-2">
+                        <dl className="space-y-2 rounded-2xl bg-reward p-4 text-[var(--ink)]">
                             <div>
                                 <dt className="font-bold">Fecha y hora</dt>
                                 <dd>
@@ -367,7 +368,7 @@ export default function ExperienceShow({
                         {selectedSession?.location?.maps_url && (
                             <a
                                 href={selectedSession.location.maps_url}
-                                className="inline-flex min-h-11 items-center underline"
+                                className="funnel-primary-action inline-flex min-h-12 items-center justify-center rounded-xl px-4 font-extrabold text-white"
                                 target="_blank"
                                 rel="noreferrer"
                             >

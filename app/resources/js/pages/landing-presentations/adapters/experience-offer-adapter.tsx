@@ -55,7 +55,7 @@ export type ExperienceOfferProps = {
         terms: string | null;
         organizers: Partner[];
         partners: Partner[];
-        prices: Array<{ label: string; value: string }>;
+        prices: Array<{ label: string; value: string; memberAdvantage?: boolean }>;
         next: Session | null;
         sessions: Session[];
         sessionCount: number;
@@ -160,7 +160,7 @@ export default function ExperienceOfferAdapter({
               : undefined,
         facts: copy.next
             ? [
-                  { label: 'Fecha', value: compactDate(copy.next.date) },
+                  { label: 'Fecha', value: compactDate(copy.next.date), tone: 'reward' },
                   {
                       label: 'Hora',
                       value:
@@ -176,6 +176,7 @@ export default function ExperienceOfferAdapter({
         prices: copy.prices.map((price) => ({
             label: price.label,
             formattedAmount: priceLabel(price.value),
+            memberAdvantage: price.memberAdvantage,
         })),
         essentialConditions: [],
         actionExplanation: {

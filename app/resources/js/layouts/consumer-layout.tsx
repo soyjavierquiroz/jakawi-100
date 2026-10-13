@@ -1,9 +1,12 @@
-import { Link } from '@inertiajs/react';
+import { DeliveryLayout } from '@/components/marketing/delivery';
+import { Link, usePage } from '@inertiajs/react';
 import MobileBottomNav from '@/components/mobile-bottom-nav';
 import ThemeToggle from '@/components/theme-toggle';
 
 /** Consumer pages never inherit staff or partner navigation. */
 export default function ConsumerLayout({ children }: { children: React.ReactNode }) {
+    const { component } = usePage();
+    if (component === 'redemptions/show') return <DeliveryLayout>{children}</DeliveryLayout>;
     return <div className="min-h-screen bg-background pb-[var(--pwa-install-clearance,0px)] text-foreground">
         <header className="sticky top-0 z-30 hidden border-b border-border/70 bg-background/90 backdrop-blur lg:block">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-8">

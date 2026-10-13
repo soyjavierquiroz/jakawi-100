@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: linked brand and ecosystem follow fulfillment and account access
+ok 1 - linked brand and ecosystem follow fulfillment and account access
+  ---
+  duration_ms: 10.473239
+  type: 'test'
+  ...
+# Subtest: pending outcome has no completed cue or success surface
+ok 2 - pending outcome has no completed cue or success surface
+  ---
+  duration_ms: 1.160332
+  type: 'test'
+  ...
+# Subtest: existing reward tone is yellow; informational offer stays neutral; truthful member price is green
+ok 3 - existing reward tone is yellow; informational offer stays neutral; truthful member price is green
+  ---
+  duration_ms: 1.486574
+  type: 'test'
+  ...
+# Subtest: Benefit instructions/address/code/validity/terms retain hierarchy
+ok 4 - Benefit instructions/address/code/validity/terms retain hierarchy
+  ---
+  duration_ms: 63.592382
+  type: 'test'
+  ...
+# Subtest: Challenge instructions precede verification; Unlock preserves authorized reveal guard
+ok 5 - Challenge instructions precede verification; Unlock preserves authorized reveal guard
+  ---
+  duration_ms: 0.709243
+  type: 'test'
+  ...
+# Subtest: Delivery does not render the floating PWA installation prompt; Challenge action follows state
+ok 6 - Delivery does not render the floating PWA installation prompt; Challenge action follows state
+  ---
+  duration_ms: 0.499518
+  type: 'test'
+  ...
+# Subtest: omit repeated simple value; retain monetary value and distinct contractual fields
+ok 7 - omit repeated simple value; retain monetary value and distinct contractual fields
+  ---
+  duration_ms: 2.799983
+  type: 'test'
+  ...
+# Subtest: reward remains early; remove only a complete repeated supporting sentence
+ok 8 - reward remains early; remove only a complete repeated supporting sentence
+  ---
+  duration_ms: 0.38431
+  type: 'test'
+  ...
+# Subtest: FAQ retains novel limits, negation, pricing, sequence and objections
+ok 9 - FAQ retains novel limits, negation, pricing, sequence and objections
+  ---
+  duration_ms: 0.704263
+  type: 'test'
+  ...
+# Subtest: empty optional data never manufactures value or FAQ content
+ok 10 - empty optional data never manufactures value or FAQ content
+  ---
+  duration_ms: 0.193436
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 743.352437

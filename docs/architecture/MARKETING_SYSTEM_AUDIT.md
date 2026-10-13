@@ -23,7 +23,7 @@ Domain mutation / external Experience informational handoff
     ↓
 Delivery (authorized outcome / explicit external-reservation instructions)
     ↓
-JAKAWI ecosystem [partial navigation; not unified today]
+JAKAWI ecosystem [shared fixed shell in Brand + Unify Delivery V1; pending deploy]
 ```
 
 Unlock substitutes `UnlockMarketingLandingPresenter → landing-presentations/unlock.tsx` for the Offer adapter/template. Product Detail is a **functional fallback**, with operational renderers also reused in conversion. Welcome Courtesy is **FUTURE / OFF / NOT IMPLEMENTED**; no implementation or membership bypass was found.
@@ -150,25 +150,20 @@ Native Benefit confirmation overlay and Experience reservation dialog are still 
 
 ## 8. Delivery capabilities / gap matrix
 
-Shared [Delivery](../../app/resources/js/components/marketing/delivery.tsx) is a section with heading/subject/success cue/children/optional instructionalMedia/account area. It is not a full layout, model, CMS or typed cross-domain delivery adapter. AccountAccessMessage is shared. Challenge alone has dedicated `ChallengeDeliveryPresenter` + `ChallengeDeliveryContent`; Experience and Unlock derive inline; Benefit uses Redemption projection and its own active pending/confirmed/expired renderer.
+Brand + Unify Delivery V1 (2026-10-13, America/La_Paz), **CURRENT REPO / NOT DEPLOYED**: shared [Delivery + DeliveryLayout](../../app/resources/js/components/marketing/delivery.tsx) provides a fixed operational shell. Benefit enters through ConsumerLayout's redemption branch; Experience/Challenge/Unlock through conversion. Both use the same minimal linked JAKAWI header (`/`) and authenticated ecosystem block after all domain fulfillment/actions and secondary AccountAccessMessage: **SIGUE VIVIENDO TU CIUDAD**, **IR A MI JAKAWI** (`/mi-jakawi`), **EXPLORAR MÁS** (`/explorar`). Delivery suppresses the floating PWA installation prompt so it cannot obscure QR/instructions. No duplicated ConsumerLayout/MobileBottomNav, acquisition menu, registry, persisted configuration, Delivery DB model or CMS.
 
-| Capability | Benefit `/canjes` | Experience / Challenge / Unlock `/l/.../resultado` | Exists / partial / missing; smallest future step |
-| --- | --- | --- | --- |
-| Shared content structure | Own QR/result page + AccountAccessMessage | Delivery reused; domain children differ | PARTIAL: fixed shell + domain content slots, preserve ownership/state. |
-| JAKAWI brand header | ConsumerLayout logo/mark | Conversion header logo image | EXISTS, but inconsistent. |
-| Logo navigation | Link to `/` in ConsumerLayout | Image without link | PARTIAL: shared linked header. |
-| Post-conversion ecosystem navigation | Explore CTA; ConsumerLayout navigation | No shared ecosystem links | PARTIAL: explicit secondary links after delivery. |
-| Mi JAKAWI | ConsumerLayout desktop/mobile nav | Absent in conversion shell | PARTIAL: existing destination can be reused (verified route). |
-| Explorar más | SEGUIR EXPLORANDO / DESCUBRIENDO | No shared link; external reservation/evidence actions are operational | PARTIAL: reuse `/explorar` after primary task. |
-| PublicFooter | Absent; ConsumerLayout has MobileBottomNav | Absent; conversion has neither | MISSING unified footer; reuse existing component if chosen. |
-| Bottom navigation | ConsumerLayout MobileBottomNav | Absent | PARTIAL; choose deliberate delivery navigation, no CMS. |
-| Instructional media | No configured delivery media | Delivery accepts node, **no caller passes it** | PARTIAL slot / MISSING content source; optional future domain field, respect Unlock disclosure. |
-| Domain instructions | QR/code, address, terms, expiry/partner validation | Session/state/targets; Challenge mission/rules/evidence; Unlock terms/offers/progress/actions | EXISTS; mostly derived, labels/manual instructions still domain-local. |
-| Account/security secondary area | AccountAccessMessage on pending; confirmed branch omits it | Shared account area; Challenge contextual verification secondary | PARTIAL: preserve task-first placement and access boundaries. |
+| Capability | Current repo contract |
+| --- | --- |
+| Branded shell / logo navigation | SHARED; accessible linked wordmark on mobile and desktop. |
+| Outcome treatment | Shared Delivery, completed only when explicitly projected; neutral default for pending/internal/external reservation and unrevealed commitment. |
+| Benefit | QR/code, expiry/timer, ownership, partner validation, address, terms and confirmed savings retained; instructions/address precede code, conditions follow it. Confirmed and expired lifecycle renderers remain active. |
+| Experience | Internal confirmed reservation can use green; pending/external cannot. Session/location/status yellow; real maps/partner action coral. No reservation is invented. |
+| Challenge | Activated participation green, instructions before deadline/reward/state/evidence and secondary verification; reward opportunity yellow, evidence action coral. Inventory remains secondary. |
+| Unlock | Shared authorized shell; completed green only inside existing revealable/authenticated/eligible guard. Restricted source, commit, JP and authorization unchanged. |
+| Account/security | Secondary, after operational fulfillment; shared AccountAccessMessage follows domain actions/verification. |
+| Instructional media | Existing optional node slot retained; no caller supplies media, no new field or fake content. |
 
-Branded: **PARTIAL**. Navigation after conversion: **PARTIAL**. Biggest gaps: linked ecosystem navigation in conversion shell; consistent account/security handling; typed domain projections; optional instructional media source. Benefit confirmed/expired screens are active lifecycle states, not obsolete Delivery versions.
-
-Smallest future shape: one fixed full-page delivery shell (brand link, result heading/status, subject/provider, instructions, primary operational action, optional domain media, secondary account/security, ecosystem links), domain-owned children/projections, existing routes/authorization. No CMS, template registry or persisted step engine required. Benefit QR/polling/expiry and Unlock disclosure stay specialized. Do not label pending reservation/participation/commitment as fulfilled reward.
+LandingPresentation/presenters/adapters remain KEEP CORE. Domain-owned instructions and projections remain specialized. Welcome Courtesy remains **FUTURE / OFF / NOT IMPLEMENTED**. Production is still `715af599073e359509ef7c68e188d2aba4b4da20`; this shell is a candidate change, not a deployed claim.
 
 ## 9. Product Detail fallback — keep all four
 
@@ -238,11 +233,11 @@ All four Product Detail renderers/routes and their operational modal states; col
 
 [theme.css](../../app/resources/css/theme.css) defines semantic palette equivalents: CORAL `--brand` #ff5a4f; YELLOW `--reward` #ffc83d; GREEN `--success` #24b47e; INK `--ink` #111111; CREAM `--cream` #fff8f2. Marketing aliases: --marketing-action/emphasis = brand, --marketing-reward = reward, --marketing-value = success, with full light/dark surface rebinding. `app.css` exposes Tailwind aliases and dark variant isolation.
 
-Landings use coral CTA/emphasis, ink/cream surfaces; green appears in FAQ markers/player presentation styles, yellow in micro-opt-in progress. **Offer value/reward block is neutral:** adapter sets `value.tone` but MarketingValueBlock ignores it, so actual benefit/reward distinctions do not activate green/yellow styling there. Experience prices are also neutral. Tokens exist; the offer hierarchy underuses semantic accents rather than lacking a palette.
+Brand + Unify Delivery V1 consumes existing `value.tone`: `reward` is a yellow opportunity surface with ink text; `offer` remains informational/neutral. There is no new tone enum. Benefit title/copy does not establish gratuity or realized savings; its domain-derived validity receives yellow. Experience dates receive yellow and member price receives green only when the presenter confirms both authoritative prices and member price is strictly below regular price (including authoritative zero); no savings amount is calculated. Challenge reward opportunity receives yellow, never a won-prize claim. V3 section order, hero/media layout, steps, FAQ and CTA architecture remain frozen.
 
-Delivery uses success/success-surface for result cues, coral operational CTAs and neutral surfaces. Benefit inherits product appearance/ConsumerLayout; other results force light marketing context via conversion page. Branding/navigation is not one shared branded delivery layout. No global palette token was proven dead: CSS aliases and derived var references count as usage. Unconsumed Offer tone/compactLabel are separate contract debt, not proof the global green/yellow tokens are unused.
+**Fixed semantic contract:** coral = action (existing approved contrast treatment, white labels); yellow = opportunity/reward/deadline (ink labels); green = real success/confirmed value (ink or approved contrast); ink/cream = instruction/structure/warm surfaces. Delivery's green status is explicit, not implied by rendering a result. Pending reservation and future reward stay neutral/yellow.
 
-Recommendation: improve semantic use inside existing blocks (conditional reward/opportunity vs actual success), after frozen-template change authorization; keep pending/external/unearned outcomes distinct. No arbitrary Admin colors and no player rebuild.
+Landing visual meaning = **domain-derived facts + existing editorial fields + fixed semantic template rules**. Marketing does not choose colors manually. No arbitrary Admin colors, new fields, Delivery editor, new CMS/model, replacement Publisher or template engine. Ephemeral price/fact presentation hints are derived in code and never persisted. No global token was retired; unconsumed compactLabel remains separate debt.
 
 ## 13. Documentation contradictions and corrections
 
@@ -260,7 +255,7 @@ Recommendation: improve semantic use inside existing blocks (conditional reward/
 | GLOSSARY | Missing LandingPresentation, activation vs membership activation, Delivery semantics | Add current terms and canonical audit link. |
 | ROADMAP | Courtesy already accurately FUTURE/OFF | Preserve; add ranked current-system work reference. |
 | ADR-001 | Product Detail vs marketing accurate but primary landing/fallback preference implicit | Make viewer-aware primary/fallback explicit. |
-| DESIGN-SYSTEM | Semantic intent could be read as implemented value/reward coloring | Add actual unconsumed tone finding and partial Delivery branding. |
+| DESIGN-SYSTEM | Historical neutral value/reward and partial branding finding | Current contract now documents consumed tone and shared shell; production awaits deploy. |
 | VSL alpha / older artifacts | Alpha “not imported” and historical screenshots include old acquisition/activation | Historical alpha/iteration scope, not current player/flow. Add scope notice; preserve evidence. |
 | ADR-002 / ADR-005 / ADR-006; operations RUNBOOKS; VSL_INTEGRATION; CONVERSION | Campaign/key separation, provider/runtime boundaries, player and economic conversion remain valid | No runtime reinterpretation; architecture audit governs current funnel. |
 
@@ -272,14 +267,14 @@ Older artifact screenshots/releases are intentionally retained as evidence, not 
 | --- | --- | --- |
 | P0 RESOLVED / LIVE | Verification Continuity V1: Benefit owned Delivery; contextual Experience/Unlock mutation verification | Focused backend and 390px isolated browser validation; preserve grant/reward/disclosure guards. |
 | P1 | Saved acquisition copy unused | Consume existing fields or explicitly retire their promise; no replacement Publisher. |
-| P1 | Delivery branding/navigation fragmented | Extend one fixed shared delivery shell with linked logo/ecosystem links and secondary account/security, preserve domain results. |
+| P1 IMPLEMENTED / NOT DEPLOYED | Brand + Unify Delivery V1 | Fixed shared linked shell and ecosystem navigation; domain truth/security preserved. |
 | P1 | Choice-only activation not universal | Explicit domain choice/action projection; bypass confirmation-only continuation when safe, preserve membership/JP consent. |
 | P1 | Cold signup gets random password without contextual access email | Reuse secure access path for generic signup; keep login/collision recovery. |
 | P2 | Dead interstitial/layout branches and test-only config landing infrastructure | Remove proven dead branches first; decide config subsystem retirement separately with tests/config inventory. |
 | P2 | Optional structured marketing editorial content / bounded journey previews | Extend existing form/adapter only for accepted missing content; keep truth derived. |
-| P2 | Semantic tone and duplicated domain delivery projections | Consume existing tokens and share projections; Unlock Offer integration only if explicitly desired. |
+| P2 PARTIALLY RESOLVED | Semantic tone consumed; duplicated domain delivery projections remain | Existing tone/date/member-value rules implemented; no Unlock Offer integration. |
 
-**Recommended next move: 3. BRAND/UNIFY DELIVERY FIRST**, after the deployed P0 continuity fix. Publisher is already substantially built; the most visible missing structure is consistent post-conversion ecosystem navigation. Small proven dead branches can be cleaned independently, but broad legacy retirement must not delay or erase working fallbacks.
+**Brand/Unify Delivery is implemented in current repo, pending deploy**, following the deployed P0 continuity fix. Publisher is already substantially built; the most visible missing structure is consistent post-conversion ecosystem navigation. Small proven dead branches can be cleaned independently, but broad legacy retirement must not delay or erase working fallbacks.
 
 Cleanup order: confirm data-dependent legacy usage → remove unreachable Challenge/MarketingLayout branches and unused starter layouts → decide test-only config subsystem retirement → unify duplicated domain projections → retire compatibility only after record audit. Preserve migration history, generic auth/verification, fallbacks and operational states throughout.
 
@@ -296,3 +291,6 @@ Verification Continuity V1 pre-release validation (2026-10-12, America/La_Paz; u
 
 
 Production release 2026-10-13 (America/La_Paz): **LIVE**, SHA `715af599073e359509ef7c68e188d2aba4b4da20`; actual previous runtime/rollback `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`, not f2b488. Three-commit delta introduces no migration or runtime/config change outside scoped verification code. Production migration status has no pending entries; no backup/migrate/seed. One clean production build; compiled assets/manifest/no-hot/no-dev-ref gates PASS. Read-only candidate/live smoke preserves domain counts and Growth outcomes. Inventory limits: no published internal Experience Landing or active published Unlock; Experience internal context and email ownership state were projected only in memory, and Unlock guard/source checked without mutation. Full contextual flows were already validated in isolated QA. `/up` 200/200, representative Landings/fallback 200; DB/V2PROOF unchanged, healthy; CRM TRUE, Meta OFF, failed jobs 3 historical/0 new. [Production evidence](../../artifacts/verification-continuity-v1/production-release.json). No rebuild/redeploy for the documentation update. Welcome Courtesy: FUTURE / OFF / NOT IMPLEMENTED.
+
+
+Brand + Unify Delivery V1 candidate validation (2026-10-13, America/La_Paz): **PASS / NOT DEPLOYED**. 25 targeted Docker PHP 8.4 backend tests (281 assertions), 10 frontend component/composition contracts, TypeScript and final frontend build/103-page manifest. Minimal isolated browser QA: Challenge Delivery 390, Sunset Landing + pending/external Delivery, Café Landing/QR Delivery and one 1440 Delivery. Final screenshots confirm no floating install obstruction, correct Challenge action hierarchy, truthful pending state and bottom navigation. Contrast coral/white 4.60:1, yellow/ink 12.21:1, green/ink 7.11:1, visible focus. Initial compiled QA required two visual corrections; a single final build followed those corrections. No deploy, production mutations, Admin/schema changes or broad funnel retest. [Candidate evidence](../../artifacts/brand-unify-delivery-v1/INDEX.md). Welcome Courtesy remains FUTURE / OFF.

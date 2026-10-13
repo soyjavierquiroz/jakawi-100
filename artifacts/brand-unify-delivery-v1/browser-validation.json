@@ -1,0 +1,93 @@
+{
+  "scope": "Isolated jakawi_test, Docker PHP 8.4, one final compiled frontend. Representative Sunset/Café/Challenge domain fixtures; no production writes or deployment.",
+  "cases": [
+    {
+      "name": "Challenge Delivery 390",
+      "pass": true,
+      "order": {
+        "instructions": 150,
+        "deadline": 587,
+        "reward": 618,
+        "state": 809,
+        "action": 844,
+        "verification": 993,
+        "navigation": 1127
+      },
+      "colors": {
+        "success": {
+          "background": "rgb(36, 180, 126)",
+          "color": "rgb(17, 17, 17)",
+          "font": "12px",
+          "weight": "800"
+        },
+        "deadline": {
+          "background": "rgb(255, 200, 61)",
+          "color": "rgb(17, 17, 17)",
+          "font": "14px",
+          "weight": "400"
+        },
+        "action": {
+          "background": "color(srgb 0.8 0.282353 0.247843)",
+          "color": "rgb(255, 255, 255)",
+          "font": "14px",
+          "weight": "800"
+        }
+      }
+    },
+    {
+      "name": "Delivery desktop 1440",
+      "pass": true
+    },
+    {
+      "name": "Sunset Landing 390, unchanged V3 sections with domain date/member accents",
+      "pass": true,
+      "colors": {
+        "date": {
+          "background": "rgb(255, 200, 61)",
+          "color": "rgb(17, 17, 17)",
+          "font": "14px",
+          "weight": "400"
+        },
+        "memberValue": {
+          "background": "rgb(36, 180, 126)",
+          "color": "rgb(17, 17, 17)",
+          "font": "16px",
+          "weight": "400"
+        },
+        "action": {
+          "background": "color(srgb 0.8 0.282353 0.247843)",
+          "color": "rgb(255, 255, 255)",
+          "font": "16px",
+          "weight": "800"
+        }
+      }
+    },
+    {
+      "name": "Sunset pending Delivery 390, neutral pending, yellow session, coral maps action, navigation last",
+      "pass": true
+    },
+    {
+      "name": "External Delivery truth retained",
+      "pass": true
+    },
+    {
+      "name": "Café Landing 390, domain expiry accent, no inferred saving",
+      "pass": true
+    },
+    {
+      "name": "Café Delivery 390, owned QR/code/instructions and bottom navigation",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "focus": {
+    "width": "2px",
+    "style": "solid"
+  },
+  "contrast": {
+    "coralWhite": 4.598562500878251,
+    "yellowInk": 12.212030711303262,
+    "greenInk": 7.107933489588301
+  },
+  "result": "PASS"
+}

@@ -3,7 +3,7 @@ import { useState, type MouseEventHandler, type ReactNode } from 'react';
 export type MarketingAction = { href: string; label: string; onClick?: MouseEventHandler<HTMLAnchorElement>; disabled?: boolean; kind?: string };
 
 export function MarketingCTA({ action, className = '', location = 'final' }: { action: MarketingAction; className?: string; location?: 'hero' | 'body' | 'final' }) {
-    return <a data-growth-kind={action.kind} data-growth-location={location} href={action.href} aria-disabled={action.disabled || undefined} onClick={action.onClick} className={`inline-flex min-h-13 w-full items-center justify-center rounded-[var(--radius-control)] bg-[var(--marketing-action)] px-6 py-3 text-center text-sm font-extrabold tracking-wide text-[var(--marketing-action-text)] uppercase transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:w-auto ${className}`}>{action.label}</a>;
+    return <a data-growth-kind={action.kind} data-growth-location={location} href={action.href} aria-disabled={action.disabled || undefined} onClick={action.onClick} className={`funnel-primary-action inline-flex min-h-13 w-full items-center justify-center rounded-[var(--radius-control)] bg-[var(--marketing-action)] px-6 py-3 text-center text-sm font-extrabold tracking-wide text-[var(--marketing-action-text)] uppercase transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:w-auto ${className}`}>{action.label}</a>;
 }
 
 export function MarketingHero({ eyebrow, title, description, action, aside }: { eyebrow: string; title: string; description: string; action: MarketingAction; aside?: ReactNode }) {

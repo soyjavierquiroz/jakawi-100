@@ -60,7 +60,11 @@ void createInertiaApp({
         return (
             <TooltipProvider delayDuration={0}>
                 {app}
-                <PwaInstall preview={page.props.preview === true} />
+                {page.component !== 'redemptions/show' &&
+                    !(
+                        page.component === 'landing-presentations/conversion' &&
+                        page.props.conversionStage === 'result'
+                    ) && <PwaInstall preview={page.props.preview === true} />}
                 <Toaster />
             </TooltipProvider>
         );

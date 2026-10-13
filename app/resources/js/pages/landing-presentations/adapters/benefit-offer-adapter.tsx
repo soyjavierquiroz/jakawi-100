@@ -111,8 +111,8 @@ export default function BenefitOfferAdapter({
     ].join(' · ');
     const facts = [
         cities && { label: 'Lugar', value: cities },
-        copy.deadline && { label: 'Vigencia', value: copy.deadline },
-    ].filter((fact): fact is { label: string; value: string } => Boolean(fact));
+        copy.deadline && { label: 'Vigencia', value: copy.deadline, tone: 'reward' as const },
+    ].filter((fact): fact is { label: string; value: string; tone?: 'reward' } => Boolean(fact));
     const offer: OfferPresentationV1 = {
         hero: {
             eyebrow: `Beneficio en ${copy.partner}`,

@@ -270,7 +270,7 @@ export default function Show({
                                 unlock.jp_deposit > 0 &&
                                 !commitAcknowledged
                             }
-                            className="discovery-primary-action w-full text-white disabled:opacity-50"
+                            className="discovery-primary-action funnel-primary-action w-full text-white disabled:opacity-50"
                         >
                             {continuationOnly
                                 ? 'DESBLOQUEAR AHORA'
@@ -314,7 +314,7 @@ export default function Show({
         return (
             <>
                 {unlock.revealable && auth.user && eligible && (
-                    <Delivery heading="DESBLOQUEADO" subject={unlock.title}>
+                    <Delivery completed heading="DESBLOQUEADO" subject={unlock.title}>
                         <p>{unlock.description}</p>
                         <p>
                             {hasActiveMembership
