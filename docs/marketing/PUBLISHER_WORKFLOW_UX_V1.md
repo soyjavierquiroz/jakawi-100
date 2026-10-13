@@ -1,8 +1,8 @@
 # Marketing Publisher workflow UX V1
 
-Status: READY FOR DEPLOY, not deployed. Landing JSON V1 and AI Product Brief V1 remain LIVE. No JSON schema, domain, DB, lifecycle, template, adapter or preview engine changes.
+Status: **LIVE** on current production application `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`, deployed from actual runtime `44636ae1c41f5828c702c052b99f3e3b7c778263` on 2026-10-13 (America/La_Paz). Landing JSON V1 and AI Product Brief V1 remain LIVE. No JSON schema, domain, DB, lifecycle, template, adapter or preview engine changes.
 
-COPIAR BRIEF PARA IA → external GPT → IMPORTAR JSON → UNSAVED EDITOR → review/media → GUARDAR Y PREVISUALIZAR → inspect current saved Preview → PUBLICAR.
+COPIAR BRIEF PARA IA → external GPT → IMPORTAR JSON → CAMBIOS SIN GUARDAR → review/media → GUARDAR Y PREVISUALIZAR → inspect current saved Preview → PUBLICAR.
 
 Import != save. `✓ JSON APLICADO` confirms the editorial form patch and its changed-field count. `● CAMBIOS SIN GUARDAR` identifies values that differ from the saved baseline, including media/video, audience and product selection. Export still exports current form state.
 
@@ -17,3 +17,5 @@ PUBLICAR with unsaved editor changes is blocked with `GUARDA TUS CAMBIOS ANTES D
 When IMAGE is selected, the Media section shows the currently resolved saved/product image, using the same authoritative asset and MediaUrl service as Preview. The existing reference input remains available for replacement; a newly typed reference is verified by saving. No media library is added.
 
 A larger Publisher UX V2 split-pane remains optional future polish. [Validation and reproduction](../../artifacts/publisher-workflow-ux-v1/validation.md).
+
+[Production release](../../artifacts/publisher-workflow-ux-v1/production-release.json): one build, no migrations or domain mutations; protected rollback; real deployed Admin DRAFT smoke PASS, temporary record removed. No rebuild/redeploy for the documentation followup. Landing JSON V1 and AI Product Brief V1: LIVE. Batch: FUTURE. Welcome Courtesy: FUTURE / OFF.

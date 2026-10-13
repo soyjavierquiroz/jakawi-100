@@ -1,0 +1,180 @@
+{
+  "previous_application": "44636ae1c41f5828c702c052b99f3e3b7c778263",
+  "deployed_application": "0a0d4b6939ae914ffe9face7436d099e1cfac6a4",
+  "release_builds": 1,
+  "source": "clean git archive of exact candidate",
+  "app_image": "sha256:0077cbe1c210b22494b698206125ed1ab65a45cb6aab0c22c6ada9d4feb276fa",
+  "web_image": "sha256:5c92a085577e24d313231b3096c0fe91e1cc4a3a05161b47fbdff866a5a4e0f3",
+  "worker_image": "sha256:0077cbe1c210b22494b698206125ed1ab65a45cb6aab0c22c6ada9d4feb276fa",
+  "rollback": {
+    "app_tag": "jakawi-app:rollback-publisher-44636ae",
+    "app_image": "sha256:96fa91d8bb903d5c9a0647443d0aea861810ff887b43c310384576f7a0fad1bf",
+    "web_tag": "jakawi-web:rollback-publisher-44636ae",
+    "web_image": "sha256:a0fcb70c219bbc0791dc4f01279c6f1dc57030340c854cbcfb4393c20d2d86b9",
+    "verified": true,
+    "rebuilt": false
+  },
+  "pending_migrations": 0,
+  "migrate_seed_backup_db_recreation": false,
+  "domain_mutations": 0,
+  "state_before": {
+    "counts": {
+      "redemptions": 9,
+      "experience_reservations": 4,
+      "challenge_participations": 4,
+      "challenge_social_entries": 4,
+      "challenge_reward_grants": 0,
+      "reward_payouts": 0,
+      "unlock_participations": 1,
+      "memberships": 1,
+      "jp_holds": 0,
+      "published_landings": 3
+    },
+    "failed_jobs": 3,
+    "crm": true,
+    "meta": {
+      "provider": false,
+      "browser": false,
+      "capi": false
+    },
+    "landings": [
+      "qa-calibration-challenge-action",
+      "qa-calibration-benefit-value",
+      "qa-calibration-experience-desire"
+    ]
+  },
+  "state_after": {
+    "counts": {
+      "redemptions": 9,
+      "experience_reservations": 4,
+      "challenge_participations": 4,
+      "challenge_social_entries": 4,
+      "challenge_reward_grants": 0,
+      "reward_payouts": 0,
+      "unlock_participations": 1,
+      "memberships": 1,
+      "jp_holds": 0,
+      "published_landings": 3
+    },
+    "failed_jobs": 3,
+    "crm": true,
+    "meta": {
+      "provider": false,
+      "browser": false,
+      "capi": false
+    },
+    "landings": [
+      "qa-calibration-challenge-action",
+      "qa-calibration-benefit-value",
+      "qa-calibration-experience-desire"
+    ]
+  },
+  "readiness": {
+    "ready": true,
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "polls": [
+      {
+        "seconds": 0.48,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200"
+      }
+    ]
+  },
+  "http": {
+    "up_local": "200",
+    "up_public": "200",
+    "cafe_local": "200",
+    "sunset_local": "200",
+    "reto_local": "200",
+    "cafe_public": "200",
+    "sunset_public": "200",
+    "reto_public": "200"
+  },
+  "guards": {
+    "public_hot": "ABSENT",
+    "manifest": "PASS \u2014 103 pages",
+    "semantic_dev_runtime": "PASS \u2014 184 manifest assets",
+    "vite_client": "ABSENT",
+    "actual_loopback_urls": "ABSENT",
+    "served_asset_matches_release": true,
+    "main_asset_sha256": "20860507feda79a3d195ac360d1cd6c73048aa0b98d7a3e13f38ef7f6dcf4e99"
+  },
+  "containers": {
+    "jakawicom-app-1": {
+      "id": "b27cbb935279167c162c6da1e07bbbdb31446f6cd832433427e5d6e6d8c23e91",
+      "image": "sha256:0077cbe1c210b22494b698206125ed1ab65a45cb6aab0c22c6ada9d4feb276fa",
+      "status": "running",
+      "health": "healthy",
+      "revision": "0a0d4b6939ae914ffe9face7436d099e1cfac6a4"
+    },
+    "jakawicom-db-1": {
+      "id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "running",
+      "health": "healthy",
+      "revision": null
+    },
+    "jakawicom-web-1": {
+      "id": "6ab8aae888e63649344a507788a9acb397db97e4b59b057b9dc33f7ad70cb140",
+      "image": "sha256:5c92a085577e24d313231b3096c0fe91e1cc4a3a05161b47fbdff866a5a4e0f3",
+      "status": "running",
+      "health": null,
+      "revision": "0a0d4b6939ae914ffe9face7436d099e1cfac6a4"
+    },
+    "jakawicom-social-worker-1": {
+      "id": "184202c4da2cf121133cb3590b23b603384bca83f5877b90f9d8b63c96fd0d95",
+      "image": "sha256:0077cbe1c210b22494b698206125ed1ab65a45cb6aab0c22c6ada9d4feb276fa",
+      "status": "running",
+      "health": null,
+      "revision": "0a0d4b6939ae914ffe9face7436d099e1cfac6a4"
+    },
+    "jakawi_v2proof-app-1": {
+      "id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+      "status": "running",
+      "health": "healthy",
+      "revision": null
+    },
+    "jakawi_v2proof-db-1": {
+      "id": "8af1e6f99993ef47d3a14a34c3c3c7fab0cc7b53af89b6ab8f25fa3d82b6a38d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "running",
+      "health": "healthy",
+      "revision": null
+    }
+  },
+  "unrelated_containers_unchanged": true,
+  "scheduler": "active cron + existing minute wrapper; recent DONE execution",
+  "failed_jobs": {
+    "historical": 3,
+    "new": 0
+  },
+  "crm": true,
+  "meta": "provider/browser/CAPI OFF",
+  "live_smoke": {
+    "result": "PASS",
+    "report": "live/admin-browser.json",
+    "successful_saves": 1,
+    "reloads": 1,
+    "validation_failures": 1,
+    "publications": 0,
+    "temporary_draft_removed": true,
+    "privileged_smoke_server_stopped": true,
+    "original_landing_inventory_restored": true
+  },
+  "docs_only_followup": true,
+  "rebuild_redeploy_after_docs": false,
+  "cleanup_prune": false,
+  "disk_before": {
+    "available_bytes": 19298951168,
+    "available_GiB": 17.97,
+    "used_percent": "77%"
+  },
+  "disk_after": {
+    "available_bytes": 18891526144,
+    "available_GiB": 17.59,
+    "used_percent": "78%"
+  }
+}

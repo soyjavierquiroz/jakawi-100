@@ -1,10 +1,10 @@
 # Landing JSON V1 — canonical external editorial contract
 
-**LIVE** on current production `44636ae1c41f5828c702c052b99f3e3b7c778263`; originally deployed on `19c946870a6a54981acc8b41f4ef0b56188226fe`. Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
+**LIVE** on current production `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`; originally deployed on `19c946870a6a54981acc8b41f4ef0b56188226fe`. Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
 
 ## Purpose and workflow
 
-Normal production workflow: JAKAWI → COPIAR BRIEF PARA IA → external GPT configured once with the [master prompt](AI_LANDING_COPYWRITER.md) → jakawi-landing-v1 → IMPORTAR JSON → UNSAVED EDITOR → review/media → GUARDAR Y PREVISUALIZAR → saved Preview → PUBLICAR. Operators normally paste only the [product brief](AI_PRODUCT_BRIEF_V1.md), without manually composing JSON. Manual JSON and partial imports remain supported. No AI API, server upload, automatic save on import or publication. Select an existing product in JAKAWI first; importing cannot select or change it.
+Normal production workflow: JAKAWI → COPIAR BRIEF PARA IA → external GPT configured once with the [master prompt](AI_LANDING_COPYWRITER.md) → jakawi-landing-v1 → IMPORTAR JSON → CAMBIOS SIN GUARDAR → review/media → GUARDAR Y PREVISUALIZAR → saved Preview → PUBLICAR. Operators normally paste only the [product brief](AI_PRODUCT_BRIEF_V1.md), without manually composing JSON. Manual JSON and partial imports remain supported. No AI API, server upload, automatic save on import or publication. Select an existing product in JAKAWI first; importing cannot select or change it.
 
 In the editor, IMPORTAR JSON opens a paste dialog. VALIDAR Y APLICAR validates the entire candidate before changing React form state. Errors list incompatible paths; no field changes on failure. CANCELAR discards the import. A differing nonempty `subject_hint` shows both titles before applying; APLICAR DE TODAS FORMAS permits it without changing the subject. Matching ignores case, accents and repeated whitespace.
 

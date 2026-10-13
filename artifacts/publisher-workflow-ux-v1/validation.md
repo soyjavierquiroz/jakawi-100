@@ -1,6 +1,6 @@
 # Publisher workflow UX V1 validation
 
-Base: `af87e1f6ef11d8fad54b9aca6b5858968d6ee8e2`, clean fetched `origin/main`. Current production application remains `44636ae1c41f5828c702c052b99f3e3b7c778263`. NO DEPLOY. No production records read or written for QA. Docker PHP 8.4 / `db-test` / `jakawi_test` only; no host PHP invocation or inspection.
+Base: `af87e1f6ef11d8fad54b9aca6b5858968d6ee8e2`, clean fetched `origin/main`. At implementation validation, production application remained `44636ae1c41f5828c702c052b99f3e3b7c778263`. NO DEPLOY. No production records read or written for QA. Docker PHP 8.4 / `db-test` / `jakawi_test` only; no host PHP invocation or inspection.
 
 ## Root cause — reproduced before changes
 
@@ -33,3 +33,7 @@ Run [local proxy](../../app/tests/marketing/publisher-workflow-proxy.mjs) from r
 ## Scope
 
 Import does not save. Success is server-confirmed. Failed saves preserve the entire current form and saved Preview. Publication with unsaved changes is blocked, never automatic. Media uses the existing MediaUrl resolver and reference input. No Landing JSON/schema/DB migrations, domain-truth changes, Publisher rebuild, template/adapter changes, AI integration, acquisition/Delivery changes or new preview engine. Publisher UX V2 remains optional future polish.
+
+## Production release
+
+Publisher Workflow UX V1 is now **LIVE** on `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`, from actual runtime `44636ae1c41f5828c702c052b99f3e3b7c778263`. [Release evidence](production-release.json), [real deployed Admin smoke](live/admin-browser.json). One production build; protected exact rollback images; no migrations, domain mutations or published-record edits. The temporary DEMO DRAFT was removed after one successful Save, one reload and one safe collision. Docs-only status followup; no rebuild/redeploy. The implementation validation above is historical pre-deploy evidence.

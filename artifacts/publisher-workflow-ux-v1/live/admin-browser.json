@@ -1,0 +1,34 @@
+{
+  "scope": "Deployed production app PHP kernel + actual web assets, real production isolated temporary Arcilla DEMO DRAFT; existing Admin identity, isolated file session. No published record or domain mutations. One successful save, one reload, one slug collision; no publication.",
+  "checks": [
+    "Productivity actions present; JSON applied; dirty warning; import creates no request/persistence; Preview explicitly represents saved state",
+    "Unsaved PUBLICAR blocked; no request, save or publication",
+    "Successful server-confirmed PUT; editor remains usable; name/slug/imported form unchanged; dirty cleared; same-slug iframe automatically refreshes saved editorial headline; real authoritative image loads",
+    "One reload retains name, slug, editorial, acquisition, closing and presentation controls",
+    "One safe collision against existing DRAFT slug; clear summary + explicit field error; imported form/DB/Preview intact; first-error focus; neutral help distinguished from real error"
+  ],
+  "mutations": [
+    {
+      "method": "PUT",
+      "url": "http://127.0.0.1:8098/admin/experiencias/demo-arcilla-y-manos/landings/publisher-workflow-live-smoke",
+      "data": "{\"name\":\"Arcilla y manos — publisher smoke DEMO\",\"slug\":\"publisher-workflow-live-smoke\",\"campaign_key\":null,\"eyebrow\":\"CREA CON TUS MANOS\",\"headline\":\"DEJA EL SCROLL. ENSÚCIATE LAS MANOS.\",\"headline_emphasis\":\"ENSÚCIATE LAS MANOS.\",\"subheadline\":\"Descubre tu forma de crear con arcilla.\",\"hero_path\":\"experiences/3/cover/a0f05c77-7eeb-46d8-8876-0dac132f371a.png\",\"hero_alt\":\"Manos trabajando arcilla\",\"reward_display_override\":\"Un plan para crear.\",\"final_cta_headline\":\"MENOS PANTALLA. MÁS ARCILLA.\",\"final_cta_description\":\"Dale espacio a tu creatividad.\",\"acquisition_headline\":\"VAMOS A METER LAS MANOS EN LA ARCILLA.\",\"acquisition_supporting_copy\":\"Crea tu cuenta y sigue aquí.\",\"hero_layout\":\"MEDIA_LED\",\"density\":\"COMPACT\",\"template_key\":\"OFFER_CONVERSION\",\"marketing_theme\":\"DARK_CONVERSION\",\"media_mode\":\"IMAGE\",\"default_scope\":\"NONE\",\"vsl\":null,\"subject_type\":\"EXPERIENCE\",\"subject_id\":3}"
+    },
+    {
+      "method": "PUT",
+      "url": "http://127.0.0.1:8098/admin/experiencias/demo-arcilla-y-manos/landings/publisher-workflow-live-smoke",
+      "data": "{\"name\":\"Arcilla y manos — publisher smoke DEMO\",\"slug\":\"arcilla-y-manos\",\"campaign_key\":null,\"eyebrow\":\"CREA CON TUS MANOS\",\"headline\":\"DEJA EL SCROLL. ENSÚCIATE LAS MANOS.\",\"headline_emphasis\":\"ENSÚCIATE LAS MANOS.\",\"subheadline\":\"Descubre tu forma de crear con arcilla.\",\"hero_path\":\"experiences/3/cover/a0f05c77-7eeb-46d8-8876-0dac132f371a.png\",\"hero_alt\":\"Manos trabajando arcilla\",\"reward_display_override\":\"Un plan para crear.\",\"final_cta_headline\":\"MENOS PANTALLA. MÁS ARCILLA.\",\"final_cta_description\":\"Dale espacio a tu creatividad.\",\"acquisition_headline\":\"VAMOS A METER LAS MANOS EN LA ARCILLA.\",\"acquisition_supporting_copy\":\"Crea tu cuenta y sigue aquí.\",\"hero_layout\":\"MEDIA_LED\",\"density\":\"COMPACT\",\"template_key\":\"OFFER_CONVERSION\",\"marketing_theme\":\"DARK_CONVERSION\",\"media_mode\":\"IMAGE\",\"default_scope\":\"NONE\",\"vsl\":null,\"subject_type\":\"EXPERIENCE\",\"subject_id\":3}"
+    }
+  ],
+  "responses": [
+    {
+      "method": "PUT",
+      "status": 303
+    },
+    {
+      "method": "PUT",
+      "status": 303
+    }
+  ],
+  "errors": [],
+  "result": "PASS"
+}
