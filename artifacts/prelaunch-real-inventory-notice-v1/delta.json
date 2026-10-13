@@ -1,0 +1,8 @@
+{
+  "actual_base": "70b597868511d95da1581c16d10e49a6877ad43d",
+  "candidate": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638",
+  "production_code_changed": [
+    "app/resources/js/components/prelaunch-notice.tsx"
+  ],
+  "migration_changes": []
+}

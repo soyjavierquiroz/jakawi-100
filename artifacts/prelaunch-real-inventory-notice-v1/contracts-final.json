@@ -1,0 +1,13 @@
+{
+    "pass": true,
+    "files": {
+        "resources\/js\/components\/prelaunch-notice.tsx": "7c6384b1f667b767722ec9ee8162ff6ec42368f694edc9845c210df8783140ad",
+        "resources\/js\/layouts\/public-mode-layout.tsx": "51b7ebc48565529dcba82118f433e3ee30b1674bdcd5263afa5722c6e64570ac",
+        "resources\/js\/pages\/coming-soon.tsx": "512e69b5221922eb726db3349d362300d534d4ba09e3225ac80cafd1a38ddf2a",
+        "app\/Http\/Middleware\/HandleInertiaRequests.php": "051b7055655f7ea73209e0ba0f356659f0f8addc24da3fc1b7ec361cbe4db35b",
+        "routes\/web.php": "caedf670295cb965b03ae869b72983df24ce55a10823c6bda1e9bfa0c2080960",
+        "app\/Services\/AttributionService.php": "2873af6564ca8dad53ca44ea2d88900282a398c65d5e2d2df958eefdb1d02027",
+        "app\/Http\/Responses\/LoginResponse.php": "a3f93e7cd85ecb5b57c7e3e9826b57314e4b339dd62b8a3e2c8259622f1b37eb",
+        "app\/Actions\/Fortify\/CreateNewUser.php": "1b536f5ce8dc0b0105fedd473f4d0bf91679d51dcb60af87be80cc177f7e9d82"
+    }
+}

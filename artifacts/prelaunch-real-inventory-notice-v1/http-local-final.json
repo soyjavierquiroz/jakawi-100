@@ -1,0 +1,9 @@
+{
+  "/": 200,
+  "/up": 200,
+  "/login": 200,
+  "/admin": 302,
+  "/beneficios": 200,
+  "/partner-inexistente-qa": 404,
+  "/p/partner-inexistente-qa": 404
+}

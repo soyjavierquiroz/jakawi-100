@@ -1,0 +1,9 @@
+
+  * * * * *  php artisan unlocks:expire ........ Next Due: 40 seconds from now
+  * * * * *  php artisan challenges:refresh-rankings  Next Due: 40 seconds from now
+  * * * * *  php artisan challenges:close-expired  Next Due: 40 seconds from now
+  * * * * *  php artisan growth:dispatch-meta .. Next Due: 40 seconds from now
+  * * * * *  php artisan crm:dispatch .......... Next Due: 40 seconds from now
+
+* * * * * /home/jakawi.com/bin/jakawi-schedule >> /home/jakawi.com/storage/logs/scheduler-cron.log 2>&1
+scheduler log last modified: 2026-10-13 23:55:03.327857390 +0000

@@ -1,6 +1,6 @@
 # JAKAWI — Prelaunch Mode V1
 
-Estado: **LIVE**, 2026-10-13 (America/La_Paz), aplicación `b386cf4882b86269fe6d1d5c2cc563cd1d64f0c7`. Producción: `PRELAUNCH_MODE=true`.
+Estado: **LIVE**, 2026-10-13 (America/La_Paz), aplicación `e71fbd8dda5d4f4fbc26a58b4d7495f369daa638`. Producción: `PRELAUNCH_MODE=true`.
 
 ## Prelaunch Mode V1
 
@@ -16,10 +16,12 @@ Validación: [evidencia focalizada](../../artifacts/prelaunch-mode-v1/validation
 
 [Release productivo](../../artifacts/prelaunch-mode-v1/production-release.json): un build, rollback exacto protegido, sin migraciones ni mutaciones de dominio, sólo app/web/social-worker recreados. 390/1440 y Admin live PASS, URLs DEMO 404, catálogo cero, salud 200/200, DB/v2proof sin recreación, failed jobs 0, CRM TRUE, Meta OFF. Followup documental sin rebuild/redeploy.
 
-## Real-inventory notice V1 — validated copy contract, pending deployment
+## Real-inventory notice V1 — LIVE
 
 El PRE-LAUNCH LAB puede contener Partners reales, ubicaciones reales, precios/valores comerciales reales y cumplimiento real controlado de Benefits, Experiences y Challenges para participantes seleccionados o invitados. Eso no abre el lanzamiento público: cada propuesta conserva sus condiciones de dominio como autoridad sobre disponibilidad, elegibilidad, precios y cumplimiento. El aviso no declara que todos los negocios son ficticios, todas las ofertas son demo o ninguna oferta puede cumplirse.
 
 Sólo cambia el texto del componente compartido; ubicación, sticky/z-index, alcance de rutas, visibilidad por PRELAUNCH_MODE y robots permanecen intactos. Coming Soon y Admin no muestran aviso. Partner, Landing, Product Detail, Activation, Delivery y rutas públicas directas lo conservan según el alcance existente; prelaunch no raíz sigue noindex,nofollow. El flag false lo oculta.
 
 Inventario real productivo **PENDING** hasta cargar deliberadamente el primer Partner; esta actualización no crea Partners, catálogo, usuarios, referidos, recompensas ni membresías y no añade migraciones. Welcome Courtesy **FUTURE / OFF**. [Validación y release](../../artifacts/prelaunch-real-inventory-notice-v1/validation.md).
+
+[Release Notice V1](../../artifacts/prelaunch-real-inventory-notice-v1/production-release.json): un único build productivo, rollback exacto de `70b5978` protegido, scope/SEO/layout intactos, sólo app/web/social-worker recreados. Copy necesario para laboratorio real controlado **COMPLETADO**; inventario real **PENDING**. Docs-only status followup sin rebuild/redeploy.

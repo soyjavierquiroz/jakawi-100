@@ -1,0 +1,19 @@
+{
+  "ready": true,
+  "timeout_seconds": 120,
+  "poll_seconds": 2,
+  "polls": [
+    {
+      "seconds": 0.09,
+      "app_health": "healthy",
+      "web_running": true,
+      "http": "000"
+    },
+    {
+      "seconds": 2.5,
+      "app_health": "healthy",
+      "web_running": true,
+      "http": "200"
+    }
+  ]
+}

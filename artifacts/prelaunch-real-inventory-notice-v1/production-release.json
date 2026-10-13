@@ -1,0 +1,161 @@
+{
+  "status": "LIVE",
+  "date": "2026-10-13",
+  "timezone": "America/La_Paz",
+  "actual_previous_runtime": "70b597868511d95da1581c16d10e49a6877ad43d",
+  "deployed_sha": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638",
+  "images": {
+    "app": {
+      "id": "sha256:a63c80d571508510aff81d2738b4e0d8e258f8eeedf4e8dc84af36a7d27358d6",
+      "revision": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638"
+    },
+    "web": {
+      "id": "sha256:dc07b3621f3f35fed1ebe00b44993b18bf36634fe490f99a420e79eebc7916be",
+      "revision": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638"
+    }
+  },
+  "worker_image": "sha256:a63c80d571508510aff81d2738b4e0d8e258f8eeedf4e8dc84af36a7d27358d6",
+  "production_builds": 1,
+  "final_frontend_validation_builds": 1,
+  "build_source": "clean Git export of exact candidate SHA",
+  "rollback": {
+    "app": {
+      "tag": "jakawi-app:rollback-notice-70b5978",
+      "id": "sha256:8a5e4407fe48067b48ff4653e3f3acbe415c68ad841646b0abaacd4319e85c99"
+    },
+    "web": {
+      "tag": "jakawi-web:rollback-notice-70b5978",
+      "id": "sha256:c5260b553ca61da0e4451247cf0ed22d41e447a622dad561a5e33e57773b9791"
+    },
+    "worker": "sha256:8a5e4407fe48067b48ff4653e3f3acbe415c68ad841646b0abaacd4319e85c99"
+  },
+  "recreated": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "db_and_v2proof_container_ids_unchanged": true,
+  "disk": {
+    "before_bytes": 16187133952,
+    "before_gib": 15.075443267822266,
+    "cleanup": true,
+    "reclaimed_bytes": 7487483904,
+    "reclaimed_gib": 6.973262786865234,
+    "after_cleanup_gib": 22.0487060546875,
+    "before_production_build_gib": 21.11522674560547,
+    "after_deploy_gib": 19.6793212890625,
+    "cleanup_stopped_at_target": true,
+    "volumes_backups_running_containers_rollback_images_and_evidence_preserved": true
+  },
+  "notice": {
+    "previous_meaning": "All shown offers/reservations/redemptions/prizes not commercially available",
+    "heading": "MODO PRE-LANZAMIENTO",
+    "copy": "JAKAWI est\u00e1 en pruebas. Algunas experiencias, beneficios y premios pueden estar disponibles \u00fanicamente para participantes invitados. Revisa las condiciones de cada propuesta.",
+    "controlled_real_inventory_compatible": true,
+    "production_code_delta": [
+      "app/resources/js/components/prelaunch-notice.tsx"
+    ],
+    "visual_behavior_changed": false,
+    "domain_conditions_remain_authoritative": true
+  },
+  "scope": {
+    "root_notice": false,
+    "partner": true,
+    "marketing_landing": true,
+    "product_detail": true,
+    "activation": true,
+    "delivery": true,
+    "admin_notice": false,
+    "flag_false_hides_notice": true,
+    "proof": "4 focused tests/133 assertions, 2 component checks, isolated 390 Partner/Landing/Product/Activation/QR Delivery and flag-off checks; exact deployed source hashes; live public empty catalog and read-only Admin browser smoke"
+  },
+  "seo": {
+    "root": "index,follow",
+    "non_root_public_prelaunch": "noindex,nofollow"
+  },
+  "data": {
+    "partners_created": 0,
+    "catalog_created": 0,
+    "new_users": 0,
+    "domain_mutations": 0,
+    "migrations_added": 0,
+    "migrations_pending": 0,
+    "migrations_executed": 0,
+    "counts_before_equal_after": true,
+    "production_counts": {
+      "referral_relationships": 0,
+      "attribution_touches": 0,
+      "ownership_assignments": 0,
+      "reward_transactions": 0,
+      "membership_purchases": 0,
+      "users": 1,
+      "partners": 0,
+      "locations": 0,
+      "benefits": 0,
+      "experiences": 0,
+      "experience_sessions": 0,
+      "challenges": 0,
+      "unlocks": 0,
+      "landing_presentations": 0,
+      "redemptions": 0,
+      "experience_reservations": 0,
+      "challenge_participations": 0,
+      "challenge_social_entries": 0,
+      "challenge_reward_grants": 0,
+      "reward_payouts": 0,
+      "unlock_participations": 0,
+      "memberships": 0,
+      "jp_holds": 0,
+      "failed_jobs": 0,
+      "migrations": 62,
+      "app_settings": 2,
+      "cities": 5
+    },
+    "production_signup_or_fixture_smoke": false
+  },
+  "guards": {
+    "public_hot": "ABSENT app/web",
+    "manifest": "PASS 104 Inertia pages; 182 assets",
+    "semantic_dev_runtime": "PASS no @vite/client or loopback runtime URLs",
+    "compiled_html": "PASS candidate/live root/public/Admin",
+    "readiness": "PASS 2.50 sec; 120 sec bound; 2 sec polling; transient 000 tolerated",
+    "live_root": "Coming Soon, no notice or Partner links",
+    "live_unknown_partner": 404,
+    "live_unknown_technical_partner": 404,
+    "live_admin": "PASS read-only existing Admin + deployed assets, no notice",
+    "live_public": "PASS exact new copy once, readable 390, noindex,nofollow"
+  },
+  "validation": {
+    "focused_backend": "4 PASS / 133 assertions",
+    "components": "2 PASS",
+    "typescript": "PASS",
+    "390_public_modal_cta_qr": "PASS",
+    "Admin": "PASS",
+    "docs": "PASS",
+    "diff": "PASS",
+    "broad_tests_run": false
+  },
+  "health": {
+    "up_local": 200,
+    "up_public": 200,
+    "app": "healthy",
+    "db": "healthy",
+    "web": "running",
+    "worker": "running",
+    "v2proof": "unchanged/healthy",
+    "scheduler": "active",
+    "failed_jobs": 0,
+    "CRM": true,
+    "Meta": "OFF"
+  },
+  "docs": {
+    "controlled_real_prelaunch": "DOCUMENTED / LIVE",
+    "notice_copy_prerequisite": "COMPLETE",
+    "real_inventory": "PENDING until intentionally loading first Partner",
+    "Welcome_Courtesy": "FUTURE / OFF",
+    "status_commit": "docs-only SHA reported in final response",
+    "rebuild": false,
+    "redeploy": false
+  },
+  "result": "JAKAWI REAL-INVENTORY PRELAUNCH MODE LIVE \u2014 READY FOR FIRST REAL PARTNER"
+}
