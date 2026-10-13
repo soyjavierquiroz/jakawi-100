@@ -1,5 +1,7 @@
 # Production asset guard
 
+**LIVE** on production `19c946870a6a54981acc8b41f4ef0b56188226fe`. One new build after correction; candidate and LIVE assets/HTML pass. [Release evidence](../../artifacts/landing-json-v1/production-release.json).
+
 The release must use a clean Git export and Docker PHP 8.4. `.dockerignore` excludes `app/public/hot`; [image hardening](../../app/scripts/check-production-artifact.sh) rejects a hot file or symlink. The [manifest checker](../../app/scripts/check-vite-manifest.mjs) verifies all entries, dependencies and compiled files, then runs the [semantic runtime guard](../../app/scripts/check-dev-runtime.mjs).
 
 The semantic guard rejects `@vite/client` and explicit HTTP(S), WS(S) or protocol-relative loopback URLs (localhost/subdomains, 127.x.x.x, IPv6 loopback) in the manifest and referenced JS/CSS/HTML/JSON. It decodes ordinary slash/Unicode/hex escapes and literal string concatenations. Rendered candidate HTML and actual live HTML must also pass this guard before/after cutover. HTML script/link/module references to a local dev server therefore fail. This is release artifact validation, not a general-purpose JavaScript dataflow or security analyzer.

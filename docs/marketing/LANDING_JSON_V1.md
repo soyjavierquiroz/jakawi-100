@@ -1,6 +1,6 @@
 # Landing JSON V1 — canonical external editorial contract
 
-Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
+**LIVE** on production `19c946870a6a54981acc8b41f4ef0b56188226fe`. Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
 
 ## Purpose and workflow
 

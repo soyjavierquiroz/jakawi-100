@@ -1,0 +1,16 @@
+{
+  "scope": "One Admin-only desktop flow on deployed 19c9468. Read-only production Laravel Admin GET for existing DEMO Benefit, create=1: isolated unsaved DRAFT form. Existing published Landings were never edited. Production session/cache use memory only. Real deployed compiled assets proxied from web; no persistence, login or publication requests.",
+  "checks": [
+    "Deployed Admin IMPORTAR JSON / EXPORTAR JSON controls visible in isolated unsaved DEMO DRAFT",
+    "Valid JSON prefills form; domain truth, subject, audience, campaign and DRAFT status unchanged; no Save/Publish",
+    "Single invalid JSON rejects price, cta_url and membership_required atomically; zero form mutation",
+    "Export is current unsaved form state; exact canonical keys, no IDs/domain/publication/CTA/media sources",
+    "Minimal export → one local editorial change → import restores semantic equivalence",
+    "Copy JSON PASS",
+    "Client-side download PASS",
+    "Zero browser mutation requests; no JavaScript errors; no published record edited"
+  ],
+  "mutationRequests": [],
+  "errors": [],
+  "result": "PASS"
+}

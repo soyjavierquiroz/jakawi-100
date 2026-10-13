@@ -1,0 +1,163 @@
+{
+  "previous": "79f2ed7dfd9f792e94bc659136a02e809699fbaa",
+  "original_blocked_candidate": "448d7d2a08fbf8a0de0c8ae5a4a5b1ff06452901",
+  "deployed": "19c946870a6a54981acc8b41f4ef0b56188226fe",
+  "images": {
+    "app": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37",
+    "web": "sha256:3b73a29fb84facf6d1bed092a93fe4bf1970605d18afc03d58046b13ddad5380",
+    "worker": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37"
+  },
+  "rollback_images": {
+    "app": "sha256:0567ab08bfc59fabf0fe62b4399c1fa2c333641b26efe445d05dfaf7560dff1d",
+    "web": "sha256:51f8a5fc45ef4e4ad100fe4ff923208ceffd4e2f320d04b2c8a4627cf0e61276",
+    "worker": "sha256:0567ab08bfc59fabf0fe62b4399c1fa2c333641b26efe445d05dfaf7560dff1d"
+  },
+  "builds_after_fix": 1,
+  "readiness": {
+    "ready": true,
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "polls": [
+      {
+        "seconds": 0.06,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "000"
+      },
+      {
+        "seconds": 2.76,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200"
+      }
+    ]
+  },
+  "pre_cutover": {
+    "candidate_sha": "19c946870a6a54981acc8b41f4ef0b56188226fe",
+    "images": {
+      "app": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37",
+      "web": "sha256:3b73a29fb84facf6d1bed092a93fe4bf1970605d18afc03d58046b13ddad5380",
+      "worker": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37"
+    },
+    "public_hot": "ABSENT",
+    "manifest": "PASS",
+    "compiled_assets": true,
+    "semantic_guard": "PASS",
+    "candidate_HTML": "PASS",
+    "builds": 1,
+    "disk_GiB": 18.888935089111328,
+    "remaining_non_network_matches": [
+      {
+        "file": "react-D2-owoWK.js",
+        "context": "e.transports}}function u(e){return e===`localhost`||/^((xn--[a-z0-9-]+|[a-z0-9]+(-[a-z0-9]+)*)\\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/i.t"
+      },
+      {
+        "file": "react-D2-owoWK.js",
+        "context": "is domain`}. For local development, use localhost.`),this.name=`InvalidDomainError`}},D=e=>{if(e instanceof S)return e;if(!(e ins"
+      }
+    ],
+    "security_regression": false
+  },
+  "live_asset_guard": "PASS: 184 manifest assets + 6 rendered/live HTML files; no hot, Vite or loopback runtime URL",
+  "guard_tests": "5/5 PASS",
+  "migrations": "NONE; no pending",
+  "domain_mutations": {
+    "redemptions": 0,
+    "experience_reservations": 0,
+    "challenge_participations": 0,
+    "challenge_social_entries": 0,
+    "challenge_reward_grants": 0,
+    "reward_payouts": 0,
+    "unlock_participations": 0,
+    "memberships": 0,
+    "jp_holds": 0,
+    "growth_outcomes": 0
+  },
+  "db_writes": false,
+  "admin_browser": {
+    "scope": "One Admin-only desktop flow on deployed 19c9468. Read-only production Laravel Admin GET for existing DEMO Benefit, create=1: isolated unsaved DRAFT form. Existing published Landings were never edited. Production session/cache use memory only. Real deployed compiled assets proxied from web; no persistence, login or publication requests.",
+    "checks": [
+      "Deployed Admin IMPORTAR JSON / EXPORTAR JSON controls visible in isolated unsaved DEMO DRAFT",
+      "Valid JSON prefills form; domain truth, subject, audience, campaign and DRAFT status unchanged; no Save/Publish",
+      "Single invalid JSON rejects price, cta_url and membership_required atomically; zero form mutation",
+      "Export is current unsaved form state; exact canonical keys, no IDs/domain/publication/CTA/media sources",
+      "Minimal export \u2192 one local editorial change \u2192 import restores semantic equivalence",
+      "Copy JSON PASS",
+      "Client-side download PASS",
+      "Zero browser mutation requests; no JavaScript errors; no published record edited"
+    ],
+    "mutationRequests": [],
+    "errors": [],
+    "result": "PASS"
+  },
+  "http": {
+    "up-local": "200",
+    "up-public": "200",
+    "cafe": "200",
+    "sunset": "200",
+    "reto": "200"
+  },
+  "health": {
+    "jakawicom-app-1": {
+      "id": "82dde0ccbee9b30f9ee8e8b2f2815b4e7798cb905d8d96b6601233cc3ea4a308",
+      "image": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37",
+      "revision": "19c946870a6a54981acc8b41f4ef0b56188226fe",
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T14:33:53.89719367Z"
+    },
+    "jakawicom-web-1": {
+      "id": "56a91fc37d17757404f64fb88694fb943056fe59ad7dafcb7baac1d90e29b82e",
+      "image": "sha256:3b73a29fb84facf6d1bed092a93fe4bf1970605d18afc03d58046b13ddad5380",
+      "revision": "19c946870a6a54981acc8b41f4ef0b56188226fe",
+      "status": "running",
+      "health": null,
+      "started": "2026-10-13T14:33:59.85704382Z"
+    },
+    "jakawicom-social-worker-1": {
+      "id": "fa4a83050364c05021b8674c4dddb1dc4ff83c19e3b35c95e72c74af73ad671e",
+      "image": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37",
+      "revision": "19c946870a6a54981acc8b41f4ef0b56188226fe",
+      "status": "running",
+      "health": null,
+      "started": "2026-10-13T14:33:59.685664659Z"
+    },
+    "jakawicom-db-1": {
+      "id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "revision": null,
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.548796374Z"
+    },
+    "jakawi_v2proof-app-1": {
+      "id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+      "revision": null,
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.629992337Z"
+    },
+    "jakawi_v2proof-db-1": {
+      "id": "8af1e6f99993ef47d3a14a34c3c3c7fab0cc7b53af89b6ab8f25fa3d82b6a38d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "revision": null,
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.511570146Z"
+    }
+  },
+  "scheduler": "active",
+  "failed_jobs": {
+    "historical": 3,
+    "new": 0
+  },
+  "crm": true,
+  "meta": "OFF",
+  "disk_before_rebuild_GiB": 19.376468658447266,
+  "disk_before_deploy_GiB": 18.888935089111328,
+  "disk_after_GiB": 18.858341217041016,
+  "cleanup_required": false,
+  "no_redeploy_for_docs": true,
+  "result": "JAKAWI LANDING JSON V1 LIVE \u2014 RELEASE GUARD CORRECTED"
+}
