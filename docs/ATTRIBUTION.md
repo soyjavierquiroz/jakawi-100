@@ -12,6 +12,6 @@ AttributionTouch sólo nace de señal de adquisición explícita; una visita dir
 
 Membership admite cinco UTMs opcionales sin cambiar intención; rechaza queries arbitrarias/campaign_key/acq como override. Email fluentcrm/email tiene provider NONE. Eventos analíticos y provider OFF: [Growth](growth-measurement-v1.md). FIRST/LATEST de contacto: [CRM](CRM_FOUNDATION_V1.md).
 
-## Partner origin continuity V1 — pending deploy
+## Partner origin continuity V1 — LIVE
 
 Root Partner profiles create anonymous `acquisition_partner_id` touches in existing visitor/session infrastructure. Native inventory routes and Marketing Landing/Micro Opt-in preserve that origin without public numeric IDs. Only server-confirmed new account creation establishes a relationship; first referral-bearing touch within the existing window wins, with id as deterministic tie-breaker. Existing login consumes pending touches as measurement only; authenticated visits do not acquire. ConversionRecorder latest-touch measurement does not redefine referral ownership. [Full profile and economy contract](PARTNER-ACQUISITION.md).

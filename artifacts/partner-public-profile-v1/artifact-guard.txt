@@ -1,0 +1,2 @@
+Production artifact PASS: Vite hot file absent
+Production artifact PASS: Vite hot file absent

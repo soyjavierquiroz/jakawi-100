@@ -1,0 +1,152 @@
+{
+  "status": "LIVE",
+  "date": "2026-10-13",
+  "timezone": "America/La_Paz",
+  "actual_previous_runtime": "b386cf4882b86269fe6d1d5c2cc563cd1d64f0c7",
+  "deployed_sha": "70b597868511d95da1581c16d10e49a6877ad43d",
+  "images": {
+    "app": {
+      "id": "sha256:8a5e4407fe48067b48ff4653e3f3acbe415c68ad841646b0abaacd4319e85c99",
+      "revision": "70b597868511d95da1581c16d10e49a6877ad43d"
+    },
+    "web": {
+      "id": "sha256:c5260b553ca61da0e4451247cf0ed22d41e447a622dad561a5e33e57773b9791",
+      "revision": "70b597868511d95da1581c16d10e49a6877ad43d"
+    }
+  },
+  "worker_image": "sha256:8a5e4407fe48067b48ff4653e3f3acbe415c68ad841646b0abaacd4319e85c99",
+  "production_builds": 1,
+  "build_source": "clean git archive of exact candidate SHA",
+  "precutover_guards": "PASS app/web hot absent; 104 Inertia pages; 182 assets; semantic dev-runtime/compiled HTML guard; root and authenticated Admin browser render; route registration/reserved validation",
+  "rollback": {
+    "app": {
+      "tag": "jakawi-app:rollback-partner-b386cf4",
+      "id": "sha256:8f3cd9ebccb6c08a3ea46fee0728597469816671b20607c53aa3a5dafee3edaf"
+    },
+    "web": {
+      "tag": "jakawi-web:rollback-partner-b386cf4",
+      "id": "sha256:e1711b01c9c168cea927620be1e8244ae91f7495e2738aaca91078bce28c56ce"
+    },
+    "worker": "sha256:8f3cd9ebccb6c08a3ea46fee0728597469816671b20607c53aa3a5dafee3edaf"
+  },
+  "recreated": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "db_and_v2proof_container_ids_unchanged": true,
+  "migrations_added": 0,
+  "migrations_pending": 0,
+  "migrations_executed": 0,
+  "backups_required": false,
+  "production_partners_created": 0,
+  "production_catalog_created": 0,
+  "production_new_users": 0,
+  "production_domain_mutations": 0,
+  "production_signup_smoke": false,
+  "production_counts": {
+    "referral_relationships": 0,
+    "attribution_touches": 0,
+    "ownership_assignments": 0,
+    "reward_transactions": 0,
+    "membership_purchases": 0,
+    "users": 1,
+    "partners": 0,
+    "locations": 0,
+    "benefits": 0,
+    "experiences": 0,
+    "experience_sessions": 0,
+    "challenges": 0,
+    "unlocks": 0,
+    "landing_presentations": 0,
+    "redemptions": 0,
+    "experience_reservations": 0,
+    "challenge_participations": 0,
+    "challenge_social_entries": 0,
+    "challenge_reward_grants": 0,
+    "reward_payouts": 0,
+    "unlock_participations": 0,
+    "memberships": 0,
+    "jp_holds": 0,
+    "failed_jobs": 0,
+    "migrations": 62,
+    "app_settings": 2,
+    "cities": 5
+  },
+  "url_contract": {
+    "canonical": "https://jakawi.com/{partnerSlug}",
+    "technical": "https://jakawi.com/p/{partnerSlug}",
+    "unknown_vanity": 404,
+    "unknown_technical": 404,
+    "registered_reserved_routes_hijacked": false,
+    "desbloqueos": "No explicit route existed in actual previous runtime; baseline 404 preserved. Slug reserved against Partner writes/resolution."
+  },
+  "ownership": {
+    "partner_user_reused": true,
+    "account_association_preserved": true,
+    "separate_partner_cms": false
+  },
+  "acquisition": {
+    "downstream_origin_continuity": "DEPLOYED",
+    "new_signup_ownership": "DEPLOYED",
+    "partner_page_signup_required": false,
+    "existing_login_assigns_ownership": false,
+    "authenticated_visit_assigns_ownership": false,
+    "existing_owner_reassigned_by_visit_or_login": false,
+    "rule": "First referral-bearing touch inside configured window, ordered occurred_at then id. Existing valid relationship preserved; visits/login never invoke assignment.",
+    "verification": "Exact deployed source hashes match validated candidate; prior isolated 45 tests/710 assertions and downstream/direct browser signup/existing-login evidence retained. No production signup or Partner fixture."
+  },
+  "commission": {
+    "page_view": false,
+    "login": false,
+    "signup": false,
+    "qualifying_event": "membership_purchased",
+    "existing_reward_payout_infrastructure_preserved": true,
+    "new_ledger": false
+  },
+  "prelaunch": {
+    "enabled": true,
+    "root": "Coming Soon",
+    "root_robots": "index,follow",
+    "root_partner_links": false,
+    "partner_direct_route_support": "LIVE",
+    "partner_robots": "noindex,nofollow",
+    "partner_notice": true,
+    "notice_copy_changed": false,
+    "real_inventory_notice_update": "PENDING BEFORE FIRST REAL CONTROLLED PARTNER INVENTORY"
+  },
+  "admin": {
+    "empty_partner_management": "PASS 200; read-only existing-admin kernel plus exact release assets browser render",
+    "public_url_and_copy_controls": "DEPLOYED",
+    "new_partner_portal": false
+  },
+  "health": {
+    "up_local": 200,
+    "up_public": 200,
+    "app": "healthy",
+    "db": "healthy",
+    "web": "running",
+    "worker": "running",
+    "v2proof": "unchanged/healthy",
+    "scheduler": "active; minute cron + recent log + deployed schedule:list",
+    "failed_jobs": 0,
+    "CRM": true,
+    "Meta": "OFF"
+  },
+  "disk_available_gib": {
+    "before": 15.475151062011719,
+    "after": 15.077072143554688
+  },
+  "cleanup": false,
+  "docs": {
+    "Partner_Public_Profile": "LIVE",
+    "acquisition_continuity": "LIVE",
+    "existing_account_protection": "LIVE",
+    "real_inventory": "PENDING",
+    "Welcome_Courtesy": "FUTURE / OFF",
+    "status_followup": "docs-only; commit SHA reported in final response",
+    "rebuild": false,
+    "redeploy": false
+  },
+  "result": "JAKAWI PARTNER PUBLIC PROFILE V1 LIVE \u2014 READY FOR FIRST REAL PARTNER"
+}

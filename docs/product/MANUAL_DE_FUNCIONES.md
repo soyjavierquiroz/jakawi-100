@@ -1,6 +1,6 @@
 # Manual de Funciones JAKAWI
 
-**CURRENT / AUTHORITATIVE — 2026-10-09.** Para producto, operaciones, soporte, equipo comercial y desarrolladores. Referencia funcional, no contrato API. Estado productivo y límites técnicos: [CURRENT](../CURRENT.md); arquitectura: [ARCHITECTURE](../ARCHITECTURE.md); carga de oferta: [Manual de Inventario](../operations/MANUAL_DE_INVENTARIO.md).
+**CURRENT / AUTHORITATIVE — 2026-10-13.** Para producto, operaciones, soporte, equipo comercial y desarrolladores. Referencia funcional, no contrato API. Estado productivo y límites técnicos: [CURRENT](../CURRENT.md); arquitectura: [ARCHITECTURE](../ARCHITECTURE.md); carga de oferta: [Manual de Inventario](../operations/MANUAL_DE_INVENTARIO.md).
 
 ## A. Qué es JAKAWI
 
@@ -166,7 +166,7 @@ Guest: nombre → correo → WhatsApp, o login; no contraseña al registrar ni p
 
 Los permisos generales anteriores deben leerse con estas excepciones: Benefit start normal omite verified, grants lo conservan; `/canjes` resultado sigue verified, inconsistencia pendiente. Experience interno y Unlock mutaciones siguen verified. Delivery informa estados reales; su navegación al ecosistema está implementada en Benefit y pendiente de unificar en los resultados de Landing. Welcome Courtesy: FUTURE / OFF / NOT IMPLEMENTED.
 
-## Perfil público Partner V1 — pendiente de deploy
+## Perfil público Partner V1 — LIVE
 
 Cada Partner comparte `jakawi.com/{slug}` desde PUBLIC PROFILE → COPIAR ENLACE en su gestión existente. `/p/{slug}` redirige al enlace público. La cuenta asignada opera su Partner mediante `partner_user`; Admin conserva gestión global. Identidad, descripción, sucursales y oferta provienen del catálogo; no existe otro CMS ni portal nuevo.
 

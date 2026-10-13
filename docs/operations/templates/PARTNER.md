@@ -24,7 +24,7 @@ Estado de trabajo: [completar; no implica estado del producto]
 
 Revisión pendiente no equivale a aprobación. Conservar evidencia del acuerdo por canal autorizado; publicar sólo mediante el flujo real y la checklist del manual.
 
-## Perfil público V1 — pendiente de deploy
+## Perfil público V1 — LIVE
 
 Usar PUBLIC PROFILE → COPIAR ENLACE en gestión existente: `jakawi.com/{slug}`. La URL técnica `/p/{slug}` redirige. Slug único persistido: minúsculas, letras ASCII/números/guiones simples; rutas de aplicación reservadas. Mantener estable; V1 no conserva historial. Vincular usuarios reales por `partner_user` owner/manager/staff con autorización existente; no crear otro perfil/CMS. Sólo Partner publicado se expone, aun sin oferta. Nunca cargar DOSIS 43 de ejemplo en producción.
 

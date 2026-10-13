@@ -11,7 +11,7 @@ Partner attribution (`acquisition_partner_id`) is marketing attribution, not a g
 
 Specific Partner rules override PARTNER defaults, which override global rules. CREDIT remains deferred pending an explicit credit ledger and consumption model. `partner_minimum_payout` is an independently configurable BOB threshold; it is not the affiliate threshold or membership price.
 
-## Public profile + acquisition V1 (implemented, pending deploy)
+## Public profile + acquisition V1 — LIVE
 
 Canonical share URL: `https://jakawi.com/{slug}`; technical `/p/{slug}` and legacy `/partners/{slug}` redirect 301 to it. The profile is a public projection of the existing Partner, with existing persisted unique slug and `partner_user` account assignments (`owner`, `manager`, `staff`). No separate CMS, account relation, migration, referral engine or payout ledger. Admin keeps global management; Partner users remain restricted to assigned entities.
 
@@ -29,4 +29,4 @@ Only published Partners resolve publicly; unknown, reserved or inactive profiles
 
 Prelaunch profiles remain directly accessible with shared PrelaunchNotice and `noindex,nofollow`; Coming Soon has no Partner links. Canonical is the root slug. **Before the first real controlled offer is loaded**, product must replace the absolute commercially-unavailable notice with truthful controlled-prelaunch wording, for example: “MODO PRE-LANZAMIENTO. JAKAWI está en pruebas. Algunas experiencias, beneficios y premios pueden estar disponibles únicamente para participantes invitados. Revisa las condiciones de cada propuesta.” Production notice is unchanged by V1.
 
-Validation and isolated QA: [Partner profile V1](../artifacts/partner-public-profile-v1/validation.md). DOSIS 43 — QA exists only in `jakawi_test`; no production Partner/inventory writes or deploy are part of this implementation.
+Validation and isolated QA: [Partner profile V1](../artifacts/partner-public-profile-v1/validation.md). DOSIS 43 — QA exists only in `jakawi_test`; no production Partner/inventory writes were performed. Runtime `70b597868511d95da1581c16d10e49a6877ad43d` is LIVE; [release evidence](../artifacts/partner-public-profile-v1/production-release.json). Real inventory remains PENDING; Welcome Courtesy FUTURE / OFF.

@@ -1,0 +1,71 @@
+{
+    "/": {
+        "name": "home",
+        "action": "App\\Http\\Controllers\\PublicController@home",
+        "uri": "/"
+    },
+    "/up": {
+        "name": null,
+        "action": "Closure",
+        "uri": "up"
+    },
+    "/login": {
+        "name": "login",
+        "action": "Laravel\\Fortify\\Http\\Controllers\\AuthenticatedSessionController@create",
+        "uri": "login"
+    },
+    "/admin": {
+        "name": "admin.index",
+        "action": "App\\Http\\Controllers\\AdminController@index",
+        "uri": "admin"
+    },
+    "/admin/partners": {
+        "name": "admin.partners.index",
+        "action": "App\\Http\\Controllers\\AdminController@partners",
+        "uri": "admin/partners"
+    },
+    "/explorar": {
+        "name": "explore",
+        "action": "App\\Http\\Controllers\\PublicController@explore",
+        "uri": "explorar"
+    },
+    "/beneficios": {
+        "name": "benefits.index",
+        "action": "App\\Http\\Controllers\\PublicController@benefits",
+        "uri": "beneficios"
+    },
+    "/experiencias": {
+        "name": "experiences.index",
+        "action": "App\\Http\\Controllers\\PublicController@experiences",
+        "uri": "experiencias"
+    },
+    "/retos": {
+        "name": "social-challenges.index",
+        "action": "App\\Http\\Controllers\\ChallengeController@index",
+        "uri": "retos"
+    },
+    "/desbloqueos": {
+        "not_registered": true
+    },
+    "/mi-jakawi": {
+        "name": "mi-jakawi",
+        "action": "App\\Http\\Controllers\\MembershipController@show",
+        "uri": "mi-jakawi"
+    },
+    "/perfil": {
+        "name": "consumer.profile",
+        "action": "App\\Http\\Controllers\\MemberProfileController@show",
+        "uri": "perfil"
+    },
+    "/l/nonexistent": {
+        "name": "landing-presentations.show",
+        "action": "App\\Http\\Controllers\\LandingPresentationController@show",
+        "uri": "l/{presentation}"
+    },
+    "/p/nonexistent": {
+        "not_registered": true
+    },
+    "/partner-inexistente-qa": {
+        "not_registered": true
+    }
+}
