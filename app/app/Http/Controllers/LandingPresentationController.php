@@ -42,7 +42,10 @@ class LandingPresentationController extends Controller
             return to_route($subject->participations()->where('user_id', $request->user()->id)->exists()
                 ? 'landing-presentations.result' : 'landing-presentations.show', $presentation);
         }
-        app(\App\Services\PublicJourneyContinuation::class)->setLanding($presentation);
+        $continuation = app(\App\Services\PublicJourneyContinuation::class);
+        if (($continuation->get()['landing_presentation_id'] ?? null) !== $presentation->id) {
+            $continuation->setLanding($presentation);
+        }
         return $this->renderStage($request, $presentation, 'activation');
     }
 
@@ -127,6 +130,9 @@ class LandingPresentationController extends Controller
         $resumed = ! $preview && $request->user() && $request->session()->get('landing_acquisition_resumed') === $presentation->id;
         $shared = [
             'conversionStage' => $stage,
+            'verificationRequired' => $stage === 'activation' && $request->boolean('verify')
+                && $request->user() && ! $request->user()->hasVerifiedEmail()
+                && (($subject instanceof Experience && $subject->reservation_method === 'jakawi') || $subject instanceof Unlock),
             'landingUrl' => route('landing-presentations.show', $presentation, false),
             'vsl' => ! ($subject instanceof Unlock) && in_array($presentation->media_mode?->value, ['IMAGE', 'NONE'], true) ? null : app(LandingVideoConfiguration::class)->forPresentation($presentation),
             'presentation' => $presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']),
@@ -176,7 +182,7 @@ class LandingPresentationController extends Controller
                 'externalReservationReady' => $externalReservationReady,
                 'landingDirectAction' => ! $stage && $request->user() && $experienceProps['hasActiveMembership'] && $experienceProps['availability']['available'] && $subject->reservation_method === 'jakawi' && count($experienceProps['experience']['sessions']) === 1 && ! $experienceProps['experience']['sessions'][0]['reservation'] ? ['endpoint' => route('experiences.reservations.store', $subject, false), 'data' => ['experience_session_id' => $experienceProps['experience']['sessions'][0]['id'], 'landing_presentation_id' => $presentation->id]] : null,
                 ...$this->offerCopy($presentation, app(ExperienceMarketingLandingPresenter::class)->present($subject, $presentation, $request)),
-                'restoredSessionId' => $stage === 'result' ? $experienceProps['restoredSessionId'] : (($resumed ? $request->session()->get('landing_continuation_context.experience_session_id') : null) ?? $experienceProps['restoredSessionId']),
+                'restoredSessionId' => $stage === 'result' ? $experienceProps['restoredSessionId'] : (($resumed ? $request->session()->get('landing_continuation_context.experience_session_id') : null) ?? ($stage === 'activation' && (app(\App\Services\PublicJourneyContinuation::class)->get()['landing_presentation_id'] ?? null) === $presentation->id ? app(\App\Services\PublicJourneyContinuation::class)->get()['context']['experience_session_id'] ?? null : null) ?? $experienceProps['restoredSessionId']),
                 'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->cover_path ?: $subject->image_path, 'hero'),
             ]);
         }

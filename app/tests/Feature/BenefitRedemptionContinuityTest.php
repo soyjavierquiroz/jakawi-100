@@ -182,11 +182,34 @@ class BenefitRedemptionContinuityTest extends TestCase
 
     public function test_challenge_grant_verification_is_not_removed(): void
     {
-        [$user, $benefit] = $this->scenario();
+        [$user, $benefit, $locations] = $this->scenario();
         $benefit->update(['access_mode' => 'social_challenge_grant']);
         $user->forceFill(['email_verified_at' => null])->save();
         $this->actingAs($user)->get(route('redemptions.intent', $benefit))->assertRedirect(route('verification.notice'));
+        $this->post(route('redemptions.start', $benefit), ['location_id' => $locations->first()->id])->assertRedirect(route('verification.notice'));
         $this->assertDatabaseCount('redemptions', 0);
+        // Verified identity alone cannot substitute for an authorized domain grant.
+        $verified = User::factory()->create();
+        $this->actingAs($verified)->post(route('redemptions.start', $benefit), ['location_id' => $locations->first()->id])->assertSessionHasErrors('redemption');
+        $this->assertDatabaseCount('redemptions', 0);
+    }
+
+    public function test_unverified_owner_reaches_delivery_and_non_owner_is_denied(): void
+    {
+        [$user, $benefit, $locations] = $this->scenario(1);
+        $user->forceFill(['email_verified_at' => null])->save();
+        $this->actingAs($user)->post(route('redemptions.start', $benefit), ['location_id' => $locations->first()->id])->assertRedirect();
+        $redemption = Redemption::sole();
+        $this->get(route('redemptions.show', $redemption->public_id))->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('redemptions/show')->where('redemption.public_id', $redemption->public_id)->where('redemption.status', 'pending'));
+        $this->assertNull($user->fresh()->email_verified_at);
+        $this->actingAs(User::factory()->unverified()->create())->get(route('redemptions.show', $redemption->public_id))->assertForbidden();
+        $this->get('/canjes/nonexistent')->assertNotFound();
+        $this->actingAs($user);
+        $redemption->update(['expires_at' => now()->subMinute()]);
+        $this->get(route('redemptions.show', $redemption->public_id))->assertInertia(fn (Assert $page) => $page
+            ->where('redemption.status', 'expired')->where('redemption.qr_url', null));
+        $this->post('/partner/'.$benefit->partner->slug.'/validar', ['code' => $redemption->code, 'pin' => '123456'])->assertForbidden();
     }
 
     public function test_context_rejects_foreign_locations_and_arbitrary_return_urls(): void

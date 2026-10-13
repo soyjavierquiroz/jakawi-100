@@ -17,7 +17,7 @@ class PublicJourneyContinuation
 
     private const ACTIONS = [
         'EXPERIENCE' => ['RESERVE'],
-        'UNLOCK' => ['COMMIT'],
+        'UNLOCK' => ['COMMIT', 'INTEREST', 'CANCEL', 'CONFIRM'],
         'BENEFIT' => ['REDEEM'],
         'ACQUISITION' => ['APPLY'],
         'SOCIAL_CHALLENGE' => ['PARTICIPATE'],

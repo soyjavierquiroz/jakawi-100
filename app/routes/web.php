@@ -153,15 +153,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('perfil', [MemberProfileController::class, 'show'])->name('consumer.profile');
     Route::get('mi-jakawi/perfil', [MemberProfileController::class, 'show'])->name('member.profile.show');
     Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->name('member.profile.update');
-    Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->name('experiences.reservations.store');
+    Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureContextualActionVerified::class)->name('experiences.reservations.store');
     Route::post('/reservas/{reservation:public_id}/cancelar', [ExperienceReservationController::class, 'cancel'])->name('experiences.reservations.cancel');
     Route::get('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'intent'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureBenefitRedemptionVerified::class)->name('redemptions.intent');
     Route::post('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'start'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureBenefitRedemptionVerified::class)->name('redemptions.start');
-    Route::post('/d/{unlock:slug}/interes', [UnlockController::class, 'interest'])->name('unlocks.interest');
-    Route::post('/d/{unlock:slug}/comprometer', [UnlockController::class, 'commit'])->name('unlocks.commit');
-    Route::post('/d/{unlock:slug}/cancelar', [UnlockController::class, 'cancel'])->name('unlocks.cancel');
-    Route::post('/d/{unlock:slug}/confirmar', [UnlockController::class, 'confirm'])->name('unlocks.confirm');
-    Route::get('/canjes/{redemption:public_id}', [RedemptionController::class, 'show'])->name('redemptions.show');
+    Route::post('/d/{unlock:slug}/interes', [UnlockController::class, 'interest'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureContextualActionVerified::class)->name('unlocks.interest');
+    Route::post('/d/{unlock:slug}/comprometer', [UnlockController::class, 'commit'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureContextualActionVerified::class)->name('unlocks.commit');
+    Route::post('/d/{unlock:slug}/cancelar', [UnlockController::class, 'cancel'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureContextualActionVerified::class)->name('unlocks.cancel');
+    Route::post('/d/{unlock:slug}/confirmar', [UnlockController::class, 'confirm'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureContextualActionVerified::class)->name('unlocks.confirm');
+    Route::get('/canjes/{redemption:public_id}', [RedemptionController::class, 'show'])->withoutMiddleware('verified')->name('redemptions.show');
 });
 
 Route::middleware(['auth', 'verified', 'promoter'])->prefix('promoter')->group(function () {

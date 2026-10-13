@@ -1,0 +1,223 @@
+{
+  "scope": "Isolated jakawi_test; Docker PHP 8.4; final compiled frontend; 390px only",
+  "cases": [
+    {
+      "name": "Guest acquisition → unverified account → isolated membership → explicit safe Benefit redemption → owned Delivery + QR, without generic verification",
+      "pass": true
+    },
+    {
+      "name": "Selected internal Experience reserve attempt → contextual confirmation and CTA; selected session retained; no reservation",
+      "pass": true
+    },
+    {
+      "name": "Unlock explicit attempt → same contextual confirmation; restricted source absent; no commitment or JP mutation",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-benefit",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/manifest.webmanifest",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sw.js",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/jakawi-wordmark.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/icon-192.png",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.ico",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-continuity-benefit/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-continuity-benefit/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/register",
+      "status": 302
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-benefit/activar",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/jakawi-logo.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-benefit/activar",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/manifest.webmanifest",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/jakawi-logo.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/icon-192.png",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/beneficios/qa-continuity-benefit/canjear",
+      "status": 302
+    },
+    {
+      "method": "GET",
+      "path": "/canjes/01M4SP4VC21YP1DK84FB628BCG",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/jakawi-mark.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-experience/activar",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/manifest.webmanifest",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/jakawi-logo.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/icon-192.png",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/experiencias/qa-continuity-experience/reservas",
+      "status": 302
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-experience/activar?verify=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-experience/activar?verify=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/manifest.webmanifest",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/jakawi-logo.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/icon-192.png",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.ico",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/email/verification-notification",
+      "status": 302
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-experience/activar?verify=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-unlock/activar",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/manifest.webmanifest",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/jakawi-logo.svg",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/icon-192.png",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/d/qa-continuity-unlock/comprometer",
+      "status": 302
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-continuity-unlock/activar?verify=1",
+      "status": 200
+    }
+  ],
+  "counts": {
+    "reservations": 0,
+    "participations": 0,
+    "holds": 0,
+    "redemptions": 3,
+    "verified": 0
+  },
+  "result": "PASS"
+}
