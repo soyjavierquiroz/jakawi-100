@@ -1,4 +1,5 @@
 import inertia from '@inertiajs/vite';
+import { inertInertiaUrlBase } from './scripts/inert-inertia-url-base.mjs';
 import { inertiaPages } from './scripts/inertia-pages.mjs';
 import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import babel from '@rolldown/plugin-babel';
@@ -25,6 +26,7 @@ export default defineConfig({
                 }),
             ],
         }),
+        inertInertiaUrlBase(),
         inertia(),
         react(),
         babel({

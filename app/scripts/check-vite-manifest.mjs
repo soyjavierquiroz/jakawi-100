@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inertiaPages } from './inertia-pages.mjs';
+import { checkRuntimeArtifacts } from './check-dev-runtime.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = resolve(process.argv[2] ?? `${root}/public/build/manifest.json`);
@@ -23,6 +24,7 @@ try {
         }
     }
     if (errors.length) throw new Error(errors.join('\n'));
+    checkRuntimeArtifacts(resolve(dirname(manifestPath), '..'));
     console.log(`Vite manifest PASS: ${inertiaPages(root).length} Inertia pages; all assets and dependencies exist.`);
 } catch (error) {
     console.error(error.message);

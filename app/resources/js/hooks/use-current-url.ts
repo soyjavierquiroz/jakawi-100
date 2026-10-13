@@ -28,12 +28,11 @@ export type UseCurrentUrlReturn = {
 
 export function useCurrentUrl(): UseCurrentUrlReturn {
     const page = usePage();
-    const currentUrlPath = new URL(
-        page.url,
-        typeof window !== 'undefined'
-            ? window.location.origin
-            : 'http://localhost',
-    ).pathname;
+    // Inertia supplies a request path or an absolute request URL. Navigation
+    // compares only its pathname; SSR needs no synthetic application origin.
+    const currentUrlPath = page.url.startsWith('/')
+        ? page.url.split(/[?#]/, 1)[0]
+        : new URL(page.url).pathname;
 
     const isCurrentUrl: IsCurrentUrlFn = (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
