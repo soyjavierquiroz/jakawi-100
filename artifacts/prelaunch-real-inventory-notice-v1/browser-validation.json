@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "390 Coming Soon: no notice, index,follow",
+    "390 Partner: exact new copy once, readable, sticky placement unchanged; inventory CTA unobscured",
+    "390 Landing: exact copy once; acquisition input/submit/close controls remain above notice and usable; no submit",
+    "390 Product Detail: exact copy once and noindex",
+    "390 Activation: shared exact notice/noindex, unchanged scope",
+    "390 Delivery: real isolated pending redemption QR generated and unobscured; exact notice once",
+    "PRELAUNCH_MODE=false: notice/noindex hidden in existing Partner route",
+    "Admin quick smoke: 200, no notice"
+  ],
+  "errors": [],
+  "mutations": [],
+  "pass": true
+}

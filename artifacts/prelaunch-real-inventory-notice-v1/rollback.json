@@ -1,0 +1,11 @@
+{
+  "app": {
+    "tag": "jakawi-app:rollback-notice-70b5978",
+    "id": "sha256:8a5e4407fe48067b48ff4653e3f3acbe415c68ad841646b0abaacd4319e85c99"
+  },
+  "web": {
+    "tag": "jakawi-web:rollback-notice-70b5978",
+    "id": "sha256:c5260b553ca61da0e4451247cf0ed22d41e447a622dad561a5e33e57773b9791"
+  },
+  "worker": "sha256:8a5e4407fe48067b48ff4653e3f3acbe415c68ad841646b0abaacd4319e85c99"
+}

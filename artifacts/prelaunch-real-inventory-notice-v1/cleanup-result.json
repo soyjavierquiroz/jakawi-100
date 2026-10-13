@@ -1,0 +1,40 @@
+{
+  "cleanup": true,
+  "available_bytes": 23674617856,
+  "available_gib": 22.0487060546875,
+  "reclaimed_bytes": 7487483904,
+  "reclaimed_gib": 6.973262786865234,
+  "target_reached": true,
+  "removed_images": [
+    {
+      "id": "sha256:9fbbfa3e1c35162c69e7e399c123471340cb7598fdb021b0d853872cb3f1ad76",
+      "tags": [
+        "jakawi-web:release-448d7d2a08fbf8a0de0c8ae5a4a5b1ff06452901"
+      ],
+      "size": 77755147,
+      "output": "Untagged: jakawi-web:release-448d7d2a08fbf8a0de0c8ae5a4a5b1ff06452901\nDeleted: sha256:9fbbfa3e1c35162c69e7e399c123471340cb7598fdb021b0d853872cb3f1ad76\n"
+    },
+    {
+      "id": "sha256:eb90f90f72775678f711dd499a73bd0b37347f97b11b3652966e9511f99a70c1",
+      "tags": [
+        "jakawi-app:release-448d7d2a08fbf8a0de0c8ae5a4a5b1ff06452901"
+      ],
+      "size": 1055206687,
+      "output": "Untagged: jakawi-app:release-448d7d2a08fbf8a0de0c8ae5a4a5b1ff06452901\nDeleted: sha256:eb90f90f72775678f711dd499a73bd0b37347f97b11b3652966e9511f99a70c1\n"
+    }
+  ],
+  "containers_removed": [
+    {
+      "name": "jakawi-json-candidate",
+      "id": "fd361e45a8f281ebca924c7058a73a747493920f2731adb2fd3c774d62dc4b0e",
+      "image": "sha256:eb90f90f72775678f711dd499a73bd0b37347f97b11b3652966e9511f99a70c1"
+    },
+    {
+      "name": "jakawi-vsl-dev-demo",
+      "id": "464d818646aae762f1c27eadf774a0d40678c8db48b9b573f72db42a3adb208a",
+      "image": "sha256:dd3aef472455a33a44f86a1d5d71cfe0193d442e5313016453e7953212027a6d"
+    }
+  ],
+  "networks_removed": [],
+  "volumes_touched": false
+}

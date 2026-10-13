@@ -1,0 +1,8 @@
+   PASS  Tests\Feature\PrelaunchModeTest
+  ✓ root is static coming soon and indexable without inventory           2.32s
+  ✓ landing native fallback and explore remain available with public po… 0.16s
+  ✓ admin and saved preview and auth are excluded                        0.11s
+  ✓ disabling flag restores home and previous public seo                 0.10s
+
+  Tests:    4 passed (133 assertions)
+  Duration: 2.93s

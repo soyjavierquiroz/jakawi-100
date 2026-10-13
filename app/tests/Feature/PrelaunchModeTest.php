@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Challenge;
+use App\Models\Partner;
 use App\Models\User;
 use App\Services\DiscoveryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,7 +41,8 @@ class PrelaunchModeTest extends TestCase
         $challenge->landingPresentations()->create([
             'name' => 'Prelaunch QA', 'slug' => 'prelaunch-qa', 'status' => 'PUBLISHED', 'default_scope' => 'NONE',
         ]);
-        foreach (['/l/prelaunch-qa', '/retos/prelaunch-qa', '/explorar'] as $url) {
+        Partner::factory()->published()->create(['slug' => 'prelaunch-notice-qa']);
+        foreach (['/prelaunch-notice-qa', '/l/prelaunch-qa', '/retos/prelaunch-qa', '/explorar'] as $url) {
             $this->get($url)->assertOk()
                 ->assertSee('<meta data-inertia="robots" name="robots" content="noindex,nofollow">', false)
                 ->assertInertia(fn (Assert $page) => $page->where('prelaunchMode', true)->where('prelaunchPublic', true));
@@ -71,6 +73,8 @@ class PrelaunchModeTest extends TestCase
         $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->component('welcome')
             ->where('prelaunchMode', false)->where('prelaunchPublic', false)->has('discovery'));
         $this->challenge();
+        Partner::factory()->published()->create(['slug' => 'prelaunch-notice-qa']);
+        $this->get('/prelaunch-notice-qa')->assertOk()->assertInertia(fn (Assert $page) => $page->where('prelaunchPublic', false));
         $this->get('/retos/prelaunch-qa')->assertOk()
             ->assertDontSee('<meta data-inertia="robots" name="robots" content="noindex,nofollow">', false)
             ->assertInertia(fn (Assert $page) => $page->where('prelaunchPublic', false));

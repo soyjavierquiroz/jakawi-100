@@ -1,0 +1,2 @@
+Markdown files: 68; relative targets checked: 451; broken: 0
+Markdown files: 1; relative targets checked: 14; broken: 0

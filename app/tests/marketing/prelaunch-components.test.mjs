@@ -24,7 +24,10 @@ test('Coming Soon renders exact copy with no product links, inventory, theme tog
 test('Notice renders commercially truthful, permanent in-flow sticky message without controls', async () => {
     const html = await render(fs.readFileSync('resources/js/components/prelaunch-notice.tsx', 'utf8'));
     assert(html.includes('MODO PRE-LANZAMIENTO'));
-    assert(html.includes('Experiencia ilustrativa. Las ofertas, reservas, canjes y premios mostrados aún no están disponibles comercialmente.'));
+    assert(html.includes('JAKAWI está en pruebas. Algunas experiencias, beneficios y premios pueden estar disponibles únicamente para participantes invitados. Revisa las condiciones de cada propuesta.'));
+    assert(!html.includes('Experiencia ilustrativa'));
+    assert(!html.includes('no están disponibles comercialmente'));
+    assert.equal((html.match(/data-prelaunch-notice/g) ?? []).length, 1);
     assert(html.includes('sticky top-0 z-40'));
     assert(!/<button|<a |fixed|ficticio/.test(html));
 });

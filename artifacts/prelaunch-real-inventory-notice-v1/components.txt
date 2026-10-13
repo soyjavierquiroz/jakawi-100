@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: Coming Soon renders exact copy with no product links, inventory, theme toggle or app navigation
+ok 1 - Coming Soon renders exact copy with no product links, inventory, theme toggle or app navigation
+  ---
+  duration_ms: 142.634574
+  type: 'test'
+  ...
+# Subtest: Notice renders commercially truthful, permanent in-flow sticky message without controls
+ok 2 - Notice renders commercially truthful, permanent in-flow sticky message without controls
+  ---
+  duration_ms: 11.050983
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1045.607436

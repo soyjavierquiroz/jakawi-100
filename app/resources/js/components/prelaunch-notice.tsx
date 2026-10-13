@@ -11,8 +11,9 @@ export default function PrelaunchNotice() {
                     MODO PRE-LANZAMIENTO
                 </p>
                 <p className="text-xs leading-4 sm:leading-5">
-                    Experiencia ilustrativa. Las ofertas, reservas, canjes y premios
-                    mostrados aún no están disponibles comercialmente.
+                    JAKAWI está en pruebas. Algunas experiencias, beneficios y premios
+                    pueden estar disponibles únicamente para participantes invitados.
+                    Revisa las condiciones de cada propuesta.
                 </p>
             </div>
         </aside>
