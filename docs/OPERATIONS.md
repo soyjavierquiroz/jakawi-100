@@ -168,3 +168,7 @@ Cambios sólo documentales: `git diff --check`, revisión de status/stat y enlac
 ## Recuperación y QA documental V1.1
 
 [RUNBOOKS](operations/RUNBOOKS.md) es el índice de recuperación por síntoma; este documento conserva los procedimientos técnicos de backup/deploy/rollback/disco. [PILOT_READINESS](operations/PILOT_READINESS.md) conserva el gate comercial. Para cambios documentales ejecutar `python3 bin/check-docs.py` y `git diff --check`; el checker no usa red, PHP, dependencias adicionales ni pruebas/builds de producto.
+
+## Pre-launch data reset — 2026-10-13
+
+[PRE-LAUNCH DATA RESET V1](operations/PRELAUNCH_DATA_RESET_V1.md) completado: un administrador, catálogo e historial comercial vacíos; schema y configuración preservados. URLs DEMO retiradas (404 esperado, fuera de gates actuales). Inventario real pendiente. Marketing engine y Publisher preservados; Welcome Courtesy FUTURE / OFF. No rebuild ni deploy requerido.
