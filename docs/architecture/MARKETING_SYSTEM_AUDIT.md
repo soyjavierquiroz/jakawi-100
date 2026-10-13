@@ -101,6 +101,8 @@ Editor forbids arbitrary action/CTA URL/kind/payload/endpoint, CSS, sections, pr
 
 **Dynamic Landing creation today: YES for the existing fixed structure in Benefit/Experience/Challenge. PARTIAL for fully editable structured content and the acquisition copy promise.** Create domain product → select in existing form → save → preview → publish already works by code contract. Existing PHP/adapter defaults fill FAQ/steps/conditions; no code change is needed for another ordinary product. Do not rebuild a Publisher to gain capabilities already present.
 
+Single-Landing JSON import/export V1 is implemented for the existing Benefit/Experience/Challenge editor, **pending deployment**. It only patches current editorial form fields; subject, domain truth, audience, campaign, publication and media sources are excluded. Canonical external contract and prompt: [Landing JSON V1](../marketing/LANDING_JSON_V1.md). No AI integration, new Publisher, schema change or Unlock expansion. Acquisition copy remains unconsumed by Micro Opt-in.
+
 ## 5. Domain truth → adapter → activation → delivery
 
 | Domain | Domain truth / landing adapter | Activation and branching | Mutation / Delivery | Status |

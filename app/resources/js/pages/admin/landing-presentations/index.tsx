@@ -1,3 +1,4 @@
+import { LandingJsonControls } from '@/components/marketing/LandingJsonControls';
 import { LandingVideoFields } from '@/components/media/jakawi-vsl-player/LandingVideoFields';
 import type { LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -440,6 +441,29 @@ export default function Index({
                             <h2 className="col-span-full text-xl font-extrabold">
                                 {editing ? 'Editar landing' : 'Nueva landing'}
                             </h2>
+                            {offer && formSubject && (
+                                <LandingJsonControls
+                                    key={`${editing?.id ?? 'new'}:${formSubject.type}:${formSubject.id}`}
+                                    form={form}
+                                    title={formSubject.title}
+                                    fallbackHeadline={
+                                        formSubject.defaults.headline
+                                    }
+                                    hasImage={
+                                        !!(
+                                            form.hero_path ||
+                                            formSubject.defaults.hero_path
+                                        )
+                                    }
+                                    hasVideo={!!video}
+                                    onApply={(patch) =>
+                                        setForm((current) => ({
+                                            ...current,
+                                            ...patch,
+                                        }))
+                                    }
+                                />
+                            )}
                             {section('Landing')}
                             {field('name', 'Nombre interno')}
                             {field('slug', 'Slug único')}
@@ -604,9 +628,23 @@ export default function Index({
                                 </>
                             )}
                             {section('COPY DE CAPTACIÓN')}
-                            {field('acquisition_headline', 'Headline al crear cuenta')}
-                            {field('acquisition_supporting_copy', 'Texto de apoyo', true)}
-                            <p className="text-sm text-muted-foreground">{form.acquisition_headline || formSubject?.defaults.acquisition_headline}<br />{form.acquisition_supporting_copy || formSubject?.defaults.acquisition_supporting_copy}</p>
+                            {field(
+                                'acquisition_headline',
+                                'Headline al crear cuenta',
+                            )}
+                            {field(
+                                'acquisition_supporting_copy',
+                                'Texto de apoyo',
+                                true,
+                            )}
+                            <p className="text-sm text-muted-foreground">
+                                {form.acquisition_headline ||
+                                    formSubject?.defaults.acquisition_headline}
+                                <br />
+                                {form.acquisition_supporting_copy ||
+                                    formSubject?.defaults
+                                        .acquisition_supporting_copy}
+                            </p>
                             {section('Mensaje')}
                             {field('eyebrow', 'Eyebrow')}
                             {field('headline', 'Headline')}

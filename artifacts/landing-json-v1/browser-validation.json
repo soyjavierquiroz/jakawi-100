@@ -1,0 +1,17 @@
+{
+  "scope": "One desktop Admin editor flow. Real Laravel Admin props from DRAFT Benefit fixture in db-test/jakawi_test, rolled back after render. Final compiled frontend served locally; no production access. No Save/Preview/Publish requested.",
+  "checks": [
+    "Full JSON applies editorial fields; domain, audience, campaign and image source unchanged; no save/publish request",
+    "Current unsaved form export matches complete schema; no domain/IDs/status/source paths",
+    "Export → manual change → import restores semantic equivalence",
+    "Partial import preserves missing fields and explicit empty clears",
+    "Unknown/domain fields reject the whole import without state change",
+    "Mismatch warns before apply; cancel works; explicit apply cannot change subject",
+    "Existing effective headline emphasis validation applies",
+    "Copy JSON works",
+    "Client-side .json download works"
+  ],
+  "mutationRequests": [],
+  "errors": [],
+  "result": "PASS"
+}
