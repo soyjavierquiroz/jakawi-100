@@ -72,6 +72,7 @@ export default function ChallengeOfferAdapter({
     noindex,
     ...challengeProps
 }: ChallengeOfferProps) {
+    const { prelaunchPublic } = usePage().props;
     const { auth } = usePage().props as {
         auth: { user?: { id: number } | null };
     };
@@ -246,7 +247,7 @@ export default function ChallengeOfferAdapter({
         <>
             <Head title={offer.hero.headline}>
                 <link rel="canonical" href={canonical} />
-                {noindex && <meta name="robots" content="noindex,follow" />}
+                {noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"} />}
             </Head>
             <OfferConversionTemplate
                 hero={presentation.hero_layout ?? undefined}

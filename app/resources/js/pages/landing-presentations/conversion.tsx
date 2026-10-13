@@ -23,7 +23,7 @@ export default function Conversion() {
     return (
         <DeliveryLayout delivered={result && !props.verificationRequired}>
             <Head title={result ? 'Tu resultado' : 'Continúa tu plan'}>
-                <meta name="robots" content="noindex,nofollow" />
+                <meta head-key="robots" name="robots" content="noindex,nofollow" />
             </Head>
             {!result && (
                 <Link

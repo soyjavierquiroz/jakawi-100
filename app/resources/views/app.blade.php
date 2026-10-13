@@ -3,6 +3,18 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        @if (($page['props']['prelaunchMode'] ?? false) && $page['component'] === 'coming-soon')
+            <title data-inertia="">JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba</title>
+            <meta data-inertia="robots" name="robots" content="index,follow">
+            <link data-inertia="canonical" rel="canonical" href="https://jakawi.com/">
+            <meta data-inertia="description" name="description" content="Beneficios, experiencias, retos y nuevos planes para vivir más Cochabamba. JAKAWI llega pronto.">
+            <meta data-inertia="og:title" property="og:title" content="JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba">
+            <meta data-inertia="og:description" property="og:description" content="Beneficios, experiencias, retos y nuevos planes para vivir más Cochabamba. JAKAWI llega pronto.">
+            <meta data-inertia="og:type" property="og:type" content="website">
+            <meta data-inertia="og:url" property="og:url" content="https://jakawi.com/">
+        @elseif ($page['props']['prelaunchPublic'] ?? false)
+            <meta data-inertia="robots" name="robots" content="noindex,nofollow">
+        @endif
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,7 +63,9 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            @unless ($page['component'] === 'coming-soon')
+                <title>{{ config('app.name', 'Laravel') }}</title>
+            @endunless
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

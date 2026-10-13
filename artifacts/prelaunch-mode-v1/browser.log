@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "390 root: official hero, exact title/canonical, one index,follow, no app navigation/links/notice, no overflow",
+    "390 real isolated Landing: notice permanent/visible, one noindex,nofollow, primary CTA opens acquisition, modal controls above notice, no overflow",
+    "390 authenticated Activation/DeliveryLayout: notice above shell, actions present/uncovered, no overflow, noindex,nofollow",
+    "Inertia client navigation Activation → root: notice removed, robots/canonical restored without hard reload",
+    "1440 root regression: no overflow, no app nav or notice",
+    "Admin authenticated: functional, no notice or Coming Soon shell",
+    "Flag OFF: existing Home/navigation restored, no prelaunch SEO/notice"
+  ],
+  "errors": [],
+  "mutations": [
+    "http://127.0.0.1:8098/analytics/landing-presentations/prelaunch-benefit-qa/cta"
+  ],
+  "banner": {
+    "text": "MODO PRE-LANZAMIENTOExperiencia ilustrativa. Las ofertas, reservas, canjes y premios mostrados aún no están disponibles comercialmente.",
+    "height": 64,
+    "position": "sticky"
+  },
+  "domainActions": 0,
+  "result": "PASS"
+}

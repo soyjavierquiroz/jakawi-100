@@ -172,3 +172,7 @@ Cambios sólo documentales: `git diff --check`, revisión de status/stat y enlac
 ## Pre-launch data reset — 2026-10-13
 
 [PRE-LAUNCH DATA RESET V1](operations/PRELAUNCH_DATA_RESET_V1.md) completado: un administrador, catálogo e historial comercial vacíos; schema y configuración preservados. URLs DEMO retiradas (404 esperado, fuera de gates actuales). Inventario real pendiente. Marketing engine y Publisher preservados; Welcome Courtesy FUTURE / OFF. No rebuild ni deploy requerido.
+
+## Modo público de pre-lanzamiento
+
+`PRELAUNCH_MODE=true`: raíz Coming Soon estática e indexable; recorridos públicos directos disponibles con aviso permanente y `noindex,nofollow`. Admin/preview/auth sin cambios. Default `false` restaura Home/navegación/SEO existentes. Catálogo clean slate, ejemplos reales pendientes; Welcome Courtesy FUTURE / OFF. [Contrato y operación](operations/PRELAUNCH_MODE_V1.md).

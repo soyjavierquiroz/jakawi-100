@@ -82,6 +82,7 @@ export default function ExperienceOfferAdapter({
     preview,
     copy,
 }: ExperienceOfferProps) {
+    const { prelaunchPublic } = usePage().props;
     const externalReservation = Boolean(
         copy.reservationMethod && copy.reservationMethod !== 'jakawi',
     );
@@ -220,7 +221,7 @@ export default function ExperienceOfferAdapter({
         <>
             <Head title={offer.hero.headline}>
                 <link rel="canonical" href={canonical} />
-                {noindex && <meta name="robots" content="noindex,follow" />}
+                {noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"} />}
             </Head>
             <OfferConversionTemplate
                 hero={presentation.hero_layout ?? undefined}

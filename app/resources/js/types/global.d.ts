@@ -9,6 +9,8 @@ declare module 'react' {
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
+            prelaunchMode: boolean;
+            prelaunchPublic: boolean;
             name: string;
             auth: Auth;
             sidebarOpen: boolean;

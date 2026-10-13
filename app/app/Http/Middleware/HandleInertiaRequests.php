@@ -42,6 +42,16 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'metaBrowser' => \Inertia\Inertia::always(fn () => app(\App\Services\Meta\MetaBrowserContext::class)->forRequest($request)),
             'name' => config('app.name'),
+            'prelaunchMode' => \Inertia\Inertia::always((bool) config('jakawi.prelaunch_mode')),
+            'prelaunchPublic' => \Inertia\Inertia::always(
+                (bool) config('jakawi.prelaunch_mode') && $request->routeIs(
+                    'explore', 'benefits.*', 'experiences.*', 'social-challenges.*',
+                    'unlocks.*', 'landing-presentations.*', 'public-landings.*',
+                    'partners.*', 'locations.*', 'cities.*', 'programs.*',
+                    'membership.*', 'mi-jakawi', 'consumer.profile', 'member.profile.*',
+                    'redemptions.intent', 'redemptions.show',
+                ) && ! $request->routeIs('membership.register'),
+            ),
             'newAcquisitionAccount' => $request->user() && $request->session()->get('acquisition_new_user_id') === $request->user()->id,
             'accessEmailQueued' => (bool) $request->session()->get('acquisition_access_email_queued', false),
             'benefitJourney' => fn () => $this->benefitJourney($request),

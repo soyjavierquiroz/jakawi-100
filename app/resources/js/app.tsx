@@ -1,8 +1,8 @@
 import { createInertiaApp } from '@inertiajs/react';
 import { Toaster } from '@/components/ui/sonner';
-import { PwaInstall } from '@/components/pwa-install';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
+import PublicModeLayout from '@/layouts/public-mode-layout';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import PartnerLayout from '@/layouts/partner-layout';
@@ -13,9 +13,14 @@ import MarketingLayout from '@/layouts/marketing-layout';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 void createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => title === 'JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba'
+        ? title
+        : (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
+        const resolveLayout = () => {
         switch (true) {
+            case name === 'coming-soon':
+                return null;
             case name === 'partners/index' || name === 'programs/index':
                 return MarketingLayout;
             case name === 'landing-presentations/unlock' ||
@@ -54,17 +59,15 @@ void createInertiaApp({
             default:
                 return AppLayout;
         }
+        };
+        const layout = resolveLayout();
+        return [PublicModeLayout, ...(Array.isArray(layout) ? layout : layout ? [layout] : [])];
     },
     strictMode: true,
-    withApp(app, { page }) {
+    withApp(app) {
         return (
             <TooltipProvider delayDuration={0}>
                 {app}
-                {page.component !== 'redemptions/show' &&
-                    !(
-                        page.component === 'landing-presentations/conversion' &&
-                        page.props.conversionStage === 'result'
-                    ) && <PwaInstall preview={page.props.preview === true} />}
                 <Toaster />
             </TooltipProvider>
         );

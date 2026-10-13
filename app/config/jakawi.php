@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'prelaunch_mode' => (bool) env('PRELAUNCH_MODE', false),
     'partner_entity_types' => ['organization', 'individual'],
     'partner_types' => ['business', 'professional', 'creator', 'organizer', 'brand', 'other'],
     'location_types' => ['branch', 'venue', 'meeting_point', 'online', 'mobile', 'other'],

@@ -25,6 +25,10 @@ class PublicController extends Controller
 {
     public function home(Request $request, AnalyticsTracker $analytics, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
+        if (config('jakawi.prelaunch_mode')) {
+            return Inertia::render('coming-soon');
+        }
+
         $analytics->homeViewed();
         $city = $selectedCity->resolve($request);
         $membership = $request->user()?->activeMembership()->first();

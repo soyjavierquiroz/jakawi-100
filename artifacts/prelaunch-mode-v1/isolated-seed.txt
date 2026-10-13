@@ -1,0 +1,76 @@
+ Image jakawi-app-test Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 526B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.50kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#3 DONE 0.1s
+
+#4 [internal] load metadata for docker.io/library/composer:2
+#4 DONE 0.1s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 278B done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#7 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.0s done
+#7 DONE 0.0s
+
+#8 [php-base 1/4] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#8 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.1s done
+#8 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 86.24kB 0.1s done
+#6 DONE 0.1s
+
+#9 [php-base 3/4] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#9 CACHED
+
+#10 [php-base 4/4] WORKDIR /var/www/html
+#10 CACHED
+
+#11 [test 3/5] COPY --chown=www-data:www-data app/ ./
+#11 CACHED
+
+#12 [test 4/5] RUN cp .env.example .env     && composer dump-autoload --optimize
+#12 CACHED
+
+#13 [test 2/5] RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#13 CACHED
+
+#14 [test 1/5] COPY app/composer.json app/composer.lock* ./
+#14 CACHED
+
+#15 [php-base 2/4] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-install         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#15 CACHED
+
+#16 [test 5/5] RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && touch .phpunit.result.cache     && chown www-data:www-data .phpunit.result.cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#16 CACHED
+
+#17 exporting to image
+#17 exporting layers 0.0s done
+#17 exporting manifest sha256:14d252236b07ce49f801d4669ce05b84c693581e2c6756911f87bf1c00e03b62 done
+#17 exporting config sha256:3353795e624b7f1d79b86ff1776456eb7768a621a581696d10109198b9bdf485 done
+#17 exporting attestation manifest sha256:c12338645889a51b38c90c00652b8d77e169387d587059d73ae4a95339072065 0.0s done
+#17 exporting manifest list sha256:1d29fe05b29375cb8a9a22fc256f0de67910467c3ee3add5cbe821cdb7e70479 0.0s done
+#17 naming to docker.io/library/jakawi-app-test:latest done
+#17 unpacking to docker.io/library/jakawi-app-test:latest 0.0s done
+#17 DONE 0.3s
+
+#18 resolving provenance for metadata file
+#18 DONE 0.0s
+ Image jakawi-app-test Built 
+ Container jakawi-test-app-test-1 Running 
+ Container jakawi-test-db-test-1 Running 
+ Container jakawi-test-db-test-1 Waiting 
+ Container jakawi-test-db-test-1 Healthy 
+Isolated fixtures created

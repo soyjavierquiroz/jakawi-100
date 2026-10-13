@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
@@ -67,6 +68,7 @@ export default function BenefitOfferAdapter({
     noindex,
     preview,
 }: BenefitOfferProps) {
+    const { prelaunchPublic } = usePage().props;
     const acquire = useAcquisition();
     const continueAction = useLandingAction();
     const sent = useRef(false);
@@ -173,7 +175,7 @@ export default function BenefitOfferAdapter({
         <>
             <Head title={offer.hero.headline}>
                 <link rel="canonical" href={canonical} />
-                {noindex && <meta name="robots" content="noindex,follow" />}
+                {noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"} />}
             </Head>
             <OfferConversionTemplate
                 hero={presentation.hero_layout ?? undefined}
