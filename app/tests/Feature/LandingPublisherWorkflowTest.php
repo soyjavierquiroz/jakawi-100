@@ -53,16 +53,40 @@ class LandingPublisherWorkflowTest extends TestCase
         foreach ($fields as $key => $value) $this->assertEquals($value, $landing->fresh()->getRawOriginal($key), $key);
     }
 
-    public function test_editorial_rejection_is_an_actual_field_error_and_preserves_persisted_version(): void
+    public function test_arcilla_editorial_prose_saves_without_changing_domain_truth(): void
+    {
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        $subject = Experience::factory()->published()->create();
+        $domain = $subject->fresh()->getAttributes();
+        $base = '/admin/experiencias/'.$subject->slug.'/landings';
+        $landing = $subject->landingPresentations()->create(['name' => 'Old', 'slug' => 'old-draft', 'status' => 'DRAFT']);
+        $fields = [
+            'name' => 'Arcilla editorial', 'slug' => 'arcilla-editorial',
+            'headline' => 'DEJA EL SCROLL. ENSÚCIATE LAS MANOS.',
+            'subheadline' => 'Cambia la pantalla por arcilla. Dale forma a una pieza tuya, sin prisas y con alguien que te guíe.',
+            'reward_display_override' => 'No se trata de hacer una pieza perfecta. Se trata de sentarte, tocar la arcilla y ver cómo algo empieza a tomar forma entre tus manos. Materiales incluidos.',
+            'final_cta_description' => 'Una tarde para cambiar el scroll por formas, texturas y una pieza hecha por ti. Propuesta demostrativa.',
+        ];
+        $this->put($base.'/'.$landing->slug, $fields)->assertRedirect($base)->assertSessionHasNoErrors();
+        foreach ($fields as $key => $value) $this->assertSame($value, $landing->fresh()->$key);
+        $this->assertSame($domain, $subject->fresh()->getAttributes());
+        $this->get($base.'/arcilla-editorial/preview')->assertInertia(fn (Assert $page) => $page
+            ->where('offerEditorial.subheadline', $fields['subheadline'])
+            ->where('copy.valueNote', $fields['reward_display_override'])
+            ->where('offerEditorial.finalDescription', $fields['final_cta_description']));
+    }
+
+    public function test_real_editorial_limits_and_structural_security_remain_specific(): void
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
         $subject = Experience::factory()->published()->create();
         $base = '/admin/experiencias/'.$subject->slug.'/landings';
-        $landing = $subject->landingPresentations()->create(['name' => 'Old', 'slug' => 'old-draft', 'status' => 'DRAFT', 'headline' => 'PREVIOUS SAVED COPY']);
-        $this->put($base.'/'.$landing->slug, ['name' => 'Imported', 'slug' => 'imported-slug', 'subheadline' => 'Descubre una forma de crear con arcilla.'])
-            ->assertSessionHasErrors(['subheadline' => 'Los importes, cantidades y condiciones de acceso pertenecen al producto.']);
-        $this->assertSame('Old', $landing->fresh()->name);
-        $this->assertSame('old-draft', $landing->fresh()->slug);
-        $this->assertSame('PREVIOUS SAVED COPY', $landing->fresh()->headline);
+        $fields = ['name' => 'Arcilla', 'slug' => 'arcilla'];
+        $this->post($base, [...$fields, 'reward_display_override' => str_repeat('a', 181)])
+            ->assertSessionHasErrors(['reward_display_override' => 'Copy complementario del valor no debe superar 180 caracteres.']);
+        foreach ([['headline' => '<b>Arcilla</b>'], ['template_key' => 'CUSTOM'], ['marketing_theme' => '#fff'], ['cta_url' => 'https://example.test'], ['action' => 'other'], ['prices' => ['regular_price' => 1]], ['headline' => 'Arcilla', 'headline_emphasis' => 'Missing']] as $invalid) {
+            $this->post($base, [...$fields, ...$invalid])->assertSessionHasErrors(array_keys($invalid)[0] === 'headline' && isset($invalid['headline_emphasis']) ? 'headline_emphasis' : array_keys($invalid)[0]);
+        }
+        $this->assertSame(0, LandingPresentation::count());
     }
 }

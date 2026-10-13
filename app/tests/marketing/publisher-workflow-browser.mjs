@@ -57,13 +57,14 @@ try {
  assert.match(await text(),/● CAMBIOS SIN GUARDAR/);
  report.checks.push('Slug collision has explicit summary and invalid field; first-error focus; entire imported form intact; DB and Preview unchanged');
  await page.screenshot({path:out+'/failed-save-desktop.png',fullPage:true});
- // Actual editorial validation is red; guidance is neutral and has no alert semantics.
- await importJson({...payload,hero:{...payload.hero,supporting_copy:'Descubre una forma de crear con arcilla.'}});
+ // A real server length error uses a human label; neutral guidance is not an error.
+ await page.click('[name="reward_display_override"]',{clickCount:3});await page.keyboard.press('Backspace');await page.type('[name="reward_display_override"]','a'.repeat(181));
  const rejected=await formState();await click('GUARDAR Y PREVISUALIZAR');await page.waitForSelector('#landing-save-errors');await page.waitForNetworkIdle();
- assert.deepEqual(await formState(),rejected);assert.match(await page.$eval('#landing-save-errors',e=>e.textContent),/Los importes, cantidades y condiciones/);
- assert.equal(await page.$eval('[name="subheadline"]',e=>e.getAttribute('aria-invalid')),'true');
+ assert.deepEqual(await formState(),rejected);assert.match(await page.$eval('#landing-save-errors',e=>e.textContent),/Copy complementario del valor/);
+ assert(!(await page.$eval('#landing-save-errors',e=>e.textContent)).includes('reward_display_override'));
+ assert.equal(await page.$eval('[name="reward_display_override"]',e=>e.getAttribute('aria-invalid')),'true');
  const help=await page.$eval('[data-editorial-help]',e=>({role:e.getAttribute('role'),color:getComputedStyle(e).color}));const error=await page.$eval('#landing-save-errors',e=>getComputedStyle(e).color);assert.equal(help.role,null);assert.notEqual(help.color,error);
- report.checks.push('Backend editorial rejection surfaced; values preserved; neutral help differs semantically and visually from real red error');
+ report.checks.push('Real length error surfaced with human value-copy label; values preserved; neutral help differs semantically and visually from red error');
  // Create path must become an editable persisted record without prompting again.
  await click('CANCELAR');await click('CREAR LANDING');await importJson({...payload,internal_name:'Arcilla nueva — demo',slug:'arcilla-new-qa'});
  await click('GUARDAR Y PREVISUALIZAR');await page.waitForFunction(()=>document.body.innerText.includes('✓ LANDING GUARDADA'));await page.waitForNetworkIdle();

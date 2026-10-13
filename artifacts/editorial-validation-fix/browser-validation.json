@@ -1,0 +1,80 @@
+{
+  "scope": "Final built assets + actual authenticated isolated Laravel HTTP save/validation/Preview + jakawi_test DB. Exact three supplied human-review strings. One successful save and one safe slug collision. No production requests or record changes.",
+  "checks": [
+    "Exact Arcilla prose imports; dirty indicator; import does not persist",
+    "Save succeeds with all three formerly rejected fields; success confirmed; summary absent; form and DB exact; automatically refreshed saved Preview contains headline/description/value/closing",
+    "One real slug collision: human label + specific red error, first-field focus, imported prose and Preview preserved; shared neutral help differs from validation error"
+  ],
+  "requests": [
+    {
+      "method": "PUT",
+      "url": "http://127.0.0.1:8098/admin/experiencias/publisher-arcilla-qa/landings/publisher-old-draft",
+      "data": {
+        "name": "Arcilla y manos — adquisición demo",
+        "slug": "arcilla-y-manos-demo",
+        "campaign_key": null,
+        "eyebrow": "CREA CON TUS MANOS",
+        "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+        "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+        "subheadline": "Cambia la pantalla por arcilla. Dale forma a una pieza tuya, sin prisas y con alguien que te guíe.",
+        "hero_path": null,
+        "hero_alt": "Manos trabajando arcilla",
+        "reward_display_override": "No se trata de hacer una pieza perfecta. Se trata de sentarte, tocar la arcilla y ver cómo algo empieza a tomar forma entre tus manos. Materiales incluidos.",
+        "final_cta_headline": "MENOS PANTALLA. MÁS ARCILLA.",
+        "final_cta_description": "Una tarde para cambiar el scroll por formas, texturas y una pieza hecha por ti. Propuesta demostrativa.",
+        "acquisition_headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+        "acquisition_supporting_copy": "Crea tu cuenta y sigue aquí.",
+        "hero_layout": "MEDIA_LED",
+        "density": "COMPACT",
+        "template_key": "OFFER_CONVERSION",
+        "marketing_theme": "DARK_CONVERSION",
+        "media_mode": "IMAGE",
+        "default_scope": "GUESTS",
+        "vsl": null,
+        "subject_type": "EXPERIENCE",
+        "subject_id": 4
+      }
+    },
+    {
+      "method": "PUT",
+      "url": "http://127.0.0.1:8098/admin/experiencias/publisher-arcilla-qa/landings/arcilla-y-manos-demo",
+      "data": {
+        "name": "Arcilla y manos — adquisición demo",
+        "slug": "arcilla-y-manos-demo-collision",
+        "campaign_key": null,
+        "eyebrow": "CREA CON TUS MANOS",
+        "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+        "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+        "subheadline": "Cambia la pantalla por arcilla. Dale forma a una pieza tuya, sin prisas y con alguien que te guíe.",
+        "hero_path": null,
+        "hero_alt": "Manos trabajando arcilla",
+        "reward_display_override": "No se trata de hacer una pieza perfecta. Se trata de sentarte, tocar la arcilla y ver cómo algo empieza a tomar forma entre tus manos. Materiales incluidos.",
+        "final_cta_headline": "MENOS PANTALLA. MÁS ARCILLA.",
+        "final_cta_description": "Una tarde para cambiar el scroll por formas, texturas y una pieza hecha por ti. Propuesta demostrativa.",
+        "acquisition_headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+        "acquisition_supporting_copy": "Crea tu cuenta y sigue aquí.",
+        "hero_layout": "MEDIA_LED",
+        "density": "COMPACT",
+        "template_key": "OFFER_CONVERSION",
+        "marketing_theme": "DARK_CONVERSION",
+        "media_mode": "IMAGE",
+        "default_scope": "GUESTS",
+        "vsl": null,
+        "subject_type": "EXPERIENCE",
+        "subject_id": 4
+      }
+    }
+  ],
+  "responses": [
+    {
+      "status": 303,
+      "method": "PUT"
+    },
+    {
+      "status": 303,
+      "method": "PUT"
+    }
+  ],
+  "errors": [],
+  "result": "PASS"
+}

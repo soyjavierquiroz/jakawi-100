@@ -1,0 +1,9 @@
+
+   PASS  Tests\Feature\LandingPublisherWorkflowTest
+  ✓ mapped import fields persist reload and project into saved preview   2.88s  
+  ✓ arcilla editorial prose saves without changing domain truth          0.14s  
+  ✓ real editorial limits and structural security remain specific        0.22s  
+
+  Tests:    3 passed (155 assertions)
+  Duration: 3.59s
+

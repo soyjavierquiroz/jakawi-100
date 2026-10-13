@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: full JSON maps exactly the seventeen existing editorial fields
+ok 1 - full JSON maps exactly the seventeen existing editorial fields
+  ---
+  duration_ms: 6.336155
+  type: 'test'
+  ...
+# Subtest: partial import changes only supplied fields
+ok 2 - partial import changes only supplied fields
+  ---
+  duration_ms: 0.969862
+  type: 'test'
+  ...
+# Subtest: missing fields preserve form and media sources
+ok 3 - missing fields preserve form and media sources
+  ---
+  duration_ms: 0.207194
+  type: 'test'
+  ...
+# Subtest: empty optional string clears; required strings and null reject
+ok 4 - empty optional string clears; required strings and null reject
+  ---
+  duration_ms: 0.60046
+  type: 'test'
+  ...
+# Subtest: unknown nested and top-level fields reject entire import without mutation
+ok 5 - unknown nested and top-level fields reject entire import without mutation
+  ---
+  duration_ms: 0.559642
+  type: 'test'
+  ...
+# Subtest: domain, action, publication, subject and arbitrary style keys reject
+ok 6 - domain, action, publication, subject and arbitrary style keys reject
+  ---
+  duration_ms: 0.404428
+  type: 'test'
+  ...
+# Subtest: enums, template, JSON and object shapes are strict
+ok 7 - enums, template, JSON and object shapes are strict
+  ---
+  duration_ms: 0.353412
+  type: 'test'
+  ...
+# Subtest: subject hint warns before apply, informational only, normalized match allowed
+ok 8 - subject hint warns before apply, informational only, normalized match allowed
+  ---
+  duration_ms: 3.093906
+  type: 'test'
+  ...
+# Subtest: export uses current unsaved state and excludes all other state
+ok 9 - export uses current unsaved state and excludes all other state
+  ---
+  duration_ms: 0.583097
+  type: 'test'
+  ...
+# Subtest: export/manual change/import restores semantic editorial equivalence
+ok 10 - export/manual change/import restores semantic editorial equivalence
+  ---
+  duration_ms: 0.719557
+  type: 'test'
+  ...
+# Subtest: import contract has no save or publish path and does not mutate input
+ok 11 - import contract has no save or publish path and does not mutate input
+  ---
+  duration_ms: 0.376075
+  type: 'test'
+  ...
+# Subtest: existing plain text, length and effective emphasis constraints apply to merged candidate
+ok 12 - existing plain text, length and effective emphasis constraints apply to merged candidate
+  ---
+  duration_ms: 0.254133
+  type: 'test'
+  ...
+# Subtest: Admin error summaries use human labels including value copy and nested/unknown controls
+ok 13 - Admin error summaries use human labels including value copy and nested/unknown controls
+  ---
+  duration_ms: 0.830067
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 140.751874

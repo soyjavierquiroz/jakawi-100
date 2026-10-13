@@ -1,6 +1,7 @@
 import { LandingJsonControls } from '@/components/marketing/LandingJsonControls';
 import { LandingVideoFields } from '@/components/media/jakawi-vsl-player/LandingVideoFields';
 import type { LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
+import { landingEditorFieldLabel } from '@/lib/landing-editor-labels';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '../layout';
@@ -49,17 +50,6 @@ const empty = {
     marketing_theme: 'LIGHT_CONVERSION',
     media_mode: 'IMAGE',
     default_scope: 'NONE',
-};
-const fieldLabels: Record<string, string> = {
-    name: 'Nombre interno',
-    slug: 'Slug único',
-    headline: 'Headline',
-    headline_emphasis: 'Texto destacado',
-    subheadline: 'Descripción editorial',
-    media_mode: 'Media',
-    vsl: 'Video',
-    final_cta_headline: 'Titular final',
-    final_cta_description: 'Texto de apoyo final',
 };
 const signature = (
     form: Record<string, string>,
@@ -603,8 +593,10 @@ export default function Index({
                                         {Object.entries(saveErrors).map(
                                             ([key, message]) => (
                                                 <li key={key}>
-                                                    {fieldLabels[key] ?? key}:{' '}
-                                                    {message}
+                                                    {landingEditorFieldLabel(
+                                                        key,
+                                                    )}
+                                                    : {message}
                                                 </li>
                                             ),
                                         )}
@@ -833,8 +825,8 @@ export default function Index({
                                 data-editorial-help
                                 className="col-span-full text-sm text-muted-foreground"
                             >
-                                Los importes, cantidades y condiciones de acceso
-                                pertenecen al producto.
+                                Los datos comerciales y condiciones se toman
+                                automáticamente del producto.
                             </p>
                             {field('eyebrow', 'Eyebrow')}
                             {field('headline', 'Headline')}

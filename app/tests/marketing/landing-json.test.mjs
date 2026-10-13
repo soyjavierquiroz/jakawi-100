@@ -86,6 +86,8 @@ test('unknown nested and top-level fields reject entire import without mutation'
 test('domain, action, publication, subject and arbitrary style keys reject', () => {
     for (const key of [
         'price',
+        'member_price',
+        'validity',
         'prices',
         'dates',
         'membership_required',
@@ -204,4 +206,14 @@ test('existing plain text, length and effective emphasis constraints apply to me
         parse({ hero: { headline: 'Nuevo mensaje', headline_emphasis: '' } })
             .ok,
     );
+});
+
+test('Admin error summaries use human labels including value copy and nested/unknown controls', async () => {
+    const { landingEditorFieldLabel } = await import(process.env.LANDING_EDITOR_LABELS_MODULE);
+    assert.equal(landingEditorFieldLabel('reward_display_override'), 'Copy complementario del valor');
+    assert.equal(landingEditorFieldLabel('subheadline'), 'Descripción editorial');
+    assert.equal(landingEditorFieldLabel('final_cta_description'), 'Texto de apoyo final');
+    assert.equal(landingEditorFieldLabel('acquisition_headline'), 'Headline al crear cuenta');
+    assert.equal(landingEditorFieldLabel('vsl.source.url'), 'Configuración de video');
+    assert.equal(landingEditorFieldLabel('unknown_internal_field'), 'Configuración de la landing');
 });

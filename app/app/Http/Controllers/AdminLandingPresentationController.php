@@ -64,14 +64,6 @@ class AdminLandingPresentationController extends Controller
                 $fail('Usa texto plano, sin HTML ni Markdown.');
             }
         };
-        $editorial = function ($attribute, $value, $fail) use ($target, $presentation) {
-            if ($value === $presentation?->getAttribute($attribute) || ($attribute === 'headline' && $value === $target->title) || ($attribute === 'subheadline' && $value === $target->short_description)) {
-                return;
-            }
-            if (is_string($value) && preg_match('/\d|%|\b(?:gratis|gratuito|sin membresía|sin límites|precio|cupos|garantizado|cero|uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|cien|mil|doble)\b/iu', $value)) {
-                $fail('Los importes, cantidades y condiciones de acceso pertenecen al producto.');
-            }
-        };
         $rules = [
             ...LandingVideoConfiguration::rules(),
             'name' => ['required', 'string', 'max:255'],
@@ -80,13 +72,13 @@ class AdminLandingPresentationController extends Controller
             'acquisition_headline' => ['nullable', 'string', 'max:180', $plain],
             'acquisition_supporting_copy' => ['nullable', 'string', 'max:1000', $plain],
             'eyebrow' => ['nullable', 'string', 'max:100', $plain],
-            'headline' => ['nullable', 'string', 'max:180', $plain, $editorial],
+            'headline' => ['nullable', 'string', 'max:180', $plain],
             'headline_emphasis' => ['nullable', 'string', 'max:180', $plain],
-            'subheadline' => ['nullable', 'string', 'max:1000', $plain, $editorial],
+            'subheadline' => ['nullable', 'string', 'max:1000', $plain],
             'hero_path' => ['nullable', 'string', 'max:2048'], 'hero_alt' => ['nullable', 'string', 'max:255', $plain],
-            'reward_display_override' => ['nullable', 'string', 'max:180', $plain, $editorial],
-            'final_cta_headline' => ['nullable', 'string', 'max:180', $plain, $editorial],
-            'final_cta_description' => ['nullable', 'string', 'max:1000', $plain, $editorial],
+            'reward_display_override' => ['nullable', 'string', 'max:180', $plain],
+            'final_cta_headline' => ['nullable', 'string', 'max:180', $plain],
+            'final_cta_description' => ['nullable', 'string', 'max:1000', $plain],
             'default_scope' => ['sometimes', Rule::in(LandingPresentation::SCOPES)],
             'template_key' => $offer ? ['sometimes', 'required', Rule::enum(LandingTemplate::class)] : ['prohibited'],
             'marketing_theme' => $offer ? ['sometimes', 'required', Rule::enum(MarketingTheme::class)] : ['prohibited'],
@@ -114,11 +106,27 @@ class AdminLandingPresentationController extends Controller
             };
             $rules['vsl.theme'][] = Rule::in(['inherit', $presentation?->vsl['theme'] ?? 'inherit']);
         }
-        $data = $request->validate($rules, [
+        $messages = [
             'name.required' => 'El nombre interno es obligatorio.',
             'slug.required' => 'El slug es obligatorio.',
             'slug.unique' => 'El slug "'.$request->input('slug').'" ya está en uso.',
             'slug.alpha_dash' => 'El slug solo admite letras, números, guiones y guiones bajos.',
+        ];
+        foreach ($rules as $field => $fieldRules) {
+            if (in_array('string', $fieldRules, true)) {
+                $messages[$field.'.max'] = ':attribute no debe superar :max caracteres.';
+            }
+        }
+        $data = $request->validate($rules, $messages, [
+            'name' => 'Nombre interno', 'slug' => 'Slug único', 'campaign_key' => 'Campaign key',
+            'eyebrow' => 'Eyebrow', 'headline' => 'Headline', 'headline_emphasis' => 'Texto destacado',
+            'subheadline' => 'Descripción editorial', 'reward_display_override' => 'Copy complementario del valor',
+            'final_cta_headline' => 'Titular final', 'final_cta_description' => 'Texto de apoyo final',
+            'acquisition_headline' => 'Headline al crear cuenta', 'acquisition_supporting_copy' => 'Texto de apoyo',
+            'hero_path' => 'Referencia del visual', 'hero_alt' => 'Descripción del visual',
+            'hero_layout' => 'Hero', 'density' => 'Densidad', 'template_key' => 'Template',
+            'marketing_theme' => 'Theme', 'media_mode' => 'Media', 'default_scope' => 'Audiencia al publicar',
+            'subject_type' => 'Tipo de producto', 'subject_id' => 'Producto', 'vsl' => 'Video', 'vsl.*' => 'Configuración de video',
         ]);
         // Project the candidate through the same presenter used by preview.
         $candidate = $presentation ? clone $presentation : new LandingPresentation;
