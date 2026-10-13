@@ -1,6 +1,6 @@
 # Verification Continuity V1
 
-Undeployed change based on clean origin/main `158769f01010e521377a47e0e3e62858fd51cdc1` (marketing architecture audit). No production database or application deployment was changed.
+LIVE production SHA `715af599073e359509ef7c68e188d2aba4b4da20`, deployed from actual production/rollback base `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`. Implementation based on clean origin/main `158769f01010e521377a47e0e3e62858fd51cdc1` (marketing architecture audit). Production application cut over once; production schema and domain records were unchanged.
 
 - Benefit: authenticated owner may view Delivery unverified. Ownership, expiration, grants, redemption rules and partner validation remain protected.
 - Experience: internal reservation identity boundary explicitly enforced; contextual verification retains the selected session and returns to Activation without reserving. External result needs no verification.
@@ -20,3 +20,5 @@ Validation:
 - Documentation and whitespace checks: PASS.
 
 Authoritative boundaries and policy decision: [audit](../../docs/architecture/MARKETING_SYSTEM_AUDIT.md), [current architecture](../../docs/ARCHITECTURE.md).
+
+Production release evidence: [reconciliation, images, read-only smoke, health and counts](production-release.json). One build, no intermediate redeploy, no migrations/backup/seed, no cleanup. Live smoke inventory limits and in-memory projections are explicitly recorded. Documentation update only; no rebuild/redeploy.

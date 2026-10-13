@@ -1,7 +1,7 @@
 # JAKAWI — estado actual de producción
 
 **STATUS: CURRENT / AUTHORITATIVE.** Última referencia operativa registrada: 2026-10-13 UTC (2026-10-12 America/La_Paz). El audit documental de 2026-10-12 no revalidó runtime ni despliegue.
-Código productivo LIVE: `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`.
+Código productivo LIVE: `715af599073e359509ef7c68e188d2aba4b4da20`. Base productiva real inmediatamente anterior: `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`; no se redesplegaron releases intermedias.
 Base productiva anterior y rollback protegido: `f2b488b7e634782d3aa21dae987596d96b30d28c`.
 Acquisition Funnel V1 y Landing-first Journey V1 están LIVE. Producción pre-launch contiene tres LandingPresentations DEMO publicadas como ALL para evaluación de producto; son sintéticas y no comerciales, no inventario de lanzamiento.
 
@@ -154,3 +154,10 @@ Challenge permite join explícito sin email verificado; el final opt-in con inte
 ## Challenge direct join — LIVE
 
 Activación requiere elección operativa real. Challenge actual: CTA explícito → join → Delivery; el final guest «QUIERO PARTICIPAR» conserva `intended_action=PARTICIPATE`, validado tras autenticar. Signup genérico y GET no participan. Sunset fecha y Café sucursal preservados; Delivery V1.1 y Unlock sin cambio. Release `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`, un build limpio y cero mutaciones nuevas en producción; DB/v2proof intactos, CRM TRUE y Meta OFF. [Validación y release](../artifacts/challenge-direct-join/INDEX.md).
+
+
+## Verification Continuity V1 — LIVE
+
+Release de 2026-10-13 (America/La_Paz): `715af599073e359509ef7c68e188d2aba4b4da20`, desde runtime real `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`. Delta: dos commits documentales y el fix de continuidad; sin migraciones nuevas/pendientes ni cambios Docker/Compose/config. Un build limpio; rollback exacto de 7cdc protegido; sin backup, migrate, seed ni rollback ejecutado. Benefit Delivery propia admite owner sin verificar; Experience interno y Unlock comprueban `hasVerifiedEmail()` explícitamente antes de mutaciones protegidas y mantienen retorno contextual sin replay. Challenge join sin verificación y evidencia/premio protegidos, sin cambios. `User` sigue sin `MustVerifyEmail`; no reinterpretación global. Account access y verificación siguen separados.
+
+Gates live: `/up` local/público 200/200; Café/Sunset/Reto Cena y fallback 200; assets compilados, manifest PASS, public/hot ausente, sin dev refs. Smoke read-only: canje existente con estado de correo proyectado en memoria y no-owner denegado; Experience interno proyectado sobre Landing/sesión publicada, con retorno contextual; handoff externo sin verificación; guard Unlock y source protegido. Límites del inventario real: Landing interna Experience DRAFT; no Unlock activo con Landing publicada. No se publicó ni creó inventario para QA; los flujos contextuales completos se validaron antes en datos aislados. Cero mutaciones nuevas de redemptions/reservas/participaciones/evidencia/rewards/Unlock/membresías/JP/outcomes Growth. App/DB healthy, web/worker running, cron activo; V2PROOF y DB intactos; failed jobs 3 históricos/0 nuevos; CRM TRUE, Meta provider/browser/CAPI OFF. [Evidencia](../artifacts/verification-continuity-v1/production-release.json). El [audit de marketing](architecture/MARKETING_SYSTEM_AUDIT.md) permanece autoritativo. Welcome Courtesy: FUTURE / OFF / NOT IMPLEMENTED. Las secciones de releases anteriores son historia, no el runtime vigente.
