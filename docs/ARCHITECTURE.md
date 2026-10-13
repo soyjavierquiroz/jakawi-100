@@ -157,4 +157,4 @@ La validación detectó que `User` no implementa `MustVerifyEmail`, por lo que l
 
 ## Modo público de pre-lanzamiento
 
-`PRELAUNCH_MODE=true`: raíz Coming Soon estática e indexable; recorridos públicos directos disponibles con aviso permanente y `noindex,nofollow`. Admin/preview/auth sin cambios. Default `false` restaura Home/navegación/SEO existentes. Catálogo clean slate, ejemplos reales pendientes; Welcome Courtesy FUTURE / OFF. [Contrato y operación](operations/PRELAUNCH_MODE_V1.md).
+**PRELAUNCH MODE V1 LIVE.** `PRELAUNCH_MODE=true`: raíz Coming Soon estática e indexable; recorridos públicos directos disponibles con aviso permanente y `noindex,nofollow`. Admin/preview/auth sin cambios. Default `false` restaura Home/navegación/SEO existentes. Catálogo clean slate, ejemplos reales pendientes; Welcome Courtesy FUTURE / OFF. [Contrato y operación](operations/PRELAUNCH_MODE_V1.md).

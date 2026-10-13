@@ -1,0 +1,45 @@
+{
+  "public": [
+    {
+      "path": "/",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "path": "/up",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "path": "/beneficios",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "path": "/admin",
+      "status": 302,
+      "expected": 302
+    },
+    {
+      "path": "/l/qa-calibration-benefit-value",
+      "status": 404,
+      "expected": 404
+    },
+    {
+      "path": "/l/qa-calibration-experience-desire",
+      "status": 404,
+      "expected": 404
+    },
+    {
+      "path": "/l/qa-calibration-challenge-action",
+      "status": 404,
+      "expected": 404
+    },
+    {
+      "path": "/beneficios/demo-beneficio-04",
+      "status": 404,
+      "expected": 404
+    }
+  ],
+  "local_up": 200
+}

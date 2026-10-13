@@ -1,0 +1,94 @@
+{
+  "status": "LIVE",
+  "date": "2026-10-13",
+  "timezone": "America/La_Paz",
+  "previous_runtime": "ba25043f2cb35b7e7feae12a4f234792cbf84c66",
+  "supplied_expected_runtime": "642dbd7c5ea6ed1d605fdba546cf19476b865013",
+  "baseline_origin_main": "5eb59b8",
+  "deployed_sha": "b386cf4882b86269fe6d1d5c2cc563cd1d64f0c7",
+  "images": {
+    "app": {
+      "id": "sha256:8f3cd9ebccb6c08a3ea46fee0728597469816671b20607c53aa3a5dafee3edaf",
+      "revision": "b386cf4882b86269fe6d1d5c2cc563cd1d64f0c7"
+    },
+    "web": {
+      "id": "sha256:e1711b01c9c168cea927620be1e8244ae91f7495e2738aaca91078bce28c56ce",
+      "revision": "b386cf4882b86269fe6d1d5c2cc563cd1d64f0c7"
+    }
+  },
+  "worker_image": "sha256:8f3cd9ebccb6c08a3ea46fee0728597469816671b20607c53aa3a5dafee3edaf",
+  "production_builds": 1,
+  "final_frontend_validation_builds": 1,
+  "rollback": {
+    "app": "jakawi-app:rollback-prelaunch-ba25043",
+    "web": "jakawi-web:rollback-prelaunch-ba25043",
+    "compose_file": "/tmp/jakawi-prelaunch-release/rollback.yaml",
+    "flag_before": "ABSENT"
+  },
+  "recreated": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "db_and_v2proof_unchanged": true,
+  "prelaunch_mode": true,
+  "root": {
+    "coming_soon": true,
+    "normal_product_navigation": false,
+    "catalog_dependency": false,
+    "robots": "index,follow",
+    "canonical": "https://jakawi.com/"
+  },
+  "direct_public": {
+    "routes_preserved": true,
+    "notice": true,
+    "robots": "noindex,nofollow",
+    "record_dependent_proof": "isolated DB + component tests only; live safe empty Benefit listing",
+    "domain_semantics_changed": false
+  },
+  "notice_hidden": [
+    "root",
+    "Admin",
+    "Admin Preview",
+    "auth"
+  ],
+  "normal_mode_restoration": "PASS isolated backend + browser",
+  "migrations_executed": 0,
+  "catalog_records_created": 0,
+  "production_domain_mutations": 0,
+  "qa": {
+    "backend_tests": 4,
+    "backend_assertions": 112,
+    "frontend_render_tests": 2,
+    "typescript": "PASS",
+    "browser_390": "PASS root/Landing/acquisition/Activation",
+    "browser_1440": "PASS root/Admin",
+    "inertia_navigation": "PASS",
+    "docs": "PASS",
+    "diff": "PASS",
+    "final_build": "PASS",
+    "manifest_pages": 104,
+    "semantic_dev_runtime_guard": "PASS"
+  },
+  "health": {
+    "up_local": 200,
+    "up_public": 200,
+    "app": "healthy",
+    "db": "healthy",
+    "web": "running",
+    "worker": "running",
+    "v2proof": "unchanged/healthy",
+    "scheduler": "active",
+    "failed_jobs": 0,
+    "CRM": true,
+    "Meta": "OFF"
+  },
+  "disk_available_gib": {
+    "before_required_build": 16.17,
+    "after": 15.77
+  },
+  "cleanup": false,
+  "Welcome_Courtesy": "FUTURE / OFF",
+  "result": "JAKAWI PRELAUNCH MODE LIVE — READY FOR REAL INVENTORY LAB",
+  "docs_followup_redeploy": false
+}

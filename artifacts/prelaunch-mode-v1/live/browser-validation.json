@@ -1,0 +1,12 @@
+{
+  "scope": "Live public HTTPS and read-only authenticated production Admin kernel render with deployed web assets. No production catalog creation, form submission or domain action.",
+  "checks": [
+    "Live 390 HTTPS root: 200, Coming Soon, no nav/links/notice/PWA prompt, exact title/canonical, index,follow, no overflow",
+    "Live safe empty public Benefit listing: 200, shared notice, noindex,nofollow; no catalog records created",
+    "Live 1440 root regression PASS",
+    "Live read-only authenticated Admin: 200, deployed assets render, no notice/Coming Soon"
+  ],
+  "errors": [],
+  "mutations": [],
+  "result": "PASS"
+}

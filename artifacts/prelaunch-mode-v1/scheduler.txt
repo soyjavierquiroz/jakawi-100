@@ -1,0 +1,14 @@
+  ⇂ '/usr/local/bin/php' 'artisan' crm:dispatch > '/dev/null' 2>&1  
+
+
+  2026-10-13 22:28:02 Running ['artisan' unlocks:expire] ....... 367.54ms DONE
+  ⇂ '/usr/local/bin/php' 'artisan' unlocks:expire > '/dev/null' 2>&1  
+  2026-10-13 22:28:02 Running ['artisan' challenges:refresh-rankings]  260.44ms DONE
+  ⇂ '/usr/local/bin/php' 'artisan' challenges:refresh-rankings > '/dev/null' 2>&1  
+  2026-10-13 22:28:03 Running ['artisan' challenges:close-expired]  240.31ms DONE
+  ⇂ '/usr/local/bin/php' 'artisan' challenges:close-expired > '/dev/null' 2>&1  
+  2026-10-13 22:28:03 Running ['artisan' growth:dispatch-meta] . 215.29ms DONE
+  ⇂ '/usr/local/bin/php' 'artisan' growth:dispatch-meta > '/dev/null' 2>&1  
+  2026-10-13 22:28:03 Running ['artisan' crm:dispatch] ......... 250.18ms DONE
+  ⇂ '/usr/local/bin/php' 'artisan' crm:dispatch > '/dev/null' 2>&1  
+
