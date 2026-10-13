@@ -13,6 +13,7 @@ type Subject = {
     slug: string;
     defaults: Record<string, string>;
     truth: { label: string; value: string }[];
+    aiBrief: Record<string, unknown> | null;
 };
 type Presentation = {
     id: number;
@@ -444,6 +445,7 @@ export default function Index({
                             {offer && formSubject && (
                                 <LandingJsonControls
                                     key={`${editing?.id ?? 'new'}:${formSubject.type}:${formSubject.id}`}
+                                    brief={formSubject.aiBrief}
                                     form={form}
                                     title={formSubject.title}
                                     fallbackHeadline={

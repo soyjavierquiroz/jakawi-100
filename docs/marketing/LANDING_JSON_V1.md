@@ -4,7 +4,7 @@
 
 ## Purpose and workflow
 
-External GPT → strict JSON → IMPORTAR JSON → existing Admin fields → human review → existing GUARDAR → PREVIEW → PUBLICAR. No AI API, server upload, automatic save, preview or publication. Select an existing product in JAKAWI first; importing cannot select or change it.
+Normal production workflow: JAKAWI → COPIAR BRIEF PARA IA → external GPT configured once with the [master prompt](AI_LANDING_COPYWRITER.md) → jakawi-landing-v1 → IMPORTAR JSON → review → media → preview → save/publish. Operators normally paste only the [product brief](AI_PRODUCT_BRIEF_V1.md), without manually composing JSON. Manual JSON and partial imports remain supported. No AI API, server upload, automatic save, preview or publication. Select an existing product in JAKAWI first; importing cannot select or change it.
 
 In the editor, IMPORTAR JSON opens a paste dialog. VALIDAR Y APLICAR validates the entire candidate before changing React form state. Errors list incompatible paths; no field changes on failure. CANCELAR discards the import. A differing nonempty `subject_hint` shows both titles before applying; APLICAR DE TODAS FORMAS permits it without changing the subject. Matching ignores case, accents and repeated whitespace.
 
@@ -120,38 +120,14 @@ The rest of the form is untouched. When replacing a headline, include a compatib
 
 All four forbidden keys are reported. Even the valid eyebrow is **not applied**.
 
-## Recommended external GPT prompt
+## External GPT configuration
 
-Copy this prompt together with an exported example and the selected product's name. It is documentation only; JAKAWI does not run it.
-
-```text
-You generate JAKAWI Landing editorial configuration for the product selected by a human.
-Return ONLY a valid JSON object with schema_version "jakawi-landing-v1".
-No Markdown, explanations, nulls, arrays or unlisted keys. Partial JSON is allowed.
-Do not invent or modify domain facts: price, discount, amounts, dates, partner,
-eligibility, membership, conditions, rules, rewards, sessions or locations.
-Optimize persuasive plain-text copy and approved presentation controls only.
-Never include subject IDs, status, audience, campaign_key, CTA/action endpoints,
-CSS/colors, HTML, image paths, asset IDs or video URLs.
-Allowed keys (optional except schema_version):
-subject_hint (informational title, max 255), internal_name (nonempty, max 255),
-slug (nonempty letters/numbers/_/-, max 255), template (OFFER_CONVERSION),
-presentation: {theme: LIGHT_CONVERSION|DARK_CONVERSION,
-hero_layout: OFFER_FIRST|MEDIA_LED, density: STANDARD|COMPACT},
-hero: {eyebrow (100), headline (180), headline_emphasis (180; headline substring),
-supporting_copy (1000)}, value: {supporting_copy (180)},
-acquisition: {headline (180), supporting_copy (1000)},
-closing: {headline (180), supporting_copy (1000)},
-media: {mode: IMAGE|VSL|NONE, alt (255)}.
-All leaf values are strings. Omit keys to retain current values; use "" only to
-clear optional text. A changed headline must keep a compatible emphasis or clear it.
-Use the accompanying exported JSON as the shape and baseline.
-```
+Configure the GPT once with the complete [JAKAWI copywriter master prompt](AI_LANDING_COPYWRITER.md). For each product, paste only the JSON from COPIAR BRIEF PARA IA. A reference Landing, exported example and repeated schema paste are not required. JAKAWI does not call or run the GPT.
 
 ## Current limitation and roadmap
 
 Acquisition copy imports/exports the existing persisted `acquisition_headline` and `acquisition_supporting_copy`. **Micro Opt-in does not yet consume them.** Wiring them is a separate next task, outside V1.
 
-V1: single-Landing JSON import/export. V1.1 candidate: COPIAR BRIEF PARA IA derived from domain truth. Future only after individual V1 survives real usage: `jakawi-landing-batch-v1` for batch imports/draft creation. No arrays, bulk creation, product lookup or multi-product assignment now. Welcome Courtesy: **FUTURE / OFF**.
+V1: single-Landing JSON import/export. AI Product Brief V1: COPIAR BRIEF PARA IA derived from domain truth, implemented for review; pending deploy. Future only after individual V1 survives real usage: `jakawi-landing-batch-v1` for batch imports/draft creation. No arrays, bulk creation, product lookup or multi-product assignment now. Welcome Courtesy: **FUTURE / OFF**.
 
 See the authoritative [Marketing System Audit](../architecture/MARKETING_SYSTEM_AUDIT.md), [parser/exporter](../../app/resources/js/lib/landing-json.ts), [editor controls](../../app/resources/js/components/marketing/LandingJsonControls.tsx) and [focused tests](../../app/tests/marketing/landing-json.test.mjs).

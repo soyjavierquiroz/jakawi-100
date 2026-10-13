@@ -1,0 +1,11 @@
+{
+  "scope": "Final compiled frontend and isolated authenticated Laravel Admin props from current peinado DEMO public snapshot. Fixtures rolled back. No deploy. No external AI.",
+  "checks": [
+    "Button order; one-click real clipboard; valid 2-space UTF-8 JSON; current peinado authoritative title/value/access/validity/requirements/conditions/disclosure; archived availability and missing published locations respected; no identifiers",
+    "Clipboard-denied manual fallback; unchanged entire form including campaign and audience; zero requests during copy; no save/publish/AI calls"
+  ],
+  "mutationRequests": [],
+  "requestsDuringCopy": [],
+  "errors": [],
+  "result": "PASS"
+}
