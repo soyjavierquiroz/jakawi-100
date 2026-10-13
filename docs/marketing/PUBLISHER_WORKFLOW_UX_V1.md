@@ -16,7 +16,7 @@ PUBLICAR with unsaved editor changes is blocked with `GUARDA TUS CAMBIOS ANTES D
 
 When IMAGE is selected, the Media section shows the currently resolved saved/product image, using the same authoritative asset and MediaUrl service as Preview. The existing reference input remains available for replacement; a newly typed reference is verified by saving. No media library is added.
 
-A larger Publisher UX V2 split-pane remains optional future polish. [Validation and reproduction](../../artifacts/publisher-workflow-ux-v1/validation.md).
+Publisher UX V2 is implemented and validated for a future deployment: [desktop workspace and operator workflow](PUBLISHER_WORKSPACE_UX_V2.md). Production remains on V1 until that deployment. [Validation and reproduction](../../artifacts/publisher-workflow-ux-v1/validation.md).
 
 [Production release](../../artifacts/publisher-workflow-ux-v1/production-release.json): one build, no migrations or domain mutations; protected rollback; real deployed Admin DRAFT smoke PASS, temporary record removed. No rebuild/redeploy for the documentation followup. Landing JSON V1 and AI Product Brief V1: LIVE. Batch: FUTURE. Welcome Courtesy: FUTURE / OFF.
 

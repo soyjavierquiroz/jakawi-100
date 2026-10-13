@@ -1,0 +1,1 @@
+PASS: app/node_modules/.bin/tsc --noEmit --project app/tsconfig.json (exit 0, no errors).

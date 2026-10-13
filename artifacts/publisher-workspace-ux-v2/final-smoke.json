@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "Final compiled desktop workspace, named saved Preview, actual 390 canvas, collapsed truth, sticky toolbar and visible current image; no overflow",
+    "Final compiled 390 Admin stacks; toolbar does not cover controls; all Preview sizes fit without overflow or save requests"
+  ],
+  "mutations": [],
+  "errors": [],
+  "result": "PASS"
+}

@@ -1,3 +1,4 @@
+import { LandingPreviewPane } from '@/components/marketing/LandingPreviewPane';
 import { LandingJsonControls } from '@/components/marketing/LandingJsonControls';
 import { LandingVideoFields } from '@/components/media/jakawi-vsl-player/LandingVideoFields';
 import type { LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
@@ -57,7 +58,7 @@ const signature = (
     subject: Subject | null,
 ) => JSON.stringify([form, video, subject?.type, subject?.id]);
 const control =
-    'w-full min-w-0 rounded border border-border bg-surface p-3 font-normal';
+    'w-full min-w-0 scroll-mt-72 rounded border border-border bg-surface p-2 font-normal focus-visible:outline-2 focus-visible:outline-brand';
 const button =
     'rounded-[var(--radius-control)] bg-brand px-4 py-3 text-sm font-extrabold text-brand-foreground';
 export default function Index({
@@ -142,6 +143,13 @@ export default function Index({
         setEditing(item);
         setVideo(item?.vsl ?? null);
         setOpen(true);
+        setPreview(item);
+        setWidth(390);
+        requestAnimationFrame(() =>
+            document
+                .getElementById('landing-workspace')
+                ?.scrollIntoView({ block: 'start' }),
+        );
         const nextForm = item
             ? Object.fromEntries(
                   Object.keys(empty).map((key) => [
@@ -167,7 +175,10 @@ export default function Index({
                 <textarea
                     name={key}
                     aria-invalid={!!errors[key]}
-                    className={`${control} min-h-24 ${errors[key] ? 'border-danger' : ''}`}
+                    aria-describedby={
+                        errors[key] ? `landing-error-${key}` : undefined
+                    }
+                    className={`${control} min-h-20 ${errors[key] ? 'border-danger' : ''}`}
                     value={form[key] ?? ''}
                     onChange={(e) =>
                         setForm((f) => ({ ...f, [key]: e.target.value }))
@@ -177,6 +188,9 @@ export default function Index({
                 <input
                     name={key}
                     aria-invalid={!!errors[key]}
+                    aria-describedby={
+                        errors[key] ? `landing-error-${key}` : undefined
+                    }
                     className={`${control} ${errors[key] ? 'border-danger' : ''}`}
                     value={form[key] ?? ''}
                     onChange={(e) =>
@@ -184,11 +198,15 @@ export default function Index({
                     }
                 />
             )}{' '}
-            {errors[key] && <span className="text-danger">{errors[key]}</span>}
+            {errors[key] && (
+                <span id={`landing-error-${key}`} className="text-danger">
+                    {errors[key]}
+                </span>
+            )}
         </label>
     );
     const section = (label: string) => (
-        <h3 className="col-span-full mt-5 border-b border-border pb-2 text-lg font-extrabold">
+        <h3 className="col-span-full mt-3 border-b border-border pb-2 text-lg font-extrabold">
             {label}
         </h3>
     );
@@ -210,7 +228,7 @@ export default function Index({
                     ← Volver al producto
                 </Link>
             )}
-            {(!subject || offer) && (
+            {!open && (!subject || offer) && (
                 <section className="mt-5 grid min-w-0 gap-4 rounded border border-border bg-surface p-4 sm:grid-cols-3">
                     <h2 className="col-span-full text-xl font-extrabold">
                         Nueva Marketing Landing
@@ -301,14 +319,24 @@ export default function Index({
                             CREAR LANDING
                         </button>
                     </div>
-                    <div className="mt-4 space-y-4">
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         {presentations.map((item) => (
                             <article
                                 key={item.id}
-                                className="min-w-0 rounded border border-border bg-surface p-5"
+                                className={`min-w-0 rounded border bg-surface p-4 ${open && editing?.id === item.id ? 'border-brand ring-1 ring-brand' : 'border-border'}`}
+                                aria-current={
+                                    open && editing?.id === item.id
+                                        ? 'true'
+                                        : undefined
+                                }
                             >
                                 <h3 className="text-lg font-extrabold">
                                     {item.name}
+                                    {open && editing?.id === item.id && (
+                                        <span className="ml-3 text-xs text-brand">
+                                            EDITANDO
+                                        </span>
+                                    )}
                                 </h3>
                                 <p className="mt-1 text-sm break-all text-muted-foreground">
                                     {item.status} · {item.default_scope} · /l/
@@ -431,7 +459,8 @@ export default function Index({
                     )}
                     {open && (
                         <form
-                            className="mt-8 grid max-w-4xl min-w-0 gap-4 rounded border border-border bg-surface p-4 sm:grid-cols-2 sm:p-6"
+                            id="landing-workspace"
+                            className="mt-8 min-w-0 scroll-mt-4"
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 if (saving) return;
@@ -516,11 +545,17 @@ export default function Index({
                                                 document.querySelector<HTMLElement>(
                                                     `[name="${Object.keys(errors)[0]}"]`,
                                                 );
-                                            if (field)
+                                            if (field) {
+                                                field
+                                                    .closest('details')
+                                                    ?.setAttribute('open', '');
+                                                field.scrollIntoView({
+                                                    block: 'center',
+                                                });
                                                 field.focus({
                                                     preventScroll: true,
                                                 });
-                                            else
+                                            } else
                                                 summary?.focus({
                                                     preventScroll: true,
                                                 });
@@ -545,246 +580,200 @@ export default function Index({
                                       );
                             }}
                         >
-                            <h2 className="col-span-full text-xl font-extrabold">
-                                {editing ? 'Editar landing' : 'Nueva landing'}
-                            </h2>
-                            <div
-                                className="col-span-full flex flex-wrap items-center gap-3 text-sm font-bold"
-                                aria-live="polite"
+                            <header
+                                data-workspace-toolbar
+                                className="top-0 z-20 mb-4 rounded border border-border bg-surface p-3 shadow-sm lg:sticky"
                             >
-                                <span>
-                                    {editing?.status ?? 'DRAFT'} · Audience:{' '}
-                                    {form.default_scope}
-                                </span>
-                                <span
-                                    className={
-                                        dirty
-                                            ? 'rounded border border-amber-500 bg-amber-50 px-3 py-2 text-amber-900'
-                                            : 'text-muted-foreground'
-                                    }
-                                >
-                                    {dirty
-                                        ? '● CAMBIOS SIN GUARDAR'
-                                        : saved
-                                          ? '✓ CAMBIOS GUARDADOS'
-                                          : editing
-                                            ? 'VERSIÓN GUARDADA'
-                                            : 'BORRADOR SIN GUARDAR'}
-                                </span>
-                                {saved && !dirty && (
-                                    <span role="status">
-                                        ✓ LANDING GUARDADA
-                                    </span>
-                                )}
-                            </div>
-                            {!!Object.keys(saveErrors).length && (
-                                <div
-                                    id="landing-save-errors"
-                                    role="alert"
-                                    tabIndex={-1}
-                                    className="col-span-full rounded border border-danger p-4 text-danger"
-                                >
-                                    <strong>NO SE PUDO GUARDAR</strong>
-                                    <p>
-                                        Hay {Object.keys(saveErrors).length}{' '}
-                                        campos que requieren atención.
-                                    </p>
-                                    <ul className="mt-2 list-disc pl-5">
-                                        {Object.entries(saveErrors).map(
-                                            ([key, message]) => (
-                                                <li key={key}>
-                                                    {landingEditorFieldLabel(
-                                                        key,
-                                                    )}
-                                                    : {message}
-                                                </li>
-                                            ),
-                                        )}
-                                    </ul>
-                                </div>
-                            )}
-                            {offer && formSubject && (
-                                <LandingJsonControls
-                                    key={`${editing?.id ?? 'new'}:${formSubject.type}:${formSubject.id}`}
-                                    brief={formSubject.aiBrief}
-                                    form={form}
-                                    title={formSubject.title}
-                                    fallbackHeadline={
-                                        formSubject.defaults.headline
-                                    }
-                                    hasImage={
-                                        !!(
-                                            form.hero_path ||
-                                            formSubject.defaults.hero_path
-                                        )
-                                    }
-                                    hasVideo={!!video}
-                                    onApply={(patch) => {
-                                        setForm((current) => ({
-                                            ...current,
-                                            ...patch,
-                                        }));
-                                        setSaveErrors({});
-                                        setSaved(false);
-                                    }}
-                                />
-                            )}
-                            <div className="col-span-full">
-                                <button
-                                    disabled={saving}
-                                    className={`${button} disabled:opacity-50`}
-                                >
-                                    {saving
-                                        ? 'GUARDANDO…'
-                                        : 'GUARDAR Y PREVISUALIZAR'}
-                                </button>
-                            </div>
-                            {section('Landing')}
-                            {field('name', 'Nombre interno')}
-                            {field('slug', 'Slug único')}
-                            <p className="col-span-full text-sm">
-                                <strong>Producto:</strong> {subject.type}:{' '}
-                                {subject.title}
-                            </p>
-                            {offer && (
-                                <div className="col-span-full grid gap-3 sm:grid-cols-2">
-                                    <label className="text-sm font-bold">
-                                        Cambiar tipo
-                                        <select
-                                            aria-label="Cambiar tipo"
-                                            className={control}
-                                            value={type}
-                                            onChange={(e) => {
-                                                setType(
-                                                    e.target
-                                                        .value as SubjectType,
-                                                );
-                                                setSelected('');
-                                            }}
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div
+                                        className="flex min-w-0 flex-wrap items-center gap-3"
+                                        aria-live="polite"
+                                    >
+                                        <h2 className="max-w-full text-lg font-extrabold break-words">
+                                            {form.name || 'Nueva landing'}
+                                        </h2>
+                                        <span className="rounded border border-border px-2 py-1 text-xs font-bold">
+                                            {editing?.status ?? 'DRAFT'}
+                                        </span>
+                                        <span className="text-xs">
+                                            Audience: {form.default_scope}
+                                        </span>
+                                        <span
+                                            className={`text-xs font-bold ${dirty ? 'text-amber-800' : 'text-green-700'}`}
                                         >
-                                            <option value="BENEFIT">
-                                                Benefit
-                                            </option>
-                                            <option value="EXPERIENCE">
-                                                Experience
-                                            </option>
-                                            <option value="CHALLENGE">
-                                                Challenge
-                                            </option>
-                                        </select>
-                                    </label>
-                                    <label className="text-sm font-bold">
-                                        Cambiar producto
-                                        <select
-                                            aria-label="Cambiar producto"
-                                            className={control}
-                                            value={String(
-                                                formSubject?.type === type
-                                                    ? formSubject.id
-                                                    : '',
-                                            )}
-                                            onChange={async (e) => {
-                                                const id = e.target.value;
-                                                if (!id) return;
-                                                setSelectionError('');
-                                                try {
-                                                    const response =
-                                                        await fetch(
-                                                            `/admin/landings/subject?subject_type=${type}&subject_id=${id}`,
-                                                            {
-                                                                headers: {
-                                                                    Accept: 'application/json',
-                                                                },
-                                                                credentials:
-                                                                    'same-origin',
-                                                            },
-                                                        );
-                                                    if (!response.ok)
-                                                        throw new Error();
-                                                    const context =
-                                                        (await response.json()) as Subject;
-                                                    setFormSubject(context);
-                                                    setSelected(id);
-                                                } catch {
-                                                    setSelectionError(
-                                                        'No se pudo cargar el producto. Intenta nuevamente.',
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            <option value="">
-                                                Seleccionar…
-                                            </option>
-                                            {subjectChoices[type]?.map(
-                                                (item) => (
-                                                    <option
-                                                        key={item.id}
-                                                        value={item.id}
-                                                    >
-                                                        {item.title}
-                                                    </option>
-                                                ),
-                                            )}
-                                        </select>
-                                    </label>
-                                    {selectionError && (
-                                        <p
-                                            role="alert"
-                                            className="col-span-full text-danger"
-                                        >
-                                            {selectionError}
-                                        </p>
-                                    )}
-                                    <p className="col-span-full text-sm text-muted-foreground">
-                                        Cambiar el producto conserva el mensaje
-                                        editorial. Revisa los datos del producto
-                                        antes de guardar.
-                                    </p>
-                                </div>
-                            )}
-                            {offer && (
-                                <>
-                                    <label className="text-sm font-bold">
-                                        Template
-                                        <select
-                                            className={control}
-                                            disabled
-                                            value="OFFER_CONVERSION"
-                                        >
-                                            <option>OFFER_CONVERSION</option>
-                                        </select>
-                                    </label>
-                                    <label className="text-sm font-bold">
-                                        Theme
-                                        <select
-                                            name="marketing_theme"
-                                            className={control}
-                                            value={form.marketing_theme}
-                                            onChange={(e) =>
-                                                setForm((f) => ({
-                                                    ...f,
-                                                    marketing_theme:
-                                                        e.target.value,
-                                                }))
-                                            }
-                                        >
-                                            <option value="LIGHT_CONVERSION">
-                                                Light Conversion
-                                            </option>
-                                            <option value="DARK_CONVERSION">
-                                                Dark Conversion
-                                            </option>
-                                        </select>
-                                        {errors.marketing_theme && (
-                                            <span className="text-danger">
-                                                {errors.marketing_theme}
+                                            {dirty
+                                                ? '● CAMBIOS SIN GUARDAR'
+                                                : editing
+                                                  ? '✓ GUARDADO'
+                                                  : 'BORRADOR SIN GUARDAR'}
+                                        </span>
+                                        {saved && !dirty && (
+                                            <span
+                                                role="status"
+                                                className="text-xs text-green-700"
+                                            >
+                                                ✓ LANDING GUARDADA
                                             </span>
                                         )}
-                                    </label>
-                                    <div className="col-span-full rounded border border-border bg-background p-4">
-                                        <h3 className="font-bold">
-                                            Datos del producto · solo lectura
-                                        </h3>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <button
+                                            disabled={saving}
+                                            className={`${button} disabled:opacity-50`}
+                                        >
+                                            {saving
+                                                ? 'GUARDANDO…'
+                                                : 'GUARDAR Y PREVISUALIZAR'}
+                                        </button>
+                                        {editing &&
+                                            editing.status !== 'PUBLISHED' && (
+                                                <button
+                                                    type="button"
+                                                    className="rounded border border-border px-4 py-3 text-sm font-bold"
+                                                    onClick={() =>
+                                                        publish(editing)
+                                                    }
+                                                >
+                                                    PUBLICAR
+                                                </button>
+                                            )}
+                                        <details className="relative">
+                                            <summary className="cursor-pointer rounded px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-brand">
+                                                Más acciones
+                                            </summary>
+                                            <div className="absolute right-0 z-30 mt-2 grid min-w-48 gap-3 rounded border border-border bg-surface p-4 text-sm">
+                                                {editing?.status ===
+                                                    'PUBLISHED' && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            router.post(
+                                                                `${baseUrl}/${editing.slug}/unpublish`,
+                                                            )
+                                                        }
+                                                    >
+                                                        DESPUBLICAR
+                                                    </button>
+                                                )}
+                                                {editing &&
+                                                    editing.status !==
+                                                        'ARCHIVED' && (
+                                                        <button
+                                                            type="button"
+                                                            className="text-danger"
+                                                            onClick={() =>
+                                                                router.post(
+                                                                    `${baseUrl}/${editing.slug}/archive`,
+                                                                )
+                                                            }
+                                                        >
+                                                            ARCHIVAR
+                                                        </button>
+                                                    )}
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setOpen(false)
+                                                    }
+                                                >
+                                                    CANCELAR
+                                                </button>
+                                            </div>
+                                        </details>
+                                    </div>
+                                </div>
+                                <div className="mt-3 border-t border-border pt-3">
+                                    <p className="mb-2 text-xs font-extrabold">
+                                        1 · CREAR CON IA{' '}
+                                        <span className="ml-3 font-normal text-muted-foreground">
+                                            2 · EDITAR → 3 · PREVIEW → 4 ·
+                                            PUBLICAR
+                                        </span>
+                                    </p>
+                                    {offer && formSubject && (
+                                        <LandingJsonControls
+                                            key={`${editing?.id ?? 'new'}:${formSubject.type}:${formSubject.id}`}
+                                            brief={formSubject.aiBrief}
+                                            form={form}
+                                            title={formSubject.title}
+                                            fallbackHeadline={
+                                                formSubject.defaults.headline
+                                            }
+                                            hasImage={
+                                                !!(
+                                                    form.hero_path ||
+                                                    formSubject.defaults
+                                                        .hero_path
+                                                )
+                                            }
+                                            hasVideo={!!video}
+                                            onApply={(patch) => {
+                                                setForm((current) => ({
+                                                    ...current,
+                                                    ...patch,
+                                                }));
+                                                setSaveErrors({});
+                                                setSaved(false);
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                {publishWarning && (
+                                    <p
+                                        role="alert"
+                                        className="mt-2 text-sm text-danger"
+                                    >
+                                        {publishWarning}
+                                    </p>
+                                )}
+                            </header>
+                            <div
+                                data-workspace-columns
+                                className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)]"
+                            >
+                                <div
+                                    data-workspace-editor
+                                    className="grid min-w-0 gap-3 rounded border border-border bg-surface p-4 sm:grid-cols-2"
+                                >
+                                    {!!Object.keys(saveErrors).length && (
+                                        <div
+                                            id="landing-save-errors"
+                                            role="alert"
+                                            tabIndex={-1}
+                                            className="col-span-full rounded border border-danger p-4 text-danger"
+                                        >
+                                            <strong>NO SE PUDO GUARDAR</strong>
+                                            <p>
+                                                Hay{' '}
+                                                {Object.keys(saveErrors).length}{' '}
+                                                campos que requieren atención.
+                                            </p>
+                                            <ul className="mt-2 list-disc pl-5">
+                                                {Object.entries(saveErrors).map(
+                                                    ([key, message]) => (
+                                                        <li key={key}>
+                                                            {landingEditorFieldLabel(
+                                                                key,
+                                                            )}
+                                                            : {message}
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
+                                    {field('name', 'Nombre interno')}
+                                    {field('slug', 'Slug único')}
+                                    <details
+                                        data-product-truth
+                                        className="col-span-full rounded border border-border bg-background p-3"
+                                    >
+                                        <summary className="cursor-pointer text-sm font-bold focus-visible:outline-2 focus-visible:outline-brand">
+                                            DATOS DEL PRODUCTO · SOLO LECTURA{' '}
+                                            <span className="ml-2 font-normal text-brand">
+                                                Ver datos
+                                            </span>
+                                        </summary>
                                         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
                                             {(formSubject?.truth ?? []).map(
                                                 (fact, i) => (
@@ -799,264 +788,436 @@ export default function Index({
                                                 ),
                                             )}
                                         </dl>
-                                    </div>
-                                </>
-                            )}
-                            {section('COPY DE CAPTACIÓN')}
-                            {field(
-                                'acquisition_headline',
-                                'Headline al crear cuenta',
-                            )}
-                            {field(
-                                'acquisition_supporting_copy',
-                                'Texto de apoyo',
-                                true,
-                            )}
-                            <p className="text-sm text-muted-foreground">
-                                {form.acquisition_headline ||
-                                    formSubject?.defaults.acquisition_headline}
-                                <br />
-                                {form.acquisition_supporting_copy ||
-                                    formSubject?.defaults
-                                        .acquisition_supporting_copy}
-                            </p>
-                            {section('Mensaje')}
-                            <p
-                                data-editorial-help
-                                className="col-span-full text-sm text-muted-foreground"
-                            >
-                                Los datos comerciales y condiciones se toman
-                                automáticamente del producto.
-                            </p>
-                            {field('eyebrow', 'Eyebrow')}
-                            {field('headline', 'Headline')}
-                            {offer &&
-                                field(
-                                    'headline_emphasis',
-                                    'Destacar (texto contenido en el headline)',
-                                )}
-                            {field(
-                                'subheadline',
-                                'Descripción editorial',
-                                true,
-                            )}
-                            {field(
-                                'reward_display_override',
-                                'Copy complementario del valor',
-                            )}
-                            {offer && (
-                                <>
-                                    {(['hero_layout', 'density'] as const).map(
-                                        (key) => (
-                                            <label
-                                                key={key}
-                                                className="flex flex-col gap-1 text-sm font-bold"
-                                            >
-                                                {key === 'hero_layout'
-                                                    ? 'Hero'
-                                                    : 'Densidad'}
-                                                <select
-                                                    name={key}
-                                                    aria-invalid={!!errors[key]}
-                                                    className={`${control} ${errors[key] ? 'border-danger' : ''}`}
-                                                    value={form[key]}
-                                                    onChange={(event) =>
-                                                        setForm((f) => ({
-                                                            ...f,
-                                                            [key]: event.target
-                                                                .value,
-                                                        }))
-                                                    }
-                                                >
-                                                    {(key === 'hero_layout'
-                                                        ? [
-                                                              'OFFER_FIRST',
-                                                              'MEDIA_LED',
-                                                          ]
-                                                        : [
-                                                              'STANDARD',
-                                                              'COMPACT',
-                                                          ]
-                                                    ).map((value) => (
-                                                        <option key={value}>
-                                                            {value}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors[key] && (
-                                                    <span className="text-danger">
-                                                        {errors[key]}
-                                                    </span>
-                                                )}
-                                            </label>
-                                        ),
-                                    )}
-                                    <p className="col-span-full text-sm text-muted-foreground">
-                                        Los campos editoriales vacíos usan el
-                                        texto del producto. La descripción de
-                                        cierre vacía se omite. El texto guardado
-                                        se muestra sin sustituciones
-                                        automáticas.
+                                    </details>
+                                    {section('MENSAJE')}
+                                    <p
+                                        data-editorial-help
+                                        className="col-span-full text-sm text-muted-foreground"
+                                    >
+                                        Los datos comerciales y condiciones se
+                                        toman automáticamente del producto.
                                     </p>
-                                </>
-                            )}
-                            {section('Media')}
-                            {offer && (
-                                <fieldset className="col-span-full flex flex-wrap gap-5">
-                                    <legend className="sr-only">Media</legend>
-                                    {[
-                                        ['IMAGE', 'Imagen'],
-                                        ['VSL', 'Video'],
-                                        ['NONE', 'Sin media'],
-                                    ].map(([value, label]) => (
-                                        <label
-                                            key={value}
-                                            className="flex gap-2"
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="media_mode"
-                                                aria-invalid={
-                                                    !!errors.media_mode
-                                                }
-                                                checked={
-                                                    form.media_mode === value
-                                                }
-                                                onChange={() =>
-                                                    setForm((f) => ({
-                                                        ...f,
-                                                        media_mode: value,
-                                                    }))
-                                                }
-                                            />
-                                            {label}
-                                        </label>
-                                    ))}
-                                    {errors.media_mode && (
-                                        <span className="text-danger">
-                                            {errors.media_mode}
-                                        </span>
+                                    {field('eyebrow', 'Eyebrow')}
+                                    {field('headline', 'Headline')}
+                                    {offer &&
+                                        field(
+                                            'headline_emphasis',
+                                            'Destacar (texto contenido en el headline)',
+                                        )}
+                                    {field(
+                                        'subheadline',
+                                        'Descripción editorial',
+                                        true,
                                     )}
-                                </fieldset>
-                            )}
-                            {(!offer || form.media_mode === 'IMAGE') && (
-                                <>
-                                    {currentMediaUrl ? (
-                                        <figure className="col-span-full">
-                                            <img
-                                                src={String(currentMediaUrl)}
-                                                alt={
-                                                    form.hero_alt ||
-                                                    'Imagen actual del producto'
-                                                }
-                                                className="max-h-40 max-w-xs rounded object-contain"
-                                            />
-                                            <figcaption className="mt-2 text-sm text-muted-foreground">
-                                                Imagen actual · Cambia la
-                                                referencia del visual para
-                                                reemplazarla.
-                                            </figcaption>
-                                        </figure>
-                                    ) : (
-                                        <p className="col-span-full text-sm text-muted-foreground">
-                                            Guarda la referencia del visual para
-                                            comprobar la imagen actual.
+                                    {field(
+                                        'reward_display_override',
+                                        'Copy complementario del valor',
+                                    )}
+                                    {offer && (
+                                        <>
+                                            {(
+                                                [
+                                                    'hero_layout',
+                                                    'density',
+                                                ] as const
+                                            ).map((key) => (
+                                                <label
+                                                    key={key}
+                                                    className="flex flex-col gap-1 text-sm font-bold"
+                                                >
+                                                    {key === 'hero_layout'
+                                                        ? 'Hero'
+                                                        : 'Densidad'}
+                                                    <select
+                                                        name={key}
+                                                        aria-invalid={
+                                                            !!errors[key]
+                                                        }
+                                                        aria-describedby={
+                                                            errors[key]
+                                                                ? `landing-error-${key}`
+                                                                : undefined
+                                                        }
+                                                        className={`${control} ${errors[key] ? 'border-danger' : ''}`}
+                                                        value={form[key]}
+                                                        onChange={(event) =>
+                                                            setForm((f) => ({
+                                                                ...f,
+                                                                [key]: event
+                                                                    .target
+                                                                    .value,
+                                                            }))
+                                                        }
+                                                    >
+                                                        {(key === 'hero_layout'
+                                                            ? [
+                                                                  'OFFER_FIRST',
+                                                                  'MEDIA_LED',
+                                                              ]
+                                                            : [
+                                                                  'STANDARD',
+                                                                  'COMPACT',
+                                                              ]
+                                                        ).map((value) => (
+                                                            <option key={value}>
+                                                                {value}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {errors[key] && (
+                                                        <span className="text-danger">
+                                                            {errors[key]}
+                                                        </span>
+                                                    )}
+                                                </label>
+                                            ))}
+                                            <p className="col-span-full text-sm text-muted-foreground">
+                                                Los campos editoriales vacíos
+                                                usan el texto del producto. La
+                                                descripción de cierre vacía se
+                                                omite. El texto guardado se
+                                                muestra sin sustituciones
+                                                automáticas.
+                                            </p>
+                                        </>
+                                    )}
+                                    {section('MEDIA')}
+                                    {offer && (
+                                        <fieldset className="col-span-full flex flex-wrap gap-5">
+                                            <legend className="sr-only">
+                                                Media
+                                            </legend>
+                                            {[
+                                                ['IMAGE', 'Imagen'],
+                                                ['VSL', 'Video'],
+                                                ['NONE', 'Sin media'],
+                                            ].map(([value, label]) => (
+                                                <label
+                                                    key={value}
+                                                    className="flex gap-2"
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="media_mode"
+                                                        aria-invalid={
+                                                            !!errors.media_mode
+                                                        }
+                                                        checked={
+                                                            form.media_mode ===
+                                                            value
+                                                        }
+                                                        onChange={() =>
+                                                            setForm((f) => ({
+                                                                ...f,
+                                                                media_mode:
+                                                                    value,
+                                                            }))
+                                                        }
+                                                    />
+                                                    {label}
+                                                </label>
+                                            ))}
+                                            {errors.media_mode && (
+                                                <span className="text-danger">
+                                                    {errors.media_mode}
+                                                </span>
+                                            )}
+                                        </fieldset>
+                                    )}
+                                    {(!offer ||
+                                        form.media_mode === 'IMAGE') && (
+                                        <>
+                                            {currentMediaUrl ? (
+                                                <figure className="col-span-full">
+                                                    <img
+                                                        src={String(
+                                                            currentMediaUrl,
+                                                        )}
+                                                        alt={
+                                                            form.hero_alt ||
+                                                            'Imagen actual del producto'
+                                                        }
+                                                        className="max-h-56 w-full rounded object-contain"
+                                                    />
+                                                    <figcaption className="mt-2 text-sm text-muted-foreground">
+                                                        IMAGEN ACTUAL
+                                                    </figcaption>
+                                                </figure>
+                                            ) : (
+                                                <p className="col-span-full text-sm text-muted-foreground">
+                                                    Guarda la referencia del
+                                                    visual para comprobar la
+                                                    imagen actual.
+                                                </p>
+                                            )}
+                                            {field(
+                                                'hero_path',
+                                                'Referencia del visual',
+                                            )}
+                                            {field(
+                                                'hero_alt',
+                                                'Descripción del visual (alt)',
+                                            )}
+                                        </>
+                                    )}
+                                    {(!offer || form.media_mode === 'VSL') && (
+                                        <LandingVideoFields
+                                            value={video}
+                                            onChange={setVideo}
+                                            errors={errors}
+                                        />
+                                    )}
+                                    {section('CAPTACIÓN')}
+                                    {field(
+                                        'acquisition_headline',
+                                        'Headline al crear cuenta',
+                                    )}
+                                    {field(
+                                        'acquisition_supporting_copy',
+                                        'Texto de apoyo',
+                                        true,
+                                    )}
+                                    {section('CIERRE')}
+                                    {field(
+                                        'final_cta_headline',
+                                        'Titular final',
+                                    )}
+                                    {offer &&
+                                        field(
+                                            'final_cta_description',
+                                            'Texto de apoyo final',
+                                            true,
+                                        )}
+                                    {section('PUBLICACIÓN / ATRIBUCIÓN')}
+                                    {field(
+                                        'campaign_key',
+                                        'Campaign key (opcional)',
+                                    )}
+                                    <label className="text-sm font-bold">
+                                        Audiencia al publicar
+                                        <select
+                                            name="default_scope"
+                                            aria-invalid={
+                                                !!errors.default_scope
+                                            }
+                                            className={`${control} ${errors.default_scope ? 'border-danger' : ''}`}
+                                            value={form.default_scope}
+                                            onChange={(e) =>
+                                                setForm((f) => ({
+                                                    ...f,
+                                                    default_scope:
+                                                        e.target.value,
+                                                }))
+                                            }
+                                        >
+                                            <option value="NONE">
+                                                NONE · Solo enlace directo
+                                            </option>
+                                            <option value="GUESTS">
+                                                GUESTS · Visitantes
+                                            </option>
+                                            <option value="ALL">
+                                                ALL · Todos
+                                            </option>
+                                        </select>
+                                    </label>
+                                    {errors.default_scope && (
+                                        <p className="text-danger">
+                                            {errors.default_scope}
                                         </p>
                                     )}
-                                    {field(
-                                        'hero_path',
-                                        'Referencia del visual',
-                                    )}
-                                    {field(
-                                        'hero_alt',
-                                        'Descripción del visual',
-                                    )}
-                                </>
-                            )}
-                            {(!offer || form.media_mode === 'VSL') && (
-                                <LandingVideoFields
-                                    value={video}
-                                    onChange={setVideo}
-                                    errors={errors}
+                                    <p className="col-span-full text-sm text-muted-foreground">
+                                        Un borrador no cambia la navegación. La
+                                        audiencia elegida se aplica al publicar.
+                                        Campaign key identifica adquisición; no
+                                        activa una campaña económica.
+                                    </p>
+                                    <details className="col-span-full rounded border border-border p-3">
+                                        <summary className="cursor-pointer font-extrabold focus-visible:outline-2 focus-visible:outline-brand">
+                                            AVANZADO
+                                        </summary>
+                                        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                                            {offer && (
+                                                <div className="col-span-full grid gap-3 sm:grid-cols-2">
+                                                    <label className="text-sm font-bold">
+                                                        Cambiar tipo
+                                                        <select
+                                                            aria-label="Cambiar tipo"
+                                                            className={control}
+                                                            value={type}
+                                                            onChange={(e) => {
+                                                                setType(
+                                                                    e.target
+                                                                        .value as SubjectType,
+                                                                );
+                                                                setSelected('');
+                                                            }}
+                                                        >
+                                                            <option value="BENEFIT">
+                                                                Benefit
+                                                            </option>
+                                                            <option value="EXPERIENCE">
+                                                                Experience
+                                                            </option>
+                                                            <option value="CHALLENGE">
+                                                                Challenge
+                                                            </option>
+                                                        </select>
+                                                    </label>
+                                                    <label className="text-sm font-bold">
+                                                        Cambiar producto
+                                                        <select
+                                                            aria-label="Cambiar producto"
+                                                            className={control}
+                                                            value={String(
+                                                                formSubject?.type ===
+                                                                    type
+                                                                    ? formSubject.id
+                                                                    : '',
+                                                            )}
+                                                            onChange={async (
+                                                                e,
+                                                            ) => {
+                                                                const id =
+                                                                    e.target
+                                                                        .value;
+                                                                if (!id) return;
+                                                                setSelectionError(
+                                                                    '',
+                                                                );
+                                                                try {
+                                                                    const response =
+                                                                        await fetch(
+                                                                            `/admin/landings/subject?subject_type=${type}&subject_id=${id}`,
+                                                                            {
+                                                                                headers:
+                                                                                    {
+                                                                                        Accept: 'application/json',
+                                                                                    },
+                                                                                credentials:
+                                                                                    'same-origin',
+                                                                            },
+                                                                        );
+                                                                    if (
+                                                                        !response.ok
+                                                                    )
+                                                                        throw new Error();
+                                                                    const context =
+                                                                        (await response.json()) as Subject;
+                                                                    setFormSubject(
+                                                                        context,
+                                                                    );
+                                                                    setSelected(
+                                                                        id,
+                                                                    );
+                                                                } catch {
+                                                                    setSelectionError(
+                                                                        'No se pudo cargar el producto. Intenta nuevamente.',
+                                                                    );
+                                                                }
+                                                            }}
+                                                        >
+                                                            <option value="">
+                                                                Seleccionar…
+                                                            </option>
+                                                            {subjectChoices[
+                                                                type
+                                                            ]?.map((item) => (
+                                                                <option
+                                                                    key={
+                                                                        item.id
+                                                                    }
+                                                                    value={
+                                                                        item.id
+                                                                    }
+                                                                >
+                                                                    {item.title}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </label>
+                                                    {selectionError && (
+                                                        <p
+                                                            role="alert"
+                                                            className="col-span-full text-danger"
+                                                        >
+                                                            {selectionError}
+                                                        </p>
+                                                    )}
+                                                    <p className="col-span-full text-sm text-muted-foreground">
+                                                        Cambiar el producto
+                                                        conserva el mensaje
+                                                        editorial. Revisa los
+                                                        datos del producto antes
+                                                        de guardar.
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {offer && (
+                                                <>
+                                                    <label className="text-sm font-bold">
+                                                        Template
+                                                        <select
+                                                            className={control}
+                                                            disabled
+                                                            value="OFFER_CONVERSION"
+                                                        >
+                                                            <option>
+                                                                OFFER_CONVERSION
+                                                            </option>
+                                                        </select>
+                                                    </label>
+                                                    <label className="text-sm font-bold">
+                                                        Theme
+                                                        <select
+                                                            name="marketing_theme"
+                                                            className={control}
+                                                            value={
+                                                                form.marketing_theme
+                                                            }
+                                                            onChange={(e) =>
+                                                                setForm(
+                                                                    (f) => ({
+                                                                        ...f,
+                                                                        marketing_theme:
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                    }),
+                                                                )
+                                                            }
+                                                        >
+                                                            <option value="LIGHT_CONVERSION">
+                                                                Light Conversion
+                                                            </option>
+                                                            <option value="DARK_CONVERSION">
+                                                                Dark Conversion
+                                                            </option>
+                                                        </select>
+                                                        {errors.marketing_theme && (
+                                                            <span className="text-danger">
+                                                                {
+                                                                    errors.marketing_theme
+                                                                }
+                                                            </span>
+                                                        )}
+                                                    </label>
+                                                </>
+                                            )}
+                                        </div>
+                                    </details>
+                                </div>
+                                <LandingPreviewPane
+                                    preview={preview}
+                                    baseUrl={baseUrl}
+                                    revision={previewRevision}
+                                    width={width}
+                                    onWidth={setWidth}
+                                    dirty={previewDirty}
+                                    saved={saved}
+                                    saving={saving}
+                                    formId="landing-workspace"
                                 />
-                            )}
-                            {section('Atribución')}
-                            {field('campaign_key', 'Campaign key (opcional)')}
-                            <label className="text-sm font-bold">
-                                Audiencia al publicar
-                                <select
-                                    name="default_scope"
-                                    aria-invalid={!!errors.default_scope}
-                                    className={`${control} ${errors.default_scope ? 'border-danger' : ''}`}
-                                    value={form.default_scope}
-                                    onChange={(e) =>
-                                        setForm((f) => ({
-                                            ...f,
-                                            default_scope: e.target.value,
-                                        }))
-                                    }
-                                >
-                                    <option value="NONE">
-                                        NONE · Solo enlace directo
-                                    </option>
-                                    <option value="GUESTS">
-                                        GUESTS · Visitantes
-                                    </option>
-                                    <option value="ALL">ALL · Todos</option>
-                                </select>
-                            </label>
-                            {errors.default_scope && (
-                                <p className="text-danger">
-                                    {errors.default_scope}
-                                </p>
-                            )}
-                            <p className="col-span-full text-sm text-muted-foreground">
-                                Un borrador no cambia la navegación. La
-                                audiencia elegida se aplica al publicar.
-                                Campaign key identifica adquisición; no activa
-                                una campaña económica.
-                            </p>
-                            {section('Cierre')}
-                            {field('final_cta_headline', 'Titular final')}
-                            {offer &&
-                                field(
-                                    'final_cta_description',
-                                    'Texto de apoyo final',
-                                    true,
-                                )}
-                            {section('Publicación')}
-                            <p className="col-span-full">
-                                Estado: {editing?.status ?? 'DRAFT'}. Guarda los
-                                cambios antes de abrir el preview o publicar.
-                            </p>
-                            <div className="col-span-full flex flex-wrap gap-4">
-                                <button
-                                    disabled={saving}
-                                    className={`${button} disabled:opacity-50`}
-                                >
-                                    {saving
-                                        ? 'GUARDANDO…'
-                                        : 'GUARDAR Y PREVISUALIZAR'}
-                                </button>
-                                {editing && (
-                                    <button
-                                        type="button"
-                                        className="underline"
-                                        onClick={() => {
-                                            setPreview(editing);
-                                            setWidth(390);
-                                        }}
-                                    >
-                                        PREVIEW GUARDADO
-                                    </button>
-                                )}
-                                <button
-                                    type="button"
-                                    className="underline"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    CANCELAR
-                                </button>
                             </div>
                         </form>
                     )}
@@ -1123,52 +1284,18 @@ export default function Index({
                             </div>
                         </form>
                     )}
-                    {preview && (
-                        <section className="mt-8 min-w-0 rounded border border-border bg-surface p-3">
-                            <div className="flex flex-wrap items-center gap-4">
-                                <h2 className="font-extrabold">
-                                    {previewDirty
-                                        ? 'PREVIEW · VERSIÓN GUARDADA'
-                                        : 'PREVIEW'}
-                                    : {preview.name}
-                                </h2>
-                                {[390, 430, 1440].map((size) => (
-                                    <button
-                                        key={size}
-                                        aria-pressed={width === size}
-                                        className="rounded border border-border px-3 py-2"
-                                        onClick={() => setWidth(size)}
-                                    >
-                                        {size === 1440 ? 'Desktop' : size}
-                                    </button>
-                                ))}
-                                <button
-                                    className="underline"
-                                    onClick={() => setPreview(null)}
-                                >
-                                    CERRAR
-                                </button>
-                            </div>
-                            <p className="my-3 text-sm text-muted-foreground">
-                                {previewDirty &&
-                                    'Tienes cambios sin guardar que todavía no aparecen aquí. '}
-                                Presentación guardada. Acciones de negocio
-                                desactivadas.
-                            </p>
-                            <div className="w-full overflow-x-auto">
-                                <iframe
-                                    title={`Preview ${preview.name}`}
-                                    key={`${preview.id}:${previewRevision}`}
-                                    src={`${baseUrl}/${preview.slug}/preview?revision=${previewRevision}`}
-                                    style={{
-                                        width,
-                                        height: 780,
-                                        boxSizing: 'content-box',
-                                    }}
-                                    className="block max-w-none border border-border bg-background"
-                                />
-                            </div>
-                        </section>
+                    {!open && preview && (
+                        <LandingPreviewPane
+                            preview={preview}
+                            baseUrl={baseUrl}
+                            revision={previewRevision}
+                            width={width}
+                            onWidth={setWidth}
+                            dirty={false}
+                            saved={false}
+                            saving={false}
+                            onClose={() => setPreview(null)}
+                        />
                     )}
                 </>
             )}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "jakawi-landing-v1",
+  "internal_name": "Arcilla y manos — adquisición demo",
+  "slug": "arcilla-y-manos-demo",
+  "template": "OFFER_CONVERSION",
+  "presentation": {
+    "theme": "DARK_CONVERSION",
+    "hero_layout": "MEDIA_LED",
+    "density": "COMPACT"
+  },
+  "hero": {
+    "eyebrow": "CREA CON TUS MANOS",
+    "headline": "DEJA EL SCROLL. ENSÚCIATE LAS MANOS.",
+    "headline_emphasis": "ENSÚCIATE LAS MANOS.",
+    "supporting_copy": "Cambia la pantalla por arcilla. Dale forma a una pieza tuya, sin prisas y con alguien que te guíe."
+  },
+  "value": {
+    "supporting_copy": "No se trata de hacer una pieza perfecta. Se trata de sentarte, tocar la arcilla y ver cómo algo empieza a tomar forma entre tus manos. Materiales incluidos."
+  },
+  "acquisition": {
+    "headline": "VAMOS A METER LAS MANOS EN LA ARCILLA.",
+    "supporting_copy": "Crea tu cuenta y sigue aquí."
+  },
+  "closing": {
+    "headline": "MENOS PANTALLA. MÁS ARCILLA.",
+    "supporting_copy": "Una tarde para cambiar el scroll por formas, texturas y una pieza hecha por ti. Propuesta demostrativa."
+  },
+  "media": {
+    "mode": "IMAGE",
+    "alt": "Manos trabajando arcilla"
+  }
+}

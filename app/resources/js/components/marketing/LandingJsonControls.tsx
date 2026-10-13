@@ -103,8 +103,8 @@ export function LandingJsonControls({
             </button>
             {brief && (
                 <p className="w-full text-sm text-muted-foreground">
-                    Pégalo en tu copywriter JAKAWI y vuelve con un
-                    jakawi-landing-v1 para importar.
+                    Copia el brief, genera el copy en tu GPT JAKAWI e importa el
+                    JSON resultante.
                 </p>
             )}
             {message && (
