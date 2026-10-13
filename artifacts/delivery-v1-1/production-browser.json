@@ -1,0 +1,34 @@
+{
+  "scope": "Same immutable deployed image and compiled assets. Challenge: existing isolated jakawi_test participation, no production participation created. Benefit: existing owned confirmed production redemption, read-only render. Experience: production external informational result, read-only render.",
+  "cases": [
+    {
+      "name": "Challenge compiled Delivery 390, existing isolated outcome",
+      "pass": true,
+      "titleOccurrences": 1,
+      "positions": {
+        "YA ESTÁS DENTRO DEL RETO": 137,
+        "QUÉ TIENES QUE HACER": 440,
+        "TIENES HASTA": 1278,
+        "QUÉ PUEDES GANAR": 1443,
+        "ASEGURA TU PARTICIPACIÓN": 2093
+      },
+      "cta": {
+        "text": "ENVIAR MI EVIDENCIA",
+        "color": "rgb(255, 255, 255)",
+        "bg": "color(srgb 0.8 0.282353 0.247843)"
+      },
+      "evidenceBlocked": true
+    },
+    {
+      "name": "Benefit existing confirmed outcome: received value first (ready-code instructions prevalidated)",
+      "pass": true
+    },
+    {
+      "name": "Experience external pending truthful informational result",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "mutations": 0,
+  "result": "PASS"
+}

@@ -1,0 +1,302 @@
+{
+  "release_sha": "f2b488b7e634782d3aa21dae987596d96b30d28c",
+  "previous_production_sha": "b3c00e371a6c5f7d509d96f67e07103f0176a051",
+  "images": {
+    "app": "sha256:c1c023ebc0a4225fa88978b57ad77a0efa1992e4a096c4b2ccd316917a2ce7ee",
+    "web": "sha256:e323360d1bc4ab48f3cee44a2859489a317d63202173bd7c209c3ef88de53121",
+    "worker": "sha256:c1c023ebc0a4225fa88978b57ad77a0efa1992e4a096c4b2ccd316917a2ce7ee"
+  },
+  "rollback_images": {
+    "app": {
+      "tag": "jakawi-app:rollback-b3c00e371a6c5f7d509d96f67e07103f0176a051",
+      "image": "sha256:046e1cf133a93fd2f071ca72b47b4bd5bda53d59a48d85148be32f9f38236093"
+    },
+    "web": {
+      "tag": "jakawi-web:rollback-b3c00e371a6c5f7d509d96f67e07103f0176a051",
+      "image": "sha256:d36f07a7cde035ba09797873c118a90f631cd98093c63a1f9019e1c7245149bb"
+    }
+  },
+  "rollback_tag_ids_verified": true,
+  "production_builds": 1,
+  "clean_git_export": true,
+  "rollback_executed": false,
+  "cleanup_during_deploy": false,
+  "database": {
+    "pending_unexpected_migrations": false,
+    "migrations_executed": false,
+    "recreated": false,
+    "deploy_domain_writes": false
+  },
+  "assets": {
+    "public_hot": "ABSENT",
+    "manifest": "PASS",
+    "compiled_assets": true,
+    "dev_refs": false
+  },
+  "precutover_routes": [
+    {
+      "path": "/beneficios/demo-beneficio-04",
+      "final_path": "/beneficios/demo-beneficio-04",
+      "redirects": [],
+      "status": 200
+    },
+    {
+      "path": "/l/qa-calibration-benefit-value",
+      "final_path": "/l/qa-calibration-benefit-value",
+      "redirects": [],
+      "status": 200
+    },
+    {
+      "path": "/l/qa-calibration-experience-desire",
+      "final_path": "/l/qa-calibration-experience-desire",
+      "redirects": [],
+      "status": 200
+    },
+    {
+      "path": "/l/qa-calibration-challenge-action",
+      "final_path": "/l/qa-calibration-challenge-action",
+      "redirects": [],
+      "status": 200
+    }
+  ],
+  "readiness_and_gates": {
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "rollback": false,
+    "polls": [
+      {
+        "seconds": 0.32,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200",
+        "curl_error": ""
+      }
+    ],
+    "routes": [
+      {
+        "name": "up local",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "up public",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-challenge-action",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-benefit-value",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-experience-desire",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      }
+    ],
+    "polling_started_utc": "2026-10-13T01:07:32.874381+00:00",
+    "seconds_until_ready": 0.32,
+    "ready": true
+  },
+  "live_contract": {
+    "responses": [
+      {
+        "path": "/l/qa-calibration-challenge-action",
+        "status": 200
+      },
+      {
+        "path": "/l/qa-calibration-challenge-action/resultado",
+        "status": 404
+      },
+      {
+        "path": "/canjes/01M3CP3FNC6GX9X1CJHSMZ6X4P",
+        "status": 200
+      },
+      {
+        "path": "/l/qa-calibration-experience-desire/resultado?session=3",
+        "status": 200
+      }
+    ],
+    "instructions": {
+      "title": "Reto Cena de Ciudad — DEMO",
+      "partner": "Brasa Prisma — DEMO",
+      "mission": "Consigue al menos 50 likes con evidencia válida.",
+      "steps": [
+        {
+          "heading": "PUBLICA TU CONTENIDO",
+          "body": "Publica una foto original de un plan gastronómico propio en Instagram con #jakawidemocena. Mantén la publicación pública y registra su enlace en JAKAWI. Alcanza 50 likes y cumple las reglas; los primeros 10 participantes verificados califican como candidatos. Revisión requerida antes de confirmar. DEMO DE PRODUCTO — premio simulado, no canjeable."
+        },
+        {
+          "heading": "CUMPLE EL OBJETIVO",
+          "body": "Consigue al menos 50 likes con evidencia válida."
+        },
+        {
+          "heading": "ENVÍA TU EVIDENCIA",
+          "body": "Envía el enlace de tu publicación en esta página. Límite: 1 publicaciones por persona."
+        },
+        {
+          "heading": "ESPERA LA REVISIÓN",
+          "body": "JAKAWI revisará el cumplimiento antes de confirmar el resultado. Participar no significa haber ganado."
+        }
+      ],
+      "deadline": "2026-12-01T00:00:00+00:00",
+      "platforms": [
+        "instagram"
+      ],
+      "hashtags": [
+        "#jakawidemocena"
+      ],
+      "mentions": [],
+      "verificationBoundary": "Confirma tu correo antes de enviar evidencia o recibir una recompensa."
+    },
+    "qa_verified": false,
+    "qa_has_participation": false,
+    "component_present": true,
+    "join_has_no_email_gate": true,
+    "explicit_join": true,
+    "evidence_email_gate": true,
+    "reward_email_gate": true,
+    "verification_returns_same_delivery": true,
+    "unlock_protected": true
+  },
+  "live_landing_browser": {
+    "scope": "Public production Challenge Landing, read-only 390px; no CTA submission",
+    "errors": [],
+    "result": "PASS",
+    "http": 200,
+    "compiledAssets": true
+  },
+  "delivery_browser": {
+    "scope": "Same immutable deployed image and compiled assets. Challenge: existing isolated jakawi_test participation, no production participation created. Benefit: existing owned confirmed production redemption, read-only render. Experience: production external informational result, read-only render.",
+    "cases": [
+      {
+        "name": "Challenge compiled Delivery 390, existing isolated outcome",
+        "pass": true,
+        "titleOccurrences": 1,
+        "positions": {
+          "YA ESTÁS DENTRO DEL RETO": 137,
+          "QUÉ TIENES QUE HACER": 440,
+          "TIENES HASTA": 1278,
+          "QUÉ PUEDES GANAR": 1443,
+          "ASEGURA TU PARTICIPACIÓN": 2093
+        },
+        "cta": {
+          "text": "ENVIAR MI EVIDENCIA",
+          "color": "rgb(255, 255, 255)",
+          "bg": "color(srgb 0.8 0.282353 0.247843)"
+        },
+        "evidenceBlocked": true
+      },
+      {
+        "name": "Benefit existing confirmed outcome: received value first (ready-code instructions prevalidated)",
+        "pass": true
+      },
+      {
+        "name": "Experience external pending truthful informational result",
+        "pass": true
+      }
+    ],
+    "errors": [],
+    "mutations": 0,
+    "result": "PASS"
+  },
+  "counts_before": {
+    "users": 8,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 2,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3,
+    "challenge_social_entries": 4,
+    "challenge_reward_grants": 0
+  },
+  "counts_after": {
+    "users": 8,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 2,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3,
+    "challenge_social_entries": 4,
+    "challenge_reward_grants": 0
+  },
+  "domain_mutations": 0,
+  "published_inventory_unchanged": true,
+  "health": {
+    "jakawicom-app-1": {
+      "id": "5df3dae55aec90a167e4d40b758c89df93b09f6b0a18173966170148269aa1e4",
+      "image": "sha256:c1c023ebc0a4225fa88978b57ad77a0efa1992e4a096c4b2ccd316917a2ce7ee",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-13T01:07:26.690226839Z"
+    },
+    "jakawicom-web-1": {
+      "id": "68046cd6dffee989e3dbb7e48dbbffd662bbb316cb0b58a47f5176bc67358d25",
+      "image": "sha256:e323360d1bc4ab48f3cee44a2859489a317d63202173bd7c209c3ef88de53121",
+      "status": "running",
+      "health": null,
+      "started_at": "2026-10-13T01:07:32.57241962Z"
+    },
+    "jakawicom-social-worker-1": {
+      "id": "43ba1b06531121a78b9b4cea5462254b76cdad8d2d889803c3a9ba6f5f0c36ad",
+      "image": "sha256:c1c023ebc0a4225fa88978b57ad77a0efa1992e4a096c4b2ccd316917a2ce7ee",
+      "status": "running",
+      "health": null,
+      "started_at": "2026-10-13T01:07:32.355035068Z"
+    },
+    "jakawicom-db-1": {
+      "id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-10T22:20:08.295249983Z"
+    },
+    "jakawi_v2proof-app-1": {
+      "id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-10T22:20:08.293389352Z"
+    }
+  },
+  "v2proof_changed": false,
+  "scheduler": "cron active; existing scheduler entry; latest jobs DONE",
+  "failed_jobs": {
+    "historical": 3,
+    "new": 0
+  },
+  "up_local_public": [
+    200,
+    200
+  ],
+  "crm": true,
+  "meta_provider_browser_capi": [
+    false,
+    false,
+    false
+  ],
+  "disk_before_bytes": 22630887424,
+  "disk_after_bytes": 22031847424,
+  "micro_opt_in": "UNCHANGED / LIVE",
+  "offer_v3": "UNCHANGED / LIVE + FROZEN",
+  "welcome_courtesy": "FUTURE / OFF / NOT IMPLEMENTED",
+  "delivery_v11": "LIVE",
+  "docs_redeploy": false,
+  "result": "LIVE — READY FOR PRODUCT REVIEW",
+  "measured_utc": "2026-10-13T01:11:02.578490+00:00",
+  "delivery_fixture_instructions_match_production": true
+}

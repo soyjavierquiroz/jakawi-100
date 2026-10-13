@@ -137,6 +137,6 @@ Sólo `acquisition_headline` y `acquisition_supporting_copy` son copy nuevo pers
 
 Delivery usa verdad de dominio: Benefit reutiliza código/QR y añade dirección/condiciones; Experience muestra sesión y estado real (pending no es confirmación); Challenge entrega instrucciones y estado de participación, no el premio. Un componente compartido mínimo presenta la entrega y, después, el acceso permanente para cuentas nuevas. No hay modelo Delivery ni motor de pasos. Challenge verifica en contexto y retorna a la misma Landing; Unlock protege source con estado de dominio, elegibilidad autenticada y participación vigente tras compromiso explícito.
 
-### Delivery V1.1 (código, pendiente de deploy)
+### Delivery V1.1 — LIVE (`f2b488b`)
 
 Join Challenge es explícito y no requiere email verificado. El límite de evidencia social permanece en `ChallengeController::submit`; selección/otorgamiento exige identidad verificada en `ChallengeService::rewardEligible`, además de las reglas de recompensa existentes. El retorno firmado reevalúa sólo una participación propia existente y vuelve a su Delivery. El presenter deriva instrucciones/plataformas/metas/deadline del dominio; el estado visible mapea qualification/selection/grant, sin estados persistidos nuevos. Logro e instrucciones preceden a cuenta/verificación en la página.
