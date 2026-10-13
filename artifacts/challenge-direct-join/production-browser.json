@@ -1,0 +1,10 @@
+{
+  "scope": "Public production Challenge Landing and final guest intent CTA, 390px; no signup/join submission",
+  "errors": [],
+  "finalGuestCTA": "QUIERO PARTICIPAR",
+  "signupSubmitted": false,
+  "joinSubmitted": false,
+  "result": "PASS",
+  "http": 200,
+  "compiledAssets": true
+}

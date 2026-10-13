@@ -1,0 +1,253 @@
+{
+  "release_sha": "7cdc8c12e71b23e6c6b99db522e2e6274be6b87f",
+  "previous_production_sha": "f2b488b7e634782d3aa21dae987596d96b30d28c",
+  "images": {
+    "app": "sha256:fff74ec4b55ccb62533f9e63a5cc05fc2268e99d3f1f194c700b7787330dace0",
+    "web": "sha256:f7b8676daf31e6f75df7b1f14fe3572d2294b5aa1105e82a8c466a73ff7b20cf",
+    "worker": "sha256:fff74ec4b55ccb62533f9e63a5cc05fc2268e99d3f1f194c700b7787330dace0"
+  },
+  "rollback_images": {
+    "app": {
+      "tag": "jakawi-app:rollback-f2b488b7e634782d3aa21dae987596d96b30d28c",
+      "image": "sha256:c1c023ebc0a4225fa88978b57ad77a0efa1992e4a096c4b2ccd316917a2ce7ee"
+    },
+    "web": {
+      "tag": "jakawi-web:rollback-f2b488b7e634782d3aa21dae987596d96b30d28c",
+      "image": "sha256:e323360d1bc4ab48f3cee44a2859489a317d63202173bd7c209c3ef88de53121"
+    }
+  },
+  "rollback_executed": false,
+  "production_builds": 1,
+  "clean_git_export": true,
+  "assets": {
+    "public_hot": "ABSENT",
+    "manifest": "PASS",
+    "dev_refs": false,
+    "compiled_assets": true
+  },
+  "database": {
+    "pending_migrations": false,
+    "migrations_executed": false,
+    "recreated": false,
+    "deploy_domain_writes": false
+  },
+  "rule": "Activation only for a genuine operational choice; Challenge explicit CTA → join → Delivery",
+  "consent": "intended_action=PARTICIPATE validated against Challenge action/subject/published Landing; generic signup and GET never join",
+  "verification": "Evidence/reward-sensitive boundaries unchanged",
+  "live_contract": {
+    "qa_verified": false,
+    "qa_participation": false,
+    "requires_choice": false,
+    "responses": [
+      {
+        "path": "/l/qa-calibration-challenge-action",
+        "status": 200,
+        "destination": null
+      },
+      {
+        "path": "/l/qa-calibration-challenge-action/activar",
+        "status": 302,
+        "destination": "https://jakawi.com/l/qa-calibration-challenge-action"
+      },
+      {
+        "path": "/l/qa-calibration-experience-desire/activar",
+        "status": 200,
+        "destination": null
+      },
+      {
+        "path": "/l/qa-calibration-benefit-value/activar",
+        "status": 200,
+        "destination": null
+      }
+    ],
+    "explicit_consent_validator": true,
+    "evidence_verified": true,
+    "reward_verified": true,
+    "unlock_protected": true
+  },
+  "isolated_existing_outcome_contract": {
+    "qa_verified": false,
+    "qa_participation": true,
+    "requires_choice": false,
+    "responses": [
+      {
+        "path": "/l/qa-calibration-challenge-action",
+        "status": 200,
+        "destination": null
+      },
+      {
+        "path": "/l/qa-calibration-challenge-action/activar",
+        "status": 302,
+        "destination": "https://jakawi.com/l/qa-calibration-challenge-action/resultado"
+      },
+      {
+        "path": "/l/qa-calibration-experience-desire/activar",
+        "status": 200,
+        "destination": null
+      },
+      {
+        "path": "/l/qa-calibration-benefit-value/activar",
+        "status": 200,
+        "destination": null
+      },
+      {
+        "path": "/l/qa-calibration-challenge-action/resultado",
+        "status": 200,
+        "destination": null
+      }
+    ],
+    "auth_returns": {
+      "App\\Http\\Responses\\RegisterResponse": "https://jakawi.com/l/qa-calibration-challenge-action/resultado",
+      "App\\Http\\Responses\\LoginResponse": "https://jakawi.com/l/qa-calibration-challenge-action/resultado"
+    },
+    "explicit_consent_validator": true,
+    "evidence_verified": true,
+    "reward_verified": true,
+    "unlock_protected": true
+  },
+  "live_browser": {
+    "scope": "Public production Challenge Landing and final guest intent CTA, 390px; no signup/join submission",
+    "errors": [],
+    "finalGuestCTA": "QUIERO PARTICIPAR",
+    "signupSubmitted": false,
+    "joinSubmitted": false,
+    "result": "PASS",
+    "http": 200,
+    "compiledAssets": true
+  },
+  "readiness_and_gates": {
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "rollback": false,
+    "polls": [
+      {
+        "seconds": 0.34,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200",
+        "curl_error": ""
+      }
+    ],
+    "routes": [
+      {
+        "name": "up local",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "up public",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-challenge-action",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-benefit-value",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-experience-desire",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      }
+    ],
+    "polling_started_utc": "2026-10-13T02:40:35.472620+00:00",
+    "seconds_until_ready": 0.34,
+    "ready": true
+  },
+  "counts_before": {
+    "users": 9,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 3,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3,
+    "challenge_social_entries": 4,
+    "challenge_reward_grants": 0
+  },
+  "counts_after": {
+    "users": 9,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 3,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3,
+    "challenge_social_entries": 4,
+    "challenge_reward_grants": 0
+  },
+  "domain_mutations": 0,
+  "published_inventory_unchanged": true,
+  "health": {
+    "jakawicom-app-1": {
+      "id": "c2215d872ed1cf988f5632bb5b03ce46d6d0d50ecb263917d6b41d07bdd63d26",
+      "image": "sha256:fff74ec4b55ccb62533f9e63a5cc05fc2268e99d3f1f194c700b7787330dace0",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-13T02:40:29.285436001Z"
+    },
+    "jakawicom-web-1": {
+      "id": "3815101c79d12a8cfe14c19ef34aa812279c50631bfcc8796c7d94732b872ac5",
+      "image": "sha256:f7b8676daf31e6f75df7b1f14fe3572d2294b5aa1105e82a8c466a73ff7b20cf",
+      "status": "running",
+      "health": null,
+      "started_at": "2026-10-13T02:40:35.124173147Z"
+    },
+    "jakawicom-social-worker-1": {
+      "id": "fd636321806fc1bb7e67a6b395df582034a2fc41fb9e84c1d29159ff9340a629",
+      "image": "sha256:fff74ec4b55ccb62533f9e63a5cc05fc2268e99d3f1f194c700b7787330dace0",
+      "status": "running",
+      "health": null,
+      "started_at": "2026-10-13T02:40:34.949150533Z"
+    },
+    "jakawicom-db-1": {
+      "id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-10T22:20:08.295249983Z"
+    },
+    "jakawi_v2proof-app-1": {
+      "id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-10T22:20:08.293389352Z"
+    }
+  },
+  "db_and_v2proof_unchanged": true,
+  "scheduler": "cron active",
+  "failed_jobs": {
+    "historical": 3,
+    "new": 0
+  },
+  "crm": true,
+  "meta_provider_browser_capi": [
+    false,
+    false,
+    false
+  ],
+  "disk_before_bytes": 21890306048,
+  "disk_after_bytes": 21375971328,
+  "cleanup": false,
+  "frontend_validation_builds": 1,
+  "delivery_v11": "UNCHANGED / LIVE",
+  "micro_opt_in": "33/66/100 and architecture preserved; Challenge final CTA + consent integration only",
+  "offer_v3": "UNCHANGED / LIVE + FROZEN",
+  "unlock": "UNCHANGED / PROTECTED",
+  "welcome_courtesy": "FUTURE / OFF / NOT IMPLEMENTED",
+  "measured_utc": "2026-10-13T02:43:58.782355+00:00",
+  "result": "CHALLENGE DIRECT JOIN LIVE — INTERSTITIAL REMOVED"
+}

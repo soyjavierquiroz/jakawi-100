@@ -1,8 +1,8 @@
 # JAKAWI — estado actual de producción
 
 **STATUS: CURRENT / AUTHORITATIVE.** Referencia operativa: 2026-10-13 UTC.
-Código productivo LIVE: `f2b488b7e634782d3aa21dae987596d96b30d28c`.
-Base productiva anterior y rollback protegido: `b3c00e371a6c5f7d509d96f67e07103f0176a051`.
+Código productivo LIVE: `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`.
+Base productiva anterior y rollback protegido: `f2b488b7e634782d3aa21dae987596d96b30d28c`.
 Acquisition Funnel V1 y Landing-first Journey V1 están LIVE. Producción pre-launch contiene tres LandingPresentations DEMO publicadas como ALL para evaluación de producto; son sintéticas y no comerciales, no inventario de lanzamiento.
 
 ## Runtime y producción
@@ -144,3 +144,7 @@ Modal guest sólo para nombre/correo/WhatsApp, progreso 33/66/100 y copy de la p
 ## Delivery / Conversion V1.1 — LIVE (2026-10-13 UTC)
 
 Challenge permite join explícito sin email verificado; no hay auto-participación. Delivery prioriza logro, misión, instrucciones, fecha límite, acción, premio y estado antes de seguridad/cuenta. Email se exige al enviar evidencia social y antes de seleccionar/otorgar recompensa, incluido el reto manual. Confirmar email vuelve a la Delivery del mismo reto con participación propia; sin participación no la crea. Sin schema ni nuevo player: no se muestra media instructiva cuando el dominio no la provee. Micro Opt-in y composición Offer V3 congelados; sólo se integra el label autenticado «ENTRAR AL RETO». Release productiva `f2b488b7e634782d3aa21dae987596d96b30d28c`, desde `b3c00e`, con un build limpio e imágenes inmutables; sin migraciones ni cambios de publicación. Smoke de entrada con identidad QA no verificada por inspección read-only del runtime; Delivery a 390 con la misma imagen/compilados y participación aislada existente, sin fabricar una en producción. Benefit confirmado existente y Experience externa pendiente PASS. Cero nuevas conversiones, evidencia o premios; DB y v2proof sin recreación. Welcome Courtesy: FUTURE / OFF / NOT IMPLEMENTED. [QA y release](../artifacts/delivery-v1-1/INDEX.md).
+
+## Challenge direct join — LIVE
+
+Activación requiere elección operativa real. Challenge actual: CTA explícito → join → Delivery; el final guest «QUIERO PARTICIPAR» conserva `intended_action=PARTICIPATE`, validado tras autenticar. Signup genérico y GET no participan. Sunset fecha y Café sucursal preservados; Delivery V1.1 y Unlock sin cambio. Release `7cdc8c12e71b23e6c6b99db522e2e6274be6b87f`, un build limpio y cero mutaciones nuevas en producción; DB/v2proof intactos, CRM TRUE y Meta OFF. [Validación y release](../artifacts/challenge-direct-join/INDEX.md).
