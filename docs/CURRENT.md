@@ -1,7 +1,7 @@
 # JAKAWI — estado actual de producción
 
 **STATUS: CURRENT / AUTHORITATIVE.** Última verificación operativa: 2026-10-13 (America/La_Paz).
-Código productivo LIVE: `0a0d4b6939ae914ffe9face7436d099e1cfac6a4` — Publisher Workflow UX V1 + AI Product Brief V1 + Landing JSON V1. Runtime anterior y rollback protegido: `44636ae1c41f5828c702c052b99f3e3b7c778263`. Un build productivo desde Git export limpio; sin migraciones ni mutaciones de dominio. Smoke sobre un DRAFT temporal DEMO retirado después de QA; ninguna Landing publicada modificada. El commit documental posterior no cambia el runtime. [Evidencia del release](../artifacts/publisher-workflow-ux-v1/production-release.json).
+Código productivo LIVE: `642dbd7c5ea6ed1d605fdba546cf19476b865013` — Editorial Validation Fix + Publisher Workflow UX V1 + AI Product Brief V1 + Landing JSON V1. Runtime anterior y rollback protegido: `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`. Un build productivo desde Git export limpio; sin migraciones ni mutaciones de dominio. Un guardado editorial sobre Arcilla DRAFT existente, sin publicar ni cambiar audiencia/campaign; los tres párrafos exactos y Preview PASS. La verdad del dominio se protege estructuralmente; la prosa editorial legítima no se bloquea por palabras. El commit documental posterior no cambia el runtime. [Evidencia del release](../artifacts/editorial-validation-fix/production-release.json).
 Acquisition Funnel V1 y Landing-first Journey V1 están LIVE. Producción pre-launch contiene tres LandingPresentations DEMO publicadas como ALL para evaluación de producto; son sintéticas y no comerciales, no inventario de lanzamiento.
 
 ## Arquitectura actual auditada

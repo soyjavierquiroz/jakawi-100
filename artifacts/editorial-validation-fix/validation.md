@@ -1,6 +1,6 @@
 # Editorial validation false-positive fix
 
-Status: READY FOR DEPLOY. No deploy. Base: `2fee8a859b4e2fd30395285f248acd85dafa36bc`, clean fetched `origin/main`. Production application remains `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`.
+Status: LIVE on production `642dbd7c5ea6ed1d605fdba546cf19476b865013`. Implementation validation before deployment: Base: `2fee8a859b4e2fd30395285f248acd85dafa36bc`, clean fetched `origin/main`. At that implementation validation, production application remained `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`.
 
 ## Exact cause
 
@@ -28,4 +28,12 @@ The existing field-label map now covers all editor controls and has human fallba
 - Docs checker: **PASS**; `git diff --check`: **PASS**.
 - Isolated fixtures removed and browser harness stopped after QA. No broad suite or funnel retest.
 
-Docs describe structural domain protection and editable editorial prose; they explicitly mark this correction pending deploy. Existing LIVE workflow/JSON/brief statuses are unchanged.
+Docs describe structural domain protection and editable editorial prose. The pre-deploy validation above is historical.
+
+## Production release — LIVE
+
+[Release evidence](production-release.json) and [desktop live smoke](live/admin-browser.json): one clean production build of `642dbd7c5ea6ed1d605fdba546cf19476b865013`; protected rollback `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`; no pending/run migrations. Only app/web/social-worker recreated. App/DB healthy, web/worker running, V2PROOF unchanged/healthy, cron active; /up local/public and Café/Sunset/Reto 200; assets/manifest/dev-runtime guards PASS. Failed jobs 3 historical / 0 new; CRM TRUE, Meta OFF.
+
+Existing Arcilla DRAFT id 15: approved exact editorial paragraphs imported with existing name/slug preserved; JSON applied/dirty/saved feedback PASS; exactly one editorial PUT, no publication or audience/campaign changes. Refreshed saved Preview renders headline and all three paragraphs. Structural price/membership/CTA URL/action JSON atomically rejected client-side without Save; specific errors red, shared help neutral. Domain counts and the full product projection remain unchanged. [Saved](live/saved-desktop.png) and [structural rejection](live/structural-rejection-desktop.png) screenshots. Local-only allowlisted harness used existing Admin identity and production assets/kernel with isolated session; stopped after smoke.
+
+Editorial Validation Fix, Publisher Workflow UX V1, JSON V1 and AI Product Brief V1: LIVE. Batch: FUTURE. Welcome Courtesy: FUTURE / OFF. Docs-only followup: no rebuild or redeploy.

@@ -1,6 +1,6 @@
 # Landing JSON V1 — canonical external editorial contract
 
-**LIVE** on current production `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`; originally deployed on `19c946870a6a54981acc8b41f4ef0b56188226fe`. Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
+**LIVE** on current production `642dbd7c5ea6ed1d605fdba546cf19476b865013`; originally deployed on `19c946870a6a54981acc8b41f4ef0b56188226fe`. Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
 
 ## Purpose and workflow
 
@@ -40,7 +40,7 @@ Only `schema_version` is required. All other keys, including groups, are optiona
 
 Missing key: leave the current field unchanged. Present optional text key with `""`: explicitly clear the editable override. Empty name, slug or enum is invalid. Empty editorial fields retain existing renderer semantics: product fallback where applicable; empty closing description is omitted. Export emits every allowed form field, including empty overrides. It does not export effective domain-derived fallback values instead of those overrides.
 
-Validation uses the merged candidate: omitted headline/emphasis still participates in the existing substring rule; a cleared headline uses the selected product's default headline. Text uses the existing Admin HTML/Markdown rejection patterns. Server Save remains authoritative for plain text, lengths, enums, headline emphasis, slug uniqueness and configured VSL. Domain facts are protected structurally: the importer rejects domain/action keys and adapters retain authoritative values. The editorial validation correction (READY FOR DEPLOY) removes keyword/number-based copy rejection; normal editorial prose remains editable. Existing server validation remains authoritative. Workflow UX V1 adds clear error summaries and saved Preview refresh; see [Publisher workflow](PUBLISHER_WORKFLOW_UX_V1.md).
+Validation uses the merged candidate: omitted headline/emphasis still participates in the existing substring rule; a cleared headline uses the selected product's default headline. Text uses the existing Admin HTML/Markdown rejection patterns. Server Save remains authoritative for plain text, lengths, enums, headline emphasis, slug uniqueness and configured VSL. Domain facts are protected structurally: the importer rejects domain/action keys and adapters retain authoritative values. The editorial validation correction (LIVE) removes keyword/number-based copy rejection; normal editorial prose remains editable. Existing server validation remains authoritative. Workflow UX V1 adds clear error summaries and saved Preview refresh; see [Publisher workflow](PUBLISHER_WORKFLOW_UX_V1.md).
 
 ## Forbidden and domain safety
 

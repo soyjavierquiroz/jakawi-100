@@ -51,7 +51,7 @@ como campos JSON ni los repitas como promesas nuevas en overrides editoriales.
 Los campos editoriales admiten prosa normal dentro de los límites de longitud
 y texto plano. Los campos de dominio y acciones están prohibidos en el JSON;
 los adapters conservan la verdad del producto. La corrección del rechazo
-heurístico de palabras/cifras está READY FOR DEPLOY, todavía no desplegada.
+heurístico de palabras/cifras está LIVE en producción.
 value.supporting_copy es anotación editorial, nunca reemplaza el premio/valor.
 No generes ahorros ni cambies la verdad para lograr un copy más persuasivo.
 

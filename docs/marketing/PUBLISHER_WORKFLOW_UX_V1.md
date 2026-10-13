@@ -1,6 +1,6 @@
 # Marketing Publisher workflow UX V1
 
-Status: **LIVE** on current production application `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`, deployed from actual runtime `44636ae1c41f5828c702c052b99f3e3b7c778263` on 2026-10-13 (America/La_Paz). Landing JSON V1 and AI Product Brief V1 remain LIVE. No JSON schema, domain, DB, lifecycle, template, adapter or preview engine changes.
+Status: **LIVE** on current production application `642dbd7c5ea6ed1d605fdba546cf19476b865013`, deployed from actual runtime `0a0d4b6939ae914ffe9face7436d099e1cfac6a4` on 2026-10-13 (America/La_Paz). Landing JSON V1 and AI Product Brief V1 remain LIVE. No JSON schema, domain, DB, lifecycle, template, adapter or preview engine changes.
 
 COPIAR BRIEF PARA IA → external GPT → IMPORTAR JSON → CAMBIOS SIN GUARDAR → review/media → GUARDAR Y PREVISUALIZAR → inspect current saved Preview → PUBLICAR.
 
@@ -10,7 +10,7 @@ Import != save. `✓ JSON APLICADO` confirms the editorial form patch and its ch
 
 Preview V1 renders **saved state**. While the associated editor is dirty its heading is `PREVIEW · VERSIÓN GUARDADA`, with an explanation that unsaved changes are absent. After Save the returned persisted record supplies the current slug, and the iframe reloads even when that slug is unchanged. This uses the existing authorized Preview route. It does not serialize unsaved values or render them through a second endpoint.
 
-On rejection, `NO SE PUDO GUARDAR` lists the affected fields, marks actual errors in red and focuses the first available affected control. Every current form value remains intact, and the saved Preview is unchanged. Slug collisions say `El slug "…" ya está en uso.`; unchanged own slugs remain allowed. Informational commercial-truth guidance uses neutral help styling. The editorial validation correction is READY FOR DEPLOY: normal editorial prose is editable within plain-text/length constraints, while domain/action overrides remain structurally forbidden. It removes the keyword heuristic that rejected `una`; this correction is not deployed yet. [Validation](../../artifacts/editorial-validation-fix/validation.md).
+On rejection, `NO SE PUDO GUARDAR` lists the affected fields, marks actual errors in red and focuses the first available affected control. Every current form value remains intact, and the saved Preview is unchanged. Slug collisions say `El slug "…" ya está en uso.`; unchanged own slugs remain allowed. Informational commercial-truth guidance uses neutral help styling. The editorial validation correction is LIVE: normal editorial prose is editable within plain-text/length constraints, while domain/action overrides remain structurally forbidden. It removes the keyword heuristic that rejected `una`; the exact Arcilla paragraphs save and refresh Preview in production. [Validation](../../artifacts/editorial-validation-fix/validation.md).
 
 PUBLICAR with unsaved editor changes is blocked with `GUARDA TUS CAMBIOS ANTES DE PUBLICAR.` There is no auto-save/publish combination and no new technical requirement to view Preview before publishing. Publication and existing lifecycle actions remain separate from JSON productivity controls.
 
@@ -19,3 +19,5 @@ When IMAGE is selected, the Media section shows the currently resolved saved/pro
 A larger Publisher UX V2 split-pane remains optional future polish. [Validation and reproduction](../../artifacts/publisher-workflow-ux-v1/validation.md).
 
 [Production release](../../artifacts/publisher-workflow-ux-v1/production-release.json): one build, no migrations or domain mutations; protected rollback; real deployed Admin DRAFT smoke PASS, temporary record removed. No rebuild/redeploy for the documentation followup. Landing JSON V1 and AI Product Brief V1: LIVE. Batch: FUTURE. Welcome Courtesy: FUTURE / OFF.
+
+[Editorial correction production release](../../artifacts/editorial-validation-fix/production-release.json): one build, protected previous runtime, no migrations/domain mutations; one existing Arcilla DRAFT editorial save, no publication or audience/campaign changes.

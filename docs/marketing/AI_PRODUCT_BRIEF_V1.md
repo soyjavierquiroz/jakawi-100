@@ -1,6 +1,6 @@
 # AI Product Brief V1
 
-Version: **`jakawi-product-brief-v1`**. Supported domains: **Benefit / Experience / Challenge**. **LIVE** on current production `0a0d4b6939ae914ffe9face7436d099e1cfac6a4`; originally deployed on `44636ae1c41f5828c702c052b99f3e3b7c778263`. A deterministic, public-safe, single-product output for an external GPT configured once with the [complete JAKAWI copywriter prompt](AI_LANDING_COPYWRITER.md).
+Version: **`jakawi-product-brief-v1`**. Supported domains: **Benefit / Experience / Challenge**. **LIVE** on current production `642dbd7c5ea6ed1d605fdba546cf19476b865013`; originally deployed on `44636ae1c41f5828c702c052b99f3e3b7c778263`. A deterministic, public-safe, single-product output for an external GPT configured once with the [complete JAKAWI copywriter prompt](AI_LANDING_COPYWRITER.md).
 
 ## Purpose and source
 
