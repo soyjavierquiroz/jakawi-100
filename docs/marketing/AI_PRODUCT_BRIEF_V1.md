@@ -1,6 +1,6 @@
 # AI Product Brief V1
 
-Version: **`jakawi-product-brief-v1`**. Supported domains: **Benefit / Experience / Challenge**. Implemented for review; pending deploy. A deterministic, public-safe, single-product output for an external GPT configured once with the [complete JAKAWI copywriter prompt](AI_LANDING_COPYWRITER.md).
+Version: **`jakawi-product-brief-v1`**. Supported domains: **Benefit / Experience / Challenge**. **LIVE** on production `44636ae1c41f5828c702c052b99f3e3b7c778263`. A deterministic, public-safe, single-product output for an external GPT configured once with the [complete JAKAWI copywriter prompt](AI_LANDING_COPYWRITER.md).
 
 ## Purpose and source
 
@@ -144,6 +144,8 @@ No database IDs, UUIDs, public IDs, primary keys, slugs, model classes, storage 
 
 ## Operator workflow
 
-JAKAWI → **COPIAR BRIEF PARA IA** → external GPT → `jakawi-landing-v1` → **IMPORTAR JSON** → review → media → preview → save/publish.
+JAKAWI → **COPIAR BRIEF PARA IA** → external GPT → `jakawi-landing-v1` → **IMPORTAR JSON** → review → media → preview → publish. Saving remains an explicit Admin action. Batch: **FUTURE**. Welcome Courtesy: **FUTURE / OFF**.
 
 Configure the GPT once with [AI_LANDING_COPYWRITER.md](AI_LANDING_COPYWRITER.md). Each time, select/open one product's Landing editor and copy its brief. One click copies the JSON and shows **✓ BRIEF COPIADO**. Microcopy: “Pégalo en tu copywriter JAKAWI y vuelve con un jakawi-landing-v1 para importar.” Clipboard failure opens a read-only manual-copy fallback. No mandatory preview dialog. Paste only the brief to the external GPT, then import its JSON using [Landing JSON V1](LANDING_JSON_V1.md). Manually composed JSON remains supported. No automated QA invokes external AI.
+
+Live release evidence: [production release](../../artifacts/ai-product-brief-v1/production-release.json) and [Admin smoke](../../artifacts/ai-product-brief-v1/live/admin-browser.json). The docs-only status commit does not rebuild or redeploy application images.

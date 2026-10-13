@@ -1,0 +1,50 @@
+{
+  "brief_version": "jakawi-product-brief-v1",
+  "domain": "Experience",
+  "title": "Sunset JAKAWI en Mirador Cobalto — DEMO",
+  "partner": "Trama Viva — DEMO · Andes Umbral — DEMO · Brasa Prisma — DEMO",
+  "city": "Cochabamba",
+  "summary": "Terraza al atardecer, música suave, tabla para compartir y bebida sin alcohol.",
+  "description": "DEMO COMERCIAL — escenario sintético, no contractual. No es inventario de lanzamiento; no existe canje ni reserva comercial real. Encuentro demo de tres horas, de 17:00 a 20:00, en la terraza ficticia Mirador Cobalto, Cochabamba. Incluye una bebida sin alcohol por persona y una tabla pequeña de pan, queso y aceitunas para compartir entre dos personas. Música ambiental; no es una cena completa ni un concierto.",
+  "demo": true,
+  "commercial_truth": {
+    "experience_type": "event",
+    "duration_minutes": 180,
+    "prices": {
+      "currency": "BOB",
+      "regular_price": "150.00",
+      "member_price": "120.00"
+    },
+    "access_requirement": "La reserva se gestiona directamente con el partner desde la ficha de la experiencia.",
+    "reservation_mode": "external",
+    "available_sessions": 2,
+    "sessions": [
+      {
+        "starts_at": "2026-11-07T17:00:00-04:00",
+        "ends_at": "2026-11-07T20:00:00-04:00",
+        "timezone": "America/La_Paz",
+        "venue": "Mirador Cobalto — DEMO",
+        "address": "Calle Demo 27, Alalay",
+        "city": "Cochabamba",
+        "capacity": 36
+      },
+      {
+        "starts_at": "2026-11-21T17:00:00-04:00",
+        "ends_at": "2026-11-21T20:00:00-04:00",
+        "timezone": "America/La_Paz",
+        "venue": "Mirador Cobalto — DEMO",
+        "address": "Calle Demo 27, Alalay",
+        "city": "Cochabamba",
+        "capacity": 36
+      }
+    ],
+    "conditions": [
+      "DEMO COMERCIAL — experiencia simulada, sin reserva comercial real. BOB 150 por persona; precio miembro BOB 120. Capacidad configurada: 36 personas por sesión; no garantiza disponibilidad en tiempo real. Reserva previa por el enlace demo.invalid; el enlace no procesa una reserva comercial. Consulta alergias y condiciones de clima en el flujo de prueba. No incluye transporte ni bebidas alcohólicas."
+    ]
+  },
+  "marketing_context": {
+    "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+    "landing_language": "es",
+    "city_first": true
+  }
+}

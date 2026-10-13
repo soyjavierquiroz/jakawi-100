@@ -1,0 +1,181 @@
+{
+  "previous": "19c946870a6a54981acc8b41f4ef0b56188226fe",
+  "deployed": "44636ae1c41f5828c702c052b99f3e3b7c778263",
+  "images": {
+    "app": "sha256:96fa91d8bb903d5c9a0647443d0aea861810ff887b43c310384576f7a0fad1bf",
+    "web": "sha256:a0fcb70c219bbc0791dc4f01279c6f1dc57030340c854cbcfb4393c20d2d86b9",
+    "worker": "sha256:96fa91d8bb903d5c9a0647443d0aea861810ff887b43c310384576f7a0fad1bf"
+  },
+  "builds": 1,
+  "rollback_images": {
+    "app": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37",
+    "web": "sha256:3b73a29fb84facf6d1bed092a93fe4bf1970605d18afc03d58046b13ddad5380",
+    "worker": "sha256:1fddd46cb038925e738e7b0dc2234b0b62daab83d80ad1447d8b99227b594c37"
+  },
+  "rollback_protected": true,
+  "rollback_tags_verified_against_runtime": true,
+  "pre_cutover": {
+    "public_hot": "ABSENT",
+    "manifest": "PASS",
+    "semantic_dev_runtime_guard": "PASS",
+    "admin_render": "PASS",
+    "landing_render": "PASS",
+    "read_only_transactions": true
+  },
+  "readiness": {
+    "ready": true,
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "polls": [
+      {
+        "seconds": 0.55,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200"
+      }
+    ]
+  },
+  "migrations": "NONE; no pending; no migration command executed",
+  "db_writes": false,
+  "domain_mutations": {
+    "redemptions": 0,
+    "experience_reservations": 0,
+    "challenge_participations": 0,
+    "challenge_social_entries": 0,
+    "challenge_reward_grants": 0,
+    "reward_payouts": 0,
+    "unlock_participations": 0,
+    "memberships": 0,
+    "jp_holds": 0,
+    "published_landings": 0
+  },
+  "live_browser": {
+    "scope": "Desktop authenticated Admin GETs rendered by deployed candidate against production DB in READ ONLY transactions. Session/cache in memory. Unsaved forms only; real deployed assets proxied locally. No login persistence, Save, Publish or external AI.",
+    "domains": {
+      "benefit": {
+        "title": "20% en peinado de evento — DEMO",
+        "result": "PASS",
+        "validJSON": true,
+        "clipboard": true,
+        "feedback": true,
+        "formMutation": false,
+        "importExportPreserved": true,
+        "safety": "PASS"
+      },
+      "experience": {
+        "title": "Sunset JAKAWI en Mirador Cobalto — DEMO",
+        "result": "PASS",
+        "validJSON": true,
+        "clipboard": true,
+        "feedback": true,
+        "formMutation": false,
+        "importExportPreserved": true,
+        "safety": "PASS",
+        "availableSessions": 2,
+        "reservationMode": "external"
+      },
+      "challenge": {
+        "title": "Reto Cena de Ciudad — DEMO",
+        "result": "PASS",
+        "validJSON": true,
+        "clipboard": true,
+        "feedback": true,
+        "formMutation": false,
+        "importExportPreserved": true,
+        "safety": "PASS"
+      }
+    },
+    "mutationRequests": [],
+    "requestsDuringCopy": [],
+    "errors": [],
+    "result": "PASS"
+  },
+  "authoritative_truth_comparison": "PASS: copied facts independently match current models in read-only production transaction",
+  "assets": {
+    "result": "PASS",
+    "manifestAssets": 184,
+    "manifestMatches": true,
+    "allServedAssetsMatchCandidate": true
+  },
+  "no_dev_refs": true,
+  "http": {
+    "up-local": "200",
+    "up-public": "200",
+    "cafe": "200",
+    "sunset": "200",
+    "reto": "200"
+  },
+  "health": {
+    "jakawicom-app-1": {
+      "id": "b0d4a5253adfadbd562acba3ee681eee0b7a0f82be2d987824dcc131ca4631a0",
+      "image": "sha256:96fa91d8bb903d5c9a0647443d0aea861810ff887b43c310384576f7a0fad1bf",
+      "revision": "44636ae1c41f5828c702c052b99f3e3b7c778263",
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T16:04:06.930896177Z"
+    },
+    "jakawicom-web-1": {
+      "id": "11f85d93fc0dbbf2dfdf9baa0daf03ab857993b04937103a49ea4e151b88c2d8",
+      "image": "sha256:a0fcb70c219bbc0791dc4f01279c6f1dc57030340c854cbcfb4393c20d2d86b9",
+      "revision": "44636ae1c41f5828c702c052b99f3e3b7c778263",
+      "status": "running",
+      "health": null,
+      "started": "2026-10-13T16:04:12.688759567Z"
+    },
+    "jakawicom-social-worker-1": {
+      "id": "2fadefe69d3b1d8d771501965acd3135ecf269f384fb628689d415ef6724fee2",
+      "image": "sha256:96fa91d8bb903d5c9a0647443d0aea861810ff887b43c310384576f7a0fad1bf",
+      "revision": "44636ae1c41f5828c702c052b99f3e3b7c778263",
+      "status": "running",
+      "health": null,
+      "started": "2026-10-13T16:04:12.918689466Z"
+    },
+    "jakawicom-db-1": {
+      "id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "revision": null,
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.548796374Z"
+    },
+    "jakawi_v2proof-app-1": {
+      "id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+      "revision": null,
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.629992337Z"
+    },
+    "jakawi_v2proof-db-1": {
+      "id": "8af1e6f99993ef47d3a14a34c3c3c7fab0cc7b53af89b6ab8f25fa3d82b6a38d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "revision": null,
+      "status": "running",
+      "health": "healthy",
+      "started": "2026-10-13T04:50:42.511570146Z"
+    }
+  },
+  "v2proof_unchanged": true,
+  "db_container_unchanged": true,
+  "scheduler": "active cron service + existing minute wrapper; recent successful execution",
+  "failed_jobs": {
+    "historical": 3,
+    "new": 0
+  },
+  "crm": true,
+  "meta": "OFF",
+  "disk_before_GiB": 18.628585815429688,
+  "disk_after_GiB": 18.136703491210938,
+  "cleanup_required": false,
+  "cleanup_performed": false,
+  "docs": {
+    "ai_product_brief": "LIVE",
+    "landing_json": "LIVE",
+    "batch": "FUTURE",
+    "welcome_courtesy": "FUTURE / OFF",
+    "docs_only_status_update": true,
+    "rebuild": false,
+    "redeploy": false
+  },
+  "result": "JAKAWI AI PRODUCT BRIEF V1 LIVE — READY FOR REAL LANDING PRODUCTION TEST"
+}

@@ -1,6 +1,6 @@
 # Landing JSON V1 — canonical external editorial contract
 
-**LIVE** on production `19c946870a6a54981acc8b41f4ef0b56188226fe`. Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
+**LIVE** on current production `44636ae1c41f5828c702c052b99f3e3b7c778263`; originally deployed on `19c946870a6a54981acc8b41f4ef0b56188226fe`. Version: **`jakawi-landing-v1`**. Applies to the existing Benefit, Experience and Challenge Landing editor. Unlock is excluded. OfferConversionTemplate V3 stays LIVE + FROZEN. This adds convenience to the existing Publisher, not another publishing system.
 
 ## Purpose and workflow
 
@@ -128,6 +128,6 @@ Configure the GPT once with the complete [JAKAWI copywriter master prompt](AI_LA
 
 Acquisition copy imports/exports the existing persisted `acquisition_headline` and `acquisition_supporting_copy`. **Micro Opt-in does not yet consume them.** Wiring them is a separate next task, outside V1.
 
-V1: single-Landing JSON import/export. AI Product Brief V1: COPIAR BRIEF PARA IA derived from domain truth, implemented for review; pending deploy. Future only after individual V1 survives real usage: `jakawi-landing-batch-v1` for batch imports/draft creation. No arrays, bulk creation, product lookup or multi-product assignment now. Welcome Courtesy: **FUTURE / OFF**.
+V1: single-Landing JSON import/export. AI Product Brief V1: COPIAR BRIEF PARA IA derived from domain truth, **LIVE** for Benefit / Experience / Challenge; output-only, no AI calls. Future only after individual V1 survives real usage: `jakawi-landing-batch-v1` for batch imports/draft creation. No arrays, bulk creation, product lookup or multi-product assignment now. Welcome Courtesy: **FUTURE / OFF**.
 
 See the authoritative [Marketing System Audit](../architecture/MARKETING_SYSTEM_AUDIT.md), [parser/exporter](../../app/resources/js/lib/landing-json.ts), [editor controls](../../app/resources/js/components/marketing/LandingJsonControls.tsx) and [focused tests](../../app/tests/marketing/landing-json.test.mjs).

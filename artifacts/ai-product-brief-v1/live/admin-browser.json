@@ -1,0 +1,41 @@
+{
+  "scope": "Desktop authenticated Admin GETs rendered by deployed candidate against production DB in READ ONLY transactions. Session/cache in memory. Unsaved forms only; real deployed assets proxied locally. No login persistence, Save, Publish or external AI.",
+  "domains": {
+    "benefit": {
+      "title": "20% en peinado de evento — DEMO",
+      "result": "PASS",
+      "validJSON": true,
+      "clipboard": true,
+      "feedback": true,
+      "formMutation": false,
+      "importExportPreserved": true,
+      "safety": "PASS"
+    },
+    "experience": {
+      "title": "Sunset JAKAWI en Mirador Cobalto — DEMO",
+      "result": "PASS",
+      "validJSON": true,
+      "clipboard": true,
+      "feedback": true,
+      "formMutation": false,
+      "importExportPreserved": true,
+      "safety": "PASS",
+      "availableSessions": 2,
+      "reservationMode": "external"
+    },
+    "challenge": {
+      "title": "Reto Cena de Ciudad — DEMO",
+      "result": "PASS",
+      "validJSON": true,
+      "clipboard": true,
+      "feedback": true,
+      "formMutation": false,
+      "importExportPreserved": true,
+      "safety": "PASS"
+    }
+  },
+  "mutationRequests": [],
+  "requestsDuringCopy": [],
+  "errors": [],
+  "result": "PASS"
+}
