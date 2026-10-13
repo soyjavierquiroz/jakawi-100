@@ -1,6 +1,6 @@
 # Conversion Handoff + Full-page Delivery V1
 
-Local/test only; **pendiente de deploy**. Producción permanece en `df0476f`.
+**LIVE en producción — 2026-10-12**. Aplicación `b3c00e371a6c5f7d509d96f67e07103f0176a051`; base real anterior y rollback protegido `df0476f38f469cd063e5b97bee2d19dfa4f17a84`. [Evidencia productiva](production-release.json): un build limpio, sin migraciones ni conversiones nuevas; v2proof intacto. Signup no enviado en producción; identidad QA existente para el handoff. Las imágenes y resultados aislados siguientes corresponden a la validación previa en `jakawi_test`.
 
 Landing → identidad guest si hace falta → Activación full-page si hay elección/requisito → acción explícita → Delivery full-page. Cuenta es infraestructura, no el resultado de conversión. Modal único con progreso 33/66/100, un campo por paso y contexto una sola vez.
 

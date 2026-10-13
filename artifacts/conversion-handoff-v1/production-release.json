@@ -1,0 +1,287 @@
+{
+  "release_sha": "b3c00e371a6c5f7d509d96f67e07103f0176a051",
+  "previous_production_sha": "df0476f38f469cd063e5b97bee2d19dfa4f17a84",
+  "reconciliation_evidence": "Running app/web/worker IDs exactly match artifacts/micro-opt-in-delivery-v1/production-release.json and its df0476 release metadata. Prior release was not redeployed.",
+  "rollback_images": {
+    "app": "sha256:968f5685a79d6a0a067fe95184838aaf7b1975910810335c1c61fcdaf190449d",
+    "web": "sha256:55b707d16ff3b4f9be7564a50c0792af4799ddb2d0636c5af3dd3f051df9ebec"
+  },
+  "rollback_tags": [
+    "jakawi-app:rollback-df0476f38f469cd063e5b97bee2d19dfa4f17a84",
+    "jakawi-web:rollback-df0476f38f469cd063e5b97bee2d19dfa4f17a84"
+  ],
+  "rollback_tag_ids_verified": true,
+  "images": {
+    "app": "sha256:046e1cf133a93fd2f071ca72b47b4bd5bda53d59a48d85148be32f9f38236093",
+    "web": "sha256:d36f07a7cde035ba09797873c118a90f631cd98093c63a1f9019e1c7245149bb",
+    "worker": "sha256:046e1cf133a93fd2f071ca72b47b4bd5bda53d59a48d85148be32f9f38236093"
+  },
+  "production_builds": 1,
+  "clean_git_export": true,
+  "migrations_executed": false,
+  "pending_unexpected_migrations": false,
+  "db_recreated": false,
+  "cleanup_during_deploy": false,
+  "assets": {
+    "manifest": "PASS",
+    "public_hot": "ABSENT",
+    "dev_refs": false,
+    "routes": [
+      {
+        "path": "/beneficios/demo-beneficio-04",
+        "final_path": "/beneficios/demo-beneficio-04",
+        "redirects": [],
+        "status": 200
+      },
+      {
+        "path": "/l/qa-calibration-benefit-value",
+        "final_path": "/l/qa-calibration-benefit-value",
+        "redirects": [],
+        "status": 200
+      },
+      {
+        "path": "/l/qa-calibration-experience-desire",
+        "final_path": "/l/qa-calibration-experience-desire",
+        "redirects": [],
+        "status": 200
+      },
+      {
+        "path": "/l/qa-calibration-challenge-action",
+        "final_path": "/l/qa-calibration-challenge-action",
+        "redirects": [],
+        "status": 200
+      }
+    ],
+    "rollback_protected": true
+  },
+  "cutover": {
+    "timeout_seconds": 120,
+    "poll_seconds": 2,
+    "rollback": false,
+    "polls": [
+      {
+        "seconds": 0.44,
+        "app_health": "healthy",
+        "web_running": true,
+        "http": "200",
+        "curl_error": ""
+      }
+    ],
+    "routes": [
+      {
+        "name": "up local",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "up public",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Benefit demo-beneficio-01",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Experience demo-sunset-jakawi",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Challenge demo-reto-cena-ciudad",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-challenge-action",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-benefit-value",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      },
+      {
+        "name": "Published qa-calibration-experience-desire",
+        "http": "200",
+        "attempts": 1,
+        "pass": true
+      }
+    ],
+    "polling_started_utc": "2026-10-13T00:18:10.457845+00:00",
+    "seconds_until_ready": 0.44,
+    "ready": true
+  },
+  "browser": {
+    "scope": "Actual production compiled frontend; no signup and no domain mutations; established existing QA guard/LoginResponse session procedure.",
+    "signupLive": false,
+    "signupReason": "SAFE NON-MUTATING DEPLOY SMOKE; account creation already validated pre-deploy",
+    "cases": [
+      {
+        "name": "Sunset guest 33/66/100, one field, contextual name, promise CTA, no password/account success/repeated title",
+        "pass": true
+      },
+      {
+        "name": "Step 3 safe identity handoff exits modal to full-page Activation; obvious selection/date CTA",
+        "pass": true,
+        "cta": {
+          "text": "VER OPCIONES PARA EL 21 DE NOVIEMBRE",
+          "color": "rgb(255, 255, 255)",
+          "background": "color(srgb 0.8 0.282353 0.247843)"
+        },
+        "signupSubmitted": false
+      },
+      {
+        "name": "Authenticated Sunset skips opt-in",
+        "pass": true
+      },
+      {
+        "name": "Authenticated Café full-page location, selected state and truthful CTA",
+        "pass": true,
+        "cta": "CONTINUAR"
+      },
+      {
+        "name": "Authenticated Reto full-page contextual verification, no auto participation",
+        "pass": true
+      },
+      {
+        "name": "Product Detail fallback",
+        "pass": true
+      }
+    ],
+    "errors": [],
+    "blockedMutations": [],
+    "requests": [
+      "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "/l/qa-calibration-experience-desire/acquisition",
+      "/analytics/landing-presentations/qa-calibration-experience-desire/cta",
+      "/analytics/landing-presentations/qa-calibration-benefit-value/cta",
+      "/analytics/journey-intent/benefit/demo-beneficio-01",
+      "/analytics/landing-presentations/qa-calibration-challenge-action/cta"
+    ],
+    "authDestination": "https://jakawi.com/l/qa-calibration-experience-desire/activar",
+    "activationResponses": [
+      {
+        "url": "https://jakawi.com/l/qa-calibration-experience-desire/activar",
+        "status": 200
+      },
+      {
+        "url": "https://jakawi.com/l/qa-calibration-experience-desire/activar",
+        "status": 200
+      },
+      {
+        "url": "https://jakawi.com/l/qa-calibration-benefit-value/activar",
+        "status": 200
+      },
+      {
+        "url": "https://jakawi.com/l/qa-calibration-challenge-action/activar",
+        "status": 200
+      }
+    ],
+    "result": "PASS"
+  },
+  "delivery": {
+    "owned_existing_redemption": 200,
+    "foreign_redemption_denied": true,
+    "benefit_component": "redemptions/show",
+    "conversion_component_present": true,
+    "delivery_component_present": true,
+    "reservation_records": 4,
+    "participation_records": 2,
+    "unlock_guest_source_protected": true
+  },
+  "external_delivery": {
+    "result": "PASS",
+    "externalResultHttp": 200,
+    "fullPage": true,
+    "truthfulPending": true,
+    "fakeSuccess": false,
+    "reservationExecuted": false
+  },
+  "delivery_scope": "Existing authorized Benefit outcome and ownership denial; deployed full-page components and result ownership gates; external Sunset result browser checked without reservation. No Challenge or internal Experience outcome manufactured.",
+  "counts_before": {
+    "users": 7,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 2,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3
+  },
+  "counts_after": {
+    "users": 7,
+    "redemptions": 9,
+    "experience_reservations": 4,
+    "challenge_participations": 2,
+    "unlock_participations": 1,
+    "memberships": 1,
+    "jp_holds": 0,
+    "failed_jobs": 3
+  },
+  "domain_mutations": 0,
+  "published_inventory_unchanged": true,
+  "health": {
+    "jakawicom-app-1": {
+      "id": "f12f03bece983fdcc8405f769f695ab1bd90327e71bca6a0dbc5eb0a3eabf923",
+      "image": "sha256:046e1cf133a93fd2f071ca72b47b4bd5bda53d59a48d85148be32f9f38236093",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-13T00:18:04.051942332Z"
+    },
+    "jakawicom-db-1": {
+      "id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-10T22:20:08.295249983Z"
+    },
+    "jakawicom-web-1": {
+      "id": "798e64a16dd55dee1531d68dfadba3d6cd37b5faa21073656b55a118c2a367d1",
+      "image": "sha256:d36f07a7cde035ba09797873c118a90f631cd98093c63a1f9019e1c7245149bb",
+      "status": "running",
+      "health": null,
+      "started_at": "2026-10-13T00:18:09.770928073Z"
+    },
+    "jakawicom-social-worker-1": {
+      "id": "2badadbd679e80e50b6402a333f020c1adac6bc98781fd07a5a6eca104c6baa6",
+      "image": "sha256:046e1cf133a93fd2f071ca72b47b4bd5bda53d59a48d85148be32f9f38236093",
+      "status": "running",
+      "health": null,
+      "started_at": "2026-10-13T00:18:10.031916086Z"
+    },
+    "jakawi_v2proof-app-1": {
+      "id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+      "image": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+      "status": "running",
+      "health": "healthy",
+      "started_at": "2026-10-10T22:20:08.293389352Z"
+    }
+  },
+  "v2proof_changed": false,
+  "scheduler": "cron active",
+  "up_local_public": [
+    200,
+    200
+  ],
+  "crm": true,
+  "meta_provider_browser_capi": [
+    false,
+    false,
+    false
+  ],
+  "disk_before_bytes": 25155117056,
+  "disk_after_bytes": 23666733056,
+  "minor_copy_review": "Café nonmember QA: selected location is visible and retained, CTA is CONTINUAR rather than naming the location.",
+  "welcome_courtesy": "FUTURE / OFF / NOT IMPLEMENTED",
+  "result": "LIVE — READY FOR PRODUCT REVIEW"
+}
