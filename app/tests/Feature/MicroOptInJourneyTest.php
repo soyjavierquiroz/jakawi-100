@@ -150,13 +150,16 @@ class MicroOptInJourneyTest extends TestCase
         $this->get(route('landing-presentations.result',['presentation'=>$landing,'session'=>$session->id]))->assertInertia(fn(Assert $p)=>$p->component('landing-presentations/conversion')->where('conversionStage','result')->where('restoredSessionId',$session->id)->where('experience.sessions.0.reservation.public_id',$reservation->public_id)->where('experience.sessions.0.reservation.status','pending'));
         $this->actingAs(User::factory()->create())->get(route('landing-presentations.result',$landing))->assertNotFound();
     }
-    public function test_challenge_identification_preserves_contextual_verification_and_no_participation(): void {
+    public function test_challenge_identification_preserves_context_before_explicit_join(): void {
         Notification::fake();[$landing,$response]=$this->acquire($this->subjects()[2]);
         $response->assertRedirect(route('landing-presentations.activation',$landing,false));
         $this->get(route('landing-presentations.show',$landing))->assertInertia(fn(Assert $p)=>$p->where('canSubmit',false)->where('participation',null));
-        $this->post(route('social-challenges.intent',$landing->subject),['landing_presentation_slug'=>$landing->slug])->assertRedirect(route('landing-presentations.activation',$landing));
-        $this->post(route('social-challenges.submit',$landing->subject),['url'=>'https://instagram.com/p/qa'])->assertSessionHasErrors('url');
         $this->noMutation();
+        $this->post(route('social-challenges.intent',$landing->subject),['landing_presentation_slug'=>$landing->slug])->assertRedirect(route('landing-presentations.result',$landing).'#participar');
+        $this->assertDatabaseCount('challenge_participations',1);
+        $this->get(route('landing-presentations.result',$landing))->assertOk();
+        $this->post(route('social-challenges.submit',$landing->subject),['url'=>'https://instagram.com/p/qa'])->assertSessionHasErrors(['url'=>'Confirma tu correo antes de enviar evidencia.']);
+        $this->assertDatabaseCount('challenge_social_entries',0);
     }
     public function test_external_experience_handoff_delivers_selected_session_without_claiming_or_creating_a_reservation(): void
     {

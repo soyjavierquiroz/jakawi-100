@@ -1,0 +1,63 @@
+{
+  "scope": "Isolated jakawi_test, Docker PHP 8.4; current local frontend; no production changes.",
+  "cases": [
+    {
+      "name": "Unverified explicit Landing join → truthful Delivery, instructions/deadline/reward/state before secondary verification, 390",
+      "pass": true,
+      "titleOccurrences": 1,
+      "positions": {
+        "YA ESTÁS DENTRO DEL RETO": 137,
+        "QUÉ TIENES QUE HACER": 440,
+        "TIENES HASTA": 1278,
+        "QUÉ PUEDES GANAR": 1443,
+        "ASEGURA TU PARTICIPACIÓN": 2093
+      },
+      "securityColor": "rgba(0, 0, 0, 0)",
+      "evidenceBlocked": true
+    },
+    {
+      "name": "Secondary verification send retains same Delivery URL",
+      "pass": true
+    },
+    {
+      "name": "Challenge desktop 1440",
+      "pass": true
+    },
+    {
+      "name": "Benefit Delivery quick regression, real isolated authorized outcome",
+      "pass": true
+    },
+    {
+      "name": "Experience pending Delivery quick regression, truthful outcome",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "status": 204
+    },
+    {
+      "path": "/retos/demo-reto-cena-ciudad/participar",
+      "status": 409
+    },
+    {
+      "path": "/email/verification-notification",
+      "status": 302
+    },
+    {
+      "path": "/login",
+      "status": 302
+    },
+    {
+      "path": "/login",
+      "status": 302
+    }
+  ],
+  "result": "PASS"
+}

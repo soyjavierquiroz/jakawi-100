@@ -1,0 +1,19 @@
+./bin/jakawi-test php artisan test --filter=ChallengeDeliveryTest|test_challenge_identification_preserves_context_before_explicit_join
+
+ PASS  Tests\Feature\ChallengeDeliveryTest
+  ✓ unverified user explicitly joins social challenge and reaches deliv… 2.23s  
+  ✓ delivery has authoritative instructions and title once without veri… 0.09s  
+  ✓ gets never participate and result requires owned participation       0.13s  
+  ✓ unverified submission remains blocked at evidence boundary           0.10s  
+  ✓ verified participant can submit evidence without automatic reward    0.11s  
+  ✓ manual reward still requires verified identity                       0.10s  
+  ✓ signed verification returns to same delivery and updates capability  0.20s  
+  ✓ membership dates and manual instructions remain authoritative        0.08s  
+  ✓ unlock restricted source stays protected                             0.08s  
+
+   PASS  Tests\Feature\MicroOptInJourneyTest
+  ✓ challenge identification preserves context before explicit join      0.20s  
+
+  Tests:    10 passed (137 assertions)
+  Duration: 4.00s
+

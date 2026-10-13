@@ -42,6 +42,8 @@ class ChallengeController extends Controller {
             'grant'=>$grant ? ['id'=>$grant->id,'status'=>$grant->status,'reward_type'=>$grant->reward_type,'jp_amount'=>$grant->jp_amount,
                 'jp_reversed'=>$grant->reward_type === 'JP' && $grant->jpCredit?->reversal !== null,
                 'benefit'=>$grant->benefit?->only(['title','slug']), 'locations'=>$grant->benefit?->availableLocations()->get(['id','name'])] : null,
+            'delivery'=>$p ? app(\App\Services\ChallengeDeliveryPresenter::class)->present($challenge) : null,
+            'canJoin'=>$challenge->acceptsParticipation() && ($challenge->participation_eligibility === 'ALL_USERS' || ($request->user()?->hasActiveMembership() ?? false)),
             'canParticipate'=>$challenge->acceptsParticipation(), 'canSubmit'=>($request->user()?->hasVerifiedEmail() ?? false) && ($challenge->participation_eligibility === 'ALL_USERS' || ($request->user()?->hasActiveMembership() ?? false)),
             'isMember'=>$request->user()?->hasActiveMembership() ?? false,
             'slots'=> $challenge->selection_type === 'FIRST_N' ? ['awarded'=>$challenge->grants()->where('status','!=','cancelled')->count(),'reserved'=>$challenge->participations()->whereIn('selection_status',['candidate','selected'])->count(),'limit'=>$challenge->winner_limit] : null,
@@ -52,21 +54,10 @@ class ChallengeController extends Controller {
     public function intent(Request $request, Challenge $challenge, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, ChallengeService $service) {
         abort_unless($challenge->acceptsParticipation(), 404);
         if (!$request->user()) { $continuation->set('SOCIAL_CHALLENGE',$challenge->id,'PARTICIPATE'); return to_route('register'); }
-        if (!$request->user()->hasVerifiedEmail()) {
-            $landing = $challenge->landingPresentations()->where('slug', $request->input('landing_presentation_slug'))->where('status', 'PUBLISHED')->first();
-            if ($landing) {
-                $continuation->setLanding($landing);
-                $request->session()->flash('landing_acquisition_resumed', $landing->id);
-                return to_route('landing-presentations.activation', $landing)->withErrors(['participation' => 'Confirma tu correo para entrar al reto.']);
-            }
-            return to_route('verification.notice');
-        }
         $this->assertParticipationEligible($challenge, $request);
-        if ($challenge->evidence_type === 'MANUAL') {
-            $p = ChallengeParticipation::firstOrCreate(['challenge_id'=>$challenge->id,'user_id'=>$request->user()->id]);
-            if ($p->wasRecentlyCreated) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
-            $service->evaluate($p);
-        }
+        $p = ChallengeParticipation::firstOrCreate(['challenge_id'=>$challenge->id,'user_id'=>$request->user()->id]);
+        if ($p->wasRecentlyCreated) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
+        if ($challenge->evidence_type === 'MANUAL') $service->evaluate($p);
         $landingSlug = $request->input('landing_presentation_slug');
         $landing = is_string($landingSlug) ? \App\Models\LandingPresentation::query()->where('slug',$landingSlug)->where('subject_type',$challenge->getMorphClass())->where('subject_id',$challenge->id)->where('status','PUBLISHED')->first() : null;
         return redirect()->to(($landing ? route($challenge->participations()->where('user_id', $request->user()->id)->exists() ? 'landing-presentations.result' : 'landing-presentations.activation',$landing->slug) : route('social-challenges.show',$challenge->slug)).'#participar');
@@ -75,7 +66,7 @@ class ChallengeController extends Controller {
         $data = $request->validate(['url'=>['required','url','max:2048','starts_with:https://,http://']]);
         if ($challenge->evidence_type !== 'SOCIAL_POST' || !$challenge->acceptsParticipation()) throw ValidationException::withMessages(['url'=>'Este reto no acepta publicaciones.']);
         if (! $request->user()->hasVerifiedEmail()) {
-            throw ValidationException::withMessages(['url' => 'Confirma tu correo para entrar al reto.']);
+            throw ValidationException::withMessages(['url' => 'Confirma tu correo antes de enviar evidencia.']);
         }
         $this->assertParticipationEligible($challenge, $request);
         $hash = hash('sha256', $this->normalizeUrl($data['url']));

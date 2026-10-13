@@ -48,17 +48,13 @@ export default function Conversion() {
                     />
                 ) : (
                     <>
-                        {!result && (
+                        {!result && context.type !== 'CHALLENGE' && (
                             <header className="mb-6 space-y-3">
                                 <p className="text-sm font-extrabold">
-                                    {context.type === 'CHALLENGE'
-                                        ? 'TU RETO'
-                                        : 'TU DESBLOQUEO'}
+                                    TU DESBLOQUEO
                                 </p>
                                 <h1 className="text-3xl font-extrabold">
-                                    {context.type === 'CHALLENGE'
-                                        ? 'ENTRA AL RETO'
-                                        : 'VAMOS A DESBLOQUEARLO'}
+                                    VAMOS A DESBLOQUEARLO
                                 </h1>
                                 <p className="font-bold">{context.title}</p>
                                 {context.provider && (
@@ -69,16 +65,29 @@ export default function Conversion() {
                             </header>
                         )}
                         {context.type === 'CHALLENGE' ? (
-                            <ChallengeShow
-                                {...(props as unknown as ComponentProps<
-                                    typeof ChallengeShow
-                                >)}
-                                embedded
-                                landingSlug={
-                                    (props.presentation as { slug: string })
-                                        .slug
-                                }
-                            />
+                            <>
+                                {!props.participation && (
+                                    <header className="mb-5 space-y-2">
+                                        <h1 className="text-3xl font-extrabold">
+                                            ENTRA AL RETO
+                                        </h1>
+                                        <p className="font-bold">
+                                            {context.title}
+                                        </p>
+                                    </header>
+                                )}
+                                <ChallengeShow
+                                    {...(props as unknown as ComponentProps<
+                                        typeof ChallengeShow
+                                    >)}
+                                    embedded
+                                    conversionOnly
+                                    landingSlug={
+                                        (props.presentation as { slug: string })
+                                            .slug
+                                    }
+                                />
+                            </>
                         ) : (
                             <UnlockShow
                                 {...(props as unknown as ComponentProps<

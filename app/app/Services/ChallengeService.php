@@ -120,7 +120,7 @@ final class ChallengeService {
         }
     }
 
-    private function rewardEligible(Challenge $c, ChallengeParticipation $p): bool { return $c->reward_eligibility === 'ALL_USERS' || $p->user->hasActiveMembership(); }
+    private function rewardEligible(Challenge $c, ChallengeParticipation $p): bool { return $p->user->hasVerifiedEmail() && ($c->reward_eligibility === 'ALL_USERS' || $p->user->hasActiveMembership()); }
 
     private function grantLocked(Challenge $c, ChallengeParticipation $p, ?int $adminId, ?int $rankingPosition = null): ChallengeRewardGrant {
         if ($p->selection_status !== 'selected' || $p->qualification_status !== 'qualified' || !$this->rewardEligible($c, $p)) throw ValidationException::withMessages(['grant'=>'La participación no es elegible para premio.']);

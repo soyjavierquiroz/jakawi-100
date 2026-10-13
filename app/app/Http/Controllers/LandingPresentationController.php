@@ -182,7 +182,7 @@ class LandingPresentationController extends Controller
 
         return Inertia::render($stage ? 'landing-presentations/conversion' : 'landing-presentations/challenge', [
             ...$props, ...$shared,
-            'landingDirectAction' => ! $stage && $request->user() && $props['canSubmit'] && $props['canParticipate'] && ! $props['participation'] && $subject->evidence_type === 'MANUAL' ? ['endpoint' => route('social-challenges.intent', $subject, false), 'data' => ['landing_presentation_slug' => $presentation->slug]] : null,
+            'landingDirectAction' => ! $stage && $request->user() && $props['canJoin'] && ! $props['participation'] ? ['endpoint' => route('social-challenges.intent', $subject, false), 'data' => ['landing_presentation_slug' => $presentation->slug]] : null,
             'presentation' => array_replace($presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']), ['hero_alt' => $presentation->hero_alt ?: $subject->hero_alt]),
             ...$this->offerCopy($presentation, $presenter->present($subject, $presentation)),
             'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path, 'hero'),

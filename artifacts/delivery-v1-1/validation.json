@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "deployment": false,
+  "productionApplicationUnchanged": "b3c00e371a6c5f7d509d96f67e07103f0176a051",
+  "previousHead": "29c1772ccb23f8aebde28a1022c1991d197da400",
+  "backend": {
+    "scope": "10 focused tests in isolated jakawi_test via bin/jakawi-test",
+    "tests": 10,
+    "assertions": 137,
+    "result": "PASS"
+  },
+  "typescript": {
+    "command": "app/node_modules/.bin/tsc --noEmit",
+    "result": "PASS"
+  },
+  "browser": {
+    "challenge390": "PASS",
+    "challenge1440": "PASS",
+    "benefitDelivery": "PASS",
+    "experiencePendingDelivery": "PASS",
+    "challengeTitleOccurrences": 1,
+    "instructionsTopPx": 440,
+    "initialJoinRequiresVerification": false,
+    "explicitJoin": true,
+    "autoJoin": false
+  },
+  "frontend": {
+    "validationCompilations": 1,
+    "compile": "PASS",
+    "manifest": "PASS — 103 source entries",
+    "publicHot": "ABSENT",
+    "note": "One npm run build compiled successfully; post-build manifest guard initially found local QA Vite hot marker. Stopped QA dev server, removed that marker, reran only manifest guard on the same assets. No recompile."
+  },
+  "security": {
+    "emailRequiredFor": [
+      "social evidence submission",
+      "reward selection and grant (including manual Challenges)"
+    ],
+    "signedVerificationReturn": "same owned Challenge Delivery",
+    "verificationInfrastructureRemoved": false,
+    "unlockChanged": false
+  },
+  "microOptInChanged": false,
+  "offerV3CompositionChanged": false,
+  "integration": "Authenticated Challenge CTA label ENTRAR AL RETO and explicit join dispatch only; no V3 hero/content redesign.",
+  "welcomeCourtesy": "FUTURE / OFF / NOT IMPLEMENTED",
+  "docs": "PASS",
+  "diff": "PASS"
+}

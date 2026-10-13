@@ -12,6 +12,13 @@ class VerifyEmailResponse implements Contract
         $continuation = app(PublicJourneyContinuation::class);
         $intent = $continuation->get();
         if (isset($intent['landing_presentation_id']) && ($destination = $continuation->destination($intent))) {
+            if (($intent['journey'] ?? null) === 'SOCIAL_CHALLENGE') {
+                $participation = \App\Models\ChallengeParticipation::where('challenge_id', $intent['resource_id'])->where('user_id', $request->user()->id)->first();
+                if ($participation) {
+                    app(\App\Services\ChallengeService::class)->evaluate($participation);
+                    $destination = route('landing-presentations.result', \App\Models\LandingPresentation::findOrFail($intent['landing_presentation_id']), false);
+                }
+            }
             $continuation->consume();
             $request->session()->forget('url.intended');
             return redirect()->to($destination);

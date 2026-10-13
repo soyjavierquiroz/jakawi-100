@@ -105,7 +105,7 @@ export default function ChallengeOfferAdapter({
                   : {
                         href: '#participar',
                         label: auth.user
-                            ? 'PARTICIPAR EN EL RETO'
+                            ? 'ENTRAR AL RETO'
                             : 'QUIERO PARTICIPAR',
                     };
     const heroCTA = useRef<HTMLDivElement>(null);
