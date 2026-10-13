@@ -28,7 +28,7 @@ class LoginResponse implements LoginResponseContract
         if (! $request->wantsJson()) {
             $continuation = app(PublicJourneyContinuation::class);
             $intent = $continuation->consume();
-            if ($intent !== null && ($destination = $continuation->destination($intent)) !== null) {
+            if ($intent !== null && ($destination = $continuation->afterAuthentication($request, $intent)) !== null) {
                 $request->session()->forget('url.intended');
 
                 try {

@@ -67,7 +67,7 @@ class ChallengeDeliveryTest extends TestCase
         $c = $this->challenge(); $l = $this->landing($c);
         $this->actingAs(User::factory()->unverified()->create());
         $this->get(route('landing-presentations.show', $l))->assertInertia(fn (Assert $p) => $p->where('canJoin', true)->where('participation', null)->where('landingDirectAction.endpoint', route('social-challenges.intent', $c, false)));
-        $this->get(route('landing-presentations.activation', $l))->assertOk();
+        $this->get(route('landing-presentations.activation', $l))->assertRedirect(route('landing-presentations.show', $l));
         $this->get(route('landing-presentations.result', $l))->assertNotFound();
         $this->assertDatabaseCount('challenge_participations', 0);
         $this->join($c, $l);

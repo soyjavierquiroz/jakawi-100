@@ -36,6 +36,12 @@ class LandingPresentationController extends Controller
     public function activation(Request $request, LandingPresentation $presentation)
     {
         abort_unless($presentation->status === 'PUBLISHED', 404);
+        $subject = $presentation->subject;
+        if ($subject instanceof Challenge && !$subject->requiresParticipationChoice()) {
+            // GET never joins. Old activation links recover to the proposal or owned result.
+            return to_route($subject->participations()->where('user_id', $request->user()->id)->exists()
+                ? 'landing-presentations.result' : 'landing-presentations.show', $presentation);
+        }
         app(\App\Services\PublicJourneyContinuation::class)->setLanding($presentation);
         return $this->renderStage($request, $presentation, 'activation');
     }
@@ -75,8 +81,12 @@ class LandingPresentationController extends Controller
         if ($subject instanceof Benefit) {
             app(PublicController::class)->benefitPublicProps($subject, $request);
         }
-        $method = $request->validate(['method' => ['required', \Illuminate\Validation\Rule::in(['register', 'login'])]])['method'];
-        app(\App\Services\PublicJourneyContinuation::class)->setLanding($presentation);
+        $data = $request->validate([
+            'method' => ['required', \Illuminate\Validation\Rule::in(['register', 'login'])],
+            'intended_action' => [\Illuminate\Validation\Rule::requiredIf($subject instanceof Challenge), \Illuminate\Validation\Rule::prohibitedIf(!($subject instanceof Challenge)), \Illuminate\Validation\Rule::in(['PARTICIPATE'])],
+        ]);
+        $method = $data['method'];
+        app(\App\Services\PublicJourneyContinuation::class)->setLanding($presentation, $data['intended_action'] ?? null);
         if (! ($subject instanceof Challenge)) {
             app(AnalyticsTracker::class)->journeyIntentStarted($subject);
             app(AnalyticsTracker::class)->journeyAuthStarted($subject, $method);
@@ -182,7 +192,7 @@ class LandingPresentationController extends Controller
 
         return Inertia::render($stage ? 'landing-presentations/conversion' : 'landing-presentations/challenge', [
             ...$props, ...$shared,
-            'landingDirectAction' => ! $stage && $request->user() && $props['canJoin'] && ! $props['participation'] ? ['endpoint' => route('social-challenges.intent', $subject, false), 'data' => ['landing_presentation_slug' => $presentation->slug]] : null,
+            'landingDirectAction' => ! $stage && $request->user() && !$subject->requiresParticipationChoice() && $props['canJoin'] && ! $props['participation'] ? ['endpoint' => route('social-challenges.intent', $subject, false), 'data' => ['landing_presentation_slug' => $presentation->slug]] : null,
             'presentation' => array_replace($presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']), ['hero_alt' => $presentation->hero_alt ?: $subject->hero_alt]),
             ...$this->offerCopy($presentation, $presenter->present($subject, $presentation)),
             'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path, 'hero'),

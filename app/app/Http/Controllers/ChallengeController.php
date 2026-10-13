@@ -54,10 +54,7 @@ class ChallengeController extends Controller {
     public function intent(Request $request, Challenge $challenge, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, ChallengeService $service) {
         abort_unless($challenge->acceptsParticipation(), 404);
         if (!$request->user()) { $continuation->set('SOCIAL_CHALLENGE',$challenge->id,'PARTICIPATE'); return to_route('register'); }
-        $this->assertParticipationEligible($challenge, $request);
-        $p = ChallengeParticipation::firstOrCreate(['challenge_id'=>$challenge->id,'user_id'=>$request->user()->id]);
-        if ($p->wasRecentlyCreated) $analytics->record('challenge_participation_started', [], ['challenge_id'=>$challenge->id]);
-        if ($challenge->evidence_type === 'MANUAL') $service->evaluate($p);
+        $service->join($challenge, $request->user());
         $landingSlug = $request->input('landing_presentation_slug');
         $landing = is_string($landingSlug) ? \App\Models\LandingPresentation::query()->where('slug',$landingSlug)->where('subject_type',$challenge->getMorphClass())->where('subject_id',$challenge->id)->where('status','PUBLISHED')->first() : null;
         return redirect()->to(($landing ? route($challenge->participations()->where('user_id', $request->user()->id)->exists() ? 'landing-presentations.result' : 'landing-presentations.activation',$landing->slug) : route('social-challenges.show',$challenge->slug)).'#participar');

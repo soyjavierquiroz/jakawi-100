@@ -165,8 +165,9 @@ class LandingAcquisitionTest extends TestCase
         $user = User::factory()->create();
         foreach ($this->subjects() as $subject) {
             $landing = $this->landing($subject);
-            $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'login'])->assertNoContent();
-            $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect(route('landing-presentations.activation', $landing, false));
+            if($subject instanceof Challenge) app(PublicJourneyContinuation::class)->setLanding($landing);
+            else $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'login'])->assertNoContent();
+            $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect(route($subject instanceof Challenge ? 'landing-presentations.show' : 'landing-presentations.activation', $landing, false));
             $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page
                 ->where('acquisitionResumed', true)->where('acquisition.subjectId', $subject->id)->where('acquisition.title', $subject->title));
             $this->post('/logout');
@@ -174,18 +175,19 @@ class LandingAcquisitionTest extends TestCase
         $this->assertNoDomainMutation();
     }
 
-    public function test_challenge_registration_returns_to_the_same_landing_without_joining_or_bypassing_verification(): void
+    public function test_challenge_explicit_registration_returns_to_delivery_without_bypassing_evidence_verification(): void
     {
         $challenge = $this->subjects()[2];
         $landing = $this->landing($challenge);
-        $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'register'])->assertNoContent();
+        $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'register', 'intended_action'=>'PARTICIPATE'])->assertNoContent();
         $this->post('/register', ['name' => 'Challenge Guest', 'email' => 'challenge@example.test', 'whatsapp' => '71234567', 'password' => 'Valid-Challenge-2026!'])
-            ->assertRedirect(route('landing-presentations.activation', $landing, false));
+            ->assertRedirect(route('landing-presentations.result', $landing, false));
         $this->get(route('landing-presentations.show', $landing))->assertInertia(fn (Assert $page) => $page
             ->where('acquisitionResumed', true)->where('challenge.id', $challenge->id)
-            ->where('canSubmit', false)->where('participation', null));
-        $this->post(route('social-challenges.intent', $challenge))->assertRedirect(route('verification.notice'));
-        $this->assertNoDomainMutation();
+            ->where('canSubmit', false)->has('participation.id'));
+        $this->assertDatabaseCount('challenge_participations',1);
+        $this->post(route('social-challenges.submit',$challenge),['url'=>'https://instagram.com/p/qa'])->assertSessionHasErrors('url');
+        $this->assertDatabaseCount('challenge_social_entries',0);
     }
 
     public function test_contextual_registration_rejects_invalid_phone_and_invalid_login_keeps_intent(): void

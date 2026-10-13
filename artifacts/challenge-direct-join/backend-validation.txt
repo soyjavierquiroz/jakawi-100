@@ -1,0 +1,17 @@
+   PASS  Tests\Feature\ChallengeDeliveryTest
+  ✓ unverified submission remains blocked at evidence boundary           1.93s
+  ✓ manual reward still requires verified identity                       0.12s
+  ✓ unlock restricted source stays protected                             0.10s
+
+   PASS  Tests\Feature\ChallengeDirectJoinTest
+  ✓ authenticated explicit landing action joins directly and is idempot… 0.13s
+  ✓ legacy activation get never joins or renders confirmation            0.08s
+  ✓ final guest participation intent registers and joins without second… 0.13s
+  ✓ explicit login intent joins directly                                 0.30s
+  ✓ generic signup and incidental context do not join without explicit…  0.11s
+  ✓ explicit intent cannot bypass membership or mismatched subject       0.08s
+  ✓ experience session choice keeps activation and does not reserve      0.11s
+  ✓ benefit location choice keeps activation and does not redeem         0.14s
+
+  Tests:    11 passed (112 assertions)
+  Duration: 3.62s

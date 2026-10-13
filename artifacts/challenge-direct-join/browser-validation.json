@@ -1,0 +1,60 @@
+{
+  "scope": "Isolated jakawi_test, Docker PHP 8.4, one final compiled frontend, 390px only",
+  "cases": [
+    {
+      "name": "Authenticated unverified: explicit Landing CTA → join → Delivery, no activation request",
+      "pass": true
+    },
+    {
+      "name": "Guest final QUIERO PARTICIPAR → register + explicit intent → owned Delivery directly; modal closed",
+      "pass": true
+    },
+    {
+      "name": "Sunset actual date/session Activation preserved",
+      "pass": true
+    },
+    {
+      "name": "Café actual location Activation preserved",
+      "pass": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/l/qa-calibration-challenge-action",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/landing-presentations/qa-calibration-challenge-action/cta",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/l/qa-calibration-challenge-action/acquisition",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/register",
+      "status": 302
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-calibration-challenge-action/resultado",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-calibration-experience-desire/activar",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/l/qa-calibration-benefit-value/activar",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "result": "PASS"
+}

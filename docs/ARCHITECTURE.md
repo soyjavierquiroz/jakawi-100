@@ -140,3 +140,5 @@ Delivery usa verdad de dominio: Benefit reutiliza código/QR y añade dirección
 ### Delivery V1.1 — LIVE (`f2b488b`)
 
 Join Challenge es explícito y no requiere email verificado. El límite de evidencia social permanece en `ChallengeController::submit`; selección/otorgamiento exige identidad verificada en `ChallengeService::rewardEligible`, además de las reglas de recompensa existentes. El retorno firmado reevalúa sólo una participación propia existente y vuelve a su Delivery. El presenter deriva instrucciones/plataformas/metas/deadline del dominio; el estado visible mapea qualification/selection/grant, sin estados persistidos nuevos. Logro e instrucciones preceden a cuenta/verificación en la página.
+
+Activación existe sólo cuando el dominio exige una elección operativa real (fecha/sesión o sucursal). Challenge actual no exige elección: CTA explícito → join → Delivery. Adquisición conserva `intended_action=PARTICIPATE`, validado al autenticar; registro genérico y GET nunca participan.

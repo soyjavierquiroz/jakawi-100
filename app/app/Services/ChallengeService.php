@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 final class ChallengeService {
+    public function join(Challenge $challenge, \App\Models\User $user): ChallengeParticipation {
+        abort_unless($challenge->acceptsParticipation(), 404);
+        if ($challenge->participation_eligibility === 'ACTIVE_MEMBERS' && !$user->hasActiveMembership()) throw ValidationException::withMessages(['participation'=>'Este reto requiere membresía activa para participar.']);
+        $participation = ChallengeParticipation::firstOrCreate(['challenge_id'=>$challenge->id,'user_id'=>$user->id]);
+        if ($participation->wasRecentlyCreated) $this->event('challenge_participation_started', $participation);
+        if ($challenge->evidence_type === 'MANUAL') $this->evaluate($participation);
+        return $participation;
+    }
+
     public function evaluate(ChallengeParticipation $participation, bool $final = false): ChallengeParticipation {
         return DB::transaction(function () use ($participation, $final) {
             $c = Challenge::query()->lockForUpdate()->findOrFail($participation->challenge_id);

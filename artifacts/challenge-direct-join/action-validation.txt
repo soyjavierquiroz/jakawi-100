@@ -1,0 +1,6 @@
+   PASS  Tests\Feature\ChallengeDirectJoinTest
+  ✓ generic signup and incidental context do not join without explicit…  1.93s
+  ✓ benefit location choice keeps activation and does not redeem         0.15s
+
+  Tests:    2 passed (30 assertions)
+  Duration: 2.32s

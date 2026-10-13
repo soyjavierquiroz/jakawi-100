@@ -52,7 +52,7 @@ class MicroOptInJourneyTest extends TestCase
 
     private function acquire($subject, string $email = 'carla@example.test', string $phone = '71234567') {
         $landing = $this->landing($subject, 'ALL');
-        $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'register'])->assertNoContent();
+        $this->post(route('landing-presentations.acquisition', $landing), ['method' => 'register'] + ($subject instanceof Challenge ? ['intended_action'=>'PARTICIPATE'] : []))->assertNoContent();
         $response = $this->post('/register', ['name' => 'Carla Pérez', 'email' => $email, 'whatsapp' => $phone]);
         return [$landing, $response];
     }
@@ -118,8 +118,9 @@ class MicroOptInJourneyTest extends TestCase
         $user = User::factory()->create();
         foreach ($this->subjects() as $subject) {
             $landing=$this->landing($subject,'ALL');
-            $this->post(route('landing-presentations.acquisition',$landing),['method'=>'login']);
-            $this->post('/login',['email'=>$user->email,'password'=>'password'])->assertRedirect(route('landing-presentations.activation',$landing,false));
+            if($subject instanceof Challenge) app(PublicJourneyContinuation::class)->setLanding($landing);
+            else $this->post(route('landing-presentations.acquisition',$landing),['method'=>'login']);
+            $this->post('/login',['email'=>$user->email,'password'=>'password'])->assertRedirect(route($subject instanceof Challenge ? 'landing-presentations.show' : 'landing-presentations.activation',$landing,false));
             $this->assertAuthenticatedAs($user);
             $this->get(route('landing-presentations.show',$landing))->assertInertia(fn(Assert $p)=>$p->where('acquisition.subjectId',$subject->id));
             $this->post('/logout');
@@ -150,11 +151,10 @@ class MicroOptInJourneyTest extends TestCase
         $this->get(route('landing-presentations.result',['presentation'=>$landing,'session'=>$session->id]))->assertInertia(fn(Assert $p)=>$p->component('landing-presentations/conversion')->where('conversionStage','result')->where('restoredSessionId',$session->id)->where('experience.sessions.0.reservation.public_id',$reservation->public_id)->where('experience.sessions.0.reservation.status','pending'));
         $this->actingAs(User::factory()->create())->get(route('landing-presentations.result',$landing))->assertNotFound();
     }
-    public function test_challenge_identification_preserves_context_before_explicit_join(): void {
+    public function test_challenge_explicit_acquisition_joins_before_returning_to_delivery(): void {
         Notification::fake();[$landing,$response]=$this->acquire($this->subjects()[2]);
-        $response->assertRedirect(route('landing-presentations.activation',$landing,false));
-        $this->get(route('landing-presentations.show',$landing))->assertInertia(fn(Assert $p)=>$p->where('canSubmit',false)->where('participation',null));
-        $this->noMutation();
+        $response->assertRedirect(route('landing-presentations.result',$landing,false));
+        $this->get(route('landing-presentations.result',$landing))->assertInertia(fn(Assert $p)=>$p->where('canSubmit',false)->has('participation.id'));
         $this->post(route('social-challenges.intent',$landing->subject),['landing_presentation_slug'=>$landing->slug])->assertRedirect(route('landing-presentations.result',$landing).'#participar');
         $this->assertDatabaseCount('challenge_participations',1);
         $this->get(route('landing-presentations.result',$landing))->assertOk();
@@ -199,14 +199,14 @@ class MicroOptInJourneyTest extends TestCase
         $this->get(route('landing-presentations.result',$landing))->assertInertia(fn(Assert $p)=>$p->component('landing-presentations/conversion')->where('conversionStage','result')->has('participation.id')->where('challenge.instructions','Cocina y presenta tu cena.')->where('challenge.evidence_type','MANUAL'));
         $this->actingAs(User::factory()->create())->get(route('landing-presentations.result',$landing))->assertNotFound();
     }
-    public function test_challenge_verification_link_returns_directly_to_same_landing_without_participating(): void {
+    public function test_challenge_verification_link_returns_to_delivery_without_another_participation(): void {
         Notification::fake();[$landing]=$this->acquire($this->subjects()[2]);
         $this->get(route('landing-presentations.show',$landing));
         $user=auth()->user();
         $url=URL::temporarySignedRoute('verification.verify',now()->addMinutes(10),['id'=>$user->id,'hash'=>sha1($user->email)]);
-        $this->get($url)->assertRedirect(route('landing-presentations.activation',$landing,false));
+        $this->get($url)->assertRedirect(route('landing-presentations.result',$landing,false));
         $this->assertNotNull($user->fresh()->email_verified_at);
-        $this->noMutation();
+        $this->assertDatabaseCount('challenge_participations',1);
     }
     public function test_unlock_source_requires_explicit_domain_commit_reveal_and_authenticated_eligibility(): void {
         $unlock=$this->subjects()[3];$landing=$this->landing($unlock,'ALL');

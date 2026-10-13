@@ -44,14 +44,15 @@ class PublicJourneyContinuation
         $this->session->put(self::KEY, $context ? $intent + ['context' => $context] : $intent);
     }
 
-    /** @return array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, context?: array{experience_session_id?: int, location_id?: int}}|null */
+    /** @return array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, intended_action?: string, context?: array{experience_session_id?: int, location_id?: int}}|null */
     public function get(): ?array
     {
         $intent = $this->session->get(self::KEY);
         if (! is_array($intent) || ! isset($intent['journey'], $intent['resource_id'], $intent['action'])
             || ! is_string($intent['journey']) || ! (is_int($intent['resource_id']) || is_string($intent['resource_id'])) || ! is_string($intent['action'])
             || ! $this->allowed($intent['journey'], $intent['resource_id'], $intent['action'])
-            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context', 'landing_presentation_id'])
+            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context', 'landing_presentation_id', 'intended_action'])
+            || ! $this->validIntendedAction($intent)
             || ! $this->allowedContext($intent['journey'], $intent['action'], $intent['context'] ?? [])) {
             return null;
         }
@@ -59,7 +60,7 @@ class PublicJourneyContinuation
         return $intent;
     }
 
-    /** @return array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, context?: array{experience_session_id?: int, location_id?: int}}|null */
+    /** @return array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, intended_action?: string, context?: array{experience_session_id?: int, location_id?: int}}|null */
     public function consume(): ?array
     {
         $intent = $this->get();
@@ -68,11 +69,12 @@ class PublicJourneyContinuation
         return $intent;
     }
 
-    /** @param array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, context?: array{experience_session_id?: int, location_id?: int}} $intent */
+    /** @param array{journey: string, resource_id: int|string, action: string, landing_presentation_id?: int, intended_action?: string, context?: array{experience_session_id?: int, location_id?: int}} $intent */
     public function destination(array $intent): ?string
     {
         if (! $this->allowed($intent['journey'], $intent['resource_id'], $intent['action'])
-            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context', 'landing_presentation_id'])
+            || array_diff(array_keys($intent), ['journey', 'resource_id', 'action', 'context', 'landing_presentation_id', 'intended_action'])
+            || ! $this->validIntendedAction($intent)
             || ! $this->allowedContext($intent['journey'], $intent['action'], $intent['context'] ?? [])) {
             return null;
         }
@@ -90,6 +92,10 @@ class PublicJourneyContinuation
             $this->session->flash('landing_acquisition_resumed', $presentation->id);
             $this->session->flash('landing_continuation_context', $intent['context'] ?? []);
 
+            if ($presentation->subject instanceof Challenge && !$presentation->subject->requiresParticipationChoice()) {
+                return route($presentation->subject->participations()->where('user_id', auth()->id())->exists()
+                    ? 'landing-presentations.result' : 'landing-presentations.show', $presentation, false);
+            }
             return route('landing-presentations.activation', $presentation, false);
         }
 
@@ -105,15 +111,37 @@ class PublicJourneyContinuation
         };
     }
 
-    public function setLanding(\App\Models\LandingPresentation $presentation): void
+    /** Only the explicit acquisition submission may authorize a join after authentication. */
+    public function afterAuthentication(\Illuminate\Http\Request $request, array $intent): ?string
+    {
+        $destination = $this->destination($intent);
+        if ($destination === null || ($intent['intended_action'] ?? null) !== 'PARTICIPATE' || !$request->user()) {
+            return $destination;
+        }
+        $presentation = \App\Models\LandingPresentation::find($intent['landing_presentation_id'] ?? null);
+        $challenge = $presentation?->subject;
+        if (!$challenge instanceof Challenge || $challenge->requiresParticipationChoice()
+            || !$challenge->acceptsParticipation()
+            || ($challenge->participation_eligibility === 'ACTIVE_MEMBERS' && !$request->user()->hasActiveMembership())) {
+            return $destination;
+        }
+        app(ChallengeService::class)->join($challenge, $request->user());
+        return route('landing-presentations.result', $presentation, false);
+    }
+
+    public function setLanding(\App\Models\LandingPresentation $presentation, ?string $intendedAction = null): void
     {
         $subject = $presentation->subject;
         [$journey, $action] = match (app(LandingPresentationEditor::class)->type($subject)) {
             'BENEFIT' => ['BENEFIT', 'REDEEM'], 'EXPERIENCE' => ['EXPERIENCE', 'RESERVE'],
             'CHALLENGE' => ['SOCIAL_CHALLENGE', 'PARTICIPATE'], default => ['UNLOCK', 'COMMIT'],
         };
+        if ($intendedAction !== null && ($journey !== 'SOCIAL_CHALLENGE' || $intendedAction !== 'PARTICIPATE')) {
+            throw new InvalidArgumentException('Invalid explicit acquisition action.');
+        }
         $this->set($journey, $subject->id, $action);
         $this->session->put(self::KEY.'.landing_presentation_id', $presentation->id);
+        if ($intendedAction !== null) $this->session->put(self::KEY.'.intended_action', $intendedAction);
     }
 
     public function attachLanding(int $id): void
@@ -173,6 +201,13 @@ class PublicJourneyContinuation
         return $journey === 'EXPERIENCE' && $action === 'RESERVE'
             && array_keys($context) === ['experience_session_id']
             && is_int($context['experience_session_id']) && $context['experience_session_id'] > 0;
+    }
+
+    private function validIntendedAction(array $intent): bool
+    {
+        return !array_key_exists('intended_action', $intent)
+            || (($intent['journey'] ?? null) === 'SOCIAL_CHALLENGE' && ($intent['action'] ?? null) === 'PARTICIPATE'
+                && $intent['intended_action'] === 'PARTICIPATE' && isset($intent['landing_presentation_id']));
     }
 
     private function allowed(string $journey, int|string $resourceId, string $action): bool

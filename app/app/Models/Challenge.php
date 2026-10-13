@@ -23,5 +23,7 @@ class Challenge extends Model {
     public function city(): BelongsTo { return $this->belongsTo(City::class); }
     public function isPublic(): bool { return $this->review_status === 'APPROVED' && in_array($this->status, ['open','closed'], true); }
     public function acceptsParticipation(): bool { return $this->isPublic() && $this->status === 'open' && (!$this->starts_at || $this->starts_at->lte(now())) && (!$this->ends_at || $this->ends_at->gt(now())); }
+    // The current domain has no session, location or other choice before joining.
+    public function requiresParticipationChoice(): bool { return false; }
     public function rulesContract(): array { return $this->only(['description','instructions','evidence_type','participation_eligibility','qualification_type','qualification_metric','qualification_target','selection_type','selection_metric','winner_limit','reward_type','benefit_id','reward_jp_amount','manual_prize_description','reward_eligibility','review_mode','starts_at','ends_at','max_entries_per_user','allowed_platforms','required_hashtags','required_mentions','published_from','published_until']); }
 }

@@ -1,0 +1,14 @@
+   PASS  Tests\Feature\ChallengeDeliveryTest
+  ✓ gets never participate and result requires owned participation       2.21s
+
+   PASS  Tests\Feature\LandingAcquisitionTest
+  ✓ login preserves each landing context without reserving joining or c… 1.10s
+  ✓ challenge explicit registration returns to delivery without bypassi… 0.28s
+
+   PASS  Tests\Feature\MicroOptInJourneyTest
+  ✓ existing login resumes each item and never auto mutates              1.08s
+  ✓ challenge explicit acquisition joins before returning to delivery    0.17s
+  ✓ challenge verification link returns to delivery without another par… 0.18s
+
+  Tests:    6 passed (192 assertions)
+  Duration: 5.49s

@@ -96,7 +96,12 @@ export function AcquisitionProvider({
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ method: mode }),
+                body: JSON.stringify({
+                    method: mode,
+                    ...(context.type === 'CHALLENGE'
+                        ? { intended_action: 'PARTICIPATE' }
+                        : {}),
+                }),
             });
             if (!response.ok)
                 throw new Error(
@@ -147,7 +152,9 @@ export function AcquisitionProvider({
               UNLOCK: 'DESBLOQUEO',
           }[context.type]
         : '';
-    const finalAction = `CONTINUAR CON MI ${itemName}`;
+    const finalAction = context?.type === 'CHALLENGE'
+        ? 'QUIERO PARTICIPAR'
+        : `CONTINUAR CON MI ${itemName}`;
     const heading = collision
         ? 'YA TIENES JAKAWI'
         : mode === 'login'

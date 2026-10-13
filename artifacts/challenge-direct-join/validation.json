@@ -1,0 +1,19 @@
+{
+  "backend": {
+    "primary_tests": 11,
+    "primary_assertions": 112,
+    "related_tests": 6,
+    "related_assertions": 192,
+    "action_validation_rechecks": 2,
+    "action_validation_assertions": 30,
+    "result": "PASS"
+  },
+  "typescript": "PASS",
+  "browser_390": "PASS",
+  "frontend_validation_builds": 1,
+  "frontend_build": "PASS",
+  "manifest": "PASS",
+  "production_hot": "ABSENT",
+  "production_deployed": false,
+  "production_application": "f2b488b7e634782d3aa21dae987596d96b30d28c"
+}
