@@ -17,7 +17,7 @@ class ExperienceReservationService
     {
         return DB::transaction(function () use ($user, $experience, $sessionId, $partySize): ExperienceReservation {
             $session = ExperienceSession::query()->lockForUpdate()->with('reservationPartner')->findOrFail($sessionId);
-            if (! $user->hasActiveMembership() || ! $experience->isPublished() || $experience->reservation_method !== 'jakawi'
+            if (($experience->catalog_visibility !== 'legacy' && ! app(ExperiencePublication::class)->canOperate($experience)) || ! $user->hasActiveMembership() || ! $experience->isPublished() || $experience->reservation_method !== 'jakawi'
                 || $session->experience_id !== $experience->id || ! $session->isUpcoming()
                 || ! $session->reservationPartner?->isPublished()
                 || ! $experience->partners()->whereKey($session->reservation_partner_id)->exists()) {

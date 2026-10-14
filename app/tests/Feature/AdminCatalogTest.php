@@ -2,7 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\{Benefit, Challenge, Experience, Partner, User};
+use App\Models\Benefit;
+use App\Models\Challenge;
+use App\Models\Experience;
+use App\Models\Partner;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -25,7 +29,7 @@ class AdminCatalogTest extends TestCase
         $this->get('/admin/experiences/1/edit')->assertNotFound(); // Documents the original ID/slug mismatch.
         $this->postJson(route('admin.experiences.update', $experience).'?q=café&status_filter=draft', [
             '_method' => 'put', 'slug' => $experience->slug, 'title' => 'Café actualizado', 'status' => 'draft', 'regular_price' => '75.00', 'currency' => 'BOB', 'reservation_method' => 'none', 'description' => $experience->description, 'terms' => $experience->terms,
-        ])->assertRedirect('/admin/experiences?q=caf%C3%A9&status_filter=draft');
+        ])->assertRedirect(route('admin.experiences.edit', $experience).'?q=caf%C3%A9&status_filter=draft');
         $this->assertSame('Café actualizado', $experience->fresh()->title);
         $this->assertSame($experience->description, $experience->fresh()->description);
         $this->assertSame($experience->terms, $experience->fresh()->terms);
@@ -49,10 +53,12 @@ class AdminCatalogTest extends TestCase
         $this->actingAs(User::factory()->create(['is_admin' => false]));
         $this->get($url)->assertForbidden();
         $this->put(route('admin.experiences.update', $experience), [])->assertForbidden();
-        foreach (['benefits', 'experiences', 'retos'] as $path) { $this->get('/admin/'.$path)->assertForbidden(); }
+        foreach (['benefits', 'experiences', 'retos'] as $path) {
+            $this->get('/admin/'.$path)->assertForbidden();
+        }
         $this->actingAs(User::factory()->create(['is_admin' => true]));
         $this->get($url)->assertOk();
-        $this->put(route('admin.experiences.update', $experience), ['slug' => $experience->slug, 'title' => 'Published edited', 'status' => 'published', 'reservation_method' => 'none'])->assertRedirect('/admin/experiences');
+        $this->put(route('admin.experiences.update', $experience), ['slug' => $experience->slug, 'title' => 'Published edited', 'status' => 'published', 'reservation_method' => 'none'])->assertRedirect(route('admin.experiences.edit', $experience));
         $this->assertDatabaseHas('experiences', ['id' => $experience->id, 'title' => 'Published edited', 'status' => 'published']);
     }
 

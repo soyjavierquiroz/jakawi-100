@@ -6,6 +6,7 @@ use App\Enums\LandingTemplate;
 use App\Models\Benefit;
 use App\Models\Challenge;
 use App\Models\Experience;
+use App\Models\ExperienceReservation;
 use App\Models\LandingPresentation;
 use App\Models\Unlock;
 use App\Services\AnalyticsTracker;
@@ -14,14 +15,19 @@ use App\Services\BenefitMarketingLandingPresenter;
 use App\Services\ChallengeMarketingLandingPresenter;
 use App\Services\ChallengeRanking;
 use App\Services\ExperienceMarketingLandingPresenter;
+use App\Services\ExperiencePublication;
 use App\Services\GrowthMeasurementService;
+use App\Services\JpBalanceService;
+use App\Services\LandingAcquisition;
 use App\Services\LandingPresentationEditor;
 use App\Services\LandingVideoConfiguration;
 use App\Services\MediaUrl;
 use App\Services\ProductLandingResolver;
+use App\Services\PublicJourneyContinuation;
 use App\Services\SocialEntryState;
 use App\Services\UnlockMarketingLandingPresenter;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class LandingPresentationController extends Controller
@@ -37,15 +43,19 @@ class LandingPresentationController extends Controller
     {
         abort_unless($presentation->status === 'PUBLISHED', 404);
         $subject = $presentation->subject;
-        if ($subject instanceof Challenge && !$subject->requiresParticipationChoice()) {
+        if ($subject instanceof Experience && $subject->catalog_visibility !== 'legacy') {
+            abort_unless(app(ExperiencePublication::class)->canOperate($subject), 404);
+        }
+        if ($subject instanceof Challenge && ! $subject->requiresParticipationChoice()) {
             // GET never joins. Old activation links recover to the proposal or owned result.
             return to_route($subject->participations()->where('user_id', $request->user()->id)->exists()
                 ? 'landing-presentations.result' : 'landing-presentations.show', $presentation);
         }
-        $continuation = app(\App\Services\PublicJourneyContinuation::class);
+        $continuation = app(PublicJourneyContinuation::class);
         if (($continuation->get()['landing_presentation_id'] ?? null) !== $presentation->id) {
             $continuation->setLanding($presentation);
         }
+
         return $this->renderStage($request, $presentation, 'activation');
     }
 
@@ -56,7 +66,7 @@ class LandingPresentationController extends Controller
         // A result page requires an actual outcome owned by this viewer.
         if ($subject instanceof Experience) {
             if ($subject->reservation_method === 'jakawi') {
-                abort_unless(\App\Models\ExperienceReservation::where('experience_id', $subject->id)->where('user_id', $request->user()->id)->whereIn('status', ['pending', 'confirmed'])->exists(), 404);
+                abort_unless(ExperienceReservation::where('experience_id', $subject->id)->where('user_id', $request->user()->id)->whereIn('status', ['pending', 'confirmed'])->exists(), 404);
             } else {
                 // External handoff is informational; it never claims a reservation.
                 abort_unless($subject->isPublished() && $subject->upcomingSessions()->whereKey($request->integer('session'))->exists(), 404);
@@ -68,6 +78,7 @@ class LandingPresentationController extends Controller
         } else {
             abort(404); // Benefit uses its existing authorized redemption confirmation route.
         }
+
         return $this->renderStage($request, $presentation, 'result');
     }
 
@@ -80,16 +91,19 @@ class LandingPresentationController extends Controller
     {
         abort_unless($presentation->status === 'PUBLISHED', 404);
         $subject = $presentation->subject;
+        if ($subject instanceof Experience && $subject->catalog_visibility !== 'legacy') {
+            abort_unless(app(ExperiencePublication::class)->canOperate($subject), 404);
+        }
         $this->assertVisible($subject, false);
         if ($subject instanceof Benefit) {
             app(PublicController::class)->benefitPublicProps($subject, $request);
         }
         $data = $request->validate([
-            'method' => ['required', \Illuminate\Validation\Rule::in(['register', 'login'])],
-            'intended_action' => [\Illuminate\Validation\Rule::requiredIf($subject instanceof Challenge), \Illuminate\Validation\Rule::prohibitedIf(!($subject instanceof Challenge)), \Illuminate\Validation\Rule::in(['PARTICIPATE'])],
+            'method' => ['required', Rule::in(['register', 'login'])],
+            'intended_action' => [Rule::requiredIf($subject instanceof Challenge), Rule::prohibitedIf(! ($subject instanceof Challenge)), Rule::in(['PARTICIPATE'])],
         ]);
         $method = $data['method'];
-        app(\App\Services\PublicJourneyContinuation::class)->setLanding($presentation, $data['intended_action'] ?? null);
+        app(PublicJourneyContinuation::class)->setLanding($presentation, $data['intended_action'] ?? null);
         if (! ($subject instanceof Challenge)) {
             app(AnalyticsTracker::class)->journeyIntentStarted($subject);
             app(AnalyticsTracker::class)->journeyAuthStarted($subject, $method);
@@ -100,7 +114,7 @@ class LandingPresentationController extends Controller
 
     private function assertVisible($subject, bool $preview): void
     {
-        abort_unless(($subject instanceof Unlock && ($preview || in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true))) || ($subject instanceof Experience && ($preview || $subject->status !== 'draft')) || $subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
+        abort_unless(($subject instanceof Unlock && ($preview || in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true))) || ($subject instanceof Experience && ($preview || app(ExperiencePublication::class)->isPublic($subject))) || $subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
     }
 
     public function preview(Request $request, string $subjectSlug, LandingPresentation $presentation, AttributionService $attribution, AnalyticsTracker $analytics, ChallengeRanking $ranking, SocialEntryState $state, ChallengeMarketingLandingPresenter $presenter, ProductLandingResolver $resolver)
@@ -161,8 +175,8 @@ class LandingPresentationController extends Controller
                 'landingDirectAction' => ! $stage && $request->user() && $copy['action']['kind'] === 'native' && $copy['action']['label'] === 'SUMARME' && $subject->jp_deposit == 0 ? ['endpoint' => route('unlocks.commit', $subject, false), 'data' => ['landing_presentation_id' => $presentation->id]] : null,
                 'participation' => $request->user()?->unlockParticipations()->where('unlock_id', $subject->id)->first()?->only(['status']),
                 'hasActiveMembership' => $request->user()?->hasActiveMembership() ?? false,
-                'jpBalance' => $request->user() ? app(\App\Services\JpBalanceService::class)->for($request->user()) : null,
-                'copy' => $copy, 'acquisition' => app(\App\Services\LandingAcquisition::class)->present($presentation, $copy),
+                'jpBalance' => $request->user() ? app(JpBalanceService::class)->for($request->user()) : null,
+                'copy' => $copy, 'acquisition' => app(LandingAcquisition::class)->present($presentation, $copy),
             ]);
         }
         if ($subject instanceof Experience) {
@@ -175,17 +189,18 @@ class LandingPresentationController extends Controller
                 $experienceProps['experience']['sessions'] = [$session];
                 $experienceProps['restoredSessionId'] = $session['id'];
             } elseif ($stage === 'result') {
-                $reservation = \App\Models\ExperienceReservation::where('user_id', $request->user()->id)->whereHas('session', fn ($q) => $q->where('experience_id', $subject->id))->whereIn('status', ['pending', 'confirmed'])->when($request->integer('session'), fn ($q) => $q->where('experience_session_id', $request->integer('session')))->latest()->firstOrFail();
+                $reservation = ExperienceReservation::where('user_id', $request->user()->id)->whereHas('session', fn ($q) => $q->where('experience_id', $subject->id))->whereIn('status', ['pending', 'confirmed'])->when($request->integer('session'), fn ($q) => $q->where('experience_session_id', $request->integer('session')))->latest()->firstOrFail();
                 $session = $reservation->session()->with('location')->firstOrFail();
                 $experienceProps['experience']['sessions'] = [$session->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $session->location?->only(['slug', 'name', 'address', 'maps_url']), 'reservation' => $reservation->only(['public_id', 'status', 'party_size'])]];
                 $experienceProps['restoredSessionId'] = $reservation->experience_session_id;
             }
+
             return Inertia::render($stage ? 'landing-presentations/conversion' : 'landing-presentations/experience', [
                 ...$experienceProps, ...$shared,
                 'externalReservationReady' => $externalReservationReady,
-                'landingDirectAction' => ! $stage && $request->user() && $experienceProps['hasActiveMembership'] && $experienceProps['availability']['available'] && $subject->reservation_method === 'jakawi' && count($experienceProps['experience']['sessions']) === 1 && ! $experienceProps['experience']['sessions'][0]['reservation'] ? ['endpoint' => route('experiences.reservations.store', $subject, false), 'data' => ['experience_session_id' => $experienceProps['experience']['sessions'][0]['id'], 'landing_presentation_id' => $presentation->id]] : null,
+                'landingDirectAction' => ! $preview && ! $stage && $request->user() && $experienceProps['hasActiveMembership'] && $experienceProps['availability']['available'] && $subject->reservation_method === 'jakawi' && count($experienceProps['experience']['sessions']) === 1 && ! $experienceProps['experience']['sessions'][0]['reservation'] ? ['endpoint' => route('experiences.reservations.store', $subject, false), 'data' => ['experience_session_id' => $experienceProps['experience']['sessions'][0]['id'], 'landing_presentation_id' => $presentation->id]] : null,
                 ...$this->offerCopy($presentation, app(ExperienceMarketingLandingPresenter::class)->present($subject, $presentation, $request)),
-                'restoredSessionId' => $stage === 'result' ? $experienceProps['restoredSessionId'] : (($resumed ? $request->session()->get('landing_continuation_context.experience_session_id') : null) ?? ($stage === 'activation' && (app(\App\Services\PublicJourneyContinuation::class)->get()['landing_presentation_id'] ?? null) === $presentation->id ? app(\App\Services\PublicJourneyContinuation::class)->get()['context']['experience_session_id'] ?? null : null) ?? $experienceProps['restoredSessionId']),
+                'restoredSessionId' => $stage === 'result' ? $experienceProps['restoredSessionId'] : (($resumed ? $request->session()->get('landing_continuation_context.experience_session_id') : null) ?? ($stage === 'activation' && (app(PublicJourneyContinuation::class)->get()['landing_presentation_id'] ?? null) === $presentation->id ? app(PublicJourneyContinuation::class)->get()['context']['experience_session_id'] ?? null : null) ?? $experienceProps['restoredSessionId']),
                 'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->cover_path ?: $subject->image_path, 'hero'),
                 'heroSrcset' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->srcset($presentation->hero_path ?: $subject->cover_path ?: $subject->image_path, 'hero'),
             ]);
@@ -203,7 +218,7 @@ class LandingPresentationController extends Controller
 
         return Inertia::render($stage ? 'landing-presentations/conversion' : 'landing-presentations/challenge', [
             ...$props, ...$shared,
-            'landingDirectAction' => ! $stage && $request->user() && !$subject->requiresParticipationChoice() && $props['canJoin'] && ! $props['participation'] ? ['endpoint' => route('social-challenges.intent', $subject, false), 'data' => ['landing_presentation_slug' => $presentation->slug]] : null,
+            'landingDirectAction' => ! $stage && $request->user() && ! $subject->requiresParticipationChoice() && $props['canJoin'] && ! $props['participation'] ? ['endpoint' => route('social-challenges.intent', $subject, false), 'data' => ['landing_presentation_slug' => $presentation->slug]] : null,
             'presentation' => array_replace($presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']), ['hero_alt' => $presentation->hero_alt ?: $subject->hero_alt]),
             ...$this->offerCopy($presentation, $presenter->present($subject, $presentation)),
             'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path, 'hero'),
@@ -218,6 +233,6 @@ class LandingPresentationController extends Controller
 
         $copy = app(LandingPresentationEditor::class)->effectiveCopy($presentation, $copy);
 
-        return ['acquisition' => app(\App\Services\LandingAcquisition::class)->present($presentation, $copy), 'copy' => $copy, 'offerEditorial' => app(LandingPresentationEditor::class)->publicEditorial($presentation, $copy)];
+        return ['acquisition' => app(LandingAcquisition::class)->present($presentation, $copy), 'copy' => $copy, 'offerEditorial' => app(LandingPresentationEditor::class)->publicEditorial($presentation, $copy)];
     }
 }

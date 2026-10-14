@@ -3,12 +3,14 @@
 namespace App\Discovery;
 
 use App\Models\Benefit;
+use App\Models\Challenge;
+use App\Models\City;
 use App\Models\Experience;
 use App\Models\Unlock;
-use App\Models\Challenge;
 use App\Services\MemberAffinityService;
 use App\Services\ProductLandingResolver;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * Read-only aggregation boundary for Discovery. Candidate queries are capped
@@ -36,11 +38,11 @@ final readonly class DiscoveryService
         $city = new DiscoveryCity($context->city->id, $context->city->name, $context->city->slug);
         $limit = max(1, $context->candidateLimitPerDomain);
 
-        /** @var \Illuminate\Support\Collection<int, Benefit> $benefits */
+        /** @var Collection<int, Benefit> $benefits */
         $benefits = $this->benefits->forCity($context->city)->limit($limit)->get();
-        /** @var \Illuminate\Support\Collection<int, Experience> $experiences */
+        /** @var Collection<int, Experience> $experiences */
         $experiences = $this->experiences->forCity($context->city)->limit($limit)->get();
-        /** @var \Illuminate\Support\Collection<int, Unlock> $unlocks */
+        /** @var Collection<int, Unlock> $unlocks */
         $unlocks = $this->unlocks->forCity($context->city)->limit($limit)->get();
 
         $progress = $this->progress->forUnlocks(
@@ -57,6 +59,11 @@ final readonly class DiscoveryService
             $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->navigationUrl($benefit, $context->user !== null));
         }
         foreach ($experiences as $experience) {
+            if ($experience->catalog_visibility === 'upcoming') {
+                $items[] = $this->experienceAdapter->proposal($experience, $city, $experience->partners->first(fn ($p) => $p->isPublished()), $this->landingResolver->navigationUrl($experience, $context->user !== null));
+
+                continue;
+            }
             $session = $experience->sessions->sortBy('starts_at')->first();
             if ($session !== null && $session->location !== null) {
                 $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->navigationUrl($experience, $context->user !== null));
@@ -65,8 +72,8 @@ final readonly class DiscoveryService
         foreach ($unlocks as $unlock) {
             $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->navigationUrl($unlock, $context->user !== null));
         }
-        foreach ($this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title'])->limit($limit)->get() as $challenge) {
-            $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->navigationUrl($challenge, $context->user !== null));
+        foreach ($this->challengesForCity($context->city)->with(['partner:id,name,slug', 'benefit:id,title'])->limit($limit)->get() as $challenge) {
+            $items[] = $this->challengeAdapter->adapt($challenge, $city, $this->landingResolver->navigationUrl($challenge, $context->user !== null));
         }
 
         // Canonical identity intentionally retains linked Unlock/Benefit or
@@ -132,6 +139,11 @@ final readonly class DiscoveryService
                 $experiences->where(fn (Builder $query) => $query->where('title', 'ilike', $like)->orWhereHas('partners', fn (Builder $partner) => $partner->where('name', 'ilike', $like)));
             }
             foreach ($experiences->limit($limit)->get() as $experience) {
+                if ($experience->catalog_visibility === 'upcoming') {
+                    $items[] = $this->experienceAdapter->proposal($experience, $city, $experience->partners->first(fn ($p) => $p->isPublished()), $this->landingResolver->navigationUrl($experience, $context->user !== null));
+
+                    continue;
+                }
                 $session = $experience->sessions->sortBy('starts_at')->first();
                 if ($session !== null && $session->location !== null) {
                     $items[] = $this->experienceAdapter->adapt($experience, $city, $session, $session->location, $experience->partners->first(), $this->landingResolver->navigationUrl($experience, $context->user !== null));
@@ -153,9 +165,13 @@ final readonly class DiscoveryService
             }
         }
         if (($type === null || $type === OpportunityType::CHALLENGE) && $category === null) {
-            $challenges = $this->challengesForCity($context->city)->with(['partner:id,name,slug','benefit:id,title']);
-            if ($like !== null) $challenges->where(fn (Builder $q) => $q->where('title','ilike',$like)->orWhere('description','ilike',$like));
-            foreach ($challenges->limit($limit)->get() as $challenge) $items[] = $this->challengeAdapter->adapt($challenge,$city,$this->landingResolver->navigationUrl($challenge, $context->user !== null));
+            $challenges = $this->challengesForCity($context->city)->with(['partner:id,name,slug', 'benefit:id,title']);
+            if ($like !== null) {
+                $challenges->where(fn (Builder $q) => $q->where('title', 'ilike', $like)->orWhere('description', 'ilike', $like));
+            }
+            foreach ($challenges->limit($limit)->get() as $challenge) {
+                $items[] = $this->challengeAdapter->adapt($challenge, $city, $this->landingResolver->navigationUrl($challenge, $context->user !== null));
+            }
         }
 
         $items = array_values(collect($items)->unique(fn (DiscoveryOpportunity $item): string => $item->type->value.'|'.$item->sourceId)->all());
@@ -217,10 +233,11 @@ final readonly class DiscoveryService
         return $deadlineSoon || ($target > 0 && $progress * 2 >= $target);
     }
 
-    private function challengesForCity(\App\Models\City $city): Builder {
-        return Challenge::query()->where('review_status','APPROVED')->where('status','open')
-            ->where(fn (Builder $q) => $q->whereNull('city_id')->orWhere('city_id',$city->id))
-            ->where(fn (Builder $q) => $q->whereNull('starts_at')->orWhere('starts_at','<=',now()))
-            ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at','>',now()));
+    private function challengesForCity(City $city): Builder
+    {
+        return Challenge::query()->where('review_status', 'APPROVED')->where('status', 'open')
+            ->where(fn (Builder $q) => $q->whereNull('city_id')->orWhere('city_id', $city->id))
+            ->where(fn (Builder $q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
+            ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at', '>', now()));
     }
 }

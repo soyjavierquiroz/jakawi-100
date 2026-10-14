@@ -6,6 +6,7 @@ use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Location;
 use App\Models\Partner;
+use App\Services\ExperiencePublication;
 use App\Services\MediaUrl;
 use InvalidArgumentException;
 
@@ -30,11 +31,11 @@ final readonly class ExperienceOpportunityAdapter
             destinationUrl: $destinationUrl ?? route('experiences.show', $experience),
             city: $city,
             subtitle: $experience->short_description,
-            image: $this->mediaUrl->url($experience->image_path, 'experience_card'),
+            image: $this->mediaUrl->url($experience->image_path ?: $experience->cover_path, 'experience_card'),
             partner: $partner ? new DiscoveryPartner($partner->getKey(), $partner->name, $partner->slug) : null,
             location: new DiscoveryLocation($location->getKey(), $location->name, $location->zone),
             categories: filled($experience->category) ? [$experience->category] : [],
-            availability: new DiscoveryAvailability($experience->status === 'published' && $session->isUpcoming(), $session->status),
+            availability: new DiscoveryAvailability(app(ExperiencePublication::class)->canOperate($experience), $session->status),
             startsAt: $session->starts_at,
             endsAt: $session->ends_at,
             // Date/time formatting remains a frontend concern.
@@ -44,6 +45,19 @@ final readonly class ExperienceOpportunityAdapter
                 'experience_type' => $experience->experience_type,
                 'reservation_method' => $experience->reservation_method,
             ], static fn (?string $value): bool => filled($value)),
+        );
+    }
+
+    public function proposal(Experience $experience, DiscoveryCity $city, ?Partner $partner, string $destinationUrl): DiscoveryOpportunity
+    {
+        return new DiscoveryOpportunity(
+            type: OpportunityType::EXPERIENCE, sourceId: $experience->getKey(), title: $experience->title,
+            destinationUrl: $destinationUrl, city: $city, subtitle: $experience->short_description,
+            image: $this->mediaUrl->url($experience->image_path ?: $experience->cover_path, 'experience_card'),
+            partner: $partner ? new DiscoveryPartner($partner->getKey(), $partner->name, $partner->slug) : null,
+            categories: filled($experience->category) ? [$experience->category] : [],
+            availability: new DiscoveryAvailability(false, 'upcoming', 'En preparación · No admite reservas'),
+            secondaryValue: 'En preparación', editorialPriority: $this->editorialPriority($experience->featured, $experience->sort_order),
         );
     }
 

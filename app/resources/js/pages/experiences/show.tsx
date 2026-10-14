@@ -31,6 +31,8 @@ type Target = {
 type Partner = { id: number; slug: string; name: string; role: string };
 type Experience = {
     id: number;
+    prices?: Array<{ label: string; value: string; memberAdvantage: boolean }>;
+    duration_minutes?: number | null;
     slug: string;
     title: string;
     short_description?: string | null;
@@ -537,6 +539,12 @@ export default function ExperienceShow({
                                 </Link>
                             </p>
                         ) : null}
+                        {experience.duration_minutes ? (
+                            <p className="mt-3 text-sm text-muted-foreground">
+                                Duración total propuesta:{' '}
+                                {experience.duration_minutes} minutos
+                            </p>
+                        ) : null}
                         {experience.short_description ? (
                             <p className="text-foreground-soft mt-5 max-w-2xl text-lg leading-7 font-semibold">
                                 {experience.short_description}
@@ -676,17 +684,20 @@ export default function ExperienceShow({
                                 <h2 className="text-xs font-extrabold tracking-[0.14em] text-muted-foreground uppercase">
                                     Precio
                                 </h2>
-                                {experience.regular_price ? (
-                                    <p className="mt-3">
-                                        Normal: Bs {experience.regular_price}
+                                {experience.prices?.map((price) => (
+                                    <p key={price.label} className="mt-3">
+                                        <span className="block text-sm text-muted-foreground">
+                                            {price.label}
+                                        </span>
+                                        <strong>{price.value}</strong>
                                     </p>
-                                ) : null}
-                                {experience.member_price ? (
-                                    <p className="mt-2 text-lg font-bold">
-                                        Miembro JAKAWI: Bs{' '}
-                                        {experience.member_price}
+                                ))}
+                                {!availability.available && (
+                                    <p className="mt-3 text-sm text-muted-foreground">
+                                        Propuesta comercial. No admite reservas
+                                        ni pagos ahora.
                                     </p>
-                                ) : null}
+                                )}
                             </section>
                         ) : null}
                         {internalReservation &&

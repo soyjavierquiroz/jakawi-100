@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Services\AnalyticsTracker;
+use App\Services\ExperiencePublication;
 use App\Services\ExperienceReservationService;
+use App\Services\PublicJourneyContinuation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -21,7 +23,7 @@ class ExperienceReservationController extends Controller
         $landing = $request->filled('landing_presentation_id')
             ? $experience->landingPresentations()->whereKey($request->integer('landing_presentation_id'))->where('status', 'PUBLISHED')->firstOrFail() : null;
         $analytics->journeyIntentStarted($experience);
-        if (! $request->user()->hasActiveMembership() && $experience->reservation_method === 'jakawi'
+        if (($experience->catalog_visibility === 'legacy' || app(ExperiencePublication::class)->canOperate($experience)) && ! $request->user()->hasActiveMembership() && $experience->reservation_method === 'jakawi'
             && $experience->upcomingSessions()->whereKey($data['experience_session_id'])->exists()) {
             return redirect('/membresia?'.http_build_query(['journey' => 'EXPERIENCE', 'action' => 'RESERVE',
                 'resource_id' => $experience->id, 'experience_session_id' => $data['experience_session_id']] + ($landing ? ['landing_presentation_id' => $landing->id] : [])));
@@ -33,11 +35,13 @@ class ExperienceReservationController extends Controller
         }
 
         if ($landing) {
-            app(\App\Services\PublicJourneyContinuation::class)->setLanding($landing);
+            app(PublicJourneyContinuation::class)->setLanding($landing);
             $request->session()->flash('landing_acquisition_resumed', $landing->id);
             $request->session()->flash('landing_continuation_context', ['experience_session_id' => $reservation->experience_session_id]);
+
             return redirect()->route('landing-presentations.result', ['presentation' => $landing, 'session' => $reservation->experience_session_id]);
         }
+
         return back();
     }
 

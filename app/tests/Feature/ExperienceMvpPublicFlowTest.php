@@ -55,7 +55,7 @@ class ExperienceMvpPublicFlowTest extends TestCase
 
         $this->get('/experiencias/'.$experience->slug)->assertOk()->assertInertia(fn (Assert $page) => $page
             ->has('experience.sessions', 0)
-            ->has('experience.reservation_targets', 1)
+            ->has('experience.reservation_targets', 0)
         );
         $this->get('/experiencias/'.$experience->slug.'/reservar?method=external')->assertNotFound();
     }

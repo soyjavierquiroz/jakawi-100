@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Experience;
+use App\Services\ExperiencePublication;
 use App\Services\ProductLandingResolver;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
@@ -12,8 +14,8 @@ class ResolveProductLanding
     public function handle(Request $request, Closure $next)
     {
         foreach ($request->route()->parameters() as $subject) {
-            if ($subject instanceof \App\Models\Experience) {
-                abort_if($subject->status === 'draft', 404);
+            if ($subject instanceof Experience) {
+                abort_unless(app(ExperiencePublication::class)->isPublic($subject), 404);
             }
             if ($subject instanceof Model && ($landing = app(ProductLandingResolver::class)->forViewer($subject, (bool) $request->user()))) {
                 // Preserve incoming attribution, but campaign_key remains saved Landing configuration.

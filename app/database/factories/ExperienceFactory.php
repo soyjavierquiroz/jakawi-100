@@ -22,6 +22,8 @@ class ExperienceFactory extends Factory
             'experience_type' => 'workshop',
             'currency' => 'BOB',
             'status' => 'draft',
+            // Legacy fixtures exercise the original contracts; V2 tests choose visibility explicitly.
+            'catalog_visibility' => 'legacy',
             'featured' => false,
             'sort_order' => 0,
         ];

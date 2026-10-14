@@ -10,9 +10,15 @@ use App\Models\Challenge;
 use App\Models\Experience;
 use App\Models\LandingPresentation;
 use App\Models\Unlock;
+use App\Services\BenefitMarketingLandingPresenter;
+use App\Services\ChallengeMarketingLandingPresenter;
+use App\Services\ExperienceMarketingLandingPresenter;
+use App\Services\ExperiencePublication;
 use App\Services\LandingPresentationDefaults;
 use App\Services\LandingPresentationEditor;
 use App\Services\LandingVideoConfiguration;
+use App\Services\MediaUploadService;
+use App\Services\MediaUrl;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +39,7 @@ class AdminLandingPresentationController extends Controller
             'autoCreate' => $request->boolean('create'),
             'baseUrl' => $subject ? $this->baseUrl($subject) : '/admin/landings',
             'productUrl' => ! $subject ? '/admin' : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug))),
-            'presentations' => $subject ? $subject->landingPresentations()->orderBy('id')->get()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(\App\Services\MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
+            'presentations' => $subject ? $subject->landingPresentations()->orderBy('id')->get()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
         ]);
     }
 
@@ -75,7 +81,11 @@ class AdminLandingPresentationController extends Controller
             'headline' => ['nullable', 'string', 'max:180', $plain],
             'headline_emphasis' => ['nullable', 'string', 'max:180', $plain],
             'subheadline' => ['nullable', 'string', 'max:1000', $plain],
-            'hero_path' => ['nullable', 'string', 'max:2048', function ($attribute, $value, $fail) use ($presentation, $target) { if ($value && $value !== $presentation?->hero_path && $value !== ($target->hero_path ?? $target->cover_path ?? $target->image_path ?? null)) $fail('Selecciona una imagen desde tu dispositivo.'); }], 'hero_alt' => ['nullable', 'string', 'max:255', $plain],
+            'hero_path' => ['nullable', 'string', 'max:2048', function ($attribute, $value, $fail) use ($presentation, $target) {
+                if ($value && $value !== $presentation?->hero_path && $value !== ($target->hero_path ?? $target->cover_path ?? $target->image_path ?? null)) {
+                    $fail('Selecciona una imagen desde tu dispositivo.');
+                }
+            }], 'hero_alt' => ['nullable', 'string', 'max:255', $plain],
             'reward_display_override' => ['nullable', 'string', 'max:180', $plain],
             'final_cta_headline' => ['nullable', 'string', 'max:180', $plain],
             'final_cta_description' => ['nullable', 'string', 'max:1000', $plain],
@@ -129,15 +139,17 @@ class AdminLandingPresentationController extends Controller
             'subject_type' => 'Tipo de producto', 'subject_id' => 'Producto', 'vsl' => 'Video', 'vsl.*' => 'Configuración de video',
         ]);
         $request->validate(['hero' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:10240']]);
-        if ($offer && $request->boolean('hero_remove') && ! $request->filled('hero_upload') && ! $request->hasFile('hero')) $data['media_mode'] = 'NONE';
+        if ($offer && $request->boolean('hero_remove') && ! $request->filled('hero_upload') && ! $request->hasFile('hero')) {
+            $data['media_mode'] = 'NONE';
+        }
         // Project the candidate through the same presenter used by preview.
         $candidate = $presentation ? clone $presentation : new LandingPresentation;
         $candidate->fill($data + ['editorial_version' => 1]);
         $candidate->editorial_version = 1;
         $copy = match (true) {
-            $target instanceof Benefit => app(\App\Services\BenefitMarketingLandingPresenter::class)->present($target, $candidate, $request, app(PublicController::class)->benefitPublicProps($target, $request, true)),
-            $target instanceof Experience => app(\App\Services\ExperienceMarketingLandingPresenter::class)->present($target, $candidate, $request),
-            $target instanceof Challenge => app(\App\Services\ChallengeMarketingLandingPresenter::class)->present($target, $candidate),
+            $target instanceof Benefit => app(BenefitMarketingLandingPresenter::class)->present($target, $candidate, $request, app(PublicController::class)->benefitPublicProps($target, $request, true)),
+            $target instanceof Experience => app(ExperienceMarketingLandingPresenter::class)->present($target, $candidate, $request),
+            $target instanceof Challenge => app(ChallengeMarketingLandingPresenter::class)->present($target, $candidate),
             default => [],
         };
         $headline = $offer ? ($editor->effectiveCopy($candidate, $copy)['headline'] ?? null) : null;
@@ -176,7 +188,7 @@ class AdminLandingPresentationController extends Controller
             } else {
                 $presentation = $target->landingPresentations()->create($data + ['status' => 'DRAFT', 'default_scope' => 'NONE']);
             }
-            $presentation->update(['hero_path' => app(\App\Services\MediaUploadService::class)->fromRequest($request, 'hero', 'landings', $presentation->id, 'cover', $presentation->hero_path)]);
+            $presentation->update(['hero_path' => app(MediaUploadService::class)->fromRequest($request, 'hero', 'landings', $presentation->id, 'cover', $presentation->hero_path)]);
             if ($presentation->status === 'PUBLISHED' && $scope !== 'NONE') {
                 app(LandingPresentationDefaults::class)->choose($target, $presentation, $scope);
             }
@@ -266,8 +278,8 @@ class AdminLandingPresentationController extends Controller
 
     private function assertPublishable(Model $subject): void
     {
-        if (! ($subject instanceof Unlock ? in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true) : ($subject instanceof Experience ? $subject->isPublished() : ($subject instanceof Benefit ? $subject->isPublished() && $subject->partner?->isPublished() : $subject->isPublic())))) {
-            throw ValidationException::withMessages(['presentation' => 'Publica el producto y su partner antes de publicar su landing.']);
+        if (! ($subject instanceof Unlock ? in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true) : ($subject instanceof Experience ? $subject->isPublished() && app(ExperiencePublication::class)->isPublic($subject) : ($subject instanceof Benefit ? $subject->isPublished() && $subject->partner?->isPublished() : $subject->isPublic())))) {
+            throw ValidationException::withMessages(['presentation' => 'Prepara el producto y su Partner. Para Experiences, autoriza visibilidad Próximamente o disponible antes de publicar la presentación.']);
         }
     }
 

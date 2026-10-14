@@ -52,28 +52,39 @@ class AdminCatalog
     {
         $partners = $item instanceof Experience ? $item->partners->unique('id')->values() : collect($item->partner ? [$item->partner] : []);
         $landing = $item->landingPresentations->sortByDesc('id')->first();
-        $prefix = match ($resource) { 'experiences' => 'experiencias', 'benefits' => 'beneficios', default => 'retos' };
+        $prefix = match ($resource) {
+            'experiences' => 'experiencias', 'benefits' => 'beneficios', default => 'retos'
+        };
         $landingBase = '/admin/'.$prefix.'/'.$item->slug.'/landings';
         $value = null;
         $money = fn ($amount, $currency = 'BOB') => ($currency === 'BOB' ? 'Bs ' : $currency.' ').number_format((float) $amount, 2, '.', ',');
         if ($item instanceof Experience) {
             $values = [];
-            if ($item->regular_price !== null) { $values[] = $money($item->regular_price, $item->currency).' · regular'; }
-            if ($item->member_price !== null) { $values[] = $money($item->member_price, $item->currency).' · miembros'; }
+            if ($item->regular_price !== null) {
+                $values[] = $money($item->regular_price, $item->currency).' · sin membresía';
+            }
+            if ($item->member_price !== null) {
+                $values[] = $money($item->member_price, $item->currency).' · miembros';
+            }
             $value = implode(' / ', $values) ?: null;
-            $public = $item->isPublished();
+            $public = app(ExperiencePublication::class)->isPublic($item);
         } elseif ($item instanceof Benefit) {
             $types = ['percentage' => 'Descuento porcentual', 'fixed_amount' => 'Descuento fijo', 'two_for_one' => '2 por 1', 'free_item' => 'Producto de cortesía', 'upgrade' => 'Upgrade', 'exclusive_access' => 'Acceso exclusivo', 'other' => 'Otro beneficio'];
             $value = $types[$item->benefit_type] ?? null;
-            if ($item->estimated_savings !== null) { $value = ($value ? $value.' · ' : '').'Ahorro estimado '.$money($item->estimated_savings); }
+            if ($item->estimated_savings !== null) {
+                $value = ($value ? $value.' · ' : '').'Ahorro estimado '.$money($item->estimated_savings);
+            }
             $public = $item->isAvailable() && $item->access_mode !== Benefit::ACCESS_CHALLENGE_GRANT;
         } else {
-            $value = match ($item->reward_type) { 'JP' => $item->reward_jp_amount.' JP', 'MANUAL_PRIZE' => $item->manual_prize_description, 'BENEFIT' => 'Beneficio como premio', default => null };
+            $value = match ($item->reward_type) {
+                'JP' => $item->reward_jp_amount.' JP', 'MANUAL_PRIZE' => $item->manual_prize_description, 'BENEFIT' => 'Beneficio como premio', default => null
+            };
             $public = $item->isPublic();
         }
         // Use the same viewer scope as the Admin's public navigation, without extra queries.
         $publicLanding = $item->landingPresentations->where('status', 'PUBLISHED')->where('default_scope', 'ALL')->sortBy('id')->first();
         $native = '/'.$prefix.'/'.$item->slug;
+
         return [
             'id' => $item->id, 'title' => $item->title, 'slug' => $item->slug,
             'partners' => $partners->map(fn ($p) => ['id' => $p->id, 'name' => $p->name, 'url' => route('admin.partners.edit', $p->id)])->all(),
@@ -83,7 +94,7 @@ class AdminCatalog
             'startsAt' => $item->starts_at?->toIso8601String(), 'endsAt' => $item->ends_at?->toIso8601String(),
             'landingStatus' => $landing?->status,
             'editUrl' => $item instanceof Challenge ? route('admin.social-challenges.edit', $item) : route('admin.'.$resource.'.edit', $item),
-            'previewUrl' => $landing ? $landingBase.'/'.$landing->slug.'/preview' : null,
+            'previewUrl' => $landing ? $landingBase.'/'.$landing->slug.'/preview' : ($item instanceof Experience ? route('admin.experiences.preview', $item) : null),
             'publicUrl' => $public ? ($publicLanding ? '/l/'.$publicLanding->slug : $native) : null,
             'reviewUrl' => $item instanceof Challenge ? route('admin.social-challenges.show', $item) : null,
         ];

@@ -297,6 +297,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('experiences', [AdminController::class, 'experiences'])->name('admin.experiences.index');
     Route::get('experiences/create', [AdminController::class, 'experienceForm'])->name('admin.experiences.create');
     Route::post('experiences', [AdminController::class, 'saveExperience'])->name('admin.experiences.store');
+    Route::get('experiences/{experience}/preview', [AdminController::class, 'experiencePreview'])->name('admin.experiences.preview');
     Route::get('experiences/{experience}/edit', [AdminController::class, 'experienceForm'])->name('admin.experiences.edit');
     Route::put('experiences/{experience}', [AdminController::class, 'saveExperience'])->name('admin.experiences.update');
     Route::post('experiences/{experience}/sessions', [AdminController::class, 'sessions'])->name('admin.experiences.sessions.store');

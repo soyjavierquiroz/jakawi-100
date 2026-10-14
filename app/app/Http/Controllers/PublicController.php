@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Discovery\DiscoveryContext;
+use App\Discovery\DiscoveryService;
+use App\Discovery\OpportunityType;
 use App\Models\Benefit;
+use App\Models\ChallengeRewardGrant;
 use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Partner;
-use App\Models\Unlock;
-use App\Discovery\DiscoveryContext;
-use App\Discovery\DiscoveryService;
-use App\Discovery\OpportunityType;
+use App\Services\AcquisitionProviderResolver;
 use App\Services\AnalyticsTracker;
+use App\Services\AttributionService;
+use App\Services\ExperiencePricing;
+use App\Services\ExperiencePublication;
 use App\Services\MediaUrl;
+use App\Services\ProductLandingResolver;
+use App\Services\PublicJourneyContinuation;
 use App\Services\SelectedCity;
+use App\Support\PartnerSlug;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,7 +49,7 @@ class PublicController extends Controller
         ));
 
         return Inertia::render('welcome', [
-            'challenges' => array_map(fn ($item) => $item->toArray(), $discovery->explore(new DiscoveryContext(city:$city,user:$request->user(),surface:'home'), OpportunityType::CHALLENGE,limit:4)),
+            'challenges' => array_map(fn ($item) => $item->toArray(), $discovery->explore(new DiscoveryContext(city: $city, user: $request->user(), surface: 'home'), OpportunityType::CHALLENGE, limit: 4)),
             'discovery' => [
                 'hero' => $result->hero?->toArray(),
                 'forYou' => array_map(fn ($item) => $item->toArray(), $result->forYou),
@@ -56,10 +63,10 @@ class PublicController extends Controller
 
     public function partners(Request $request, Partner $partner, AnalyticsTracker $analytics): Response
     {
-        abort_unless($partner->isPublished() && \App\Support\PartnerSlug::valid($partner->slug), 404);
+        abort_unless($partner->isPublished() && PartnerSlug::valid($partner->slug), 404);
         $analytics->partnerViewed($partner);
-        if (! $request->user() && ! app(\App\Services\AcquisitionProviderResolver::class)->suppressed($request)) {
-            $touch = app(\App\Services\AttributionService::class)->recordTouch($request, $partner, $partner->referral_code_normalized);
+        if (! $request->user() && ! app(AcquisitionProviderResolver::class)->suppressed($request)) {
+            $touch = app(AttributionService::class)->recordTouch($request, $partner, $partner->referral_code_normalized);
             $request->session()->push('attribution_touch_ids', $touch->id);
         }
         $challenges = $partner->challenges()->where('review_status', 'APPROVED')->where('status', 'open')
@@ -73,8 +80,8 @@ class PublicController extends Controller
             'partner' => $this->partner($partner) + $this->image($partner->cover_path, 'partner_editorial', 'cover_desktop'),
             'locations' => $partner->locations()->published()->with('cityEntity')->orderBy('sort_order')->get()->map(fn ($x) => $this->locationData($x)),
             'benefits' => $partner->benefits()->available()->publicAccess()->orderBy('sort_order')->get()->map(fn ($x) => $this->benefitData($x, true)),
-            'experiences' => $partner->experiences()->upcoming()->with(['sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
-            'challenges' => $challenges->map(fn ($x) => $x->only(['id', 'slug', 'title', 'description', 'ends_at', 'reward_type', 'reward_jp_amount', 'manual_prize_description']) + ['destination_url' => app(\App\Services\ProductLandingResolver::class)->navigationUrl($x, (bool) $request->user())] + $this->image($x->hero_path, 'hero')),
+            'experiences' => $partner->experiences()->catalogVisible()->with(['sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
+            'challenges' => $challenges->map(fn ($x) => $x->only(['id', 'slug', 'title', 'description', 'ends_at', 'reward_type', 'reward_jp_amount', 'manual_prize_description']) + ['destination_url' => app(ProductLandingResolver::class)->navigationUrl($x, (bool) $request->user())] + $this->image($x->hero_path, 'hero')),
         ]);
     }
 
@@ -140,19 +147,23 @@ class PublicController extends Controller
         if ($props['availability']['available'] && $request->user() && $benefit->requiresMembership() && ! $props['hasActiveMembership']) {
             $analytics->journeyMembershipGateViewed($benefit);
         }
-        if ($props['availability']['available']) $analytics->benefitViewed($benefit);
+        if ($props['availability']['available']) {
+            $analytics->benefitViewed($benefit);
+        }
+
         return Inertia::render('benefits/show', $props);
     }
 
     public function benefitPublicProps(Benefit $benefit, Request $request, bool $preview = false): array
     {
         $grant = null;
-        if (!$preview && $benefit->access_mode === 'social_challenge_grant') {
-            $grant = $request->user() ? \App\Models\ChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->first() : null;
+        if (! $preview && $benefit->access_mode === 'social_challenge_grant') {
+            $grant = $request->user() ? ChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->first() : null;
             abort_unless($grant, 404);
         }
         $benefit->load('partner');
         $locations = $benefit->isAvailable() ? $benefit->availableLocations()->get()->filter->hasRedemptionPin()->values() : collect();
+
         return ['rewardUrl' => $grant ? route('social-challenges.show', $grant->participation->challenge) : null, 'benefit' => $this->benefitData($benefit), 'locations' => $locations->map(fn (Location $location) => $this->locationData($location->load('partner'))),
             'hasActiveMembership' => $request->user()?->activeMembership()->exists() ?? false,
             'availability' => $this->benefitAvailability($benefit, $request, $locations->isNotEmpty())];
@@ -160,7 +171,7 @@ class PublicController extends Controller
 
     public function experiences(Request $request): Response
     {
-        $query = Experience::upcoming()->with('sessions.location')->orderByDesc('featured')->orderBy('sort_order');
+        $query = Experience::catalogVisible()->with('sessions.location')->orderByDesc('featured')->orderBy('sort_order');
         if ($request->filled('category')) {
             $query->where('category', $request->string('category'));
         }
@@ -170,7 +181,7 @@ class PublicController extends Controller
 
     public function experience(Request $request, Experience $experience, AnalyticsTracker $analytics): Response
     {
-        abort_if($experience->status === 'draft', 404);
+        abort_unless(app(ExperiencePublication::class)->isPublic($experience), 404);
         $analytics->resetJourneyIntent($experience);
         $available = $experience->isPublished();
         if ($available) {
@@ -191,11 +202,12 @@ class PublicController extends Controller
 
     public function experiencePublicProps(Experience $experience, Request $request): array
     {
-        $available = $experience->isPublished();
+        $available = app(ExperiencePublication::class)->canOperate($experience);
         $experience->load(['partners', 'sessions' => fn ($query) => $available ? $query->upcoming()->with('location') : $query->whereRaw('1 = 0')]);
         $reservations = $request->user() ? $request->user()->experienceReservations()->where('experience_id', $experience->id)->get()->keyBy('experience_session_id') : collect();
         $hasActiveMembership = $request->user()?->hasActiveMembership() ?? false;
-        return ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $hasActiveMembership, 'restoredSessionId' => app(\App\Services\PublicJourneyContinuation::class)->restoredExperienceSessionId($experience), 'availability' => ['available' => $available, 'reason' => $available ? null : 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA']];
+
+        return ['experience' => $this->experienceData($experience, true, $reservations), 'hasActiveMembership' => $hasActiveMembership, 'restoredSessionId' => app(PublicJourneyContinuation::class)->restoredExperienceSessionId($experience), 'availability' => ['available' => $available, 'reason' => $available ? null : ($experience->catalog_visibility === 'upcoming' ? 'EN PREPARACIÓN · Fechas y operación pendientes de confirmación. No admite reservas ni pagos.' : 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA')]];
     }
 
     public function map(Location $location, AnalyticsTracker $analytics): RedirectResponse
@@ -224,8 +236,9 @@ class PublicController extends Controller
 
     public function reserve(Request $request, Experience $experience, AnalyticsTracker $analytics): RedirectResponse
     {
-        abort_unless($experience->isPublished() && $experience->upcomingSessions()->exists(), 404);
+        abort_unless(app(ExperiencePublication::class)->canOperate($experience), 404);
         $method = $request->query('method', $experience->reservation_method);
+        abort_unless($experience->catalog_visibility === 'legacy' || $method === $experience->reservation_method, 404);
         abort_unless(in_array($method, ['whatsapp', 'url', 'external', 'phone'], true), 404);
         $destination = match ($method) {
             'whatsapp' => filled($experience->reservation_whatsapp) ? 'https://wa.me/'.preg_replace('/\D+/', '', $experience->reservation_whatsapp) : null,
@@ -255,24 +268,24 @@ class PublicController extends Controller
 
     private function benefitData(Benefit $b, bool $inventory = false): array
     {
-        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'access_mode', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['availability_label' => $inventory ? ($b->availableLocations()->exists() ? 'Disponible · revisa las condiciones' : 'Sin ubicación disponible ahora') : null, 'destination_url'=>app(\App\Services\ProductLandingResolver::class)->navigationUrl($b, auth()->check()),'partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null] + $this->image($b->image_path, 'benefit_card') + $this->image($b->image_path, 'hero', 'hero');
+        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'access_mode', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['availability_label' => $inventory ? ($b->availableLocations()->exists() ? 'Disponible · revisa las condiciones' : 'Sin ubicación disponible ahora') : null, 'destination_url' => app(ProductLandingResolver::class)->navigationUrl($b, auth()->check()), 'partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null] + $this->image($b->image_path, 'benefit_card') + $this->image($b->image_path, 'hero', 'hero');
     }
 
     private function experienceData(Experience $e, bool $detail = false, $reservations = null): array
     {
         $targets = [];
-        if (filled($e->reservation_whatsapp)) {
+        if (($e->catalog_visibility === 'legacy' || $e->reservation_method === 'whatsapp') && preg_match('/^\+?[1-9]\d{6,14}$/', $e->reservation_whatsapp ?? '')) {
             $targets[] = ['method' => 'whatsapp', 'label' => 'CONTINUAR POR WHATSAPP'];
         }
-        if (filled($e->reservation_url)) {
+        if (($e->catalog_visibility === 'legacy' || in_array($e->reservation_method, ['url', 'external'], true)) && filter_var($e->reservation_url, FILTER_VALIDATE_URL) && in_array(parse_url($e->reservation_url, PHP_URL_SCHEME), ['http', 'https'], true)) {
             $targets[] = ['method' => $e->reservation_method === 'external' ? 'external' : 'url', 'label' => 'IR AL SITIO DE RESERVA'];
         }
-        if (filled($e->reservation_phone) && preg_match('/^\+?[1-9]\d{6,14}$/', $e->reservation_phone)) {
+        if (($e->catalog_visibility === 'legacy' || $e->reservation_method === 'phone') && filled($e->reservation_phone) && preg_match('/^\+?[1-9]\d{6,14}$/', $e->reservation_phone)) {
             $targets[] = ['method' => 'phone', 'label' => 'LLAMAR PARA RESERVAR'];
         }
         usort($targets, fn (array $a, array $b) => ($a['method'] === $e->reservation_method ? 0 : 1) <=> ($b['method'] === $e->reservation_method ? 0 : 1));
 
-        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + $this->image($e->image_path, 'experience_card') + $this->image($e->image_path, 'hero', 'hero') + $this->image($e->cover_path, 'hero', 'cover') + ['destination_url'=>app(\App\Services\ProductLandingResolver::class)->navigationUrl($e, auth()->check()),'partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'reservation_targets' => $detail ? $targets : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size'])]) : []];
+        return ['catalog_visibility' => $e->catalog_visibility, 'duration_minutes' => $e->duration_minutes, 'currency' => $e->currency, 'prices' => app(ExperiencePricing::class)->present($e, auth()->user())] + $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + $this->image($e->image_path, 'experience_card') + $this->image($e->image_path, 'hero', 'hero') + $this->image($e->cover_path, 'hero', 'cover') + ['destination_url' => app(ProductLandingResolver::class)->navigationUrl($e, auth()->check()), 'partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'reservation_targets' => $detail && app(ExperiencePublication::class)->canOperate($e) ? $targets : [], 'sessions' => $e->catalog_visibility !== 'upcoming' && $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size'])]) : []];
     }
 
     private function image(?string $key, string $preset, string $name = 'image'): array

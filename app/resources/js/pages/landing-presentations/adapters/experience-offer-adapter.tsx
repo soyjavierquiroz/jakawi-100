@@ -37,8 +37,8 @@ export type ExperienceOfferProps = {
         hero_alt: string | null;
     };
     heroUrl: string | null;
-    heroSrcset?: {src: string; width: number}[];
-    heroDesktopSrcset?: {src: string; width: number}[];
+    heroSrcset?: { src: string; width: number }[];
+    heroDesktopSrcset?: { src: string; width: number }[];
     nativeUrl: string;
     canonical: string;
     noindex: boolean;
@@ -57,7 +57,11 @@ export type ExperienceOfferProps = {
         terms: string | null;
         organizers: Partner[];
         partners: Partner[];
-        prices: Array<{ label: string; value: string; memberAdvantage?: boolean }>;
+        prices: Array<{
+            label: string;
+            value: string;
+            memberAdvantage?: boolean;
+        }>;
         next: Session | null;
         sessions: Session[];
         sessionCount: number;
@@ -167,7 +171,11 @@ export default function ExperienceOfferAdapter({
               : undefined,
         facts: copy.next
             ? [
-                  { label: 'Fecha', value: compactDate(copy.next.date), tone: 'reward' },
+                  {
+                      label: 'Fecha',
+                      value: compactDate(copy.next.date),
+                      tone: 'reward',
+                  },
                   {
                       label: 'Hora',
                       value:
@@ -227,7 +235,17 @@ export default function ExperienceOfferAdapter({
         <>
             <Head title={offer.hero.headline}>
                 <link rel="canonical" href={canonical} />
-                {noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"} />}
+                {noindex && (
+                    <meta
+                        head-key="robots"
+                        name="robots"
+                        content={
+                            prelaunchPublic
+                                ? 'noindex,nofollow'
+                                : 'noindex,follow'
+                        }
+                    />
+                )}
             </Head>
             <OfferConversionTemplate
                 hero={presentation.hero_layout ?? undefined}
@@ -240,10 +258,14 @@ export default function ExperienceOfferAdapter({
                 className="experience-marketing-v3 overflow-x-clip font-discovery break-words"
                 faqClassName="experience-faq border-t border-border"
                 renderNotice={() =>
-                    preview && (
+                    (preview || copy.action.label === 'EN PREPARACIÓN') && (
                         <StatusBanner
-                            title="VISTA PREVIA"
-                            description="Las acciones están desactivadas en esta vista."
+                            title={preview ? 'VISTA PREVIA' : 'PRÓXIMAMENTE'}
+                            description={
+                                preview
+                                    ? 'Las acciones están desactivadas en esta vista.'
+                                    : 'Presentación comercial en preparación. No admite reservas, pagos ni canjes. El precio preferencial está previsto y requiere futura activación y verificación.'
+                            }
                             className="mt-5"
                         />
                     )

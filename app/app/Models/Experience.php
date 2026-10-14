@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
@@ -17,7 +18,7 @@ class Experience extends Model
     /** @use HasFactory<ExperienceFactory> */
     use HasFactory;
 
-    public function landingPresentations(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function landingPresentations(): MorphMany
     {
         return $this->morphMany(LandingPresentation::class, 'subject');
     }
@@ -28,7 +29,7 @@ class Experience extends Model
     }
 
     protected $fillable = [
-        'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type',
+        'catalog_visibility', 'operations_confirmed', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type',
         'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method',
         'reservation_url', 'reservation_whatsapp', 'reservation_phone', 'status', 'featured',
         'image_path', 'cover_path', 'sort_order', 'published_at', 'review_status', 'submitted_at', 'submitted_by_user_id', 'reviewed_at', 'reviewed_by_user_id', 'review_notes', 'created_by_user_id',
@@ -75,6 +76,18 @@ class Experience extends Model
     public function scopeUpcoming(Builder $query): void
     {
         $query->published()->whereHas('sessions', fn (Builder $query) => $query->upcoming());
+    }
+
+    /** Explicit proposals never need synthetic sessions; legacy records retain catalog rules. */
+    public function scopeCatalogVisible(Builder $query): void
+    {
+        $query->published()->where(function (Builder $q) {
+            $q->where(function (Builder $legacy) {
+                $legacy->where('catalog_visibility', 'legacy')->whereHas('sessions', fn ($s) => $s->upcoming());
+            })->orWhere(function (Builder $explicit) {
+                $explicit->whereIn('catalog_visibility', ['upcoming', 'active'])->whereHas('partners', fn ($p) => $p->published());
+            });
+        });
     }
 
     public function isPublished(): bool
@@ -131,6 +144,7 @@ class Experience extends Model
     {
         return [
             'featured' => 'boolean',
+            'operations_confirmed' => 'boolean',
             'regular_price' => 'decimal:2',
             'member_price' => 'decimal:2',
             'published_at' => 'datetime',
