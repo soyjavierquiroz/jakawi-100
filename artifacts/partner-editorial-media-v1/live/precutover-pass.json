@@ -1,0 +1,13 @@
+{
+  "pass": true,
+  "production_builds": 1,
+  "php": "8.4",
+  "migrations": 1,
+  "manifest": "PASS",
+  "semantic_runtime_guard": "PASS",
+  "hot": "ABSENT",
+  "vite_client": "ABSENT",
+  "loopback_runtime_urls": "ABSENT",
+  "native_offer_paths": "DEPLOYED_IN_BUNDLE",
+  "state_unchanged": true
+}

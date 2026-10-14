@@ -1,0 +1,1 @@
+{"scanned":6,"referenced":2,"recent_orphans_skipped":4,"temp_expired":0,"orphan_candidates_recorded":1,"candidates":0,"deleted":0,"bytes_reclaimed":0,"errors":0}

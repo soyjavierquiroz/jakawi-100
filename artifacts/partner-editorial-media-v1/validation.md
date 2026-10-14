@@ -1,8 +1,8 @@
 # Partner Editorial Media V1 validation
 
-Status: **READY FOR DEPLOY — NOT DEPLOYED**.
+Status: **LIVE** — application `359c98cfbe00dda393a4630c203f2892a4c2c3d1`. Implementation QA below describes the pre-deploy validation.
 
-Base: `e5036461e6d258626a09efe0c882032ed78d007c`. Production application remains `22fd406eb7d8794b2c725c79b0af55b19280a16d`.
+Base: `e5036461e6d258626a09efe0c882032ed78d007c`. Previous production application: `22fd406eb7d8794b2c725c79b0af55b19280a16d`.
 
 ## Contract
 
@@ -24,3 +24,13 @@ The shared public template omits an empty gallery; one image stays bounded, two 
 ## Production boundary
 
 All QA data/media are guarded by `APP_ENV=testing`, `DB_HOST=db-test`, `DB_DATABASE=jakawi_test` and use isolated local test storage. No production data/media upload or mutation, no Dossis gallery/logo/cover changes, no production migration, no deploy. Existing production app/web/worker images remain unchanged. Human Admin uploads real curated images after a separately authorized deployment and migration.
+
+## Production release
+
+**Partner Editorial Media V1 LIVE**. [Release record](live/production-release.json): one clean production build, exact rollback images protected, one pre-migration custom-format backup validated with pg_restore --list, and one additive nullable JSON migration applied before cutover. No pending migrations; rollback may retain the nullable column. Only app/web/social-worker recreated; DB, v2proof and unrelated containers unchanged.
+
+[Readiness](live/readiness.json) and local/public /up PASS (200/200). App/DB/v2proof healthy, web/worker running, scheduler active, failed jobs 0, CRM TRUE, Meta OFF. [Browser smoke](live/browser-validation.json) used the deployed production kernel under READ ONLY with analytics suppressed in that CLI process, then real public compiled assets and existing imgproxy media. Dossis guest rendering returned 200, no horizontal overflow at 390/1440, empty editorial section omitted, compact zero-inventory state/location/account preserved. Existing Admin shows exactly IMAGEN 1/2/3; no file selection, upload, removal or save. Authenticated signup/login remains hidden; actual public Coming Soon and robots unchanged.
+
+[GC dry-run](live/gc-dry-run.txt) PASS: existing logo/cover referenced, gallery empty, deleted 0, errors 0. [Gallery/schema checks](live/gallery-final.json) verify nullable JSON, no images, GC reference support. MinIO object inventories/ETags before/after are identical, including health; Dossis logo/cover data and master hashes unchanged. Partners 1, Benefits/Experiences/Challenges/Landings 0, gallery images 0, existing users 2 unchanged, new users 0, domain/production QA media mutations 0. Disk 17.76 GiB before; see [after](live/disk-after.json). Docs-only followup; no rebuild/redeploy.
+
+[Admin controls](live/admin-gallery-1440.png), [390](live/dossis43-390.png), [1440](live/dossis43-1440.png).

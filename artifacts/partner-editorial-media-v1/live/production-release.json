@@ -1,0 +1,44 @@
+{
+  "status": "LIVE",
+  "previous_runtime": "22fd406eb7d8794b2c725c79b0af55b19280a16d",
+  "deployed_sha": "359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+  "production_builds": 1,
+  "images": {
+    "app": {
+      "tag": "jakawi-app:release-359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+      "id": "sha256:4c6fdd6f72adfc192bc8ea45663724a1735a61601268bbbd6f5fc7896e25488d",
+      "revision": "359c98cfbe00dda393a4630c203f2892a4c2c3d1"
+    },
+    "web": {
+      "tag": "jakawi-web:release-359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+      "id": "sha256:2e44e6738e162a009fbc4c75796ba2d78766c6528fe54034c13419d51c1a1bc8",
+      "revision": "359c98cfbe00dda393a4630c203f2892a4c2c3d1"
+    }
+  },
+  "rollback": {
+    "app": "sha256:cd4c1935a238d5d94ef4c5ad4db469c6e72dd33bc3fcb6e9eaed73d31123c232",
+    "web": "sha256:11cad511fb3f0c612b8893242fcf252e916966e5595963cedf1aea4526b07583",
+    "worker": "sha256:cd4c1935a238d5d94ef4c5ad4db469c6e72dd33bc3fcb6e9eaed73d31123c232"
+  },
+  "backup": {
+    "path": "/home/jakawi.com/backups/jakawi-pre-partner-editorial-media-20261014T042302Z.dump",
+    "bytes": 281378,
+    "sha256": "f5c63ac46922af1266e67caf83f57d78cd63160abdeff7de0ba94a3d7d95f923",
+    "pg_restore_list": "PASS"
+  },
+  "migration": "2026_10_14_000001_add_gallery_paths_to_partners",
+  "pending_migrations": 0,
+  "gallery_images": 0,
+  "production_qa_uploads": 0,
+  "domain_mutations": 0,
+  "new_users": 0,
+  "minio_mutations": 0,
+  "dossis_logo_cover_unchanged": true,
+  "failed_jobs": 0,
+  "crm": true,
+  "meta": false,
+  "prelaunch": true,
+  "scheduler": "ACTIVE",
+  "docs_only_followup": true,
+  "redeploy_after_docs": false
+}

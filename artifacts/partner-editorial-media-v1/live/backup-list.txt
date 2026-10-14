@@ -1,0 +1,673 @@
+;
+; Archive created at 2026-10-14 04:23:02 UTC
+;     dbname: jakawi
+;     TOC Entries: 662
+;     Compression: gzip
+;     Dump Version: 1.15-0
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 16.15
+;     Dumped by pg_dump version: 16.15
+;
+;
+; Selected TOC Entries:
+;
+249; 1259 24967 TABLE public analytics_events jakawi
+248; 1259 24966 SEQUENCE public analytics_events_id_seq jakawi
+4430; 0 0 SEQUENCE OWNED BY public analytics_events_id_seq jakawi
+262; 1259 25237 TABLE public app_settings jakawi
+261; 1259 25236 SEQUENCE public app_settings_id_seq jakawi
+4431; 0 0 SEQUENCE OWNED BY public app_settings_id_seq jakawi
+256; 1259 25151 TABLE public attribution_touches jakawi
+255; 1259 25150 SEQUENCE public attribution_touches_id_seq jakawi
+4432; 0 0 SEQUENCE OWNED BY public attribution_touches_id_seq jakawi
+264; 1259 25248 TABLE public audit_logs jakawi
+263; 1259 25247 SEQUENCE public audit_logs_id_seq jakawi
+4433; 0 0 SEQUENCE OWNED BY public audit_logs_id_seq jakawi
+240; 1259 24853 TABLE public benefit_location jakawi
+239; 1259 24833 TABLE public benefits jakawi
+238; 1259 24832 SEQUENCE public benefits_id_seq jakawi
+4434; 0 0 SEQUENCE OWNED BY public benefits_id_seq jakawi
+223; 1259 24712 TABLE public cache jakawi
+224; 1259 24720 TABLE public cache_locks jakawi
+280; 1259 25470 TABLE public campaign_participants jakawi
+279; 1259 25469 SEQUENCE public campaign_participants_id_seq jakawi
+4435; 0 0 SEQUENCE OWNED BY public campaign_participants_id_seq jakawi
+278; 1259 25451 TABLE public campaigns jakawi
+277; 1259 25449 SEQUENCE public campaigns_id_seq jakawi
+4436; 0 0 SEQUENCE OWNED BY public campaigns_id_seq jakawi
+307; 1259 25916 TABLE public challenge_participations jakawi
+309; 1259 25948 TABLE public challenge_reward_grants jakawi
+311; 1259 26038 TABLE public challenge_social_entries jakawi
+310; 1259 26037 SEQUENCE public challenge_social_entries_id_seq jakawi
+4437; 0 0 SEQUENCE OWNED BY public challenge_social_entries_id_seq jakawi
+305; 1259 25885 TABLE public challenges jakawi
+293; 1259 25703 TABLE public cities jakawi
+292; 1259 25702 SEQUENCE public cities_id_seq jakawi
+4438; 0 0 SEQUENCE OWNED BY public cities_id_seq jakawi
+295; 1259 25725 TABLE public city_interests jakawi
+294; 1259 25724 SEQUENCE public city_interests_id_seq jakawi
+4439; 0 0 SEQUENCE OWNED BY public city_interests_id_seq jakawi
+260; 1259 25205 TABLE public conversions jakawi
+259; 1259 25204 SEQUENCE public conversions_id_seq jakawi
+4440; 0 0 SEQUENCE OWNED BY public conversions_id_seq jakawi
+319; 1259 26202 TABLE public crm_contact_links jakawi
+318; 1259 26201 SEQUENCE public crm_contact_links_id_seq jakawi
+4441; 0 0 SEQUENCE OWNED BY public crm_contact_links_id_seq jakawi
+317; 1259 26188 TABLE public crm_deliveries jakawi
+316; 1259 26187 SEQUENCE public crm_deliveries_id_seq jakawi
+4442; 0 0 SEQUENCE OWNED BY public crm_deliveries_id_seq jakawi
+245; 1259 24927 TABLE public experience_partner jakawi
+252; 1259 25040 TABLE public experience_reservations jakawi
+251; 1259 25039 SEQUENCE public experience_reservations_id_seq jakawi
+4443; 0 0 SEQUENCE OWNED BY public experience_reservations_id_seq jakawi
+247; 1259 24944 TABLE public experience_sessions jakawi
+246; 1259 24943 SEQUENCE public experience_sessions_id_seq jakawi
+4444; 0 0 SEQUENCE OWNED BY public experience_sessions_id_seq jakawi
+244; 1259 24913 TABLE public experiences jakawi
+243; 1259 24912 SEQUENCE public experiences_id_seq jakawi
+4445; 0 0 SEQUENCE OWNED BY public experiences_id_seq jakawi
+229; 1259 24746 TABLE public failed_jobs jakawi
+228; 1259 24745 SEQUENCE public failed_jobs_id_seq jakawi
+4446; 0 0 SEQUENCE OWNED BY public failed_jobs_id_seq jakawi
+315; 1259 26163 TABLE public growth_provider_deliveries jakawi
+314; 1259 26162 SEQUENCE public growth_provider_deliveries_id_seq jakawi
+4447; 0 0 SEQUENCE OWNED BY public growth_provider_deliveries_id_seq jakawi
+227; 1259 24738 TABLE public job_batches jakawi
+226; 1259 24729 TABLE public jobs jakawi
+225; 1259 24728 SEQUENCE public jobs_id_seq jakawi
+4448; 0 0 SEQUENCE OWNED BY public jobs_id_seq jakawi
+291; 1259 25630 TABLE public jp_holds jakawi
+290; 1259 25629 SEQUENCE public jp_holds_id_seq jakawi
+4449; 0 0 SEQUENCE OWNED BY public jp_holds_id_seq jakawi
+313; 1259 26106 TABLE public landing_presentations jakawi
+312; 1259 26105 SEQUENCE public landing_presentations_id_seq jakawi
+4450; 0 0 SEQUENCE OWNED BY public landing_presentations_id_seq jakawi
+237; 1259 24814 TABLE public locations jakawi
+236; 1259 24813 SEQUENCE public locations_id_seq jakawi
+4451; 0 0 SEQUENCE OWNED BY public locations_id_seq jakawi
+303; 1259 25853 TABLE public membership_purchase_requests jakawi
+302; 1259 25852 SEQUENCE public membership_purchase_requests_id_seq jakawi
+4452; 0 0 SEQUENCE OWNED BY public membership_purchase_requests_id_seq jakawi
+268; 1259 25281 TABLE public membership_purchases jakawi
+267; 1259 25280 SEQUENCE public membership_purchases_id_seq jakawi
+4453; 0 0 SEQUENCE OWNED BY public membership_purchases_id_seq jakawi
+233; 1259 24777 TABLE public memberships jakawi
+232; 1259 24776 SEQUENCE public memberships_id_seq jakawi
+4454; 0 0 SEQUENCE OWNED BY public memberships_id_seq jakawi
+218; 1259 24679 TABLE public migrations jakawi
+217; 1259 24678 SEQUENCE public migrations_id_seq jakawi
+4455; 0 0 SEQUENCE OWNED BY public migrations_id_seq jakawi
+282; 1259 25497 TABLE public operational_adjustments jakawi
+281; 1259 25496 SEQUENCE public operational_adjustments_id_seq jakawi
+4456; 0 0 SEQUENCE OWNED BY public operational_adjustments_id_seq jakawi
+301; 1259 25829 TABLE public ownership_assignments jakawi
+300; 1259 25828 SEQUENCE public ownership_assignments_id_seq jakawi
+4457; 0 0 SEQUENCE OWNED BY public ownership_assignments_id_seq jakawi
+297; 1259 25753 TABLE public partner_applications jakawi
+296; 1259 25752 SEQUENCE public partner_applications_id_seq jakawi
+4458; 0 0 SEQUENCE OWNED BY public partner_applications_id_seq jakawi
+250; 1259 25015 TABLE public partner_user jakawi
+235; 1259 24800 TABLE public partners jakawi
+234; 1259 24799 SEQUENCE public partners_id_seq jakawi
+4459; 0 0 SEQUENCE OWNED BY public partners_id_seq jakawi
+231; 1259 24759 TABLE public passkeys jakawi
+230; 1259 24758 SEQUENCE public passkeys_id_seq jakawi
+4460; 0 0 SEQUENCE OWNED BY public passkeys_id_seq jakawi
+221; 1259 24696 TABLE public password_reset_tokens jakawi
+299; 1259 25807 TABLE public program_applications jakawi
+298; 1259 25806 SEQUENCE public program_applications_id_seq jakawi
+4461; 0 0 SEQUENCE OWNED BY public program_applications_id_seq jakawi
+266; 1259 25263 TABLE public program_enrollments jakawi
+265; 1259 25262 SEQUENCE public program_enrollments_id_seq jakawi
+4462; 0 0 SEQUENCE OWNED BY public program_enrollments_id_seq jakawi
+242; 1259 24869 TABLE public redemptions jakawi
+241; 1259 24868 SEQUENCE public redemptions_id_seq jakawi
+4463; 0 0 SEQUENCE OWNED BY public redemptions_id_seq jakawi
+258; 1259 25176 TABLE public referral_relationships jakawi
+257; 1259 25175 SEQUENCE public referral_relationships_id_seq jakawi
+4464; 0 0 SEQUENCE OWNED BY public referral_relationships_id_seq jakawi
+276; 1259 25403 TABLE public reward_payout_reward_transaction jakawi
+275; 1259 25402 SEQUENCE public reward_payout_reward_transaction_id_seq jakawi
+4465; 0 0 SEQUENCE OWNED BY public reward_payout_reward_transaction_id_seq jakawi
+274; 1259 25378 TABLE public reward_payouts jakawi
+273; 1259 25377 SEQUENCE public reward_payouts_id_seq jakawi
+4466; 0 0 SEQUENCE OWNED BY public reward_payouts_id_seq jakawi
+270; 1259 25329 TABLE public reward_rules jakawi
+269; 1259 25328 SEQUENCE public reward_rules_id_seq jakawi
+4467; 0 0 SEQUENCE OWNED BY public reward_rules_id_seq jakawi
+272; 1259 25349 TABLE public reward_transactions jakawi
+271; 1259 25348 SEQUENCE public reward_transactions_id_seq jakawi
+4468; 0 0 SEQUENCE OWNED BY public reward_transactions_id_seq jakawi
+222; 1259 24703 TABLE public sessions jakawi
+306; 1259 25915 SEQUENCE public social_challenge_participations_id_seq jakawi
+4469; 0 0 SEQUENCE OWNED BY public social_challenge_participations_id_seq jakawi
+308; 1259 25947 SEQUENCE public social_challenge_reward_grants_id_seq jakawi
+4470; 0 0 SEQUENCE OWNED BY public social_challenge_reward_grants_id_seq jakawi
+304; 1259 25884 SEQUENCE public social_challenges_id_seq jakawi
+4471; 0 0 SEQUENCE OWNED BY public social_challenges_id_seq jakawi
+285; 1259 25565 TABLE public unlock_location jakawi
+287; 1259 25581 TABLE public unlock_participations jakawi
+286; 1259 25580 SEQUENCE public unlock_participations_id_seq jakawi
+4472; 0 0 SEQUENCE OWNED BY public unlock_participations_id_seq jakawi
+289; 1259 25601 TABLE public unlock_status_history jakawi
+288; 1259 25600 SEQUENCE public unlock_status_history_id_seq jakawi
+4473; 0 0 SEQUENCE OWNED BY public unlock_status_history_id_seq jakawi
+284; 1259 25521 TABLE public unlocks jakawi
+283; 1259 25520 SEQUENCE public unlocks_id_seq jakawi
+4474; 0 0 SEQUENCE OWNED BY public unlocks_id_seq jakawi
+254; 1259 25120 TABLE public user_profiles jakawi
+253; 1259 25119 SEQUENCE public user_profiles_id_seq jakawi
+4475; 0 0 SEQUENCE OWNED BY public user_profiles_id_seq jakawi
+220; 1259 24686 TABLE public users jakawi
+219; 1259 24685 SEQUENCE public users_id_seq jakawi
+4476; 0 0 SEQUENCE OWNED BY public users_id_seq jakawi
+3599; 2604 24970 DEFAULT public analytics_events id jakawi
+3612; 2604 25240 DEFAULT public app_settings id jakawi
+3605; 2604 25154 DEFAULT public attribution_touches id jakawi
+3613; 2604 25251 DEFAULT public audit_logs id jakawi
+3584; 2604 24836 DEFAULT public benefits id jakawi
+3627; 2604 25473 DEFAULT public campaign_participants id jakawi
+3624; 2604 25457 DEFAULT public campaigns id jakawi
+3671; 2604 25919 DEFAULT public challenge_participations id jakawi
+3674; 2604 25951 DEFAULT public challenge_reward_grants id jakawi
+3676; 2604 26041 DEFAULT public challenge_social_entries id jakawi
+3656; 2604 25888 DEFAULT public challenges id jakawi
+3647; 2604 25706 DEFAULT public cities id jakawi
+3649; 2604 25728 DEFAULT public city_interests id jakawi
+3609; 2604 25208 DEFAULT public conversions id jakawi
+3694; 2604 26205 DEFAULT public crm_contact_links id jakawi
+3691; 2604 26191 DEFAULT public crm_deliveries id jakawi
+3602; 2604 25043 DEFAULT public experience_reservations id jakawi
+3598; 2604 24947 DEFAULT public experience_sessions id jakawi
+3592; 2604 24916 DEFAULT public experiences id jakawi
+3574; 2604 24749 DEFAULT public failed_jobs id jakawi
+3687; 2604 26166 DEFAULT public growth_provider_deliveries id jakawi
+3573; 2604 24732 DEFAULT public jobs id jakawi
+3645; 2604 25633 DEFAULT public jp_holds id jakawi
+3682; 2604 26109 DEFAULT public landing_presentations id jakawi
+3581; 2604 24817 DEFAULT public locations id jakawi
+3655; 2604 25856 DEFAULT public membership_purchase_requests id jakawi
+3616; 2604 25284 DEFAULT public membership_purchases id jakawi
+3577; 2604 24780 DEFAULT public memberships id jakawi
+3569; 2604 24682 DEFAULT public migrations id jakawi
+3628; 2604 25500 DEFAULT public operational_adjustments id jakawi
+3654; 2604 25832 DEFAULT public ownership_assignments id jakawi
+3650; 2604 25756 DEFAULT public partner_applications id jakawi
+3578; 2604 24803 DEFAULT public partners id jakawi
+3576; 2604 24762 DEFAULT public passkeys id jakawi
+3652; 2604 25810 DEFAULT public program_applications id jakawi
+3614; 2604 25266 DEFAULT public program_enrollments id jakawi
+3591; 2604 24872 DEFAULT public redemptions id jakawi
+3607; 2604 25179 DEFAULT public referral_relationships id jakawi
+3623; 2604 25406 DEFAULT public reward_payout_reward_transaction id jakawi
+3622; 2604 25381 DEFAULT public reward_payouts id jakawi
+3618; 2604 25332 DEFAULT public reward_rules id jakawi
+3621; 2604 25352 DEFAULT public reward_transactions id jakawi
+3642; 2604 25584 DEFAULT public unlock_participations id jakawi
+3643; 2604 25604 DEFAULT public unlock_status_history id jakawi
+3629; 2604 25524 DEFAULT public unlocks id jakawi
+3604; 2604 25123 DEFAULT public user_profiles id jakawi
+3570; 2604 24689 DEFAULT public users id jakawi
+4353; 0 24967 TABLE DATA public analytics_events jakawi
+4366; 0 25237 TABLE DATA public app_settings jakawi
+4360; 0 25151 TABLE DATA public attribution_touches jakawi
+4368; 0 25248 TABLE DATA public audit_logs jakawi
+4344; 0 24853 TABLE DATA public benefit_location jakawi
+4343; 0 24833 TABLE DATA public benefits jakawi
+4327; 0 24712 TABLE DATA public cache jakawi
+4328; 0 24720 TABLE DATA public cache_locks jakawi
+4384; 0 25470 TABLE DATA public campaign_participants jakawi
+4382; 0 25451 TABLE DATA public campaigns jakawi
+4411; 0 25916 TABLE DATA public challenge_participations jakawi
+4413; 0 25948 TABLE DATA public challenge_reward_grants jakawi
+4415; 0 26038 TABLE DATA public challenge_social_entries jakawi
+4409; 0 25885 TABLE DATA public challenges jakawi
+4397; 0 25703 TABLE DATA public cities jakawi
+4399; 0 25725 TABLE DATA public city_interests jakawi
+4364; 0 25205 TABLE DATA public conversions jakawi
+4423; 0 26202 TABLE DATA public crm_contact_links jakawi
+4421; 0 26188 TABLE DATA public crm_deliveries jakawi
+4349; 0 24927 TABLE DATA public experience_partner jakawi
+4356; 0 25040 TABLE DATA public experience_reservations jakawi
+4351; 0 24944 TABLE DATA public experience_sessions jakawi
+4348; 0 24913 TABLE DATA public experiences jakawi
+4333; 0 24746 TABLE DATA public failed_jobs jakawi
+4419; 0 26163 TABLE DATA public growth_provider_deliveries jakawi
+4331; 0 24738 TABLE DATA public job_batches jakawi
+4330; 0 24729 TABLE DATA public jobs jakawi
+4395; 0 25630 TABLE DATA public jp_holds jakawi
+4417; 0 26106 TABLE DATA public landing_presentations jakawi
+4341; 0 24814 TABLE DATA public locations jakawi
+4407; 0 25853 TABLE DATA public membership_purchase_requests jakawi
+4372; 0 25281 TABLE DATA public membership_purchases jakawi
+4337; 0 24777 TABLE DATA public memberships jakawi
+4322; 0 24679 TABLE DATA public migrations jakawi
+4386; 0 25497 TABLE DATA public operational_adjustments jakawi
+4405; 0 25829 TABLE DATA public ownership_assignments jakawi
+4401; 0 25753 TABLE DATA public partner_applications jakawi
+4354; 0 25015 TABLE DATA public partner_user jakawi
+4339; 0 24800 TABLE DATA public partners jakawi
+4335; 0 24759 TABLE DATA public passkeys jakawi
+4325; 0 24696 TABLE DATA public password_reset_tokens jakawi
+4403; 0 25807 TABLE DATA public program_applications jakawi
+4370; 0 25263 TABLE DATA public program_enrollments jakawi
+4346; 0 24869 TABLE DATA public redemptions jakawi
+4362; 0 25176 TABLE DATA public referral_relationships jakawi
+4380; 0 25403 TABLE DATA public reward_payout_reward_transaction jakawi
+4378; 0 25378 TABLE DATA public reward_payouts jakawi
+4374; 0 25329 TABLE DATA public reward_rules jakawi
+4376; 0 25349 TABLE DATA public reward_transactions jakawi
+4326; 0 24703 TABLE DATA public sessions jakawi
+4389; 0 25565 TABLE DATA public unlock_location jakawi
+4391; 0 25581 TABLE DATA public unlock_participations jakawi
+4393; 0 25601 TABLE DATA public unlock_status_history jakawi
+4388; 0 25521 TABLE DATA public unlocks jakawi
+4358; 0 25120 TABLE DATA public user_profiles jakawi
+4324; 0 24686 TABLE DATA public users jakawi
+4477; 0 0 SEQUENCE SET public analytics_events_id_seq jakawi
+4478; 0 0 SEQUENCE SET public app_settings_id_seq jakawi
+4479; 0 0 SEQUENCE SET public attribution_touches_id_seq jakawi
+4480; 0 0 SEQUENCE SET public audit_logs_id_seq jakawi
+4481; 0 0 SEQUENCE SET public benefits_id_seq jakawi
+4482; 0 0 SEQUENCE SET public campaign_participants_id_seq jakawi
+4483; 0 0 SEQUENCE SET public campaigns_id_seq jakawi
+4484; 0 0 SEQUENCE SET public challenge_social_entries_id_seq jakawi
+4485; 0 0 SEQUENCE SET public cities_id_seq jakawi
+4486; 0 0 SEQUENCE SET public city_interests_id_seq jakawi
+4487; 0 0 SEQUENCE SET public conversions_id_seq jakawi
+4488; 0 0 SEQUENCE SET public crm_contact_links_id_seq jakawi
+4489; 0 0 SEQUENCE SET public crm_deliveries_id_seq jakawi
+4490; 0 0 SEQUENCE SET public experience_reservations_id_seq jakawi
+4491; 0 0 SEQUENCE SET public experience_sessions_id_seq jakawi
+4492; 0 0 SEQUENCE SET public experiences_id_seq jakawi
+4493; 0 0 SEQUENCE SET public failed_jobs_id_seq jakawi
+4494; 0 0 SEQUENCE SET public growth_provider_deliveries_id_seq jakawi
+4495; 0 0 SEQUENCE SET public jobs_id_seq jakawi
+4496; 0 0 SEQUENCE SET public jp_holds_id_seq jakawi
+4497; 0 0 SEQUENCE SET public landing_presentations_id_seq jakawi
+4498; 0 0 SEQUENCE SET public locations_id_seq jakawi
+4499; 0 0 SEQUENCE SET public membership_purchase_requests_id_seq jakawi
+4500; 0 0 SEQUENCE SET public membership_purchases_id_seq jakawi
+4501; 0 0 SEQUENCE SET public memberships_id_seq jakawi
+4502; 0 0 SEQUENCE SET public migrations_id_seq jakawi
+4503; 0 0 SEQUENCE SET public operational_adjustments_id_seq jakawi
+4504; 0 0 SEQUENCE SET public ownership_assignments_id_seq jakawi
+4505; 0 0 SEQUENCE SET public partner_applications_id_seq jakawi
+4506; 0 0 SEQUENCE SET public partners_id_seq jakawi
+4507; 0 0 SEQUENCE SET public passkeys_id_seq jakawi
+4508; 0 0 SEQUENCE SET public program_applications_id_seq jakawi
+4509; 0 0 SEQUENCE SET public program_enrollments_id_seq jakawi
+4510; 0 0 SEQUENCE SET public redemptions_id_seq jakawi
+4511; 0 0 SEQUENCE SET public referral_relationships_id_seq jakawi
+4512; 0 0 SEQUENCE SET public reward_payout_reward_transaction_id_seq jakawi
+4513; 0 0 SEQUENCE SET public reward_payouts_id_seq jakawi
+4514; 0 0 SEQUENCE SET public reward_rules_id_seq jakawi
+4515; 0 0 SEQUENCE SET public reward_transactions_id_seq jakawi
+4516; 0 0 SEQUENCE SET public social_challenge_participations_id_seq jakawi
+4517; 0 0 SEQUENCE SET public social_challenge_reward_grants_id_seq jakawi
+4518; 0 0 SEQUENCE SET public social_challenges_id_seq jakawi
+4519; 0 0 SEQUENCE SET public unlock_participations_id_seq jakawi
+4520; 0 0 SEQUENCE SET public unlock_status_history_id_seq jakawi
+4521; 0 0 SEQUENCE SET public unlocks_id_seq jakawi
+4522; 0 0 SEQUENCE SET public user_profiles_id_seq jakawi
+4523; 0 0 SEQUENCE SET public users_id_seq jakawi
+3813; 2606 26152 CONSTRAINT public analytics_events analytics_events_event_id_unique jakawi
+3822; 2606 24974 CONSTRAINT public analytics_events analytics_events_pkey jakawi
+3828; 2606 26145 CONSTRAINT public analytics_events analytics_growth_outcome_unique jakawi
+3874; 2606 25246 CONSTRAINT public app_settings app_settings_key_unique jakawi
+3876; 2606 25244 CONSTRAINT public app_settings app_settings_pkey jakawi
+3852; 2606 25158 CONSTRAINT public attribution_touches attribution_touches_pkey jakawi
+3878; 2606 25255 CONSTRAINT public audit_logs audit_logs_pkey jakawi
+3780; 2606 24867 CONSTRAINT public benefit_location benefit_location_benefit_id_location_id_unique jakawi
+3774; 2606 24844 CONSTRAINT public benefits benefits_pkey jakawi
+3777; 2606 24851 CONSTRAINT public benefits benefits_slug_unique jakawi
+3735; 2606 24726 CONSTRAINT public cache_locks cache_locks_pkey jakawi
+3732; 2606 24718 CONSTRAINT public cache cache_pkey jakawi
+3942; 2606 25482 CONSTRAINT public campaign_participants campaign_participants_campaign_id_participant_type_unique jakawi
+3944; 2606 25475 CONSTRAINT public campaign_participants campaign_participants_pkey jakawi
+3935; 2606 25465 CONSTRAINT public campaigns campaigns_code_unique jakawi
+3938; 2606 25463 CONSTRAINT public campaigns campaigns_pkey jakawi
+4023; 2606 26062 CONSTRAINT public challenge_social_entries challenge_social_entries_challenge_id_normalized_url_hash_uniqu jakawi
+4025; 2606 26065 CONSTRAINT public challenge_social_entries challenge_social_entries_external_reference_unique jakawi
+4029; 2606 26050 CONSTRAINT public challenge_social_entries challenge_social_entries_pkey jakawi
+3977; 2606 25711 CONSTRAINT public cities cities_pkey jakawi
+3979; 2606 25713 CONSTRAINT public cities cities_slug_unique jakawi
+3986; 2606 25732 CONSTRAINT public city_interests city_interests_pkey jakawi
+3866; 2606 25234 CONSTRAINT public conversions conversions_idempotency_key_unique jakawi
+3869; 2606 25214 CONSTRAINT public conversions conversions_pkey jakawi
+4048; 2606 26209 CONSTRAINT public crm_contact_links crm_contact_links_pkey jakawi
+4050; 2606 26218 CONSTRAINT public crm_contact_links crm_contact_links_provider_provider_contact_id_unique jakawi
+4052; 2606 26216 CONSTRAINT public crm_contact_links crm_contact_links_provider_user_id_unique jakawi
+4043; 2606 26197 CONSTRAINT public crm_deliveries crm_deliveries_pkey jakawi
+4045; 2606 26199 CONSTRAINT public crm_deliveries crm_deliveries_provider_event_id_unique jakawi
+3801; 2606 24942 CONSTRAINT public experience_partner experience_partner_experience_id_partner_id_role_unique jakawi
+3834; 2606 25084 CONSTRAINT public experience_reservations experience_reservations_check_in_code_unique jakawi
+3838; 2606 25045 CONSTRAINT public experience_reservations experience_reservations_pkey jakawi
+3840; 2606 25074 CONSTRAINT public experience_reservations experience_reservations_public_id_unique jakawi
+3803; 2606 24963 CONSTRAINT public experience_sessions experience_sessions_experience_id_reference_key_unique jakawi
+3805; 2606 24951 CONSTRAINT public experience_sessions experience_sessions_pkey jakawi
+3795; 2606 24923 CONSTRAINT public experiences experiences_pkey jakawi
+3798; 2606 24925 CONSTRAINT public experiences experiences_slug_unique jakawi
+3743; 2606 24754 CONSTRAINT public failed_jobs failed_jobs_pkey jakawi
+3745; 2606 24757 CONSTRAINT public failed_jobs failed_jobs_uuid_unique jakawi
+4037; 2606 26173 CONSTRAINT public growth_provider_deliveries growth_provider_deliveries_pkey jakawi
+4041; 2606 26180 CONSTRAINT public growth_provider_deliveries growth_provider_delivery_unique jakawi
+3740; 2606 24744 CONSTRAINT public job_batches job_batches_pkey jakawi
+3737; 2606 24736 CONSTRAINT public jobs jobs_pkey jakawi
+3972; 2606 25638 CONSTRAINT public jp_holds jp_holds_pkey jakawi
+3974; 2606 25650 CONSTRAINT public jp_holds jp_holds_unlock_participation_id_unique jakawi
+4032; 2606 26115 CONSTRAINT public landing_presentations landing_presentations_pkey jakawi
+4034; 2606 26118 CONSTRAINT public landing_presentations landing_presentations_slug_unique jakawi
+3768; 2606 24823 CONSTRAINT public locations locations_pkey jakawi
+3770; 2606 24830 CONSTRAINT public locations locations_slug_unique jakawi
+4002; 2606 25879 CONSTRAINT public membership_purchase_requests membership_purchase_requests_membership_purchase_id_unique jakawi
+4005; 2606 25860 CONSTRAINT public membership_purchase_requests membership_purchase_requests_pkey jakawi
+3887; 2606 25325 CONSTRAINT public membership_purchases membership_purchases_idempotency_key_unique jakawi
+3890; 2606 25289 CONSTRAINT public membership_purchases membership_purchases_pkey jakawi
+3893; 2606 25323 CONSTRAINT public membership_purchases membership_purchases_reference_unique jakawi
+3753; 2606 24784 CONSTRAINT public memberships memberships_pkey jakawi
+3717; 2606 24684 CONSTRAINT public migrations migrations_pkey jakawi
+3948; 2606 25999 CONSTRAINT public operational_adjustments operational_adjustments_idempotency_key_unique jakawi
+3950; 2606 25504 CONSTRAINT public operational_adjustments operational_adjustments_pkey jakawi
+3999; 2606 25836 CONSTRAINT public ownership_assignments ownership_assignments_pkey jakawi
+3992; 2606 25761 CONSTRAINT public partner_applications partner_applications_pkey jakawi
+3832; 2606 25031 CONSTRAINT public partner_user partner_user_pkey jakawi
+3758; 2606 24809 CONSTRAINT public partners partners_pkey jakawi
+3760; 2606 25425 CONSTRAINT public partners partners_referral_code_normalized_unique jakawi
+3762; 2606 25423 CONSTRAINT public partners partners_referral_code_unique jakawi
+3764; 2606 24811 CONSTRAINT public partners partners_slug_unique jakawi
+3747; 2606 24774 CONSTRAINT public passkeys passkeys_credential_id_unique jakawi
+3749; 2606 24766 CONSTRAINT public passkeys passkeys_pkey jakawi
+3725; 2606 24702 CONSTRAINT public password_reset_tokens password_reset_tokens_pkey jakawi
+3995; 2606 25815 CONSTRAINT public program_applications program_applications_pkey jakawi
+3881; 2606 25271 CONSTRAINT public program_enrollments program_enrollments_pkey jakawi
+3783; 2606 24909 CONSTRAINT public redemptions redemptions_code_unique jakawi
+3789; 2606 24876 CONSTRAINT public redemptions redemptions_pkey jakawi
+3791; 2606 24907 CONSTRAINT public redemptions redemptions_public_id_unique jakawi
+3861; 2606 25184 CONSTRAINT public referral_relationships referral_relationships_pkey jakawi
+3930; 2606 25408 CONSTRAINT public reward_payout_reward_transaction reward_payout_reward_transaction_pkey jakawi
+3932; 2606 25420 CONSTRAINT public reward_payout_reward_transaction reward_payout_reward_transaction_reward_payout_id_reward_transa jakawi
+3924; 2606 25385 CONSTRAINT public reward_payouts reward_payouts_pkey jakawi
+3926; 2606 25398 CONSTRAINT public reward_payouts reward_payouts_reference_unique jakawi
+3900; 2606 25338 CONSTRAINT public reward_rules reward_rules_pkey jakawi
+3905; 2606 25373 CONSTRAINT public reward_transactions reward_transactions_conversion_id_reward_rule_id_unique jakawi
+3907; 2606 26020 CONSTRAINT public reward_transactions reward_transactions_forfeited_jp_hold_id_unique jakawi
+3909; 2606 26016 CONSTRAINT public reward_transactions reward_transactions_operational_adjustment_id_unique jakawi
+3911; 2606 25356 CONSTRAINT public reward_transactions reward_transactions_pkey jakawi
+3913; 2606 26018 CONSTRAINT public reward_transactions reward_transactions_reversal_of_reward_transaction_id_unique jakawi
+3915; 2606 26027 CONSTRAINT public reward_transactions reward_transactions_social_challenge_reward_grant_id_unique jakawi
+3918; 2606 25671 CONSTRAINT public reward_transactions reward_transactions_unlock_participation_id_unique jakawi
+3728; 2606 24709 CONSTRAINT public sessions sessions_pkey jakawi
+4015; 2606 25929 CONSTRAINT public challenge_participations social_challenge_participations_pkey jakawi
+4017; 2606 25941 CONSTRAINT public challenge_participations social_challenge_participations_social_challenge_id_user_id_uni jakawi
+4019; 2606 25983 CONSTRAINT public challenge_reward_grants social_challenge_reward_grants_participation_id_unique jakawi
+4021; 2606 25956 CONSTRAINT public challenge_reward_grants social_challenge_reward_grants_pkey jakawi
+4010; 2606 25896 CONSTRAINT public challenges social_challenges_pkey jakawi
+4012; 2606 25913 CONSTRAINT public challenges social_challenges_slug_unique jakawi
+3960; 2606 25579 CONSTRAINT public unlock_location unlock_location_pkey jakawi
+3962; 2606 25586 CONSTRAINT public unlock_participations unlock_participations_pkey jakawi
+3967; 2606 25598 CONSTRAINT public unlock_participations unlock_participations_unlock_id_user_id_unique jakawi
+3969; 2606 25609 CONSTRAINT public unlock_status_history unlock_status_history_pkey jakawi
+3955; 2606 25540 CONSTRAINT public unlocks unlocks_pkey jakawi
+3957; 2606 25564 CONSTRAINT public unlocks unlocks_slug_unique jakawi
+3844; 2606 25127 CONSTRAINT public user_profiles user_profiles_pkey jakawi
+3846; 2606 25134 CONSTRAINT public user_profiles user_profiles_user_id_unique jakawi
+3719; 2606 24695 CONSTRAINT public users users_email_unique jakawi
+3721; 2606 24693 CONSTRAINT public users users_pkey jakawi
+3723; 2606 25149 CONSTRAINT public users users_referral_code_normalized_unique jakawi
+3809; 1259 26148 INDEX public analytics_events_attribution_touch_id_index jakawi
+3810; 1259 25011 INDEX public analytics_events_benefit_id_index jakawi
+3811; 1259 26147 INDEX public analytics_events_campaign_key_occurred_at_index jakawi
+3814; 1259 25005 INDEX public analytics_events_event_name_index jakawi
+3815; 1259 25014 INDEX public analytics_events_event_name_occurred_at_index jakawi
+3816; 1259 25012 INDEX public analytics_events_experience_id_index jakawi
+3817; 1259 26146 INDEX public analytics_events_landing_presentation_id_occurred_at_index jakawi
+3818; 1259 25010 INDEX public analytics_events_location_id_index jakawi
+3819; 1259 25006 INDEX public analytics_events_occurred_at_index jakawi
+3820; 1259 25009 INDEX public analytics_events_partner_id_index jakawi
+3823; 1259 25013 INDEX public analytics_events_redemption_id_index jakawi
+3824; 1259 25626 INDEX public analytics_events_unlock_id_index jakawi
+3825; 1259 25007 INDEX public analytics_events_user_id_occurred_at_index jakawi
+3826; 1259 25008 INDEX public analytics_events_visitor_id_occurred_at_index jakawi
+3829; 1259 26161 INDEX public analytics_provider_occurred_at_index jakawi
+3847; 1259 25431 INDEX public attribution_touches_acquisition_partner_id_occurred_at_index jakawi
+3848; 1259 25171 INDEX public attribution_touches_anonymous_id_index jakawi
+3849; 1259 25851 INDEX public attribution_touches_campaign_key_index jakawi
+3850; 1259 25174 INDEX public attribution_touches_occurred_at_index jakawi
+3853; 1259 25172 INDEX public attribution_touches_referral_code_index jakawi
+3854; 1259 25170 INDEX public attribution_touches_referrer_user_id_occurred_at_index jakawi
+3855; 1259 25677 INDEX public attribution_touches_unlock_id_referrer_user_id_index jakawi
+3856; 1259 25169 INDEX public attribution_touches_user_id_occurred_at_index jakawi
+3857; 1259 25173 INDEX public attribution_touches_utm_campaign_index jakawi
+3879; 1259 25261 INDEX public audit_logs_subject_type_subject_id_index jakawi
+3772; 1259 25883 INDEX public benefits_access_mode_index jakawi
+3775; 1259 25101 INDEX public benefits_review_status_index jakawi
+3778; 1259 24852 INDEX public benefits_status_index jakawi
+3730; 1259 24719 INDEX public cache_expiration_index jakawi
+3733; 1259 24727 INDEX public cache_locks_expiration_index jakawi
+3936; 1259 25468 INDEX public campaigns_end_at_index jakawi
+3939; 1259 25467 INDEX public campaigns_start_at_index jakawi
+3940; 1259 25466 INDEX public campaigns_status_index jakawi
+4026; 1259 26066 INDEX public challenge_social_entries_identity_unique jakawi
+4027; 1259 26063 INDEX public challenge_social_entries_participation_id_id_index jakawi
+4008; 1259 26089 INDEX public challenges_review_status_index jakawi
+3980; 1259 25714 INDEX public cities_status_index jakawi
+3981; 1259 25748 INDEX public city_interests_city_id_index jakawi
+3982; 1259 25749 INDEX public city_interests_city_id_visitor_id_index jakawi
+3983; 1259 25750 INDEX public city_interests_city_user_unique jakawi
+3984; 1259 25751 INDEX public city_interests_city_visitor_unique jakawi
+3864; 1259 25494 INDEX public conversions_campaign_id_occurred_at_index jakawi
+3867; 1259 25235 INDEX public conversions_occurred_at_index jakawi
+3870; 1259 25232 INDEX public conversions_type_index jakawi
+3871; 1259 25231 INDEX public conversions_type_status_index jakawi
+3872; 1259 25230 INDEX public conversions_user_id_occurred_at_index jakawi
+4046; 1259 26200 INDEX public crm_deliveries_status_next_attempt_at_index jakawi
+3835; 1259 25082 INDEX public experience_reservations_partner_id_check_in_code_index jakawi
+3836; 1259 25072 INDEX public experience_reservations_partner_id_status_index jakawi
+3841; 1259 25075 INDEX public experience_reservations_status_index jakawi
+3842; 1259 25071 INDEX public experience_reservations_user_id_experience_session_id_status_in jakawi
+3806; 1259 25038 INDEX public experience_sessions_reservation_partner_id_index jakawi
+3807; 1259 24964 INDEX public experience_sessions_starts_at_index jakawi
+3808; 1259 24965 INDEX public experience_sessions_status_index jakawi
+3796; 1259 25118 INDEX public experiences_review_status_index jakawi
+3799; 1259 24926 INDEX public experiences_status_index jakawi
+3741; 1259 24755 INDEX public failed_jobs_connection_queue_failed_at_index jakawi
+4038; 1259 26181 INDEX public growth_provider_delivery_due_index jakawi
+4039; 1259 26182 INDEX public growth_provider_delivery_provider_index jakawi
+3738; 1259 24737 INDEX public jobs_queue_index jakawi
+3975; 1259 25651 INDEX public jp_holds_user_id_status_index jakawi
+4030; 1259 26127 INDEX public landing_presentations_one_default jakawi
+4035; 1259 26116 INDEX public landing_presentations_subject_type_subject_id_index jakawi
+3766; 1259 25720 INDEX public locations_city_id_index jakawi
+3771; 1259 24831 INDEX public locations_status_index jakawi
+4003; 1259 25880 INDEX public membership_purchase_requests_one_requested_per_user jakawi
+4006; 1259 25876 INDEX public membership_purchase_requests_status_requested_at_index jakawi
+4007; 1259 25877 INDEX public membership_purchase_requests_user_id_status_index jakawi
+3885; 1259 25321 INDEX public membership_purchases_collected_by_user_id_created_at_index jakawi
+3888; 1259 25326 INDEX public membership_purchases_payment_channel_index jakawi
+3891; 1259 25320 INDEX public membership_purchases_recorded_by_user_id_created_at_index jakawi
+3894; 1259 25327 INDEX public membership_purchases_status_index jakawi
+3751; 1259 24798 INDEX public memberships_ends_at_index jakawi
+3754; 1259 24797 INDEX public memberships_starts_at_index jakawi
+3755; 1259 24796 INDEX public memberships_status_index jakawi
+3756; 1259 24795 INDEX public memberships_user_id_index jakawi
+3945; 1259 25513 INDEX public operational_adjustments_beneficiary_id_index jakawi
+3946; 1259 25512 INDEX public operational_adjustments_beneficiary_type_index jakawi
+3951; 1259 25510 INDEX public operational_adjustments_target_type_target_id_index jakawi
+3952; 1259 25511 INDEX public operational_adjustments_type_index jakawi
+3997; 1259 25849 INDEX public ownership_assignments_one_active_per_target jakawi
+4000; 1259 25847 INDEX public ownership_assignments_target_type_target_id_assigned_at_index jakawi
+3987; 1259 25778 INDEX public partner_applications_city_id_business_name_normalized_index jakawi
+3988; 1259 25779 INDEX public partner_applications_city_id_contact_email_normalized_index jakawi
+3989; 1259 25780 INDEX public partner_applications_city_id_contact_phone_normalized_index jakawi
+3990; 1259 25777 INDEX public partner_applications_city_id_status_index jakawi
+3830; 1259 25032 INDEX public partner_user_partner_id_index jakawi
+3765; 1259 24812 INDEX public partners_status_index jakawi
+3750; 1259 24772 INDEX public passkeys_user_id_index jakawi
+3993; 1259 25827 INDEX public program_applications_one_open jakawi
+3996; 1259 25826 INDEX public program_applications_program_type_status_index jakawi
+3882; 1259 25278 INDEX public program_enrollments_program_type_index jakawi
+3883; 1259 25279 INDEX public program_enrollments_status_index jakawi
+3884; 1259 25277 INDEX public program_enrollments_user_id_program_type_status_index jakawi
+3781; 1259 24904 INDEX public redemptions_benefit_id_index jakawi
+3784; 1259 25995 INDEX public redemptions_confirmed_social_grant_unique jakawi
+3785; 1259 24911 INDEX public redemptions_expires_at_index jakawi
+3786; 1259 24905 INDEX public redemptions_location_id_index jakawi
+3787; 1259 25984 INDEX public redemptions_membership_id_index jakawi
+3792; 1259 24910 INDEX public redemptions_status_index jakawi
+3793; 1259 24902 INDEX public redemptions_user_id_index jakawi
+3858; 1259 25444 INDEX public referral_relationships_acquisition_partner_id_status_index jakawi
+3859; 1259 25203 INDEX public referral_relationships_one_active_per_referred jakawi
+3862; 1259 25200 INDEX public referral_relationships_referred_user_id_status_index jakawi
+3863; 1259 25432 INDEX public referral_relationships_referrer_user_id_status_index jakawi
+3933; 1259 25421 INDEX public reward_payout_reward_transaction_reward_transaction_id_index jakawi
+3919; 1259 25448 INDEX public reward_payouts_beneficiary_type_beneficiary_id_index jakawi
+3920; 1259 25519 INDEX public reward_payouts_beneficiary_type_beneficiary_id_status_index jakawi
+3921; 1259 25396 INDEX public reward_payouts_beneficiary_user_id_status_index jakawi
+3922; 1259 25401 INDEX public reward_payouts_paid_at_index jakawi
+3927; 1259 25400 INDEX public reward_payouts_requested_at_index jakawi
+3928; 1259 25399 INDEX public reward_payouts_status_index jakawi
+3895; 1259 25446 INDEX public reward_rules_beneficiary_type_beneficiary_id_index jakawi
+3896; 1259 25488 INDEX public reward_rules_campaign_id_status_index jakawi
+3897; 1259 25345 INDEX public reward_rules_event_index jakawi
+3898; 1259 25344 INDEX public reward_rules_participant_type_index jakawi
+3901; 1259 25346 INDEX public reward_rules_product_key_index jakawi
+3902; 1259 25347 INDEX public reward_rules_status_index jakawi
+3903; 1259 25447 INDEX public reward_transactions_beneficiary_type_beneficiary_id_index jakawi
+3916; 1259 25374 INDEX public reward_transactions_status_index jakawi
+3726; 1259 24711 INDEX public sessions_last_activity_index jakawi
+3729; 1259 24710 INDEX public sessions_user_id_index jakawi
+4013; 1259 25914 INDEX public social_challenges_status_index jakawi
+3963; 1259 25683 INDEX public unlock_participations_referral_attribution_touch_id_index jakawi
+3964; 1259 25664 INDEX public unlock_participations_status_confirmed_at_index jakawi
+3965; 1259 25599 INDEX public unlock_participations_unlock_id_status_index jakawi
+3970; 1259 25620 INDEX public unlock_status_history_unlock_id_created_at_index jakawi
+3953; 1259 25562 INDEX public unlocks_commitment_deadline_index jakawi
+3958; 1259 25561 INDEX public unlocks_status_starts_at_index jakawi
+4078; 2606 26134 FK CONSTRAINT public analytics_events analytics_events_attribution_touch_id_foreign jakawi
+4079; 2606 24990 FK CONSTRAINT public analytics_events analytics_events_benefit_id_foreign jakawi
+4080; 2606 24995 FK CONSTRAINT public analytics_events analytics_events_experience_id_foreign jakawi
+4081; 2606 26139 FK CONSTRAINT public analytics_events analytics_events_landing_presentation_id_foreign jakawi
+4082; 2606 24985 FK CONSTRAINT public analytics_events analytics_events_location_id_foreign jakawi
+4083; 2606 24980 FK CONSTRAINT public analytics_events analytics_events_partner_id_foreign jakawi
+4084; 2606 25000 FK CONSTRAINT public analytics_events analytics_events_redemption_id_foreign jakawi
+4085; 2606 25621 FK CONSTRAINT public analytics_events analytics_events_unlock_id_foreign jakawi
+4086; 2606 24975 FK CONSTRAINT public analytics_events analytics_events_user_id_foreign jakawi
+4096; 2606 25426 FK CONSTRAINT public attribution_touches attribution_touches_acquisition_partner_id_foreign jakawi
+4097; 2606 25164 FK CONSTRAINT public attribution_touches attribution_touches_referrer_user_id_foreign jakawi
+4098; 2606 25672 FK CONSTRAINT public attribution_touches attribution_touches_unlock_id_foreign jakawi
+4099; 2606 25159 FK CONSTRAINT public attribution_touches attribution_touches_user_id_foreign jakawi
+4108; 2606 25256 FK CONSTRAINT public audit_logs audit_logs_actor_user_id_foreign jakawi
+4062; 2606 24856 FK CONSTRAINT public benefit_location benefit_location_benefit_id_foreign jakawi
+4063; 2606 24861 FK CONSTRAINT public benefit_location benefit_location_location_id_foreign jakawi
+4058; 2606 25096 FK CONSTRAINT public benefits benefits_created_by_user_id_foreign jakawi
+4059; 2606 24845 FK CONSTRAINT public benefits benefits_partner_id_foreign jakawi
+4060; 2606 25091 FK CONSTRAINT public benefits benefits_reviewed_by_user_id_foreign jakawi
+4061; 2606 25086 FK CONSTRAINT public benefits benefits_submitted_by_user_id_foreign jakawi
+4131; 2606 25476 FK CONSTRAINT public campaign_participants campaign_participants_campaign_id_foreign jakawi
+4164; 2606 26067 FK CONSTRAINT public challenge_participations challenge_participations_qualified_entry_id_foreign jakawi
+4165; 2606 26072 FK CONSTRAINT public challenge_participations challenge_participations_selected_entry_id_foreign jakawi
+4168; 2606 26078 FK CONSTRAINT public challenge_reward_grants challenge_reward_grants_winning_entry_id_foreign jakawi
+4174; 2606 26051 FK CONSTRAINT public challenge_social_entries challenge_social_entries_challenge_id_foreign jakawi
+4175; 2606 26056 FK CONSTRAINT public challenge_social_entries challenge_social_entries_participation_id_foreign jakawi
+4148; 2606 25743 FK CONSTRAINT public city_interests city_interests_attribution_touch_id_foreign jakawi
+4149; 2606 25733 FK CONSTRAINT public city_interests city_interests_city_id_foreign jakawi
+4150; 2606 25738 FK CONSTRAINT public city_interests city_interests_user_id_foreign jakawi
+4104; 2606 25225 FK CONSTRAINT public conversions conversions_attribution_touch_id_foreign jakawi
+4105; 2606 25489 FK CONSTRAINT public conversions conversions_campaign_id_foreign jakawi
+4106; 2606 25220 FK CONSTRAINT public conversions conversions_referral_relationship_id_foreign jakawi
+4107; 2606 25215 FK CONSTRAINT public conversions conversions_user_id_foreign jakawi
+4177; 2606 26210 FK CONSTRAINT public crm_contact_links crm_contact_links_user_id_foreign jakawi
+4073; 2606 24931 FK CONSTRAINT public experience_partner experience_partner_experience_id_foreign jakawi
+4074; 2606 24936 FK CONSTRAINT public experience_partner experience_partner_partner_id_foreign jakawi
+4089; 2606 25077 FK CONSTRAINT public experience_reservations experience_reservations_checked_in_by_user_id_foreign jakawi
+4090; 2606 25051 FK CONSTRAINT public experience_reservations experience_reservations_experience_id_foreign jakawi
+4091; 2606 25056 FK CONSTRAINT public experience_reservations experience_reservations_experience_session_id_foreign jakawi
+4092; 2606 25061 FK CONSTRAINT public experience_reservations experience_reservations_partner_id_foreign jakawi
+4093; 2606 25066 FK CONSTRAINT public experience_reservations experience_reservations_responded_by_user_id_foreign jakawi
+4094; 2606 25046 FK CONSTRAINT public experience_reservations experience_reservations_user_id_foreign jakawi
+4075; 2606 24952 FK CONSTRAINT public experience_sessions experience_sessions_experience_id_foreign jakawi
+4076; 2606 24957 FK CONSTRAINT public experience_sessions experience_sessions_location_id_foreign jakawi
+4077; 2606 25033 FK CONSTRAINT public experience_sessions experience_sessions_reservation_partner_id_foreign jakawi
+4070; 2606 25113 FK CONSTRAINT public experiences experiences_created_by_user_id_foreign jakawi
+4071; 2606 25108 FK CONSTRAINT public experiences experiences_reviewed_by_user_id_foreign jakawi
+4072; 2606 25103 FK CONSTRAINT public experiences experiences_submitted_by_user_id_foreign jakawi
+4176; 2606 26174 FK CONSTRAINT public growth_provider_deliveries growth_provider_deliveries_analytics_event_id_foreign jakawi
+4146; 2606 25644 FK CONSTRAINT public jp_holds jp_holds_unlock_participation_id_foreign jakawi
+4147; 2606 25639 FK CONSTRAINT public jp_holds jp_holds_user_id_foreign jakawi
+4056; 2606 25715 FK CONSTRAINT public locations locations_city_id_foreign jakawi
+4057; 2606 24824 FK CONSTRAINT public locations locations_partner_id_foreign jakawi
+4158; 2606 25866 FK CONSTRAINT public membership_purchase_requests membership_purchase_requests_attribution_touch_id_foreign jakawi
+4159; 2606 25871 FK CONSTRAINT public membership_purchase_requests membership_purchase_requests_membership_purchase_id_foreign jakawi
+4160; 2606 25861 FK CONSTRAINT public membership_purchase_requests membership_purchase_requests_user_id_foreign jakawi
+4110; 2606 25290 FK CONSTRAINT public membership_purchases membership_purchases_beneficiary_user_id_foreign jakawi
+4111; 2606 25300 FK CONSTRAINT public membership_purchases membership_purchases_collected_by_user_id_foreign jakawi
+4112; 2606 25310 FK CONSTRAINT public membership_purchases membership_purchases_conversion_id_foreign jakawi
+4113; 2606 25305 FK CONSTRAINT public membership_purchases membership_purchases_membership_id_foreign jakawi
+4114; 2606 25295 FK CONSTRAINT public membership_purchases membership_purchases_recorded_by_user_id_foreign jakawi
+4115; 2606 25315 FK CONSTRAINT public membership_purchases membership_purchases_refunded_by_user_id_foreign jakawi
+4054; 2606 24790 FK CONSTRAINT public memberships memberships_activated_by_foreign jakawi
+4055; 2606 24785 FK CONSTRAINT public memberships memberships_user_id_foreign jakawi
+4132; 2606 25505 FK CONSTRAINT public operational_adjustments operational_adjustments_actor_user_id_foreign jakawi
+4156; 2606 25842 FK CONSTRAINT public ownership_assignments ownership_assignments_assigned_by_user_id_foreign jakawi
+4157; 2606 25837 FK CONSTRAINT public ownership_assignments ownership_assignments_owner_user_id_foreign jakawi
+4151; 2606 25772 FK CONSTRAINT public partner_applications partner_applications_attribution_touch_id_foreign jakawi
+4152; 2606 25762 FK CONSTRAINT public partner_applications partner_applications_city_id_foreign jakawi
+4153; 2606 25767 FK CONSTRAINT public partner_applications partner_applications_user_id_foreign jakawi
+4087; 2606 25025 FK CONSTRAINT public partner_user partner_user_partner_id_foreign jakawi
+4088; 2606 25020 FK CONSTRAINT public partner_user partner_user_user_id_foreign jakawi
+4053; 2606 24767 FK CONSTRAINT public passkeys passkeys_user_id_foreign jakawi
+4154; 2606 25821 FK CONSTRAINT public program_applications program_applications_attribution_touch_id_foreign jakawi
+4155; 2606 25816 FK CONSTRAINT public program_applications program_applications_user_id_foreign jakawi
+4109; 2606 25272 FK CONSTRAINT public program_enrollments program_enrollments_user_id_foreign jakawi
+4064; 2606 24897 FK CONSTRAINT public redemptions redemptions_benefit_id_foreign jakawi
+4065; 2606 24892 FK CONSTRAINT public redemptions redemptions_location_id_foreign jakawi
+4066; 2606 25985 FK CONSTRAINT public redemptions redemptions_membership_id_foreign jakawi
+4067; 2606 24887 FK CONSTRAINT public redemptions redemptions_partner_id_foreign jakawi
+4068; 2606 25990 FK CONSTRAINT public redemptions redemptions_social_challenge_reward_grant_id_foreign jakawi
+4069; 2606 24877 FK CONSTRAINT public redemptions redemptions_user_id_foreign jakawi
+4100; 2606 25439 FK CONSTRAINT public referral_relationships referral_relationships_acquisition_partner_id_foreign jakawi
+4101; 2606 25195 FK CONSTRAINT public referral_relationships referral_relationships_attribution_touch_id_foreign jakawi
+4102; 2606 25190 FK CONSTRAINT public referral_relationships referral_relationships_referred_user_id_foreign jakawi
+4103; 2606 25433 FK CONSTRAINT public referral_relationships referral_relationships_referrer_user_id_foreign jakawi
+4129; 2606 25409 FK CONSTRAINT public reward_payout_reward_transaction reward_payout_reward_transaction_reward_payout_id_foreign jakawi
+4130; 2606 25414 FK CONSTRAINT public reward_payout_reward_transaction reward_payout_reward_transaction_reward_transaction_id_foreign jakawi
+4126; 2606 25386 FK CONSTRAINT public reward_payouts reward_payouts_beneficiary_user_id_foreign jakawi
+4127; 2606 25391 FK CONSTRAINT public reward_payouts reward_payouts_paid_by_user_id_foreign jakawi
+4128; 2606 25514 FK CONSTRAINT public reward_payouts reward_payouts_requested_by_user_id_foreign jakawi
+4116; 2606 25339 FK CONSTRAINT public reward_rules reward_rules_beneficiary_user_id_foreign jakawi
+4117; 2606 25483 FK CONSTRAINT public reward_rules reward_rules_campaign_id_foreign jakawi
+4118; 2606 25357 FK CONSTRAINT public reward_transactions reward_transactions_beneficiary_user_id_foreign jakawi
+4119; 2606 25362 FK CONSTRAINT public reward_transactions reward_transactions_conversion_id_foreign jakawi
+4120; 2606 26010 FK CONSTRAINT public reward_transactions reward_transactions_forfeited_jp_hold_id_foreign jakawi
+4121; 2606 26000 FK CONSTRAINT public reward_transactions reward_transactions_operational_adjustment_id_foreign jakawi
+4122; 2606 26005 FK CONSTRAINT public reward_transactions reward_transactions_reversal_of_reward_transaction_id_foreign jakawi
+4123; 2606 25367 FK CONSTRAINT public reward_transactions reward_transactions_reward_rule_id_foreign jakawi
+4124; 2606 26021 FK CONSTRAINT public reward_transactions reward_transactions_social_challenge_reward_grant_id_foreign jakawi
+4125; 2606 25665 FK CONSTRAINT public reward_transactions reward_transactions_unlock_participation_id_foreign jakawi
+4166; 2606 25930 FK CONSTRAINT public challenge_participations social_challenge_participations_social_challenge_id_foreign jakawi
+4167; 2606 25935 FK CONSTRAINT public challenge_participations social_challenge_participations_user_id_foreign jakawi
+4169; 2606 25972 FK CONSTRAINT public challenge_reward_grants social_challenge_reward_grants_benefit_id_foreign jakawi
+4170; 2606 25977 FK CONSTRAINT public challenge_reward_grants social_challenge_reward_grants_granted_by_user_id_foreign jakawi
+4171; 2606 25962 FK CONSTRAINT public challenge_reward_grants social_challenge_reward_grants_participation_id_foreign jakawi
+4172; 2606 25957 FK CONSTRAINT public challenge_reward_grants social_challenge_reward_grants_social_challenge_id_foreign jakawi
+4173; 2606 25967 FK CONSTRAINT public challenge_reward_grants social_challenge_reward_grants_user_id_foreign jakawi
+4161; 2606 25907 FK CONSTRAINT public challenges social_challenges_benefit_id_foreign jakawi
+4162; 2606 25902 FK CONSTRAINT public challenges social_challenges_city_id_foreign jakawi
+4163; 2606 25897 FK CONSTRAINT public challenges social_challenges_partner_id_foreign jakawi
+4137; 2606 25573 FK CONSTRAINT public unlock_location unlock_location_location_id_foreign jakawi
+4138; 2606 25568 FK CONSTRAINT public unlock_location unlock_location_unlock_id_foreign jakawi
+4139; 2606 25652 FK CONSTRAINT public unlock_participations unlock_participations_fulfilled_by_user_id_foreign jakawi
+4140; 2606 25659 FK CONSTRAINT public unlock_participations unlock_participations_fulfillment_redemption_id_foreign jakawi
+4141; 2606 25678 FK CONSTRAINT public unlock_participations unlock_participations_referral_attribution_touch_id_foreign jakawi
+4142; 2606 25587 FK CONSTRAINT public unlock_participations unlock_participations_unlock_id_foreign jakawi
+4143; 2606 25592 FK CONSTRAINT public unlock_participations unlock_participations_user_id_foreign jakawi
+4144; 2606 25615 FK CONSTRAINT public unlock_status_history unlock_status_history_actor_user_id_foreign jakawi
+4145; 2606 25610 FK CONSTRAINT public unlock_status_history unlock_status_history_unlock_id_foreign jakawi
+4133; 2606 25546 FK CONSTRAINT public unlocks unlocks_created_by_user_id_foreign jakawi
+4134; 2606 25551 FK CONSTRAINT public unlocks unlocks_linked_benefit_id_foreign jakawi
+4135; 2606 25556 FK CONSTRAINT public unlocks unlocks_linked_experience_id_foreign jakawi
+4136; 2606 25541 FK CONSTRAINT public unlocks unlocks_partner_id_foreign jakawi
+4095; 2606 25128 FK CONSTRAINT public user_profiles user_profiles_user_id_foreign jakawi

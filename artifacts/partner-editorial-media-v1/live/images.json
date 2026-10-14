@@ -1,0 +1,12 @@
+{
+  "app": {
+    "tag": "jakawi-app:release-359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+    "id": "sha256:4c6fdd6f72adfc192bc8ea45663724a1735a61601268bbbd6f5fc7896e25488d",
+    "revision": "359c98cfbe00dda393a4630c203f2892a4c2c3d1"
+  },
+  "web": {
+    "tag": "jakawi-web:release-359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+    "id": "sha256:2e44e6738e162a009fbc4c75796ba2d78766c6528fe54034c13419d51c1a1bc8",
+    "revision": "359c98cfbe00dda393a4630c203f2892a4c2c3d1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "column": {
+        "data_type": "json",
+        "is_nullable": "YES"
+    },
+    "gallery_paths": null,
+    "gallery_images": 0,
+    "logo_cover_referenced": true,
+    "gallery_in_gc_fields": true
+}
