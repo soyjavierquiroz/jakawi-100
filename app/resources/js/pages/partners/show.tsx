@@ -275,7 +275,7 @@ export default function PartnerShow({
                                         srcset={partner.logo_srcset}
                                         sizes="112px"
                                         alt={`Logo de ${partner.name}`}
-                                        className="h-full w-full object-contain p-3"
+                                        className="h-full w-full rounded-full object-contain"
                                         loading="eager"
                                     />
                                 ) : (
