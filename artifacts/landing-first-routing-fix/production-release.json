@@ -1,0 +1,91 @@
+{
+  "previous_runtime": "b008a236fa68752e0f911109f3adf099799ebd6d",
+  "deployed_sha": "f9b6c0e450528b11dc4c30548c639ba8e1cda622",
+  "commit_pushed": true,
+  "migrations": 0,
+  "production_domain_mutations": 0,
+  "production_data_note": "Only normal analytics events from public HTTP QA; no product/configuration/user/acquisition/redemption writes.",
+  "qa_count_delta": {
+    "analytics_events": [
+      61,
+      63
+    ]
+  },
+  "production_builds": 1,
+  "frontend_validation_builds": 1,
+  "rollback": {
+    "file": "/tmp/jakawi-landing-first-routing-release/rollback.yaml",
+    "images": "services:\n  app:\n    image: sha256:0ce0014c6da66b2eba9671241e20632a29ee1615f6a3d4fb18d5636eb54cd867\n  web:\n    image: sha256:0d4f83062d9915b625f238ab879ab5e6161c4f7b67367834ca4740006c02728b\n  social-worker:\n    image: sha256:0ce0014c6da66b2eba9671241e20632a29ee1615f6a3d4fb18d5636eb54cd867\n",
+    "tags_protected": true
+  },
+  "images": {
+    "app": {
+      "tag": "jakawi-app:release-f9b6c0e450528b11dc4c30548c639ba8e1cda622",
+      "id": "sha256:0bde4049e3a323a0e2e37f3107e6070a5b06b100a8c2c61e957d4d51a617482d",
+      "revision": "f9b6c0e450528b11dc4c30548c639ba8e1cda622"
+    },
+    "web": {
+      "tag": "jakawi-web:release-f9b6c0e450528b11dc4c30548c639ba8e1cda622",
+      "id": "sha256:1e33ebe2f0914cca9146bbbfdeac44371ec4872a1bc8633060c85bab178b46e8",
+      "revision": "f9b6c0e450528b11dc4c30548c639ba8e1cda622"
+    }
+  },
+  "recreated": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "untouched": "All other runtime containers have identical IDs; db, MinIO and v2proof untouched.",
+  "prelaunch": "UNCHANGED",
+  "root": "coming-soon; index,follow",
+  "landing": "noindex,nofollow; PrelaunchNotice present",
+  "current_dossis": {
+    "benefit_id": 1,
+    "archived_landing": {
+      "id": 1,
+      "slug": "dossis43-parada-estrategica",
+      "status": "ARCHIVED",
+      "scope": "NONE"
+    },
+    "applicable_landing": {
+      "id": 2,
+      "slug": "dossis-43-cafe-y-antojo",
+      "status": "PUBLISHED",
+      "scope": "ALL"
+    },
+    "guest_target": "/l/dossis-43-cafe-y-antojo",
+    "authenticated_target": "/l/dossis-43-cafe-y-antojo"
+  },
+  "browser": {
+    "candidate": "PASS",
+    "live": "PASS",
+    "guest": "Actual public HTTPS Partner click -> Landing -> Micro Opt-in. Purpose: prefetch suppresses acquisition touches. No submit.",
+    "authenticated": "Actual deployed production kernel under READ ONLY transaction with an existing authenticated identity; real public compiled assets and actual React clicks. Canonical Benefit POST intercepted before transmission. No full login/redeem performed.",
+    "generic_sheet_inserted": false,
+    "loop": false
+  },
+  "tests": {
+    "focused_cases_passed": 70,
+    "execution": "69 passed in focused final run; the sole failed fixture was corrected and its test rerun successfully (46 assertions).",
+    "coverage": [
+      "ALL for guest/authenticated",
+      "GUESTS priority",
+      "no Landing",
+      "DRAFT",
+      "ARCHIVED",
+      "NONE",
+      "wrong audience",
+      "query-preserving direct generic redirects",
+      "guest signup continuation and Partner ownership",
+      "existing login does not gain ownership",
+      "Benefit action and Delivery in isolated tests",
+      "Experience and Challenge presentation"
+    ],
+    "initial_failures": "Two stale Experience/Challenge expectations corrected; draft/default and simultaneous-default fixtures corrected. Unrelated Unlock video test excluded from final routing scope."
+  },
+  "typescript": "PASS",
+  "frontend_manifest": "104 Inertia pages; PASS",
+  "docs_checker": "PASS",
+  "diff_check": "PASS",
+  "result": "LANDING-FIRST ROUTING LIVE \u2014 READY FOR FUNNEL QA"
+}

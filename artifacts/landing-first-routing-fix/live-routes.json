@@ -1,0 +1,26 @@
+[
+  {
+    "viewer": "guest",
+    "path": "/beneficios/dossis43-parada-estrategica?utm_source=partner&ref=EXAMPLE",
+    "status": 302,
+    "location": "https://jakawi.com/l/dossis-43-cafe-y-antojo?utm_source=partner&ref=EXAMPLE"
+  },
+  {
+    "viewer": "guest",
+    "path": "/l/dossis43-parada-estrategica",
+    "status": 404,
+    "location": null
+  },
+  {
+    "viewer": "auth",
+    "path": "/beneficios/dossis43-parada-estrategica?utm_source=partner&ref=EXAMPLE",
+    "status": 302,
+    "location": "https://jakawi.com/l/dossis-43-cafe-y-antojo?utm_source=partner&ref=EXAMPLE"
+  },
+  {
+    "viewer": "auth",
+    "path": "/l/dossis43-parada-estrategica",
+    "status": 404,
+    "location": null
+  }
+]

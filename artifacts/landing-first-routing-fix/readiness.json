@@ -1,0 +1,7 @@
+[
+  {
+    "app_health": "healthy",
+    "http": "200",
+    "ready": true
+  }
+]
