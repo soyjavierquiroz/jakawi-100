@@ -299,6 +299,17 @@ export default function ExperienceForm({
                         Diseña la oferta · Decide si se muestra · Confirma su
                         operación
                     </p>
+                    <button
+                        type="submit"
+                        form="experience-editor"
+                        className="min-h-11 rounded-xl bg-brand px-5 py-3 text-sm font-bold text-brand-foreground disabled:opacity-50"
+                        disabled={
+                            form.processing ||
+                            Object.values(uploading).some(Boolean)
+                        }
+                    >
+                        {form.processing ? 'Guardando…' : 'Guardar cambios'}
+                    </button>
                 </div>
                 {flash?.success && (
                     <p
@@ -328,6 +339,7 @@ export default function ExperienceForm({
                     ))}
                 </nav>
                 <form
+                    id="experience-editor"
                     onSubmit={submit}
                     className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"
                 >

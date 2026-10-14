@@ -37,6 +37,9 @@ class ExperiencePublication
         if (! $experience->upcomingSessions()->exists()) {
             $reasons[] = 'Configura una sesión real con fecha futura y estado Programada.';
         }
+        if ($this->mode($experience) !== 'legacy' && $experience->upcomingSessions()->whereNull('location_id')->where(fn ($q) => $q->whereNull('venue_label')->orWhere('venue_label', ''))->exists()) {
+            $reasons[] = 'Indica la sede o el punto de encuentro real en todas las sesiones futuras.';
+        }
         if ($experience->reservation_method === 'jakawi') {
             if (! $experience->upcomingSessions()->whereHas('reservationPartner', fn ($q) => $q->published()->whereHas('experiences', fn ($e) => $e->whereKey($experience->id)))->exists()) {
                 $reasons[] = 'Asigna a una sesión futura un Partner de reservas publicado y asociado.';

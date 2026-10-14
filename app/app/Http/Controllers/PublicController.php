@@ -203,7 +203,8 @@ class PublicController extends Controller
     public function experiencePublicProps(Experience $experience, Request $request): array
     {
         $available = app(ExperiencePublication::class)->canOperate($experience);
-        $experience->load(['partners', 'sessions' => fn ($query) => $available ? $query->upcoming()->with('location') : $query->whereRaw('1 = 0')]);
+        $showSessions = $experience->isPublished() && ! in_array($experience->catalog_visibility, ['hidden', 'upcoming'], true);
+        $experience->load(['partners', 'sessions' => fn ($query) => $showSessions ? $query->upcoming()->with('location') : $query->whereRaw('1 = 0')]);
         $reservations = $request->user() ? $request->user()->experienceReservations()->where('experience_id', $experience->id)->get()->keyBy('experience_session_id') : collect();
         $hasActiveMembership = $request->user()?->hasActiveMembership() ?? false;
 
@@ -241,8 +242,8 @@ class PublicController extends Controller
         abort_unless($experience->catalog_visibility === 'legacy' || $method === $experience->reservation_method, 404);
         abort_unless(in_array($method, ['whatsapp', 'url', 'external', 'phone'], true), 404);
         $destination = match ($method) {
-            'whatsapp' => filled($experience->reservation_whatsapp) ? 'https://wa.me/'.preg_replace('/\D+/', '', $experience->reservation_whatsapp) : null,
-            'url', 'external' => filled($experience->reservation_url) ? $experience->reservation_url : null,
+            'whatsapp' => preg_match('/^\+?[1-9]\d{6,14}$/', $experience->reservation_whatsapp ?? '') ? 'https://wa.me/'.preg_replace('/\D+/', '', $experience->reservation_whatsapp) : null,
+            'url', 'external' => filter_var($experience->reservation_url, FILTER_VALIDATE_URL) && in_array(parse_url($experience->reservation_url, PHP_URL_SCHEME), ['http', 'https'], true) ? $experience->reservation_url : null,
             'phone' => filled($experience->reservation_phone) && preg_match('/^\+?[1-9]\d{6,14}$/', $experience->reservation_phone) ? 'tel:'.$experience->reservation_phone : null,
         };
         abort_unless(filled($destination), 404);

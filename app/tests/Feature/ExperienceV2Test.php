@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Services\ExperiencePricing;
 use App\Services\ExperiencePublication;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -99,7 +100,7 @@ class ExperienceV2Test extends TestCase
         [$experience, $partner] = $this->proposal(['catalog_visibility' => 'active']);
         $policy = app(ExperiencePublication::class);
         $this->assertFalse($policy->canOperate($experience));
-        ExperienceSession::factory()->for($experience)->upcoming()->create();
+        ExperienceSession::factory()->for($experience)->upcoming()->create(['venue_label' => 'Sede confirmada']);
         $experience->update(['operations_confirmed' => true, 'reservation_whatsapp' => '+59170000000']);
         $this->assertFalse($policy->canOperate($experience));
         $this->assertStringContainsString('no verifica membresía', implode(' ', $policy->operationalBlockers($experience)));
@@ -170,6 +171,22 @@ class ExperienceV2Test extends TestCase
         $experience->terms = 'Precio JAKAWI: Bs 60 por persona. Sin membresía JAKAWI.';
         $this->assertCount(1, app(ExperiencePublication::class)->copyWarnings($experience));
         $this->assertSame('75.00', $experience->regular_price);
+    }
+
+    public function test_additive_migration_and_rollback_preserve_existing_commercial_data(): void
+    {
+        [$experience] = $this->proposal();
+        $before = $experience->only(['id', 'title', 'regular_price', 'member_price', 'duration_minutes', 'description', 'terms', 'status', 'updated_at']);
+        $draft = Experience::factory()->draft()->create();
+        $migration = require database_path('migrations/2026_10_14_000002_add_experience_catalog_controls.php');
+        $migration->down();
+        $this->assertFalse(Schema::hasColumn('experiences', 'catalog_visibility'));
+        $migration->up();
+        $this->assertEquals($before, $experience->fresh()->only(array_keys($before)));
+        $this->assertSame('legacy', $experience->fresh()->catalog_visibility);
+        $this->assertFalse($experience->fresh()->operations_confirmed);
+        $this->assertSame('hidden', $draft->fresh()->catalog_visibility);
+        $this->assertDatabaseCount('experience_sessions', 0);
     }
 
     public function test_admin_preview_is_private_and_works_without_a_landing_or_sessions(): void
