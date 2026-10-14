@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowDown, ArrowUpRight, MapPin } from 'lucide-react';
+import { PartnerGallery } from '@/components/partner-gallery';
 import { PartnerSocialLinks } from '@/components/partner-social-links';
 import { JakawiImage } from '@/components/jakawi-image';
 
@@ -404,24 +405,7 @@ export default function PartnerShow({
                         <h2 className="partner-section-title">
                             CONOCE {partner.name}
                         </h2>
-                        <div
-                            className={`mt-8 grid gap-5 ${partner.gallery.length === 3 ? 'md:grid-cols-3' : partner.gallery.length === 2 ? 'max-w-4xl md:grid-cols-2' : 'max-w-lg'}`}
-                        >
-                            {partner.gallery.map((image, index) => (
-                                <figure
-                                    key={image.image_url}
-                                    className="aspect-[4/5] overflow-hidden rounded-2xl"
-                                >
-                                    <JakawiImage
-                                        src={image.image_url}
-                                        srcset={image.image_srcset}
-                                        sizes="(min-width: 1024px) 440px, (min-width: 768px) 45vw, 90vw"
-                                        alt={`${partner.name} · imagen ${index + 1}`}
-                                        className="h-full w-full object-cover"
-                                    />
-                                </figure>
-                            ))}
-                        </div>
+                        <PartnerGallery images={partner.gallery} name={partner.name} />
                     </section>
                 )}
                 {locations.length > 0 && (
