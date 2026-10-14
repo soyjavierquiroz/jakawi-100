@@ -44,7 +44,7 @@ class RedemptionController extends Controller
             return back()->withErrors(['redemption' => 'Este beneficio no está disponible en esa sucursal.']);
         }
         $analytics->journeyIntentStarted($benefit);
-        if ($benefit->access_mode !== 'social_challenge_grant' && ! $r->user()->hasActiveMembership()) {
+        if ($benefit->requiresMembership() && ! $r->user()->hasActiveMembership()) {
             return redirect('/membresia?'.http_build_query(['journey' => 'BENEFIT', 'action' => 'REDEEM', 'resource_id' => $benefit->id, 'location_id' => $location->id]));
         }
         try {

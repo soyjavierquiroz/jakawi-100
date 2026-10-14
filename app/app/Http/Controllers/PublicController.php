@@ -137,7 +137,7 @@ class PublicController extends Controller
     {
         $props = $this->benefitPublicProps($benefit, $request);
         $analytics->resetJourneyIntent($benefit);
-        if ($props['availability']['available'] && $request->user() && ! $props['hasActiveMembership']) {
+        if ($props['availability']['available'] && $request->user() && $benefit->requiresMembership() && ! $props['hasActiveMembership']) {
             $analytics->journeyMembershipGateViewed($benefit);
         }
         if ($props['availability']['available']) $analytics->benefitViewed($benefit);
@@ -254,7 +254,7 @@ class PublicController extends Controller
 
     private function benefitData(Benefit $b, bool $native = false): array
     {
-        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['availability_label' => $native ? ($b->availableLocations()->exists() ? 'Disponible · revisa las condiciones' : 'Sin ubicación disponible ahora') : null, 'destination_url'=>$native ? route('benefits.show', $b, false) : app(\App\Services\ProductLandingResolver::class)->navigationUrl($b, auth()->check()),'partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null] + $this->image($b->image_path, 'benefit_card') + $this->image($b->image_path, 'hero', 'hero');
+        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'access_mode', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['availability_label' => $native ? ($b->availableLocations()->exists() ? 'Disponible · revisa las condiciones' : 'Sin ubicación disponible ahora') : null, 'destination_url'=>$native ? route('benefits.show', $b, false) : app(\App\Services\ProductLandingResolver::class)->navigationUrl($b, auth()->check()),'partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null] + $this->image($b->image_path, 'benefit_card') + $this->image($b->image_path, 'hero', 'hero');
     }
 
     private function experienceData(Experience $e, bool $detail = false, $reservations = null, bool $native = false): array

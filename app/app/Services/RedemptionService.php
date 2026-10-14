@@ -31,7 +31,10 @@ class RedemptionService
                 $grant = $grant ? ChallengeRewardGrant::query()->lockForUpdate()->find($grant->id) : null;
                 $this->assertGrant($grant, $lockedUser, $benefit);
                 $membership = null;
-            } elseif ($membership === null) throw new DomainException('An active membership is required.');
+            } else {
+                if ($benefit?->requiresMembership() !== false && $membership === null) throw new DomainException('An active membership is required.');
+                $grant = null; // Ordinary access cannot consume an unrelated challenge grant.
+            }
             $this->assertRedeemable($benefit, $location);
             $this->assertLimitAvailable($lockedUser, $benefit);
 
@@ -88,7 +91,7 @@ class RedemptionService
             } else {
                 if ($benefit?->access_mode === 'social_challenge_grant') throw new DomainException('A challenge grant is required.');
                 $membership = Membership::query()->lockForUpdate()->find($redemption->membership_id);
-                if ($membership === null || $membership->user_id !== $user->id || ! $membership->isActive()) throw new DomainException('The membership is no longer active.');
+                if ($benefit?->requiresMembership() !== false && ($membership === null || $membership->user_id !== $user->id || ! $membership->isActive())) throw new DomainException('The membership is no longer active.');
             }
             $location = Location::query()->find($redemption->location_id);
             $this->assertRedeemable($benefit, $location);

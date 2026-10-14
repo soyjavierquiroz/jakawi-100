@@ -16,7 +16,7 @@ import { trackJourneyIntent } from '@/lib/journey-analytics';
 export type BenefitOfferProps = {
     vsl?: LandingVideoConfig | null;
     offerEditorial?: LandingOfferEditorial;
-    benefit: { slug: string; title: string; terms: string | null };
+    benefit: { slug: string; title: string; terms: string | null; access_mode?: 'public' | 'authenticated' | 'social_challenge_grant' };
     presentation: {
         hero_layout?: 'OFFER_FIRST' | 'MEDIA_LED' | null;
         density?: 'STANDARD' | 'COMPACT' | null;
@@ -144,7 +144,7 @@ export default function BenefitOfferAdapter({
         actionExplanation: {
             description:
                 (copy.action.kind === 'guest'
-                    ? 'Crea tu cuenta en menos de un minuto y continúa aquí mismo. El canje requiere membresía activa.'
+                    ? `Crea tu cuenta y continúa aquí mismo. ${copy.membership}`
                     : copy.action.kind === 'membership'
                       ? 'Activa tu membresía para continuar.'
                       : 'Continúa en la ficha para revisar cómo usarlo.') +

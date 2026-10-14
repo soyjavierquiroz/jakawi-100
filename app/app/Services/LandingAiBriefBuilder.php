@@ -58,7 +58,7 @@ final class LandingAiBriefBuilder
             'benefit_type' => $subject->benefit_type,
             // No contractual numeric value exists. estimated_savings is never a discount.
             'value' => ['description' => $subject->title],
-            'membership_required' => $subject->access_mode !== 'social_challenge_grant' ? true : null,
+            'membership_required' => $subject->access_mode === Benefit::ACCESS_CHALLENGE_GRANT ? null : $subject->requiresMembership(),
             'access_requirement' => $copy['membership'],
             'available' => $subject->isAvailable(),
             'validity' => $this->validity($subject),

@@ -54,6 +54,8 @@ export default function BenefitShow({
     selectedLocationId?: number | null;
     continuationOnly?: boolean;
 }) {
+    const requiresMembership = !['authenticated', 'social_challenge_grant'].includes(benefit.access_mode ?? 'public');
+    const membershipEligible = !requiresMembership || hasActiveMembership;
     const demo = isDemoName(benefit.title);
     const title = displayBenefitName(benefit.title, demo);
     const name = (value: string) => displayBenefitName(value, demo);
@@ -84,7 +86,7 @@ export default function BenefitShow({
     const canUse =
         availability.available &&
         !!auth.user &&
-        hasActiveMembership &&
+        membershipEligible &&
         locations.length > 0;
     const [processing, setProcessing] = useState(false);
     const membershipUrl = `/membresia?journey=BENEFIT&action=REDEEM&resource_id=${benefit.id}${locationId ? `&location_id=${locationId}` : ''}${landingId ? `&landing_presentation_id=${landingId}` : ''}`;
@@ -114,7 +116,7 @@ export default function BenefitShow({
             >
                 {!auth.user
                     ? 'QUIERO MI BENEFICIO'
-                    : !hasActiveMembership
+                    : !membershipEligible
                       ? 'VER MEMBRESÍA'
                       : 'USAR BENEFICIO'}
             </button>
@@ -137,7 +139,7 @@ export default function BenefitShow({
     );
     const mobileAction = !availability.available
         ? null
-        : !auth.user || !hasActiveMembership
+        : !auth.user || !membershipEligible
           ? action
           : canUse
             ? action
@@ -220,7 +222,7 @@ export default function BenefitShow({
                     </p>
                 ) : null}
                 <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                    {!hasActiveMembership
+                    {!membershipEligible
                         ? 'Este beneficio requiere membresía activa. La sucursal elegida se conservará.'
                         : 'Actívalo solamente cuando estés listo para utilizarlo.'}
                 </p>
@@ -249,7 +251,7 @@ export default function BenefitShow({
                                     `/beneficios/${benefit.slug}/canjear`,
                                     { location_id: locationId },
                                 );
-                            } else if (!hasActiveMembership) {
+                            } else if (!membershipEligible) {
                                 router.visit(membershipUrl);
                             } else {
                                 router.post(
@@ -269,7 +271,7 @@ export default function BenefitShow({
                             ? 'ACTIVANDO…'
                             : !auth.user
                               ? 'CONTINUAR PARA CREAR CUENTA'
-                              : !hasActiveMembership
+                              : !membershipEligible
                                 ? 'CONTINUAR'
                                 : continuationOnly
                                   ? selectedLocation
@@ -376,7 +378,7 @@ export default function BenefitShow({
                             </p>
                         ) : null}
                         {auth.user &&
-                        !hasActiveMembership &&
+                        !membershipEligible &&
                         availability.available ? (
                             <StatusBanner
                                 title="SE REQUIERE MEMBRESÍA"
@@ -396,7 +398,7 @@ export default function BenefitShow({
                                     </p>
                                 ) : (
                                     <p className="mt-2 text-xl font-extrabold">
-                                        Beneficio exclusivo para miembros
+                                        {requiresMembership ? 'Beneficio exclusivo para miembros' : 'Beneficio con tu cuenta JAKAWI'}
                                     </p>
                                 )}
                             </div>
@@ -491,8 +493,7 @@ export default function BenefitShow({
                                 DISPONIBILIDAD Y CONDICIONES
                             </h2>
                             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                                Válido para membresías activas. Sujeto a
-                                disponibilidad.
+                                {requiresMembership ? 'Válido para membresías activas.' : benefit.access_mode === 'authenticated' ? 'Disponible con tu cuenta JAKAWI. No requiere membresía activa.' : 'Requiere un premio de reto vigente.'} Sujeto a disponibilidad.
                             </p>
                             {benefit.terms ? (
                                 <details className="mt-4 text-sm text-muted-foreground">

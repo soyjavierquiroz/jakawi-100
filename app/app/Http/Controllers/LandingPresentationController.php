@@ -190,7 +190,7 @@ class LandingPresentationController extends Controller
         if ($subject instanceof Benefit) {
             return Inertia::render($stage ? 'landing-presentations/conversion' : 'landing-presentations/benefit', [
                 ...$benefitProps, ...$shared,
-                'landingDirectAction' => ! $stage && $request->user() && $benefitProps['hasActiveMembership'] && $benefitProps['availability']['available'] && count($benefitProps['locations']) === 1 ? ['endpoint' => route('redemptions.start', $subject, false), 'data' => ['location_id' => $benefitProps['locations'][0]['id']]] : null,
+                'landingDirectAction' => ! $stage && $request->user() && (! $subject->requiresMembership() || $benefitProps['hasActiveMembership']) && $benefitProps['availability']['available'] && count($benefitProps['locations']) === 1 ? ['endpoint' => route('redemptions.start', $subject, false), 'data' => ['location_id' => $benefitProps['locations'][0]['id']]] : null,
                 ...$this->offerCopy($presentation, app(BenefitMarketingLandingPresenter::class)->present($subject, $presentation, $request, $benefitProps)),
                 'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->image_path, 'hero'),
                 'heroSrcset' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->srcset($presentation->hero_path ?: $subject->image_path, 'hero'),

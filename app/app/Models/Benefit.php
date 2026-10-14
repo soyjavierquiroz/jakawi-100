@@ -13,6 +13,17 @@ use InvalidArgumentException;
 
 class Benefit extends Model
 {
+    public const ACCESS_PUBLIC = 'public';
+    public const ACCESS_AUTHENTICATED = 'authenticated';
+    public const ACCESS_CHALLENGE_GRANT = 'social_challenge_grant';
+    public const ACCESS_MODES = [self::ACCESS_PUBLIC, self::ACCESS_AUTHENTICATED, self::ACCESS_CHALLENGE_GRANT];
+
+    public function requiresMembership(): bool
+    {
+        // Unknown modes fail closed; historical public/default remains member-only.
+        return ! in_array($this->access_mode, [self::ACCESS_AUTHENTICATED, self::ACCESS_CHALLENGE_GRANT], true);
+    }
+
     /** @use HasFactory<BenefitFactory> */
     use HasFactory;
 
@@ -64,7 +75,7 @@ class Benefit extends Model
             ->whereHas('partner', fn (Builder $query) => $query->published());
     }
 
-    public function scopePublicAccess(Builder $query): void { $query->where('access_mode', 'public'); }
+    public function scopePublicAccess(Builder $query): void { $query->whereIn('access_mode', [self::ACCESS_PUBLIC, self::ACCESS_AUTHENTICATED]); }
 
     public function isPublished(): bool
     {

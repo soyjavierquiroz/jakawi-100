@@ -17,8 +17,9 @@ class BenefitMarketingLandingPresenter
         ])->all();
         $placeSummary = implode(' · ', array_column($places, 'name'));
         $grantOnly = $benefit->access_mode === 'social_challenge_grant';
-        $membership = $grantOnly ? 'Exclusivo para quienes tienen un premio vigente de un reto. No admite adquisición pública.' : 'Necesitas una membresía JAKAWI activa para canjear este beneficio.';
-        $limit = $benefit->redemption_limit_per_member !== null ? "Límite: {$benefit->redemption_limit_per_member} canjes por miembro." : null;
+        $requiresMembership = $benefit->requiresMembership();
+        $membership = $grantOnly ? 'Exclusivo para quienes tienen un premio vigente de un reto. No admite adquisición pública.' : ($requiresMembership ? 'Necesitas una membresía JAKAWI activa para canjear este beneficio.' : 'Disponible con tu cuenta JAKAWI. No requiere membresía activa.');
+        $limit = $benefit->redemption_limit_per_member !== null ? "Límite: {$benefit->redemption_limit_per_member} canjes por usuario." : null;
         $deadline = $benefit->ends_at?->timezone('America/La_Paz')->format('d/m/Y H:i');
         $rules = [$membership];
         if ($placeSummary) $rules[] = 'Úsalo en: '.$placeSummary.'.';
@@ -38,7 +39,7 @@ class BenefitMarketingLandingPresenter
             !$available => ['label'=>$props['availability']['reason'], 'href'=>'#condiciones', 'kind'=>'unavailable'],
             $grantOnly => ['label'=>'VER MI PREMIO', 'href'=>$props['rewardUrl'] ?? $native, 'kind'=>'native'],
             !$request->user() => ['label'=>'QUIERO ESTE BENEFICIO','href'=>route('redemptions.start',$benefit), 'kind'=>'guest'],
-            !$props['hasActiveMembership'] => ['label'=>'QUIERO MI BENEFICIO','href'=>'#condiciones', 'kind'=>'membership'],
+            $requiresMembership && !$props['hasActiveMembership'] => ['label'=>'QUIERO MI BENEFICIO','href'=>'#condiciones', 'kind'=>'membership'],
             default => ['label'=>'USAR BENEFICIO','href'=>'#condiciones','kind'=>'native'],
         };
         return [
@@ -53,7 +54,7 @@ class BenefitMarketingLandingPresenter
                 $deadline ? ['title'=>'Vigencia clara','description'=>'Válido hasta el '.$deadline.'.'] : null,
             ]),0,3),
             'steps'=>[
-                ['title'=>$grantOnly ? 'REVISA TU PREMIO' : ($request->user() ? ($props['hasActiveMembership'] ? 'PREPARA TU VISITA' : 'ACTIVA TU MEMBRESÍA') : 'CREA TU CUENTA'), 'description'=>$grantOnly ? $membership : ($request->user() && $props['hasActiveMembership'] ? 'Revisa las condiciones y elige una sucursal aplicable.' : 'Continúa con tu cuenta JAKAWI. '.$membership)],
+                ['title'=>$grantOnly ? 'REVISA TU PREMIO' : ($request->user() ? ((!$requiresMembership || $props['hasActiveMembership']) ? 'PREPARA TU VISITA' : 'ACTIVA TU MEMBRESÍA') : 'CREA TU CUENTA'), 'description'=>$grantOnly ? $membership : ($request->user() && (!$requiresMembership || $props['hasActiveMembership']) ? 'Revisa las condiciones y elige una sucursal aplicable.' : 'Continúa con tu cuenta JAKAWI. '.$membership)],
                 ['title'=>'VISITA EL PARTNER','description'=>'Acércate a una de las sucursales aplicables de '.$partner.'.'],
                 ['title'=>'CANJEA','description'=>$redemptionInstructions],
             ],

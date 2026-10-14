@@ -7,6 +7,7 @@ export type PartnerSummary = {
 };
 
 export type BenefitSummary = {
+    access_mode?: 'public' | 'authenticated' | 'social_challenge_grant';
     id: number;
     title: string;
     slug: string;

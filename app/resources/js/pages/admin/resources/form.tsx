@@ -141,7 +141,7 @@ export default function ResourceForm({
     };
     const options = (field: string) =>
         field === 'access_mode'
-            ? ['public', 'social_challenge_grant']
+            ? ['public', 'authenticated', 'social_challenge_grant']
             : field === 'status'
             ? ['draft', 'published', 'paused', 'archived']
             : field === 'entity_type'
@@ -211,7 +211,7 @@ export default function ResourceForm({
                             >
                                 {options(field).map((x) => (
                                     <option key={x} value={x}>
-                                        {x}
+                                        {field === 'access_mode' ? ({public: 'MEMBRESÍA JAKAWI', authenticated: 'CUENTA JAKAWI', social_challenge_grant: 'PREMIO DE RETO'}[x] ?? x) : x}
                                     </option>
                                 ))}
                             </select>
@@ -257,6 +257,7 @@ export default function ResourceForm({
                                 }
                             />
                         )}
+                    {field === 'access_mode' && form.data[field] === 'authenticated' && <p className="text-muted-foreground">Disponible para usuarios con cuenta JAKAWI. No requiere membresía activa.</p>}
                     </label>
                 ))}
                 {resource === 'locations' ? (

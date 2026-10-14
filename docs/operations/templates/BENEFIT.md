@@ -27,3 +27,31 @@ Estado de trabajo: [completar; no implica estado del producto]
 | Aprobación de publicación | [completar o no aplicable con motivo] |
 
 Revisión pendiente no equivale a aprobación. Conservar evidencia del acuerdo por canal autorizado; publicar sólo mediante el flujo real y la checklist del manual.
+
+
+## Benefit access mode V2
+
+`access_mode` is the single source of truth:
+
+- `public`: active JAKAWI membership required (historical default, unchanged).
+- `authenticated`: authenticated JAKAWI account required; no active membership or Challenge grant required. Guests first complete the existing acquisition/login flow.
+- `social_challenge_grant`: valid owned Challenge reward required; existing verification and grant rules remain.
+
+All modes preserve applicable locations, canonical owned Delivery, expiring code/QR,
+Location PIN validation and successful per-user redemption limits. Ordinary account
+access creates no membership, purchase or courtesy entitlement. Unknown Admin modes
+are rejected. Existing records are not rewritten. The existing VARCHAR column is
+reused; no migration or capacity field is added.
+
+Admin → Beneficios → Editar → access mode exposes MEMBRESÍA JAKAWI, CUENTA JAKAWI
+and PREMIO DE RETO. Admin → Locations → existing Location → PIN nuevo (6 dígitos)
+sets/resets the PIN; Admin shows whether configured, never the existing plaintext.
+
+Welcome Courtesy remains FUTURE / OFF.
+
+Dossis 43 V1 uses `authenticated`, one successful redemption per user, and a manual
+prelaunch operational target of 20 redemptions. This target is not domain-enforced:
+archive/unpublish manually after target if desired. Bs 35 is paid directly to
+Dossis 43, with no JAKAWI payment collection. Benefit has no offer-price or internal
+name field: commercial truth belongs in its description/terms; internal naming
+can be retained in Admin review notes. Never use estimated savings as the price.
