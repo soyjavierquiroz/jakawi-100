@@ -73,8 +73,8 @@ class PublicController extends Controller
             'partner' => $this->partner($partner),
             'locations' => $partner->locations()->published()->with('cityEntity')->orderBy('sort_order')->get()->map(fn ($x) => $this->locationData($x)),
             'benefits' => $partner->benefits()->available()->publicAccess()->orderBy('sort_order')->get()->map(fn ($x) => $this->benefitData($x, true)),
-            'experiences' => $partner->experiences()->upcoming()->with(['sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x, native: true)),
-            'challenges' => $challenges->map(fn ($x) => $x->only(['id', 'slug', 'title', 'description', 'ends_at', 'reward_type', 'reward_jp_amount', 'manual_prize_description']) + $this->image($x->hero_path, 'hero')),
+            'experiences' => $partner->experiences()->upcoming()->with(['sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
+            'challenges' => $challenges->map(fn ($x) => $x->only(['id', 'slug', 'title', 'description', 'ends_at', 'reward_type', 'reward_jp_amount', 'manual_prize_description']) + ['destination_url' => app(\App\Services\ProductLandingResolver::class)->navigationUrl($x, (bool) $request->user())] + $this->image($x->hero_path, 'hero')),
         ]);
     }
 
@@ -252,12 +252,12 @@ class PublicController extends Controller
         return $l->only(['id', 'slug', 'name', 'location_type', 'city', 'zone', 'address', 'address_reference', 'opening_hours', 'phone', 'whatsapp', 'website', 'instagram', 'facebook', 'tiktok', 'maps_url']) + ['city_name' => $l->relationLoaded('cityEntity') ? $l->cityEntity?->name : $l->city, 'partner' => $l->relationLoaded('partner') && $l->partner ? $this->partner($l->partner) : null] + $this->image($l->image_path, 'partner_cover');
     }
 
-    private function benefitData(Benefit $b, bool $native = false): array
+    private function benefitData(Benefit $b, bool $inventory = false): array
     {
-        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'access_mode', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['availability_label' => $native ? ($b->availableLocations()->exists() ? 'Disponible · revisa las condiciones' : 'Sin ubicación disponible ahora') : null, 'destination_url'=>$native ? route('benefits.show', $b, false) : app(\App\Services\ProductLandingResolver::class)->navigationUrl($b, auth()->check()),'partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null] + $this->image($b->image_path, 'benefit_card') + $this->image($b->image_path, 'hero', 'hero');
+        return $b->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'benefit_type', 'access_mode', 'estimated_savings', 'redemption_limit_per_member', 'featured', 'starts_at', 'ends_at']) + ['availability_label' => $inventory ? ($b->availableLocations()->exists() ? 'Disponible · revisa las condiciones' : 'Sin ubicación disponible ahora') : null, 'destination_url'=>app(\App\Services\ProductLandingResolver::class)->navigationUrl($b, auth()->check()),'partner' => $b->relationLoaded('partner') ? $this->partner($b->partner) : null] + $this->image($b->image_path, 'benefit_card') + $this->image($b->image_path, 'hero', 'hero');
     }
 
-    private function experienceData(Experience $e, bool $detail = false, $reservations = null, bool $native = false): array
+    private function experienceData(Experience $e, bool $detail = false, $reservations = null): array
     {
         $targets = [];
         if (filled($e->reservation_whatsapp)) {
@@ -271,7 +271,7 @@ class PublicController extends Controller
         }
         usort($targets, fn (array $a, array $b) => ($a['method'] === $e->reservation_method ? 0 : 1) <=> ($b['method'] === $e->reservation_method ? 0 : 1));
 
-        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + $this->image($e->image_path, 'experience_card') + $this->image($e->image_path, 'hero', 'hero') + $this->image($e->cover_path, 'hero', 'cover') + ['destination_url'=>$native ? route('experiences.show', $e, false) : app(\App\Services\ProductLandingResolver::class)->navigationUrl($e, auth()->check()),'partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'reservation_targets' => $detail ? $targets : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size'])]) : []];
+        return $e->only(['id', 'slug', 'title', 'short_description', 'description', 'terms', 'category', 'experience_type', 'duration_minutes', 'regular_price', 'member_price', 'currency', 'reservation_method', 'featured']) + $this->image($e->image_path, 'experience_card') + $this->image($e->image_path, 'hero', 'hero') + $this->image($e->cover_path, 'hero', 'cover') + ['destination_url'=>app(\App\Services\ProductLandingResolver::class)->navigationUrl($e, auth()->check()),'partners' => $detail ? $e->partners->map(fn ($p) => $this->partner($p) + ['role' => $p->pivot->role]) : [], 'reservation_targets' => $detail ? $targets : [], 'sessions' => $e->relationLoaded('sessions') ? $e->sessions->map(fn ($s) => $s->only(['id', 'starts_at', 'ends_at', 'venue_label', 'capacity', 'status']) + ['location' => $s->location ? $this->locationData($s->location) : null, 'reservation' => $reservations?->get($s->id)?->only(['public_id', 'status', 'party_size'])]) : []];
     }
 
     private function image(?string $key, string $preset, string $name = 'image'): array

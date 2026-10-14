@@ -245,7 +245,7 @@ class LandingPresentationTest extends TestCase
                 if ($authenticated) $this->actingAs(User::factory()->create());
                 else auth()->forgetGuards();
                 $this->get('/l/audience')->assertOk()->assertInertia(fn (Assert $page)=>$page->component('landing-presentations/challenge')->where('noindex',$scope!=='ALL')->where('canonical',$scope==='ALL'?route('landing-presentations.show',$landing):route('social-challenges.show',$challenge)));
-                if (!$authenticated && $scope === 'ALL') $this->get('/retos/'.$challenge->slug)->assertRedirect(route('landing-presentations.show',$landing));
+                if ($scope === 'ALL' || (!$authenticated && $scope === 'GUESTS')) $this->get('/retos/'.$challenge->slug)->assertRedirect(route('landing-presentations.show',$landing));
                 else $this->get('/retos/'.$challenge->slug)->assertOk()->assertInertia(fn (Assert $page)=>$page->component('social-challenges/show'));
             }
         }

@@ -43,7 +43,7 @@ class PartnerPublicProfileTest extends TestCase
         $this->get('/dosis43')->assertOk()->assertInertia(fn (Assert $p) => $p->component('partners/show')
             ->where('canonicalUrl', config('app.url').'/dosis43')->where('partner.name', $partner->name)
             ->where('partner.description', $partner->description)->where('locations.0.name', $location->name)
-            ->where('benefits.0.title', $benefit->title)->where('benefits.0.destination_url', '/beneficios/'.$benefit->slug)
+            ->where('benefits.0.title', $benefit->title)->where('benefits.0.destination_url', route('landing-presentations.show', $landing))
             ->where('experiences.0.title', $experience->title)->where('challenges.0.title', $challenge->title)
             ->where('prelaunchPublic', true)->where('auth.user', null));
         $this->assertSame($owner->id, $partner->users()->wherePivot('role', 'owner')->sole()->id);
@@ -182,4 +182,74 @@ class PartnerPublicProfileTest extends TestCase
         $this->put('/admin/partners/'.$partner->id, [...$data, 'description' => 'Perfil actualizado QA'])->assertRedirect('/admin/partners');
         $this->assertSame('Perfil actualizado QA', $partner->fresh()->description);
     }
+    public function test_partner_inventory_and_generic_entry_share_landing_first_for_both_audiences(): void
+    {
+        extract($this->inventory());
+        $experienceLanding = $experience->landingPresentations()->create(['name' => 'Experience', 'slug' => 'experience-primary', 'status' => 'PUBLISHED', 'default_scope' => 'ALL']);
+        $challengeLanding = $challenge->landingPresentations()->create(['name' => 'Challenge', 'slug' => 'challenge-primary', 'status' => 'PUBLISHED', 'default_scope' => 'ALL']);
+        foreach ([false, true] as $authenticated) {
+            if ($authenticated) $this->actingAs(User::factory()->create());
+            $this->get('/dosis43')->assertInertia(fn (Assert $p) => $p
+                ->where('benefits.0.destination_url', route('landing-presentations.show', $landing))
+                ->where('experiences.0.destination_url', route('landing-presentations.show', $experienceLanding))
+                ->where('challenges.0.destination_url', route('landing-presentations.show', $challengeLanding)));
+            foreach ([$benefit, $experience, $challenge] as $subject) {
+                $resolver = app(\App\Services\ProductLandingResolver::class);
+                $target = $resolver->navigationUrl($subject, $authenticated);
+                $this->get($resolver->nativeUrl($subject).'?utm_source=partner&ref=EXAMPLE')
+                    ->assertRedirect($target.'?utm_source=partner&ref=EXAMPLE');
+                $this->get($target)->assertOk();
+            }
+        }
+        // Authenticated profile visits never establish acquisition ownership.
+        $this->assertDatabaseCount('referral_relationships', 0);
+    }
+
+    public function test_inapplicable_landings_fall_back_and_guest_priority_is_preserved(): void
+    {
+        extract($this->inventory());
+        $resolver = app(\App\Services\ProductLandingResolver::class);
+        foreach (['DRAFT', 'ARCHIVED', 'PUBLISHED'] as $status) {
+            $landing->update(['status' => $status, 'default_scope' => 'NONE']);
+            $this->assertSame(route('benefits.show', $benefit), $resolver->navigationUrl($benefit, false));
+            $this->get(route('benefits.show', $benefit))->assertOk()->assertInertia(fn (Assert $p) => $p->component('benefits/show'));
+        }
+        $landing->update(['status' => 'PUBLISHED', 'default_scope' => 'ALL']);
+        // Production enforces one default per subject. Relax only inside this
+        // rolled-back test transaction to exercise the resolver's defensive priority.
+        \Illuminate\Support\Facades\DB::statement('DROP INDEX landing_presentations_one_default');
+        $guests = $benefit->landingPresentations()->create(['name' => 'Guests', 'slug' => 'guest-primary', 'status' => 'PUBLISHED', 'default_scope' => 'GUESTS']);
+        $this->assertSame($guests->id, $resolver->forViewer($benefit, false)->id);
+        $this->assertSame($landing->id, $resolver->forViewer($benefit, true)->id);
+        $landing->delete();
+        $this->actingAs(User::factory()->create());
+        $this->assertSame(route('benefits.show', $benefit), $resolver->navigationUrl($benefit, true));
+        $this->get(route('benefits.show', $benefit))->assertOk()->assertInertia(fn (Assert $p) => $p->component('benefits/show'));
+        $guests->delete();
+        $this->get(route('benefits.show', $benefit))->assertOk()->assertInertia(fn (Assert $p) => $p->component('benefits/show'));
+    }
+
+    public function test_landing_cta_continues_domain_action_without_presentation_loop(): void
+    {
+        extract($this->inventory());
+        $benefit->update(['access_mode' => 'authenticated']);
+        $this->get('/dosis43')->assertOk();
+        $touch = AttributionTouch::sole();
+        $this->get('/l/'.$landing->slug)->assertInertia(fn (Assert $p) => $p
+            ->where('copy.action.kind', 'guest')->where('acquisition.endpoint', '/l/'.$landing->slug.'/acquisition'));
+        $this->post('/l/'.$landing->slug.'/acquisition', ['method' => 'register'])->assertNoContent();
+        $this->post('/register', ['name' => 'Landing User', 'email' => 'landing-first@example.test', 'whatsapp' => '71234567'])
+            ->assertRedirect('/l/'.$landing->slug.'/activar');
+        $user = User::whereEmail('landing-first@example.test')->sole();
+        $this->assertDatabaseHas('referral_relationships', ['referred_user_id' => $user->id, 'acquisition_partner_id' => $partner->id, 'attribution_touch_id' => $touch->id]);
+        $this->actingAs($user)->get('/l/'.$landing->slug)->assertInertia(fn (Assert $p) => $p
+            ->where('copy.action.kind', 'native')->where('landingDirectAction.endpoint', route('redemptions.start', $benefit, false))
+            ->where('landingDirectAction.data.location_id', $location->id));
+        $this->get('/l/'.$landing->slug.'/activar')->assertOk()->assertInertia(fn (Assert $p) => $p->component('landing-presentations/conversion'));
+        $response = $this->post(route('redemptions.start', $benefit), ['location_id' => $location->id]);
+        $response->assertRedirect();
+        $this->assertStringNotContainsString('/l/', $response->headers->get('Location'));
+        $this->assertDatabaseCount('redemptions', 1);
+    }
+
 }

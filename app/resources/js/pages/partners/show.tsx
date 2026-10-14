@@ -7,6 +7,7 @@ type Source = { src: string; width: number };
 type Card = {
     id: number;
     slug: string;
+    destination_url: string;
     title: string;
     image_url?: string;
     image_srcset?: Source[];
@@ -155,7 +156,7 @@ function Inventory({
                     )}
                 </div>
                 <Link
-                    href={`/${journey}/${item.slug}`}
+                    href={item.destination_url}
                     className="partner-primary mt-auto"
                 >
                     {cta}

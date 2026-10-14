@@ -54,7 +54,7 @@ class ExperienceMarketingLandingTest extends TestCase
         $this->post(route('experiences.reservations.store',$experience),['experience_session_id'=>$session->id])->assertRedirect(route('register'));
         $this->assertSame('EXPERIENCE',session('public_journey.continuation.journey'));
         $user=User::factory()->create();$this->actingAs($user);
-        $this->get('/l/experience-plan')->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','QUIERO MI BENEFICIO')->where('copy.action.href','/membresia?'.http_build_query(['journey'=>'EXPERIENCE','action'=>'RESERVE','resource_id'=>$experience->id,'experience_session_id'=>$session->id])));
+        $this->get('/l/experience-plan')->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','ACTIVAR MEMBRESÍA')->where('copy.action.href','/membresia?'.http_build_query(['journey'=>'EXPERIENCE','action'=>'RESERVE','resource_id'=>$experience->id,'experience_session_id'=>$session->id])));
         Membership::create(['user_id'=>$user->id,'status'=>'active','starts_at'=>now()->subDay(),'ends_at'=>now()->addMonth(),'amount_paid'=>100]);
         $this->get('/l/experience-plan')->assertInertia(fn(Assert $p)=>$p->where('copy.action.label','RESERVAR')->where('copy.action.href',route('experiences.show',$experience)));
         $this->post(route('experiences.reservations.store',$experience),['experience_session_id'=>$session->id])->assertRedirect();
