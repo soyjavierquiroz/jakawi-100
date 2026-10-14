@@ -38,6 +38,8 @@ type Partner = {
     whatsapp?: string | null;
     logo_srcset?: Source[];
     cover_srcset?: Source[];
+    cover_desktop_url?: string;
+    cover_desktop_srcset?: Source[];
     gallery?: { image_url: string; image_srcset: Source[] }[];
 };
 type Location = {
@@ -221,15 +223,31 @@ export default function PartnerShow({
                 >
                     <div data-partner-cover className="partner-cover">
                         {partner.cover_url ? (
-                            <JakawiImage
-                                src={partner.cover_url}
-                                srcset={partner.cover_srcset}
-                                sizes="(min-width: 1280px) 560px, (min-width: 1024px) 46vw, 100vw"
-                                alt={`Portada de ${partner.name}`}
-                                className="h-full w-full object-cover"
-                                loading="eager"
-                                priority
-                            />
+                            <picture className="block h-full w-full">
+                                <source
+                                    media="(min-width: 1024px)"
+                                    srcSet={
+                                        partner.cover_desktop_srcset?.length
+                                            ? partner.cover_desktop_srcset
+                                                  .map(
+                                                      ({ src, width }) =>
+                                                          `${src} ${width}w`,
+                                                  )
+                                                  .join(', ')
+                                            : partner.cover_desktop_url
+                                    }
+                                    sizes="(min-width: 1280px) 560px, 46vw"
+                                />
+                                <JakawiImage
+                                    src={partner.cover_url}
+                                    srcset={partner.cover_srcset}
+                                    sizes="(min-width: 1280px) 560px, (min-width: 1024px) 46vw, 100vw"
+                                    alt={`Portada de ${partner.name}`}
+                                    className="h-full w-full object-cover lg:object-contain"
+                                    loading="eager"
+                                    priority
+                                />
+                            </picture>
                         ) : (
                             <div
                                 data-partner-cover-fallback

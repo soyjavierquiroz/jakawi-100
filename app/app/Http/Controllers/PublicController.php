@@ -70,7 +70,7 @@ class PublicController extends Controller
 
         return Inertia::render('partners/show', [
             'canonicalUrl' => rtrim(config('app.url'), '/').'/'.$partner->slug,
-            'partner' => $this->partner($partner),
+            'partner' => $this->partner($partner) + $this->image($partner->cover_path, 'partner_editorial', 'cover_desktop'),
             'locations' => $partner->locations()->published()->with('cityEntity')->orderBy('sort_order')->get()->map(fn ($x) => $this->locationData($x)),
             'benefits' => $partner->benefits()->available()->publicAccess()->orderBy('sort_order')->get()->map(fn ($x) => $this->benefitData($x, true)),
             'experiences' => $partner->experiences()->upcoming()->with(['sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
