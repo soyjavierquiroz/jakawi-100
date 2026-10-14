@@ -1,0 +1,33 @@
+{
+  "schema_version": "jakawi-landing-v1",
+  "subject_hint": "Brunch a tu ritmo.",
+  "internal_name": "Le Petit Brunch & Bakery — Brunch a tu ritmo.",
+  "slug": "le-petit-brunch-bakery-brunch-a-tu-ritmo",
+  "template": "OFFER_CONVERSION",
+  "presentation": {
+    "theme": "LIGHT_CONVERSION",
+    "hero_layout": "OFFER_FIRST",
+    "density": "STANDARD"
+  },
+  "hero": {
+    "eyebrow": "Le Petit Brunch & Bakery · COCHABAMBA",
+    "headline": "Tu día merece un brunch sin prisas.",
+    "headline_emphasis": "",
+    "supporting_copy": "Sabores salados, algo dulce y un momento para disfrutar en Le Petit."
+  },
+  "value": {
+    "supporting_copy": "Precio comercial JAKAWI: Bs 85 por persona (BOB)."
+  },
+  "acquisition": {
+    "headline": "Tu cuenta para descubrir Cochabamba",
+    "supporting_copy": "Propuesta en preparación. El acceso comercial previsto no exige membresía de pago."
+  },
+  "closing": {
+    "headline": "QUIERO MI BRUNCH",
+    "supporting_copy": "CTA editorial preparado. Pre-lanzamiento privado: sin reservas, pagos ni canjes disponibles. Platos elegibles, bebidas, mini dulces, horarios y días de utilización."
+  },
+  "media": {
+    "mode": "NONE",
+    "alt": ""
+  }
+}

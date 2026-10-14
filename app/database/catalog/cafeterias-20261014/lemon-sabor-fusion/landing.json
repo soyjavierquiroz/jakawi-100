@@ -1,0 +1,33 @@
+{
+  "schema_version": "jakawi-landing-v1",
+  "subject_hint": "Viernes sin excusas.",
+  "internal_name": "Lemon Sabor Fusión — Viernes sin excusas.",
+  "slug": "lemon-sabor-fusion-viernes-sin-excusas",
+  "template": "OFFER_CONVERSION",
+  "presentation": {
+    "theme": "LIGHT_CONVERSION",
+    "hero_layout": "OFFER_FIRST",
+    "density": "STANDARD"
+  },
+  "hero": {
+    "eyebrow": "Lemon Sabor Fusión · COCHABAMBA",
+    "headline": "Dos frappés. Algo rico para compartir. Cero excusas.",
+    "headline_emphasis": "",
+    "supporting_copy": "Convierte una pausa en un plan para dos en Lemon Sabor Fusión."
+  },
+  "value": {
+    "supporting_copy": "Bs 35 por persona · mínimo dos personas · Bs 70 por la propuesta completa."
+  },
+  "acquisition": {
+    "headline": "Tu cuenta para descubrir Cochabamba",
+    "supporting_copy": "Propuesta en preparación. El acceso comercial previsto no exige membresía de pago."
+  },
+  "closing": {
+    "headline": "QUIERO ESTE PLAN",
+    "supporting_copy": "CTA editorial preparado. Pre-lanzamiento privado: sin reservas, pagos ni canjes disponibles. Tipos de frappé elegibles, postre o acompañamiento, horarios, días aplicables y disponibilidad real."
+  },
+  "media": {
+    "mode": "NONE",
+    "alt": ""
+  }
+}

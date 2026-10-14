@@ -1,0 +1,18 @@
+{
+  "name": "MISHIN.café — Michi & Café.",
+  "template_key": "OFFER_CONVERSION",
+  "marketing_theme": "LIGHT_CONVERSION",
+  "hero_layout": "OFFER_FIRST",
+  "density": "STANDARD",
+  "eyebrow": "MISHIN.café · COCHABAMBA",
+  "headline": "Un café puede convertirse en un momento especial.",
+  "headline_emphasis": "",
+  "subheadline": "Descubre MISHIN.café y una forma diferente de compartir una pausa.",
+  "reward_display_override": "Precio comercial JAKAWI: Bs 65 por persona (BOB).",
+  "acquisition_headline": "Tu cuenta para descubrir Cochabamba",
+  "acquisition_supporting_copy": "Propuesta en preparación. El acceso comercial previsto no exige membresía de pago.",
+  "final_cta_headline": "QUIERO CONOCER MISHIN",
+  "final_cta_description": "CTA editorial preparado. Pre-lanzamiento privado: sin reservas, pagos ni canjes disponibles. Aforo, convivencia, bienestar animal, zonas habilitadas, disponibilidad, reservas y mecanismo de aporte voluntario.",
+  "media_mode": "NONE",
+  "hero_alt": ""
+}

@@ -1,0 +1,26 @@
+{
+    "brief_version": "jakawi-product-brief-v1",
+    "domain": "Experience",
+    "title": "Café de origen.",
+    "partner": "KOA Café",
+    "summary": "Descubrir cómo una preparación puede transformar la manera de apreciar el café.",
+    "description": "Descubrir cómo una preparación puede transformar la manera de apreciar el café.\n\nIncluye propuesto, pendiente de verificación física: Microdemostración guiada de preparación; degustación de café boliviano; mini degustación de repostería.\n\nPrecio comercial JAKAWI: Bs 85 por persona (BOB).\n\nLugar de referencia: Calle Potosí 1161, entre Aniceto Padilla y Av. Uyuni, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+    "commercial_truth": {
+        "experience_type": "tasting",
+        "prices": {
+            "currency": "BOB",
+            "regular_price": "85.00"
+        },
+        "reservation_mode": "informational",
+        "available_sessions": 0,
+        "conditions": [
+            "Precio comercial JAKAWI: Bs 85 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. Límite por cuenta y vigencia requieren instrumentación y control del Partner; no están automatizados en el flujo externo. Actualmente no hay sesiones ni reservas habilitadas. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: KOA Café, Calle Potosí 1161, entre Aniceto Padilla y Av. Uyuni, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Disponibilidad de barista, método de preparación, café elegible, repostería, duración, capacidad y horarios."
+        ]
+    },
+    "marketing_context": {
+        "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+        "landing_language": "es",
+        "city_first": true
+    },
+    "city": "Cochabamba"
+}

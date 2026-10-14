@@ -1,0 +1,22 @@
+{
+  "slug": "koa-cafe-cafe-de-origen",
+  "title": "Café de origen.",
+  "short_description": "Descubrir cómo una preparación puede transformar la manera de apreciar el café.",
+  "description": "Descubrir cómo una preparación puede transformar la manera de apreciar el café.\n\nIncluye propuesto, pendiente de verificación física: Microdemostración guiada de preparación; degustación de café boliviano; mini degustación de repostería.\n\nPrecio comercial JAKAWI: Bs 85 por persona (BOB).\n\nLugar de referencia: Calle Potosí 1161, entre Aniceto Padilla y Av. Uyuni, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+  "terms": "Precio comercial JAKAWI: Bs 85 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. Límite por cuenta y vigencia requieren instrumentación y control del Partner; no están automatizados en el flujo externo. Actualmente no hay sesiones ni reservas habilitadas. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: KOA Café, Calle Potosí 1161, entre Aniceto Padilla y Av. Uyuni, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Disponibilidad de barista, método de preparación, café elegible, repostería, duración, capacidad y horarios.",
+  "category": "cafe",
+  "status": "draft",
+  "featured": false,
+  "review_status": "approved",
+  "review_notes": "CONFIRMED BY JAKAWI. Decisión de diseño comercial; no acredita aceptación formal del negocio ni operación física confirmada. CTA editorial preparado: QUIERO DESCUBRIRLO. Objetivo: Dar valor al conocimiento del barista y diferenciar la cafetería mediante una experiencia de aprendizaje. Pendientes: Disponibilidad de barista, método de preparación, café elegible, repostería, duración, capacidad y horarios.",
+  "published_at": null,
+  "experience_type": "tasting",
+  "regular_price": "85.00",
+  "member_price": null,
+  "currency": "BOB",
+  "duration_minutes": null,
+  "reservation_method": "none",
+  "catalog_visibility": "hidden",
+  "operations_confirmed": false,
+  "sort_order": 0
+}

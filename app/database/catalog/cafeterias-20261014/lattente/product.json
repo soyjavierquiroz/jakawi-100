@@ -1,0 +1,23 @@
+{
+  "slug": "lattente-la-pausa-que-mereces",
+  "title": "La pausa que mereces.",
+  "short_description": "Una pausa de café con algo dulce para disfrutar el momento.",
+  "description": "Una pausa de café con algo dulce para disfrutar el momento.\n\nIncluye propuesto, pendiente de verificación física: Una bebida elegible del menú; una porción dulce seleccionada; posibilidad de upgrade de bebida con modalidad y posible diferencia de precio pendientes. El upgrade no se ofrece como gratuito.\n\nPrecio comercial JAKAWI: Bs 55 por persona (BOB).\n\nLugar de referencia: Av. América 763, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+  "terms": "Precio comercial JAKAWI: Bs 55 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. El límite se aplicará mediante el canje verificado existente sólo tras activar y comprobar la operación; actualmente no hay canje habilitado. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: Coffee Shop Lattente, Av. América 763, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Bebidas elegibles, dulces disponibles, condiciones del upgrade y aporte comercial por unidad.",
+  "category": "cafe",
+  "status": "draft",
+  "featured": false,
+  "review_status": "approved",
+  "review_notes": "CONFIRMED BY JAKAWI. Decisión de diseño comercial; no acredita aceptación formal del negocio ni operación física confirmada. CTA editorial preparado: QUIERO MI PAUSA. Objetivo: Generar primeras visitas y oportunidades de venta de bebidas superiores. Pendientes: Bebidas elegibles, dulces disponibles, condiciones del upgrade y aporte comercial por unidad.",
+  "published_at": null,
+  "partner_slug": "lattente",
+  "benefit_type": "other",
+  "estimated_savings": null,
+  "redemption_limit_per_member": 1,
+  "access_mode": "authenticated",
+  "starts_at": null,
+  "ends_at": "2026-12-01T03:59:59+00:00",
+  "applies_to_all_locations": false,
+  "location_slugs": "lattente-principal",
+  "sort_order": 0
+}

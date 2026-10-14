@@ -1,0 +1,33 @@
+{
+  "schema_version": "jakawi-landing-v1",
+  "subject_hint": "La pausa que mereces.",
+  "internal_name": "Coffee Shop Lattente — La pausa que mereces.",
+  "slug": "lattente-la-pausa-que-mereces",
+  "template": "OFFER_CONVERSION",
+  "presentation": {
+    "theme": "LIGHT_CONVERSION",
+    "hero_layout": "OFFER_FIRST",
+    "density": "STANDARD"
+  },
+  "hero": {
+    "eyebrow": "Coffee Shop Lattente · COCHABAMBA",
+    "headline": "Tu pausa favorita tiene una nueva razón para suceder.",
+    "headline_emphasis": "",
+    "supporting_copy": "Café, algo dulce y un momento para ti en Lattente."
+  },
+  "value": {
+    "supporting_copy": "Precio comercial JAKAWI: Bs 55 por persona (BOB)."
+  },
+  "acquisition": {
+    "headline": "Tu cuenta para descubrir Cochabamba",
+    "supporting_copy": "Propuesta en preparación. El acceso comercial previsto no exige membresía de pago."
+  },
+  "closing": {
+    "headline": "QUIERO MI PAUSA",
+    "supporting_copy": "CTA editorial preparado. Pre-lanzamiento privado: sin reservas, pagos ni canjes disponibles. Bebidas elegibles, dulces disponibles, condiciones del upgrade y aporte comercial por unidad."
+  },
+  "media": {
+    "mode": "NONE",
+    "alt": ""
+  }
+}
