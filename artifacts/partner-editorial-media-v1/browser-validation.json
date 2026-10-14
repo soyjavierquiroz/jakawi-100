@@ -1,0 +1,96 @@
+{
+  "pass": true,
+  "checks": [
+    "Zero images: editorial section absent",
+    "Zero inventory: compact state → editorial image → location → account",
+    "390: three ordered loaded 4:5 images; offers → editorial → location → guest acquisition; no overflow; V2.1 identity preserved",
+    "1440: three-column editorial composition; no overflow",
+    "Admin 390: exactly three shared upload slots; local selection/immediate preview; actual save/reload immutable replacement; remove compacts order and retains old asset; logo/cover untouched; no overflow",
+    "Admin: remove all → null; upload three empty slots in arbitrary selection order → three saved references in slot order; single image bounded to 512px; two-image balanced grid",
+    "Authenticated acquisition block stays hidden"
+  ],
+  "states": {
+    "old": {
+      "gallery_paths": [
+        "partners/38/gallery/78caec5d-5a11-44ee-b60e-008e1ade0f8b.webp",
+        "partners/38/gallery/7627bf64-e9a1-4d71-ab9f-868048ba4a17.webp",
+        "partners/38/gallery/c1d4a3de-0542-4f76-857d-9671a066e669.webp"
+      ],
+      "gallery_masters": [
+        "partners/38/gallery/7627bf64-e9a1-4d71-ab9f-868048ba4a17.webp",
+        "partners/38/gallery/78caec5d-5a11-44ee-b60e-008e1ade0f8b.webp",
+        "partners/38/gallery/c1d4a3de-0542-4f76-857d-9671a066e669.webp"
+      ],
+      "id": 38,
+      "logo_path": "partners/38/logo/c543b4b9-51ff-4a9f-aa9c-3cb557adc144.webp",
+      "cover_path": "partner-profile-qa-cover.svg",
+      "width": 800,
+      "height": 800,
+      "mime": "image/webp",
+      "masters": [
+        "partners/38/logo/c543b4b9-51ff-4a9f-aa9c-3cb557adc144.webp"
+      ]
+    },
+    "mobile": {
+      "title": "CONOCE DOSIS 43 — QA",
+      "columns": 1,
+      "frames": [
+        {
+          "width": 350,
+          "height": 437.5,
+          "fit": "cover",
+          "alt": "DOSIS 43 — QA · imagen 1",
+          "src": "http://127.0.0.1:8098/__qa/img/RjjrwS60e2t9ebdwZjdDYdqYgk3uHtShncbGjOV6C8A/rs:fill:960:1200/q:82/f:webp/plain/s3://jakawi-media/partners/38/gallery/78caec5d-5a11-44ee-b60e-008e1ade0f8b.webp"
+        },
+        {
+          "width": 350,
+          "height": 437.5,
+          "fit": "cover",
+          "alt": "DOSIS 43 — QA · imagen 2",
+          "src": "http://127.0.0.1:8098/__qa/img/0ggl87tCKwxmIEMpIakdM6X2YqErSB2NDsRHf3jJvcw/rs:fill:960:1200/q:82/f:webp/plain/s3://jakawi-media/partners/38/gallery/7627bf64-e9a1-4d71-ab9f-868048ba4a17.webp"
+        },
+        {
+          "width": 350,
+          "height": 437.5,
+          "fit": "cover",
+          "alt": "DOSIS 43 — QA · imagen 3",
+          "src": "http://127.0.0.1:8098/__qa/img/VahW8Ymt6Qp_AfiF_Z0DDn_WIVqo2FVIMMXz3Fp6U_g/rs:fill:960:1200/q:82/f:webp/plain/s3://jakawi-media/partners/38/gallery/c1d4a3de-0542-4f76-857d-9671a066e669.webp"
+        }
+      ],
+      "order": 4,
+      "locationAfter": 4,
+      "accountAfter": 4
+    },
+    "desktop": {
+      "title": "CONOCE DOSIS 43 — QA",
+      "columns": 3,
+      "frames": [
+        {
+          "width": 392,
+          "height": 490,
+          "fit": "cover",
+          "alt": "DOSIS 43 — QA · imagen 1",
+          "src": "http://127.0.0.1:8098/__qa/img/RjjrwS60e2t9ebdwZjdDYdqYgk3uHtShncbGjOV6C8A/rs:fill:960:1200/q:82/f:webp/plain/s3://jakawi-media/partners/38/gallery/78caec5d-5a11-44ee-b60e-008e1ade0f8b.webp"
+        },
+        {
+          "width": 392,
+          "height": 490,
+          "fit": "cover",
+          "alt": "DOSIS 43 — QA · imagen 2",
+          "src": "http://127.0.0.1:8098/__qa/img/0ggl87tCKwxmIEMpIakdM6X2YqErSB2NDsRHf3jJvcw/rs:fill:960:1200/q:82/f:webp/plain/s3://jakawi-media/partners/38/gallery/7627bf64-e9a1-4d71-ab9f-868048ba4a17.webp"
+        },
+        {
+          "width": 392,
+          "height": 490,
+          "fit": "cover",
+          "alt": "DOSIS 43 — QA · imagen 3",
+          "src": "http://127.0.0.1:8098/__qa/img/VahW8Ymt6Qp_AfiF_Z0DDn_WIVqo2FVIMMXz3Fp6U_g/rs:fill:960:1200/q:82/f:webp/plain/s3://jakawi-media/partners/38/gallery/c1d4a3de-0542-4f76-857d-9671a066e669.webp"
+        }
+      ],
+      "order": 4,
+      "locationAfter": 4,
+      "accountAfter": 4
+    }
+  },
+  "errors": []
+}

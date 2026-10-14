@@ -41,7 +41,7 @@ class AdminController extends Controller
 
     public function partnerForm(?Partner $partner = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['logoCropUrl' => $partner->logo_path ? route('admin.partners.logo-source', $partner->id, false) : null, 'logoUrl' => app(\App\Services\MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'coverUrl' => app(\App\Services\MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
+        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['galleryUrls' => array_map(fn ($key) => app(\App\Services\MediaUrl::class)->url($key, 'partner_editorial'), $partner->gallery_paths ?? []), 'logoCropUrl' => $partner->logo_path ? route('admin.partners.logo-source', $partner->id, false) : null, 'logoUrl' => app(\App\Services\MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'coverUrl' => app(\App\Services\MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
     }
 
     public function partnerLogoSource(Partner $partner)
@@ -62,6 +62,12 @@ class AdminController extends Controller
             $partner->save();
             $this->upload($request, $partner, 'logo', 'logo_path', 'partners');
             $this->upload($request, $partner, 'cover', 'cover_path', 'partners');
+            $paths = [];
+            for ($slot = 1; $slot <= 3; $slot++) {
+                $paths[] = app(MediaUploadService::class)->fromRequest($request, 'gallery_'.$slot, 'partners', $partner->id, 'gallery', ($partner->gallery_paths ?? [])[$slot - 1] ?? null);
+            }
+            $partner->gallery_paths = array_values(array_filter($paths, fn ($key) => $key !== null)) ?: null;
+            $partner->save();
 
             return to_route('admin.partners.index');
         });
@@ -243,7 +249,13 @@ class AdminController extends Controller
 
     private function partnerRules(?Partner $p): array
     {
-        return array_merge($this->base('partners', $p), ['slug' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('partners', 'slug')->ignore($p?->id), \App\Support\PartnerSlug::rule()], 'name' => 'required|string|max:255', 'entity_type' => 'required|in:organization,individual', 'partner_type' => 'required|in:business,professional,creator,organizer,brand,other', 'legal_name' => 'nullable|string|max:255', 'tax_id' => 'nullable|string|max:255', 'description' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'contact_name' => 'nullable|string', 'contact_phone' => 'nullable|string', 'contact_email' => 'nullable|email', 'featured' => 'boolean', 'internal_notes' => 'nullable|string', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'logo' => 'nullable|image|mimes:jpeg,png,webp|max:10240', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
+        $galleryRules = ['gallery_paths' => 'prohibited', 'gallery_4' => 'prohibited', 'gallery_4_upload' => 'prohibited', 'gallery_4_remove' => 'prohibited'];
+        for ($slot = 1; $slot <= 3; $slot++) {
+            $galleryRules['gallery_'.$slot] = 'nullable|image|mimes:jpeg,png,webp|max:10240';
+            $galleryRules['gallery_'.$slot.'_upload'] = 'nullable|string';
+            $galleryRules['gallery_'.$slot.'_remove'] = 'sometimes|boolean';
+        }
+        return array_merge($this->base('partners', $p), $galleryRules, ['slug' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('partners', 'slug')->ignore($p?->id), \App\Support\PartnerSlug::rule()], 'name' => 'required|string|max:255', 'entity_type' => 'required|in:organization,individual', 'partner_type' => 'required|in:business,professional,creator,organizer,brand,other', 'legal_name' => 'nullable|string|max:255', 'tax_id' => 'nullable|string|max:255', 'description' => 'nullable|string', 'category' => 'nullable|in:food,cafe,fitness,wellness,beauty,entertainment,nightlife,shopping,services,experiences', 'website' => 'nullable|url', 'instagram' => 'nullable|string', 'facebook' => 'nullable|string', 'tiktok' => 'nullable|string', 'phone' => 'nullable|string', 'whatsapp' => 'nullable|string', 'email' => 'nullable|email', 'contact_name' => 'nullable|string', 'contact_phone' => 'nullable|string', 'contact_email' => 'nullable|email', 'featured' => 'boolean', 'internal_notes' => 'nullable|string', 'sort_order' => 'nullable|integer', 'published_at' => 'nullable|date', 'logo' => 'nullable|image|mimes:jpeg,png,webp|max:10240', 'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240']);
     }
 
     private function locationRules(?Location $l): array

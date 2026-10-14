@@ -37,6 +37,7 @@ type Partner = {
     whatsapp?: string | null;
     logo_srcset?: Source[];
     cover_srcset?: Source[];
+    gallery?: { image_url: string; image_srcset: Source[] }[];
 };
 type Location = {
     id: number;
@@ -375,6 +376,32 @@ export default function PartnerShow({
                             <p className="mt-1 text-sm text-muted-foreground">
                                 Estamos preparando sus primeras propuestas.
                             </p>
+                        </div>
+                    </section>
+                )}
+                {!!partner.gallery?.length && (
+                    <section className="partner-section" data-partner-editorial>
+                        <p className="partner-kicker">EL LUGAR, DE CERCA</p>
+                        <h2 className="partner-section-title">
+                            CONOCE {partner.name}
+                        </h2>
+                        <div
+                            className={`mt-8 grid gap-5 ${partner.gallery.length === 3 ? 'md:grid-cols-3' : partner.gallery.length === 2 ? 'max-w-4xl md:grid-cols-2' : 'max-w-lg'}`}
+                        >
+                            {partner.gallery.map((image, index) => (
+                                <figure
+                                    key={image.image_url}
+                                    className="aspect-[4/5] overflow-hidden rounded-2xl"
+                                >
+                                    <JakawiImage
+                                        src={image.image_url}
+                                        srcset={image.image_srcset}
+                                        sizes="(min-width: 1024px) 440px, (min-width: 768px) 45vw, 90vw"
+                                        alt={`${partner.name} · imagen ${index + 1}`}
+                                        className="h-full w-full object-cover"
+                                    />
+                                </figure>
+                            ))}
                         </div>
                     </section>
                 )}

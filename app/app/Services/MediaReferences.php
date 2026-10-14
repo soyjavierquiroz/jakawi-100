@@ -15,7 +15,7 @@ class MediaReferences
 {
     // Include drafts, archived records and shared references, not just public content.
     public const FIELDS = [
-        Partner::class => ['logo_path', 'cover_path'],
+        Partner::class => ['logo_path', 'cover_path', 'gallery_paths'],
         Location::class => ['image_path'],
         Benefit::class => ['image_path'],
         Experience::class => ['image_path', 'cover_path'],
@@ -32,8 +32,10 @@ class MediaReferences
             $model::query()->select(['id', ...$fields])->chunkById(500, function ($rows) use ($fields, &$keys) {
                 foreach ($rows as $row) {
                     foreach ($fields as $field) {
-                        if (filled($row->$field)) {
-                            $keys[$row->$field] = true;
+                        foreach (is_array($row->$field) ? $row->$field : [$row->$field] as $key) {
+                            if (filled($key)) {
+                                $keys[$key] = true;
+                            }
                         }
                     }
                 }
@@ -48,7 +50,11 @@ class MediaReferences
         foreach (self::FIELDS as $model => $fields) {
             if ($model::query()->where(function ($query) use ($fields, $key) {
                 foreach ($fields as $field) {
-                    $query->orWhere($field, $key);
+                    if ($field === 'gallery_paths') {
+                        $query->orWhereJsonContains($field, $key);
+                    } else {
+                        $query->orWhere($field, $key);
+                    }
                 }
             })->exists()) {
                 return true;

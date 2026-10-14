@@ -129,7 +129,8 @@ export default function ResourceForm({
     publicUrl,
 }: any) {
     const [uploading, setUploading] = useState<Record<string, boolean>>({});
-    const form = useForm<any>({ ...defaults, ...item });
+    const { gallery_paths: _galleryPaths, ...editableItem } = item ?? {};
+    const form = useForm<any>({ ...defaults, ...editableItem });
     const submit = (e: any) => {
         e.preventDefault();
         if (item) {
@@ -297,6 +298,61 @@ export default function ResourceForm({
                     </label>
                 ) : null}
                 {(resource === 'partners' ? ['logo', 'cover'] : resource === 'experiences' ? ['image', 'cover'] : ['image']).map(name => <ImageUpload key={name} profileAvatar={resource === 'partners' && name === 'logo'} currentCropUrl={name === 'logo' ? item?.logoCropUrl : null} name={name} label={name === 'logo' ? 'Logo / foto de perfil' : name === 'cover' ? 'Portada' : 'Imagen'} currentUrl={item?.[`${name}Url`]} error={form.errors[name]} onBusy={busy => setUploading(value => ({...value, [name]: busy}))} onChange={(token, remove) => form.setData((data: Record<string, unknown>) => ({...data, [`${name}_upload`]: token, [`${name}_remove`]: remove}))} />)}
+                {resource === 'partners' && (
+                    <section
+                        className="space-y-4"
+                        aria-label="Imágenes del Partner"
+                    >
+                        <h2 className="text-lg font-bold">
+                            IMÁGENES DEL PARTNER
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                            Hasta 3 imágenes, en este orden. Recomendado: 4:5 ·
+                            1080 × 1350 px. Guarda para aplicar los cambios.
+                        </p>
+                        <div className="grid gap-4 lg:grid-cols-3">
+                            {[1, 2, 3].map((slot) => {
+                                const name = `gallery_${slot}`;
+                                return (
+                                    <ImageUpload
+                                        key={name}
+                                        name={name}
+                                        label={`IMAGEN ${slot}`}
+                                        currentUrl={
+                                            item?.galleryUrls?.[slot - 1]
+                                        }
+                                        error={form.errors[name]}
+                                        onBusy={(busy) =>
+                                            setUploading((value) => ({
+                                                ...value,
+                                                [name]: busy,
+                                            }))
+                                        }
+                                        onChange={(token, remove) =>
+                                            form.setData(
+                                                (
+                                                    data: Record<
+                                                        string,
+                                                        unknown
+                                                    >,
+                                                ) => ({
+                                                    ...data,
+                                                    [`${name}_upload`]: token,
+                                                    [`${name}_remove`]: remove,
+                                                }),
+                                            )
+                                        }
+                                    />
+                                );
+                            })}
+                        </div>
+                        {form.errors.gallery_paths && (
+                            <p role="alert" className="text-sm text-red-600">
+                                {form.errors.gallery_paths}
+                            </p>
+                        )}
+                    </section>
+                )}
                 <button
                     className="rounded bg-brand p-3 text-brand-foreground"
                     disabled={form.processing || Object.values(uploading).some(Boolean)}

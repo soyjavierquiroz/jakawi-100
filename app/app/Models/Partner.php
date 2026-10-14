@@ -17,6 +17,17 @@ class Partner extends Model
     protected static function booted(): void
     {
         static::saving(function (Partner $partner): void {
+            if ($partner->isDirty('gallery_paths') && $partner->gallery_paths !== null) {
+                $paths = $partner->gallery_paths;
+                if (! is_array($paths) || ! array_is_list($paths) || count($paths) > 3) {
+                    throw \Illuminate\Validation\ValidationException::withMessages(['gallery_paths' => 'El Partner admite hasta 3 imágenes editoriales ordenadas.']);
+                }
+                foreach ($paths as $key) {
+                    if (! is_string($key) || ! str_starts_with($key, 'partners/'.$partner->id.'/gallery/') || ! app(\App\Services\MediaUploadService::class)->isMediaKey($key)) {
+                        throw \Illuminate\Validation\ValidationException::withMessages(['gallery_paths' => 'Usa el uploader de imágenes del Partner.']);
+                    }
+                }
+            }
             if ($partner->isDirty('slug') && ! \App\Support\PartnerSlug::valid($partner->slug)) {
                 throw \Illuminate\Validation\ValidationException::withMessages(['slug' => 'El slug público es inválido o está reservado por JAKAWI.']);
             }
@@ -32,7 +43,7 @@ class Partner extends Model
         'slug', 'referral_code', 'referral_code_normalized', 'name', 'entity_type', 'partner_type', 'legal_name', 'tax_id',
         'description', 'category', 'website', 'instagram', 'facebook', 'tiktok',
         'phone', 'whatsapp', 'email', 'contact_name', 'contact_phone', 'contact_email',
-        'logo_path', 'cover_path', 'status', 'featured', 'internal_notes', 'sort_order', 'published_at',
+        'logo_path', 'cover_path', 'gallery_paths', 'status', 'featured', 'internal_notes', 'sort_order', 'published_at',
     ];
 
     /** @return HasMany<Location, $this> */
@@ -106,6 +117,6 @@ class Partner extends Model
 
     protected function casts(): array
     {
-        return ['featured' => 'boolean', 'published_at' => 'datetime'];
+        return ['gallery_paths' => 'array', 'featured' => 'boolean', 'published_at' => 'datetime'];
     }
 }

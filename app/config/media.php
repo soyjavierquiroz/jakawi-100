@@ -14,6 +14,7 @@ return [
         'experience_card' => ['width' => 720, 'height' => 480, 'quality' => 80, 'fit' => 'fill'],
         'partner_logo' => ['width' => 480, 'height' => 320, 'quality' => 82, 'fit' => 'fit'],
         'partner_cover' => ['width' => 960, 'height' => 640, 'quality' => 82, 'fit' => 'fill'],
+        'partner_editorial' => ['width' => 960, 'height' => 1200, 'quality' => 82, 'fit' => 'fill'],
         'thumbnail' => ['width' => 320, 'height' => 240, 'quality' => 75, 'fit' => 'fill'],
         'avatar' => ['width' => 256, 'height' => 256, 'quality' => 80, 'fit' => 'fill'],
     ],

@@ -70,7 +70,7 @@ class MediaUploadService
 
     private function key(string $kind, int $id, string $slot): string
     {
-        if (! in_array($kind, ['partners', 'benefits', 'experiences', 'locations', 'challenges', 'landings', 'avatars', 'unlocks'], true) || $id < 1 || ! in_array($slot, ['cover', 'logo', 'image', 'avatar'], true)) {
+        if (! in_array($kind, ['partners', 'benefits', 'experiences', 'locations', 'challenges', 'landings', 'avatars', 'unlocks'], true) || $id < 1 || ! in_array($slot, ['cover', 'logo', 'image', 'avatar', ...($kind === 'partners' ? ['gallery'] : [])], true)) {
             throw new \InvalidArgumentException('Invalid media namespace');
         }
 
@@ -146,6 +146,7 @@ class MediaUploadService
     public function isMediaKey(?string $key): bool
     {
         return is_string($key) && (preg_match('#^(partners|benefits|experiences|locations|challenges|landings|avatars|unlocks)/[1-9][0-9]*/(cover|logo|image|avatar)/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.(jpg|png|webp)$#D', $key) === 1
+            || preg_match('#^partners/[1-9][0-9]*/gallery/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.webp$#D', $key) === 1
             || preg_match('#^avatars/[1-9][0-9]*/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.(jpg|png|webp)$#D', $key) === 1);
     }
 }
