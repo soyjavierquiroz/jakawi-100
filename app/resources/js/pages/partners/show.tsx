@@ -19,6 +19,7 @@ type Card = {
     regular_price?: string;
     member_price?: string;
     currency?: string;
+    prices?: { label: string; value: string; memberAdvantage: boolean }[];
     sessions?: { starts_at: string }[];
     ends_at?: string;
     reward_type?: string;
@@ -126,21 +127,41 @@ function Inventory({
                             )}
                         </>
                     )}
+                    {journey === 'experiencias' && item.availability_label && (
+                        <p className="partner-opportunity">
+                            {item.availability_label}
+                        </p>
+                    )}
                     {item.sessions?.[0] && (
                         <p className="partner-opportunity">
                             {date(item.sessions[0].starts_at)}
                         </p>
                     )}
-                    {item.regular_price != null && (
-                        <p className="text-sm text-muted-foreground">
-                            Precio regular: {item.currency} {item.regular_price}
-                        </p>
-                    )}
-                    {item.member_price != null && (
-                        <p className="text-xl font-extrabold">
-                            Miembros: {item.currency} {item.member_price}
-                        </p>
-                    )}
+                    {journey === 'experiencias' &&
+                        item.prices?.map((price) => (
+                            <p
+                                key={price.label}
+                                className="text-sm text-muted-foreground"
+                            >
+                                <span className="block">{price.label}</span>
+                                <strong className="text-lg text-foreground">
+                                    {price.value}
+                                </strong>
+                            </p>
+                        ))}
+                    {journey !== 'experiencias' &&
+                        item.regular_price != null && (
+                            <p className="text-sm text-muted-foreground">
+                                Precio regular: {item.currency}{' '}
+                                {item.regular_price}
+                            </p>
+                        )}
+                    {journey !== 'experiencias' &&
+                        item.member_price != null && (
+                            <p className="text-xl font-extrabold">
+                                Miembros: {item.currency} {item.member_price}
+                            </p>
+                        )}
                     {item.reward_type === 'JP' &&
                         Number(item.reward_jp_amount) > 0 && (
                             <p className="partner-opportunity">
@@ -405,7 +426,10 @@ export default function PartnerShow({
                         <h2 className="partner-section-title">
                             CONOCE {partner.name}
                         </h2>
-                        <PartnerGallery images={partner.gallery} name={partner.name} />
+                        <PartnerGallery
+                            images={partner.gallery}
+                            name={partner.name}
+                        />
                     </section>
                 )}
                 {locations.length > 0 && (

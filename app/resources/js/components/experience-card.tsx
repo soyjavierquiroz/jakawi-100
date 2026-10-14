@@ -73,10 +73,12 @@ export default function ExperienceCard({
                 </p>
                 <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
                     <MapPin className="size-4" />
-                    {session?.location?.name ??
-                        session?.venue_label ??
-                        experience.category ??
-                        'JAKAWI'}
+                    {experience.catalog_visibility === 'upcoming'
+                        ? 'Lugar por confirmar'
+                        : (session?.location?.name ??
+                          session?.venue_label ??
+                          experience.category ??
+                          'JAKAWI')}
                 </p>
             </div>
         </Link>

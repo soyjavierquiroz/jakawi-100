@@ -44,7 +44,7 @@ class ExperienceV2Test extends TestCase
         $this->assertNull($items[0]->startsAt);
         $this->assertSame(route('experiences.show', $experience), $items[0]->destinationUrl);
         $this->get($items[0]->destinationUrl)->assertOk()->assertInertia(fn (Assert $p) => $p->where('availability.available', false)->has('experience.sessions', 0)->has('experience.reservation_targets', 0));
-        $this->get('/'.$partner->slug)->assertOk()->assertInertia(fn (Assert $p) => $p->has('experiences', 1));
+        $this->get('/'.$partner->slug)->assertOk()->assertInertia(fn (Assert $p) => $p->has('experiences', 1)->where('experiences.0.availability_label', 'Próximamente · Sin reservas')->where('experiences.0.prices.1.label', 'Precio preferencial previsto · activación y verificación pendientes'));
         $this->get('/l/'.$experience->slug)->assertNotFound();
         $this->get('/experiencias/'.$experience->slug.'/reservar')->assertNotFound();
         $this->assertDatabaseCount('experience_sessions', 0);
