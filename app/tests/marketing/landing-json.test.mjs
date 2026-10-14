@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 const { parseLandingJson, exportLandingJson, subjectHintMismatch } =
     await import(process.env.LANDING_JSON_MODULE);
 const form = {
+    id: '3',
+    published_at: '2026-10-14T12:00:00Z',
+    subject_type: 'BENEFIT',
     name: 'Draft',
     slug: 'draft',
     template_key: 'OFFER_CONVERSION',
@@ -34,10 +37,11 @@ const parse = (data, current = form) =>
         current,
         'Título del producto',
     );
-test('full JSON maps exactly the seventeen existing editorial fields', () => {
+test('full JSON maps sixteen editorial fields and preserves routing identity', () => {
     const result = parseLandingJson(exportLandingJson(form, 'Producto'), {});
     assert(result.ok);
-    assert.equal(Object.keys(result.patch).length, 17);
+    assert.equal(Object.keys(result.patch).length, 16);
+    assert.equal('slug' in result.patch, false);
     for (const [key, value] of Object.entries(result.patch))
         assert.equal(value, form[key]);
 });
@@ -103,6 +107,8 @@ test('domain, action, publication, subject and arbitrary style keys reject', () 
         'cta_url',
         'action',
         'background_color',
+        'id',
+        'published_at',
         'status',
         'audience',
         'default_scope',
@@ -216,4 +222,13 @@ test('Admin error summaries use human labels including value copy and nested/unk
     assert.equal(landingEditorFieldLabel('acquisition_headline'), 'Headline al crear cuenta');
     assert.equal(landingEditorFieldLabel('vsl.source.url'), 'Configuración de video');
     assert.equal(landingEditorFieldLabel('unknown_internal_field'), 'Configuración de la landing');
+});
+
+test('import with another slug preserves the selected landing identity and publication', () => {
+    const result = parse({ slug: 'another-landing', hero: { supporting_copy: 'Nuevo copy' } });
+    assert(result.ok);
+    const merged = { ...form, ...result.patch };
+    for (const key of ['id', 'slug', 'subject_type', 'subject_id', 'default_scope', 'status', 'published_at', 'campaign_key'])
+        assert.equal(merged[key], form[key]);
+    assert.equal(merged.subheadline, 'Nuevo copy');
 });

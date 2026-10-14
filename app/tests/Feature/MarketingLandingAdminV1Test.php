@@ -121,6 +121,34 @@ class MarketingLandingAdminV1Test extends TestCase
         $this->get('/l/'.$landing->slug)->assertNotFound();
     }
 
+    public function test_editorial_save_preserves_selected_identity_publication_and_sibling(): void
+    {
+        $subject = $this->subject();
+        $this->admin();
+        $base = $this->base($subject);
+        $this->post($base, $this->fields(['default_scope' => 'ALL']))->assertRedirect();
+        $published = LandingPresentation::where('slug', 'oferta-editorial')->sole();
+        $this->post($base.'/'.$published->slug.'/publish')->assertRedirect();
+        $this->post($base, $this->fields(['slug' => 'sibling-draft', 'default_scope' => 'NONE']))->assertRedirect();
+        $draft = LandingPresentation::where('slug', 'sibling-draft')->sole();
+        $protected = ['id', 'subject_type', 'subject_id', 'slug', 'default_scope', 'publish_scope', 'status', 'published_at'];
+        foreach ([$published, $draft] as $selected) {
+            $before = $selected->fresh()->only($protected);
+            $sibling = $selected->id === $published->id ? $draft : $published;
+            $siblingBefore = $sibling->fresh()->getAttributes();
+            $this->put($base.'/'.$selected->slug, $this->fields([
+                'slug' => $selected->slug,
+                'default_scope' => $selected->fresh()->publish_scope,
+                'subject_type' => 'BENEFIT', 'subject_id' => $subject->id,
+                'subheadline' => 'Copy importado y guardado explícitamente.',
+            ]))->assertRedirect($base);
+            $this->assertSame($before, $selected->fresh()->only($protected));
+            $this->assertSame($siblingBefore, $sibling->fresh()->getAttributes());
+            $this->assertSame('Copy importado y guardado explícitamente.', $selected->fresh()->subheadline);
+            $this->assertSame(2, LandingPresentation::count());
+        }
+    }
+
     public function test_allowlists_plain_text_emphasis_subject_and_no_action_editor(): void
     {
         $subject = $this->subject();

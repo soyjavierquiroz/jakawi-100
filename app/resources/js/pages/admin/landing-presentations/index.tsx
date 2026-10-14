@@ -234,7 +234,7 @@ export default function Index({
             {!open && (!subject || offer) && (
                 <section className="mt-5 grid min-w-0 gap-4 rounded border border-border bg-surface p-4 sm:grid-cols-3">
                     <h2 className="col-span-full text-xl font-extrabold">
-                        Nueva Marketing Landing
+                        Seleccionar producto
                     </h2>
                     <label className="text-sm font-bold">
                         Tipo de producto
@@ -275,7 +275,6 @@ export default function Index({
                             router.get('/admin/landings', {
                                 subject_type: type,
                                 subject_id: selected,
-                                create: 1,
                             })
                         }
                     >
@@ -694,6 +693,7 @@ export default function Index({
                                     {offer && formSubject && (
                                         <LandingJsonControls
                                             key={`${editing?.id ?? 'new'}:${formSubject.type}:${formSubject.id}`}
+                                            canImport={!!editing}
                                             brief={formSubject.aiBrief}
                                             form={form}
                                             title={formSubject.title}

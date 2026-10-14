@@ -12,6 +12,7 @@ import {
 import { useState } from 'react';
 
 export function LandingJsonControls({
+    canImport,
     brief,
     form,
     title,
@@ -20,6 +21,7 @@ export function LandingJsonControls({
     hasVideo,
     onApply,
 }: {
+    canImport: boolean;
     brief: Record<string, unknown> | null;
     form: Record<string, string>;
     title: string;
@@ -37,6 +39,12 @@ export function LandingJsonControls({
     const [message, setMessage] = useState('');
     const button = 'rounded border border-border px-4 py-2 text-sm font-bold';
     const start = (next: 'import' | 'export') => {
+        if (next === 'import' && !canImport) {
+            setMessage(
+                'Selecciona una Landing existente con Editar antes de importar JSON. Para una nueva, usa CREAR LANDING y guárdala primero.',
+            );
+            return;
+        }
         setText(next === 'export' ? exportLandingJson(form, title) : '');
         setErrors([]);
         setMismatch(null);
@@ -44,6 +52,7 @@ export function LandingJsonControls({
         setMode(next);
     };
     const apply = (confirmed = false) => {
+        if (!canImport) return;
         // Revalidate against the current form and subject, even after confirmation.
         const result = parseLandingJson(text, form, fallbackHeadline);
         if (!result.ok) {
@@ -130,9 +139,9 @@ export function LandingJsonControls({
                               : 'EXPORTAR JSON'}
                     </DialogTitle>
                     <DialogDescription>
-                        Solo presentación editorial. El producto, audiencia y
-                        campaign key se conservan. Importar no guarda ni
-                        publica.
+                        Solo presentación editorial. La identidad, slug,
+                        producto, audiencia, estado de publicación y campaign
+                        key se conservan. Importar no guarda ni publica.
                     </DialogDescription>
                     <label className="text-sm font-bold">
                         JSON

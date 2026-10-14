@@ -134,7 +134,8 @@ export function parseLandingJson(
                         `${path}: usa texto plano, sin HTML ni Markdown`,
                     );
             }
-            patch[rule[0]] = value;
+            // Keep the interchange format compatible, but never import routing identity.
+            if (path !== 'slug') patch[rule[0]] = value;
         }
     };
     visit(data);
