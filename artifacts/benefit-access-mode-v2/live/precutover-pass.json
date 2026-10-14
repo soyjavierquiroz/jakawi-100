@@ -1,0 +1,9 @@
+{
+  "pass": true,
+  "production_builds": 1,
+  "migrations": 0,
+  "manifest": "PASS",
+  "runtime_guard": "PASS",
+  "source": "PASS",
+  "unchanged_partner": true
+}

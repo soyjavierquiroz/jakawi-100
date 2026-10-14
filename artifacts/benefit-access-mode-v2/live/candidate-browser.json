@@ -1,0 +1,10 @@
+{
+  "pass": true,
+  "errors": [],
+  "mutations": [],
+  "checks": [
+    "/admin/benefits/create rendered with candidate assets",
+    "/admin/landings rendered with candidate assets",
+    "/admin/partners/1/edit rendered with candidate assets"
+  ]
+}

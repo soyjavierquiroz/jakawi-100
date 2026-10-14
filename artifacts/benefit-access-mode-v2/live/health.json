@@ -1,0 +1,45 @@
+{
+  "local_up": 200,
+  "public_up": 200,
+  "containers": [
+    {
+      "name": "jakawicom-app-1",
+      "running": true,
+      "health": "healthy",
+      "image_id": "sha256:0ce0014c6da66b2eba9671241e20632a29ee1615f6a3d4fb18d5636eb54cd867"
+    },
+    {
+      "name": "jakawicom-db-1",
+      "running": true,
+      "health": "healthy",
+      "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "name": "jakawicom-web-1",
+      "running": true,
+      "health": null,
+      "image_id": "sha256:0d4f83062d9915b625f238ab879ab5e6161c4f7b67367834ca4740006c02728b"
+    },
+    {
+      "name": "jakawicom-social-worker-1",
+      "running": true,
+      "health": null,
+      "image_id": "sha256:0ce0014c6da66b2eba9671241e20632a29ee1615f6a3d4fb18d5636eb54cd867"
+    },
+    {
+      "name": "jakawi_v2proof-app-1",
+      "running": true,
+      "health": "healthy",
+      "image_id": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632"
+    },
+    {
+      "name": "jakawi_v2proof-db-1",
+      "running": true,
+      "health": "healthy",
+      "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    }
+  ],
+  "scheduler": "active",
+  "failed_jobs": 0,
+  "prelaunch": true
+}

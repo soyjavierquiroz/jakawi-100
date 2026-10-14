@@ -1,0 +1,53 @@
+{
+    "counts": {
+        "partners": 1,
+        "locations": 1,
+        "benefits": 1,
+        "landing_presentations": 1,
+        "experiences": 0,
+        "challenges": 0,
+        "users": 2,
+        "memberships": 0,
+        "redemptions": 0,
+        "experience_reservations": 0,
+        "referral_relationships": 0,
+        "ownership_assignments": 0,
+        "reward_transactions": 0,
+        "membership_purchases": 0,
+        "unlocks": 0,
+        "failed_jobs": 0
+    },
+    "prelaunch": true,
+    "benefit": {
+        "id": 1,
+        "slug": "dossis43-parada-estrategica",
+        "title": "Tu próxima parada tiene sabor a café.",
+        "status": "published",
+        "access_mode": "authenticated",
+        "redemption_limit_per_member": 1,
+        "starts_at": "2026-10-14T05:14:29.000000Z",
+        "ends_at": "2026-12-01T03:59:00.000000Z",
+        "image_path": null,
+        "terms": "Una bebida de cafetería disponible.\nUn acompañamiento dulce o salado disponible del día.\nPrecio del combo: Bs 35.\nPago directo en Dossis 43.\nUn canje por usuario.\nSujeto a disponibilidad del local.\nNo acumulable con otras promociones.\nVálido hasta el 30 de noviembre de 2026.",
+        "estimated_savings": null
+    },
+    "location_ids": [
+        1
+    ],
+    "pin_configured": true,
+    "landing": {
+        "id": 1,
+        "slug": "dossis43-parada-estrategica",
+        "status": "PUBLISHED",
+        "default_scope": "ALL",
+        "publish_scope": "ALL",
+        "template_key": "OFFER_CONVERSION",
+        "marketing_theme": "LIGHT_CONVERSION",
+        "hero_layout": "OFFER_FIRST",
+        "density": "COMPACT",
+        "media_mode": "NONE",
+        "hero_path": null,
+        "campaign_key": null,
+        "editorial_version": 1
+    }
+}

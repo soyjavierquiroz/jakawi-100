@@ -1,0 +1,41 @@
+{
+  "status": "LIVE",
+  "previous_runtime": "359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+  "deployed_sha": "b008a236fa68752e0f911109f3adf099799ebd6d",
+  "images": {
+    "app": {
+      "tag": "jakawi-app:release-b008a236fa68752e0f911109f3adf099799ebd6d",
+      "id": "sha256:0ce0014c6da66b2eba9671241e20632a29ee1615f6a3d4fb18d5636eb54cd867",
+      "revision": "b008a236fa68752e0f911109f3adf099799ebd6d"
+    },
+    "web": {
+      "tag": "jakawi-web:release-b008a236fa68752e0f911109f3adf099799ebd6d",
+      "id": "sha256:0d4f83062d9915b625f238ab879ab5e6161c4f7b67367834ca4740006c02728b",
+      "revision": "b008a236fa68752e0f911109f3adf099799ebd6d"
+    }
+  },
+  "production_builds": 1,
+  "frontend_validation_builds": 1,
+  "migrations": 0,
+  "backup": "Not required; no migration",
+  "rollback_tags": [
+    "jakawi-app:rollback-benefit-access-v2",
+    "jakawi-web:rollback-benefit-access-v2"
+  ],
+  "production_mutations": {
+    "benefits": 1,
+    "landing_presentations": 1,
+    "existing_location": "PIN only",
+    "users": 0,
+    "memberships": 0,
+    "redemptions": 0,
+    "reservations": 0,
+    "referrals": 0,
+    "ownership": 0,
+    "transactions": 0,
+    "experiences": 0,
+    "challenges": 0
+  },
+  "docs_only_followup": true,
+  "redeploy_after_docs": false
+}

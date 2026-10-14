@@ -1,0 +1,419 @@
+ Image jakawi-web:release-b008a236fa68752e0f911109f3adf099799ebd6d Building 
+ Image jakawi-app:release-b008a236fa68752e0f911109f3adf099799ebd6d Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.29kB done
+#1 DONE 0.0s
+
+#2 [web internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.73kB 0.0s done
+#2 DONE 0.0s
+
+#3 [web internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#3 DONE 0.3s
+
+#4 [web internal] load metadata for docker.io/library/composer:2
+#4 DONE 0.2s
+
+#5 [app internal] load .dockerignore
+#5 transferring context: 278B done
+#5 DONE 0.0s
+
+#6 [web internal] load metadata for docker.io/library/nginx:1.27-alpine
+#6 DONE 0.4s
+
+#5 [web internal] load .dockerignore
+#5 transferring context: 278B done
+#5 DONE 0.0s
+
+#7 [app internal] load build context
+#7 DONE 0.0s
+
+#8 [app php-base 1/5] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#8 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.0s done
+#8 DONE 0.1s
+
+#9 [web web 1/5] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#9 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 0.0s done
+#9 DONE 0.0s
+
+#10 [app] FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#10 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.1s done
+#10 DONE 0.1s
+
+#11 [web internal] load build context
+#11 transferring context: 17.75MB 1.0s done
+#11 DONE 1.1s
+
+#7 [app internal] load build context
+#7 transferring context: 17.75MB 1.1s done
+#7 DONE 1.1s
+
+#12 [app php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#12 CACHED
+
+#13 [app build 3/7] RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#13 CACHED
+
+#14 [app build 2/7] COPY app/composer.json app/composer.lock* ./
+#14 CACHED
+
+#15 [app build 4/7] COPY app/package.json app/package-lock.json ./
+#15 CACHED
+
+#16 [app php-base 5/5] WORKDIR /var/www/html
+#16 CACHED
+
+#17 [app build 1/7] RUN apt-get update     && apt-get install -y --no-install-recommends ca-certificates curl gnupg     && mkdir -p /etc/apt/keyrings     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list     && apt-get update     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*
+#17 CACHED
+
+#18 [app php-base 2/5] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libjpeg62-turbo-dev         libpng-dev         libwebp-dev         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-configure gd --with-jpeg --with-webp     && docker-php-ext-install         gd         exif         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#18 CACHED
+
+#19 [app php-base 3/5] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#19 CACHED
+
+#20 [app build 5/7] RUN npm ci
+#20 CACHED
+
+#21 [app build 6/7] COPY app/ ./
+#21 DONE 0.5s
+
+#22 [web build 7/7] RUN sh scripts/check-production-artifact.sh public     && php artisan route:clear     && npm run types:check     && npm run build     && composer dump-autoload --no-dev --optimize     && rm -rf node_modules
+#22 0.485 Production artifact PASS: Vite hot file absent
+#22 1.256 
+#22 1.256    INFO  Route cache cleared successfully.  
+#22 1.256 
+#22 1.692 
+#22 1.692 > types:check
+#22 1.692 > php artisan wayfinder:generate --with-form --no-interaction && tsc --noEmit
+#22 1.692 
+#22 2.801 
+#22 2.801 [32m [Wayfinder] Generated actions in /var/www/html/resources/js/actions[39m
+#22 2.801 
+#22 3.442 [32m [Wayfinder] Generated routes in /var/www/html/resources/js/routes[39m
+#22 3.442 
+#22 26.22 
+#22 26.22 > build
+#22 26.22 > vp build && npm run check:manifest
+#22 26.22 
+#22 29.34 [plugin @laravel/vite-plugin-wayfinder] Types generated for actions, routes, form variants
+#22 29.53 [plugin laravel:fonts] Optimized font fallbacks require the optional "fontaine" package. Install it, or set "optimizedFallbacks: false" on your fonts to disable the feature.
+#22 39.42 transforming...
+#22 46.29 ✓ 2491 modules transformed.
+#22 46.58 rendering chunks...
+#22 46.88 computing gzip size...
+#22 46.90 public/build/fonts-manifest.json                                13.77 kB │ gzip:   1.04 kB
+#22 46.90 public/build/assets/instrument-sans-400-normal-DRC__1Mx.woff2   16.86 kB
+#22 46.90 public/build/assets/instrument-sans-500-normal-Dk9ku72i.woff2   17.23 kB
+#22 46.90 public/build/assets/instrument-sans-600-normal-B7fBEWYG.woff2   17.40 kB
+#22 46.90 public/build/assets/montserrat-600-normal-UVxSCcoG.woff2        18.68 kB
+#22 46.90 public/build/assets/montserrat-500-normal-DRFEGfly.woff2        18.74 kB
+#22 46.90 public/build/assets/montserrat-400-normal-BLhwKU8k.woff2        18.78 kB
+#22 46.90 public/build/assets/montserrat-700-normal-BdjcYUrC.woff2        18.82 kB
+#22 46.90 public/build/assets/montserrat-800-normal-axpkC1rd.woff2        19.01 kB
+#22 46.90 public/build/assets/montserrat-600-normal-CdhFl4lI.woff         20.54 kB
+#22 46.90 public/build/assets/montserrat-500-normal-Dok2oTci.woff         20.60 kB
+#22 46.90 public/build/assets/montserrat-400-normal-xItZbAXg.woff         20.64 kB
+#22 46.90 public/build/assets/montserrat-800-normal-C3dfDxXV.woff         20.66 kB
+#22 46.90 public/build/assets/montserrat-700-normal-BWkrl476.woff         20.67 kB
+#22 46.90 public/build/assets/instrument-sans-400-normal-D1W7dsQl.woff    21.24 kB
+#22 46.90 public/build/assets/instrument-sans-500-normal-Z6ESRlEs.woff    21.65 kB
+#22 46.90 public/build/assets/instrument-sans-600-normal-B9e8oLYv.woff    21.67 kB
+#22 46.90 public/build/manifest.json                                      62.59 kB │ gzip:   6.32 kB
+#22 46.90 public/build/assets/fonts-BNJWz-d_.css                           6.05 kB │ gzip:   0.56 kB
+#22 46.90 public/build/assets/LandingVideo-tMDdhU75.css                    6.46 kB │ gzip:   1.67 kB
+#22 46.90 public/build/assets/app-f86HKiOP.css                           154.22 kB │ gzip:  24.50 kB
+#22 46.90 public/build/assets/form-CwfmylW4.js                             0.05 kB │ gzip:   0.07 kB
+#22 46.90 public/build/assets/benefit-DsAR3nVD.js                          0.07 kB │ gzip:   0.09 kB
+#22 46.90 public/build/assets/challenge-CMNtRWTN.js                        0.07 kB │ gzip:   0.09 kB
+#22 46.90 public/build/assets/experience-Ca7AszSq.js                       0.07 kB │ gzip:   0.09 kB
+#22 46.90 public/build/assets/check-DAiUvaO-.js                            0.12 kB │ gzip:   0.14 kB
+#22 46.90 public/build/assets/loader-circle-6gwpHS5a.js                    0.14 kB │ gzip:   0.15 kB
+#22 46.90 public/build/assets/message-circle-CnZvYOLL.js                   0.14 kB │ gzip:   0.15 kB
+#22 46.90 public/build/assets/x-CwR-vRd4.js                                0.15 kB │ gzip:   0.15 kB
+#22 46.90 public/build/assets/arrow-left-Bd1AfUEr.js                       0.16 kB │ gzip:   0.16 kB
+#22 46.90 public/build/assets/search-BkBdxCxQ.js                           0.17 kB │ gzip:   0.16 kB
+#22 46.90 public/build/assets/clock-3-CVFi6o4T.js                          0.18 kB │ gzip:   0.17 kB
+#22 46.90 public/build/assets/compiler-runtime-DF-fxw1i.js                 0.23 kB │ gzip:   0.21 kB
+#22 46.90 public/build/assets/input-error-01__SjER.js                      0.25 kB │ gzip:   0.21 kB
+#22 46.90 public/build/assets/lock-keyhole-pfXerX0-.js                     0.25 kB │ gzip:   0.22 kB
+#22 46.90 public/build/assets/map-pin-D-BBNTnr.js                          0.25 kB │ gzip:   0.22 kB
+#22 46.90 public/build/assets/monitor-BrejQcCn.js                          0.25 kB │ gzip:   0.20 kB
+#22 46.90 public/build/assets/journey-analytics-Bk8omEyV.js                0.30 kB │ gzip:   0.26 kB
+#22 46.90 public/build/assets/confirm-Culw9Q-x.js                          0.36 kB │ gzip:   0.22 kB
+#22 46.90 public/build/assets/text-link-BGIfOdRk.js                        0.37 kB │ gzip:   0.25 kB
+#22 46.90 public/build/assets/heading-Dnz88bFV.js                          0.40 kB │ gzip:   0.27 kB
+#22 46.90 public/build/assets/security-ZZC6IP8e.js                         0.50 kB │ gzip:   0.27 kB
+#22 46.90 public/build/assets/spinner-D-CPi0jy.js                          0.51 kB │ gzip:   0.36 kB
+#22 46.90 public/build/assets/sun-W8_WkR6Z.js                              0.56 kB │ gzip:   0.30 kB
+#22 46.90 public/build/assets/sparkles-DfEiwBpi.js                         0.58 kB │ gzip:   0.33 kB
+#22 46.90 public/build/assets/dist-DSdFbHmR.js                             0.63 kB │ gzip:   0.41 kB
+#22 46.90 public/build/assets/dist-SJLXfxUU.js                             0.67 kB │ gzip:   0.46 kB
+#22 46.90 public/build/assets/layout-1xJJXBF_.js                           0.76 kB │ gzip:   0.47 kB
+#22 46.90 public/build/assets/index-Cd_UV69N.js                            0.81 kB │ gzip:   0.44 kB
+#22 46.90 public/build/assets/wayfinder-Dp7PqxvV.js                        0.89 kB │ gzip:   0.53 kB
+#22 46.90 public/build/assets/createLucideIcon-C8UyESMm.js                 0.91 kB │ gzip:   0.54 kB
+#22 46.90 public/build/assets/separator-DzPzVIhU.js                        0.93 kB │ gzip:   0.50 kB
+#22 46.90 public/build/assets/appearance-DazRc4Hz.js                       0.97 kB │ gzip:   0.35 kB
+#22 46.90 public/build/assets/label-C9ChO78x.js                            0.98 kB │ gzip:   0.60 kB
+#22 46.90 public/build/assets/journey-layout-B_ic-348.js                   0.98 kB │ gzip:   0.55 kB
+#22 46.90 public/build/assets/show-BmjsKVTo.js                             1.06 kB │ gzip:   0.51 kB
+#22 46.90 public/build/assets/jakawi-image-T3LS0btF.js                     1.11 kB │ gzip:   0.62 kB
+#22 46.90 public/build/assets/input-BT9g33Kx.js                            1.11 kB │ gzip:   0.63 kB
+#22 46.90 public/build/assets/index-DOUeQtVp.js                            1.12 kB │ gzip:   0.63 kB
+#22 46.90 public/build/assets/benefit-journey-context-COaN3BS7.js          1.13 kB │ gzip:   0.64 kB
+#22 46.90 public/build/assets/partner-application-success-BCwdTI-B.js      1.19 kB │ gzip:   0.70 kB
+#22 46.90 public/build/assets/theme-toggle-XVCUnZJx.js                     1.19 kB │ gzip:   0.63 kB
+#22 46.90 public/build/assets/preload-helper-B6JZccWF.js                   1.20 kB │ gzip:   0.68 kB
+#22 46.90 public/build/assets/index-BzdrQ3IM.js                            1.22 kB │ gzip:   0.52 kB
+#22 46.90 public/build/assets/index-CJPsyVS_.js                            1.23 kB │ gzip:   0.61 kB
+#22 46.90 public/build/assets/index-B1Hl9K4p.js                            1.23 kB │ gzip:   0.69 kB
+#22 46.90 public/build/assets/check-in-NArzZIRL.js                         1.25 kB │ gzip:   0.74 kB
+#22 46.90 public/build/assets/index-BP7y0DRX.js                            1.27 kB │ gzip:   0.68 kB
+#22 46.90 public/build/assets/index-ZpXhmjXF.js                            1.27 kB │ gzip:   0.67 kB
+#22 46.90 public/build/assets/index-ehDKPY36.js                            1.30 kB │ gzip:   0.71 kB
+#22 46.90 public/build/assets/index-Mzauuran.js                            1.32 kB │ gzip:   0.65 kB
+#22 46.90 public/build/assets/index-D0l4Xa2v.js                            1.33 kB │ gzip:   0.69 kB
+#22 46.90 public/build/assets/verify-email-Dl9AYSig.js                     1.38 kB │ gzip:   0.73 kB
+#22 46.90 public/build/assets/profile-uNtLFEsD.js                          1.43 kB │ gzip:   0.40 kB
+#22 46.90 public/build/assets/verification-BOcn3HIw.js                     1.48 kB │ gzip:   0.52 kB
+#22 46.90 public/build/assets/state-panel-DcnsdqFr.js                      1.54 kB │ gzip:   0.69 kB
+#22 46.90 public/build/assets/index-BNY6TD_u.js                            1.66 kB │ gzip:   0.82 kB
+#22 46.90 public/build/assets/public-footer-DoM48pqI.js                    1.71 kB │ gzip:   0.70 kB
+#22 46.90 public/build/assets/appearance-CKDv9Xgk.js                       1.76 kB │ gzip:   0.86 kB
+#22 46.90 public/build/assets/review-GdjE98MG.js                           1.80 kB │ gzip:   0.88 kB
+#22 46.90 public/build/assets/password-input-DYwuG2n6.js                   1.94 kB │ gzip:   1.06 kB
+#22 46.90 public/build/assets/use-appearance-X73_9lwL.js                   1.94 kB │ gzip:   0.97 kB
+#22 46.90 public/build/assets/form-nbvOW99T.js                             2.01 kB │ gzip:   1.02 kB
+#22 46.90 public/build/assets/index-Ugi9-XXo.js                            2.03 kB │ gzip:   1.01 kB
+#22 46.90 public/build/assets/index-CbEcGW2F.js                            2.04 kB │ gzip:   0.93 kB
+#22 46.90 public/build/assets/forgot-password-ByeAWsM2.js                  2.06 kB │ gzip:   0.94 kB
+#22 46.90 public/build/assets/button-CrIeqD1u.js                           2.10 kB │ gzip:   0.99 kB
+#22 46.90 public/build/assets/scan-CrbkVIvW.js                             2.14 kB │ gzip:   1.09 kB
+#22 46.90 public/build/assets/index-DtCxkXnV.js                            2.16 kB │ gzip:   1.04 kB
+#22 46.90 public/build/assets/index-tZHObhLF.js                            2.16 kB │ gzip:   1.08 kB
+#22 46.90 public/build/assets/passkey-verify-e_N7TZo0.js                   2.18 kB │ gzip:   1.21 kB
+#22 46.90 public/build/assets/reservations-CDxedQZ9.js                     2.20 kB │ gzip:   0.97 kB
+#22 46.90 public/build/assets/index-CA_g2HWL.js                            2.20 kB │ gzip:   1.12 kB
+#22 46.90 public/build/assets/check-in-review-C0lNjLSj.js                  2.27 kB │ gzip:   1.12 kB
+#22 46.90 public/build/assets/layout-BCA2jvsN.js                           2.30 kB │ gzip:   0.84 kB
+#22 46.90 public/build/assets/reset-password-BhmVt1sR.js                   2.38 kB │ gzip:   0.96 kB
+#22 46.90 public/build/assets/confirm-password-Z8Py5pHd.js                 2.43 kB │ gzip:   1.03 kB
+#22 46.90 public/build/assets/validate-BKb1s4_6.js                         2.47 kB │ gzip:   1.19 kB
+#22 46.90 public/build/assets/marketing-layout-W2u-p8ck.js                 2.48 kB │ gzip:   1.20 kB
+#22 46.90 public/build/assets/index-D_2GoABU.js                            2.65 kB │ gzip:   1.19 kB
+#22 46.90 public/build/assets/participation-CCiNokU3.js                    2.72 kB │ gzip:   1.27 kB
+#22 46.90 public/build/assets/index-0GYQOqiq.js                            2.73 kB │ gzip:   1.21 kB
+#22 46.90 public/build/assets/password-CB_NxgQN.js                         2.73 kB │ gzip:   0.73 kB
+#22 46.90 public/build/assets/two-factor-challenge-DLJSPm4N.js             2.81 kB │ gzip:   1.28 kB
+#22 46.90 public/build/assets/index-BPiuzgaj.js                            2.83 kB │ gzip:   1.02 kB
+#22 46.90 public/build/assets/create-3MaQlAp_.js                           2.84 kB │ gzip:   1.28 kB
+#22 46.90 public/build/assets/routes-BKe4AhC3.js                           2.87 kB │ gzip:   0.58 kB
+#22 46.90 public/build/assets/show-CcA17wDe.js                             2.87 kB │ gzip:   1.35 kB
+#22 46.90 public/build/assets/show-CuXUtBID.js                             2.87 kB │ gzip:   1.30 kB
+#22 46.90 public/build/assets/dist-DMUAYi6k.js                             2.88 kB │ gzip:   1.27 kB
+#22 46.90 public/build/assets/city-selector-z9u23Avc.js                    2.88 kB │ gzip:   1.23 kB
+#22 46.90 public/build/assets/index-CXvw9Ebz.js                            2.88 kB │ gzip:   1.33 kB
+#22 46.90 public/build/assets/show-D6V7gbAT.js                             3.17 kB │ gzip:   1.36 kB
+#22 46.90 public/build/assets/form-DydRuOWz.js                             3.19 kB │ gzip:   1.41 kB
+#22 46.90 public/build/assets/show-COC9k3U-.js                             3.22 kB │ gzip:   1.40 kB
+#22 46.90 public/build/assets/partner-application-C00F6RkU.js              3.23 kB │ gzip:   1.55 kB
+#22 46.90 public/build/assets/create-DFe9roWE.js                           3.24 kB │ gzip:   1.51 kB
+#22 46.90 public/build/assets/index-7vliiI65.js                            3.28 kB │ gzip:   1.39 kB
+#22 46.90 public/build/assets/index-BIo-usTV.js                            3.32 kB │ gzip:   1.24 kB
+#22 46.90 public/build/assets/index-CpLeZf_M.js                            3.34 kB │ gzip:   1.37 kB
+#22 46.90 public/build/assets/delivery-Bzmb6Cf0.js                         3.40 kB │ gzip:   1.36 kB
+#22 46.90 public/build/assets/ownership-block-DRHKmU3H.js                  3.58 kB │ gzip:   1.51 kB
+#22 46.90 public/build/assets/register-D5_oGFVU.js                         3.78 kB │ gzip:   1.62 kB
+#22 46.90 public/build/assets/show-L27_1UX2.js                             3.79 kB │ gzip:   1.68 kB
+#22 46.90 public/build/assets/conversion-kcIWoDxS.js                       3.92 kB │ gzip:   1.80 kB
+#22 46.90 public/build/assets/form-BKgzMiBF.js                             4.11 kB │ gzip:   1.96 kB
+#22 46.90 public/build/assets/create-92m9XhkQ.js                           4.28 kB │ gzip:   1.41 kB
+#22 46.90 public/build/assets/image-upload-BvLzwSNS.js                     4.33 kB │ gzip:   1.99 kB
+#22 46.90 public/build/assets/membresia-BvNUbbYk.js                        4.40 kB │ gzip:   1.92 kB
+#22 46.90 public/build/assets/show-BIPn6t5x.js                             4.51 kB │ gzip:   1.80 kB
+#22 46.90 public/build/assets/coming-soon-Dns1Yvlx.js                      4.63 kB │ gzip:   1.82 kB
+#22 46.90 public/build/assets/show-DmeqIqEx.js                             4.87 kB │ gzip:   1.76 kB
+#22 46.90 public/build/assets/show-DyQWrPNq.js                             4.89 kB │ gzip:   2.10 kB
+#22 46.90 public/build/assets/dashboard-BT6UKY5B.js                        5.18 kB │ gzip:   2.07 kB
+#22 46.90 public/build/assets/primitives-DbZLjmIp.js                       5.28 kB │ gzip:   1.89 kB
+#22 46.90 public/build/assets/challenge-delivery-DaYSgMn8.js               5.29 kB │ gzip:   2.06 kB
+#22 46.90 public/build/assets/index-BaMPPd89.js                            5.30 kB │ gzip:   1.90 kB
+#22 46.90 public/build/assets/index-CWWTy9yz.js                            5.73 kB │ gzip:   2.30 kB
+#22 46.90 public/build/assets/show-BvK6HUSA.js                             6.18 kB │ gzip:   1.94 kB
+#22 46.90 public/build/assets/show-D0Ragqbq.js                             6.20 kB │ gzip:   2.52 kB
+#22 46.90 public/build/assets/dashboard-FrWUtABR.js                        6.55 kB │ gzip:   2.73 kB
+#22 46.90 public/build/assets/form-Z71KMmcA.js                             6.80 kB │ gzip:   2.24 kB
+#22 46.90 public/build/assets/dist-BEQNN_jm.js                             6.97 kB │ gzip:   2.69 kB
+#22 46.90 public/build/assets/form-DzmR9obO.js                             7.02 kB │ gzip:   2.70 kB
+#22 46.90 public/build/assets/index-D-cpEC7K.js                            7.26 kB │ gzip:   2.69 kB
+#22 46.90 public/build/assets/create--9rNGy4m.js                           7.50 kB │ gzip:   2.68 kB
+#22 46.90 public/build/assets/benefit-offer-adapter-BhhmLxTk.js            7.57 kB │ gzip:   3.06 kB
+#22 46.90 public/build/assets/profile-56dOFyqx.js                          7.59 kB │ gzip:   2.60 kB
+#22 46.90 public/build/assets/index-DPtC1rPQ.js                            7.62 kB │ gzip:   2.80 kB
+#22 46.90 public/build/assets/create-BKKfOThD.js                           7.78 kB │ gzip:   2.78 kB
+#22 46.90 public/build/assets/challenge-offer-adapter-58daqD7_.js          7.78 kB │ gzip:   3.24 kB
+#22 46.90 public/build/assets/index-D594P-lC.js                            7.82 kB │ gzip:   2.68 kB
+#22 46.90 public/build/assets/index-BMnZstu3.js                            7.83 kB │ gzip:   3.12 kB
+#22 46.90 public/build/assets/opportunity-card-CjWtzPQi.js                 8.01 kB │ gzip:   2.81 kB
+#22 46.90 public/build/assets/meta-browser-tracker-Cy2PPpjd.js             8.39 kB │ gzip:   3.60 kB
+#22 46.90 public/build/assets/experience-offer-adapter-C1uLa8kw.js         8.60 kB │ gzip:   3.54 kB
+#22 46.90 public/build/assets/show-lLurRihh.js                             8.65 kB │ gzip:   3.04 kB
+#22 46.90 public/build/assets/dashboard-CIyiia_-.js                        8.74 kB │ gzip:   3.24 kB
+#22 46.90 public/build/assets/explore-Dl3J_sxk.js                          8.87 kB │ gzip:   2.84 kB
+#22 46.90 public/build/assets/show-BZLjxAx0.js                             9.23 kB │ gzip:   3.33 kB
+#22 46.90 public/build/assets/show-B4gtLgNK.js                             9.61 kB │ gzip:   3.37 kB
+#22 46.90 public/build/assets/performance-BxllE9lc.js                      9.72 kB │ gzip:   3.48 kB
+#22 46.90 public/build/assets/login-CeSmZM_M.js                            9.85 kB │ gzip:   3.74 kB
+#22 46.90 public/build/assets/form-aT_qvK93.js                            10.05 kB │ gzip:   3.49 kB
+#22 46.90 public/build/assets/show-pXqJSi1z.js                            10.57 kB │ gzip:   3.68 kB
+#22 46.90 public/build/assets/show-BFUDPkYG.js                            11.15 kB │ gzip:   3.94 kB
+#22 46.90 public/build/assets/index-B8BFuuaO.js                           11.40 kB │ gzip:   4.39 kB
+#22 46.90 public/build/assets/OfferConversionTemplate-DXZ0qNkg.js         12.02 kB │ gzip:   4.05 kB
+#22 46.90 public/build/assets/show-BREFec6a.js                            12.71 kB │ gzip:   4.59 kB
+#22 46.90 public/build/assets/unlock-CGLfVP_2.js                          13.54 kB │ gzip:   5.08 kB
+#22 46.90 public/build/assets/react-D2-owoWK.js                           13.86 kB │ gzip:   4.60 kB
+#22 46.90 public/build/assets/mi-jakawi-BRIUJ6Lc.js                       14.38 kB │ gzip:   4.55 kB
+#22 46.90 public/build/assets/member-profile-DZcT0tPK.js                  14.93 kB │ gzip:   5.36 kB
+#22 46.90 public/build/assets/welcome-j2h-bT_3.js                         15.59 kB │ gzip:   4.96 kB
+#22 46.90 public/build/assets/use-two-factor-auth-3wvmubwH.js             17.17 kB │ gzip:   6.22 kB
+#22 46.90 public/build/assets/show-C5OfR1TU.js                            17.18 kB │ gzip:   5.05 kB
+#22 46.90 public/build/assets/show-vzyHO25r.js                            22.03 kB │ gzip:   7.48 kB
+#22 46.90 public/build/assets/avatar-crop-dialog-DWl2GKK3.js              25.64 kB │ gzip:   8.00 kB
+#22 46.90 public/build/assets/utils-CQk6LZJn.js                           27.68 kB │ gzip:   8.76 kB
+#22 46.90 public/build/assets/show-BCbo0lkX.js                            29.71 kB │ gzip:  11.29 kB
+#22 46.90 public/build/assets/LandingVideo-ChoYDpgH.js                    30.65 kB │ gzip:  11.82 kB
+#22 46.90 public/build/assets/security-D8BfUTUa.js                        31.63 kB │ gzip:   9.90 kB
+#22 46.90 public/build/assets/dialog-BJ9RV55b.js                          32.03 kB │ gzip:  10.73 kB
+#22 46.90 public/build/assets/index-zIkl890F.js                           34.24 kB │ gzip:  10.85 kB
+#22 46.90 public/build/assets/app-B9jKdCev.js                            157.92 kB │ gzip:  47.40 kB
+#22 46.90 public/build/assets/jsx-runtime-3K-vts_8.js                    345.86 kB │ gzip: 108.18 kB
+#22 46.90 public/build/assets/hls-BuMXb-yf.js                            575.76 kB │ gzip: 179.37 kB
+#22 46.90 
+#22 46.90 [plugin builtin:vite-reporter] 
+#22 46.90 (!) Some chunks are larger than 500 kB after minification. Consider:
+#22 46.90 - Using dynamic import() to code-split the application
+#22 46.90 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+#22 46.90 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+#22 46.91 ✓ built in 19.41s
+#22 46.91 [33m[PLUGIN_TIMINGS] [0mYour build spent 94% of 19.4s inside plugin hooks (18.3s).
+#22 46.91 Measured inside the callback, so queue time is excluded and time the callback itself awaited is not:
+#22 46.91   - @rolldown/plugin-babel transform (73%, 14.1s, 227 calls)
+#22 46.91   - @tailwindcss/vite:generate:build transform (19%, 3.7s, 2 calls)
+#22 46.91   - @laravel/vite-plugin-wayfinder buildStart (9%, 1.8s, 1 call)
+#22 46.91 See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+#22 46.91 
+#22 47.14 
+#22 47.14 > check:manifest
+#22 47.14 > node scripts/check-vite-manifest.mjs
+#22 47.14 
+#22 47.21 Vite manifest PASS: 104 Inertia pages; all assets and dependencies exist.
+#22 47.41 Generating optimized autoload files
+#22 50.67 > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+#22 50.70 > @php artisan package:discover --ansi
+#22 50.90 
+#22 50.90   [37;44m INFO [39;49m Discovering packages.  
+#22 50.90 
+#22 50.90   inertiajs/inertia-laravel [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#22 50.90   laravel/fortify [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#22 50.90   laravel/passkeys [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#22 50.90   laravel/tinker [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#22 50.90   laravel/wayfinder [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#22 50.90   nesbot/carbon [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#22 50.90   nunomaduro/termwind [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#22 50.90 
+#22 50.91 Generated optimized autoload files containing 7793 classes
+#22 DONE 52.1s
+
+#23 [web web 2/5] COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+#23 CACHED
+
+#24 [web build 7/7] RUN sh scripts/check-production-artifact.sh public     && php artisan route:clear     && npm run types:check     && npm run build     && composer dump-autoload --no-dev --optimize     && rm -rf node_modules
+#24 CACHED
+
+#19 [web php-base 3/5] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#19 CACHED
+
+#25 [web build 2/7] COPY app/composer.json app/composer.lock* ./
+#25 CACHED
+
+#26 [web build 1/7] RUN apt-get update     && apt-get install -y --no-install-recommends ca-certificates curl gnupg     && mkdir -p /etc/apt/keyrings     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list     && apt-get update     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*
+#26 CACHED
+
+#27 [web build 3/7] RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#27 CACHED
+
+#28 [web build 4/7] COPY app/package.json app/package-lock.json ./
+#28 CACHED
+
+#29 [web build 5/7] RUN npm ci
+#29 CACHED
+
+#30 [web php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#30 CACHED
+
+#31 [web php-base 5/5] WORKDIR /var/www/html
+#31 CACHED
+
+#18 [web php-base 2/5] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libjpeg62-turbo-dev         libpng-dev         libwebp-dev         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-configure gd --with-jpeg --with-webp     && docker-php-ext-install         gd         exif         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#18 CACHED
+
+#32 [web build 6/7] COPY app/ ./
+#32 CACHED
+
+#33 [web web 3/5] COPY --from=build /var/www/html/public /var/www/html/public
+#33 DONE 0.2s
+
+#34 [web web 4/5] COPY app/scripts/check-production-artifact.sh /usr/local/bin/check-production-artifact
+#34 DONE 0.1s
+
+#35 [web web 5/5] RUN sh /usr/local/bin/check-production-artifact /var/www/html/public
+#35 0.457 Production artifact PASS: Vite hot file absent
+#35 DONE 0.5s
+
+#36 [web] exporting to image
+#36 exporting layers
+#36 exporting layers 0.9s done
+#36 exporting manifest sha256:803a3a4f07655357116a394908d57e8813398695e5db6669e9cc603c8ca31792 0.0s done
+#36 exporting config sha256:c081d6196a4dd46bc8311af0e8dcf5ce58042af9550aa2bc1879bcb3540abc62 0.0s done
+#36 exporting attestation manifest sha256:09531ebfe21c59e41c5872aa930517aec8633f59336d003cbdc878709fa5a385 0.0s done
+#36 exporting manifest list sha256:0d4f83062d9915b625f238ab879ab5e6161c4f7b67367834ca4740006c02728b 0.0s done
+#36 naming to docker.io/library/jakawi-web:release-b008a236fa68752e0f911109f3adf099799ebd6d
+#36 naming to docker.io/library/jakawi-web:release-b008a236fa68752e0f911109f3adf099799ebd6d done
+#36 unpacking to docker.io/library/jakawi-web:release-b008a236fa68752e0f911109f3adf099799ebd6d
+#36 unpacking to docker.io/library/jakawi-web:release-b008a236fa68752e0f911109f3adf099799ebd6d 0.3s done
+#36 DONE 1.4s
+
+#37 [web] resolving provenance for metadata file
+#37 DONE 0.1s
+
+#38 [app app 1/4] COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+#38 CACHED
+
+#39 [app app 2/4] COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
+#39 CACHED
+
+#40 [app app 3/4] COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
+#40 DONE 2.4s
+
+#41 [app app 4/4] RUN sh scripts/check-production-artifact.sh public     && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#41 0.387 Production artifact PASS: Vite hot file absent
+#41 DONE 0.5s
+
+#42 [app] exporting to image
+#42 exporting layers
+#42 exporting layers 5.1s done
+#42 exporting manifest sha256:b8410bc66cb6c2de08736b37e359b8f1cc6e2c412a59612fe35e24ccbf44610d
+#42 exporting manifest sha256:b8410bc66cb6c2de08736b37e359b8f1cc6e2c412a59612fe35e24ccbf44610d 0.0s done
+#42 exporting config sha256:2747d8d195c29f4be3b5b802eda5b1098be9b982052977fcc8521a5d517b3b53 0.0s done
+#42 exporting attestation manifest sha256:37137e530c5e3b9f407f4911d56b2cc47c353bafeac55f61dc96258ee33e2d74 0.0s done
+#42 exporting manifest list sha256:0ce0014c6da66b2eba9671241e20632a29ee1615f6a3d4fb18d5636eb54cd867 done
+#42 naming to docker.io/library/jakawi-app:release-b008a236fa68752e0f911109f3adf099799ebd6d done
+#42 unpacking to docker.io/library/jakawi-app:release-b008a236fa68752e0f911109f3adf099799ebd6d
+#42 unpacking to docker.io/library/jakawi-app:release-b008a236fa68752e0f911109f3adf099799ebd6d 4.3s done
+#42 DONE 9.6s
+
+#43 [app] resolving provenance for metadata file
+#43 DONE 0.0s
+ Image jakawi-app:release-b008a236fa68752e0f911109f3adf099799ebd6d Built 
+ Image jakawi-web:release-b008a236fa68752e0f911109f3adf099799ebd6d Built 

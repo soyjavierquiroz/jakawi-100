@@ -1,0 +1,130 @@
+[
+  {
+    "name": "jakawi-test-app-test-1",
+    "container_id": "b4093d2ae4d93ab174957aac75d71b2c500f8a6d64848d5d1142931540f259b7",
+    "image_id": "sha256:376dba11831c472c0ca867ee4aaaf01540202a041a0b896221a0b02c7ae09a97",
+    "revision": null,
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawicom-social-worker-1",
+    "container_id": "3db7558ac8d395548c83a47879f649b83db9d758debcb5e5b4d6e4432aeaf2a2",
+    "image_id": "sha256:4c6fdd6f72adfc192bc8ea45663724a1735a61601268bbbd6f5fc7896e25488d",
+    "revision": "359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+    "running": true,
+    "health": null
+  },
+  {
+    "name": "jakawicom-web-1",
+    "container_id": "6437b19b293d541457469c0f9a522bd97b46bf81b76c5f2610d61b57d5480015",
+    "image_id": "sha256:2e44e6738e162a009fbc4c75796ba2d78766c6528fe54034c13419d51c1a1bc8",
+    "revision": "359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+    "running": true,
+    "health": null
+  },
+  {
+    "name": "jakawicom-app-1",
+    "container_id": "3117b20b417f8d12c07035076d717efe535d2b18e5257e5de9145a41eeb526b7",
+    "image_id": "sha256:4c6fdd6f72adfc192bc8ea45663724a1735a61601268bbbd6f5fc7896e25488d",
+    "revision": "359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawi-brand-candidate",
+    "container_id": "8451e2db5d0b29a49aa5d8a2cfed2eacd7e3771d6e78a95d0a00d530bdfec002",
+    "image_id": "sha256:0567ab08bfc59fabf0fe62b4399c1fa2c333641b26efe445d05dfaf7560dff1d",
+    "revision": "79f2ed7dfd9f792e94bc659136a02e809699fbaa",
+    "running": true,
+    "health": null
+  },
+  {
+    "name": "jakawi-vsl-test-db-test-1",
+    "container_id": "ad81e6dc912db5fc2ae7d40a7b960de82c44d5911d0e99be44c301450ce55dd6",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "running": false,
+    "health": "starting"
+  },
+  {
+    "name": "jakawi-vsl-dev-db-1",
+    "container_id": "c2c9aa220b518d8636e5cca528c70f61138a1cf34b410aeee134cef311e9a6bc",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "running": false,
+    "health": "starting"
+  },
+  {
+    "name": "jakawicom-db-1",
+    "container_id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawi-test-db-test-1",
+    "container_id": "2328da60fc4f62063165ce8cc80d3d546ac98045bd273203b390836cd695e076",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawi-preview-web-preview-1",
+    "container_id": "44224ca06dc04533f1eaa8f0fdee86536d8da825656f9772ef4ba3c1326c0f28",
+    "image_id": "sha256:b07b2e1733086da4ded149838821c57d673c6d364bab2d60a3ee2f7ea57f2683",
+    "revision": null,
+    "running": true,
+    "health": null
+  },
+  {
+    "name": "jakawi-preview-app-preview-1",
+    "container_id": "fd7cc7212102a3335d1289e9d75f0bec88188869a4dc681c183c235c19fe706f",
+    "image_id": "sha256:f7e94115f55b3c725a3f5d221f1b3cf362a49a4d4ef52fbcb3db251c56f44e20",
+    "revision": null,
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawicom-imgproxy-1",
+    "container_id": "cf2107d971b754654a09ac15568540604e3ce6c13e8b848bea4dc0594e4a2c3d",
+    "image_id": "sha256:3b709e4a0e5e8e0e959b556b7031229202b4b8e7e7d955c517ea7abed68ee34d",
+    "revision": "62224b4414db836d3e61359e2beeb0cc25b13861",
+    "running": true,
+    "health": null
+  },
+  {
+    "name": "jakawicom-db-test-1",
+    "container_id": "a8f40da718787ca902978151e524ef46c5605f76eedd65ec95e8be26beda1569",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "running": false,
+    "health": "starting"
+  },
+  {
+    "name": "jakawi-preview-db-preview-1",
+    "container_id": "ac8c92c9cecc7ec7ac420752f49e5acb335bde7673e33cece00fe706cc1e90e3",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawi_v2proof-app-1",
+    "container_id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+    "image_id": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+    "revision": null,
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawi_v2proof-db-1",
+    "container_id": "8af1e6f99993ef47d3a14a34c3c3c7fab0cc7b53af89b6ab8f25fa3d82b6a38d",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "running": true,
+    "health": "healthy"
+  }
+]

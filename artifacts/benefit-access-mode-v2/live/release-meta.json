@@ -1,0 +1,18 @@
+{
+  "sha": "b008a236fa68752e0f911109f3adf099799ebd6d",
+  "previous_runtime": "359c98cfbe00dda393a4630c203f2892a4c2c3d1",
+  "migrations": 0,
+  "preserved_contracts": [
+    "resources/js/components/prelaunch-notice.tsx",
+    "resources/js/pages/coming-soon.tsx",
+    "resources/js/layouts/public-mode-layout.tsx",
+    "app/Services/AttributionService.php",
+    "app/Services/AcquisitionProviderResolver.php",
+    "app/Actions/Fortify/CreateNewUser.php",
+    "app/Http/Controllers/PartnerPublicController.php",
+    "app/Services/ProductLandingResolver.php",
+    "routes/web.php",
+    "routes/console.php",
+    "config/jakawi.php"
+  ]
+}
