@@ -156,6 +156,8 @@ class PublicController extends Controller
 
     public function benefitPublicProps(Benefit $benefit, Request $request, bool $preview = false): array
     {
+        abort_if(! $preview && $benefit->status === 'draft', 404);
+
         $grant = null;
         if (! $preview && $benefit->access_mode === 'social_challenge_grant') {
             $grant = $request->user() ? ChallengeRewardGrant::where('user_id', $request->user()->id)->where('benefit_id', $benefit->id)->where('status', 'granted')->first() : null;

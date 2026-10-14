@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Benefit;
 use App\Models\Experience;
 use App\Services\ExperiencePublication;
 use App\Services\ProductLandingResolver;
@@ -14,6 +15,7 @@ class ResolveProductLanding
     public function handle(Request $request, Closure $next)
     {
         foreach ($request->route()->parameters() as $subject) {
+            abort_if($subject instanceof Benefit && $subject->status === 'draft', 404);
             if ($subject instanceof Experience) {
                 abort_unless(app(ExperiencePublication::class)->isPublic($subject), 404);
             }
