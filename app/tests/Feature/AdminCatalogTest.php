@@ -15,7 +15,7 @@ class AdminCatalogTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
         $partner = Partner::factory()->published()->create(['name' => 'Toc Toc Café Gourmet']);
-        $experience = Experience::factory()->draft()->create(['id' => 1, 'slug' => 'toctoccafe-descubre-el-cafe-boliviano', 'title' => 'Descubre el café boliviano', 'regular_price' => 75]);
+        $experience = Experience::factory()->draft()->create(['id' => 1, 'slug' => 'toctoccafe-descubre-el-cafe-boliviano', 'title' => 'Descubre el café boliviano', 'regular_price' => 75, 'description' => "Primer párrafo.\nSegundo párrafo.", 'terms' => "Condición uno.\nCondición dos."]);
         $experience->syncPartnersWithRoles([['partner_id' => $partner->id, 'role' => 'organizer']]);
         $landing = $experience->landingPresentations()->create(['name' => 'Café', 'slug' => 'cafe-preview', 'status' => 'DRAFT']);
         $url = route('admin.experiences.edit', $experience);
@@ -23,10 +23,12 @@ class AdminCatalogTest extends TestCase
         $this->get('/admin/experiences')->assertInertia(fn (Assert $p) => $p->component('admin/catalog/index')->where('items.data.0.editUrl', $url)->where('items.data.0.partners.0.name', $partner->name)->where('items.data.0.publicUrl', null));
         $this->get($url)->assertOk()->assertInertia(fn (Assert $p) => $p->where('item.id', 1)->where('item.status', 'draft')->where('item.regular_price', '75.00'));
         $this->get('/admin/experiences/1/edit')->assertNotFound(); // Documents the original ID/slug mismatch.
-        $this->post(route('admin.experiences.update', $experience).'?q=café&status_filter=draft', [
-            '_method' => 'put', 'slug' => $experience->slug, 'title' => 'Café actualizado', 'status' => 'draft', 'regular_price' => '75.00', 'currency' => 'BOB', 'reservation_method' => 'none',
+        $this->postJson(route('admin.experiences.update', $experience).'?q=café&status_filter=draft', [
+            '_method' => 'put', 'slug' => $experience->slug, 'title' => 'Café actualizado', 'status' => 'draft', 'regular_price' => '75.00', 'currency' => 'BOB', 'reservation_method' => 'none', 'description' => $experience->description, 'terms' => $experience->terms,
         ])->assertRedirect('/admin/experiences?q=caf%C3%A9&status_filter=draft');
         $this->assertSame('Café actualizado', $experience->fresh()->title);
+        $this->assertSame($experience->description, $experience->fresh()->description);
+        $this->assertSame($experience->terms, $experience->fresh()->terms);
         $this->assertSame('draft', $experience->fresh()->status);
         $this->assertDatabaseCount('experiences', 1);
         $this->assertSame($partner->id, $experience->fresh()->partners->sole()->id);

@@ -140,9 +140,9 @@ export default function ResourceForm({
         e.preventDefault();
         if (item) {
             form.transform((data: any) => ({ ...data, _method: 'put' }));
-            form.post(`/admin/${resource}/${['benefits', 'experiences'].includes(resource) ? item.slug : item.id}${catalogQuery}`, { forceFormData: true });
+            form.post(`/admin/${resource}/${['benefits', 'experiences'].includes(resource) ? item.slug : item.id}${catalogQuery}`);
         } else {
-            form.post(`/admin/${resource}`, { forceFormData: true });
+            form.post(`/admin/${resource}`);
         }
     };
     const options = (field: string) =>
