@@ -33,19 +33,30 @@ export function OptionalMarketingMedia({
             {media.type === 'vsl' ? (
                 <LandingVideo config={{ ...media.config, theme: 'inherit' }} />
             ) : (
-                <JakawiImage
-                    src={media.src}
-                    srcset={media.srcset}
-                    sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) 90vw, 50vw"
-                    alt={media.alt}
-                    className={
-                        compact
-                            ? 'aspect-[4/3] w-full rounded-[var(--radius-card)] object-cover'
-                            : 'aspect-[4/3] w-full object-cover lg:aspect-square'
-                    }
-                    loading="eager"
-                    priority
-                />
+                <picture>
+                    {!!media.desktopSrcset?.length && (
+                        <source
+                            media="(min-width: 1024px)"
+                            srcSet={media.desktopSrcset
+                                .map(({ src, width }) => `${src} ${width}w`)
+                                .join(', ')}
+                            sizes="(min-width: 1280px) 640px, 50vw"
+                        />
+                    )}
+                    <JakawiImage
+                        src={media.src}
+                        srcset={media.srcset}
+                        sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) 90vw, 50vw"
+                        alt={media.alt}
+                        className={
+                            compact
+                                ? 'aspect-[4/3] w-full rounded-[var(--radius-card)] object-cover'
+                                : 'aspect-[4/3] w-full object-cover lg:aspect-square'
+                        }
+                        loading="eager"
+                        priority
+                    />
+                </picture>
             )}
         </div>
     );

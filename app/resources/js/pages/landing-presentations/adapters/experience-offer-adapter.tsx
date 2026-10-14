@@ -38,6 +38,7 @@ export type ExperienceOfferProps = {
     };
     heroUrl: string | null;
     heroSrcset?: {src: string; width: number}[];
+    heroDesktopSrcset?: {src: string; width: number}[];
     nativeUrl: string;
     canonical: string;
     noindex: boolean;
@@ -79,6 +80,7 @@ export default function ExperienceOfferAdapter({
     presentation,
     heroUrl,
     heroSrcset,
+    heroDesktopSrcset,
     canonical,
     noindex,
     preview,
@@ -159,6 +161,7 @@ export default function ExperienceOfferAdapter({
                     type: 'image',
                     src: heroUrl,
                     srcset: heroSrcset,
+                    desktopSrcset: heroDesktopSrcset,
                     alt: presentation.hero_alt || copy.title,
                 }
               : undefined,

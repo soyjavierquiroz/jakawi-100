@@ -121,6 +121,33 @@ class MarketingLandingAdminV1Test extends TestCase
         $this->get('/l/'.$landing->slug)->assertNotFound();
     }
 
+    public function test_offer_desktop_sources_use_master_portrait_preset_for_each_domain(): void
+    {
+        $this->admin();
+        config(['media.imgproxy_url' => 'https://img.example.test', 'media.imgproxy_key' => str_repeat('01', 32), 'media.imgproxy_salt' => str_repeat('02', 32)]);
+        $challenge = Challenge::create([
+            'title' => 'Reto editorial', 'slug' => 'reto-editorial', 'status' => 'open', 'review_status' => 'APPROVED',
+            'description' => 'Participa', 'instructions' => 'Publica una foto',
+            'allowed_platforms' => ['instagram'], 'required_hashtags' => [], 'required_mentions' => [],
+            'evidence_type' => 'SOCIAL_POST', 'qualification_type' => 'VALID_EVIDENCE', 'selection_type' => 'ALL_QUALIFIED',
+            'evaluation_mode' => 'CONTINUOUS', 'review_mode' => 'AUTOMATIC', 'participation_eligibility' => 'ALL_USERS', 'reward_eligibility' => 'ALL_USERS',
+            'reward_type' => 'JP', 'reward_jp_amount' => 25,
+        ]);
+        $master = 'landings/1/cover/11111111-1111-4111-8111-111111111111.webp';
+        foreach ([[$this->subject(), 'beneficios'], [Experience::factory()->published()->create(), 'experiencias'], [$challenge, 'retos']] as [$subject, $route]) {
+            $landing = $subject->landingPresentations()->create([
+                'name' => 'Portrait', 'slug' => 'portrait-'.$route, 'status' => 'DRAFT', 'media_mode' => 'IMAGE', 'hero_path' => $master,
+            ]);
+            $preview = '/admin/'.$route.'/'.$subject->slug.'/landings/'.$landing->slug.'/preview';
+            $this->get($preview)->assertOk()->assertInertia(fn (Assert $page) => $page
+                ->has('heroDesktopSrcset', 4)
+                ->where('heroDesktopSrcset.3.width', 960)
+                ->where('heroDesktopSrcset.3.src', fn ($url) => str_contains($url, '/rs:fill:960:1200/') && str_ends_with($url, '/'.$master)));
+            $landing->update(['media_mode' => 'NONE']);
+            $this->get($preview)->assertOk()->assertInertia(fn (Assert $page) => $page->where('heroDesktopSrcset', []));
+        }
+    }
+
     public function test_editorial_save_preserves_selected_identity_publication_and_sibling(): void
     {
         $subject = $this->subject();

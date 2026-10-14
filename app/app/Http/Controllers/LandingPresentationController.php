@@ -128,7 +128,10 @@ class LandingPresentationController extends Controller
             app(GrowthMeasurementService::class)->landingView($presentation, $touch);
         }
         $resumed = ! $preview && $request->user() && $request->session()->get('landing_acquisition_resumed') === $presentation->id;
+        // Reuse the existing portrait preset, directly from the master (never the horizontal hero derivative).
+        $heroPath = $presentation->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : ($subject->hero_path ?? null)));
         $shared = [
+            'heroDesktopSrcset' => ! ($subject instanceof Unlock) && ! in_array($presentation->media_mode?->value, ['NONE', 'VSL'], true) ? app(MediaUrl::class)->srcset($heroPath, 'partner_editorial') : [],
             'conversionStage' => $stage,
             'verificationRequired' => $stage === 'activation' && $request->boolean('verify')
                 && $request->user() && ! $request->user()->hasVerifiedEmail()

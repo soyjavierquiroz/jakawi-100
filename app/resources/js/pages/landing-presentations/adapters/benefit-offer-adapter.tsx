@@ -52,6 +52,7 @@ export type BenefitOfferProps = {
     };
     heroUrl: string | null;
     heroSrcset?: {src: string; width: number}[];
+    heroDesktopSrcset?: {src: string; width: number}[];
     nativeUrl: string;
     canonical: string;
     noindex: boolean;
@@ -66,6 +67,7 @@ export default function BenefitOfferAdapter({
     copy,
     heroUrl,
     heroSrcset,
+    heroDesktopSrcset,
     canonical,
     noindex,
     preview,
@@ -130,6 +132,7 @@ export default function BenefitOfferAdapter({
                     type: 'image',
                     src: heroUrl,
                     srcset: heroSrcset,
+                    desktopSrcset: heroDesktopSrcset,
                     alt: presentation.hero_alt || benefit.title,
                 }
               : undefined,

@@ -14,6 +14,7 @@ import Show from '@/pages/social-challenges/show';
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
 
 export type ChallengeOfferProps = ComponentProps<typeof Show> & {
+    heroDesktopSrcset?: {src: string; width: number}[];
     vsl?: LandingVideoConfig | null;
     offerEditorial?: LandingOfferEditorial;
     presentation: {
@@ -194,6 +195,7 @@ export default function ChallengeOfferAdapter({
                     type: 'image',
                     src: challengeProps.heroUrl,
                     srcset: challengeProps.heroSrcset,
+                    desktopSrcset: challengeProps.heroDesktopSrcset,
                     alt:
                         presentation.hero_alt || challengeProps.challenge.title,
                 }
