@@ -1,0 +1,211 @@
+ Image jakawi-app-test Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 526B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.73kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 ...
+
+#4 [internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#4 DONE 0.2s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 DONE 0.2s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 278B done
+#5 DONE 0.0s
+
+#6 [php-base 1/5] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#6 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.0s done
+#6 DONE 0.0s
+
+#7 FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#7 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 152.12kB 0.1s done
+#8 DONE 0.1s
+
+#9 [php-base 2/5] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libjpeg62-turbo-dev         libpng-dev         libwebp-dev         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-configure gd --with-jpeg --with-webp     && docker-php-ext-install         gd         exif         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#9 CACHED
+
+#10 [php-base 3/5] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#10 CACHED
+
+#11 [php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#11 CACHED
+
+#12 [php-base 5/5] WORKDIR /var/www/html
+#12 CACHED
+
+#13 [test 1/5] COPY app/composer.json app/composer.lock* ./
+#13 CACHED
+
+#14 [test 2/5] RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#14 CACHED
+
+#15 [test 3/5] COPY --chown=www-data:www-data app/ ./
+#15 DONE 0.9s
+
+#16 [test 4/5] RUN cp .env.example .env     && composer dump-autoload --optimize
+#16 2.126 Generating optimized autoload files
+#16 12.23 > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+#16 12.28 > @php artisan package:discover --ansi
+#16 12.85
+#16 12.85    INFO  Discovering packages.
+#16 12.85
+#16 12.86   inertiajs/inertia-laravel ............................................. DONE
+#16 12.86   laravel/fortify ....................................................... DONE
+#16 12.87   laravel/pail .......................................................... DONE
+#16 12.87   laravel/pao ........................................................... DONE
+#16 12.87   laravel/passkeys ...................................................... DONE
+#16 12.87   laravel/sail .......................................................... DONE
+#16 12.87   laravel/tinker ........................................................ DONE
+#16 12.87   laravel/wayfinder ..................................................... DONE
+#16 12.87   nesbot/carbon ......................................................... DONE
+#16 12.88   nunomaduro/collision .................................................. DONE
+#16 12.88   nunomaduro/termwind ................................................... DONE
+#16 12.88
+#16 12.90 Generated optimized autoload files containing 10180 classes
+#16 DONE 13.1s
+
+#17 [test 5/5] RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && touch .phpunit.result.cache     && chown www-data:www-data .phpunit.result.cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#17 DONE 1.3s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 2.6s done
+#18 exporting manifest sha256:ccc4cdebc574fc5e2457dfaea2698fda6931454e9d449623dc272453ecd86f5a
+#18 exporting manifest sha256:ccc4cdebc574fc5e2457dfaea2698fda6931454e9d449623dc272453ecd86f5a 0.0s done
+#18 exporting config sha256:d1210e8efd4d5b689caa11dc84b8a8b631eca7c84113a767039f8e2aebe7158a 0.0s done
+#18 exporting attestation manifest sha256:359f6cc32a9579a052f9145b8ab3098d9b8fe491440875b9b4ce7161861471cf 0.0s done
+#18 exporting manifest list sha256:e00adb65bc73e1b71620aa8534445813720d46c25be538f2104aee47bb6d02ab 0.0s done
+#18 naming to docker.io/library/jakawi-app-test:latest done
+#18 unpacking to docker.io/library/jakawi-app-test:latest
+#18 unpacking to docker.io/library/jakawi-app-test:latest 0.8s done
+#18 DONE 3.7s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.1s
+ Image jakawi-app-test Built
+ Container jakawi-test-db-test-1 Running
+ Container jakawi-test-app-test-1 Recreate
+ Container jakawi-test-app-test-1 Recreated
+ Container jakawi-test-db-test-1 Waiting
+ Container jakawi-test-db-test-1 Healthy
+ Container jakawi-test-app-test-1 Starting
+ Container jakawi-test-app-test-1 Started
+
+  Dropping all tables .......................................... 621.63ms DONE
+
+   INFO  Preparing database.
+
+  Creating migration table ...................................... 35.14ms DONE
+
+   INFO  Running migrations.
+
+  0001_01_01_000000_create_users_table .......................... 57.77ms DONE
+  0001_01_01_000001_create_cache_table .......................... 62.88ms DONE
+  0001_01_01_000002_create_jobs_table ........................... 42.04ms DONE
+  2024_01_01_000000_create_passkeys_table ....................... 32.86ms DONE
+  2025_08_14_170933_add_two_factor_columns_to_users_table ........ 6.44ms DONE
+  2026_09_21_000001_add_is_admin_to_users_table .................. 1.84ms DONE
+  2026_09_21_000004_create_memberships_table .................... 39.46ms DONE
+  2026_09_22_000001_create_partners_table ....................... 54.51ms DONE
+  2026_09_22_000002_create_locations_table ...................... 28.95ms DONE
+  2026_09_22_000003_create_benefits_table ....................... 33.90ms DONE
+  2026_09_22_000004_create_benefit_location_table ................ 8.93ms DONE
+  2026_09_22_000005_create_redemptions_table .................... 52.40ms DONE
+  2026_09_22_000006_create_experiences_table .................... 18.66ms DONE
+  2026_09_22_000007_create_experience_partner_table ............. 12.61ms DONE
+  2026_09_22_000008_create_experience_sessions_table ............ 26.40ms DONE
+  2026_09_22_000009_create_analytics_events_table ............... 65.31ms DONE
+  2026_09_23_000001_create_partner_user_table ................... 20.25ms DONE
+  2026_09_23_000002_add_internal_experience_reservations ........ 58.81ms DONE
+  2026_09_23_000003_add_party_size_to_experience_reservations .... 2.19ms DONE
+  2026_09_23_000004_add_check_in_to_experience_reservations ..... 24.94ms DONE
+  2026_09_24_000001_add_content_review_metadata ................. 36.26ms DONE
+  2026_09_24_000005_create_user_profiles_table .................. 16.16ms DONE
+  2026_09_25_000001_add_theme_preference_to_users_table .......... 7.85ms DONE
+  2026_09_26_000001_add_referral_code_to_users_table ............. 6.40ms DONE
+  2026_09_26_000002_create_attribution_foundation_tables ....... 155.13ms DONE
+  2026_09_26_000003_create_manual_membership_sales_tables ...... 134.45ms DONE
+  2026_09_26_000004_create_reward_payouts_tables ................ 62.02ms DONE
+  2026_09_26_000008_add_partner_acquisition_attribution ......... 42.67ms DONE
+  2026_09_26_000009_add_generic_reward_beneficiaries ............ 25.07ms DONE
+  2026_09_26_000010_create_campaigns ............................ 47.84ms DONE
+  2026_09_26_000011_create_operational_adjustments_table ........ 24.51ms DONE
+  2026_09_27_000012_add_requested_by_to_reward_payouts ........... 6.05ms DONE
+  2026_09_27_000013_create_unlocks_tables ....................... 84.16ms DONE
+  2026_09_27_000014_add_unlock_to_analytics_events .............. 15.30ms DONE
+  2026_09_27_000015_create_jp_holds_table ....................... 17.05ms DONE
+  2026_09_27_000016_add_unlock_fulfillment_lifecycle ............ 34.17ms DONE
+  2026_09_27_000017_add_unlock_growth_context ................... 18.98ms DONE
+  2026_09_30_000001_create_cities_table ......................... 15.19ms DONE
+  2026_10_01_000001_add_city_id_to_locations_and_seed_canonical_cities  12.92ms DONE
+  2026_10_02_000001_create_city_interests_table ................. 30.19ms DONE
+  2026_10_03_000001_create_partner_applications_table ........... 34.36ms DONE
+  2026_10_05_000001_add_whatsapp_to_user_profiles ................ 2.67ms DONE
+  2026_10_05_000001_create_program_applications_table ........... 26.73ms DONE
+  2026_10_06_000001_create_ownership_assignments_table .......... 86.52ms DONE
+  2026_10_06_000002_add_public_journey_attribution_to_touches .... 6.99ms DONE
+  2026_10_07_000001_create_membership_purchase_requests ......... 36.06ms DONE
+  2026_10_07_000002_create_social_challenges ................... 121.67ms DONE
+  2026_10_07_000003_add_jp_ledger_references .................... 22.00ms DONE
+  2026_10_07_000004_add_social_challenge_jp_rewards ............. 11.40ms DONE
+  2026_10_07_000005_generalize_challenges ....................... 76.46ms DONE
+  2026_10_07_000006_challenge_product_experience ................. 8.17ms DONE
+  2026_10_08_000001_create_landing_presentations ................ 28.95ms DONE
+  2026_10_08_000002_add_challenge_marketing_editorial ............ 3.01ms DONE
+  2026_10_08_000003_add_landing_default_scope .................... 9.17ms DONE
+  2026_10_09_000001_extend_analytics_events_for_growth .......... 55.09ms DONE
+  2026_10_09_000002_add_acquisition_provider ..................... 8.30ms DONE
+  2026_10_09_000003_create_growth_provider_deliveries ........... 29.24ms DONE
+  2026_10_09_180000_create_crm_foundation ....................... 77.59ms DONE
+  2026_10_11_000001_add_vsl_to_landing_presentations ............. 8.00ms DONE
+  2026_10_12_000001_add_offer_presentation_settings ............. 67.03ms DONE
+  2026_10_12_000002_add_offer_layout_controls .................... 2.72ms DONE
+  2026_10_12_000003_add_acquisition_copy_to_landing_presentations  2.43ms DONE
+
+
+   PASS  Tests\Feature\MemberProfileTest
+  ✓ consumer can open profile without an active membership               3.32s
+  ✓ partner only user is kept out of member profile                      0.11s
+  ✓ preferences are whitelisted deduplicated and completed once          0.10s
+  ✓ profile edit preserves signup whatsapp                               0.23s
+  ✓ each preference group can be updated and invalid values are rejecte… 0.20s
+  ✓ user cannot update another users profile and partner pages do not r… 0.12s
+  ✓ owner can upload supported avatar formats without losing profile fi… 0.12s
+  ✓ svg avatar is rejected and old avatar survives until replaced        0.08s
+
+   PASS  Tests\Feature\PartnerAcquisitionTest
+  ✓ partner code is global and referral records partner source           0.13s
+  ✓ first partner remains and confirmed purchase is aggregated without…  0.16s
+  ✓ partner does not replace user referrer and expired policy can repla… 0.07s
+
+   PASS  Tests\Feature\PartnerIdentityRefinementTest
+  ✓ existing social fields are projected without new domain data         0.11s
+  ✓ square logo uses immutable shared media pipeline and keeps cover     0.46s
+  ✓ only admin can reopen existing master without overwriting it         0.25s
+
+   PASS  Tests\Feature\PartnerPublicProfileTest
+  ✓ public identity inventory locations canonical and prelaunch          0.15s
+  ✓ partner media projection preserves logo proportions and optimizes c… 0.09s
+  ✓ empty profile and only current public inventory                      0.10s
+  ✓ reserved rule covers registered routes and invalid slugs on creatio… 0.06s
+  ✓ primary downstream new signup owns partner without partner signup b… 0.39s
+  ✓ direct signup returns to public profile                              0.16s
+  ✓ existing login consumes candidate without ownership even after logo… 0.40s
+  ✓ existing identity cannot signup and existing owner is never reassig… 0.37s
+  ✓ first valid partner wins even when landing latest touch is differen… 0.16s
+  ✓ stale and unscoped anonymous touches do not become new ownership     0.08s
+  ✓ partner management shows public url and other accounts cannot manag… 0.15s
+
+  Tests:    25 passed (381 assertions)
+  Duration: 8.16s

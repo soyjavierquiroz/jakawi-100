@@ -41,7 +41,16 @@ class AdminController extends Controller
 
     public function partnerForm(?Partner $partner = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['logoUrl' => app(\App\Services\MediaUrl::class)->url($partner->logo_path, 'thumbnail'), 'coverUrl' => app(\App\Services\MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
+        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['logoCropUrl' => $partner->logo_path ? route('admin.partners.logo-source', $partner->id, false) : null, 'logoUrl' => app(\App\Services\MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'coverUrl' => app(\App\Services\MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
+    }
+
+    public function partnerLogoSource(Partner $partner)
+    {
+        abort_unless($partner->logo_path, 404);
+        $disk = app(MediaUploadService::class)->isMediaKey($partner->logo_path) ? config('media.disk') : 'public';
+        return \Illuminate\Support\Facades\Storage::disk($disk)->response($partner->logo_path, 'partner-logo.webp', [
+            'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff', 'Content-Security-Policy' => "default-src 'none'; sandbox",
+        ]);
     }
 
     public function savePartner(Request $request, ?Partner $partner = null)

@@ -17,12 +17,18 @@ http.createServer((req, res) => {
     const initial = req.method === 'GET' && !req.headers['x-inertia'] && req.headers.accept?.includes('text/html');
     const headers = { ...req.headers, host: '127.0.0.1:8098' }; if (initial) headers['x-inertia'] = 'true';
     const upstream = http.request({ host: process.env.PARTNER_TEST_HOST, port: 8099, path: req.url, method: req.method, headers }, response => {
-        let body = ''; response.on('data', data => body += data); response.on('end', () => {
+        const chunks = []; response.on('data', data => chunks.push(data)); response.on('end', () => {
+            let body = Buffer.concat(chunks);
             const h = { ...response.headers }; delete h['content-length']; delete h['transfer-encoding'];
-            if (initial && response.statusCode === 200 && body.startsWith('{')) {
+            if (initial && response.statusCode === 200 && body[0] === 123) {
                 const manifest = JSON.parse(fs.readFileSync(root + '/app/public/build/manifest.json'));
                 h['content-type'] = 'text/html'; delete h['x-inertia'];
-                body = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/build/${manifest['resources/css/app.css'].file}"><script type="module" src="/build/${manifest['resources/js/app.tsx'].file}"></script></head><body><div id="app"></div><script data-page="app" type="application/json">${body.replaceAll('<', '\\u003c')}</script></body></html>`;
+                body = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/build/${manifest['resources/css/app.css'].file}"><script type="module" src="/build/${manifest['resources/js/app.tsx'].file}"></script></head><body><div id="app"></div><script data-page="app" type="application/json">${body.toString().replaceAll('<', '\\u003c')}</script></body></html>`;
+                if (process.env.PARTNER_VITE_ORIGIN) {
+                    const vite = process.env.PARTNER_VITE_ORIGIN;
+                    body = body.replace(/<link rel="stylesheet"[^>]+><script type="module"[^>]+><\/script>/, `<script type="module">import RefreshRuntime from '${vite}/@react-refresh'; RefreshRuntime.injectIntoGlobalHook(window); window.$RefreshReg$=()=>{}; window.$RefreshSig$=()=>type=>type; window.__vite_plugin_react_preamble_installed__=true;</script><script type="module" src="${vite}/@vite/client"></script><link rel="stylesheet" href="${vite}/resources/css/app.css"><script type="module" src="${vite}/resources/js/app.tsx"></script>`);
+                }
+
             }
             res.writeHead(response.statusCode, h); res.end(body);
         });

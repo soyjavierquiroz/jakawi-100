@@ -431,11 +431,11 @@
   place-items: center;
   flex-shrink: 0;
   width: 112px;
-  height: 88px;
+  height: 112px;
   margin-top: -20px;
   overflow: hidden;
   border: 5px solid var(--background);
-  border-radius: 1rem;
+  border-radius: 50%;
   background: var(--surface-raised);
   color: var(--foreground);
 }

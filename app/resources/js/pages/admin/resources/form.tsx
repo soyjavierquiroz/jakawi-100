@@ -296,7 +296,7 @@ export default function ResourceForm({
                         </select>
                     </label>
                 ) : null}
-                {(resource === 'partners' ? ['logo', 'cover'] : resource === 'experiences' ? ['image', 'cover'] : ['image']).map(name => <ImageUpload key={name} name={name} label={name === 'logo' ? 'Logo' : name === 'cover' ? 'Portada' : 'Imagen'} currentUrl={item?.[`${name}Url`]} error={form.errors[name]} onBusy={busy => setUploading(value => ({...value, [name]: busy}))} onChange={(token, remove) => form.setData((data: Record<string, unknown>) => ({...data, [`${name}_upload`]: token, [`${name}_remove`]: remove}))} />)}
+                {(resource === 'partners' ? ['logo', 'cover'] : resource === 'experiences' ? ['image', 'cover'] : ['image']).map(name => <ImageUpload key={name} profileAvatar={resource === 'partners' && name === 'logo'} currentCropUrl={name === 'logo' ? item?.logoCropUrl : null} name={name} label={name === 'logo' ? 'Logo / foto de perfil' : name === 'cover' ? 'Portada' : 'Imagen'} currentUrl={item?.[`${name}Url`]} error={form.errors[name]} onBusy={busy => setUploading(value => ({...value, [name]: busy}))} onChange={(token, remove) => form.setData((data: Record<string, unknown>) => ({...data, [`${name}_upload`]: token, [`${name}_remove`]: remove}))} />)}
                 <button
                     className="rounded bg-brand p-3 text-brand-foreground"
                     disabled={form.processing || Object.values(uploading).some(Boolean)}

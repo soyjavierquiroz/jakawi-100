@@ -1,0 +1,15 @@
+{
+  "production_mutations_by_implementation": 0,
+  "partner_slug": "dossis43",
+  "existing_logo_reference_unchanged": true,
+  "stored_social_fields": [
+    "instagram",
+    "tiktok",
+    "facebook"
+  ],
+  "empty_optional_fields": [
+    "website",
+    "whatsapp"
+  ],
+  "migration": false
+}

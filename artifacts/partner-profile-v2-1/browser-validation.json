@@ -1,0 +1,58 @@
+{
+  "pass": true,
+  "checks": [
+    "390: circular undistorted loaded avatar, five ordered compact safe social links, no overflow; coral CTA/yellow rewards preserved",
+    "Instagram-only Partner renders one link",
+    "Missing socials omitted; circular initials fallback works",
+    "Unsafe/invalid schemes omitted",
+    "1440: V2 hero preserved, circular avatar/socials, no overflow",
+    "Admin can reopen saved master; cancel preserves old asset",
+    "Real isolated Admin: select horizontal PNG → round mask → zoom → drag/reposition → fit entire logo → square live preview retaining both brand edges → actual upload receipt → save/reload normalized WebP master; immutable old master retained; cover unchanged",
+    "390 Admin crop responsive; 200×50 source stays small, no forced upscale; staged replacement does not overwrite saved master",
+    "Authenticated Partner hides acquisition block"
+  ],
+  "errors": [],
+  "states": {
+    "avatar": {
+      "width": 112,
+      "height": 112,
+      "radius": "50%",
+      "fit": "contain",
+      "loaded": true
+    },
+    "old": {
+      "id": 27,
+      "logo_path": "partners/27/logo/a2f999cf-f6dc-4dc2-9f9d-31fbbc8e5382.webp",
+      "cover_path": "partner-profile-qa-cover.svg",
+      "width": 800,
+      "height": 800,
+      "mime": "image/webp",
+      "masters": [
+        "partners/27/logo/a2f999cf-f6dc-4dc2-9f9d-31fbbc8e5382.webp"
+      ]
+    },
+    "preview": {
+      "width": 1024,
+      "height": 1024,
+      "red": 23312,
+      "blue": 23064,
+      "cornerAlpha": 0
+    },
+    "saved": {
+      "id": 27,
+      "logo_path": "partners/27/logo/c72ea23c-96a1-4972-b65f-abe22b071c01.webp",
+      "cover_path": "partner-profile-qa-cover.svg",
+      "width": 1024,
+      "height": 1024,
+      "mime": "image/webp",
+      "masters": [
+        "partners/27/logo/a2f999cf-f6dc-4dc2-9f9d-31fbbc8e5382.webp",
+        "partners/27/logo/c72ea23c-96a1-4972-b65f-abe22b071c01.webp"
+      ]
+    },
+    "smallPreview": {
+      "width": 206,
+      "height": 206
+    }
+  }
+}

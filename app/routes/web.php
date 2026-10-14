@@ -280,6 +280,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('partners', [AdminController::class, 'partners'])->name('admin.partners.index');
     Route::get('partners/create', [AdminController::class, 'partnerForm'])->name('admin.partners.create');
     Route::post('partners', [AdminController::class, 'savePartner'])->name('admin.partners.store');
+    Route::get('partners/{partner:id}/logo-source', [AdminController::class, 'partnerLogoSource'])->name('admin.partners.logo-source');
     Route::get('partners/{partner:id}/edit', [AdminController::class, 'partnerForm'])->name('admin.partners.edit');
     Route::put('partners/{partner:id}', [AdminController::class, 'savePartner'])->name('admin.partners.update');
     Route::post('partners/{partner:id}/referral-code', [AdminController::class, 'partnerReferralCode'])->name('admin.partners.referral-code');

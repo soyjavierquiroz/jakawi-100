@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowDown, ArrowUpRight, MapPin } from 'lucide-react';
+import { PartnerSocialLinks } from '@/components/partner-social-links';
 import { JakawiImage } from '@/components/jakawi-image';
 
 type Source = { src: string; width: number };
@@ -29,6 +30,11 @@ type Partner = {
     description?: string;
     logo_url?: string;
     cover_url?: string;
+    instagram?: string | null;
+    tiktok?: string | null;
+    facebook?: string | null;
+    website?: string | null;
+    whatsapp?: string | null;
     logo_srcset?: Source[];
     cover_srcset?: Source[];
 };
@@ -262,6 +268,12 @@ export default function PartnerShow({
                                 )}
                             </div>
                             <p className="min-w-0 text-xs leading-relaxed font-extrabold tracking-widest uppercase">
+                                {(partner.category || locality) && (
+                                    <span
+                                        aria-hidden="true"
+                                        className="mr-2 inline-block size-1.5 rounded-full bg-success align-middle"
+                                    />
+                                )}
                                 {[
                                     categoryLabels[partner.category || ''] ||
                                         partner.category,
@@ -285,6 +297,7 @@ export default function PartnerShow({
                                 {supporting}
                             </p>
                         )}
+                        <PartnerSocialLinks partner={partner} />
                         <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
                             <a
                                 href={
@@ -306,7 +319,7 @@ export default function PartnerShow({
                                     className="inline-flex min-h-12 items-center gap-2 text-sm font-extrabold"
                                 >
                                     <MapPin
-                                        className="size-4 text-brand"
+                                        className="size-4 text-success"
                                         aria-hidden="true"
                                     />
                                     CÓMO LLEGAR
