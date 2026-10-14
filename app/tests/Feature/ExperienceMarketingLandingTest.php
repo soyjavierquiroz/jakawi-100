@@ -145,10 +145,10 @@ class ExperienceMarketingLandingTest extends TestCase
         $this->post("$base/new-experience/publish")->assertRedirect();
         foreach (['GUESTS', 'ALL'] as $scope) {
             $this->post("$base/new-experience/default", ['default_scope' => $scope])->assertRedirect();
-            $this->assertSame($scope,$landing->fresh()->default_scope);
+            $this->assertSame($scope, $landing->fresh()->default_scope);
         }
         $this->post("$base/default-product")->assertRedirect();
-        $this->assertSame('NONE',$landing->fresh()->default_scope);
+        $this->assertSame('NONE', $landing->fresh()->default_scope);
         $this->post("$base/new-experience/archive")->assertRedirect();
         $this->get('/l/new-experience')->assertNotFound();
     }
