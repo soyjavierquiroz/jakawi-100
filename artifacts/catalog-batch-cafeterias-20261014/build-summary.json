@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "source_sha": "df8f543af38664c168d4465aca9d0099e5c3631c",
+  "export": "git archive HEAD",
+  "typescript": "PASS within Docker build",
+  "wayfinder": "PASS",
+  "vite": "PASS",
+  "manifest": "106 pages",
+  "production_asset_guard": "PASS on app and web image extractions",
+  "public_hot": "absent",
+  "tests_passed": 29,
+  "assertions": 662,
+  "pint": "PASS",
+  "full_suite_run": false
+}

@@ -1,0 +1,159 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "key": "lattente",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "lattente",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "mishin-cafe",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "mishin-cafe",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "koa-cafe",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "koa-cafe",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "lemon-sabor-fusion",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "lemon-sabor-fusion",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "suss-cafe",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "suss-cafe",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "le-petit-brunch-bakery",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "le-petit-brunch-bakery",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "path": "/l/lattente-la-pausa-que-mereces",
+      "guestStatus": 404
+    },
+    {
+      "path": "/lattente",
+      "guestStatus": 404
+    },
+    {
+      "path": "/l/mishin-cafe-michi-y-cafe",
+      "guestStatus": 404
+    },
+    {
+      "path": "/mishin-cafe",
+      "guestStatus": 404
+    },
+    {
+      "path": "/l/koa-cafe-cafe-de-origen",
+      "guestStatus": 404
+    },
+    {
+      "path": "/koa-cafe",
+      "guestStatus": 404
+    },
+    {
+      "path": "/l/lemon-sabor-fusion-viernes-sin-excusas",
+      "guestStatus": 404
+    },
+    {
+      "path": "/lemon-sabor-fusion",
+      "guestStatus": 404
+    },
+    {
+      "path": "/l/suss-cafe-desayuno-en-el-pueblito",
+      "guestStatus": 404
+    },
+    {
+      "path": "/suss-cafe",
+      "guestStatus": 404
+    },
+    {
+      "path": "/l/le-petit-brunch-bakery-brunch-a-tu-ritmo",
+      "guestStatus": 404
+    },
+    {
+      "path": "/le-petit-brunch-bakery",
+      "guestStatus": 404
+    },
+    {
+      "path": "/explorar",
+      "privateDraftsAbsent": true
+    },
+    {
+      "path": "/beneficios",
+      "privateDraftsAbsent": true
+    },
+    {
+      "path": "/experiencias",
+      "privateDraftsAbsent": true
+    },
+    {
+      "existingMobileCarousel": "PASS"
+    }
+  ],
+  "errors": [],
+  "mutations": [],
+  "failedAssets": [],
+  "analyticsRequestsSuppressed": [
+    "https://jakawi.com/analytics/opportunities",
+    "https://jakawi.com/analytics/opportunities"
+  ]
+}

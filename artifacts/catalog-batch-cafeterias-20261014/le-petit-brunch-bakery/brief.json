@@ -1,0 +1,37 @@
+{
+    "brief_version": "jakawi-product-brief-v1",
+    "domain": "Benefit",
+    "title": "Brunch a tu ritmo.",
+    "partner": "Le Petit Brunch & Bakery",
+    "summary": "Un momento para disfrutar un brunch sin prisas, combinando algo salado, una bebida y un detalle dulce.",
+    "description": "Un momento para disfrutar un brunch sin prisas, combinando algo salado, una bebida y un detalle dulce.\n\nIncluye propuesto, pendiente de verificación física: Un plato salado ligero elegible; una bebida elegible; una mini porción dulce de bakery.\n\nPrecio comercial JAKAWI: Bs 85 por persona (BOB).\n\nLugar de referencia: Juan Capriles, entre Av. Santa Cruz y Pasaje Asbun, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+    "demo": false,
+    "commercial_truth": {
+        "benefit_type": "other",
+        "value": {
+            "description": "Brunch a tu ritmo."
+        },
+        "membership_required": false,
+        "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+        "available": false,
+        "validity": {
+            "ends_at": "2026-11-30T23:59:59-04:00",
+            "timezone": "America/La_Paz"
+        },
+        "usage_limit": {
+            "redemptions_per_member": 1
+        },
+        "requirements": [
+            "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+        ],
+        "conditions": [
+            "Precio comercial JAKAWI: Bs 85 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. El límite se aplicará mediante el canje verificado existente sólo tras activar y comprobar la operación; actualmente no hay canje habilitado. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: Le Petit Brunch & Bakery, Juan Capriles, entre Av. Santa Cruz y Pasaje Asbun, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Platos elegibles, bebidas, mini dulces, horarios y días de utilización."
+        ]
+    },
+    "marketing_context": {
+        "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+        "landing_language": "es",
+        "city_first": true
+    },
+    "city": "Cochabamba"
+}

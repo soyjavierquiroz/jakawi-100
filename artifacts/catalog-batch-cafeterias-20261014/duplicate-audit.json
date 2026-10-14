@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "partner": "Coffee Shop Lattente",
+      "matches_before": [],
+      "checked": [
+        "name",
+        "slug",
+        "phones",
+        "instagram",
+        "facebook",
+        "tiktok",
+        "address"
+      ]
+    },
+    {
+      "partner": "MISHIN.café",
+      "matches_before": [],
+      "checked": [
+        "name",
+        "slug",
+        "phones",
+        "instagram",
+        "facebook",
+        "tiktok",
+        "address"
+      ]
+    },
+    {
+      "partner": "KOA Café",
+      "matches_before": [],
+      "checked": [
+        "name",
+        "slug",
+        "phones",
+        "instagram",
+        "facebook",
+        "tiktok",
+        "address"
+      ]
+    },
+    {
+      "partner": "Lemon Sabor Fusión",
+      "matches_before": [],
+      "checked": [
+        "name",
+        "slug",
+        "phones",
+        "instagram",
+        "facebook",
+        "tiktok",
+        "address"
+      ]
+    },
+    {
+      "partner": "SÜSS Café",
+      "matches_before": [],
+      "checked": [
+        "name",
+        "slug",
+        "phones",
+        "instagram",
+        "facebook",
+        "tiktok",
+        "address"
+      ]
+    },
+    {
+      "partner": "Le Petit Brunch & Bakery",
+      "matches_before": [],
+      "checked": [
+        "name",
+        "slug",
+        "phones",
+        "instagram",
+        "facebook",
+        "tiktok",
+        "address"
+      ]
+    }
+  ],
+  "existing_reused": 0,
+  "new": 6
+}

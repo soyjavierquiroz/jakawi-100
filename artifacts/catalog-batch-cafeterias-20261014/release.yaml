@@ -1,0 +1,7 @@
+services:
+  app:
+    image: jakawi-cafe-batch-app:df8f543
+  web:
+    image: jakawi-cafe-batch-web:df8f543
+  social-worker:
+    image: jakawi-cafe-batch-app:df8f543

@@ -1,0 +1,32 @@
+[
+    {
+        "key": "lattente",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 1, updated 0\nExperiences: created 0, updated 0\nExperience partners: created 0, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    },
+    {
+        "key": "mishin-cafe",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 0, updated 0\nExperiences: created 1, updated 0\nExperience partners: created 1, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    },
+    {
+        "key": "koa-cafe",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 0, updated 0\nExperiences: created 1, updated 0\nExperience partners: created 1, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    },
+    {
+        "key": "lemon-sabor-fusion",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 1, updated 0\nExperiences: created 0, updated 0\nExperience partners: created 0, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    },
+    {
+        "key": "suss-cafe",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 1, updated 0\nExperiences: created 0, updated 0\nExperience partners: created 0, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    },
+    {
+        "key": "le-petit-brunch-bakery",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 1, updated 0\nExperiences: created 0, updated 0\nExperience partners: created 0, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    }
+]

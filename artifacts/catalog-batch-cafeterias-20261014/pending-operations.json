@@ -1,0 +1,68 @@
+{
+  "lattente": {
+    "decision": "CONFIRMED BY JAKAWI",
+    "price_per_person_bob": 55,
+    "currency": "BOB",
+    "minimum_people": 1,
+    "editorial_cta": "QUIERO MI PAUSA",
+    "objective": "Generar primeras visitas y oportunidades de venta de bebidas superiores.",
+    "pending_operations": "Bebidas elegibles, dulces disponibles, condiciones del upgrade y aporte comercial por unidad.",
+    "visual_pending": "Fotografía oficial autorizada y logo pendientes; tratamiento existente sin imagen.",
+    "reference": null
+  },
+  "mishin-cafe": {
+    "decision": "CONFIRMED BY JAKAWI",
+    "price_per_person_bob": 65,
+    "currency": "BOB",
+    "minimum_people": 1,
+    "editorial_cta": "QUIERO CONOCER MISHIN",
+    "objective": "Atraer nuevos visitantes y generar apoyo voluntario a la iniciativa de rescate.",
+    "pending_operations": "Aforo, convivencia, bienestar animal, zonas habilitadas, disponibilidad, reservas y mecanismo de aporte voluntario.",
+    "visual_pending": "Fotografía oficial autorizada y logo pendientes; tratamiento existente sin imagen.",
+    "reference": null
+  },
+  "koa-cafe": {
+    "decision": "CONFIRMED BY JAKAWI",
+    "price_per_person_bob": 85,
+    "currency": "BOB",
+    "minimum_people": 1,
+    "editorial_cta": "QUIERO DESCUBRIRLO",
+    "objective": "Dar valor al conocimiento del barista y diferenciar la cafetería mediante una experiencia de aprendizaje.",
+    "pending_operations": "Disponibilidad de barista, método de preparación, café elegible, repostería, duración, capacidad y horarios.",
+    "visual_pending": "Fotografía oficial autorizada y logo pendientes; tratamiento existente sin imagen.",
+    "reference": null
+  },
+  "lemon-sabor-fusion": {
+    "decision": "CONFIRMED BY JAKAWI",
+    "price_per_person_bob": 35,
+    "currency": "BOB",
+    "minimum_people": 2,
+    "editorial_cta": "QUIERO ESTE PLAN",
+    "objective": "Incrementar el valor de compra mediante un complemento que aporte valor frente al consumo de solo dos frappés.",
+    "pending_operations": "Tipos de frappé elegibles, postre o acompañamiento, horarios, días aplicables y disponibilidad real.",
+    "visual_pending": "Fotografía oficial autorizada y logo pendientes; tratamiento existente sin imagen.",
+    "reference": "Promoción anterior de dos frappés por Bs 46 aportada por JAKAWI, no verificada ni presentada como vigente."
+  },
+  "suss-cafe": {
+    "decision": "CONFIRMED BY JAKAWI",
+    "price_per_person_bob": 65,
+    "currency": "BOB",
+    "minimum_people": 1,
+    "editorial_cta": "QUIERO MI DESAYUNO",
+    "objective": "Atraer primeras visitas, promover consumo de desayunos y fomentar visitas recurrentes.",
+    "pending_operations": "Confirmar si la carta realmente ofrece las opciones de desayuno propuestas, productos elegibles y horarios.",
+    "visual_pending": "Fotografía oficial autorizada y logo pendientes; tratamiento existente sin imagen.",
+    "reference": null
+  },
+  "le-petit-brunch-bakery": {
+    "decision": "CONFIRMED BY JAKAWI",
+    "price_per_person_bob": 85,
+    "currency": "BOB",
+    "minimum_people": 1,
+    "editorial_cta": "QUIERO MI BRUNCH",
+    "objective": "Crear una propuesta empaquetada previsible y favorecer la degustación cruzada de productos.",
+    "pending_operations": "Platos elegibles, bebidas, mini dulces, horarios y días de utilización.",
+    "visual_pending": "Fotografía oficial autorizada y logo pendientes; tratamiento existente sin imagen.",
+    "reference": null
+  }
+}

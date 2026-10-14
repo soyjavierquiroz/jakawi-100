@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "review": "Visual inspection of all six Partners using mobile or desktop screenshots; all twelve widths also checked in Chromium. Native text-only media treatment, readable hero/price/conditions, disabled CTA, no image claims.",
+  "screenshots": {
+    "lattente": [
+      "lattente/preview-390.png",
+      "lattente/preview-1440.png"
+    ],
+    "mishin-cafe": [
+      "mishin-cafe/preview-390.png",
+      "mishin-cafe/preview-1440.png"
+    ],
+    "koa-cafe": [
+      "koa-cafe/preview-390.png",
+      "koa-cafe/preview-1440.png"
+    ],
+    "lemon-sabor-fusion": [
+      "lemon-sabor-fusion/preview-390.png",
+      "lemon-sabor-fusion/preview-1440.png"
+    ],
+    "suss-cafe": [
+      "suss-cafe/preview-390.png",
+      "suss-cafe/preview-1440.png"
+    ],
+    "le-petit-brunch-bakery": [
+      "le-petit-brunch-bakery/preview-390.png",
+      "le-petit-brunch-bakery/preview-1440.png"
+    ]
+  }
+}

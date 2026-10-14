@@ -1,0 +1,13 @@
+{
+  "path": "/root/backups/jakawi/catalog-batch-cafeterias-20261014/before.dump",
+  "sha256": "000ba0fb2dbe6a19a01ca82c574797c417dabca643c95e833abd7832ae57ef84",
+  "bytes": 298776,
+  "pg_restore_list": "PASS",
+  "use": "Disaster recovery only; limited rollback uses exact created IDs.",
+  "before_privacy_release": {
+    "path": "/root/backups/jakawi/catalog-batch-cafeterias-20261014/before-privacy-release.dump",
+    "sha256": "6f91216e9f710c1f1b2bb4d7ee9c6a7e7110c09b52399e2995d2a32170f975e4",
+    "bytes": 305289,
+    "pg_restore_list": "PASS"
+  }
+}

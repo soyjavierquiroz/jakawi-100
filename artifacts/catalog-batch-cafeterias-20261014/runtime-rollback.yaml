@@ -1,0 +1,7 @@
+services:
+  app:
+    image: jakawi-experiences-v2-app:effd76e
+  web:
+    image: jakawi-experiences-v2-web:effd76e
+  social-worker:
+    image: jakawi-experiences-v2-app:effd76e

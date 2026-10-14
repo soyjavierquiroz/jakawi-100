@@ -1,0 +1,59 @@
+{
+    "status": "PASS",
+    "checks": [
+        {
+            "key": "lattente",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        },
+        {
+            "key": "mishin-cafe",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        },
+        {
+            "key": "koa-cafe",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        },
+        {
+            "key": "lemon-sabor-fusion",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        },
+        {
+            "key": "suss-cafe",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        },
+        {
+            "key": "le-petit-brunch-bakery",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        }
+    ]
+}

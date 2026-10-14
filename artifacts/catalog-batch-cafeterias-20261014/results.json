@@ -1,0 +1,292 @@
+[
+    {
+        "key": "lattente",
+        "name": "Coffee Shop Lattente",
+        "domain": "Benefit",
+        "partner_id": 6,
+        "location_id": 5,
+        "product_id": 4,
+        "landing_id": 6,
+        "title": "La pausa que mereces.",
+        "price_bob": 55,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/beneficios/lattente-la-pausa-que-mereces/landings/lattente-la-pausa-que-mereces/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Benefit",
+            "title": "La pausa que mereces.",
+            "partner": "Coffee Shop Lattente",
+            "summary": "Una pausa de café con algo dulce para disfrutar el momento.",
+            "description": "Una pausa de café con algo dulce para disfrutar el momento.\n\nIncluye propuesto, pendiente de verificación física: Una bebida elegible del menú; una porción dulce seleccionada; posibilidad de upgrade de bebida con modalidad y posible diferencia de precio pendientes. El upgrade no se ofrece como gratuito.\n\nPrecio comercial JAKAWI: Bs 55 por persona (BOB).\n\nLugar de referencia: Av. América 763, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+            "demo": false,
+            "commercial_truth": {
+                "benefit_type": "other",
+                "value": {
+                    "description": "La pausa que mereces."
+                },
+                "membership_required": false,
+                "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+                "available": false,
+                "validity": {
+                    "ends_at": "2026-11-30T23:59:59-04:00",
+                    "timezone": "America/La_Paz"
+                },
+                "usage_limit": {
+                    "redemptions_per_member": 1
+                },
+                "requirements": [
+                    "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+                ],
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 55 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. El límite se aplicará mediante el canje verificado existente sólo tras activar y comprobar la operación; actualmente no hay canje habilitado. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: Coffee Shop Lattente, Av. América 763, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Bebidas elegibles, dulces disponibles, condiciones del upgrade y aporte comercial por unidad."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    },
+    {
+        "key": "mishin-cafe",
+        "name": "MISHIN.café",
+        "domain": "Experience",
+        "partner_id": 7,
+        "location_id": 6,
+        "product_id": 2,
+        "landing_id": 7,
+        "title": "Michi & Café.",
+        "price_bob": 65,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/experiencias/mishin-cafe-michi-y-cafe/landings/mishin-cafe-michi-y-cafe/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Experience",
+            "title": "Michi & Café.",
+            "partner": "MISHIN.café",
+            "summary": "Una visita diferente para disfrutar una bebida, algo dulce y conocer una iniciativa vinculada al cuidado de gatos rescatados.",
+            "description": "Una visita diferente para disfrutar una bebida, algo dulce y conocer una iniciativa vinculada al cuidado de gatos rescatados.\n\nIncluye propuesto, pendiente de verificación física: Una bebida elegible; un postre seleccionado; convivencia responsable sujeta a las condiciones reales del establecimiento. Posibilidad de aporte voluntario independiente del precio, únicamente mediante un mecanismo acordado.\n\nPrecio comercial JAKAWI: Bs 65 por persona (BOB).\n\nLugar de referencia: Calle Colombia, entre José Pol y Belzu, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada. No se promete contacto físico con gatos ni su presencia, disponibilidad o interacción. Los animales no forman parte obligatoria de una actividad. Ninguna parte de los Bs 65 se dona automáticamente. El aporte voluntario es independiente del precio y requiere un mecanismo acordado.",
+            "commercial_truth": {
+                "experience_type": "social",
+                "prices": {
+                    "currency": "BOB",
+                    "regular_price": "65.00"
+                },
+                "reservation_mode": "informational",
+                "available_sessions": 0,
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 65 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. Límite por cuenta y vigencia requieren instrumentación y control del Partner; no están automatizados en el flujo externo. Actualmente no hay sesiones ni reservas habilitadas. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: MISHIN.café, Calle Colombia, entre José Pol y Belzu, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Aforo, convivencia, bienestar animal, zonas habilitadas, disponibilidad, reservas y mecanismo de aporte voluntario. No se promete contacto físico con gatos ni su presencia, disponibilidad o interacción. Los animales no forman parte obligatoria de una actividad. Ninguna parte de los Bs 65 se dona automáticamente. El aporte voluntario es independiente del precio y requiere un mecanismo acordado."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    },
+    {
+        "key": "koa-cafe",
+        "name": "KOA Café",
+        "domain": "Experience",
+        "partner_id": 8,
+        "location_id": 7,
+        "product_id": 3,
+        "landing_id": 8,
+        "title": "Café de origen.",
+        "price_bob": 85,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/experiencias/koa-cafe-cafe-de-origen/landings/koa-cafe-cafe-de-origen/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Experience",
+            "title": "Café de origen.",
+            "partner": "KOA Café",
+            "summary": "Descubrir cómo una preparación puede transformar la manera de apreciar el café.",
+            "description": "Descubrir cómo una preparación puede transformar la manera de apreciar el café.\n\nIncluye propuesto, pendiente de verificación física: Microdemostración guiada de preparación; degustación de café boliviano; mini degustación de repostería.\n\nPrecio comercial JAKAWI: Bs 85 por persona (BOB).\n\nLugar de referencia: Calle Potosí 1161, entre Aniceto Padilla y Av. Uyuni, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+            "commercial_truth": {
+                "experience_type": "tasting",
+                "prices": {
+                    "currency": "BOB",
+                    "regular_price": "85.00"
+                },
+                "reservation_mode": "informational",
+                "available_sessions": 0,
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 85 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. Límite por cuenta y vigencia requieren instrumentación y control del Partner; no están automatizados en el flujo externo. Actualmente no hay sesiones ni reservas habilitadas. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: KOA Café, Calle Potosí 1161, entre Aniceto Padilla y Av. Uyuni, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Disponibilidad de barista, método de preparación, café elegible, repostería, duración, capacidad y horarios."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    },
+    {
+        "key": "lemon-sabor-fusion",
+        "name": "Lemon Sabor Fusión",
+        "domain": "Benefit",
+        "partner_id": 9,
+        "location_id": 8,
+        "product_id": 5,
+        "landing_id": 9,
+        "title": "Viernes sin excusas.",
+        "price_bob": 35,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/beneficios/lemon-sabor-fusion-viernes-sin-excusas/landings/lemon-sabor-fusion-viernes-sin-excusas/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Benefit",
+            "title": "Viernes sin excusas.",
+            "partner": "Lemon Sabor Fusión",
+            "summary": "Dos frappés y algo para compartir. Un plan sencillo para romper la rutina.",
+            "description": "Dos frappés y algo para compartir. Un plan sencillo para romper la rutina.\n\nIncluye propuesto, pendiente de verificación física: Para dos personas: dos frappés elegibles y un postre o acompañamiento pequeño compartido.\n\nPrecio comercial JAKAWI: Bs 35 por persona (BOB). Compra mínima: dos personas. Total Bs 70 por la propuesta completa. Día objetivo: viernes; días aplicables y horarios pendientes de confirmación.\n\nLugar de referencia: Batallón Colorados 1435, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+            "demo": false,
+            "commercial_truth": {
+                "benefit_type": "other",
+                "value": {
+                    "description": "Viernes sin excusas."
+                },
+                "membership_required": false,
+                "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+                "available": false,
+                "validity": {
+                    "ends_at": "2026-11-30T23:59:59-04:00",
+                    "timezone": "America/La_Paz"
+                },
+                "usage_limit": {
+                    "redemptions_per_member": 1
+                },
+                "requirements": [
+                    "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+                ],
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 35 por persona (BOB). Compra mínima: dos personas. Total Bs 70 por la propuesta completa. Día objetivo: viernes; días aplicables y horarios pendientes de confirmación. No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. El límite se aplicará mediante el canje verificado existente sólo tras activar y comprobar la operación; actualmente no hay canje habilitado. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: Lemon Sabor Fusión, Batallón Colorados 1435, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Tipos de frappé elegibles, postre o acompañamiento, horarios, días aplicables y disponibilidad real."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    },
+    {
+        "key": "suss-cafe",
+        "name": "SÜSS Café",
+        "domain": "Benefit",
+        "partner_id": 10,
+        "location_id": 9,
+        "product_id": 6,
+        "landing_id": 10,
+        "title": "Desayuno en El Pueblito.",
+        "price_bob": 65,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/beneficios/suss-cafe-desayuno-en-el-pueblito/landings/suss-cafe-desayuno-en-el-pueblito/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Benefit",
+            "title": "Desayuno en El Pueblito.",
+            "partner": "SÜSS Café",
+            "summary": "Una pausa de desayuno en un rincón característico de Cochabamba.",
+            "description": "Una pausa de desayuno en un rincón característico de Cochabamba.\n\nIncluye propuesto, pendiente de verificación física: Una bebida caliente elegible; una tostada o sándwich disponible; un pequeño bocado dulce. Oferta propuesta sujeta a verificar que estas opciones existan en la carta.\n\nPrecio comercial JAKAWI: Bs 65 por persona (BOB).\n\nLugar de referencia: Mariano Melgarejo 1780, Plazita del Pueblito, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+            "demo": false,
+            "commercial_truth": {
+                "benefit_type": "other",
+                "value": {
+                    "description": "Desayuno en El Pueblito."
+                },
+                "membership_required": false,
+                "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+                "available": false,
+                "validity": {
+                    "ends_at": "2026-11-30T23:59:59-04:00",
+                    "timezone": "America/La_Paz"
+                },
+                "usage_limit": {
+                    "redemptions_per_member": 1
+                },
+                "requirements": [
+                    "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+                ],
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 65 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. El límite se aplicará mediante el canje verificado existente sólo tras activar y comprobar la operación; actualmente no hay canje habilitado. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: SÜSS Café, Mariano Melgarejo 1780, Plazita del Pueblito, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Confirmar si la carta realmente ofrece las opciones de desayuno propuestas, productos elegibles y horarios."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    },
+    {
+        "key": "le-petit-brunch-bakery",
+        "name": "Le Petit Brunch & Bakery",
+        "domain": "Benefit",
+        "partner_id": 11,
+        "location_id": 10,
+        "product_id": 7,
+        "landing_id": 11,
+        "title": "Brunch a tu ritmo.",
+        "price_bob": 85,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/beneficios/le-petit-brunch-bakery-brunch-a-tu-ritmo/landings/le-petit-brunch-bakery-brunch-a-tu-ritmo/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Benefit",
+            "title": "Brunch a tu ritmo.",
+            "partner": "Le Petit Brunch & Bakery",
+            "summary": "Un momento para disfrutar un brunch sin prisas, combinando algo salado, una bebida y un detalle dulce.",
+            "description": "Un momento para disfrutar un brunch sin prisas, combinando algo salado, una bebida y un detalle dulce.\n\nIncluye propuesto, pendiente de verificación física: Un plato salado ligero elegible; una bebida elegible; una mini porción dulce de bakery.\n\nPrecio comercial JAKAWI: Bs 85 por persona (BOB).\n\nLugar de referencia: Juan Capriles, entre Av. Santa Cruz y Pasaje Asbun, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+            "demo": false,
+            "commercial_truth": {
+                "benefit_type": "other",
+                "value": {
+                    "description": "Brunch a tu ritmo."
+                },
+                "membership_required": false,
+                "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+                "available": false,
+                "validity": {
+                    "ends_at": "2026-11-30T23:59:59-04:00",
+                    "timezone": "America/La_Paz"
+                },
+                "usage_limit": {
+                    "redemptions_per_member": 1
+                },
+                "requirements": [
+                    "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+                ],
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 85 por persona (BOB). No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. El límite se aplicará mediante el canje verificado existente sólo tras activar y comprobar la operación; actualmente no hay canje habilitado. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: Le Petit Brunch & Bakery, Juan Capriles, entre Av. Santa Cruz y Pasaje Asbun, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Platos elegibles, bebidas, mini dulces, horarios y días de utilización."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    }
+]

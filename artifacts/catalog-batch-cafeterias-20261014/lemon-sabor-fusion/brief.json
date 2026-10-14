@@ -1,0 +1,37 @@
+{
+    "brief_version": "jakawi-product-brief-v1",
+    "domain": "Benefit",
+    "title": "Viernes sin excusas.",
+    "partner": "Lemon Sabor Fusión",
+    "summary": "Dos frappés y algo para compartir. Un plan sencillo para romper la rutina.",
+    "description": "Dos frappés y algo para compartir. Un plan sencillo para romper la rutina.\n\nIncluye propuesto, pendiente de verificación física: Para dos personas: dos frappés elegibles y un postre o acompañamiento pequeño compartido.\n\nPrecio comercial JAKAWI: Bs 35 por persona (BOB). Compra mínima: dos personas. Total Bs 70 por la propuesta completa. Día objetivo: viernes; días aplicables y horarios pendientes de confirmación.\n\nLugar de referencia: Batallón Colorados 1435, Cochabamba.\n\nPre-lanzamiento: propuesta comercial privada, sin disponibilidad confirmada.",
+    "demo": false,
+    "commercial_truth": {
+        "benefit_type": "other",
+        "value": {
+            "description": "Viernes sin excusas."
+        },
+        "membership_required": false,
+        "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+        "available": false,
+        "validity": {
+            "ends_at": "2026-11-30T23:59:59-04:00",
+            "timezone": "America/La_Paz"
+        },
+        "usage_limit": {
+            "redemptions_per_member": 1
+        },
+        "requirements": [
+            "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+        ],
+        "conditions": [
+            "Precio comercial JAKAWI: Bs 35 por persona (BOB). Compra mínima: dos personas. Total Bs 70 por la propuesta completa. Día objetivo: viernes; días aplicables y horarios pendientes de confirmación. No representa un precio habitual externo ni un descuento. Cuenta JAKAWI; sin membresía de pago ni tarifa especial de miembros. Pago directo al Partner sólo cuando se active operativamente; JAKAWI no cobra este importe. Vigencia comercial propuesta: hasta el 30 de noviembre de 2026, 23:59 hora de Bolivia; no confirma disponibilidad ni fecha de consumo. Un uso por cuenta. El límite se aplicará mediante el canje verificado existente sólo tras activar y comprobar la operación; actualmente no hay canje habilitado. Propuesta privada en preparación comercial. No habilita pago, reserva ni canje. Lugar de referencia: Lemon Sabor Fusión, Batallón Colorados 1435, Cochabamba. No constituye autorización física ni lugar de ejecución confirmado. Pendientes operativos: Tipos de frappé elegibles, postre o acompañamiento, horarios, días aplicables y disponibilidad real."
+        ]
+    },
+    "marketing_context": {
+        "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+        "landing_language": "es",
+        "city_first": true
+    },
+    "city": "Cochabamba"
+}

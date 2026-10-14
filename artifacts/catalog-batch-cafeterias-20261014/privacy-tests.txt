@@ -1,0 +1,201 @@
+ Image jakawi-app-test Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 526B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.73kB 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 ...
+
+#4 [internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#4 DONE 0.3s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 DONE 0.3s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 278B done
+#5 DONE 0.0s
+
+#6 [php-base 1/5] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#6 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.0s done
+#6 DONE 0.0s
+
+#7 FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#7 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 224.04kB 0.2s done
+#8 DONE 0.2s
+
+#9 [php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#9 CACHED
+
+#10 [php-base 5/5] WORKDIR /var/www/html
+#10 CACHED
+
+#11 [test 1/5] COPY app/composer.json app/composer.lock* ./
+#11 CACHED
+
+#12 [php-base 2/5] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libjpeg62-turbo-dev         libpng-dev         libwebp-dev         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-configure gd --with-jpeg --with-webp     && docker-php-ext-install         gd         exif         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#12 CACHED
+
+#13 [php-base 3/5] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#13 CACHED
+
+#14 [test 2/5] RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#14 CACHED
+
+#15 [test 3/5] COPY --chown=www-data:www-data app/ ./
+#15 DONE 0.8s
+
+#16 [test 4/5] RUN cp .env.example .env     && composer dump-autoload --optimize
+#16 1.067 Generating optimized autoload files
+#16 6.859 > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+#16 6.889 > @php artisan package:discover --ansi
+#16 7.133
+#16 7.133    INFO  Discovering packages.
+#16 7.133
+#16 7.138   inertiajs/inertia-laravel ............................................. DONE
+#16 7.140   laravel/fortify ....................................................... DONE
+#16 7.141   laravel/pail .......................................................... DONE
+#16 7.142   laravel/pao ........................................................... DONE
+#16 7.143   laravel/passkeys ...................................................... DONE
+#16 7.143   laravel/sail .......................................................... DONE
+#16 7.144   laravel/tinker ........................................................ DONE
+#16 7.145   laravel/wayfinder ..................................................... DONE
+#16 7.146   nesbot/carbon ......................................................... DONE
+#16 7.147   nunomaduro/collision .................................................. DONE
+#16 7.148   nunomaduro/termwind ................................................... DONE
+#16 7.149
+#16 7.159 Generated optimized autoload files containing 10189 classes
+#16 DONE 7.3s
+
+#17 [test 5/5] RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && touch .phpunit.result.cache     && chown www-data:www-data .phpunit.result.cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#17 DONE 0.5s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 1.4s done
+#18 exporting manifest sha256:8c021a38224cdd52da469c9c5c5e9f1b240c772bc1f00dda57b9bada88e3f2a3
+#18 exporting manifest sha256:8c021a38224cdd52da469c9c5c5e9f1b240c772bc1f00dda57b9bada88e3f2a3 0.0s done
+#18 exporting config sha256:1f3bf49451e62d0e837b5c9b89480a5cab3634483ac4767ad8a9b53a53c0d280 0.0s done
+#18 exporting attestation manifest sha256:e1dc5b39cd401d56096d95155a58343f274e2e61b116d5eaabce4b601faf597c 0.0s done
+#18 exporting manifest list sha256:ee2d4926d1d60feed691440c4f3e7d85ec14cb23fa094c9279ef7b14161e3649 0.0s done
+#18 naming to docker.io/library/jakawi-app-test:latest done
+#18 unpacking to docker.io/library/jakawi-app-test:latest
+#18 unpacking to docker.io/library/jakawi-app-test:latest 0.5s done
+#18 DONE 2.0s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
+ Image jakawi-app-test Built
+ Container jakawi-test-db-test-1 Running
+ Container jakawi-test-app-test-1 Recreate
+ Container jakawi-test-app-test-1 Recreated
+ Container jakawi-test-db-test-1 Waiting
+ Container jakawi-test-db-test-1 Healthy
+ Container jakawi-test-app-test-1 Starting
+ Container jakawi-test-app-test-1 Started
+
+  Dropping all tables .......................................... 459.17ms DONE
+
+   INFO  Preparing database.
+
+  Creating migration table ...................................... 26.07ms DONE
+
+   INFO  Running migrations.
+
+  0001_01_01_000000_create_users_table .......................... 40.77ms DONE
+  0001_01_01_000001_create_cache_table .......................... 25.13ms DONE
+  0001_01_01_000002_create_jobs_table ........................... 45.21ms DONE
+  2024_01_01_000000_create_passkeys_table ....................... 30.23ms DONE
+  2025_08_14_170933_add_two_factor_columns_to_users_table ........ 2.28ms DONE
+  2026_09_21_000001_add_is_admin_to_users_table .................. 1.77ms DONE
+  2026_09_21_000004_create_memberships_table .................... 22.30ms DONE
+  2026_09_22_000001_create_partners_table ....................... 15.59ms DONE
+  2026_09_22_000002_create_locations_table ...................... 21.14ms DONE
+  2026_09_22_000003_create_benefits_table ....................... 17.49ms DONE
+  2026_09_22_000004_create_benefit_location_table ................ 8.62ms DONE
+  2026_09_22_000005_create_redemptions_table .................... 43.30ms DONE
+  2026_09_22_000006_create_experiences_table .................... 17.08ms DONE
+  2026_09_22_000007_create_experience_partner_table ............. 10.68ms DONE
+  2026_09_22_000008_create_experience_sessions_table ............ 21.87ms DONE
+  2026_09_22_000009_create_analytics_events_table ............... 46.50ms DONE
+  2026_09_23_000001_create_partner_user_table ................... 17.28ms DONE
+  2026_09_23_000002_add_internal_experience_reservations ........ 32.07ms DONE
+  2026_09_23_000003_add_party_size_to_experience_reservations .... 1.67ms DONE
+  2026_09_23_000004_add_check_in_to_experience_reservations ..... 10.44ms DONE
+  2026_09_24_000001_add_content_review_metadata ................. 29.37ms DONE
+  2026_09_24_000005_create_user_profiles_table .................. 19.72ms DONE
+  2026_09_25_000001_add_theme_preference_to_users_table .......... 2.29ms DONE
+  2026_09_26_000001_add_referral_code_to_users_table ............. 6.49ms DONE
+  2026_09_26_000002_create_attribution_foundation_tables ....... 124.49ms DONE
+  2026_09_26_000003_create_manual_membership_sales_tables ...... 114.20ms DONE
+  2026_09_26_000004_create_reward_payouts_tables ................ 43.01ms DONE
+  2026_09_26_000008_add_partner_acquisition_attribution ......... 25.96ms DONE
+  2026_09_26_000009_add_generic_reward_beneficiaries ............ 18.49ms DONE
+  2026_09_26_000010_create_campaigns ............................ 56.01ms DONE
+  2026_09_26_000011_create_operational_adjustments_table ........ 33.55ms DONE
+  2026_09_27_000012_add_requested_by_to_reward_payouts ........... 7.25ms DONE
+  2026_09_27_000013_create_unlocks_tables ....................... 69.52ms DONE
+  2026_09_27_000014_add_unlock_to_analytics_events ............... 8.50ms DONE
+  2026_09_27_000015_create_jp_holds_table ....................... 20.52ms DONE
+  2026_09_27_000016_add_unlock_fulfillment_lifecycle ............ 23.39ms DONE
+  2026_09_27_000017_add_unlock_growth_context ................... 13.85ms DONE
+  2026_09_30_000001_create_cities_table ......................... 15.78ms DONE
+  2026_10_01_000001_add_city_id_to_locations_and_seed_canonical_cities  10.79ms DONE
+  2026_10_02_000001_create_city_interests_table ................. 32.02ms DONE
+  2026_10_03_000001_create_partner_applications_table ........... 31.06ms DONE
+  2026_10_05_000001_add_whatsapp_to_user_profiles ................ 2.21ms DONE
+  2026_10_05_000001_create_program_applications_table ........... 20.10ms DONE
+  2026_10_06_000001_create_ownership_assignments_table .......... 20.81ms DONE
+  2026_10_06_000002_add_public_journey_attribution_to_touches .... 5.85ms DONE
+  2026_10_07_000001_create_membership_purchase_requests ......... 28.91ms DONE
+  2026_10_07_000002_create_social_challenges .................... 92.06ms DONE
+  2026_10_07_000003_add_jp_ledger_references .................... 22.61ms DONE
+  2026_10_07_000004_add_social_challenge_jp_rewards ............. 10.02ms DONE
+  2026_10_07_000005_generalize_challenges ....................... 64.58ms DONE
+  2026_10_07_000006_challenge_product_experience ................ 10.47ms DONE
+  2026_10_08_000001_create_landing_presentations ................ 16.18ms DONE
+  2026_10_08_000002_add_challenge_marketing_editorial ............ 4.96ms DONE
+  2026_10_08_000003_add_landing_default_scope ................... 10.07ms DONE
+  2026_10_09_000001_extend_analytics_events_for_growth .......... 33.27ms DONE
+  2026_10_09_000002_add_acquisition_provider ..................... 8.22ms DONE
+  2026_10_09_000003_create_growth_provider_deliveries ........... 21.11ms DONE
+  2026_10_09_180000_create_crm_foundation ....................... 30.56ms DONE
+  2026_10_11_000001_add_vsl_to_landing_presentations ............. 1.26ms DONE
+  2026_10_12_000001_add_offer_presentation_settings ............. 14.28ms DONE
+  2026_10_12_000002_add_offer_layout_controls .................... 2.25ms DONE
+  2026_10_12_000003_add_acquisition_copy_to_landing_presentations  2.26ms DONE
+  2026_10_14_000001_add_gallery_paths_to_partners ................ 1.19ms DONE
+  2026_10_14_000002_add_experience_catalog_controls .............. 2.89ms DONE
+
+
+   PASS  Tests\Feature\BenefitAuthenticatedAccessTest
+  ✓ public non member is denied at controller and service                2.40s
+  ✓ members can redeem both ordinary modes                               0.20s
+  ✓ free account owned delivery pin idempotency and limit                0.24s
+  ✓ missing pin and foreign location remain blocked                      0.08s
+  ✓ guest partner landing signup activation and delivery preserve acqui… 0.45s
+  ✓ admin accepts authenticated and rejects unknown access mode          0.09s
+
+   PASS  Tests\Feature\BenefitDraftPrivacyTest
+  ✓ draft native and published landing never expose commercial copy      0.12s
+  ✓ draft admin preview survives and guests cannot enter                 0.09s
+
+   PASS  Tests\Feature\BenefitMarketingLandingTest
+  ✓ renderer real value partner places conditions contextual faq and at… 0.11s
+  ✓ editorial overrides never replace the offer and hero fallback        0.13s
+  ✓ member membership expired unavailable and redeemed states            0.23s
+  ✓ social challenge offer is not public even with published all landin… 0.12s
+  ✓ entitled challenge winner gets existing reward path without members… 0.13s
+  ✓ audience navigation one item direct native and seo                   0.41s
+  ✓ admin reuses management create edit preview publish defaults and ar… 0.28s
+
+  Tests:    15 passed (493 assertions)
+  Duration: 5.61s

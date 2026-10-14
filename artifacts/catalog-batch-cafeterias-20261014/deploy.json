@@ -1,0 +1,15 @@
+{
+  "sha": "df8f543af38664c168d4465aca9d0099e5c3631c",
+  "status": "PASS",
+  "migrations": 0,
+  "rollbackExecuted": false,
+  "candidateReadOnly": "PASS",
+  "types": "PASS",
+  "build": "PASS",
+  "assetGuard": "PASS",
+  "envUnchanged": true,
+  "unrelatedContainersUnchanged": true,
+  "artifactsPreserved": true,
+  "appImage": "sha256:01c40f0ea937b4a64e0443015af401cb62cde347726f907b40584ef7681c0f49",
+  "webImage": "sha256:8ed6105c7ebd31fd124c53e46fa90151bc24b596cceec0ac4c598570591ca25b"
+}

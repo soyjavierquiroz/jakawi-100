@@ -1,0 +1,33 @@
+{
+  "schema_version": "jakawi-landing-v1",
+  "subject_hint": "Café de origen.",
+  "internal_name": "KOA Café — Café de origen.",
+  "slug": "koa-cafe-cafe-de-origen",
+  "template": "OFFER_CONVERSION",
+  "presentation": {
+    "theme": "LIGHT_CONVERSION",
+    "hero_layout": "OFFER_FIRST",
+    "density": "STANDARD"
+  },
+  "hero": {
+    "eyebrow": "KOA Café · COCHABAMBA",
+    "headline": "No es solo café. Es todo lo que hay detrás de cada taza.",
+    "headline_emphasis": "",
+    "supporting_copy": "Descubre aromas, preparación y sabores en una experiencia de café de especialidad."
+  },
+  "value": {
+    "supporting_copy": "Precio comercial JAKAWI: Bs 85 por persona (BOB)."
+  },
+  "acquisition": {
+    "headline": "Tu cuenta para descubrir Cochabamba",
+    "supporting_copy": "Propuesta en preparación. El acceso comercial previsto no exige membresía de pago."
+  },
+  "closing": {
+    "headline": "QUIERO DESCUBRIRLO",
+    "supporting_copy": "CTA editorial preparado. Pre-lanzamiento privado: sin reservas, pagos ni canjes disponibles. Disponibilidad de barista, método de preparación, café elegible, repostería, duración, capacidad y horarios."
+  },
+  "media": {
+    "mode": "NONE",
+    "alt": ""
+  }
+}

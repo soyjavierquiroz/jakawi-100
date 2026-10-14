@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "key": "lattente",
+      "brief": "PASS",
+      "landing": "PASS"
+    },
+    {
+      "key": "mishin-cafe",
+      "brief": "PASS",
+      "landing": "PASS"
+    },
+    {
+      "key": "koa-cafe",
+      "brief": "PASS",
+      "landing": "PASS"
+    },
+    {
+      "key": "lemon-sabor-fusion",
+      "brief": "PASS",
+      "landing": "PASS"
+    },
+    {
+      "key": "suss-cafe",
+      "brief": "PASS",
+      "landing": "PASS"
+    },
+    {
+      "key": "le-petit-brunch-bakery",
+      "brief": "PASS",
+      "landing": "PASS"
+    }
+  ]
+}

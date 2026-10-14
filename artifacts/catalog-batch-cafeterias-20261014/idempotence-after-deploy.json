@@ -1,0 +1,50 @@
+[
+    {
+        "key": "lattente",
+        "partner_id": 6,
+        "location_id": 5,
+        "product_id": 4,
+        "landing_id": 6,
+        "action": "verified-existing"
+    },
+    {
+        "key": "mishin-cafe",
+        "partner_id": 7,
+        "location_id": 6,
+        "product_id": 2,
+        "landing_id": 7,
+        "action": "verified-existing"
+    },
+    {
+        "key": "koa-cafe",
+        "partner_id": 8,
+        "location_id": 7,
+        "product_id": 3,
+        "landing_id": 8,
+        "action": "verified-existing"
+    },
+    {
+        "key": "lemon-sabor-fusion",
+        "partner_id": 9,
+        "location_id": 8,
+        "product_id": 5,
+        "landing_id": 9,
+        "action": "verified-existing"
+    },
+    {
+        "key": "suss-cafe",
+        "partner_id": 10,
+        "location_id": 9,
+        "product_id": 6,
+        "landing_id": 10,
+        "action": "verified-existing"
+    },
+    {
+        "key": "le-petit-brunch-bakery",
+        "partner_id": 11,
+        "location_id": 10,
+        "product_id": 7,
+        "landing_id": 11,
+        "action": "verified-existing"
+    }
+]

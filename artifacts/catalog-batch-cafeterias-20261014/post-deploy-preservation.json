@@ -1,0 +1,22 @@
+{
+  "status": "PASS_WITH_CONCURRENT_CHANGE",
+  "batch_rows_unchanged": true,
+  "prelaunch_unchanged": true,
+  "differences": [
+    {
+      "table": "benefits",
+      "id": 1,
+      "field": "short_description",
+      "before": "Una bebida de cafetería disponible + un acompañamiento dulce o salado disponible del día por Bs 35. Pago directo en Dossis 43.",
+      "after": "Una bebida de cafetería + un acompañamiento dulce o salado por Bs 35."
+    },
+    {
+      "table": "benefits",
+      "id": 1,
+      "field": "updated_at",
+      "before": "2026-10-14 11:09:08",
+      "after": "2026-10-14 23:52:24"
+    }
+  ],
+  "handling": "Preserved current value. No batch script updates Benefit 1; browser blocked all non-GET product mutations. Origin not independently established."
+}
