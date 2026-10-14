@@ -24,7 +24,7 @@ class PartnerChallengeController extends Controller {
         $this->authorizePartner($request,$partner);
         if ($challenge) $this->own($partner,$challenge);
         return Inertia::render('partner/challenges/form',['partner'=>$partner->only('id','name','slug'),'challenge'=>$challenge,
-            'heroUrl'=>$challenge ? app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero') : null,
+            'heroUrl'=>$challenge ? app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'thumbnail') : null,
             'cities'=>City::orderBy('name')->get(['id','name']),
             'benefits'=>Benefit::where('partner_id',$partner->id)->where('access_mode','social_challenge_grant')->get(['id','title'])]);
     }
@@ -47,7 +47,7 @@ class PartnerChallengeController extends Controller {
     }
     public function preview(Request $request, Partner $partner, Challenge $challenge) {
         $this->authorizePartner($request,$partner); $this->own($partner,$challenge);
-        return Inertia::render('social-challenges/show',['challenge'=>$challenge,'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null,'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'preview'=>true,'verificationUrl'=>route('verification.notice')]);
+        return Inertia::render('social-challenges/show',['challenge'=>$challenge,'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null,'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'),'heroSrcset'=>app(\App\Services\MediaUrl::class)->srcset($challenge->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'preview'=>true,'verificationUrl'=>route('verification.notice')]);
     }
     public function image(Request $request, Partner $partner, Challenge $challenge) {
         $this->authorizePartner($request,$partner); $this->own($partner,$challenge);

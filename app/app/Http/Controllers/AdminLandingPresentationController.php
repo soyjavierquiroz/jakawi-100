@@ -33,7 +33,7 @@ class AdminLandingPresentationController extends Controller
             'autoCreate' => $request->boolean('create'),
             'baseUrl' => $subject ? $this->baseUrl($subject) : '/admin/landings',
             'productUrl' => ! $subject ? '/admin' : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug))),
-            'presentations' => $subject ? $subject->landingPresentations()->orderBy('id')->get()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(\App\Services\MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'hero')]) : [],
+            'presentations' => $subject ? $subject->landingPresentations()->orderBy('id')->get()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(\App\Services\MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
         ]);
     }
 
@@ -75,7 +75,7 @@ class AdminLandingPresentationController extends Controller
             'headline' => ['nullable', 'string', 'max:180', $plain],
             'headline_emphasis' => ['nullable', 'string', 'max:180', $plain],
             'subheadline' => ['nullable', 'string', 'max:1000', $plain],
-            'hero_path' => ['nullable', 'string', 'max:2048'], 'hero_alt' => ['nullable', 'string', 'max:255', $plain],
+            'hero_path' => ['nullable', 'string', 'max:2048', function ($attribute, $value, $fail) use ($presentation, $target) { if ($value && $value !== $presentation?->hero_path && $value !== ($target->hero_path ?? $target->cover_path ?? $target->image_path ?? null)) $fail('Selecciona una imagen desde tu dispositivo.'); }], 'hero_alt' => ['nullable', 'string', 'max:255', $plain],
             'reward_display_override' => ['nullable', 'string', 'max:180', $plain],
             'final_cta_headline' => ['nullable', 'string', 'max:180', $plain],
             'final_cta_description' => ['nullable', 'string', 'max:1000', $plain],
@@ -128,6 +128,8 @@ class AdminLandingPresentationController extends Controller
             'marketing_theme' => 'Theme', 'media_mode' => 'Media', 'default_scope' => 'Audiencia al publicar',
             'subject_type' => 'Tipo de producto', 'subject_id' => 'Producto', 'vsl' => 'Video', 'vsl.*' => 'Configuración de video',
         ]);
+        $request->validate(['hero' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:10240']]);
+        if ($offer && $request->boolean('hero_remove') && ! $request->filled('hero_upload') && ! $request->hasFile('hero')) $data['media_mode'] = 'NONE';
         // Project the candidate through the same presenter used by preview.
         $candidate = $presentation ? clone $presentation : new LandingPresentation;
         $candidate->fill($data + ['editorial_version' => 1]);
@@ -151,7 +153,7 @@ class AdminLandingPresentationController extends Controller
             if ($data['media_mode'] === 'VSL' && ! (array_key_exists('vsl', $data) ? $data['vsl'] : $presentation?->vsl)) {
                 throw ValidationException::withMessages(['vsl' => 'Configura el video antes de seleccionarlo.']);
             }
-            $changed = ! $presentation || $target->getMorphClass() !== $presentation->subject_type || $target->id !== $presentation->subject_id;
+            $changed = $request->filled('hero_upload') || $request->hasFile('hero') || $request->boolean('hero_remove') || ! $presentation || $target->getMorphClass() !== $presentation->subject_type || $target->id !== $presentation->subject_id;
             foreach ($editor::EDITORIAL as $field) {
                 if (array_key_exists($field, $data) && $data[$field] !== $presentation?->$field) {
                     $changed = true;
@@ -160,7 +162,7 @@ class AdminLandingPresentationController extends Controller
             $data['editorial_version'] = $changed ? 1 : ($presentation?->editorial_version ?? 1);
         }
         $data['publish_scope'] = $scope;
-        DB::transaction(function () use ($subject, $target, $presentation, $data, $scope) {
+        DB::transaction(function () use ($request, $subject, $target, $presentation, $data, $scope) {
             foreach (collect([$subject, $target])->unique(fn ($s) => $s->getMorphClass().':'.$s->id)->sortBy(fn ($s) => $s->getMorphClass().':'.$s->id) as $locked) {
                 $locked->newQuery()->whereKey($locked->id)->lockForUpdate()->firstOrFail();
             }
@@ -174,6 +176,7 @@ class AdminLandingPresentationController extends Controller
             } else {
                 $presentation = $target->landingPresentations()->create($data + ['status' => 'DRAFT', 'default_scope' => 'NONE']);
             }
+            $presentation->update(['hero_path' => app(\App\Services\MediaUploadService::class)->fromRequest($request, 'hero', 'landings', $presentation->id, 'cover', $presentation->hero_path)]);
             if ($presentation->status === 'PUBLISHED' && $scope !== 'NONE') {
                 app(LandingPresentationDefaults::class)->choose($target, $presentation, $scope);
             }

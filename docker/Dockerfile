@@ -3,12 +3,18 @@ FROM php:8.4-fpm-bookworm AS php-base
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         git \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libwebp-dev \
         libicu-dev \
         libpq-dev \
         libzip-dev \
         unzip \
         zip \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install \
+        gd \
+        exif \
         bcmath \
         intl \
         opcache \
@@ -19,6 +25,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
 
 WORKDIR /var/www/html
 

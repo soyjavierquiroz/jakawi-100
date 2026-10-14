@@ -41,19 +41,21 @@ class AdminController extends Controller
 
     public function partnerForm(?Partner $partner = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
+        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['logoUrl' => app(\App\Services\MediaUrl::class)->url($partner->logo_path, 'thumbnail'), 'coverUrl' => app(\App\Services\MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
     }
 
     public function savePartner(Request $request, ?Partner $partner = null)
     {
-        $data = $request->validate($this->partnerRules($partner));
-        $partner ??= new Partner;
-        $partner->fill($data);
-        $partner->save();
-        $this->upload($request, $partner, 'logo', 'logo_path', 'partners');
-        $this->upload($request, $partner, 'cover', 'cover_path', 'partners');
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $partner) {
+            $data = $request->validate($this->partnerRules($partner));
+            $partner ??= new Partner;
+            $partner->fill($data);
+            $partner->save();
+            $this->upload($request, $partner, 'logo', 'logo_path', 'partners');
+            $this->upload($request, $partner, 'cover', 'cover_path', 'partners');
 
-        return to_route('admin.partners.index');
+            return to_route('admin.partners.index');
+        });
     }
 
     public function partnerReferralCode(Request $request, Partner $partner, ReferralCodeService $codes)
@@ -71,22 +73,24 @@ class AdminController extends Controller
 
     public function locationForm(?Location $location = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin()] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'cities' => City::orderByDesc('priority')->orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('admin/resources/form', ['title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin(), 'imageUrl' => app(\App\Services\MediaUrl::class)->url($location->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'cities' => City::orderByDesc('priority')->orderBy('name')->get(['id', 'name'])]);
     }
 
     public function saveLocation(Request $request, ?Location $location = null)
     {
-        $data = $request->validate($this->locationRules($location));
-        $city = isset($data['city_id']) ? City::find($data['city_id']) : null;
-        $data['city'] = $city?->name;
-        $location ??= new Location;
-        $location->fill($data);
-        if (filled($data['redemption_pin'] ?? null)) {
-            $location->setRedemptionPin($data['redemption_pin']);
-        } $location->save();
-        $this->upload($request, $location, 'image', 'image_path', 'locations');
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $location) {
+            $data = $request->validate($this->locationRules($location));
+            $city = isset($data['city_id']) ? City::find($data['city_id']) : null;
+            $data['city'] = $city?->name;
+            $location ??= new Location;
+            $location->fill($data);
+            if (filled($data['redemption_pin'] ?? null)) {
+                $location->setRedemptionPin($data['redemption_pin']);
+            } $location->save();
+            $this->upload($request, $location, 'image', 'image_path', 'locations');
 
-        return to_route('admin.locations.index');
+            return to_route('admin.locations.index');
+        });
     }
 
     public function benefits(): Response
@@ -96,19 +100,20 @@ class AdminController extends Controller
 
     public function benefitForm(?Benefit $benefit = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $benefit ? 'Editar beneficio' : 'Nuevo beneficio', 'resource' => 'benefits', 'item' => $benefit, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => $benefit?->partner?->locations()->get(['id', 'name']) ?? []]);
+        return Inertia::render('admin/resources/form', ['title' => $benefit ? 'Editar beneficio' : 'Nuevo beneficio', 'resource' => 'benefits', 'item' => $benefit ? $benefit->toArray() + ['imageUrl' => app(\App\Services\MediaUrl::class)->url($benefit->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => $benefit?->partner?->locations()->get(['id', 'name']) ?? []]);
     }
 
     public function saveBenefit(Request $request, ?Benefit $benefit = null)
     {
-        $validator = Validator::make($request->all(), $this->benefitRules($benefit));
-        $validator->after(function ($validator) use ($request) {
-            if ($request->input('location_scope') !== 'selected' || ! $request->filled('location_ids') || ! $request->filled('partner_id')) {
-                return;
-            } $locationIds = $request->input('location_ids', []);
-            if (Location::query()->whereIn('id', $locationIds)->where('partner_id', $request->input('partner_id'))->count() !== count(array_unique($locationIds))) {
-                $validator->errors()->add('location_ids', 'Selected locations must belong to the benefit partner.');
-            }
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $benefit) {
+            $validator = Validator::make($request->all(), $this->benefitRules($benefit));
+            $validator->after(function ($validator) use ($request) {
+                if ($request->input('location_scope') !== 'selected' || ! $request->filled('location_ids') || ! $request->filled('partner_id')) {
+                    return;
+                } $locationIds = $request->input('location_ids', []);
+                if (Location::query()->whereIn('id', $locationIds)->where('partner_id', $request->input('partner_id'))->count() !== count(array_unique($locationIds))) {
+                    $validator->errors()->add('location_ids', 'Selected locations must belong to the benefit partner.');
+                }
         });
         $data = $validator->validate();
         if ($benefit && isset($data['access_mode']) && $data['access_mode'] !== $benefit->access_mode && \App\Models\Challenge::where('benefit_id', $benefit->id)->exists()) {
@@ -125,6 +130,7 @@ class AdminController extends Controller
         } $this->upload($request, $benefit, 'image', 'image_path', 'benefits');
 
         return to_route('admin.benefits.index');
+        });
     }
 
     public function experiences(): Response
@@ -134,21 +140,23 @@ class AdminController extends Controller
 
     public function experienceForm(?Experience $experience = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $experience ? 'Editar experiencia' : 'Nueva experiencia', 'resource' => 'experiences', 'item' => $experience?->load('partners', 'sessions'), 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => Location::orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('admin/resources/form', ['title' => $experience ? 'Editar experiencia' : 'Nueva experiencia', 'resource' => 'experiences', 'item' => $experience ? $experience->load('partners', 'sessions')->toArray() + ['imageUrl' => app(\App\Services\MediaUrl::class)->url($experience->image_path, 'thumbnail'), 'coverUrl' => app(\App\Services\MediaUrl::class)->url($experience->cover_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => Location::orderBy('name')->get(['id', 'name'])]);
     }
 
     public function saveExperience(Request $request, ?Experience $experience = null)
     {
-        $data = $request->validate($this->experienceRules($experience));
-        $experience ??= new Experience;
-        $experience->fill($data);
-        $experience->save();
-        if ($request->has('partners')) {
-            $experience->syncPartnersWithRoles($data['partners'] ?? []);
-        } $this->upload($request, $experience, 'image', 'image_path', 'experiences');
-        $this->upload($request, $experience, 'cover', 'cover_path', 'experiences');
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $experience) {
+            $data = $request->validate($this->experienceRules($experience));
+            $experience ??= new Experience;
+            $experience->fill($data);
+            $experience->save();
+            if ($request->has('partners')) {
+                $experience->syncPartnersWithRoles($data['partners'] ?? []);
+            } $this->upload($request, $experience, 'image', 'image_path', 'experiences');
+            $this->upload($request, $experience, 'cover', 'cover_path', 'experiences');
 
-        return to_route('admin.experiences.index');
+            return to_route('admin.experiences.index');
+        });
     }
 
     public function sessions(Request $request, Experience $experience)
@@ -220,13 +228,7 @@ class AdminController extends Controller
 
     private function upload(Request $request, object $model, string $input, string $attribute, string $folder): void
     {
-        if (! $request->hasFile($input)) {
-            return;
-        }
-        $old = $model->{$attribute};
-        $slot = $input === 'logo' ? 'logo' : 'cover';
-        $path = app(MediaUploadService::class)->replace($request->file($input), $folder, $model->id, $slot, $old);
-        $model->{$attribute} = $path;
+        $model->{$attribute} = app(MediaUploadService::class)->fromRequest($request, $input, $folder, $model->id, $input === 'logo' ? 'logo' : 'cover', $model->{$attribute});
         $model->save();
     }
 

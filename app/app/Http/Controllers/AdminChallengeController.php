@@ -18,7 +18,7 @@ use Inertia\Inertia;
 
 class AdminChallengeController extends Controller {
     public function index() { return Inertia::render('admin/social-challenges/index',['challenges'=>Challenge::with('partner:id,name')->latest()->get(['id','partner_id','city_id','title','slug','status','review_status','evidence_type','qualification_type','selection_type','reward_type','ends_at'])]); }
-    public function form(?Challenge $challenge=null) { return Inertia::render('admin/social-challenges/form',['challenge'=>$challenge,'heroUrl'=>$challenge ? app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero') : null,'partners'=>\App\Models\Partner::orderBy('name')->get(['id','name']),'cities'=>\App\Models\City::orderBy('name')->get(['id','name']),'benefits'=>Benefit::where('access_mode','social_challenge_grant')->get(['id','partner_id','title'])]); }
+    public function form(?Challenge $challenge=null) { return Inertia::render('admin/social-challenges/form',['challenge'=>$challenge,'heroUrl'=>$challenge ? app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'thumbnail') : null,'partners'=>\App\Models\Partner::orderBy('name')->get(['id','name']),'cities'=>\App\Models\City::orderBy('name')->get(['id','name']),'benefits'=>Benefit::where('access_mode','social_challenge_grant')->get(['id','partner_id','title'])]); }
     public function save(Request $request, ?Challenge $challenge=null) {
         $data = $request->validate([
             'partner_id'=>['nullable','integer','exists:partners,id'], 'city_id'=>['nullable','integer','exists:cities,id'], 'title'=>['required','string','max:255'],
@@ -101,11 +101,11 @@ class AdminChallengeController extends Controller {
         return Inertia::render('admin/social-challenges/show',['challenge'=>$challenge,'reviewWarnings'=>$warnings,'participations'=>$rows->map(fn ($p) => $p->toArray()+['user_name'=>$p->user->name]),'ranking'=>$ranking]);
     }
     public function preview(Challenge $challenge) {
-        return Inertia::render('social-challenges/show',['challenge'=>$challenge,'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null,'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'preview'=>true,'verificationUrl'=>route('verification.notice')]);
+        return Inertia::render('social-challenges/show',['challenge'=>$challenge,'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null,'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'),'heroSrcset'=>app(\App\Services\MediaUrl::class)->srcset($challenge->hero_path,'hero'),'participation'=>null,'entries'=>[],'grant'=>null,'canParticipate'=>false,'canSubmit'=>false,'isMember'=>false,'preview'=>true,'verificationUrl'=>route('verification.notice')]);
     }
     public function image(Request $request, Challenge $challenge) {
-        $request->validate(['image'=>['required','image','mimes:jpeg,png,webp','max:10240']]);
-        $challenge->update(['hero_path'=>app(MediaUploadService::class)->replace($request->file('image'),'challenges',$challenge->id,'cover',$challenge->hero_path)]);
+        $request->validate(['image'=>['nullable','image','mimes:jpeg,png,webp','max:10240']]);
+        $challenge->update(['hero_path'=>app(MediaUploadService::class)->fromRequest($request,'image','challenges',$challenge->id,'cover',$challenge->hero_path)]);
         return back();
     }
     public function participation(Challenge $challenge, ChallengeParticipation $participation) {

@@ -1,3 +1,5 @@
+import { ImageUpload } from '@/components/media/image-upload';
+import { useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import AdminLayout from '../layout';
 
@@ -126,11 +128,12 @@ export default function ResourceForm({
     cities = [],
     publicUrl,
 }: any) {
+    const [uploading, setUploading] = useState<Record<string, boolean>>({});
     const form = useForm<any>({ ...defaults, ...item });
     const submit = (e: any) => {
         e.preventDefault();
         if (item) {
-            form.put(`/admin/${resource}/${resource === 'benefits' ? item.slug : item.id}`, { forceFormData: true });
+            form.put(`/admin/${resource}/${['benefits', 'experiences'].includes(resource) ? item.slug : item.id}`, { forceFormData: true });
         } else {
             form.post(`/admin/${resource}`, { forceFormData: true });
         }
@@ -293,69 +296,10 @@ export default function ResourceForm({
                         </select>
                     </label>
                 ) : null}
-                {resource === 'partners' ? (
-                    <>
-                        <label>
-                            Logo
-                            <input
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                onChange={(e) =>
-                                    form.setData(
-                                        'logo',
-                                        e.target.files?.[0] || null,
-                                    )
-                                }
-                            />
-                        </label>
-                        <label>
-                            Cover
-                            <input
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                onChange={(e) =>
-                                    form.setData(
-                                        'cover',
-                                        e.target.files?.[0] || null,
-                                    )
-                                }
-                            />
-                        </label>
-                    </>
-                ) : null}
-                {resource !== 'partners' ? (
-                    <label>
-                        Imagen
-                        <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp"
-                            onChange={(e) =>
-                                form.setData(
-                                    'image',
-                                    e.target.files?.[0] || null,
-                                )
-                            }
-                        />
-                    </label>
-                ) : null}
-                {resource === 'experiences' ? (
-                    <label>
-                        Cover
-                        <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp"
-                            onChange={(e) =>
-                                form.setData(
-                                    'cover',
-                                    e.target.files?.[0] || null,
-                                )
-                            }
-                        />
-                    </label>
-                ) : null}
+                {(resource === 'partners' ? ['logo', 'cover'] : resource === 'experiences' ? ['image', 'cover'] : ['image']).map(name => <ImageUpload key={name} name={name} label={name === 'logo' ? 'Logo' : name === 'cover' ? 'Portada' : 'Imagen'} currentUrl={item?.[`${name}Url`]} error={form.errors[name]} onBusy={busy => setUploading(value => ({...value, [name]: busy}))} onChange={(token, remove) => form.setData((data: Record<string, unknown>) => ({...data, [`${name}_upload`]: token, [`${name}_remove`]: remove}))} />)}
                 <button
                     className="rounded bg-brand p-3 text-brand-foreground"
-                    disabled={form.processing}
+                    disabled={form.processing || Object.values(uploading).some(Boolean)}
                 >
                     Guardar
                 </button>

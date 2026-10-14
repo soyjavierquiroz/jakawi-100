@@ -1,0 +1,2 @@
+PASS: node app/node_modules/typescript/bin/tsc --noEmit --project app/tsconfig.json
+Wayfinder generation for the final frontend build used Docker PHP 8.4 via an explicit PATH adapter.

@@ -7,9 +7,9 @@ return [
     'imgproxy_salt' => env('IMGPROXY_SALT'),
     'bucket' => env('MEDIA_AWS_BUCKET', 'jakawi-media'),
     'max_bytes' => 10 * 1024 * 1024,
-    'max_pixels' => 50_000_000,
+    'max_pixels' => 24_000_000,
     'presets' => [
-        'hero' => ['width' => 1280, 'height' => 800, 'quality' => 82, 'fit' => 'fill'],
+        'hero' => ['width' => 1600, 'height' => 1000, 'quality' => 82, 'fit' => 'fill'],
         'benefit_card' => ['width' => 640, 'height' => 480, 'quality' => 80, 'fit' => 'fill'],
         'experience_card' => ['width' => 720, 'height' => 480, 'quality' => 80, 'fit' => 'fill'],
         'partner_cover' => ['width' => 960, 'height' => 640, 'quality' => 82, 'fit' => 'fill'],

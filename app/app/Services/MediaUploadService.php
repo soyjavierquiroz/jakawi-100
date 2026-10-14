@@ -2,61 +2,150 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class MediaUploadService
 {
-    /** Store first, then delete an old immutable media object only after success. */
+    // Replacement never deletes: the old reference survives any upload/DB failure.
     public function replace(UploadedFile $file, string $kind, int $id, string $slot, ?string $oldKey = null): string
     {
-        $key = $this->store($file, $kind, $id, $slot);
-        $this->delete($oldKey);
-
-        return $key;
+        return $this->store($file, $kind, $id, $slot);
     }
 
-    /** Store an immutable object without changing a currently referenced object. */
     public function store(UploadedFile $file, string $kind, int $id, string $slot): string
     {
-        $this->validate($file);
-        $extension = match ($file->getMimeType()) {
-            'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp',
-            default => throw ValidationException::withMessages(['image' => 'Solo se permiten JPEG, PNG o WebP.']),
-        };
-        $key = $kind === 'avatars'
-            ? sprintf('avatars/%d/%s.%s', $id, (string) Str::uuid(), $extension)
-            : sprintf('%s/%d/%s/%s.%s', $kind, $id, $slot, (string) Str::uuid(), $extension);
-        Storage::disk(config('media.disk'))->putFileAs(dirname($key), $file, basename($key), [
-            'visibility' => 'private', 'CacheControl' => 'public, max-age=31536000, immutable',
-        ]);
+        $key = $this->key($kind, $id, $slot);
+        $this->write($key, $this->normalize($file));
+
         return $key;
     }
 
-    /** Delete only a known immutable media object. */
-    public function delete(?string $key): void
+    public function temporary(UploadedFile $file, int $userId): string
     {
-        if ($this->isMediaKey($key)) {
-            Storage::disk(config('media.disk'))->delete($key);
+        $key = 'tmp/'.Str::uuid().'/master.webp';
+        $this->write($key, $this->normalize($file));
+
+        return Crypt::encryptString(json_encode(['key' => $key, 'user' => $userId, 'expires' => now()->addHours(24)->timestamp], JSON_THROW_ON_ERROR));
+    }
+
+    /** Resolve only a server-issued upload owned by this authenticated user. */
+    public function fromRequest(Request $request, string $input, string $kind, int $id, string $slot, ?string $old): ?string
+    {
+        try {
+            if ($request->filled($input.'_upload')) {
+                $token = json_decode(Crypt::decryptString($request->string($input.'_upload')->toString()), true, 512, JSON_THROW_ON_ERROR);
+                if ($token['user'] !== $request->user()->id || $token['expires'] <= now()->timestamp || ! $this->isTemporaryKey($token['key'])) {
+                    throw new \RuntimeException('Invalid upload');
+                }
+                $disk = Storage::disk(config('media.disk'));
+                $content = $disk->get($token['key']);
+                if (! $content) {
+                    throw new \RuntimeException('Missing upload');
+                }
+                $key = $this->key($kind, $id, $slot);
+                $this->write($key, $content);
+
+                return $key;
+            }
+            if ($request->hasFile($input)) {
+                return $this->store($request->file($input), $kind, $id, $slot);
+            }
+            if ($request->boolean($input.'_remove')) {
+                return null;
+            }
+
+            return $old;
+        } catch (ValidationException $exception) {
+            throw ValidationException::withMessages([$input => $exception->validator->errors()->first()]);
+        } catch (\Throwable $exception) {
+            report($exception);
+            throw ValidationException::withMessages([$input => 'No pudimos guardar la imagen. Selecciónala de nuevo; la imagen anterior sigue disponible.']);
+        }
+    }
+
+    private function key(string $kind, int $id, string $slot): string
+    {
+        if (! in_array($kind, ['partners', 'benefits', 'experiences', 'locations', 'challenges', 'landings', 'avatars', 'unlocks'], true) || $id < 1 || ! in_array($slot, ['cover', 'logo', 'image', 'avatar'], true)) {
+            throw new \InvalidArgumentException('Invalid media namespace');
+        }
+
+        return sprintf('%s/%d/%s/%s.webp', $kind, $id, $slot, Str::uuid());
+    }
+
+    private function write(string $key, string $content): void
+    {
+        $disk = Storage::disk(config('media.disk'));
+        if (! $disk->put($key, $content, ['visibility' => 'private', 'ContentType' => 'image/webp', 'CacheControl' => 'public, max-age=31536000, immutable']) || ! $disk->exists($key) || $disk->size($key) !== strlen($content)) {
+            throw new \RuntimeException('Media write verification failed');
         }
     }
 
     public function validate(UploadedFile $file): void
     {
-        if (! in_array($file->getMimeType(), ['image/jpeg', 'image/png', 'image/webp'], true) || $file->getSize() > config('media.max_bytes')) {
+        if (! $file->isValid() || ! in_array($file->getMimeType(), ['image/jpeg', 'image/png', 'image/webp'], true) || $file->getSize() > config('media.max_bytes')) {
             throw ValidationException::withMessages(['image' => 'La imagen debe ser JPEG, PNG o WebP y no superar 10 MB.']);
         }
         $dimensions = @getimagesize($file->getRealPath());
-        if ($dimensions === false || $dimensions[0] < 1 || $dimensions[1] < 1 || $dimensions[0] * $dimensions[1] > config('media.max_pixels')) {
+        if ($dimensions === false || $dimensions[0] < 1 || $dimensions[1] < 1 || max($dimensions[0], $dimensions[1]) > 16000 || config('media.max_pixels') < $dimensions[0] * $dimensions[1]) {
             throw ValidationException::withMessages(['image' => 'Las dimensiones de la imagen no son válidas.']);
         }
+        $decoded = @imagecreatefromstring(file_get_contents($file->getRealPath()));
+        if ($decoded === false) {
+            throw ValidationException::withMessages(['image' => 'No pudimos leer la imagen. Selecciona un archivo válido.']);
+        }
+        imagedestroy($decoded);
+    }
+
+    private function normalize(UploadedFile $file): string
+    {
+        $this->validate($file);
+        $image = imagecreatefromstring(file_get_contents($file->getRealPath()));
+        if ($file->getMimeType() === 'image/jpeg') {
+            $orientation = (int) (@exif_read_data($file->getRealPath())['Orientation'] ?? 1);
+            if (in_array($orientation, [2, 4, 5, 7], true)) {
+                imageflip($image, IMG_FLIP_HORIZONTAL);
+            }
+            $angle = match ($orientation) {
+                3, 4 => 180, 5, 6 => -90, 7, 8 => 90, default => 0
+            };
+            if ($angle) {
+                $rotated = imagerotate($image, $angle, 0);
+                imagedestroy($image);
+                $image = $rotated;
+            }
+        }
+        $ratio = min(1, 1600 / max(imagesx($image), imagesy($image)));
+        $output = imagecreatetruecolor(max(1, (int) round(imagesx($image) * $ratio)), max(1, (int) round(imagesy($image) * $ratio)));
+        imagealphablending($output, false);
+        imagesavealpha($output, true);
+        imagecopyresampled($output, $image, 0, 0, 0, 0, imagesx($output), imagesy($output), imagesx($image), imagesy($image));
+        ob_start();
+        try {
+            if (! imagewebp($output, null, 82)) {
+                throw new \RuntimeException('Image encoding failed');
+            }
+
+            return ob_get_contents();
+        } finally {
+            ob_end_clean();
+            imagedestroy($image);
+            imagedestroy($output);
+        }
+    }
+
+    public function isTemporaryKey(?string $key): bool
+    {
+        return is_string($key) && preg_match('#^tmp/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}/master\.webp$#D', $key) === 1;
     }
 
     public function isMediaKey(?string $key): bool
     {
-        return is_string($key) && preg_match('#^(partners|benefits|experiences|locations|challenges)/\d+/(cover|logo|image)/[0-9a-f-]+\.(jpg|png|webp)$#', $key) === 1
-            || is_string($key) && preg_match('#^avatars/\d+/[0-9a-f-]+\.(jpg|png|webp)$#', $key) === 1;
+        return is_string($key) && (preg_match('#^(partners|benefits|experiences|locations|challenges|landings|avatars|unlocks)/[1-9][0-9]*/(cover|logo|image|avatar)/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.(jpg|png|webp)$#D', $key) === 1
+            || preg_match('#^avatars/[1-9][0-9]*/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.(jpg|png|webp)$#D', $key) === 1);
     }
 }

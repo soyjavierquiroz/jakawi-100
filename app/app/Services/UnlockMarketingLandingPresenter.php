@@ -113,6 +113,7 @@ class UnlockMarketingLandingPresenter
             'subheadline'=>$failed ? $failure : ($expired ? 'El plazo terminó. Consulta el estado del desbloqueo en sus condiciones.' : ($success ? $result : ($editorial($landing->subheadline) ?: $data['short_description'] ?: $reward))),
             'valueNote'=>$editorial($landing->reward_display_override),
             'heroUrl'=>app(MediaUrl::class)->url($hiddenOffer ? null : ($landing->hero_path ?: $unlock->hero_path), 'hero'),
+            'heroSrcset'=>app(MediaUrl::class)->srcset($hiddenOffer ? null : ($landing->hero_path ?: $unlock->hero_path), 'hero'),
             'heroAlt'=>$hiddenOffer ? $data['title'] : ($landing->hero_alt ?: $data['title']),
             'progress'=>['current'=>$data['committed_count'], 'target'=>$data['minimum_commitments'], 'remaining'=>$data['remaining'], 'percent'=>$data['minimum_commitments'] > 0 ? round($data['committed_count'] / $data['minimum_commitments'] * 100, 1) : null],
             'status'=>$data['status'], 'stateLabel'=>$stateLabel, 'success'=>$success, 'failed'=>$failed, 'expired'=>(bool) $expired,

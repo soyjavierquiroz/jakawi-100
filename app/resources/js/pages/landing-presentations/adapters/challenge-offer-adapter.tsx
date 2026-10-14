@@ -193,6 +193,7 @@ export default function ChallengeOfferAdapter({
               ? {
                     type: 'image',
                     src: challengeProps.heroUrl,
+                    srcset: challengeProps.heroSrcset,
                     alt:
                         presentation.hero_alt || challengeProps.challenge.title,
                 }

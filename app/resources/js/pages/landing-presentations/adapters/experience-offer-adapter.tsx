@@ -37,6 +37,7 @@ export type ExperienceOfferProps = {
         hero_alt: string | null;
     };
     heroUrl: string | null;
+    heroSrcset?: {src: string; width: number}[];
     nativeUrl: string;
     canonical: string;
     noindex: boolean;
@@ -77,6 +78,7 @@ export default function ExperienceOfferAdapter({
     offerEditorial,
     presentation,
     heroUrl,
+    heroSrcset,
     canonical,
     noindex,
     preview,
@@ -156,6 +158,7 @@ export default function ExperienceOfferAdapter({
               ? {
                     type: 'image',
                     src: heroUrl,
+                    srcset: heroSrcset,
                     alt: presentation.hero_alt || copy.title,
                 }
               : undefined,

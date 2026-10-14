@@ -11,7 +11,7 @@ export type OfferPresentationV1 = {
     };
     media?:
         | { type: 'vsl'; config: LandingVideoConfig }
-        | { type: 'image'; src: string; alt: string };
+        | { type: 'image'; src: string; alt: string; srcset?: {src: string; width: number}[] };
     facts: Array<{ label: string; value: string; tone?: 'reward' }>;
     value?: {
         // An offer is informational; a reward is an opportunity, never a won prize.

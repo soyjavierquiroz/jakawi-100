@@ -105,7 +105,7 @@ class MemberProfileTest extends TestCase
             ])->assertRedirect('/mi-jakawi/perfil');
 
             $path = $user->fresh()->profile->avatar_path;
-            $this->assertMatchesRegularExpression('#^avatars/'.$user->id.'/[0-9a-f-]+\\.(jpg|png|webp)$#', $path);
+            $this->assertMatchesRegularExpression('#^avatars/'.$user->id.'/avatar/[0-9a-f-]+\\.(jpg|png|webp)$#', $path);
             $this->assertStringNotContainsString('http', $path);
             Storage::disk('public')->assertExists($path);
             $this->assertSame(['cafe'], $user->fresh()->profile->interests);
@@ -129,18 +129,17 @@ class MemberProfileTest extends TestCase
 
         $this->actingAs($user)->put('/mi-jakawi/perfil', ['avatar' => $this->image('new.png')])->assertRedirect();
         $this->assertNotSame($old, $user->fresh()->profile->avatar_path);
-        Storage::disk('public')->assertMissing($old);
+        Storage::disk('public')->assertExists($old);
         Storage::disk('public')->assertExists($user->fresh()->profile->avatar_path);
     }
 
     private function image(string $name): UploadedFile
     {
-        $images = [
-            'jpg' => '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAEFAqf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AR//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AR//2Q==',
-            'png' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbhwAAAABJRU5ErkJggg==',
-            'webp' => 'UklGRiIAAABXRUJQVlA4IC4AAAAwAQCdASoBAAEAAUAmJaQAA3AA/vuUAAA=',
-        ];
-
-        return UploadedFile::fake()->createWithContent($name, base64_decode($images[pathinfo($name, PATHINFO_EXTENSION)]));
+        $image = imagecreatetruecolor(10, 10);
+        ob_start();
+        match (pathinfo($name, PATHINFO_EXTENSION)) { 'jpg' => imagejpeg($image), 'png' => imagepng($image), 'webp' => imagewebp($image) };
+        $content = ob_get_clean();
+        imagedestroy($image);
+        return UploadedFile::fake()->createWithContent($name, $content);
     }
 }

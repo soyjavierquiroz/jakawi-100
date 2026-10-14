@@ -1,3 +1,4 @@
+import { ImageUpload } from '@/components/media/image-upload';
 import { LandingPreviewPane } from '@/components/marketing/LandingPreviewPane';
 import { LandingJsonControls } from '@/components/marketing/LandingJsonControls';
 import { LandingVideoFields } from '@/components/media/jakawi-vsl-player/LandingVideoFields';
@@ -39,6 +40,8 @@ const empty = {
     headline_emphasis: '',
     subheadline: '',
     hero_path: '',
+    hero_upload: '',
+    hero_remove: '0',
     hero_alt: '',
     reward_display_override: '',
     final_cta_headline: '',
@@ -475,6 +478,7 @@ export default function Index({
                                     ),
                                     vsl: video,
                                 };
+                                delete payload.hero_path;
                                 if (offer && formSubject) {
                                     payload.subject_type = formSubject.type;
                                     payload.subject_id = formSubject.id;
@@ -490,11 +494,6 @@ export default function Index({
                                         'final_cta_description',
                                     ])
                                         delete payload[key];
-                                const submittedBaseline = signature(
-                                    form,
-                                    video,
-                                    formSubject,
-                                );
                                 const submittedSlug = form.slug.trim();
                                 setSaving(true);
                                 setSaved(false);
@@ -521,7 +520,9 @@ export default function Index({
                                             return;
                                         }
                                         setEditing(persisted);
-                                        setBaseline(submittedBaseline);
+                                        const savedForm = {...form, media_mode: String(persisted.media_mode ?? form.media_mode), hero_path: String(persisted.hero_path ?? ''), hero_upload: '', hero_remove: '0'};
+                                        setForm(savedForm);
+                                        setBaseline(signature(savedForm, video, formSubject));
                                         setSaved(true);
                                         setPreview(persisted);
                                         setPreviewRevision(
@@ -927,33 +928,7 @@ export default function Index({
                                     {(!offer ||
                                         form.media_mode === 'IMAGE') && (
                                         <>
-                                            {currentMediaUrl ? (
-                                                <figure className="col-span-full">
-                                                    <img
-                                                        src={String(
-                                                            currentMediaUrl,
-                                                        )}
-                                                        alt={
-                                                            form.hero_alt ||
-                                                            'Imagen actual del producto'
-                                                        }
-                                                        className="max-h-56 w-full rounded object-contain"
-                                                    />
-                                                    <figcaption className="mt-2 text-sm text-muted-foreground">
-                                                        IMAGEN ACTUAL
-                                                    </figcaption>
-                                                </figure>
-                                            ) : (
-                                                <p className="col-span-full text-sm text-muted-foreground">
-                                                    Guarda la referencia del
-                                                    visual para comprobar la
-                                                    imagen actual.
-                                                </p>
-                                            )}
-                                            {field(
-                                                'hero_path',
-                                                'Referencia del visual',
-                                            )}
+                                            <div className="col-span-full"><ImageUpload key={editing?.id ?? 'new'} name="hero" label="Imagen de la Landing" currentUrl={currentMediaUrl ? String(currentMediaUrl) : null} error={errors.hero || errors.image} onChange={(token, remove) => setForm(value => ({...value, hero_upload: token, hero_remove: remove ? '1' : '0'}))} /></div>
                                             {field(
                                                 'hero_alt',
                                                 'Descripción del visual (alt)',

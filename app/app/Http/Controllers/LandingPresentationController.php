@@ -184,6 +184,7 @@ class LandingPresentationController extends Controller
                 ...$this->offerCopy($presentation, app(ExperienceMarketingLandingPresenter::class)->present($subject, $presentation, $request)),
                 'restoredSessionId' => $stage === 'result' ? $experienceProps['restoredSessionId'] : (($resumed ? $request->session()->get('landing_continuation_context.experience_session_id') : null) ?? ($stage === 'activation' && (app(\App\Services\PublicJourneyContinuation::class)->get()['landing_presentation_id'] ?? null) === $presentation->id ? app(\App\Services\PublicJourneyContinuation::class)->get()['context']['experience_session_id'] ?? null : null) ?? $experienceProps['restoredSessionId']),
                 'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->cover_path ?: $subject->image_path, 'hero'),
+                'heroSrcset' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->srcset($presentation->hero_path ?: $subject->cover_path ?: $subject->image_path, 'hero'),
             ]);
         }
         if ($subject instanceof Benefit) {
@@ -192,6 +193,7 @@ class LandingPresentationController extends Controller
                 'landingDirectAction' => ! $stage && $request->user() && $benefitProps['hasActiveMembership'] && $benefitProps['availability']['available'] && count($benefitProps['locations']) === 1 ? ['endpoint' => route('redemptions.start', $subject, false), 'data' => ['location_id' => $benefitProps['locations'][0]['id']]] : null,
                 ...$this->offerCopy($presentation, app(BenefitMarketingLandingPresenter::class)->present($subject, $presentation, $request, $benefitProps)),
                 'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->image_path, 'hero'),
+                'heroSrcset' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->srcset($presentation->hero_path ?: $subject->image_path, 'hero'),
             ]);
         }
         $props = app(ChallengeController::class)->publicProps($request, $subject, $ranking, $state);
@@ -202,6 +204,7 @@ class LandingPresentationController extends Controller
             'presentation' => array_replace($presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']), ['hero_alt' => $presentation->hero_alt ?: $subject->hero_alt]),
             ...$this->offerCopy($presentation, $presenter->present($subject, $presentation)),
             'heroUrl' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->url($presentation->hero_path ?: $subject->hero_path, 'hero'),
+            'heroSrcset' => $presentation->media_mode?->value === 'NONE' || $presentation->media_mode?->value === 'VSL' ? null : app(MediaUrl::class)->srcset($presentation->hero_path ?: $subject->hero_path, 'hero'),
         ]);
     }
 

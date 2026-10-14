@@ -140,7 +140,8 @@ class MarketingLandingAdminV1Test extends TestCase
         $this->admin();
         $base = $this->base($subject);
         $video = ['source' => ['type' => 'youtube', 'url' => 'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing' => 'embedded-vertical', 'mode' => 'vsl'];
-        $fields = $this->fields(['media_mode' => 'VSL', 'hero_path' => 'images/pilot.jpg', 'vsl' => $video]);
+        $subject->update(['image_path' => 'images/pilot.jpg']);
+        $fields = $this->fields(['media_mode' => 'VSL', 'hero_path' => $subject->image_path, 'vsl' => $video]);
         $this->post($base, $fields)->assertRedirect();
         $landing = LandingPresentation::firstOrFail();
         foreach (['IMAGE', 'NONE', 'VSL'] as $mode) {

@@ -1,0 +1,32 @@
+{
+  "adminThumbnail": {
+    "src": "http://127.0.0.1:8108/__qa/img/i261aVxK1nKiJOqAEDhwispi_kJYcDynPIWjHhvF5S4/rs:fill:320:240/q:75/f:webp/plain/s3://jakawi-media/partners/26/cover/5f2dd397-26fb-42af-afbc-a6b6d4b633b4.webp",
+    "width": 320
+  },
+  "partner": {
+    "upload": true,
+    "immediatePreview": true,
+    "persists": true,
+    "replacement": true,
+    "oldRetained": true
+  },
+  "error": {
+    "readable": true,
+    "oldPreserved": true
+  },
+  "responsive390": {
+    "srcset": "http://127.0.0.1:8108/__qa/img/G8DUHbY-nnvuRuf_nRxV9_-NMk6HAgsMQanJg0D-psE/rs:fill:320:200/q:82/f:webp/plain/s3://jakawi-media/landings/18/cover/08fa2ca4-d7ac-4f61-b178-677f5e94ad46.webp 320w, http://127.0.0.1:8108/__qa/img/AWO2sqWI_AkZaXqcnXfGhRV5xsFYMa1lNYiK_EHPgQo/rs:fill:480:300/q:82/f:webp/plain/s3://jakawi-media/landings/18/cover/08fa2ca4-d7ac-4f61-b178-677f5e94ad46.webp 480w, http://127.0.0.1:8108/__qa/img/hEqvYm23yweN8i66C3SuEEtrJzROAuv8ahgZGqwaTFw/rs:fill:640:400/q:82/f:webp/plain/s3://jakawi-media/landings/18/cover/08fa2ca4-d7ac-4f61-b178-677f5e94ad46.webp 640w, http://127.0.0.1:8108/__qa/img/hW--Bo5z7mKIbIjVK1hvEtcdjCctjThX24jw5u2gW5w/rs:fill:960:600/q:82/f:webp/plain/s3://jakawi-media/landings/18/cover/08fa2ca4-d7ac-4f61-b178-677f5e94ad46.webp 960w, http://127.0.0.1:8108/__qa/img/XxW6VLH6hJ35ZHWr-BQfxn5onUzgW62n3a3XvPbURa0/rs:fill:1600:1000/q:82/f:webp/plain/s3://jakawi-media/landings/18/cover/08fa2ca4-d7ac-4f61-b178-677f5e94ad46.webp 1600w",
+    "sizes": "(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) 90vw, 50vw",
+    "currentSrc": "http://127.0.0.1:8108/__qa/img/AWO2sqWI_AkZaXqcnXfGhRV5xsFYMa1lNYiK_EHPgQo/rs:fill:480:300/q:82/f:webp/plain/s3://jakawi-media/landings/18/cover/08fa2ca4-d7ac-4f61-b178-677f5e94ad46.webp",
+    "width": 347
+  },
+  "landing": {
+    "upload": true,
+    "immediatePreview": true,
+    "persists": true,
+    "replacement": true
+  },
+  "mobile390": true,
+  "desktop1440": true,
+  "pageErrors": []
+}

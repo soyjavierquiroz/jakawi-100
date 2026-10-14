@@ -83,3 +83,5 @@ Artisan::command('crm:dispatch', function (CrmDeliveryDispatcher $dispatcher) {
     $this->info($dispatcher->run().' CRM deliveries processed.');
 })->purpose('Dispatch the independent CRM outbox');
 Schedule::command('crm:dispatch')->everyMinute()->withoutOverlapping(15);
+
+Schedule::command('media:gc')->dailyAt('03:20')->timezone('America/La_Paz')->withoutOverlapping(120);

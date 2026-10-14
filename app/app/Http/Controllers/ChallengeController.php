@@ -35,7 +35,7 @@ class ChallengeController extends Controller {
             app(PublicJourneyContinuation::class)->setLanding($landing);
         }
         return [
-            'challenge'=>$challenge, 'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null, 'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'), 'rules'=>$challenge->rulesContract(),
+            'challenge'=>$challenge, 'rewardLabel'=>$challenge->reward_type === 'BENEFIT' ? $challenge->benefit?->title : null, 'heroUrl'=>app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'),'heroSrcset'=>app(\App\Services\MediaUrl::class)->srcset($challenge->hero_path,'hero'), 'rules'=>$challenge->rulesContract(),
             'participation'=>$p?->only(['id','qualification_status','qualified_entry_id','qualified_at','selection_status','selected_entry_id','review_status']),
             'entries'=>$p?->socialEntries->map(fn ($e) => $state->entry($e))->all() ?? [],
             'submittedEntryId'=>$request->session()->get('submitted_entry_id'),

@@ -15,7 +15,7 @@ type Props = {
     nativeUrl: string; canonical: string; noindex: boolean; preview: boolean;
     copy: {
         title: string; slug: string; eyebrow: string; headline: string; subheadline: string;
-        reward: string; description: string | null; valueNote: string | null; heroUrl: string | null; heroAlt: string;
+        reward: string; description: string | null; valueNote: string | null; heroUrl: string | null; heroSrcset?: {src: string; width: number}[]; heroAlt: string;
         offers: { label: string; value: string }[];
         progress: { current: number; target: number; remaining: number; percent: number | null };
         status: string; stateLabel: string; success: boolean; failed: boolean; expired: boolean; deadline: string | null;
@@ -65,7 +65,7 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
         <main onClickCapture={trackGrowthClick} className="overflow-x-clip break-words font-discovery">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 {preview && <StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mt-5"/>}
-                <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10">{vsl ? <LandingVideo config={{...vsl, theme: 'inherit'}}/> : (<JakawiImage src={copy.heroUrl} alt={copy.heroAlt} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority/>)}</div>
+                <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10">{vsl ? <LandingVideo config={{...vsl, theme: 'inherit'}}/> : (<JakawiImage src={copy.heroUrl} srcset={copy.heroSrcset} sizes="(max-width: 640px) 100vw, 80vw" alt={copy.heroAlt} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority/>)}</div>
                 <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={heroDescription} action={action} aside={progress}/>
                 <section className="border-t border-border py-14 sm:py-20"><p className="discovery-eyebrow text-foreground">LO QUE DESBLOQUEAMOS</p><h2 className="mt-3 max-w-3xl text-3xl font-extrabold uppercase sm:text-5xl">{copy.title}</h2><p className="mt-6 max-w-3xl whitespace-pre-line leading-7 text-foreground-soft">{copy.reward}</p>{copy.offers.length > 0 && <dl className="mt-7 grid gap-6 sm:grid-cols-2">{copy.offers.map(offer => <div key={offer.label} className="rounded-[var(--radius-card)] bg-surface-muted p-6"><dt className="discovery-eyebrow text-foreground">{offer.label}</dt><dd className="mt-3 whitespace-pre-line text-lg font-bold">{offer.value}</dd></div>)}</dl>}{copy.valueNote && <p className="mt-5 leading-7">{copy.valueNote}</p>}</section>
                 <MarketingBenefits eyebrow="POR QUÉ PARTICIPAR" title={copy.success ? 'LA META SE LOGRÓ' : (copy.failed || copy.expired ? 'EL RESULTADO' : 'HAGAMOS QUE SUCEDA')} items={copy.benefits}/>

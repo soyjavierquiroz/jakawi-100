@@ -35,6 +35,8 @@ export function OptionalMarketingMedia({
             ) : (
                 <JakawiImage
                     src={media.src}
+                    srcset={media.srcset}
+                    sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) 90vw, 50vw"
                     alt={media.alt}
                     className={
                         compact

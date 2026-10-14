@@ -19,14 +19,12 @@ class MediaInfrastructureTest extends TestCase
 
     private function image(string $name = 'image.jpg'): UploadedFile
     {
-        $images = [
-            'jpg' => '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAEFAqf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AR//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AR//2Q==',
-            'png' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbhwAAAABJRU5ErkJggg==',
-            'webp' => 'UklGRiIAAABXRUJQVlA4IC4AAAAwAQCdASoBAAEAAUAmJaQAA3AA/vuUAAA=',
-        ];
-        $extension = pathinfo($name, PATHINFO_EXTENSION);
-
-        return UploadedFile::fake()->createWithContent($name, base64_decode($images[$extension]));
+        $image = imagecreatetruecolor(10, 10);
+        ob_start();
+        match (pathinfo($name, PATHINFO_EXTENSION)) { 'jpg' => imagejpeg($image), 'png' => imagepng($image), 'webp' => imagewebp($image) };
+        $content = ob_get_clean();
+        imagedestroy($image);
+        return UploadedFile::fake()->createWithContent($name, $content);
     }
 
     public function test_media_uses_immutable_object_keys_and_replaces_after_store(): void
@@ -35,8 +33,8 @@ class MediaInfrastructureTest extends TestCase
         $service = app(MediaUploadService::class);
         $first = $service->replace($this->image(), 'benefits', 42, 'cover');
         $second = $service->replace($this->image(), 'benefits', 42, 'cover', $first);
-        $this->assertMatchesRegularExpression('#^benefits/42/cover/[0-9a-f-]+\.jpg$#', $second);
-        Storage::disk('public')->assertMissing($first);
+        $this->assertMatchesRegularExpression('#^benefits/42/cover/[0-9a-f-]+\.webp$#', $second);
+        Storage::disk('public')->assertExists($first);
         Storage::disk('public')->assertExists($second);
     }
 

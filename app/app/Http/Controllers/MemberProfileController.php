@@ -55,32 +55,12 @@ class MemberProfileController extends Controller
 
         unset($data['avatar']);
         $media = app(MediaUploadService::class);
-        $oldAvatarPath = $profile->avatar_path;
-        $newAvatarPath = null;
-
-        try {
-            if ($request->hasFile('avatar')) {
-                // Preserve the current avatar until the new key is committed.
-                $newAvatarPath = $media->store($request->file('avatar'), 'avatars', $request->user()->id, 'avatar');
-                $data['avatar_path'] = $newAvatarPath;
-            }
-
-            DB::transaction(function () use ($profile, $data): void {
-                $profile->fill($data);
-                if ($profile->completionPercentage() === 100 && $profile->profile_completed_at === null) {
-                    $profile->profile_completed_at = now();
-                }
-                $profile->save();
-            });
-        } catch (\Throwable $exception) {
-            $media->delete($newAvatarPath);
-
-            throw $exception;
-        }
-
-        if ($newAvatarPath !== null) {
-            $media->delete($oldAvatarPath);
-        }
+        $data['avatar_path'] = $media->fromRequest($request, 'avatar', 'avatars', $request->user()->id, 'avatar', $profile->avatar_path);
+        DB::transaction(function () use ($profile, $data): void {
+            $profile->fill($data);
+            if ($profile->completionPercentage() === 100 && $profile->profile_completed_at === null) $profile->profile_completed_at = now();
+            $profile->save();
+        });
 
         return to_route('member.profile.show')->with('success', 'Tu perfil JAKAWI fue guardado.');
     }

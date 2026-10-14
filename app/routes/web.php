@@ -363,3 +363,5 @@ Route::post('/analytics/landing-presentations/{presentation:slug}/cta', [\App\Ht
 Route::get('/p/{partner:slug}/auth/{method}', [\App\Http\Controllers\PartnerPublicController::class, 'authenticate'])->whereIn('method', ['register', 'login'])->middleware('guest')->name('partners.public.auth');
 Route::get('/p/{partner:slug}', [\App\Http\Controllers\PartnerPublicController::class, 'redirect'])->name('partners.public.resolver');
 Route::get('/{partner:slug}', [PublicController::class, 'partners'])->where('partner', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('partners.public');
+
+Route::post('/media/uploads', [\App\Http\Controllers\MediaUploadController::class, 'store'])->middleware(['auth', 'throttle:30,1'])->name('media.uploads');

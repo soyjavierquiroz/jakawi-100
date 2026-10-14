@@ -24,27 +24,27 @@ class PartnerContentController extends Controller
     {
         $this->ownedBenefit($partner, $benefit);
 
-        return Inertia::render('partner/content/form', ['partner' => $partner->only('name', 'slug'), 'kind' => 'benefit', 'item' => $benefit?->load('locations'), 'locations' => $partner->locations()->orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('partner/content/form', ['partner' => $partner->only('name', 'slug'), 'kind' => 'benefit', 'item' => $benefit ? $benefit->load('locations')->toArray() + ['imageUrl' => app(\App\Services\MediaUrl::class)->url($benefit->image_path, 'thumbnail')] : null, 'locations' => $partner->locations()->orderBy('name')->get(['id', 'name'])]);
     }
 
     public function saveBenefit(Request $request, Partner $partner, ?Benefit $benefit = null)
     {
-        $this->ownedBenefit($partner, $benefit);
-        $this->editable($benefit);
-        $data = $request->validate($this->benefitRules());
-        $ids = $data['location_ids'] ?? [];
-        abort_unless(Location::where('partner_id', $partner->id)->whereIn('id', $ids)->count() === count(array_unique($ids)), 422);
-        $benefit ??= new Benefit(['partner_id' => $partner->id, 'status' => 'draft', 'review_status' => 'draft', 'created_by_user_id' => $request->user()->id]);
-        $benefit->fill(collect($data)->except(['location_ids', 'location_scope'])->all());
-        $benefit->applies_to_all_locations = $data['location_scope'] === 'all';
-        $benefit->slug ??= $this->slug(Benefit::class, $data['title']);
-        $benefit->save();
-        $benefit->syncLocations($ids);
-        if ($request->hasFile('image')) {
-            $benefit->update(['image_path' => app(MediaUploadService::class)->replace($request->file('image'), 'benefits', $benefit->id, 'cover', $benefit->image_path)]);
-        }
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $partner, $benefit) {
+            $this->ownedBenefit($partner, $benefit);
+            $this->editable($benefit);
+            $data = $request->validate($this->benefitRules());
+            $ids = $data['location_ids'] ?? [];
+            abort_unless(Location::where('partner_id', $partner->id)->whereIn('id', $ids)->count() === count(array_unique($ids)), 422);
+            $benefit ??= new Benefit(['partner_id' => $partner->id, 'status' => 'draft', 'review_status' => 'draft', 'created_by_user_id' => $request->user()->id]);
+            $benefit->fill(collect($data)->except(['location_ids', 'location_scope'])->all());
+            $benefit->applies_to_all_locations = $data['location_scope'] === 'all';
+            $benefit->slug ??= $this->slug(Benefit::class, $data['title']);
+            $benefit->save();
+            $benefit->syncLocations($ids);
+            $benefit->update(['image_path' => app(MediaUploadService::class)->fromRequest($request, 'image', 'benefits', $benefit->id, 'cover', $benefit->image_path)]);
 
-        return to_route('partner.benefits.index', $partner);
+            return to_route('partner.benefits.index', $partner);
+        });
     }
 
     public function submitBenefit(Request $request, Partner $partner, Benefit $benefit)
@@ -65,29 +65,27 @@ class PartnerContentController extends Controller
     {
         $this->ownedExperience($partner, $experience);
 
-        return Inertia::render('partner/content/form', ['partner' => $partner->only('name', 'slug'), 'kind' => 'experience', 'item' => $experience?->load('sessions.location'), 'locations' => $partner->locations()->orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('partner/content/form', ['partner' => $partner->only('name', 'slug'), 'kind' => 'experience', 'item' => $experience ? $experience->load('sessions.location')->toArray() + ['imageUrl' => app(\App\Services\MediaUrl::class)->url($experience->image_path, 'thumbnail'), 'coverUrl' => app(\App\Services\MediaUrl::class)->url($experience->cover_path, 'thumbnail')] : null, 'locations' => $partner->locations()->orderBy('name')->get(['id', 'name'])]);
     }
 
     public function saveExperience(Request $request, Partner $partner, ?Experience $experience = null)
     {
-        $this->ownedExperience($partner, $experience);
-        $this->editable($experience);
-        $data = $request->validate($this->experienceRules());
-        $experience ??= new Experience(['status' => 'draft', 'review_status' => 'draft', 'created_by_user_id' => $request->user()->id]);
-        $experience->fill($data);
-        $experience->slug ??= $this->slug(Experience::class, $data['title']);
-        $experience->save();
-        if (! $experience->partners()->whereKey($partner->id)->exists()) {
-            $experience->partners()->attach($partner->id, ['role' => 'organizer', 'sort_order' => 0]);
-        }
-        if ($request->hasFile('image')) {
-            $experience->update(['image_path' => app(MediaUploadService::class)->replace($request->file('image'), 'experiences', $experience->id, 'cover', $experience->image_path)]);
-        }
-        if ($request->hasFile('cover')) {
-            $experience->update(['cover_path' => app(MediaUploadService::class)->replace($request->file('cover'), 'experiences', $experience->id, 'cover', $experience->cover_path)]);
-        }
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $partner, $experience) {
+            $this->ownedExperience($partner, $experience);
+            $this->editable($experience);
+            $data = $request->validate($this->experienceRules());
+            $experience ??= new Experience(['status' => 'draft', 'review_status' => 'draft', 'created_by_user_id' => $request->user()->id]);
+            $experience->fill($data);
+            $experience->slug ??= $this->slug(Experience::class, $data['title']);
+            $experience->save();
+            if (! $experience->partners()->whereKey($partner->id)->exists()) {
+                $experience->partners()->attach($partner->id, ['role' => 'organizer', 'sort_order' => 0]);
+            }
+            $experience->update(['image_path' => app(MediaUploadService::class)->fromRequest($request, 'image', 'experiences', $experience->id, 'cover', $experience->image_path)]);
+            $experience->update(['cover_path' => app(MediaUploadService::class)->fromRequest($request, 'cover', 'experiences', $experience->id, 'cover', $experience->cover_path)]);
 
-        return to_route('partner.experiences.edit', [$partner, $experience]);
+            return to_route('partner.experiences.edit', [$partner, $experience]);
+        });
     }
 
     public function saveSession(Request $request, Partner $partner, Experience $experience)
