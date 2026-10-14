@@ -1,0 +1,39 @@
+{
+    "experiences": {
+        "count": 1,
+        "sha256": "5ded91c325a5ddf1df5638ab5f91ab88e679cc714066dbdd76fa93682b530edb"
+    },
+    "experience_partner": {
+        "count": 1,
+        "sha256": "3b2a41102a1cace4ed71bfe4b871c7caeaa1ee5f5395016a925683c32c2626d3"
+    },
+    "benefits": {
+        "count": 2,
+        "sha256": "8d183c2e6d1e2842b992cc6bf804a845cec1c3df8a1e08f1234f02b479d5f384"
+    },
+    "challenges": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "landing_presentations": {
+        "count": 5,
+        "sha256": "5f32a71bce3ca61944a8c0cd9bb39c2f79a14f866fe6303c7d8f35a98ab5dea4"
+    },
+    "partners": {
+        "count": 3,
+        "sha256": "f4c18a320480dca9bbd71806310c006189e857d3c710cb327dad4745905f9a62"
+    },
+    "experience_sessions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "experience_1": {
+        "id": 1,
+        "slug": "toctoccafe-descubre-el-cafe-boliviano",
+        "title": "Descubre el café boliviano",
+        "status": "draft",
+        "regular_price": "75.00",
+        "member_price": null
+    },
+    "prelaunch": true
+}

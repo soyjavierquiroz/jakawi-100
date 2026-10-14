@@ -1,0 +1,85 @@
+{
+  "source": "candidate compiled assets + read-only production kernel",
+  "checks": [
+    {
+      "catalog": "experiences",
+      "width": 375,
+      "rows": 1,
+      "overflow": false
+    },
+    {
+      "catalog": "benefits",
+      "width": 375,
+      "rows": 2,
+      "overflow": false
+    },
+    {
+      "catalog": "retos",
+      "width": 375,
+      "rows": 0,
+      "overflow": false
+    },
+    {
+      "catalog": "experiences",
+      "width": 390,
+      "rows": 1,
+      "overflow": false
+    },
+    {
+      "catalog": "benefits",
+      "width": 390,
+      "rows": 2,
+      "overflow": false
+    },
+    {
+      "catalog": "retos",
+      "width": 390,
+      "rows": 0,
+      "overflow": false
+    },
+    {
+      "catalog": "experiences",
+      "width": 1440,
+      "rows": 1,
+      "overflow": false
+    },
+    {
+      "catalog": "benefits",
+      "width": 1440,
+      "rows": 2,
+      "overflow": false
+    },
+    {
+      "catalog": "retos",
+      "width": 1440,
+      "rows": 0,
+      "overflow": false
+    },
+    {
+      "experience": 1,
+      "edit": "PASS",
+      "url": "/admin/experiences/toctoccafe-descubre-el-cafe-boliviano/edit"
+    },
+    {
+      "partnerSearch": "PASS",
+      "editAndReturnContext": "PASS"
+    },
+    {
+      "preview": "/admin/experiencias/toctoccafe-descubre-el-cafe-boliviano/landings/toctoccafe-descubre-el-cafe-boliviano/preview",
+      "status": 200
+    },
+    {
+      "preview": "/admin/beneficios/elrepollo-almuerzo/landings/el-re-pollo-almuerzo-resuelto/preview",
+      "status": 200
+    },
+    {
+      "preview": "/admin/beneficios/dossis43-parada-estrategica/landings/dossis-43-cafe-y-antojo/preview",
+      "status": 200
+    },
+    {
+      "uiFixtures": "draft / published / missing partner / missing and broken image / long title PASS"
+    }
+  ],
+  "errors": [],
+  "status": "PASS"
+}

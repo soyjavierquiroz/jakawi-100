@@ -1,0 +1,25 @@
+{
+  "php_final": "662 passed, 10 preexisting failures, 9857 assertions",
+  "baseline_commit": "c37f3ef1d3b11f331d4c667ee84a4c7015d70f31",
+  "baseline_reproduction": "10 identical failures in 9 suites (51 passed)",
+  "failures": [
+    "Tests\\Feature\\AdminV2Test > admin creates…  ModelNotFoundException",
+    "Tests\\Feature\\AdminV2Test > admin uploads…  ModelNotFoundException",
+    "Tests\\Feature\\ApplicationV2HttpTest > publication routes only exp…",
+    "Tests\\Feature\\CampaignTest > admin can create campaign and non ad…",
+    "Tests\\Feature\\DemoCatalogV2Test > demo catalog lifecycle is idemp…",
+    "Tests\\Feature\\LandingPresentationTest > video configuration is nu…",
+    "Tests\\Feature\\PublicV2HttpTest > partner and location are public…",
+    "Tests\\Feature\\UnlockCoreTest > public view is safe for guests and…",
+    "Tests\\Feature\\UnlockMarketingLandingTest > guest continuation eli…",
+    "Tests\\Feature\\UnlockMarketingLandingTest > visibility terminal pr…"
+  ],
+  "typescript": "PASS (host tsc and clean PHP 8.4 image wayfinder + tsc)",
+  "build": "PASS (clean git archive app + web)",
+  "lint": "114 baseline warnings; identical after normalizing line numbers; new catalog file passes",
+  "format": "157 preexisting files in both baseline and final check",
+  "migrations": 0,
+  "correction_validation": "123 related tests PASS (2472 assertions), followed by final AdminCatalogTest 4 PASS (198 assertions), scoped catalog + form lint PASS",
+  "final_runtime_commit": "4d5cdac",
+  "incident": "First attempt rolled back automatically after multipart normalized line endings; description/terms/updated_at restored from validated backup; all original hashes verified; fixed by JSON transport with automatic file detection."
+}

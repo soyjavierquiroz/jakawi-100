@@ -1,0 +1,1 @@
+docker compose --project-name jakawicom -f /home/jakawi.com/compose.yaml -f /home/jakawi.com/backups/admin-catalog-4d5cdac/rollback.yaml up -d --no-deps --no-build --force-recreate app web social-worker

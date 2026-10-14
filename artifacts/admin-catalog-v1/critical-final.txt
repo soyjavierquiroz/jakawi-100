@@ -1,0 +1,9 @@
+   PASS  Tests\Feature\AdminCatalogTest
+  ✓ existing draft can be opened and saved by admin without duplicating… 3.78s  
+  ✓ published edit and authorization are preserved                       0.13s  
+  ✓ catalog search filters order pagination and empty results            0.25s  
+  ✓ benefits and challenges share catalog and only offer valid actions   0.15s  
+
+  Tests:    4 passed (198 assertions)
+  Duration: 4.97s
+

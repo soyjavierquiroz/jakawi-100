@@ -1,0 +1,192 @@
+   FAILED  Tests\Feature\AdminV2Test > admin creates…  ModelNotFoundException   
+  No query results for model [App\Models\Partner].
+
+  at vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:809
+    805▕         if (! is_null($model = $this->first($columns))) {
+    806▕             return $model;
+    807▕         }
+    808▕ 
+  ➜ 809▕         throw (new ModelNotFoundException)->setModel(get_class($this->model));
+    810▕     }
+    811▕ 
+    812▕     /**
+    813▕      * Execute the query and get the first result or call a callback.
+
+      +4 vendor frames 
+  5   tests/Feature/AdminV2Test.php:39
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\AdminV2Test > admin uploads…  ModelNotFoundException   
+  No query results for model [App\Models\Partner].
+
+  at vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:809
+    805▕         if (! is_null($model = $this->first($columns))) {
+    806▕             return $model;
+    807▕         }
+    808▕ 
+  ➜ 809▕         throw (new ModelNotFoundException)->setModel(get_class($this->model));
+    810▕     }
+    811▕ 
+    812▕     /**
+    813▕      * Execute the query and get the first result or call a callback.
+
+      +4 vendor frames 
+  5   tests/Feature/AdminV2Test.php:55
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ApplicationV2HttpTest > publication routes only exp…   
+  Expected response status code [200] but received 301.
+Failed asserting that 301 is identical to 200.
+
+  at tests/Feature/ApplicationV2HttpTest.php:29
+     25▕         $experience = Experience::factory()->create(['status' => 'published']);
+     26▕         $draftExperience = Experience::factory()->create(['status' => 'draft']);
+     27▕ 
+     28▕         $this->get('/')->assertOk();
+  ➜  29▕         $this->get('/partners/'.$partner->slug)->assertOk()->assertDontSee('tax_id');
+     30▕         $this->get('/partners/'.$draftPartner->slug)->assertNotFound();
+     31▕         $this->get('/lugares/'.$location->slug)->assertOk()->assertDontSee('redemption_pin_hash');
+     32▕         $this->get('/lugares/'.$draftLocation->slug)->assertNotFound();
+     33▕         $this->get('/beneficios/'.$benefit->slug)->assertOk();
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\CampaignTest > admin can create campaign and non ad…   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 403.
+Failed asserting that false is true.
+
+  at tests/Feature/CampaignTest.php:21
+     17▕ 
+     18▕     public function test_admin_can_create_campaign_and_non_admin_cannot(): void
+     19▕     {
+     20▕         $payload = ['name' => 'Fundadores', 'code' => 'fundadores1000', 'status' => 'active', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'participant_types' => ['CREATOR'], 'start_at' => now()->subDay()->toDateTimeString(), 'end_at' => now()->addDay()->toDateTimeString()];
+  ➜  21▕         $this->actingAs(User::factory()->create())->post('/admin/campaigns', $payload)->assertRedirect('/login');
+     22▕         $this->actingAs(User::factory()->create(['is_admin' => true]))->post('/admin/campaigns', $payload)->assertSessionHasNoErrors();
+     23▕         $this->assertDatabaseHas('campaigns', ['code' => 'fundadores1000']);
+     24▕     }
+     25▕
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\DemoCatalogV2Test > demo catalog lifecycle is idemp…   
+  Expected response status code [200] but received 301.
+Failed asserting that 301 is identical to 200.
+
+  at tests/Feature/DemoCatalogV2Test.php:35
+     31▕         $this->assertSame(3, Experience::where('slug', 'demo-sunset-jakawi')->sole()->partners()->count());
+     32▕         Artisan::call('jakawi:seed-demo-catalog');
+     33▕         $this->assertCounts();
+     34▕         foreach (['/', '/beneficios', '/experiencias', '/partners/demo-altura-nube', '/lugares/demo-altura-nube-cala-cala', '/beneficios/demo-beneficio-01', '/experiencias/demo-sunset-jakawi'] as $url) {
+  ➜  35▕             $this->get($url)->assertOk();
+     36▕         }
+     37▕         Artisan::call('jakawi:clear-demo-catalog');
+     38▕         $this->assertCounts(0, 0, 0, 0, 0);
+     39▕         $this->assertDatabaseHas('partners', ['id' => $real->id]);
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\LandingPresentationTest > video configuration is nu…   
+  Property [vsl] does not match the expected value.
+Failed asserting that null is identical to Array &0 [
+    'framing' => 'embedded-vertical',
+    'source' => Array &1 [
+        'type' => 'youtube',
+        'url' => 'https://www.youtube.com/watch?v=hI-Ecy2D8pg',
+    ],
+].
+
+  at tests/Feature/LandingPresentationTest.php:47
+     43▕         $this->get('/l/private-video-landing')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+     44▕         $this->actingAs(User::factory()->create())->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+     45▕         $this->actingAs(User::factory()->create(['is_admin'=>true]))->get('/admin/desbloqueos/private-video/landings/private-video-landing/preview')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+     46▕         $unlock->update(['status'=>Unlock::UNLOCKED]);
+  ➜  47▕         $this->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', $config));
+     48▕     }
+     49▕ 
+     50▕     public function test_video_configuration_validates_allowlists_and_null_removal(): void
+     51▕     {
+
+      +2 vendor frames 
+  3   tests/Feature/LandingPresentationTest.php:47
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\PublicV2HttpTest > partner and location are public…    
+  Expected response status code [200] but received 301.
+Failed asserting that 301 is identical to 200.
+
+  at tests/Feature/PublicV2HttpTest.php:51
+     47▕         foreach (['draft', 'paused', 'archived'] as $status) {
+     48▕             $this->get('/partners/'.Partner::factory()->create(['status' => $status])->slug)->assertNotFound();
+     49▕             $this->get('/lugares/'.Location::factory()->create(['status' => $status])->slug)->assertNotFound();
+     50▕         }
+  ➜  51▕         $this->get('/partners/'.$partner->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('partners/show')->where('locations.0.opening_hours.mon.0', '08:00-18:00')->missing('partner.legal_name')->missing('partner.tax_id')->missing('partner.contact_name')->missing('partner.contact_phone')->missing('partner.contact_email')->missing('partner.internal_notes'));
+     52▕         $this->get('/lugares/'.$location->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('locations/show')->missing('location.manager_name')->missing('location.manager_phone')->missing('location.manager_email')->missing('location.redemption_pin_hash')->missing('location.redemption_pin'));
+     53▕         $this->assertDatabaseCount('analytics_events', 2);
+     54▕         $this->assertDatabaseHas('analytics_events', ['event_name' => 'partner_view', 'partner_id' => $partner->id]);
+     55▕         $this->assertDatabaseHas('analytics_events', ['event_name' => 'location_view', 'location_id' => $location->id]);
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\UnlockCoreTest > public view is safe for guests and…   
+  Expected: <!DOCTYPE html>\n
+  <html lang="en" data-appearance="system" data-appearance-authenticated="false" class="">\n
+      <head>\n
+  ... (53 more lines)
+
+  To contain: Secret Partner
+
+  at tests/Feature/UnlockCoreTest.php:75
+     71▕         $unlock = $this->unlock(['secret_mode' => true, 'hide_partner_until_unlock' => true, 'hide_location_until_unlock' => true, 'hide_exact_offer_until_unlock' => true, 'free_user_offer' => 'SECRET OFFER', 'description' => 'SECRET OFFER', 'partner_id' => $partner->id]);
+     72▕         $unlock->locations()->attach($location);
+     73▕         $this->get('/d/'.$unlock->slug)->assertOk()->assertDontSee('Secret Partner')->assertDontSee('Secret Location')->assertDontSee('SECRET OFFER');
+     74▕         app(UnlockParticipationService::class)->commit($unlock, User::factory()->create());
+  ➜  75▕         $this->get('/d/'.$unlock->slug)->assertOk()->assertSee('Secret Partner')->assertSee('Secret Location')->assertSee('SECRET OFFER')->assertDontSee(User::first()->email);
+     76▕     }
+     77▕ 
+     78▕     public function test_interest_commitment_eligibility_and_idempotency(): void
+     79▕     {
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\UnlockMarketingLandingTest > guest continuation eli…   
+  Property [copy.action.label] does not match the expected value.
+Failed asserting that two strings are identical.
+  -'QUIERO MI BENEFICIO'
+  +'ACTIVAR MEMBRESÍA'
+  
+
+  at tests/Feature/UnlockMarketingLandingTest.php:64
+     60▕         $this->assertDatabaseCount('unlock_participations',0);
+     61▕         $user=User::factory()->create(); $this->actingAs($user);
+     62▕         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.viewer.eligible',true)->where('copy.action.label','SUMARME')->where('copy.action.href',route('unlocks.show',$unlock)));
+     63▕         $unlock->update(['free_user_eligible'=>false]);
+  ➜  64▕         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.action.label','QUIERO MI BENEFICIO')->where('copy.action.href','/membresia?'.http_build_query(['journey'=>'UNLOCK','action'=>'COMMIT','resource_id'=>$unlock->id])));
+     65▕         Membership::create(['user_id'=>$user->id,'status'=>'active','starts_at'=>now()->subDay(),'ends_at'=>now()->addMonth(),'amount_paid'=>100]);
+     66▕         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.viewer.eligible',true)->where('copy.action.label','SUMARME'));
+     67▕         $participation = $this->participate($unlock,UnlockParticipation::COMMITTED,$user);
+     68▕         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.action.label','VER MI PARTICIPACIÓN')->where('copy.viewer.participationStatus','COMMITTED'));
+
+      +2 vendor frames 
+  3   tests/Feature/UnlockMarketingLandingTest.php:64
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\UnlockMarketingLandingTest > visibility terminal pr…   
+  Property [copy.reward] does not match the expected value.
+Failed asserting that two strings are identical.
+  -'Menú de temporada para quienes confirmen.'
+  +'Una cena especial para compartir.'
+  
+
+  at tests/Feature/UnlockMarketingLandingTest.php:130
+    126▕         $unlock->update(['status'=>Unlock::ACTIVE,'jp_deposit'=>0,'secret_mode'=>true,'hide_exact_offer_until_unlock'=>true,'hide_partner_until_unlock'=>true,'hide_location_until_unlock'=>true]);
+    127▕         $landing->update(['headline'=>'OFERTA SECRETA REVELADA','hero_path'=>'spoiler.jpg','hero_alt'=>'Oferta oculta','reward_display_override'=>'Oferta oculta']);
+    128▕         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.description',null)->has('copy.offers',0)->where('copy.partner',null)->has('copy.locations',0)->where('copy.heroUrl',null)->where('copy.heroAlt',$unlock->title)->where('copy.headline',$unlock->title)->where('copy.valueNote',null));
+    129▕         $unlock->update(['status'=>Unlock::UNLOCKED,'goal_reached_at'=>now()]);
+  ➜ 130▕         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.reward',$unlock->description)->has('copy.offers',2)->where('copy.partner.name','Partner real')->has('copy.locations',1));
+    131▕     }
+    132▕ 
+    133▕     public function test_guarantee_copy_matches_release_and_forfeit_semantics_without_mutation(): void
+    134▕     {
+
+      +2 vendor frames 
+  3   tests/Feature/UnlockMarketingLandingTest.php:130
+
+
+  Tests:    10 failed, 662 passed (9857 assertions)
+  Duration: 141.21s
+

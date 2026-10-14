@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "path": "/admin/experiences",
+      "html_manifest": "PASS"
+    },
+    {
+      "path": "/admin/benefits",
+      "html_manifest": "PASS"
+    },
+    {
+      "path": "/admin/retos",
+      "html_manifest": "PASS"
+    },
+    {
+      "path": "/admin/experiences/toctoccafe-descubre-el-cafe-boliviano/edit",
+      "html_manifest": "PASS"
+    },
+    {
+      "path": "/toctoccafe",
+      "html_manifest": "PASS"
+    },
+    {
+      "path": "/dossis43",
+      "html_manifest": "PASS"
+    },
+    {
+      "path": "/elrepollo",
+      "html_manifest": "PASS"
+    }
+  ],
+  "app_web_assets_identical": true
+}

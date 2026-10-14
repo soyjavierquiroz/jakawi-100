@@ -1,0 +1,17 @@
+{
+  "sha": "4d5cdac923c066d338fa310748e99d563998f104",
+  "previous_runtime": "baead48dc695215eb5eb4384c69e96f281fce03a",
+  "services": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "rollback_available": true,
+  "migrations": 0,
+  "status": "PASS",
+  "data_hashes_unchanged": true,
+  "prelaunch": true,
+  "unrelated_containers_unchanged": true,
+  "artifacts_preserved": 899,
+  "rollback_executed": false
+}

@@ -1,0 +1,6 @@
+{
+  "path": "/home/jakawi.com/backups/jakawi-pre-admin-catalog-20261014-215326.dump",
+  "bytes": 301956,
+  "sha256": "e890262df055eadb388eb16907645cd9fadb2eba50def8cfae59ab06853fd4ac",
+  "pg_restore_list": "PASS"
+}

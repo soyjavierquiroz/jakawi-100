@@ -1,0 +1,20 @@
+
+  ✓ existing draft can be opened and saved by admin without duplicating… 6.27s  
+  ✓ published edit and authorization are preserved                       0.22s  
+  ✓ catalog search filters order pagination and empty results            0.69s  
+  ✓ benefits and challenges share catalog and only offer valid actions   0.25s  
+
+   PASS  Tests\Feature\ExperienceMvpPublicFlowTest
+  ✓ detail exposes one upcoming session location and organizer           0.22s  
+  ✓ multiple sessions and both external targets are exposed in configur… 0.24s  
+  ✓ no future session has no reservation target and external destinatio… 0.19s  
+  ✓ whatsapp and external clicks are tracked without a dead target       0.16s  
+  ✓ phone destination uses existing external reservation flow            0.22s  
+  ✓ unpublished experience is not publicly exposed                       0.12s  
+
+   PASS  Tests\Feature\TocTocExperienceConfigurationTest
+  ✓ approved commercial draft has no public action or membership gate    0.26s  
+
+  Tests:    11 passed (288 assertions)
+  Duration: 9.77s
+

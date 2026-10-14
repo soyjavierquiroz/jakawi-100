@@ -1,0 +1,180 @@
+   PASS  Tests\Feature\AdminCatalogTest
+  ✓ existing draft can be opened and saved by admin without duplicating… 2.87s  
+  ✓ published edit and authorization are preserved                       0.13s  
+  ✓ catalog search filters order pagination and empty results            0.22s  
+  ✓ benefits and challenges share catalog and only offer valid actions   0.12s  
+
+   PASS  Tests\Feature\AdminV2Test
+  ✓ admin enforces benefit location ownership and experience relations   0.13s  
+
+   PASS  Tests\Feature\BenefitAuthenticatedAccessTest
+  ✓ public non member is denied at controller and service                0.10s  
+  ✓ members can redeem both ordinary modes                               0.20s  
+  ✓ free account owned delivery pin idempotency and limit                0.19s  
+  ✓ missing pin and foreign location remain blocked                      0.09s  
+  ✓ guest partner landing signup activation and delivery preserve acqui… 0.46s  
+  ✓ admin accepts authenticated and rejects unknown access mode          0.09s  
+
+   PASS  Tests\Feature\BenefitMarketingLandingTest
+  ✓ renderer real value partner places conditions contextual faq and at… 0.12s  
+  ✓ editorial overrides never replace the offer and hero fallback        0.15s  
+  ✓ member membership expired unavailable and redeemed states            0.29s  
+  ✓ social challenge offer is not public even with published all landin… 0.17s  
+  ✓ entitled challenge winner gets existing reward path without members… 0.15s  
+  ✓ audience navigation one item direct native and seo                   0.48s  
+  ✓ admin reuses management create edit preview publish defaults and ar… 0.28s  
+
+   PASS  Tests\Feature\BenefitRedemptionContinuityTest
+  ✓ benefit context is visible on register and login without changing i… 0.37s  
+  ✓ generic auth has no benefit context and auth choice is not a return… 0.11s  
+  ✓ guest login restores benefit intent and location without redeeming   0.35s  
+  ✓ guest without location resumes selection not a redemption            0.35s  
+  ✓ signup without a location returns to benefit without verification b… 0.17s  
+  ✓ multi location requires selection and rejects foreign or unusable l… 0.19s  
+  ✓ single location resolves deterministically                           0.14s  
+  ✓ zero locations disables action and cannot redeem                     0.10s  
+  ✓ stale auth context is not authorization                              0.39s  
+  ✓ non member context survives membership gate and unverified member c… 0.20s  
+  ✓ inactive and future benefits cannot redeem                           0.16s  
+  ✓ challenge grant verification is not removed                          0.13s  
+  ✓ unverified owner reaches delivery and non owner is denied            0.18s  
+  ✓ context rejects foreign locations and arbitrary return urls          0.10s  
+
+   PASS  Tests\Feature\BenefitTest
+  ✓ benefit requires partner                                             0.05s  
+  ✓ benefit slug is unique                                               0.06s  
+  ✓ benefit persists decimal casts featured and nullable limit           0.07s  
+  ✓ benefit rules cover configured values and dates                      0.06s  
+  ✓ published scope excludes drafts                                      0.05s  
+  ✓ availability requires published partner benefit and valid dates      0.07s  
+  ✓ all locations are dynamic and only published locations are returned  0.06s  
+  ✓ selected locations are published same partner locations only         0.09s  
+  ✓ independent locations are rejected and switching to all clears pivo… 0.07s  
+
+   PASS  Tests\Feature\CatalogImporterV2Test
+  ✓ reference key is nullable but unique per experience when present     0.06s  
+  ✓ validation matrix rejects structural boolean reference and benefit…  0.10s  
+
+   PASS  Tests\Feature\ChallengeDirectJoinTest
+  ✓ experience session choice keeps activation and does not reserve      0.15s  
+  ✓ benefit location choice keeps activation and does not redeem         0.15s  
+
+   PASS  Tests\Feature\ChallengeGeneralizationTest
+  ✓ exclusive benefit redemption and manual prize fulfillment stay inta… 0.23s  
+
+   PASS  Tests\Feature\ChallengeProductExperienceTest
+  ✓ partner submission review and publication gate                       0.31s  
+  ✓ partner cannot use another partners benefit                          0.10s  
+  ✓ public landing discovery and individual progress                     0.12s  
+  ✓ ranking uses one best eligible entry per participant and visibility  0.08s  
+  ✓ scheduler queues only stale top n social entries                     0.11s  
+  ✓ first n slots manual landing and membership return                   0.14s  
+  ✓ rules cannot change after participation                              0.07s  
+  ✓ closed ranking stays provisional until candidate is confirmed        0.08s  
+  ✓ inflight inspection at close writes final snapshot                   0.11s  
+  ✓ expired social challenge closes and queues final snapshot            0.08s  
+
+   PASS  Tests\Feature\CityInterestTest
+  ✓ active city redirects into selected city experience                  0.06s  
+
+   PASS  Tests\Feature\CityLocationTest
+  ✓ city work does not change benefit session or redemption relationshi… 0.09s  
+
+   PASS  Tests\Feature\DiscoveryEligibilityQueryTest
+  ✓ benefit query preserves availability and city geography              0.13s  
+  ✓ experience query returns only relevant city sessions without new pu… 0.11s  
+
+   PASS  Tests\Feature\ExperienceMarketingLandingTest
+  ✓ member price accent requires authoritative lower price               0.22s  
+  ✓ renderer facts editorial conditions faq and campaign isolation       0.12s  
+  ✓ guest membership member multiple sessions and existing booking       0.27s  
+  ✓ price missing free external unavailable past and media fallback      0.23s  
+  ✓ defaults discovery unique native marketing and seo                   0.44s  
+  ✓ other types compact sessions and no invented capacity claims         0.13s  
+  ✓ generic admin lifecycle and preview subject guard                    0.22s  
+
+   PASS  Tests\Feature\ExperienceMvpPublicFlowTest
+  ✓ detail exposes one upcoming session location and organizer           0.09s  
+  ✓ multiple sessions and both external targets are exposed in configur… 0.08s  
+  ✓ no future session has no reservation target and external destinatio… 0.09s  
+  ✓ whatsapp and external clicks are tracked without a dead target       0.07s  
+  ✓ phone destination uses existing external reservation flow            0.09s  
+  ✓ unpublished experience is not publicly exposed                       0.05s  
+
+   PASS  Tests\Feature\ExperienceReservationTest
+  ✓ active member requests once and the event is recorded once           0.14s  
+  ✓ party size persists and existing active reservation keeps its origi… 0.12s  
+  ✓ party size must be between one and ten                               0.11s  
+  ✓ guest and member without membership cannot request                   0.10s  
+  ✓ external and invalid or past sessions cannot create internal reserv… 0.13s  
+  ✓ partner can confirm or reject only its own reservations and member…  0.15s  
+  ✓ partner view shows only member name party size and confirmed attend… 0.15s  
+  ✓ partner cannot view another partners member data                     0.13s  
+
+   PASS  Tests\Feature\ExperienceTest
+  ✓ experience persists editorial fields and defaults                    0.07s  
+  ✓ slug is unique and publication scope excludes drafts                 0.06s  
+  ✓ experience rules cover types prices and reservation destinations     0.08s  
+  ✓ multi partner roles allow zero partners and multiple roles per part… 0.09s  
+  ✓ session rules and upcoming logic                                     0.07s  
+  ✓ upcoming experiences require published status and order sessions     0.06s  
+  ✓ session location may be partner owned independent or unrelated or n… 0.08s  
+
+   PASS  Tests\Feature\LandingAcquisitionTest
+  ✓ experience membership continuation preserves landing and selected s… 0.18s  
+  ✓ register preserves landing subject action and resumes benefit locat… 0.23s  
+
+   PASS  Tests\Feature\LandingAiBriefTest
+  ✓ benefit exports authoritative truth without treating savings as dis… 0.08s  
+  ✓ experience exports all upcoming sessions prices and reservation mod… 0.11s  
+
+   PASS  Tests\Feature\MarketingLandingAdminV1Test
+  ✓ experience editorial containing en is not silently replaced          0.13s  
+
+   PASS  Tests\Feature\MembershipConversionJourneyTest
+  ✓ experience return restores valid session without reserving           0.24s  
+  ✓ member gate and invalid session return stays on experience detail    0.20s  
+  ✓ benefit and unlock gates and active member cannot request            0.18s  
+
+   PASS  Tests\Feature\MembershipRedemptionTest
+  ✓ start rejects invalid benefit location or missing pin                0.09s  
+
+   PASS  Tests\Feature\MicroOptInJourneyTest
+  ✓ passwordless identification authenticates and returns same benefit…  0.15s  
+  ✓ benefit explicit action delivers only real owned code location and…  0.15s  
+  ✓ experience explicit reservation returns pending truth to same landi… 0.19s  
+  ✓ external experience handoff delivers selected session without claim… 0.15s  
+
+   PASS  Tests\Feature\PartnerContentStudioTest
+  ✓ partner experience sessions are scoped editable and reviewed         0.23s  
+
+   PASS  Tests\Feature\PartnerPublicProfileTest
+  ✓ public identity inventory locations canonical and prelaunch          0.16s  
+
+   PASS  Tests\Feature\PrelaunchModeTest
+  ✓ root is static coming soon and indexable without inventory           0.06s  
+  ✓ landing native fallback and explore remain available with public po… 0.14s  
+  ✓ admin and saved preview and auth are excluded                        0.12s  
+  ✓ disabling flag restores home and previous public seo                 0.13s  
+
+   PASS  Tests\Feature\PublicJourneyContinuationTest
+  ✓ context is limited to a valid experience session                     0.06s  
+
+   PASS  Tests\Feature\PublicJourneyWiringTest
+  ✓ guest reserve returns to experience after signup without reserving   0.16s  
+  ✓ existing user returns to experience after login without reserving    0.39s  
+  ✓ foreign or expired experience session is not restored                0.20s  
+  ✓ guest benefit intent returns after signup without redeeming          0.20s  
+  ✓ deleted benefit continuation falls back safely                       0.15s  
+  ✓ existing user returns to benefit after login without redeeming       0.34s  
+
+   PASS  Tests\Feature\PublicV2HttpTest
+  ✓ benefit listing filter and detail follow availability                0.31s  
+  ✓ experience publication sessions partners and reservation redirects…  0.21s  
+
+   PASS  Tests\Feature\TocTocExperienceConfigurationTest
+  ✓ approved commercial draft has no public action or membership gate    0.27s  
+
+  Tests:    123 passed (2472 assertions)
+  Duration: 21.79s
+

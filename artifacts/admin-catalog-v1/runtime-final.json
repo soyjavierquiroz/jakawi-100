@@ -1,0 +1,23 @@
+[
+  {
+    "name": "jakawicom-app-1",
+    "image": "sha256:5835ef7b45b975f458e51dd5543ab4736a5025caf2b2c2ed4ac51443962866a0",
+    "revision": "4d5cdac923c066d338fa310748e99d563998f104",
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "name": "jakawicom-web-1",
+    "image": "sha256:226259bc4eb469e33d7677a2a02013781d81632171011e51faa2b0bcd74104ad",
+    "revision": "4d5cdac923c066d338fa310748e99d563998f104",
+    "running": true,
+    "health": null
+  },
+  {
+    "name": "jakawicom-social-worker-1",
+    "image": "sha256:5835ef7b45b975f458e51dd5543ab4736a5025caf2b2c2ed4ac51443962866a0",
+    "revision": "4d5cdac923c066d338fa310748e99d563998f104",
+    "running": true,
+    "health": null
+  }
+]

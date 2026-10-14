@@ -1,0 +1,15 @@
+{
+  "sha": "59acfdebde14519e0225273f56dc7b2e7f0ec4e7",
+  "previous_runtime": "baead48dc695215eb5eb4384c69e96f281fce03a",
+  "services": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "rollback_available": true,
+  "migrations": 0,
+  "status": "FAIL",
+  "failure": "Commercial data hash changed",
+  "rollback_ready": true,
+  "rollback_executed": true
+}
