@@ -1,0 +1,43 @@
+{
+  "mode": "Read-only HTTP-kernel render of persisted Admin preview, hydrated with existing LIVE assets; no public publication or session injection.",
+  "checks": [
+    {
+      "width": 320,
+      "overflow": false,
+      "brokenImages": 0,
+      "unavailableActionDisabled": true,
+      "conditionsVisible": true
+    },
+    {
+      "width": 375,
+      "overflow": false,
+      "brokenImages": 0,
+      "unavailableActionDisabled": true,
+      "conditionsVisible": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "brokenImages": 0,
+      "unavailableActionDisabled": true,
+      "conditionsVisible": true
+    },
+    {
+      "width": 430,
+      "overflow": false,
+      "brokenImages": 0,
+      "unavailableActionDisabled": true,
+      "conditionsVisible": true
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "brokenImages": 0,
+      "unavailableActionDisabled": true,
+      "conditionsVisible": true
+    }
+  ],
+  "errors": [],
+  "mutations": [],
+  "status": "PASS"
+}

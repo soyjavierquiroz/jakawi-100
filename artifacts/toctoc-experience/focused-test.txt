@@ -1,0 +1,5 @@
+PASS  Tests\Feature\TocTocExperienceConfigurationTest
+  ✓ approved commercial draft has no public action or membership gate    3.34s
+
+  Tests:    1 passed (51 assertions)
+  Duration: 4.29s

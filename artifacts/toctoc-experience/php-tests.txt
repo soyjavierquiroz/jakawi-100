@@ -1,0 +1,192 @@
+PASS  Tests\Unit\DiscoveryOpportunityAdapterTest
+  ✓ experience adapter uses only the explicit selected city session and… 0.20s
+  ✓ experience adapter rejects a wrong city session without using venue… 0.04s
+
+   PASS  Tests\Unit\DiscoveryOpportunityTest
+  ✓ experience shaped opportunity serializes                             0.06s
+
+   PASS  Tests\Unit\DiscoveryRankerTest
+  ✓ category affinity applies to benefits and experiences but not unloc… 0.04s
+
+   PASS  Tests\Feature\AdminV2Test
+  ✓ admin enforces benefit location ownership and experience relations   3.01s
+
+   PASS  Tests\Feature\BenefitMarketingLandingTest
+  ✓ renderer real value partner places conditions contextual faq and at… 0.17s
+  ✓ editorial overrides never replace the offer and hero fallback        0.15s
+  ✓ member membership expired unavailable and redeemed states            0.34s
+  ✓ social challenge offer is not public even with published all landin… 0.17s
+  ✓ entitled challenge winner gets existing reward path without members… 0.17s
+  ✓ audience navigation one item direct native and seo                   0.49s
+  ✓ admin reuses management create edit preview publish defaults and ar… 0.26s
+
+   PASS  Tests\Feature\CatalogImporterV2Test
+  ✓ reference key is nullable but unique per experience when present     0.08s
+
+   PASS  Tests\Feature\ChallengeDirectJoinTest
+  ✓ experience session choice keeps activation and does not reserve      0.17s
+
+   PASS  Tests\Feature\ChallengeProductExperienceTest
+  ✓ partner submission review and publication gate                       0.15s
+  ✓ partner cannot use another partners benefit                          0.07s
+  ✓ public landing discovery and individual progress                     0.14s
+  ✓ ranking uses one best eligible entry per participant and visibility  0.09s
+  ✓ scheduler queues only stale top n social entries                     0.09s
+  ✓ first n slots manual landing and membership return                   0.16s
+  ✓ rules cannot change after participation                              0.09s
+  ✓ closed ranking stays provisional until candidate is confirmed        0.11s
+  ✓ inflight inspection at close writes final snapshot                   0.17s
+  ✓ expired social challenge closes and queues final snapshot            0.09s
+
+   PASS  Tests\Feature\CityInterestTest
+  ✓ active city redirects into selected city experience                  0.08s
+
+   PASS  Tests\Feature\DiscoveryEligibilityQueryTest
+  ✓ experience query returns only relevant city sessions without new pu… 0.08s
+
+   PASS  Tests\Feature\ExperienceMarketingLandingTest
+  ✓ member price accent requires authoritative lower price               0.23s
+  ✓ renderer facts editorial conditions faq and campaign isolation       0.15s
+  ✓ guest membership member multiple sessions and existing booking       0.27s
+  ✓ price missing free external unavailable past and media fallback      0.26s
+  ✓ defaults discovery unique native marketing and seo                   0.54s
+  ✓ other types compact sessions and no invented capacity claims         0.20s
+  ✓ generic admin lifecycle and preview subject guard                    0.25s
+
+   PASS  Tests\Feature\ExperienceMvpPublicFlowTest
+  ✓ detail exposes one upcoming session location and organizer           0.13s
+  ✓ multiple sessions and both external targets are exposed in configur… 0.08s
+  ✓ no future session has no reservation target and external destinatio… 0.09s
+  ✓ whatsapp and external clicks are tracked without a dead target       0.10s
+  ✓ phone destination uses existing external reservation flow            0.09s
+  ✓ unpublished experience has a safe unavailable state                  0.11s
+
+   PASS  Tests\Feature\ExperienceReservationTest
+  ✓ active member requests once and the event is recorded once           0.17s
+  ✓ party size persists and existing active reservation keeps its origi… 0.12s
+  ✓ party size must be between one and ten                               0.13s
+  ✓ guest and member without membership cannot request                   0.17s
+  ✓ external and invalid or past sessions cannot create internal reserv… 0.17s
+  ✓ partner can confirm or reject only its own reservations and member…  0.15s
+  ✓ partner view shows only member name party size and confirmed attend… 0.15s
+  ✓ partner cannot view another partners member data                     0.13s
+
+   PASS  Tests\Feature\ExperienceTest
+  ✓ experience persists editorial fields and defaults                    0.06s
+  ✓ slug is unique and publication scope excludes drafts                 0.05s
+  ✓ experience rules cover types prices and reservation destinations     0.06s
+  ✓ multi partner roles allow zero partners and multiple roles per part… 0.08s
+  ✓ session rules and upcoming logic                                     0.07s
+  ✓ upcoming experiences require published status and order sessions     0.07s
+  ✓ session location may be partner owned independent or unrelated or n… 0.07s
+
+   PASS  Tests\Feature\LandingAcquisitionTest
+  ✓ experience membership continuation preserves landing and selected s… 0.14s
+
+   PASS  Tests\Feature\LandingAiBriefTest
+  ✓ benefit exports authoritative truth without treating savings as dis… 0.08s
+  ✓ experience exports all upcoming sessions prices and reservation mod… 0.10s
+  ✓ challenge exports objective evidence selection reward and verificat… 0.06s
+  ✓ allowlist excludes internal and private data even from public text   0.07s
+  ✓ missing facts are omitted and grant access is not public membership  0.09s
+  ✓ version order json and read only admin projection are stable         0.12s
+  ✓ unlock is excluded                                                   0.04s
+
+   FAIL  Tests\Feature\LandingPresentationTest
+  ✓ preview preserves real challenge participation state                 0.11s
+  ⨯ video configuration is nullable and projected only when unlock is r… 0.30s
+  ✓ video configuration validates allowlists and null removal            0.06s
+  ✓ admin persists valid video rejects invalid configuration and remove… 0.23s
+  ✓ multiple presentations atomic default and native fallback            0.10s
+  ✓ draft and archived cannot be default or public                       0.06s
+  ✓ published non default is public and captures campaign without econo… 0.09s
+  ✓ default changes challenge navigation without duplicating the item    0.13s
+  ✓ admin can preview publish and restore product default                0.17s
+  ✓ landing exposes participant state and immediate verification contex… 0.10s
+  ✓ presenter uses domain values for top first and manual                0.06s
+  ✓ other product native urls remain available                           0.05s
+  ✓ audience matrix for every product type                               0.16s
+  ✓ guests navigation direct urls and seo do not leak between viewers    0.57s
+  ✓ admin visitors everyone archive and invalid scope                    0.10s
+  ✓ database rejects invalid scopes unpublished defaults and duplicate…  0.06s
+  ✓ incremental migration preserves legacy and qa non default            0.11s
+  ✓ native routes resolve all default for every viewer                   0.12s
+
+   PASS  Tests\Feature\LandingPublisherWorkflowTest
+  ✓ mapped import fields persist reload and project into saved preview   0.20s
+  ✓ arcilla editorial prose saves without changing domain truth          0.19s
+  ✓ real editorial limits and structural security remain specific        0.25s
+
+   PASS  Tests\Feature\MarketingLandingAdminV1Test
+  ✓ admin saves only two acquisition copy values and preview projects t… 0.15s
+  ✓ saved editorial is rendered verbatim and layout controls are valida… 0.22s
+  ✓ experience editorial containing en is not silently replaced          0.14s
+  ✓ emphasis uses effective product headline when editorial headline is… 0.10s
+  ✓ create edit publish unpublish and live domain truth                  0.17s
+  ✓ offer desktop sources use master portrait preset for each domain     0.19s
+  ✓ editorial save preserves selected identity publication and sibling   0.19s
+  ✓ allowlists plain text emphasis subject and no action editor          0.26s
+  ✓ media switching keeps stored config and duplicate is new draft       0.22s
+  ✓ existing admin subject picker summary and reassignment               0.20s
+  ✓ preview is authorized noindex and has no business or growth writes   0.22s
+  ✓ unlock editorial admin keeps legacy validation without offer settin… 0.09s
+  ✓ migration is deterministic reversible preserves editorial and unloc… 0.08s
+
+   PASS  Tests\Feature\MembershipConversionJourneyTest
+  ✓ experience return restores valid session without reserving           0.24s
+  ✓ member gate and invalid session return stays on experience detail    0.20s
+
+   PASS  Tests\Feature\MicroOptInJourneyTest
+  ✓ experience explicit reservation returns pending truth to same landi… 0.22s
+  ✓ external experience handoff delivers selected session without claim… 0.18s
+
+   PASS  Tests\Feature\PartnerContentStudioTest
+  ✓ partner experience sessions are scoped editable and reviewed         0.17s
+
+   PASS  Tests\Feature\PartnerPublicProfileTest
+  ✓ public identity inventory locations canonical and prelaunch          0.17s
+
+   PASS  Tests\Feature\PrelaunchModeTest
+  ✓ root is static coming soon and indexable without inventory           0.08s
+  ✓ landing native fallback and explore remain available with public po… 0.20s
+  ✓ admin and saved preview and auth are excluded                        0.16s
+  ✓ disabling flag restores home and previous public seo                 0.14s
+
+   PASS  Tests\Feature\PublicJourneyContinuationTest
+  ✓ context is limited to a valid experience session                     0.10s
+
+   PASS  Tests\Feature\PublicJourneyWiringTest
+  ✓ guest reserve returns to experience after signup without reserving   0.21s
+  ✓ existing user returns to experience after login without reserving    0.35s
+  ✓ foreign or expired experience session is not restored                0.15s
+
+   PASS  Tests\Feature\PublicV2HttpTest
+  ✓ experience publication sessions partners and reservation redirects…  0.19s
+  ────────────────────────────────────────────────────────────────────────────
+   FAILED  Tests\Feature\LandingPresentationTest > video configuration is nu…
+  Property [vsl] does not match the expected value.
+Failed asserting that null is identical to Array &0 [
+    'framing' => 'embedded-vertical',
+    'source' => Array &1 [
+        'type' => 'youtube',
+        'url' => 'https://www.youtube.com/watch?v=hI-Ecy2D8pg',
+    ],
+].
+
+  at tests/Feature/LandingPresentationTest.php:47
+     43▕         $this->get('/l/private-video-landing')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+     44▕         $this->actingAs(User::factory()->create())->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+     45▕         $this->actingAs(User::factory()->create(['is_admin'=>true]))->get('/admin/desbloqueos/private-video/landings/private-video-landing/preview')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+     46▕         $unlock->update(['status'=>Unlock::UNLOCKED]);
+  ➜  47▕         $this->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', $config));
+     48▕     }
+     49▕
+     50▕     public function test_video_configuration_validates_allowlists_and_null_removal(): void
+     51▕     {
+
+      +2 vendor frames
+  3   tests/Feature/LandingPresentationTest.php:47
+
+
+  Tests:    1 failed, 110 passed (2614 assertions)
+  Duration: 20.15s

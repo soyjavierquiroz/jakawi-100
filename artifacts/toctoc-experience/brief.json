@@ -1,0 +1,26 @@
+{
+  "brief_version": "jakawi-product-brief-v1",
+  "domain": "Experience",
+  "title": "Descubre el café boliviano",
+  "partner": "Toc Toc Café Gourmet",
+  "summary": "El café boliviano tiene mucho que contar. Descúbrelo en cada taza.",
+  "description": "Una pausa para descubrir algo nuevo.\n\nUna experiencia que combina degustación, aprendizaje y el placer de compartir un buen café en Cochabamba.\n\nEstructura propuesta, pendiente de confirmación operativa:\n• Degustación comparativa de 2 preparaciones de café.\n• Explicación guiada de 15 a 20 minutos.\n• Un bocado dulce de acompañamiento.\n• Grupo de hasta 8 participantes.\n\nEstas especificaciones describen la propuesta comercial; todavía no documentan una sesión confirmada.",
+  "commercial_truth": {
+    "experience_type": "tasting",
+    "prices": {
+      "currency": "BOB",
+      "regular_price": "75.00"
+    },
+    "reservation_mode": "informational",
+    "available_sessions": 0,
+    "conditions": [
+      "Precio JAKAWI: Bs 75 por persona.\nAcceso mediante cuenta JAKAWI. Sin membresía JAKAWI.\nPago directamente en Toc Toc Café Gourmet. JAKAWI no cobra el importe.\nLímite comercial: una participación por cuenta JAKAWI.\nVigencia comercial inicial: hasta el 30 de noviembre de 2026, hora de Bolivia.\nHorarios sujetos a coordinación. Disponible únicamente cuando exista una sesión operativamente confirmada.\nActualmente no hay una sesión confirmada ni disponible para solicitar, reservar o participar.\nPendientes operativos: confirmar las 2 preparaciones, la explicación guiada de 15 a 20 minutos y su responsable, el bocado dulce, la capacidad de hasta 8 personas, fecha, horario, lugar de realización y canal de coordinación.\nLa coordinación y la entrega se gestionarán directamente con el Partner mediante el flujo externo existente, cuando exista una sesión confirmada. No hay reserva ni pago en JAKAWI.\nEl límite por cuenta y el cierre de vigencia requieren control operativo del Partner: el flujo externo no registra asistencia ni aplica automáticamente estos límites."
+    ]
+  },
+  "marketing_context": {
+    "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+    "landing_language": "es",
+    "city_first": true
+  },
+  "city": "Cochabamba"
+}

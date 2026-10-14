@@ -1,0 +1,28 @@
+{
+  "productBrief": "PASS: real builder output + city from primary Partner location; persisted description, price and conditions match",
+  "landingJson": "PASS: real parseLandingJson",
+  "importer": "14 passed",
+  "phpRegression": "110 passed; 1 pre-existing failure in LandingPresentationTest::test_video_configuration_is_nullable_and_projected_only_when_unlock_is_revealable (Unlock VSL null versus expected config); affected runtime/test files unchanged from HEAD",
+  "focused": "1 passed, 51 assertions",
+  "inventoryOperation": "PASS in isolated testing DB, then actual product/landing persisted transactionally through existing Publisher",
+  "typescript": "PASS in Docker build",
+  "build": "PASS: jakawi-toctoc-frontend-check, production manifest guard passed",
+  "browser": "PASS: 320, 375, 390, 430, 1440; no overflow, broken images, JS errors or mutations; unavailable CTA click inert",
+  "public": {
+    "partner": 200,
+    "landing": 404,
+    "reservation": 404,
+    "health": 200
+  },
+  "deploy": false,
+  "liveApp": "baead48dc695215eb5eb4384c69e96f281fce03a",
+  "liveWeb": "baead48dc695215eb5eb4384c69e96f281fce03a",
+  "rollback": {
+    "backup": "/home/jakawi.com/backups/jakawi-pre-toctoc-experience-20261014-211650.dump",
+    "sha256": "0cad2f09cb93873ff200a48ce8d2e3282d4895ab7c5b5a6340a943a45d3a42ba",
+    "pg_restore_list": "PASS",
+    "inventory": "Archive the two drafts with existing Admin; no runtime cutover performed"
+  },
+  "unchanged": "Partner, Location, Benefits, previous Landings, user count, reservation count and PRELAUNCH true verified by before/after snapshot",
+  "priorFinding": "El Re-Pollo stored terms contain conflicting Bs 115 / Bs 48 and product components. Existing data left unchanged; not used as Experience truth."
+}

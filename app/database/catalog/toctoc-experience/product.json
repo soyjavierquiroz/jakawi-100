@@ -1,0 +1,22 @@
+{
+  "slug": "toctoccafe-descubre-el-cafe-boliviano",
+  "title": "Descubre el café boliviano",
+  "short_description": "El café boliviano tiene mucho que contar. Descúbrelo en cada taza.",
+  "description": "Una pausa para descubrir algo nuevo.\n\nUna experiencia que combina degustación, aprendizaje y el placer de compartir un buen café en Cochabamba.\n\nEstructura propuesta, pendiente de confirmación operativa:\n• Degustación comparativa de 2 preparaciones de café.\n• Explicación guiada de 15 a 20 minutos.\n• Un bocado dulce de acompañamiento.\n• Grupo de hasta 8 participantes.\n\nEstas especificaciones describen la propuesta comercial; todavía no documentan una sesión confirmada.",
+  "terms": "Precio JAKAWI: Bs 75 por persona.\nAcceso mediante cuenta JAKAWI. Sin membresía JAKAWI.\nPago directamente en Toc Toc Café Gourmet. JAKAWI no cobra el importe.\nLímite comercial: una participación por cuenta JAKAWI.\nVigencia comercial inicial: hasta el 30 de noviembre de 2026, hora de Bolivia.\nHorarios sujetos a coordinación. Disponible únicamente cuando exista una sesión operativamente confirmada.\nActualmente no hay una sesión confirmada ni disponible para solicitar, reservar o participar.\nPendientes operativos: confirmar las 2 preparaciones, la explicación guiada de 15 a 20 minutos y su responsable, el bocado dulce, la capacidad de hasta 8 personas, fecha, horario, lugar de realización y canal de coordinación.\nLa coordinación y la entrega se gestionarán directamente con el Partner mediante el flujo externo existente, cuando exista una sesión confirmada. No hay reserva ni pago en JAKAWI.\nEl límite por cuenta y el cierre de vigencia requieren control operativo del Partner: el flujo externo no registra asistencia ni aplica automáticamente estos límites.",
+  "category": "cafe",
+  "experience_type": "tasting",
+  "regular_price": "75.00",
+  "member_price": null,
+  "currency": "BOB",
+  "duration_minutes": null,
+  "reservation_method": "none",
+  "reservation_url": null,
+  "reservation_whatsapp": null,
+  "reservation_phone": null,
+  "status": "draft",
+  "featured": false,
+  "review_status": "approved",
+  "review_notes": "CONFIRMED BY JAKAWI. Oferta, precio, acceso sin membresía, límite, vigencia y copy aprobados por JAKAWI. CTA comercial: QUIERO DESCUBRIRLO. Sin sesión operativamente confirmada. No publicar ni configurar disponibilidad hasta verificar la operación. Método none provisional; usar coordinación externa existente tras verificar un canal. Vigencia y límite por cuenta no tienen campos ejecutables en Experience externo; control manual requerido.",
+  "published_at": null
+}

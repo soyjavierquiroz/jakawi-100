@@ -1,0 +1,18 @@
+{
+    "partner_hash": "95b5023207786f08d6596f767e6186bf36e7d4d8f4e5d6f298317af4cc7c1a97",
+    "location_hash": "0aa6f9101b6e411b349dc81cd50aae2ccfd24eb0677896271aa50054ff3dfa68",
+    "benefits_hash": "912b3abd840f3a950debf80219f847a81fbd9a7b888c1d0b65236b6088494002",
+    "landings_hash": "b4b3a4e385b7fd5f045110ae98d8374404019252405da4918cf88b33c2c51fa7",
+    "users": 5,
+    "reservations": 0,
+    "prelaunch": true,
+    "sessions": 0,
+    "partner_ids": [
+        3
+    ],
+    "experience_status": "draft",
+    "review_status": "approved",
+    "landing_status": "DRAFT",
+    "default_scope": "NONE",
+    "cover_path": "partners/3/cover/745b2445-b864-4e8a-8144-f0f54e82f59e.webp"
+}
