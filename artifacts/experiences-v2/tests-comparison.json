@@ -1,0 +1,21 @@
+{
+  "baseline": "4bc202a",
+  "baselinePassed": 662,
+  "baselineFailed": 10,
+  "fullCandidate": "2cef128",
+  "candidatePassed": 675,
+  "candidateFailed": 10,
+  "newRegressions": 0,
+  "existingFailures": [
+    "FAILED  Tests\\Feature\\AdminV2Test > admin creates\u2026  ModelNotFoundException",
+    "FAILED  Tests\\Feature\\AdminV2Test > admin uploads\u2026  ModelNotFoundException",
+    "FAILED  Tests\\Feature\\ApplicationV2HttpTest > publication routes only exp\u2026",
+    "FAILED  Tests\\Feature\\CampaignTest > admin can create campaign and non ad\u2026",
+    "FAILED  Tests\\Feature\\DemoCatalogV2Test > demo catalog lifecycle is idemp\u2026",
+    "FAILED  Tests\\Feature\\LandingPresentationTest > video configuration is nu\u2026",
+    "FAILED  Tests\\Feature\\PublicV2HttpTest > partner and location are public\u2026",
+    "FAILED  Tests\\Feature\\UnlockCoreTest > public view is safe for guests and\u2026",
+    "FAILED  Tests\\Feature\\UnlockMarketingLandingTest > guest continuation eli\u2026",
+    "FAILED  Tests\\Feature\\UnlockMarketingLandingTest > visibility terminal pr\u2026"
+  ]
+}

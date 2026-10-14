@@ -1,0 +1,108 @@
+{
+  "source": "Production build · isolated jakawi_test replica",
+  "checks": [
+    {
+      "width": 375,
+      "editor": "PASS",
+      "prices": "75/60",
+      "duration": 90,
+      "partner": 3,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "editor": "PASS",
+      "prices": "75/60",
+      "duration": 90,
+      "partner": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "editor": "PASS",
+      "prices": "75/60",
+      "duration": 90,
+      "partner": 3,
+      "overflow": false
+    },
+    {
+      "catalogNavigation": "PASS"
+    },
+    {
+      "adminPreview": "PASS"
+    },
+    {
+      "validation": "field errors retain input",
+      "dirtyNavigation": "PASS",
+      "persistedSave": "PASS"
+    },
+    {
+      "upcomingAuthorization": "PASS",
+      "informationalLandingPublication": "PASS",
+      "qaCopyCorrection": "isolated replica only"
+    },
+    {
+      "creationWithoutSlug": "PASS",
+      "defaultPrivacy": "hidden"
+    },
+    {
+      "public": "explore",
+      "width": 375,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "partner",
+      "width": 375,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "landing",
+      "width": 375,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "explore",
+      "width": 390,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "partner",
+      "width": 390,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "landing",
+      "width": 390,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "explore",
+      "width": 1440,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "partner",
+      "width": 1440,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "public": "landing",
+      "width": 1440,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "guestPreviewProtection": "PASS"
+    }
+  ],
+  "errors": [],
+  "status": "PASS"
+}

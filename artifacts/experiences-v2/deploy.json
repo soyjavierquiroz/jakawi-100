@@ -1,0 +1,81 @@
+{
+  "source": "effd76e84e6b8a369ba22e9a057ba69850873728",
+  "status": "PASS",
+  "services": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "migrations": 1,
+  "rollbackAvailable": true,
+  "rollbackExecuted": false,
+  "http": [
+    {
+      "path": "/up",
+      "status": 200
+    },
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/explorar",
+      "status": 200
+    },
+    {
+      "path": "/toctoccafe",
+      "status": 200
+    },
+    {
+      "path": "/dossis43",
+      "status": 200
+    },
+    {
+      "path": "/elrepollo",
+      "status": 200
+    },
+    {
+      "path": "/experiencias/toctoccafe-descubre-el-cafe-boliviano",
+      "status": 200
+    },
+    {
+      "path": "/experiencias",
+      "status": 200
+    },
+    {
+      "path": "/beneficios",
+      "status": 200
+    },
+    {
+      "path": "/retos",
+      "status": 200
+    },
+    {
+      "path": "/l/dossis-43-cafe-y-antojo",
+      "status": 200
+    },
+    {
+      "path": "/l/el-re-pollo-almuerzo-resuelto",
+      "status": 200
+    },
+    {
+      "path": "/l/toctoccafe-descubre-el-cafe-boliviano",
+      "status": 404,
+      "expected": "private draft or unavailable operation"
+    },
+    {
+      "path": "/experiencias/toctoccafe-descubre-el-cafe-boliviano/reservar",
+      "status": 404,
+      "expected": "private draft or unavailable operation"
+    }
+  ],
+  "prelaunch": true,
+  "commercialDataUnchanged": true,
+  "unrelatedContainersUnchanged": true,
+  "artifactsPreserved": 108,
+  "images": {
+    "app": "sha256:25d102862ad22f6d285a6e1ba5f257c7513cb0624c0e20d0026e3f96716834b0",
+    "web": "sha256:faccbc59d7ed72c8343893cb2e1f4830b46d6be839c876d915a3c02fa6cdaf6f"
+  },
+  "readiness": true
+}

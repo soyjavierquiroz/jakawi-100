@@ -14,7 +14,7 @@ Copy Toc Toc: terms dice Bs 60 general/sin membresía; structured dice 75/60. La
 
 Se mantienen status (draft/published/paused/archived), sesiones, métodos, membresías, landings y dos precios. No se añade precio habitual externo ni sistema de pagos.
 
-Extensión aditiva: catalog_visibility (legacy/hidden/upcoming/active) y operations_confirmed boolean. legacy conserva descubrimiento previo con sesiones; no autoriza propuestas sin sesiones. Nuevos formularios empiezan hidden. upcoming permite ficha informativa sin sesiones, requiere published y Partner público; ciudad se deriva de sedes publicadas del Partner, no de una sesión ficticia. hidden siempre privado, incluso landing publicada. active exige confirmación explícita y requisitos reales; un cambio editorial nunca confirma operación. paused/archived suspenden acciones. Legacy conserva comportamiento operativo existente con canal válido y sesión, pero no habilita propuestas nuevas.
+Extensión aditiva: catalog_visibility (legacy/hidden/upcoming/active) y operations_confirmed boolean. legacy conserva descubrimiento previo con sesiones; no autoriza propuestas sin sesiones. La base y los nuevos formularios empiezan hidden. La migración inicializa únicamente el control nuevo de registros existentes no draft como legacy; los drafts quedan hidden, sin alterar ningún campo comercial anterior. upcoming permite ficha informativa sin sesiones, requiere published y Partner público; ciudad se deriva de sedes publicadas del Partner, no de una sesión ficticia. hidden siempre privado, incluso landing publicada. active exige confirmación explícita y requisitos reales; un cambio editorial nunca confirma operación. paused/archived suspenden acciones. Legacy conserva comportamiento operativo existente con canal válido y sesión, pero no habilita propuestas nuevas.
 
 La disponibilidad se resuelve centralmente y se aplica a ficha, landing y endpoints de reservas. La ficha nativa es un destino informativo real; DRAFT de landing nunca se enlaza públicamente. Preview Admin independiente con autorización del grupo Admin. Catálogo próximo informa En preparación y no entrega sesiones/canales operativos.
 
@@ -29,3 +29,8 @@ Conservar reservas internas y bloquear activación de descuento externo hasta ve
 ## Desarrollo posterior
 
 Verificación de membresías para Benefits y Experiences con pago directo al Partner: definir prueba de elegibilidad, momento de verificación, trazabilidad de tarifa aceptada, revocación/expiración y controles de entrega/límites. No ampliar en esta entrega pagos, reservas ni canjes. La reserva interna actual y su requisito de membresía se mantienen.
+
+
+## Entrega verificada
+
+Código LIVE effd76e. [Informe, capturas y pruebas](../../artifacts/experiences-v2/REPORT.md). 87 pruebas críticas finales pasan; comparación global conserva 10 fallos anteriores. PRELAUNCH_MODE=true y datos comerciales de Toc Toc preservados.

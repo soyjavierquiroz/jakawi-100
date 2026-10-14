@@ -1,0 +1,8 @@
+{
+  "path": "/home/jakawi.com/backups/jakawi-pre-experiences-v2-20261014-225405.dump",
+  "bytes": 301360,
+  "sha256": "9415b64ebf323d7ee040dd09f3da4d86dcfa72f7f12876d884bdff3ca3355a63",
+  "format": "custom",
+  "validation": "pg_restore --list PASS",
+  "tocEntries": 673
+}

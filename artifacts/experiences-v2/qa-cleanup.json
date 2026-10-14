@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "qaEventsRemoved": 9,
+  "remainingQaEvents": 0,
+  "attributionTouches": 0,
+  "traceVerified": "Four HTTP gate views and five browser events, matched against request order, product IDs and artifact timestamps",
+  "commercialDataModified": false,
+  "qaSessionsRemoved": 3,
+  "remainingQaSessions": 0
+}

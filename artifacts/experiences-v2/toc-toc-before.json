@@ -1,0 +1,92 @@
+{
+    "product": {
+        "id": 1,
+        "slug": "toctoccafe-descubre-el-cafe-boliviano",
+        "title": "Descubre el café boliviano",
+        "short_description": "El café boliviano tiene mucho que contar. Descúbrelo en cada taza.",
+        "description": "Una pausa para descubrir algo nuevo.\n\nUna experiencia que combina degustación, aprendizaje y el placer de compartir un buen café en Cochabamba.\n\nEstructura propuesta, pendiente de confirmación operativa:\n• Degustación comparativa de 2 preparaciones de café.\n• Explicación guiada de 15 a 20 minutos.\n• Un bocado dulce de acompañamiento.\n• Grupo de hasta 8 participantes.\n\nEstas especificaciones describen la propuesta comercial; todavía no documentan una sesión confirmada.",
+        "terms": "Precio JAKAWI: Bs 60 por persona.\nAcceso mediante cuenta JAKAWI. Sin membresía JAKAWI.\nPago directamente en Toc Toc Café Gourmet. JAKAWI no cobra el importe.\nLímite comercial: una participación por cuenta JAKAWI.\nVigencia comercial inicial: hasta el 30 de noviembre de 2026, hora de Bolivia.\nHorarios sujetos a coordinación. Disponible únicamente cuando exista una sesión operativamente confirmada.\nActualmente no hay una sesión confirmada ni disponible para solicitar, reservar o participar.\nPendientes operativos: confirmar las 2 preparaciones, la explicación guiada de 15 a 20 minutos y su responsable, el bocado dulce, la capacidad de hasta 8 personas, fecha, horario, lugar de realización y canal de coordinación.\nLa coordinación y la entrega se gestionarán directamente con el Partner mediante el flujo externo existente, cuando exista una sesión confirmada. No hay reserva ni pago en JAKAWI.\nEl límite por cuenta y el cierre de vigencia requieren control operativo del Partner: el flujo externo no registra asistencia ni aplica automáticamente estos límites.",
+        "category": "cafe",
+        "experience_type": "tasting",
+        "duration_minutes": 90,
+        "regular_price": "75.00",
+        "member_price": "60.00",
+        "currency": "BOB",
+        "reservation_method": "whatsapp",
+        "reservation_url": null,
+        "reservation_whatsapp": null,
+        "reservation_phone": null,
+        "status": "published",
+        "featured": true,
+        "image_path": null,
+        "cover_path": "partners\/3\/cover\/745b2445-b864-4e8a-8144-f0f54e82f59e.webp",
+        "sort_order": 0,
+        "published_at": "2026-10-14T18:19:00.000000Z",
+        "created_at": "2026-10-14T21:20:54.000000Z",
+        "updated_at": "2026-10-14T22:20:43.000000Z",
+        "review_status": "approved",
+        "submitted_at": null,
+        "submitted_by_user_id": null,
+        "reviewed_at": "2026-10-14T21:20:54.000000Z",
+        "reviewed_by_user_id": 1,
+        "review_notes": "CONFIRMED BY JAKAWI. Oferta, precio, acceso sin membresía, límite, vigencia y copy aprobados por JAKAWI. CTA comercial: QUIERO DESCUBRIRLO. Sin sesión operativamente confirmada. No publicar ni configurar disponibilidad hasta verificar la operación. Método none provisional; usar coordinación externa existente tras verificar un canal. Vigencia y límite por cuenta no tienen campos ejecutables en Experience externo; control manual requerido.",
+        "created_by_user_id": 1,
+        "partners": [
+            {
+                "id": 3,
+                "name": "Toc Toc Café Gourmet",
+                "slug": "toctoccafe",
+                "status": "published",
+                "pivot": {
+                    "experience_id": 1,
+                    "partner_id": 3,
+                    "role": "organizer",
+                    "sort_order": 0
+                }
+            }
+        ],
+        "sessions": [],
+        "landing_presentations": [
+            {
+                "id": 5,
+                "subject_type": "App\\Models\\Experience",
+                "subject_id": 1,
+                "name": "Toc Toc — Descubre el café boliviano",
+                "slug": "toctoccafe-descubre-el-cafe-boliviano",
+                "status": "DRAFT",
+                "campaign_key": null,
+                "eyebrow": "TOC TOC · COCHABAMBA",
+                "headline": "El café boliviano tiene mucho que contar.",
+                "subheadline": "Descúbrelo en cada taza.\n\nNo todos los cafés saben igual. Descubre sus aromas, sabores y diferencias en una experiencia diseñada para disfrutar el café de otra manera.",
+                "hero_path": null,
+                "hero_alt": "Visual editorial de café del perfil de Toc Toc Café Gourmet; no documenta una sesión de esta experiencia.",
+                "reward_display_override": "Una experiencia que combina degustación, aprendizaje y el placer de compartir un buen café.",
+                "final_cta_headline": "QUIERO DESCUBRIRLO",
+                "created_at": "2026-10-14T21:20:54.000000Z",
+                "updated_at": "2026-10-14T21:20:54.000000Z",
+                "default_scope": "NONE",
+                "vsl": null,
+                "template_key": "OFFER_CONVERSION",
+                "marketing_theme": "LIGHT_CONVERSION",
+                "media_mode": "IMAGE",
+                "headline_emphasis": "mucho que contar.",
+                "final_cta_description": "Bs 75 por persona. Sin membresía JAKAWI. Pago directo en Toc Toc Café Gourmet.\n\nTodavía no hay sesiones confirmadas; esta experiencia no está disponible para reservar.",
+                "publish_scope": "ALL",
+                "editorial_version": 1,
+                "hero_layout": "MEDIA_LED",
+                "density": "STANDARD",
+                "acquisition_headline": "QUIERO DESCUBRIRLO",
+                "acquisition_supporting_copy": "Accede con tu cuenta JAKAWI. La coordinación con Toc Toc estará disponible únicamente cuando exista una sesión confirmada."
+            }
+        ]
+    },
+    "sha256": "59d692c14e344f8887fa78961f4b7940a3b209497ef4aa73b79a0ca3fa28b1b2",
+    "prelaunch": true,
+    "counts": {
+        "experiences": 1,
+        "benefits": 2,
+        "challenges": 0,
+        "partners": 3,
+        "landings": 5
+    }
+}

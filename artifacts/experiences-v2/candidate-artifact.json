@@ -1,0 +1,76 @@
+{
+  "source": "effd76e",
+  "status": "PASS",
+  "manifestPages": 106,
+  "appWebMatch": true,
+  "hotAbsent": true,
+  "checks": [
+    {
+      "path": "/experiencias/toctoccafe-descubre-el-cafe-boliviano",
+      "resolvedPath": "/experiencias/toctoccafe-descubre-el-cafe-boliviano",
+      "redirects": [],
+      "status": 200,
+      "compiledHtml": "PASS",
+      "transaction": "READ ONLY",
+      "analytics": false
+    },
+    {
+      "path": "/admin/experiences/toctoccafe-descubre-el-cafe-boliviano/preview",
+      "resolvedPath": "/admin/experiences/toctoccafe-descubre-el-cafe-boliviano/preview",
+      "redirects": [],
+      "status": 200,
+      "compiledHtml": "PASS",
+      "transaction": "READ ONLY",
+      "analytics": false
+    },
+    {
+      "path": "/admin/experiencias/toctoccafe-descubre-el-cafe-boliviano/landings/toctoccafe-descubre-el-cafe-boliviano/preview",
+      "resolvedPath": "/admin/experiencias/toctoccafe-descubre-el-cafe-boliviano/landings/toctoccafe-descubre-el-cafe-boliviano/preview",
+      "redirects": [],
+      "status": 200,
+      "compiledHtml": "PASS",
+      "transaction": "READ ONLY",
+      "analytics": false
+    },
+    {
+      "path": "/beneficios/dossis43-parada-estrategica",
+      "resolvedPath": "/l/dossis-43-cafe-y-antojo",
+      "redirects": [
+        "/l/dossis-43-cafe-y-antojo"
+      ],
+      "status": 200,
+      "compiledHtml": "PASS",
+      "transaction": "READ ONLY",
+      "analytics": false
+    },
+    {
+      "path": "/admin/beneficios/dossis43-parada-estrategica/landings/dossis43-parada-estrategica/preview",
+      "resolvedPath": "/admin/beneficios/dossis43-parada-estrategica/landings/dossis43-parada-estrategica/preview",
+      "redirects": [],
+      "status": 200,
+      "compiledHtml": "PASS",
+      "transaction": "READ ONLY",
+      "analytics": false
+    },
+    {
+      "path": "/beneficios/elrepollo-almuerzo",
+      "resolvedPath": "/l/el-re-pollo-almuerzo-resuelto",
+      "redirects": [
+        "/l/el-re-pollo-almuerzo-resuelto"
+      ],
+      "status": 200,
+      "compiledHtml": "PASS",
+      "transaction": "READ ONLY",
+      "analytics": false
+    },
+    {
+      "path": "/admin/beneficios/elrepollo-almuerzo/landings/elrepollo-almuerzo/preview",
+      "resolvedPath": "/admin/beneficios/elrepollo-almuerzo/landings/elrepollo-almuerzo/preview",
+      "redirects": [],
+      "status": 200,
+      "compiledHtml": "PASS",
+      "transaction": "READ ONLY",
+      "analytics": false
+    }
+  ]
+}

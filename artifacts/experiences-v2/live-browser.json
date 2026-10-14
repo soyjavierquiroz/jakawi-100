@@ -1,0 +1,86 @@
+{
+  "source": "LIVE · read only",
+  "checks": [
+    {
+      "width": 375,
+      "editor": "PASS",
+      "prices": "75/60",
+      "duration": 90,
+      "partner": 3,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "editor": "PASS",
+      "prices": "75/60",
+      "duration": 90,
+      "partner": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "editor": "PASS",
+      "prices": "75/60",
+      "duration": 90,
+      "partner": 3,
+      "overflow": false
+    },
+    {
+      "catalogNavigation": "PASS"
+    },
+    {
+      "savedPreview": "/admin/experiencias/toctoccafe-descubre-el-cafe-boliviano/landings/toctoccafe-descubre-el-cafe-boliviano/preview",
+      "status": 200
+    },
+    {
+      "savedPreview": "/admin/beneficios/dossis43-parada-estrategica/landings/dossis43-parada-estrategica/preview",
+      "status": 200
+    },
+    {
+      "savedPreview": "/admin/beneficios/elrepollo-almuerzo/landings/elrepollo-almuerzo/preview",
+      "status": 200
+    },
+    {
+      "adminPreview": "PASS"
+    },
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/explorar",
+      "status": 200
+    },
+    {
+      "path": "/toctoccafe",
+      "status": 200
+    },
+    {
+      "path": "/experiencias/toctoccafe-descubre-el-cafe-boliviano",
+      "status": 200
+    },
+    {
+      "path": "/experiencias",
+      "status": 200
+    },
+    {
+      "path": "/beneficios",
+      "status": 200
+    },
+    {
+      "path": "/retos",
+      "status": 200
+    },
+    {
+      "draftLanding": 404
+    },
+    {
+      "existingMobileCarousel": "PASS"
+    },
+    {
+      "guestPreviewProtection": "PASS"
+    }
+  ],
+  "errors": [],
+  "status": "PASS"
+}

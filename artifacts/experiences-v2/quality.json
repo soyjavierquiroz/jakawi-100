@@ -1,0 +1,22 @@
+{
+  "source": "effd76e",
+  "criticalTests": 87,
+  "criticalAssertions": 2356,
+  "newBusinessTests": 14,
+  "criticalStatus": "PASS",
+  "fullSuiteComparison": "tests-comparison.json",
+  "typescript": "PASS (Wayfinder + tsc --noEmit in final image build)",
+  "build": "PASS",
+  "manifestPages": 106,
+  "frontendLintErrors": 0,
+  "frontendBaselineWarnings": 4,
+  "phpFormattedFiles": 22,
+  "phpFormatting": "PASS except existing routes/web.php formatting, reproduced in baseline",
+  "chromiumWidths": [
+    375,
+    390,
+    1440
+  ],
+  "candidateBrowser": "PASS",
+  "liveBrowser": "PASS"
+}
