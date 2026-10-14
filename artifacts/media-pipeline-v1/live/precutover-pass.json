@@ -1,0 +1,15 @@
+{
+  "pass": true,
+  "application_sha": "dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878",
+  "production_builds": 1,
+  "available_gib": 20.106853485107422,
+  "rollback_protected": true,
+  "repo_clean": true,
+  "migrations_pending": 0,
+  "public_hot": "ABSENT app/web",
+  "manifest": "PASS",
+  "semantic_dev_runtime": "PASS",
+  "vite_client": "ABSENT",
+  "loopback_dev_references": "ABSENT",
+  "env_sha256": "03de3d3bfd531c2e999ed7655cdca02e4d042edc537d7866935da9de2746d92d"
+}

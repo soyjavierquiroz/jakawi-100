@@ -1,0 +1,7 @@
+services:
+  app:
+    image: sha256:a63c80d571508510aff81d2738b4e0d8e258f8eeedf4e8dc84af36a7d27358d6
+  web:
+    image: sha256:dc07b3621f3f35fed1ebe00b44993b18bf36634fe490f99a420e79eebc7916be
+  social-worker:
+    image: sha256:a63c80d571508510aff81d2738b4e0d8e258f8eeedf4e8dc84af36a7d27358d6

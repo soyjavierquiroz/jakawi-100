@@ -1,0 +1,14 @@
+{
+    "pass": true,
+    "files": {
+        "resources\/js\/components\/prelaunch-notice.tsx": "7c6384b1f667b767722ec9ee8162ff6ec42368f694edc9845c210df8783140ad",
+        "resources\/js\/pages\/coming-soon.tsx": "512e69b5221922eb726db3349d362300d534d4ba09e3225ac80cafd1a38ddf2a",
+        "resources\/js\/layouts\/public-mode-layout.tsx": "51b7ebc48565529dcba82118f433e3ee30b1674bdcd5263afa5722c6e64570ac",
+        "resources\/js\/lib\/landing-json.ts": "affccd97ac81795703671127b1510201b40cc8bdf13197e2aa7414ede6216e69",
+        "app\/Http\/Controllers\/PartnerPublicController.php": "b89774dbfca778da0bdb40efcee99e2deebf4dba61e2955d4c3ac8b2bb5cf493",
+        "app\/Services\/AttributionService.php": "2873af6564ca8dad53ca44ea2d88900282a398c65d5e2d2df958eefdb1d02027",
+        "config\/crm.php": "e2a9f2b011f6099959a401b43e8e361444929747603f48fab1554b09aac2aa0a",
+        "config\/meta.php": "fea48885e4f4edfbbc34304c7d39a4ae7275045bd185d7b5bfc4df0255c20863",
+        "config\/jakawi.php": "fa85b8e5a890a9758222a5795f770dc2cce1a98397c451f06f8d8f2be73c38bc"
+    }
+}

@@ -1,0 +1,270 @@
+{
+  "status": "LIVE",
+  "date": "2026-10-13",
+  "timezone": "America/La_Paz",
+  "actual_previous_runtime": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638",
+  "deployed_application_sha": "dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878",
+  "feature_commit": "87ab0bc",
+  "images": {
+    "app": {
+      "id": "sha256:6175c68968be01b391cce9b6fb9c99bde48f2c8d473febcf9295c5984a8f27f1",
+      "tag": "jakawi-app:release-dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878",
+      "revision": "dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878"
+    },
+    "web": {
+      "id": "sha256:42ba904bdd06768e53be5cac1fc06db8e1baab010976d9b639329364dc017543",
+      "tag": "jakawi-web:release-dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878",
+      "revision": "dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878"
+    }
+  },
+  "worker_image": "sha256:6175c68968be01b391cce9b6fb9c99bde48f2c8d473febcf9295c5984a8f27f1",
+  "production_builds": 1,
+  "second_validation_build": false,
+  "build_source": "clean Git export of exact candidate",
+  "recreated": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "rollback": {
+    "app": "jakawi-app:rollback-media-e71fbd8",
+    "web": "jakawi-web:rollback-media-e71fbd8",
+    "worker": "same protected previous app image",
+    "protected": true
+  },
+  "disk": {
+    "disk-before": {
+      "available_bytes": 19838500864,
+      "available_gib": 18.476043701171875
+    },
+    "cleanup-result": {
+      "cleanup": true,
+      "available_bytes": 23779315712,
+      "available_gib": 22.14621353149414,
+      "reclaimed_bytes": 3940814848,
+      "reclaimed_gib": 3.6701698303222656,
+      "removed": [
+        {
+          "container": "jakawi-editorial-artifact",
+          "id": "8dcf9bb475220040e311fc423e9e236e35001ff1b692f38857bda418adcd19e4"
+        },
+        {
+          "container": "jakawi-publisher-artifact",
+          "id": "cba716380e4ed4af72fbdfd67390d51ddba345d216499b7270a07d0c91e383c7"
+        },
+        {
+          "container": "jakawi-json-guard-candidate",
+          "id": "6d4a0e8a5e35c1911021f96da37bea204c782ed5ecac89fa96589c4d1847b5bb"
+        },
+        {
+          "container": "jakawi-brand-web-gate",
+          "id": "91f9cd12abc80b9d184a316d96cdd3d2dc8bbd7e00f6155cb6b80dfba36ffd72"
+        },
+        {
+          "container": "jakawi-vsl-test-app-test-1",
+          "id": "c8f9b0d9f123adab1e654a46c720f723a27744de4ec5336f3855ab95dd710f7f"
+        },
+        {
+          "container": "jakawi-vsl-dev-demo-web",
+          "id": "064c9508d59e237ad1fc84e3a3925af1cbb57558da60ee21f0bf04b68834c8f7"
+        },
+        {
+          "container": "jakawi-vsl-dev-web-1",
+          "id": "d8b8c6be905e64bb165d3a4db6e6b721325c01332fac04755e495b8bc14467d8"
+        },
+        {
+          "container": "jakawi-vsl-dev-app-1",
+          "id": "b6a7bd43ff163717cae4ce5dad36b4ec617d82a7c7f30a2a01ccd12dba6a7cd8"
+        },
+        {
+          "image": "jakawi-vsl-dev-tools:local",
+          "id": "sha256:dd3aef472455a33a44f86a1d5d71cfe0193d442e5313016453e7953212027a6d"
+        },
+        {
+          "image": "jakawi-vsl-dev-app:local",
+          "id": "sha256:d8ea077d37c79c778dc4898cfdf63307bbb7e0e069c209293785a36a53305b6b"
+        }
+      ],
+      "volumes_touched": false,
+      "protected_images_preserved": true
+    },
+    "disk-before-build": {
+      "available_bytes": 23665729536,
+      "available_gib": 22.040428161621094
+    },
+    "disk-after-deploy": {
+      "available_bytes": 21588869120,
+      "available_gib": 20.106201171875
+    }
+  },
+  "media": {
+    "ImageUpload": "LIVE",
+    "MediaUploadService": "LIVE",
+    "device_upload": "LIVE",
+    "media_db_model_added": false,
+    "private_minio": true,
+    "accepted": [
+      "JPEG",
+      "PNG",
+      "WebP"
+    ],
+    "max_input": "10 MiB / 24MP / 16000px per side",
+    "master": "WebP q82 max1600, aspect preserved",
+    "upscale": false,
+    "exif": "NORMALIZED",
+    "metadata": "STRIPPED",
+    "raw_originals_retained_indefinitely": false,
+    "one_stored_master": true,
+    "responsive_widths": [
+      320,
+      480,
+      640,
+      960,
+      1600
+    ],
+    "physical_variant_copies": false,
+    "immutable_server_generated_slug_independent_keys": true,
+    "delete_old_before_save": false,
+    "failed_replacement_preserves_old": true,
+    "previous_asset_gc_candidate": true,
+    "temp_namespace": "tmp/{uuid}/master.webp",
+    "receipt": "encrypted/user-bound",
+    "temporary_ttl_hours": 24
+  },
+  "gc": {
+    "command": "media:gc",
+    "dry_run": "PASS",
+    "dry_run_counters": {
+      "scanned": 0,
+      "referenced": 0,
+      "recent_orphans_skipped": 0,
+      "temp_expired": 0,
+      "orphan_candidates_recorded": 0,
+      "candidates": 0,
+      "deleted": 0,
+      "bytes_reclaimed": 0,
+      "errors": 0
+    },
+    "schedule": "03:20 America/La_Paz DAILY",
+    "without_overlapping": true,
+    "orphan_grace_hours": 48,
+    "grace_from": "first confirmed unreferenced GC observation",
+    "reference_recheck": true,
+    "allowlisted_namespaces": true,
+    "health_excluded": true,
+    "idempotent": true,
+    "manual_destructive_run": false
+  },
+  "forms": {
+    "Partner": "LOCAL DEVICE UPLOAD",
+    "Location": "LOCAL DEVICE UPLOAD",
+    "Benefit": "LOCAL DEVICE UPLOAD",
+    "Experience": "LOCAL DEVICE UPLOAD",
+    "Challenge": "LOCAL DEVICE UPLOAD",
+    "Unlock": "LOCAL DEVICE UPLOAD",
+    "Landing": "LOCAL DEVICE UPLOAD"
+  },
+  "landing_json": {
+    "media.mode": "PRESERVED",
+    "media.alt": "PRESERVED",
+    "source_url_path_import": "FORBIDDEN",
+    "schema_changed": false
+  },
+  "minio": {
+    "before": {
+      "bucket": "jakawi-media",
+      "disk": "minio-media",
+      "visibility": "private",
+      "objects_count": 1,
+      "bytes": 41,
+      "objects": [
+        {
+          "key": "health/imgproxy-auth-test.txt",
+          "bytes": 41,
+          "etag": "\"f8a8dd05f5fc363e7c10cbba21678edd\""
+        }
+      ]
+    },
+    "after": {
+      "bucket": "jakawi-media",
+      "disk": "minio-media",
+      "visibility": "private",
+      "objects_count": 1,
+      "bytes": 41,
+      "objects": [
+        {
+          "key": "health/imgproxy-auth-test.txt",
+          "bytes": 41,
+          "etag": "\"f8a8dd05f5fc363e7c10cbba21678edd\""
+        }
+      ]
+    },
+    "health_probe": "PRESERVED",
+    "production_qa_objects": 0
+  },
+  "prelaunch": {
+    "mode": "UNCHANGED",
+    "notice_copy": "UNCHANGED",
+    "Coming_Soon": "UNCHANGED"
+  },
+  "data": {
+    "migrations_added": 0,
+    "pending_migrations": 0,
+    "migrations_executed": 0,
+    "catalog_created": 0,
+    "new_users": 0,
+    "domain_mutations": 0,
+    "counts_before_equal_after": true,
+    "counts": {
+      "referral_relationships": 0,
+      "attribution_touches": 0,
+      "ownership_assignments": 0,
+      "reward_transactions": 0,
+      "membership_purchases": 0,
+      "users": 1,
+      "partners": 0,
+      "locations": 0,
+      "benefits": 0,
+      "experiences": 0,
+      "experience_sessions": 0,
+      "challenges": 0,
+      "unlocks": 0,
+      "landing_presentations": 0,
+      "redemptions": 0,
+      "experience_reservations": 0,
+      "challenge_participations": 0,
+      "challenge_social_entries": 0,
+      "challenge_reward_grants": 0,
+      "reward_payouts": 0,
+      "unlock_participations": 0,
+      "memberships": 0,
+      "jp_holds": 0,
+      "failed_jobs": 0,
+      "migrations": 62,
+      "app_settings": 2,
+      "cities": 5
+    }
+  },
+  "health": {
+    "up_local": 200,
+    "up_public": 200,
+    "Admin": "200 authenticated read-only kernel render",
+    "app": "healthy",
+    "db": "healthy",
+    "web": "running",
+    "worker": "running",
+    "v2proof": "unchanged/healthy",
+    "scheduler": "active",
+    "failed_jobs": 0,
+    "CRM": true,
+    "Meta": "OFF"
+  },
+  "docs": {
+    "Media_Pipeline": "LIVE",
+    "Media_GC": "LIVE",
+    "docs_status_commit": "reported in final response",
+    "rebuild": false,
+    "redeploy": false
+  },
+  "result": "JAKAWI MEDIA PIPELINE V1 LIVE \u2014 MINIO LIFECYCLE ACTIVE"
+}

@@ -1,0 +1,21 @@
+{
+    "php": "8.4.26",
+    "gd_jpeg": true,
+    "gd_png": true,
+    "gd_webp": true,
+    "exif": true,
+    "upload_max_filesize": "12M",
+    "post_max_size": "16M",
+    "media_disk": "minio-media",
+    "bucket": "jakawi-media",
+    "visibility": "private",
+    "max_bytes": 10485760,
+    "max_pixels": 24000000,
+    "imgproxy_signing_configured": true,
+    "schedule": {
+        "command": "'\/usr\/local\/bin\/php' 'artisan' media:gc",
+        "expression": "20 3 * * *",
+        "timezone": "America\/La_Paz",
+        "withoutOverlapping": true
+    }
+}

@@ -1,5 +1,7 @@
 # MEDIA PIPELINE V1
 
+Status: **MEDIA PIPELINE V1 LIVE** · **MEDIA GC LIVE**. Application release: `dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878`.
+
 Canonical normal-image workflow: device upload → authoritative validation → normalization → temporary private MinIO object → verified immutable object → committed DB reference → optimized delivery → GC lifecycle.
 
 `ImageUpload` is the shared editor selector. It supports drag/drop, device selection, immediate local preview, upload progress, processing, errors, change and removal. `/media/uploads` uses session authentication, CSRF and throttling. Its encrypted upload receipt binds the temporary object to its uploader and expires after 24 hours. Browsers receive no storage credentials or object-key editor. Final forms retain their existing authorization. Direct multipart uploads remain supported by the same backend for existing clients, including the profile crop adapter.
@@ -22,4 +24,4 @@ Schedule: once **daily at 03:20 America/La_Paz**, using the existing Laravel sch
 
 External URLs are not the canonical normal-image workflow. Publisher images use the same selector/service. Landing JSON V1 still accepts `media.mode` and `media.alt`; importing image source URLs or paths remains forbidden by its existing schema. Publisher save also rejects arbitrary hero paths while permitting an existing saved reference or authoritative product fallback for compatibility. Actual image selection belongs to the Publisher UI.
 
-Before deploy: build the Docker image with GD/EXIF, validate image signing configuration and keep bucket private. This implementation does not deploy or create production catalog/test data.
+Live deployment uses Docker PHP 8.4 with GD/EXIF, private MinIO and signed imgproxy delivery. Production GC dry-run passed with zero deletions; the only production object remains `health/imgproxy-auth-test.txt` (41 bytes). No catalog records, users or QA media were created during release. The existing scheduler runs media GC daily at 03:20 America/La_Paz; normal orphan grace is 48h and temporary TTL is 24h.

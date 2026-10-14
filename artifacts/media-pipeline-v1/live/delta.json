@@ -1,0 +1,17 @@
+{
+  "actual_previous_runtime": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638",
+  "candidate": "dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878",
+  "migration_delta": [],
+  "functional_delta": "Media pipeline, responsive delivery, temporary lifecycle and GC only",
+  "immutable_product_contracts": [
+    "resources/js/components/prelaunch-notice.tsx",
+    "resources/js/pages/coming-soon.tsx",
+    "resources/js/layouts/public-mode-layout.tsx",
+    "resources/js/lib/landing-json.ts",
+    "app/Http/Controllers/PartnerPublicController.php",
+    "app/Services/AttributionService.php",
+    "config/crm.php",
+    "config/meta.php",
+    "config/jakawi.php"
+  ]
+}

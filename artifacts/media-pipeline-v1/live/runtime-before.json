@@ -1,0 +1,58 @@
+[
+  {
+    "name": "jakawicom-social-worker-1",
+    "container_id": "ea97de79f1348d7eff4c28cdf4710d2ee6f4150b6f795d4976f9248ed5be73e1",
+    "image_id": "sha256:a63c80d571508510aff81d2738b4e0d8e258f8eeedf4e8dc84af36a7d27358d6",
+    "revision": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638",
+    "status": "running",
+    "health": null
+  },
+  {
+    "name": "jakawicom-web-1",
+    "container_id": "d7075f3cb5e1d4b34e8223e4e686cb433e156c20f22b799d18a1bf2b36087aaa",
+    "image_id": "sha256:dc07b3621f3f35fed1ebe00b44993b18bf36634fe490f99a420e79eebc7916be",
+    "revision": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638",
+    "status": "running",
+    "health": null
+  },
+  {
+    "name": "jakawicom-app-1",
+    "container_id": "1def244fb6f98ed8022b05426bea4fbea03148209885338f085700f1bfb41861",
+    "image_id": "sha256:a63c80d571508510aff81d2738b4e0d8e258f8eeedf4e8dc84af36a7d27358d6",
+    "revision": "e71fbd8dda5d4f4fbc26a58b4d7495f369daa638",
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "jakawicom-db-1",
+    "container_id": "a2fa474ce4d6afa909005386e6368cf89b978d3187e5a3726a8545cbc39da423",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "jakawicom-imgproxy-1",
+    "container_id": "cf2107d971b754654a09ac15568540604e3ce6c13e8b848bea4dc0594e4a2c3d",
+    "image_id": "sha256:3b709e4a0e5e8e0e959b556b7031229202b4b8e7e7d955c517ea7abed68ee34d",
+    "revision": "62224b4414db836d3e61359e2beeb0cc25b13861",
+    "status": "running",
+    "health": null
+  },
+  {
+    "name": "jakawi_v2proof-app-1",
+    "container_id": "fdb5676f1b2168a7c5d073b016cbd5a1baef76af78fbe33686de79389d848bdc",
+    "image_id": "sha256:65aa23a452c561243d47702cdfb9057f6852899d8d818f9d5c24b9e8e94c2632",
+    "revision": null,
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "jakawi_v2proof-db-1",
+    "container_id": "8af1e6f99993ef47d3a14a34c3c3c7fab0cc7b53af89b6ab8f25fa3d82b6a38d",
+    "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "revision": null,
+    "status": "running",
+    "health": "healthy"
+  }
+]

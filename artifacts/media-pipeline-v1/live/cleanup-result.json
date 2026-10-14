@@ -1,0 +1,51 @@
+{
+  "cleanup": true,
+  "available_bytes": 23779315712,
+  "available_gib": 22.14621353149414,
+  "reclaimed_bytes": 3940814848,
+  "reclaimed_gib": 3.6701698303222656,
+  "removed": [
+    {
+      "container": "jakawi-editorial-artifact",
+      "id": "8dcf9bb475220040e311fc423e9e236e35001ff1b692f38857bda418adcd19e4"
+    },
+    {
+      "container": "jakawi-publisher-artifact",
+      "id": "cba716380e4ed4af72fbdfd67390d51ddba345d216499b7270a07d0c91e383c7"
+    },
+    {
+      "container": "jakawi-json-guard-candidate",
+      "id": "6d4a0e8a5e35c1911021f96da37bea204c782ed5ecac89fa96589c4d1847b5bb"
+    },
+    {
+      "container": "jakawi-brand-web-gate",
+      "id": "91f9cd12abc80b9d184a316d96cdd3d2dc8bbd7e00f6155cb6b80dfba36ffd72"
+    },
+    {
+      "container": "jakawi-vsl-test-app-test-1",
+      "id": "c8f9b0d9f123adab1e654a46c720f723a27744de4ec5336f3855ab95dd710f7f"
+    },
+    {
+      "container": "jakawi-vsl-dev-demo-web",
+      "id": "064c9508d59e237ad1fc84e3a3925af1cbb57558da60ee21f0bf04b68834c8f7"
+    },
+    {
+      "container": "jakawi-vsl-dev-web-1",
+      "id": "d8b8c6be905e64bb165d3a4db6e6b721325c01332fac04755e495b8bc14467d8"
+    },
+    {
+      "container": "jakawi-vsl-dev-app-1",
+      "id": "b6a7bd43ff163717cae4ce5dad36b4ec617d82a7c7f30a2a01ccd12dba6a7cd8"
+    },
+    {
+      "image": "jakawi-vsl-dev-tools:local",
+      "id": "sha256:dd3aef472455a33a44f86a1d5d71cfe0193d442e5313016453e7953212027a6d"
+    },
+    {
+      "image": "jakawi-vsl-dev-app:local",
+      "id": "sha256:d8ea077d37c79c778dc4898cfdf63307bbb7e0e069c209293785a36a53305b6b"
+    }
+  ],
+  "volumes_touched": false,
+  "protected_images_preserved": true
+}
