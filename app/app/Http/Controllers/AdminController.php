@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -196,6 +197,14 @@ class AdminController extends Controller
     public function saveExperience(Request $request, ?Experience $experience = null)
     {
         return DB::transaction(function () use ($request, $experience) {
+            if (! $experience && blank($request->input('slug')) && $request->filled('title')) {
+                $baseSlug = Str::slug($request->string('title')->toString()) ?: 'experiencia';
+                $slug = $baseSlug;
+                for ($suffix = 2; Experience::where('slug', $slug)->exists(); $suffix++) {
+                    $slug = $baseSlug.'-'.$suffix;
+                }
+                $request->merge(['slug' => $slug]);
+            }
             $request->mergeIfMissing(['currency' => $experience?->currency ?? 'BOB']);
             $data = $request->validate($this->experienceRules($experience), ExperienceRules::messages(), ExperienceRules::attributes());
             if (($data['catalog_visibility'] ?? null) === 'legacy' && (! $experience || $experience->catalog_visibility !== 'legacy')) {

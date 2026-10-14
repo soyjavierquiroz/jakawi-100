@@ -541,7 +541,9 @@ export default function ExperienceShow({
                         ) : null}
                         {experience.duration_minutes ? (
                             <p className="mt-3 text-sm text-muted-foreground">
-                                Duración total propuesta:{' '}
+                                {availability.available
+                                    ? 'Duración total:'
+                                    : 'Duración total propuesta:'}{' '}
                                 {experience.duration_minutes} minutos
                             </p>
                         ) : null}

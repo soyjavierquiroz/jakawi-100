@@ -151,6 +151,16 @@ class ExperienceV2Test extends TestCase
         $this->assertSame('upcoming', $experience->fresh()->catalog_visibility);
     }
 
+    public function test_admin_can_create_without_knowing_slugs_and_duplicate_titles_get_distinct_links(): void
+    {
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        $data = ['title' => 'Nuevo plan de café', 'status' => 'draft', 'reservation_method' => 'none', 'slug' => ''];
+        $this->post('/admin/experiences', $data)->assertSessionHasNoErrors();
+        $this->post('/admin/experiences', $data)->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('experiences', ['slug' => 'nuevo-plan-de-cafe', 'catalog_visibility' => 'hidden']);
+        $this->assertDatabaseHas('experiences', ['slug' => 'nuevo-plan-de-cafe-2', 'catalog_visibility' => 'hidden']);
+    }
+
     public function test_invalid_prices_return_errors_and_optional_member_price_can_be_blank(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);

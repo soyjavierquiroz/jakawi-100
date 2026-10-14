@@ -133,7 +133,7 @@ class ExperiencePublication
 
         return [
             'editorial' => ['draft' => 'Borrador', 'published' => 'Publicada editorialmente', 'paused' => 'Suspendida', 'archived' => 'Archivada'][$experience->status] ?? $experience->status,
-            'landing' => $landing?->status ?? 'Sin landing',
+            'landing' => $landing ? (['DRAFT' => 'Borrador', 'PUBLISHED' => 'Publicada', 'ARCHIVED' => 'Archivada'][$landing->status] ?? $landing->status) : 'Sin presentación comercial',
             'catalog' => $visible ? ($this->mode($experience) === 'upcoming' ? 'Visible · En preparación' : 'Visible según ciudad y sesiones') : 'No visible',
             'explore' => $cityVisible ? 'Visible en ciudades con sede / sesión' : 'No visible',
             'partner' => $visible ? 'Visible en perfiles públicos asociados' : 'No visible',

@@ -542,7 +542,7 @@ export default function ExperienceForm({
                                         {field(
                                             'slug',
                                             'Identificador del enlace',
-                                            'Usa palabras separadas por guiones. Cambiarlo modifica el enlace existente.',
+                                            'Opcional al crear: generamos el enlace desde el título. Cambiarlo después modifica el enlace existente.',
                                         )}
                                     </div>
                                 </details>
