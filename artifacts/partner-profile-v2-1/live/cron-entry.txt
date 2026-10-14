@@ -1,0 +1,1 @@
+* * * * * /home/jakawi.com/bin/jakawi-schedule >> /home/jakawi.com/storage/logs/scheduler-cron.log 2>&1

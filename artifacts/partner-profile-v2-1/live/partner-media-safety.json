@@ -1,0 +1,16 @@
+{
+  "partner": "dossis43",
+  "references_and_master_bytes_unchanged": true,
+  "logo": {
+    "width": 720,
+    "height": 720,
+    "sha256": "96e9c287ebc2b92d780835c7d424977410fb23063e6257974fec787c85232191"
+  },
+  "cover": {
+    "width": 1080,
+    "height": 1350,
+    "sha256": "e852e46a6a9aea6b6b23f3ac84e2ae907d7459334b86980c3560453fed96af37"
+  },
+  "crop_save_performed": false,
+  "upload_performed": false
+}

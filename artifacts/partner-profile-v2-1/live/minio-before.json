@@ -1,0 +1,44 @@
+{
+    "bucket": "jakawi-media",
+    "disk": "minio-media",
+    "visibility": "private",
+    "objects_count": 7,
+    "bytes": 613845,
+    "objects": [
+        {
+            "key": "health\/imgproxy-auth-test.txt",
+            "bytes": 41,
+            "etag": "\"f8a8dd05f5fc363e7c10cbba21678edd\""
+        },
+        {
+            "key": "partners\/1\/cover\/0e332762-d2aa-4d06-9c14-51b78f53aa26.webp",
+            "bytes": 101580,
+            "etag": "\"b0a0280a36348ae3192e9145efdfb0e8\""
+        },
+        {
+            "key": "partners\/1\/cover\/ba547c75-a609-47ec-9083-53a9d3f0e1be.webp",
+            "bytes": 180394,
+            "etag": "\"b23a29537d39f19d3f0654b08a552b72\""
+        },
+        {
+            "key": "partners\/1\/logo\/94417ea1-be71-4caa-a296-d1f9e9776dbb.webp",
+            "bytes": 24928,
+            "etag": "\"6bbc5f170196b19a2f4101b50e2ec564\""
+        },
+        {
+            "key": "tmp\/0b0ab531-57a8-4e20-80d6-d0afe3e26a6f\/master.webp",
+            "bytes": 101580,
+            "etag": "\"b0a0280a36348ae3192e9145efdfb0e8\""
+        },
+        {
+            "key": "tmp\/61c10bba-9493-4984-91de-3625d81291ab\/master.webp",
+            "bytes": 24928,
+            "etag": "\"6bbc5f170196b19a2f4101b50e2ec564\""
+        },
+        {
+            "key": "tmp\/9cae2a69-03a5-4396-a0f4-2ed8c858e0a5\/master.webp",
+            "bytes": 180394,
+            "etag": "\"b23a29537d39f19d3f0654b08a552b72\""
+        }
+    ]
+}

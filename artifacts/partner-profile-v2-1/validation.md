@@ -39,3 +39,11 @@ Existing Admin can select a new file or reopen the saved master through a small 
 | Git | Previous HEAD above; commit/push SHA reported in final answer; NO DEPLOY |
 | Decision | PARTNER PROFILE V2.1 READY FOR DEPLOY |
 | Resultado | JAKAWI PARTNER PROFILE V2.1 READY |
+
+## Production release — LIVE
+
+Partner Profile V2.1 application `22fd406eb7d8794b2c725c79b0af55b19280a16d` is LIVE, released directly from actual runtime `3fd45e30b4d641f9f6601f31c53f70ec57600048`. One clean production build; exact previous app/web images protected; only app/web/social-worker recreated. Logo = circular profile identity; shared Admin crop = square 1:1 + zoom/reposition; stored social links supported; cover/hero semantics and acquisition unchanged. Docs-only followup, no rebuild/redeploy.
+
+[Release evidence](live/production-release.json), [readiness](live/readiness.json), [browser smoke](live/browser-validation.json), [390](live/dossis43-390.png), [1440](live/dossis43-1440.png), [Admin crop availability](live/admin-crop-available-1440.png). Partner GET returned 200 through the deployed kernel in a READ ONLY transaction; browser hash-checked real public compiled assets and loaded existing imgproxy media. Existing Admin opened the existing master preview and cancelled: no selection, zoom/reposition change, crop confirmation, save or upload. Instagram/TikTok/Facebook visible; empty website/WhatsApp hidden; external attributes safe; two subtle green accents; coral/yellow preserved; no overflow.
+
+[Media safety](live/partner-media-safety.json): current 720×720 Dossis logo and existing cover retain exact references/master bytes. All DB counts (including analytics and attribution), existing Partner social data, and MinIO inventory stayed unchanged; mutations/uploads/migrations zero. App, DB and v2proof healthy, unrelated container IDs unchanged; web/worker running, scheduler active, failed jobs zero, CRM true, Meta off, prelaunch unchanged. Root Coming Soon/index-follow and Partner notice/noindex-nofollow preserved.

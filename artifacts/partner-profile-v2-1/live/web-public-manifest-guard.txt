@@ -1,0 +1,1 @@
+Vite manifest PASS: 104 Inertia pages; all assets and dependencies exist.
