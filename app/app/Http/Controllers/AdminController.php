@@ -108,14 +108,14 @@ class AdminController extends Controller
         });
     }
 
-    public function benefits(): Response
+    public function benefits(Request $request): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Beneficios', 'resource' => 'benefits', 'items' => Benefit::with('partner')->orderBy('title')->get()]);
+        return Inertia::render('admin/catalog/index', app(\App\Services\AdminCatalog::class)->listing($request, 'benefits'));
     }
 
     public function benefitForm(?Benefit $benefit = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $benefit ? 'Editar beneficio' : 'Nuevo beneficio', 'resource' => 'benefits', 'item' => $benefit ? $benefit->toArray() + ['imageUrl' => app(\App\Services\MediaUrl::class)->url($benefit->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => $benefit?->partner?->locations()->get(['id', 'name']) ?? []]);
+        return Inertia::render('admin/resources/form', ['title' => $benefit ? 'Editar beneficio' : 'Nuevo beneficio', 'resource' => 'benefits', 'item' => $benefit ? $benefit->load('locations')->toArray() + ['imageUrl' => app(\App\Services\MediaUrl::class)->url($benefit->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => $benefit?->partner?->locations()->get(['id', 'name']) ?? []]);
     }
 
     public function saveBenefit(Request $request, ?Benefit $benefit = null)
@@ -144,13 +144,13 @@ class AdminController extends Controller
             $benefit->syncLocations($data['location_ids'] ?? []);
         } $this->upload($request, $benefit, 'image', 'image_path', 'benefits');
 
-        return to_route('admin.benefits.index');
+        return to_route('admin.benefits.index', $request->only(['q', 'status_filter', 'partner_filter', 'page']));
         });
     }
 
-    public function experiences(): Response
+    public function experiences(Request $request): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Experiencias', 'resource' => 'experiences', 'items' => Experience::orderBy('title')->get()]);
+        return Inertia::render('admin/catalog/index', app(\App\Services\AdminCatalog::class)->listing($request, 'experiences'));
     }
 
     public function experienceForm(?Experience $experience = null): Response
@@ -170,7 +170,7 @@ class AdminController extends Controller
             } $this->upload($request, $experience, 'image', 'image_path', 'experiences');
             $this->upload($request, $experience, 'cover', 'cover_path', 'experiences');
 
-            return to_route('admin.experiences.index');
+            return to_route('admin.experiences.index', $request->only(['q', 'status_filter', 'partner_filter', 'page']));
         });
     }
 

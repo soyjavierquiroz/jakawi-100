@@ -150,7 +150,7 @@ class PublicV2HttpTest extends TestCase
         }
         $none = Experience::factory()->published()->create(['reservation_method' => 'none']);
         $this->get('/experiencias/'.$none->slug.'/reservar')->assertNotFound();
-        $this->get('/experiencias/'.Experience::factory()->create(['status' => 'draft'])->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->where('availability.available', false));
+        $this->get('/experiencias/'.Experience::factory()->create(['status' => 'draft'])->slug)->assertNotFound();
     }
 
     public function test_contact_redirects_and_empty_states_are_safe(): void

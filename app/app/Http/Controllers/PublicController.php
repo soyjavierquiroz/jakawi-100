@@ -170,6 +170,7 @@ class PublicController extends Controller
 
     public function experience(Request $request, Experience $experience, AnalyticsTracker $analytics): Response
     {
+        abort_if($experience->status === 'draft', 404);
         $analytics->resetJourneyIntent($experience);
         $available = $experience->isPublished();
         if ($available) {

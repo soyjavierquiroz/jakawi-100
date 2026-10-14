@@ -89,14 +89,9 @@ class ExperienceMvpPublicFlowTest extends TestCase
         $this->assertSame('phone', AnalyticsEvent::where('event_name', 'experience_reserve_click')->latest('id')->value('metadata')['reservation_method']);
     }
 
-    public function test_unpublished_experience_has_a_safe_unavailable_state(): void
+    public function test_unpublished_experience_is_not_publicly_exposed(): void
     {
-        $experience = Experience::factory()->create(['status' => 'draft']);
-
-        $this->get('/experiencias/'.$experience->slug)->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('availability.available', false)
-            ->where('availability.reason', 'ESTA EXPERIENCIA NO ESTÁ DISPONIBLE AHORA')
-            ->has('experience.sessions', 0)
-        );
+        $experience = Experience::factory()->draft()->create();
+        $this->get('/experiencias/'.$experience->slug)->assertNotFound();
     }
 }

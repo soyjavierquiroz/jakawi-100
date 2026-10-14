@@ -100,7 +100,7 @@ class LandingPresentationController extends Controller
 
     private function assertVisible($subject, bool $preview): void
     {
-        abort_unless(($subject instanceof Unlock && ($preview || in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true))) || $subject instanceof Experience || $subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
+        abort_unless(($subject instanceof Unlock && ($preview || in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true))) || ($subject instanceof Experience && ($preview || $subject->status !== 'draft')) || $subject instanceof Benefit || ($subject instanceof Challenge && ($preview || $subject->isPublic())), 404);
     }
 
     public function preview(Request $request, string $subjectSlug, LandingPresentation $presentation, AttributionService $attribution, AnalyticsTracker $analytics, ChallengeRanking $ranking, SocialEntryState $state, ChallengeMarketingLandingPresenter $presenter, ProductLandingResolver $resolver)

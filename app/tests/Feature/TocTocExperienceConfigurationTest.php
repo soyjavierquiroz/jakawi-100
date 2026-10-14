@@ -37,10 +37,10 @@ class TocTocExperienceConfigurationTest extends TestCase
         $this->assertSame(0, $brief['commercial_truth']['available_sessions']);
         $this->assertSame([$experience->terms], $brief['commercial_truth']['conditions']);
         $this->get('/l/'.$landing->slug)->assertNotFound();
-        $this->get('/experiencias/'.$experience->slug)->assertInertia(fn (Assert $p) => $p->where('availability.available', false)->has('experience.sessions', 0)->has('experience.reservation_targets', 0));
+        $this->get('/experiencias/'.$experience->slug)->assertNotFound();
         $this->get('/explorar?type=experiences')->assertInertia(fn (Assert $p) => $p->has('opportunities', 0));
         $user = User::factory()->create();
-        $this->actingAs($user)->get('/experiencias/'.$experience->slug)->assertOk()->assertInertia(fn (Assert $p) => $p->where('hasActiveMembership', false)->where('availability.available', false));
+        $this->actingAs($user)->get('/experiencias/'.$experience->slug)->assertNotFound();
         $this->actingAs(User::factory()->create(['is_admin' => true]));
         $this->post('/admin/experiencias/'.$experience->slug.'/landings/'.$landing->slug.'/publish')->assertSessionHasErrors('presentation');
         $this->assertDatabaseHas('landing_presentations', ['id' => $landing->id, 'status' => 'DRAFT']);

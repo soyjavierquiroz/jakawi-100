@@ -33,7 +33,7 @@ class ApplicationV2HttpTest extends TestCase
         $this->get('/beneficios/'.$benefit->slug)->assertOk();
         $this->get('/beneficios/'.$draftBenefit->slug)->assertOk();
         $this->get('/experiencias/'.$experience->slug)->assertOk();
-        $this->get('/experiencias/'.$draftExperience->slug)->assertOk();
+        $this->get('/experiencias/'.$draftExperience->slug)->assertNotFound();
     }
 
     public function test_admin_is_server_side_protected(): void

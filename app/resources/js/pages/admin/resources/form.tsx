@@ -1,6 +1,6 @@
 import { ImageUpload } from '@/components/media/image-upload';
 import { useState } from 'react';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '../layout';
 
 const fields: Record<string, string[]> = {
@@ -128,13 +128,19 @@ export default function ResourceForm({
     cities = [],
     publicUrl,
 }: any) {
+    const { url } = usePage();
+    const catalogQuery = ['benefits', 'experiences'].includes(resource) && url.includes('?') ? `?${url.split('?')[1]}` : '';
     const [uploading, setUploading] = useState<Record<string, boolean>>({});
     const { gallery_paths: _galleryPaths, ...editableItem } = item ?? {};
-    const form = useForm<any>({ ...defaults, ...editableItem });
+    const form = useForm<any>({ ...defaults, ...editableItem,
+        ...(resource === 'experiences' && item ? { partners: (item.partners ?? []).map((partner: any) => ({ partner_id: partner.id, role: partner.pivot.role, sort_order: partner.pivot.sort_order })) } : {}),
+        ...(resource === 'benefits' && item ? { location_scope: item.applies_to_all_locations ? 'all' : 'selected', location_ids: (item.locations ?? []).map((location: any) => location.id) } : {}),
+    });
     const submit = (e: any) => {
         e.preventDefault();
         if (item) {
-            form.put(`/admin/${resource}/${['benefits', 'experiences'].includes(resource) ? item.slug : item.id}`, { forceFormData: true });
+            form.transform((data: any) => ({ ...data, _method: 'put' }));
+            form.post(`/admin/${resource}/${['benefits', 'experiences'].includes(resource) ? item.slug : item.id}${catalogQuery}`, { forceFormData: true });
         } else {
             form.post(`/admin/${resource}`, { forceFormData: true });
         }
@@ -360,7 +366,7 @@ export default function ResourceForm({
                 >
                     Guardar
                 </button>
-                <Link href={`/admin/${resource}`}>Cancelar</Link>
+                <Link href={`/admin/${resource}${catalogQuery}`}>Volver al listado</Link>
             </form>
         </AdminLayout>
     );

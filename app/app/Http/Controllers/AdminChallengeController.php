@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class AdminChallengeController extends Controller {
-    public function index() { return Inertia::render('admin/social-challenges/index',['challenges'=>Challenge::with('partner:id,name')->latest()->get(['id','partner_id','city_id','title','slug','status','review_status','evidence_type','qualification_type','selection_type','reward_type','ends_at'])]); }
+    public function index(Request $request) { return Inertia::render('admin/catalog/index', app(\App\Services\AdminCatalog::class)->listing($request, 'challenges')); }
     public function form(?Challenge $challenge=null) { return Inertia::render('admin/social-challenges/form',['challenge'=>$challenge,'heroUrl'=>$challenge ? app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'thumbnail') : null,'partners'=>\App\Models\Partner::orderBy('name')->get(['id','name']),'cities'=>\App\Models\City::orderBy('name')->get(['id','name']),'benefits'=>Benefit::where('access_mode','social_challenge_grant')->get(['id','partner_id','title'])]); }
     public function save(Request $request, ?Challenge $challenge=null) {
         $data = $request->validate([
@@ -79,7 +79,7 @@ class AdminChallengeController extends Controller {
         $challenge ? $challenge->update($data) : $challenge=Challenge::create($data);
         return $request->attributes->get('partner_challenge')
             ? to_route('partner.challenges.index', $request->attributes->get('partner_slug'))
-            : to_route('admin.social-challenges.show',$challenge->slug);
+            : to_route('admin.social-challenges.index', $request->only(['q', 'status_filter', 'partner_filter', 'review_filter', 'page']));
     }
     public function editorial(Request $request, Challenge $challenge) {
         $data = $request->validate(['decision'=>['required',Rule::in(['APPROVED','CHANGES_REQUESTED','REJECTED'])], 'comment'=>['required_if:decision,CHANGES_REQUESTED','nullable','string','max:2000']]);
