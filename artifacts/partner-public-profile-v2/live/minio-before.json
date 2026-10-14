@@ -1,0 +1,14 @@
+{
+    "bucket": "jakawi-media",
+    "disk": "minio-media",
+    "visibility": "private",
+    "objects_count": 1,
+    "bytes": 41,
+    "objects": [
+        {
+            "key": "health\/imgproxy-auth-test.txt",
+            "bytes": 41,
+            "etag": "\"f8a8dd05f5fc363e7c10cbba21678edd\""
+        }
+    ]
+}

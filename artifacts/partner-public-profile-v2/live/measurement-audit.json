@@ -1,0 +1,31 @@
+{
+  "qa_db_mutations": 0,
+  "domain_counts_unchanged": true,
+  "measurement_changes": {
+    "analytics_events": {
+      "before": 17,
+      "after": 19
+    },
+    "attribution_touches": {
+      "before": 16,
+      "after": 17
+    }
+  },
+  "concurrent_external_requests": [
+    {
+      "time": "14/Oct/2026:02:35:21 +0000",
+      "request": "GET /dossis43 HTTP/1.1",
+      "status": 200,
+      "headless_browser": false,
+      "curl": false
+    },
+    {
+      "time": "14/Oct/2026:02:36:04 +0000",
+      "request": "GET /lugares/dossis43/mapa HTTP/1.1",
+      "status": 302,
+      "headless_browser": false,
+      "curl": false
+    }
+  ],
+  "qa_partner_document_requests_to_production": 0
+}

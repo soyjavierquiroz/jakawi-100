@@ -1,0 +1,23 @@
+[
+  {
+    "time": "14/Oct/2026:02:32:13 +0000",
+    "request": "GET /p/dossis43 HTTP/1.1",
+    "status": 301,
+    "headless_browser": false,
+    "curl": true
+  },
+  {
+    "time": "14/Oct/2026:02:35:21 +0000",
+    "request": "GET /dossis43 HTTP/1.1",
+    "status": 200,
+    "headless_browser": false,
+    "curl": false
+  },
+  {
+    "time": "14/Oct/2026:02:36:04 +0000",
+    "request": "GET /lugares/dossis43/mapa HTTP/1.1",
+    "status": 302,
+    "headless_browser": false,
+    "curl": false
+  }
+]

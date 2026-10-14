@@ -1,0 +1,52 @@
+{
+  "status": "LIVE",
+  "deployed_sha": "3fd45e30b4d641f9f6601f31c53f70ec57600048",
+  "previous_runtime": "dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878",
+  "production_builds": 1,
+  "migrations": 0,
+  "domain_mutations": 0,
+  "smoke": "PASS",
+  "partner_kernel_get_status": 200,
+  "partner_public_observed_get_status": 200,
+  "partner_smoke_mode": "Production kernel READ ONLY render + real public assets; public GET 200 additionally observed in external non-QA access log",
+  "root_http": 200,
+  "technical_redirect": 301,
+  "production_domain_mutations_by_qa": 0,
+  "new_users": 0,
+  "new_offers": 0,
+  "minio_mutations": 0,
+  "qa_uploads": 0,
+  "failed_jobs": 0,
+  "scheduler": "ACTIVE",
+  "rollback": "EXACT PREVIOUS IMAGES PROTECTED",
+  "disk_available_gib": 18.458110809326172,
+  "concurrent_external_measurement": {
+    "analytics_events": {
+      "before": 17,
+      "after": 19
+    },
+    "attribution_touches": {
+      "before": 16,
+      "after": 17
+    }
+  },
+  "images": {
+    "app": {
+      "tag": "jakawi-app:release-3fd45e30b4d641f9f6601f31c53f70ec57600048",
+      "id": "sha256:24ce46448b54370db6d3dbd6dd90cab118e71d8059e38df983fcc810e7579329",
+      "revision": "3fd45e30b4d641f9f6601f31c53f70ec57600048"
+    },
+    "web": {
+      "tag": "jakawi-web:release-3fd45e30b4d641f9f6601f31c53f70ec57600048",
+      "id": "sha256:d7809ce4d714b63ad7a5eea41ad19e79f299594304f464c5a60af29593cb76ef",
+      "revision": "3fd45e30b4d641f9f6601f31c53f70ec57600048"
+    }
+  },
+  "protected_rollback": {
+    "app": "sha256:6175c68968be01b391cce9b6fb9c99bde48f2c8d473febcf9295c5984a8f27f1",
+    "web": "sha256:42ba904bdd06768e53be5cac1fc06db8e1baab010976d9b639329364dc017543",
+    "worker": "sha256:6175c68968be01b391cce9b6fb9c99bde48f2c8d473febcf9295c5984a8f27f1"
+  },
+  "docs_only_followup": true,
+  "redeploy_after_docs": false
+}

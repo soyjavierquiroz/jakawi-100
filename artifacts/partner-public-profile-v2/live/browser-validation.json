@@ -1,0 +1,282 @@
+{
+  "pass": true,
+  "mode": "Deployed production HTTP kernel in READ ONLY transaction for Partner HTML; real public HTTPS compiled assets; real public Coming Soon; no production Partner GET analytics write",
+  "checks": [
+    "390: V2 hero, brand fallback/initials, immediate identity, compact zero inventory, visible location, lower signup/login, usable account CTA, notice unchanged, noindex/nofollow, canonical, scroll clears sticky notice, no overflow/broken images",
+    "1440: wide editorial split, strong type, destination location section, secondary lower acquisition, no overflow",
+    "Existing authenticated account read-only render: signup/login hidden; no login or account creation",
+    "Existing Admin read-only render: Partner Logo/Portada upload controls still available; no upload or update",
+    "Actual public HTTP root: Coming Soon, index/follow, compiled production assets"
+  ],
+  "errors": [],
+  "mutations": [],
+  "assets": [
+    {
+      "path": "/build/assets/instrument-sans-400-normal-DRC__1Mx.woff2",
+      "status": 200,
+      "sha256": "9a91efaa3599a6ef01b2f49e9ec670e3a2f39baeef09c73198f1052cf3bb0850"
+    },
+    {
+      "path": "/build/assets/app-Cv-D46ZH.css",
+      "status": 200,
+      "sha256": "32186281a42d0a99f87b4da9b29563e202dc00d99da9a300f63ed6cba6ff81ee"
+    },
+    {
+      "path": "/build/assets/instrument-sans-500-normal-Dk9ku72i.woff2",
+      "status": 200,
+      "sha256": "9d3547da16d950d12a677c772a3ff9b69846e60e7dcd1b5efd540993f7286532"
+    },
+    {
+      "path": "/build/assets/montserrat-800-normal-axpkC1rd.woff2",
+      "status": 200,
+      "sha256": "ba826fb84c2e961578adf3a08b5778b87905d4443445d1d56d84f9f157d5ea4b"
+    },
+    {
+      "path": "/build/assets/montserrat-700-normal-BdjcYUrC.woff2",
+      "status": 200,
+      "sha256": "f9d9e65b15372cebcafc3acd1e664a564c5c4b23278de4d5760de9a13c530371"
+    },
+    {
+      "path": "/build/assets/instrument-sans-600-normal-B7fBEWYG.woff2",
+      "status": 200,
+      "sha256": "efb770916eda95a0e31d80cccde9651d4e8617010b21220e9f227c4820d675da"
+    },
+    {
+      "path": "/build/assets/use-appearance-X73_9lwL.js",
+      "status": 200,
+      "sha256": "5449ae3dab78e227e13f80ab55a10576c9485b5f668f0c323b8b672d3b3c6347"
+    },
+    {
+      "path": "/build/assets/compiler-runtime-DF-fxw1i.js",
+      "status": 200,
+      "sha256": "d8febb44e1314f0fd3ee7c2f7a8b38dd95c474ee79b10078afdf115f6de3048b"
+    },
+    {
+      "path": "/build/assets/preload-helper-B6JZccWF.js",
+      "status": 200,
+      "sha256": "3331b3c98fcaccdec5cbfdb7bcdb0bcfd998b67f56c47dcbd76e2debc042c8da"
+    },
+    {
+      "path": "/build/assets/app-6gx8JD9R.js",
+      "status": 200,
+      "sha256": "967886df021f4400cfd0472c8dc163a38368b9cda2e53360f5d75941491f66de"
+    },
+    {
+      "path": "/build/assets/dist-BEQNN_jm.js",
+      "status": 200,
+      "sha256": "63749129ef0d66069d0cbb5f9524e8ff759ccab6af65f24b4984d086aad53e1a"
+    },
+    {
+      "path": "/build/assets/dist-DMUAYi6k.js",
+      "status": 200,
+      "sha256": "639a50a4412ebfdccc57a9f32764a469bcd9e26b656c9b8cb5c1be927fa443b0"
+    },
+    {
+      "path": "/build/assets/dist-SJLXfxUU.js",
+      "status": 200,
+      "sha256": "d0eca46fa9cc41fc21f5bade9cb23b7383f7cd439ec1711941020777c0ed978f"
+    },
+    {
+      "path": "/build/assets/dialog-BJ9RV55b.js",
+      "status": 200,
+      "sha256": "9cbd04685df933e53246aa7819ff4593957abe57f6a1525db679997a5f7dd73f"
+    },
+    {
+      "path": "/build/assets/createLucideIcon-C8UyESMm.js",
+      "status": 200,
+      "sha256": "cf6c7f6004541349050eb504e1ba792f65670086d9b9e267b33c2d46f2cad2e6"
+    },
+    {
+      "path": "/build/assets/x-CwR-vRd4.js",
+      "status": 200,
+      "sha256": "3c46843d1ecdd24df2dd9afd0231122b98e81d2b63730e234c18c3ad25499475"
+    },
+    {
+      "path": "/build/assets/routes-BKe4AhC3.js",
+      "status": 200,
+      "sha256": "f7b277ae95802437521f79cd51c5e1be4eaf2b89a4fbb4e23c2e9c9433d1a0f1"
+    },
+    {
+      "path": "/build/assets/profile-uNtLFEsD.js",
+      "status": 200,
+      "sha256": "3484616cb5a1f6c1ee3c19c4aa5bd9e4b9ca4a27ff7c9db88a6596ddb3619929"
+    },
+    {
+      "path": "/build/assets/utils-CQk6LZJn.js",
+      "status": 200,
+      "sha256": "7ee6ef67e29d7a164989786f501e285319a18723377cf1b59adbbc561bd5b2a7"
+    },
+    {
+      "path": "/build/assets/theme-toggle-XVCUnZJx.js",
+      "status": 200,
+      "sha256": "fae3c93703c06edb3041a24788bbf5910b7685bface9fb7d9b161031be8c4cb4"
+    },
+    {
+      "path": "/build/assets/sun-W8_WkR6Z.js",
+      "status": 200,
+      "sha256": "a5d2e3cb57b92f5204006c9202f5e9d854655e97de64ba1950cd46fadbcf3338"
+    },
+    {
+      "path": "/build/assets/meta-browser-tracker-Cy2PPpjd.js",
+      "status": 200,
+      "sha256": "616bf3787e092f7fc210b62bbd5e0d4c9f9eea2e596f6398299ab0f31daa024b"
+    },
+    {
+      "path": "/build/assets/delivery-Bzmb6Cf0.js",
+      "status": 200,
+      "sha256": "ae0ac2aa4b743dfeee8acb95cc2f6237b79f33ce889b8fb0b6f560963021d24c"
+    },
+    {
+      "path": "/build/assets/security-ZZC6IP8e.js",
+      "status": 200,
+      "sha256": "7ec3e65bd920e11745cee4f3eb24db0aed67d644b233285335f59dc8b79bde22"
+    },
+    {
+      "path": "/build/assets/appearance-DazRc4Hz.js",
+      "status": 200,
+      "sha256": "9843daf6fdd944191ef4b30ff75cc3bb44293d51113fd4cb30f124499244581b"
+    },
+    {
+      "path": "/build/assets/password-input-DYwuG2n6.js",
+      "status": 200,
+      "sha256": "3581892857b3bdf05960fafd1c45ef63a7144381be6d0ab4551e7fc981883e4d"
+    },
+    {
+      "path": "/build/assets/heading-Dnz88bFV.js",
+      "status": 200,
+      "sha256": "f356bb09f22f43b9fae61ae59917e3bb996b9b3ea7b4999cfdcb30929bdc6ab9"
+    },
+    {
+      "path": "/build/assets/dist-DSdFbHmR.js",
+      "status": 200,
+      "sha256": "c8cf348a085d289ac9a7b39e20fa3a61272d8372df1c873d998cd5f516ab4e85"
+    },
+    {
+      "path": "/build/assets/sparkles-DfEiwBpi.js",
+      "status": 200,
+      "sha256": "b185de092395b7e17b2e0c448a9ddbf415a3c8cbe9e0a57a8455fec919747c3e"
+    },
+    {
+      "path": "/build/assets/search-BkBdxCxQ.js",
+      "status": 200,
+      "sha256": "e490cbbf08c2a0725bdb845af31df849eb6fc7c7295f422f15588ce0ff5c091c"
+    },
+    {
+      "path": "/build/assets/button-CrIeqD1u.js",
+      "status": 200,
+      "sha256": "6fe6d2a216787ac25f6143a74be1244cb16fb654d30a19bb6805c98806a63759"
+    },
+    {
+      "path": "/build/assets/input-BT9g33Kx.js",
+      "status": 200,
+      "sha256": "efae95b1904ec6f28b272fa0a343d1389cf699d031ee4c67f27539dfd9a2edd0"
+    },
+    {
+      "path": "/build/assets/separator-DzPzVIhU.js",
+      "status": 200,
+      "sha256": "474b127e3957be2208d99d1cbb1e1e2513eb3ff83136e3b30586bfb1751cc0e0"
+    },
+    {
+      "path": "/build/assets/wayfinder-Dp7PqxvV.js",
+      "status": 200,
+      "sha256": "3d4c90228fda731e37f541f3087fdf5387d9d59433e35b267b64a97196f70781"
+    },
+    {
+      "path": "/build/assets/map-pin-D-BBNTnr.js",
+      "status": 200,
+      "sha256": "d466a02d12d90d2d77968ef0912af283df58b593b0d41ff11c32a4958f6a36ac"
+    },
+    {
+      "path": "/build/assets/input-error-01__SjER.js",
+      "status": 200,
+      "sha256": "787a9cbb63305e37637033a5b78e05ab2162c3bf273f7fc086f49bb7601fb669"
+    },
+    {
+      "path": "/build/assets/show-BmNyWIC1.js",
+      "status": 200,
+      "sha256": "187817cc380ffa7c9ea2fa6a7a9de7a6949bf1fcc2ac58e11eaea42df48fd235"
+    },
+    {
+      "path": "/build/assets/jakawi-image-T3LS0btF.js",
+      "status": 200,
+      "sha256": "ec8df5589998a72d4e8040e500408df0b7d1ae3de59b21ed25241331bb2ef90d"
+    },
+    {
+      "path": "/build/assets/label-C9ChO78x.js",
+      "status": 200,
+      "sha256": "97b43af8873f638c8af976932caf432dfa439871a34c4aa43cc5c5bda528d047"
+    },
+    {
+      "path": "/build/assets/public-footer-DoM48pqI.js",
+      "status": 200,
+      "sha256": "367f05e2acdf0a1dec4743499dc4044e8b9275029a9e2e7b2be889d937eec456"
+    },
+    {
+      "path": "/build/assets/marketing-layout-W2u-p8ck.js",
+      "status": 200,
+      "sha256": "0bae1b5d83f9e423a5bbbf3ead8e534d63b08a6bb367bec99d897c0bed7e1cbe"
+    },
+    {
+      "path": "/build/assets/jsx-runtime-3K-vts_8.js",
+      "status": 200,
+      "sha256": "3a0b25897975e82020980fe0eb246026ccbdcfd6894e4d9512051fba4f64f0b4"
+    },
+    {
+      "path": "/build/assets/montserrat-800-normal-C3dfDxXV.woff",
+      "status": 200,
+      "sha256": "26f9e611260b72c43467d0a0ab4f56c5068ec431e41d9e3088fa74117ca086d8"
+    },
+    {
+      "path": "/build/assets/montserrat-400-normal-xItZbAXg.woff",
+      "status": 200,
+      "sha256": "6a7d6a30d2b8cdc9dd4092918ad2d9a45006f19987300b6a1c1f7a2bde5b0ea3"
+    },
+    {
+      "path": "/build/assets/instrument-sans-600-normal-B9e8oLYv.woff",
+      "status": 200,
+      "sha256": "9b4ce1f2b26be7cb087fd87d6f99a202136292ec820af75bd38ab9e53895cf28"
+    },
+    {
+      "path": "/build/assets/instrument-sans-400-normal-D1W7dsQl.woff",
+      "status": 200,
+      "sha256": "797bd3eaa70edbd4757650ab44dad75fbfbfdf18bacedb4b71022c04621d30ad"
+    },
+    {
+      "path": "/build/assets/form-CSG4lyH1.js",
+      "status": 200,
+      "sha256": "56d66e0059af7620e065abd79f2fd2e2f399af53a1a4d0ba9509a5e7cc5c46d2"
+    },
+    {
+      "path": "/build/assets/layout-BCA2jvsN.js",
+      "status": 200,
+      "sha256": "743b69f8813da7a44fca9a1c807379dc33579dd6538fce2ae7bd8f8c8c18e39a"
+    },
+    {
+      "path": "/build/assets/image-upload-LJBxt9rq.js",
+      "status": 200,
+      "sha256": "c06e224ece6370fc26acb15464dce42172e4c9e9c1fceed39a4ef9dbaa8289f6"
+    },
+    {
+      "path": "/build/assets/instrument-sans-500-normal-Z6ESRlEs.woff",
+      "status": 200,
+      "sha256": "bd6a8dc8b0dc0cced0c32d3eda93f0e0e82c58ddefea8b53b3307b0c48da3089"
+    },
+    {
+      "path": "/build/assets/coming-soon-Dns1Yvlx.js",
+      "status": 200,
+      "sha256": "ea9488338888358b7ca04161666652232f2b819f208fd7847a4e781dd4925b79"
+    }
+  ],
+  "mobile": {
+    "[data-partner-cover]": 156,
+    "#partner-name": 466.75,
+    "#ubicaciones": 1152.765625,
+    "[data-partner-account]": 1601.8125
+  },
+  "desktop": {
+    "coverWidth": 556.203125,
+    "copyWidth": 611.796875,
+    "coverX": 771.796875,
+    "copyX": 112
+  }
+}

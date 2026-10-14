@@ -1,0 +1,7 @@
+
+  *  * * * *  php artisan unlocks:expire ........ Next Due: 7 seconds from now
+  *  * * * *  php artisan challenges:refresh-rankings  Next Due: 7 seconds from now
+  *  * * * *  php artisan challenges:close-expired  Next Due: 7 seconds from now
+  *  * * * *  php artisan growth:dispatch-meta .. Next Due: 7 seconds from now
+  *  * * * *  php artisan crm:dispatch .......... Next Due: 7 seconds from now
+  20 7 * * *  php artisan media:gc ................ Next Due: 4 hours from now

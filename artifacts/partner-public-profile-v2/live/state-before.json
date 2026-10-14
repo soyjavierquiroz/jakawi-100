@@ -1,0 +1,41 @@
+{
+    "counts": {
+        "analytics_events": 17,
+        "referral_relationships": 0,
+        "attribution_touches": 16,
+        "ownership_assignments": 0,
+        "reward_transactions": 0,
+        "membership_purchases": 0,
+        "users": 2,
+        "partners": 1,
+        "locations": 1,
+        "benefits": 0,
+        "experiences": 0,
+        "experience_sessions": 0,
+        "challenges": 0,
+        "unlocks": 0,
+        "landing_presentations": 0,
+        "redemptions": 0,
+        "experience_reservations": 0,
+        "challenge_participations": 0,
+        "challenge_social_entries": 0,
+        "challenge_reward_grants": 0,
+        "reward_payouts": 0,
+        "unlock_participations": 0,
+        "memberships": 0,
+        "jp_holds": 0,
+        "failed_jobs": 0,
+        "migrations": 62,
+        "app_settings": 2,
+        "cities": 5
+    },
+    "admins": 1,
+    "analytics": true,
+    "prelaunch": true,
+    "crm": true,
+    "meta": {
+        "provider": false,
+        "browser": false,
+        "capi": false
+    }
+}

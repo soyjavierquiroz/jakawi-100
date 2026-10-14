@@ -1,0 +1,909 @@
+ Image jakawi-app:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 Building
+ Image jakawi-web:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.31kB done
+#1 DONE 0.0s
+
+#2 [web internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.73kB done
+#2 DONE 0.0s
+
+#3 [app internal] load metadata for docker.io/library/composer:2
+#3 DONE 0.3s
+
+#4 [web internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#4 DONE 0.2s
+
+#5 [web internal] load metadata for docker.io/library/nginx:1.27-alpine
+#5 DONE 0.2s
+
+#6 [web internal] load .dockerignore
+#6 transferring context: 278B done
+#6 DONE 0.0s
+
+#7 [web web 1/5] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#7 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 0.0s done
+#7 DONE 0.0s
+
+#8 [web] FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#8 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.0s done
+#8 DONE 0.0s
+
+#9 [app php-base 1/5] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#9 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.0s done
+#9 DONE 0.1s
+
+#10 [app internal] load build context
+#10 transferring context: 17.67MB 0.7s done
+#10 DONE 0.7s
+
+#11 [web internal] load build context
+#11 transferring context: 17.67MB 0.7s done
+#11 DONE 0.7s
+
+#12 [web php-base 2/5] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libjpeg62-turbo-dev         libpng-dev         libwebp-dev         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-configure gd --with-jpeg --with-webp     && docker-php-ext-install         gd         exif         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#12 CACHED
+
+#13 [web php-base 3/5] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#13 CACHED
+
+#7 [web web 1/5] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#7 CACHED
+
+#14 [app php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#14 DONE 0.2s
+
+#15 [web web 2/5] COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+#15 DONE 0.2s
+
+#16 [web php-base 5/5] WORKDIR /var/www/html
+#16 DONE 0.0s
+
+#17 [app php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#17 CACHED
+
+#18 [app php-base 5/5] WORKDIR /var/www/html
+#18 CACHED
+
+#19 [web build 1/7] RUN apt-get update     && apt-get install -y --no-install-recommends ca-certificates curl gnupg     && mkdir -p /etc/apt/keyrings     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list     && apt-get update     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*
+#19 ...
+
+#20 [app app 1/4] COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+#20 DONE 0.2s
+
+#21 [app app 2/4] COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
+#21 DONE 0.0s
+
+#19 [web build 1/7] RUN apt-get update     && apt-get install -y --no-install-recommends ca-certificates curl gnupg     && mkdir -p /etc/apt/keyrings     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list     && apt-get update     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*
+#19 0.543 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#19 0.559 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#19 0.559 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#19 0.705 Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8790 kB]
+#19 1.024 Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+#19 1.109 Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [349 kB]
+#19 2.084 Fetched 9388 kB in 2s (6034 kB/s)
+#19 2.084 Reading package lists...
+#19 2.842 Reading package lists...
+#19 3.478 Building dependency tree...
+#19 3.669 Reading state information...
+#19 3.924 ca-certificates is already the newest version (20250419~deb12u1).
+#19 3.924 curl is already the newest version (7.88.1-10+deb12u15).
+#19 3.924 The following additional packages will be installed:
+#19 3.924   dirmngr gnupg-l10n gnupg-utils gpg gpg-agent gpg-wks-client gpg-wks-server
+#19 3.925   gpgconf gpgsm libassuan0 libksba8 libncursesw6 libnpth0 pinentry-curses
+#19 3.926 Suggested packages:
+#19 3.926   dbus-user-session libpam-systemd pinentry-gnome3 tor parcimonie xloadimage
+#19 3.926   scdaemon pinentry-doc
+#19 3.926 Recommended packages:
+#19 3.926   libgpm2
+#19 4.003 The following NEW packages will be installed:
+#19 4.003   dirmngr gnupg gnupg-l10n gnupg-utils gpg gpg-agent gpg-wks-client
+#19 4.004   gpg-wks-server gpgconf gpgsm libassuan0 libksba8 libncursesw6 libnpth0
+#19 4.004   pinentry-curses
+#19 4.029 0 upgraded, 15 newly installed, 0 to remove and 0 not upgraded.
+#19 4.029 Need to get 8019 kB of archives.
+#19 4.029 After this operation, 16.4 MB of additional disk space will be used.
+#19 4.029 Get:1 http://deb.debian.org/debian bookworm/main amd64 libassuan0 amd64 2.5.5-5 [48.5 kB]
+#19 4.034 Get:2 http://deb.debian.org/debian bookworm/main amd64 gpgconf amd64 2.2.40-1.1+deb12u2 [565 kB]
+#19 4.050 Get:3 http://deb.debian.org/debian bookworm/main amd64 libksba8 amd64 1.6.3-2 [128 kB]
+#19 4.050 Get:4 http://deb.debian.org/debian bookworm/main amd64 libnpth0 amd64 1.6-3 [19.0 kB]
+#19 4.050 Get:5 http://deb.debian.org/debian bookworm/main amd64 dirmngr amd64 2.2.40-1.1+deb12u2 [793 kB]
+#19 4.050 Get:6 http://deb.debian.org/debian bookworm/main amd64 gnupg-l10n all 2.2.40-1.1+deb12u2 [1093 kB]
+#19 4.056 Get:7 http://deb.debian.org/debian bookworm/main amd64 gnupg-utils amd64 2.2.40-1.1+deb12u2 [927 kB]
+#19 4.061 Get:8 http://deb.debian.org/debian bookworm/main amd64 gpg amd64 2.2.40-1.1+deb12u2 [950 kB]
+#19 4.067 Get:9 http://deb.debian.org/debian bookworm/main amd64 libncursesw6 amd64 6.4-4 [134 kB]
+#19 4.068 Get:10 http://deb.debian.org/debian bookworm/main amd64 pinentry-curses amd64 1.2.1-1 [77.4 kB]
+#19 4.069 Get:11 http://deb.debian.org/debian bookworm/main amd64 gpg-agent amd64 2.2.40-1.1+deb12u2 [695 kB]
+#19 4.073 Get:12 http://deb.debian.org/debian bookworm/main amd64 gpg-wks-client amd64 2.2.40-1.1+deb12u2 [541 kB]
+#19 4.077 Get:13 http://deb.debian.org/debian bookworm/main amd64 gpg-wks-server amd64 2.2.40-1.1+deb12u2 [531 kB]
+#19 4.080 Get:14 http://deb.debian.org/debian bookworm/main amd64 gpgsm amd64 2.2.40-1.1+deb12u2 [671 kB]
+#19 4.083 Get:15 http://deb.debian.org/debian bookworm/main amd64 gnupg all 2.2.40-1.1+deb12u2 [846 kB]
+#19 4.300 debconf: delaying package configuration, since apt-utils is not installed
+#19 4.345 Fetched 8019 kB in 0s (113 MB/s)
+#19 4.380 Selecting previously unselected package libassuan0:amd64.
+#19 4.380 (Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 15172 files and directories currently installed.)
+#19 4.442 Preparing to unpack .../00-libassuan0_2.5.5-5_amd64.deb ...
+#19 4.448 Unpacking libassuan0:amd64 (2.5.5-5) ...
+#19 4.484 Selecting previously unselected package gpgconf.
+#19 4.486 Preparing to unpack .../01-gpgconf_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 4.489 Unpacking gpgconf (2.2.40-1.1+deb12u2) ...
+#19 4.536 Selecting previously unselected package libksba8:amd64.
+#19 4.536 Preparing to unpack .../02-libksba8_1.6.3-2_amd64.deb ...
+#19 4.541 Unpacking libksba8:amd64 (1.6.3-2) ...
+#19 4.580 Selecting previously unselected package libnpth0:amd64.
+#19 4.582 Preparing to unpack .../03-libnpth0_1.6-3_amd64.deb ...
+#19 4.585 Unpacking libnpth0:amd64 (1.6-3) ...
+#19 4.620 Selecting previously unselected package dirmngr.
+#19 4.624 Preparing to unpack .../04-dirmngr_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 4.654 Unpacking dirmngr (2.2.40-1.1+deb12u2) ...
+#19 4.749 Selecting previously unselected package gnupg-l10n.
+#19 4.749 Preparing to unpack .../05-gnupg-l10n_2.2.40-1.1+deb12u2_all.deb ...
+#19 4.754 Unpacking gnupg-l10n (2.2.40-1.1+deb12u2) ...
+#19 4.866 Selecting previously unselected package gnupg-utils.
+#19 4.866 Preparing to unpack .../06-gnupg-utils_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 4.870 Unpacking gnupg-utils (2.2.40-1.1+deb12u2) ...
+#19 4.937 Selecting previously unselected package gpg.
+#19 4.940 Preparing to unpack .../07-gpg_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 4.943 Unpacking gpg (2.2.40-1.1+deb12u2) ...
+#19 5.016 Selecting previously unselected package libncursesw6:amd64.
+#19 5.019 Preparing to unpack .../08-libncursesw6_6.4-4_amd64.deb ...
+#19 5.022 Unpacking libncursesw6:amd64 (6.4-4) ...
+#19 5.063 Selecting previously unselected package pinentry-curses.
+#19 5.065 Preparing to unpack .../09-pinentry-curses_1.2.1-1_amd64.deb ...
+#19 5.069 Unpacking pinentry-curses (1.2.1-1) ...
+#19 5.107 Selecting previously unselected package gpg-agent.
+#19 5.110 Preparing to unpack .../10-gpg-agent_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 5.114 Unpacking gpg-agent (2.2.40-1.1+deb12u2) ...
+#19 5.163 Selecting previously unselected package gpg-wks-client.
+#19 5.165 Preparing to unpack .../11-gpg-wks-client_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 5.168 Unpacking gpg-wks-client (2.2.40-1.1+deb12u2) ...
+#19 5.209 Selecting previously unselected package gpg-wks-server.
+#19 5.211 Preparing to unpack .../12-gpg-wks-server_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 5.214 Unpacking gpg-wks-server (2.2.40-1.1+deb12u2) ...
+#19 5.249 Selecting previously unselected package gpgsm.
+#19 5.252 Preparing to unpack .../13-gpgsm_2.2.40-1.1+deb12u2_amd64.deb ...
+#19 5.255 Unpacking gpgsm (2.2.40-1.1+deb12u2) ...
+#19 5.298 Selecting previously unselected package gnupg.
+#19 5.300 Preparing to unpack .../14-gnupg_2.2.40-1.1+deb12u2_all.deb ...
+#19 5.303 Unpacking gnupg (2.2.40-1.1+deb12u2) ...
+#19 5.376 Setting up libksba8:amd64 (1.6.3-2) ...
+#19 5.384 Setting up libnpth0:amd64 (1.6-3) ...
+#19 5.392 Setting up libassuan0:amd64 (2.5.5-5) ...
+#19 5.399 Setting up gnupg-l10n (2.2.40-1.1+deb12u2) ...
+#19 5.407 Setting up libncursesw6:amd64 (6.4-4) ...
+#19 5.414 Setting up gpgconf (2.2.40-1.1+deb12u2) ...
+#19 5.420 Setting up gpg (2.2.40-1.1+deb12u2) ...
+#19 5.428 Setting up gnupg-utils (2.2.40-1.1+deb12u2) ...
+#19 5.436 Setting up pinentry-curses (1.2.1-1) ...
+#19 5.455 Setting up gpg-agent (2.2.40-1.1+deb12u2) ...
+#19 5.940 Setting up gpgsm (2.2.40-1.1+deb12u2) ...
+#19 5.948 Setting up dirmngr (2.2.40-1.1+deb12u2) ...
+#19 6.087 Setting up gpg-wks-server (2.2.40-1.1+deb12u2) ...
+#19 6.100 Setting up gpg-wks-client (2.2.40-1.1+deb12u2) ...
+#19 6.108 Setting up gnupg (2.2.40-1.1+deb12u2) ...
+#19 6.118 Processing triggers for libc-bin (2.36-9+deb12u14) ...
+#19 6.333 Hit:1 http://deb.debian.org/debian bookworm InRelease
+#19 6.333 Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+#19 6.334 Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+#19 6.366 Get:4 https://deb.nodesource.com/node_22.x nodistro InRelease [12.1 kB]
+#19 6.607 Get:5 https://deb.nodesource.com/node_22.x nodistro/main amd64 Packages [12.5 kB]
+#19 6.626 Fetched 24.7 kB in 0s (73.6 kB/s)
+#19 6.626 Reading package lists...
+#19 7.276 Reading package lists...
+#19 7.967 Building dependency tree...
+#19 8.175 Reading state information...
+#19 8.466 The following additional packages will be installed:
+#19 8.467   libpython3-stdlib libpython3.11-minimal libpython3.11-stdlib media-types
+#19 8.467   python3 python3-minimal python3.11 python3.11-minimal
+#19 8.468 Suggested packages:
+#19 8.468   python3-doc python3-tk python3-venv python3.11-venv python3.11-doc
+#19 8.468   binfmt-support
+#19 8.535 The following NEW packages will be installed:
+#19 8.536   libpython3-stdlib libpython3.11-minimal libpython3.11-stdlib media-types
+#19 8.536   nodejs python3 python3-minimal python3.11 python3.11-minimal
+#19 8.568 0 upgraded, 9 newly installed, 0 to remove and 0 not upgraded.
+#19 8.568 Need to get 43.1 MB of archives.
+#19 8.568 After this operation, 258 MB of additional disk space will be used.
+#19 8.568 Get:1 http://deb.debian.org/debian-security bookworm-security/main amd64 libpython3.11-minimal amd64 3.11.2-6+deb12u9 [821 kB]
+#19 8.577 Get:2 http://deb.debian.org/debian-security bookworm-security/main amd64 python3.11-minimal amd64 3.11.2-6+deb12u9 [2055 kB]
+#19 8.588 Get:3 http://deb.debian.org/debian bookworm/main amd64 python3-minimal amd64 3.11.2-1+b1 [26.3 kB]
+#19 8.588 Get:4 http://deb.debian.org/debian bookworm/main amd64 media-types all 10.0.0 [26.1 kB]
+#19 8.588 Get:5 http://deb.debian.org/debian-security bookworm-security/main amd64 libpython3.11-stdlib amd64 3.11.2-6+deb12u9 [1798 kB]
+#19 8.593 Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 python3.11 amd64 3.11.2-6+deb12u9 [575 kB]
+#19 8.604 Get:7 http://deb.debian.org/debian bookworm/main amd64 libpython3-stdlib amd64 3.11.2-1+b1 [9312 B]
+#19 8.623 Get:8 http://deb.debian.org/debian bookworm/main amd64 python3 amd64 3.11.2-1+b1 [26.3 kB]
+#19 8.640 Get:9 https://deb.nodesource.com/node_22.x nodistro/main amd64 nodejs amd64 22.23.3-1nodesource1 [37.8 MB]
+#19 9.140 debconf: delaying package configuration, since apt-utils is not installed
+#19 9.181 Fetched 43.1 MB in 0s (101 MB/s)
+#19 9.215 Selecting previously unselected package libpython3.11-minimal:amd64.
+#19 9.217 (Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 15438 files and directories currently installed.)
+#19 9.229 Preparing to unpack .../libpython3.11-minimal_3.11.2-6+deb12u9_amd64.deb ...
+#19 9.232 Unpacking libpython3.11-minimal:amd64 (3.11.2-6+deb12u9) ...
+#19 9.334 Selecting previously unselected package python3.11-minimal.
+#19 9.336 Preparing to unpack .../python3.11-minimal_3.11.2-6+deb12u9_amd64.deb ...
+#19 9.344 Unpacking python3.11-minimal (3.11.2-6+deb12u9) ...
+#19 9.540 Setting up libpython3.11-minimal:amd64 (3.11.2-6+deb12u9) ...
+#19 9.553 Setting up python3.11-minimal (3.11.2-6+deb12u9) ...
+#19 10.33 Selecting previously unselected package python3-minimal.
+#19 10.33 (Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 15745 files and directories currently installed.)
+#19 10.34 Preparing to unpack .../python3-minimal_3.11.2-1+b1_amd64.deb ...
+#19 10.34 Unpacking python3-minimal (3.11.2-1+b1) ...
+#19 10.38 Selecting previously unselected package media-types.
+#19 10.38 Preparing to unpack .../media-types_10.0.0_all.deb ...
+#19 10.38 Unpacking media-types (10.0.0) ...
+#19 10.42 Selecting previously unselected package libpython3.11-stdlib:amd64.
+#19 10.42 Preparing to unpack .../libpython3.11-stdlib_3.11.2-6+deb12u9_amd64.deb ...
+#19 10.42 Unpacking libpython3.11-stdlib:amd64 (3.11.2-6+deb12u9) ...
+#19 10.59 Selecting previously unselected package python3.11.
+#19 10.59 Preparing to unpack .../python3.11_3.11.2-6+deb12u9_amd64.deb ...
+#19 10.59 Unpacking python3.11 (3.11.2-6+deb12u9) ...
+#19 10.63 Selecting previously unselected package libpython3-stdlib:amd64.
+#19 10.63 Preparing to unpack .../libpython3-stdlib_3.11.2-1+b1_amd64.deb ...
+#19 10.63 Unpacking libpython3-stdlib:amd64 (3.11.2-1+b1) ...
+#19 10.66 Setting up python3-minimal (3.11.2-1+b1) ...
+#19 10.80 Selecting previously unselected package python3.
+#19 10.80 (Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 16155 files and directories currently installed.)
+#19 10.81 Preparing to unpack .../python3_3.11.2-1+b1_amd64.deb ...
+#19 10.82 Unpacking python3 (3.11.2-1+b1) ...
+#19 10.86 Selecting previously unselected package nodejs.
+#19 10.87 Preparing to unpack .../nodejs_22.23.3-1nodesource1_amd64.deb ...
+#19 10.87 Unpacking nodejs (22.23.3-1nodesource1) ...
+#19 13.62 Setting up media-types (10.0.0) ...
+#19 13.64 Setting up libpython3.11-stdlib:amd64 (3.11.2-6+deb12u9) ...
+#19 13.65 Setting up libpython3-stdlib:amd64 (3.11.2-1+b1) ...
+#19 13.66 Setting up python3.11 (3.11.2-6+deb12u9) ...
+#19 14.46 Setting up python3 (3.11.2-1+b1) ...
+#19 14.47 running python rtupdate hooks for python3.11...
+#19 14.47 running python post-rtupdate hooks for python3.11...
+#19 14.57 Setting up nodejs (22.23.3-1nodesource1) ...
+#19 DONE 14.8s
+
+#22 [web build 2/7] COPY app/composer.json app/composer.lock* ./
+#22 DONE 0.4s
+
+#23 [web build 3/7] RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#23 0.489 Installing dependencies from lock file
+#23 0.500 Verifying lock file contents can be installed on current platform.
+#23 0.646 Package operations: 105 installs, 0 updates, 0 removals
+#23 0.649   - Downloading aws/aws-crt-php (v1.2.7)
+#23 0.651   - Downloading dasprid/enum (1.0.7)
+#23 0.651   - Downloading doctrine/inflector (2.1.0)
+#23 0.652   - Downloading doctrine/lexer (3.0.2)
+#23 0.653   - Downloading dragonmantank/cron-expression (v3.6.0)
+#23 0.653   - Downloading symfony/polyfill-mbstring (v1.38.2)
+#23 0.654   - Downloading symfony/deprecation-contracts (v3.7.1)
+#23 0.654   - Downloading symfony/http-foundation (v8.1.7)
+#23 0.655   - Downloading fruitcake/php-cors (v1.4.0)
+#23 0.655   - Downloading symfony/polyfill-php82 (v1.38.1)
+#23 0.655   - Downloading symfony/polyfill-php80 (v1.37.0)
+#23 0.656   - Downloading psr/http-message (2.0)
+#23 0.656   - Downloading psr/http-factory (1.1.0)
+#23 0.656   - Downloading psr/http-client (1.0.3)
+#23 0.657   - Downloading guzzlehttp/psr7 (3.1.0)
+#23 0.657   - Downloading guzzlehttp/promises (3.0.2)
+#23 0.657   - Downloading guzzlehttp/guzzle (8.2.0)
+#23 0.658   - Downloading guzzlehttp/uri-template (v2.0.1)
+#23 0.658   - Downloading symfony/polyfill-intl-normalizer (v1.42.0)
+#23 0.658   - Downloading symfony/polyfill-intl-grapheme (v1.41.0)
+#23 0.659   - Downloading symfony/polyfill-ctype (v1.37.0)
+#23 0.659   - Downloading symfony/string (v8.1.7)
+#23 0.659   - Downloading psr/container (2.0.2)
+#23 0.659   - Downloading symfony/service-contracts (v3.7.3)
+#23 0.660   - Downloading symfony/polyfill-php85 (v1.41.0)
+#23 0.660   - Downloading symfony/console (v8.1.7)
+#23 0.660   - Downloading voku/portable-ascii (2.1.1)
+#23 0.660   - Downloading phpoption/phpoption (1.10.0)
+#23 0.661   - Downloading graham-campbell/result-type (v1.2.0)
+#23 0.661   - Downloading vlucas/phpdotenv (v5.7.0)
+#23 0.661   - Downloading symfony/css-selector (v8.1.6)
+#23 0.662   - Downloading tijsverkoyen/css-to-inline-styles (v2.4.0)
+#23 0.662   - Downloading symfony/var-dumper (v8.1.7)
+#23 0.662   - Downloading symfony/polyfill-uuid (v1.37.0)
+#23 0.662   - Downloading symfony/uid (v8.1.5)
+#23 0.663   - Downloading symfony/routing (v8.1.6)
+#23 0.663   - Downloading symfony/process (v8.1.7)
+#23 0.663   - Downloading symfony/polyfill-php86 (v1.41.0)
+#23 0.663   - Downloading symfony/polyfill-php84 (v1.38.1)
+#23 0.664   - Downloading symfony/polyfill-intl-idn (v1.42.0)
+#23 0.664   - Downloading symfony/mime (v8.1.7)
+#23 0.664   - Downloading psr/event-dispatcher (1.0.0)
+#23 0.664   - Downloading symfony/event-dispatcher-contracts (v3.7.1)
+#23 0.665   - Downloading symfony/event-dispatcher (v8.1.5)
+#23 0.665   - Downloading psr/log (3.0.2)
+#23 0.665   - Downloading egulias/email-validator (4.0.4)
+#23 0.665   - Downloading symfony/mailer (v8.1.7)
+#23 0.665   - Downloading symfony/error-handler (v8.1.5)
+#23 0.666   - Downloading symfony/http-kernel (v8.1.7)
+#23 0.666   - Downloading symfony/finder (v8.1.7)
+#23 0.666   - Downloading ramsey/collection (2.1.1)
+#23 0.667   - Downloading brick/math (1.0.0)
+#23 0.667   - Downloading ramsey/uuid (4.9.4)
+#23 0.667   - Downloading psr/simple-cache (3.0.0)
+#23 0.667   - Downloading nunomaduro/termwind (v2.4.0)
+#23 0.668   - Downloading symfony/translation-contracts (v3.7.1)
+#23 0.668   - Downloading symfony/translation (v8.1.5)
+#23 0.668   - Downloading psr/clock (1.0.0)
+#23 0.669   - Downloading symfony/clock (v8.1.0)
+#23 0.669   - Downloading carbonphp/carbon-doctrine-types (3.2.1)
+#23 0.669   - Downloading nesbot/carbon (3.14.0)
+#23 0.669   - Downloading monolog/monolog (3.12.0)
+#23 0.670   - Downloading league/uri-interfaces (7.8.1)
+#23 0.670   - Downloading league/uri (7.8.1)
+#23 0.670   - Downloading league/mime-type-detection (1.17.0)
+#23 0.670   - Downloading league/flysystem-local (3.35.3)
+#23 0.671   - Downloading league/flysystem (3.36.0)
+#23 0.671   - Downloading nette/utils (v4.1.5)
+#23 0.671   - Downloading nette/schema (v1.3.6)
+#23 0.672   - Downloading dflydev/dot-access-data (v3.0.3)
+#23 0.672   - Downloading league/config (v1.2.0)
+#23 0.673   - Downloading league/commonmark (2.10.3)
+#23 0.673   - Downloading laravel/serializable-closure (v2.1.0)
+#23 0.674   - Downloading laravel/prompts (v0.3.24)
+#23 0.674   - Downloading laravel/framework (v13.33.0)
+#23 0.674   - Downloading inertiajs/inertia-laravel (v3.4.0)
+#23 0.674   - Downloading nikic/php-parser (v5.9.0)
+#23 0.676   - Downloading laravel/chisel (v0.1.1)
+#23 0.676   - Downloading paragonie/constant_time_encoding (v3.1.3)
+#23 0.676   - Downloading pragmarx/google2fa (v9.1.0)
+#23 0.676   - Downloading spomky-labs/pki-framework (1.6.3)
+#23 0.676   - Downloading web-auth/cose-lib (4.8.2)
+#23 0.676   - Downloading symfony/serializer (v8.1.7)
+#23 0.676   - Downloading symfony/type-info (v8.1.5)
+#23 0.677   - Downloading symfony/property-info (v8.1.7)
+#23 0.677   - Downloading symfony/property-access (v8.1.4)
+#23 0.677   - Downloading symfony/polyfill-php81 (v1.38.1)
+#23 0.677   - Downloading spomky-labs/cbor-php (3.4.2)
+#23 0.678   - Downloading webmozart/assert (2.4.1)
+#23 0.678   - Downloading phpstan/phpdoc-parser (2.3.5)
+#23 0.678   - Downloading phpdocumentor/reflection-common (2.2.0)
+#23 0.679   - Downloading doctrine/deprecations (1.1.6)
+#23 0.679   - Downloading phpdocumentor/type-resolver (2.0.0)
+#23 0.679   - Downloading phpdocumentor/reflection-docblock (6.0.3)
+#23 0.679   - Downloading web-auth/webauthn-lib (5.3.9)
+#23 0.679   - Downloading laravel/passkeys (v0.2.1)
+#23 0.680   - Downloading bacon/bacon-qr-code (v3.1.1)
+#23 0.681   - Downloading laravel/fortify (v1.40.0)
+#23 0.681   - Downloading psy/psysh (v0.12.24)
+#23 0.681   - Downloading laravel/tinker (v3.0.2)
+#23 0.681   - Downloading laravel/wayfinder (v0.1.21)
+#23 0.682   - Downloading symfony/filesystem (v8.1.6)
+#23 0.683   - Downloading mtdowling/jmespath.php (2.9.2)
+#23 0.683   - Downloading aws/aws-sdk-php (3.398.1)
+#23 0.683   - Downloading league/flysystem-aws-s3-v3 (3.35.3)
+#23 1.953   - Installing aws/aws-crt-php (v1.2.7): Extracting archive
+#23 1.956   - Installing dasprid/enum (1.0.7): Extracting archive
+#23 1.956   - Installing doctrine/inflector (2.1.0): Extracting archive
+#23 1.957   - Installing doctrine/lexer (3.0.2): Extracting archive
+#23 1.960   - Installing dragonmantank/cron-expression (v3.6.0): Extracting archive
+#23 1.962   - Installing symfony/polyfill-mbstring (v1.38.2): Extracting archive
+#23 1.967   - Installing symfony/deprecation-contracts (v3.7.1): Extracting archive
+#23 1.969   - Installing symfony/http-foundation (v8.1.7): Extracting archive
+#23 1.971   - Installing fruitcake/php-cors (v1.4.0): Extracting archive
+#23 1.974   - Installing symfony/polyfill-php82 (v1.38.1): Extracting archive
+#23 1.977   - Installing symfony/polyfill-php80 (v1.37.0): Extracting archive
+#23 1.978   - Installing psr/http-message (2.0): Extracting archive
+#23 1.978   - Installing psr/http-factory (1.1.0): Extracting archive
+#23 1.979   - Installing psr/http-client (1.0.3): Extracting archive
+#23 1.980   - Installing guzzlehttp/psr7 (3.1.0): Extracting archive
+#23 1.980   - Installing guzzlehttp/promises (3.0.2): Extracting archive
+#23 1.981   - Installing guzzlehttp/guzzle (8.2.0): Extracting archive
+#23 1.982   - Installing guzzlehttp/uri-template (v2.0.1): Extracting archive
+#23 1.982   - Installing symfony/polyfill-intl-normalizer (v1.42.0): Extracting archive
+#23 1.983   - Installing symfony/polyfill-intl-grapheme (v1.41.0): Extracting archive
+#23 1.984   - Installing symfony/polyfill-ctype (v1.37.0): Extracting archive
+#23 1.985   - Installing symfony/string (v8.1.7): Extracting archive
+#23 1.985   - Installing psr/container (2.0.2): Extracting archive
+#23 1.986   - Installing symfony/service-contracts (v3.7.3): Extracting archive
+#23 1.987   - Installing symfony/polyfill-php85 (v1.41.0): Extracting archive
+#23 1.988   - Installing symfony/console (v8.1.7): Extracting archive
+#23 1.988   - Installing voku/portable-ascii (2.1.1): Extracting archive
+#23 1.989   - Installing phpoption/phpoption (1.10.0): Extracting archive
+#23 1.989   - Installing graham-campbell/result-type (v1.2.0): Extracting archive
+#23 1.990   - Installing vlucas/phpdotenv (v5.7.0): Extracting archive
+#23 1.991   - Installing symfony/css-selector (v8.1.6): Extracting archive
+#23 1.991   - Installing tijsverkoyen/css-to-inline-styles (v2.4.0): Extracting archive
+#23 1.992   - Installing symfony/var-dumper (v8.1.7): Extracting archive
+#23 1.993   - Installing symfony/polyfill-uuid (v1.37.0): Extracting archive
+#23 1.994   - Installing symfony/uid (v8.1.5): Extracting archive
+#23 1.995   - Installing symfony/routing (v8.1.6): Extracting archive
+#23 1.995   - Installing symfony/process (v8.1.7): Extracting archive
+#23 1.996   - Installing symfony/polyfill-php86 (v1.41.0): Extracting archive
+#23 1.996   - Installing symfony/polyfill-php84 (v1.38.1): Extracting archive
+#23 1.997   - Installing symfony/polyfill-intl-idn (v1.42.0): Extracting archive
+#23 1.997   - Installing symfony/mime (v8.1.7): Extracting archive
+#23 1.998   - Installing psr/event-dispatcher (1.0.0): Extracting archive
+#23 1.998   - Installing symfony/event-dispatcher-contracts (v3.7.1): Extracting archive
+#23 1.998   - Installing symfony/event-dispatcher (v8.1.5): Extracting archive
+#23 1.999   - Installing psr/log (3.0.2): Extracting archive
+#23 1.999   - Installing egulias/email-validator (4.0.4): Extracting archive
+#23 2.000   - Installing symfony/mailer (v8.1.7): Extracting archive
+#23 2.000   - Installing symfony/error-handler (v8.1.5): Extracting archive
+#23 2.001   - Installing symfony/http-kernel (v8.1.7): Extracting archive
+#23 2.001   - Installing symfony/finder (v8.1.7): Extracting archive
+#23 2.001   - Installing ramsey/collection (2.1.1): Extracting archive
+#23 2.002   - Installing brick/math (1.0.0): Extracting archive
+#23 2.003   - Installing ramsey/uuid (4.9.4): Extracting archive
+#23 2.003   - Installing psr/simple-cache (3.0.0): Extracting archive
+#23 2.003   - Installing nunomaduro/termwind (v2.4.0): Extracting archive
+#23 2.004   - Installing symfony/translation-contracts (v3.7.1): Extracting archive
+#23 2.004   - Installing symfony/translation (v8.1.5): Extracting archive
+#23 2.007   - Installing psr/clock (1.0.0): Extracting archive
+#23 2.007   - Installing symfony/clock (v8.1.0): Extracting archive
+#23 2.007   - Installing carbonphp/carbon-doctrine-types (3.2.1): Extracting archive
+#23 2.007   - Installing nesbot/carbon (3.14.0): Extracting archive
+#23 2.007   - Installing monolog/monolog (3.12.0): Extracting archive
+#23 2.007   - Installing league/uri-interfaces (7.8.1): Extracting archive
+#23 2.007   - Installing league/uri (7.8.1): Extracting archive
+#23 2.007   - Installing league/mime-type-detection (1.17.0): Extracting archive
+#23 2.007   - Installing league/flysystem-local (3.35.3): Extracting archive
+#23 2.007   - Installing league/flysystem (3.36.0): Extracting archive
+#23 2.007   - Installing nette/utils (v4.1.5): Extracting archive
+#23 2.007   - Installing nette/schema (v1.3.6): Extracting archive
+#23 2.008   - Installing dflydev/dot-access-data (v3.0.3): Extracting archive
+#23 2.008   - Installing league/config (v1.2.0): Extracting archive
+#23 2.008   - Installing league/commonmark (2.10.3): Extracting archive
+#23 2.009   - Installing laravel/serializable-closure (v2.1.0): Extracting archive
+#23 2.009   - Installing laravel/prompts (v0.3.24): Extracting archive
+#23 2.009   - Installing laravel/framework (v13.33.0): Extracting archive
+#23 2.010   - Installing inertiajs/inertia-laravel (v3.4.0): Extracting archive
+#23 2.010   - Installing nikic/php-parser (v5.9.0): Extracting archive
+#23 2.012   - Installing laravel/chisel (v0.1.1): Extracting archive
+#23 2.012   - Installing paragonie/constant_time_encoding (v3.1.3): Extracting archive
+#23 2.013   - Installing pragmarx/google2fa (v9.1.0): Extracting archive
+#23 2.013   - Installing spomky-labs/pki-framework (1.6.3): Extracting archive
+#23 2.013   - Installing web-auth/cose-lib (4.8.2): Extracting archive
+#23 2.014   - Installing symfony/serializer (v8.1.7): Extracting archive
+#23 2.014   - Installing symfony/type-info (v8.1.5): Extracting archive
+#23 2.015   - Installing symfony/property-info (v8.1.7): Extracting archive
+#23 2.015   - Installing symfony/property-access (v8.1.4): Extracting archive
+#23 2.016   - Installing symfony/polyfill-php81 (v1.38.1): Extracting archive
+#23 2.016   - Installing spomky-labs/cbor-php (3.4.2): Extracting archive
+#23 2.017   - Installing webmozart/assert (2.4.1): Extracting archive
+#23 2.017   - Installing phpstan/phpdoc-parser (2.3.5): Extracting archive
+#23 2.017   - Installing phpdocumentor/reflection-common (2.2.0): Extracting archive
+#23 2.018   - Installing doctrine/deprecations (1.1.6): Extracting archive
+#23 2.018   - Installing phpdocumentor/type-resolver (2.0.0): Extracting archive
+#23 2.019   - Installing phpdocumentor/reflection-docblock (6.0.3): Extracting archive
+#23 2.019   - Installing web-auth/webauthn-lib (5.3.9): Extracting archive
+#23 2.019   - Installing laravel/passkeys (v0.2.1): Extracting archive
+#23 2.020   - Installing bacon/bacon-qr-code (v3.1.1): Extracting archive
+#23 2.021   - Installing laravel/fortify (v1.40.0): Extracting archive
+#23 2.021   - Installing psy/psysh (v0.12.24): Extracting archive
+#23 2.021   - Installing laravel/tinker (v3.0.2): Extracting archive
+#23 2.022   - Installing laravel/wayfinder (v0.1.21): Extracting archive
+#23 2.022   - Installing symfony/filesystem (v8.1.6): Extracting archive
+#23 2.022   - Installing mtdowling/jmespath.php (2.9.2): Extracting archive
+#23 2.023   - Installing aws/aws-sdk-php (3.398.1): Extracting archive
+#23 2.023   - Installing league/flysystem-aws-s3-v3 (3.35.3): Extracting archive
+#23 3.955 Generating optimized autoload files
+#23 5.362 64 packages you are using are looking for funding.
+#23 5.362 Use the `composer fund` command to find out more!
+#23 DONE 5.8s
+
+#24 [app build 4/7] COPY app/package.json app/package-lock.json ./
+#24 DONE 0.2s
+
+#25 [app build 5/7] RUN npm ci
+#25 13.33
+#25 13.33 added 315 packages, and audited 316 packages in 13s
+#25 13.33
+#25 13.33 69 packages are looking for funding
+#25 13.33   run `npm fund` for details
+#25 13.34
+#25 13.34 6 vulnerabilities (1 high, 5 critical)
+#25 13.34
+#25 13.34 To address issues that do not require attention, run:
+#25 13.34   npm audit fix
+#25 13.34
+#25 13.34 To address all issues, run:
+#25 13.34   npm audit fix --force
+#25 13.34
+#25 13.34 Run `npm audit` for details.
+#25 13.34 npm notice
+#25 13.34 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#25 13.34 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#25 13.34 npm notice To update run: npm install -g npm@12.2.0
+#25 13.34 npm notice
+#25 DONE 13.8s
+
+#26 [app build 6/7] COPY app/ ./
+#26 DONE 0.8s
+
+#27 [web build 7/7] RUN sh scripts/check-production-artifact.sh public     && php artisan route:clear     && npm run types:check     && npm run build     && composer dump-autoload --no-dev --optimize     && rm -rf node_modules
+#27 0.300 Production artifact PASS: Vite hot file absent
+#27 0.891
+#27 0.891    INFO  Route cache cleared successfully.
+#27 0.891
+#27 1.145
+#27 1.145 > types:check
+#27 1.145 > php artisan wayfinder:generate --with-form --no-interaction && tsc --noEmit
+#27 1.145
+#27 2.119
+#27 2.119  [Wayfinder] Generated actions in /var/www/html/resources/js/actions
+#27 2.119
+#27 2.756  [Wayfinder] Generated routes in /var/www/html/resources/js/routes
+#27 2.756
+#27 23.11
+#27 23.11 > build
+#27 23.11 > vp build && npm run check:manifest
+#27 23.11
+#27 25.94 [plugin @laravel/vite-plugin-wayfinder] Types generated for actions, routes, form variants
+#27 26.13 [plugin laravel:fonts] Optimized font fallbacks require the optional "fontaine" package. Install it, or set "optimizedFallbacks: false" on your fonts to disable the feature.
+#27 30.33 transforming...
+#27 42.39 ✓ 2489 modules transformed.
+#27 42.63 rendering chunks...
+#27 42.92 computing gzip size...
+#27 42.94 public/build/fonts-manifest.json                                13.77 kB │ gzip:   1.04 kB
+#27 42.94 public/build/assets/instrument-sans-400-normal-DRC__1Mx.woff2   16.86 kB
+#27 42.94 public/build/assets/instrument-sans-500-normal-Dk9ku72i.woff2   17.23 kB
+#27 42.94 public/build/assets/instrument-sans-600-normal-B7fBEWYG.woff2   17.40 kB
+#27 42.94 public/build/assets/montserrat-600-normal-UVxSCcoG.woff2        18.68 kB
+#27 42.94 public/build/assets/montserrat-500-normal-DRFEGfly.woff2        18.74 kB
+#27 42.94 public/build/assets/montserrat-400-normal-BLhwKU8k.woff2        18.78 kB
+#27 42.94 public/build/assets/montserrat-700-normal-BdjcYUrC.woff2        18.82 kB
+#27 42.94 public/build/assets/montserrat-800-normal-axpkC1rd.woff2        19.01 kB
+#27 42.94 public/build/assets/montserrat-600-normal-CdhFl4lI.woff         20.54 kB
+#27 42.94 public/build/assets/montserrat-500-normal-Dok2oTci.woff         20.60 kB
+#27 42.94 public/build/assets/montserrat-400-normal-xItZbAXg.woff         20.64 kB
+#27 42.94 public/build/assets/montserrat-800-normal-C3dfDxXV.woff         20.66 kB
+#27 42.94 public/build/assets/montserrat-700-normal-BWkrl476.woff         20.67 kB
+#27 42.94 public/build/assets/instrument-sans-400-normal-D1W7dsQl.woff    21.24 kB
+#27 42.94 public/build/assets/instrument-sans-500-normal-Z6ESRlEs.woff    21.65 kB
+#27 42.94 public/build/assets/instrument-sans-600-normal-B9e8oLYv.woff    21.67 kB
+#27 42.94 public/build/manifest.json                                      62.07 kB │ gzip:   6.22 kB
+#27 42.94 public/build/assets/fonts-BNJWz-d_.css                           6.05 kB │ gzip:   0.56 kB
+#27 42.94 public/build/assets/LandingVideo-tMDdhU75.css                    6.46 kB │ gzip:   1.67 kB
+#27 42.94 public/build/assets/app-Cv-D46ZH.css                           154.21 kB │ gzip:  24.52 kB
+#27 42.94 public/build/assets/form-CdYJ-_j-.js                             0.05 kB │ gzip:   0.07 kB
+#27 42.94 public/build/assets/benefit-C4WFNpH8.js                          0.07 kB │ gzip:   0.09 kB
+#27 42.94 public/build/assets/challenge-CMNtRWTN.js                        0.07 kB │ gzip:   0.09 kB
+#27 42.94 public/build/assets/experience-Ca7AszSq.js                       0.07 kB │ gzip:   0.09 kB
+#27 42.94 public/build/assets/check-DAiUvaO-.js                            0.12 kB │ gzip:   0.14 kB
+#27 42.94 public/build/assets/loader-circle-6gwpHS5a.js                    0.14 kB │ gzip:   0.15 kB
+#27 42.94 public/build/assets/x-CwR-vRd4.js                                0.15 kB │ gzip:   0.15 kB
+#27 42.94 public/build/assets/arrow-left-Bd1AfUEr.js                       0.16 kB │ gzip:   0.16 kB
+#27 42.94 public/build/assets/search-BkBdxCxQ.js                           0.17 kB │ gzip:   0.16 kB
+#27 42.94 public/build/assets/clock-3-CVFi6o4T.js                          0.18 kB │ gzip:   0.17 kB
+#27 42.94 public/build/assets/compiler-runtime-DF-fxw1i.js                 0.23 kB │ gzip:   0.21 kB
+#27 42.94 public/build/assets/input-error-01__SjER.js                      0.25 kB │ gzip:   0.21 kB
+#27 42.94 public/build/assets/lock-keyhole-pfXerX0-.js                     0.25 kB │ gzip:   0.22 kB
+#27 42.94 public/build/assets/map-pin-D-BBNTnr.js                          0.25 kB │ gzip:   0.22 kB
+#27 42.94 public/build/assets/monitor-BrejQcCn.js                          0.25 kB │ gzip:   0.20 kB
+#27 42.94 public/build/assets/journey-analytics-Bk8omEyV.js                0.30 kB │ gzip:   0.26 kB
+#27 42.94 public/build/assets/confirm-Culw9Q-x.js                          0.36 kB │ gzip:   0.22 kB
+#27 42.94 public/build/assets/text-link-BGIfOdRk.js                        0.37 kB │ gzip:   0.25 kB
+#27 42.94 public/build/assets/heading-Dnz88bFV.js                          0.40 kB │ gzip:   0.27 kB
+#27 42.94 public/build/assets/security-ZZC6IP8e.js                         0.50 kB │ gzip:   0.27 kB
+#27 42.94 public/build/assets/spinner-D-CPi0jy.js                          0.51 kB │ gzip:   0.36 kB
+#27 42.94 public/build/assets/sun-W8_WkR6Z.js                              0.56 kB │ gzip:   0.30 kB
+#27 42.94 public/build/assets/sparkles-DfEiwBpi.js                         0.58 kB │ gzip:   0.33 kB
+#27 42.94 public/build/assets/dist-DSdFbHmR.js                             0.63 kB │ gzip:   0.41 kB
+#27 42.94 public/build/assets/dist-SJLXfxUU.js                             0.67 kB │ gzip:   0.46 kB
+#27 42.94 public/build/assets/layout-1xJJXBF_.js                           0.76 kB │ gzip:   0.47 kB
+#27 42.94 public/build/assets/index-Cd_UV69N.js                            0.81 kB │ gzip:   0.44 kB
+#27 42.94 public/build/assets/wayfinder-Dp7PqxvV.js                        0.89 kB │ gzip:   0.53 kB
+#27 42.94 public/build/assets/createLucideIcon-C8UyESMm.js                 0.91 kB │ gzip:   0.54 kB
+#27 42.94 public/build/assets/separator-DzPzVIhU.js                        0.93 kB │ gzip:   0.50 kB
+#27 42.94 public/build/assets/appearance-DazRc4Hz.js                       0.97 kB │ gzip:   0.35 kB
+#27 42.94 public/build/assets/label-C9ChO78x.js                            0.98 kB │ gzip:   0.60 kB
+#27 42.94 public/build/assets/journey-layout-B_ic-348.js                   0.98 kB │ gzip:   0.55 kB
+#27 42.94 public/build/assets/show-BmjsKVTo.js                             1.06 kB │ gzip:   0.51 kB
+#27 42.94 public/build/assets/jakawi-image-T3LS0btF.js                     1.11 kB │ gzip:   0.62 kB
+#27 42.94 public/build/assets/input-BT9g33Kx.js                            1.11 kB │ gzip:   0.63 kB
+#27 42.94 public/build/assets/index-DOUeQtVp.js                            1.12 kB │ gzip:   0.63 kB
+#27 42.94 public/build/assets/benefit-journey-context-COaN3BS7.js          1.13 kB │ gzip:   0.64 kB
+#27 42.94 public/build/assets/partner-application-success-BCwdTI-B.js      1.19 kB │ gzip:   0.70 kB
+#27 42.94 public/build/assets/theme-toggle-XVCUnZJx.js                     1.19 kB │ gzip:   0.63 kB
+#27 42.94 public/build/assets/preload-helper-B6JZccWF.js                   1.20 kB │ gzip:   0.68 kB
+#27 42.94 public/build/assets/index-BzdrQ3IM.js                            1.22 kB │ gzip:   0.52 kB
+#27 42.94 public/build/assets/index-CJPsyVS_.js                            1.23 kB │ gzip:   0.61 kB
+#27 42.94 public/build/assets/index-B1Hl9K4p.js                            1.23 kB │ gzip:   0.69 kB
+#27 42.94 public/build/assets/check-in-NArzZIRL.js                         1.25 kB │ gzip:   0.74 kB
+#27 42.94 public/build/assets/index-BP7y0DRX.js                            1.27 kB │ gzip:   0.68 kB
+#27 42.94 public/build/assets/index-ZpXhmjXF.js                            1.27 kB │ gzip:   0.67 kB
+#27 42.94 public/build/assets/index-ehDKPY36.js                            1.30 kB │ gzip:   0.71 kB
+#27 42.94 public/build/assets/index-Mzauuran.js                            1.32 kB │ gzip:   0.65 kB
+#27 42.94 public/build/assets/index-D0l4Xa2v.js                            1.33 kB │ gzip:   0.69 kB
+#27 42.94 public/build/assets/verify-email-Dl9AYSig.js                     1.38 kB │ gzip:   0.73 kB
+#27 42.94 public/build/assets/profile-uNtLFEsD.js                          1.43 kB │ gzip:   0.40 kB
+#27 42.94 public/build/assets/verification-BOcn3HIw.js                     1.48 kB │ gzip:   0.52 kB
+#27 42.94 public/build/assets/state-panel-DcnsdqFr.js                      1.54 kB │ gzip:   0.69 kB
+#27 42.94 public/build/assets/index-BNY6TD_u.js                            1.66 kB │ gzip:   0.82 kB
+#27 42.94 public/build/assets/public-footer-DoM48pqI.js                    1.71 kB │ gzip:   0.70 kB
+#27 42.94 public/build/assets/appearance-CKDv9Xgk.js                       1.76 kB │ gzip:   0.86 kB
+#27 42.94 public/build/assets/review-GdjE98MG.js                           1.80 kB │ gzip:   0.88 kB
+#27 42.94 public/build/assets/password-input-DYwuG2n6.js                   1.94 kB │ gzip:   1.06 kB
+#27 42.94 public/build/assets/use-appearance-X73_9lwL.js                   1.94 kB │ gzip:   0.97 kB
+#27 42.94 public/build/assets/form-nbvOW99T.js                             2.01 kB │ gzip:   1.02 kB
+#27 42.94 public/build/assets/index-Ugi9-XXo.js                            2.03 kB │ gzip:   1.01 kB
+#27 42.94 public/build/assets/index-CbEcGW2F.js                            2.04 kB │ gzip:   0.93 kB
+#27 42.94 public/build/assets/forgot-password-ByeAWsM2.js                  2.06 kB │ gzip:   0.94 kB
+#27 42.94 public/build/assets/button-CrIeqD1u.js                           2.10 kB │ gzip:   0.99 kB
+#27 42.94 public/build/assets/scan-CrbkVIvW.js                             2.14 kB │ gzip:   1.09 kB
+#27 42.94 public/build/assets/index-DtCxkXnV.js                            2.16 kB │ gzip:   1.04 kB
+#27 42.94 public/build/assets/index-tZHObhLF.js                            2.16 kB │ gzip:   1.08 kB
+#27 42.94 public/build/assets/passkey-verify-e_N7TZo0.js                   2.18 kB │ gzip:   1.21 kB
+#27 42.94 public/build/assets/reservations-CDxedQZ9.js                     2.20 kB │ gzip:   0.97 kB
+#27 42.94 public/build/assets/index-CA_g2HWL.js                            2.20 kB │ gzip:   1.12 kB
+#27 42.94 public/build/assets/check-in-review-C0lNjLSj.js                  2.27 kB │ gzip:   1.12 kB
+#27 42.94 public/build/assets/layout-BCA2jvsN.js                           2.30 kB │ gzip:   0.84 kB
+#27 42.94 public/build/assets/reset-password-BhmVt1sR.js                   2.38 kB │ gzip:   0.96 kB
+#27 42.94 public/build/assets/confirm-password-Z8Py5pHd.js                 2.43 kB │ gzip:   1.03 kB
+#27 42.94 public/build/assets/validate-BKb1s4_6.js                         2.47 kB │ gzip:   1.19 kB
+#27 42.94 public/build/assets/marketing-layout-W2u-p8ck.js                 2.48 kB │ gzip:   1.20 kB
+#27 42.94 public/build/assets/index-D_2GoABU.js                            2.65 kB │ gzip:   1.19 kB
+#27 42.94 public/build/assets/participation-CCiNokU3.js                    2.72 kB │ gzip:   1.27 kB
+#27 42.94 public/build/assets/index-0GYQOqiq.js                            2.73 kB │ gzip:   1.21 kB
+#27 42.94 public/build/assets/password-CB_NxgQN.js                         2.73 kB │ gzip:   0.73 kB
+#27 42.94 public/build/assets/two-factor-challenge-DLJSPm4N.js             2.81 kB │ gzip:   1.28 kB
+#27 42.94 public/build/assets/index-BPiuzgaj.js                            2.83 kB │ gzip:   1.02 kB
+#27 42.94 public/build/assets/create-3MaQlAp_.js                           2.84 kB │ gzip:   1.28 kB
+#27 42.94 public/build/assets/routes-BKe4AhC3.js                           2.87 kB │ gzip:   0.58 kB
+#27 42.94 public/build/assets/show-CcA17wDe.js                             2.87 kB │ gzip:   1.35 kB
+#27 42.94 public/build/assets/show-CuXUtBID.js                             2.87 kB │ gzip:   1.30 kB
+#27 42.94 public/build/assets/dist-DMUAYi6k.js                             2.88 kB │ gzip:   1.27 kB
+#27 42.94 public/build/assets/city-selector-z9u23Avc.js                    2.88 kB │ gzip:   1.23 kB
+#27 42.94 public/build/assets/index-CXvw9Ebz.js                            2.88 kB │ gzip:   1.33 kB
+#27 42.94 public/build/assets/show-D6V7gbAT.js                             3.17 kB │ gzip:   1.36 kB
+#27 42.94 public/build/assets/form-DydRuOWz.js                             3.19 kB │ gzip:   1.41 kB
+#27 42.94 public/build/assets/show-COC9k3U-.js                             3.22 kB │ gzip:   1.40 kB
+#27 42.94 public/build/assets/partner-application-C00F6RkU.js              3.23 kB │ gzip:   1.55 kB
+#27 42.94 public/build/assets/create-DFe9roWE.js                           3.24 kB │ gzip:   1.51 kB
+#27 42.94 public/build/assets/index-7vliiI65.js                            3.28 kB │ gzip:   1.39 kB
+#27 42.94 public/build/assets/index-BIo-usTV.js                            3.32 kB │ gzip:   1.24 kB
+#27 42.94 public/build/assets/index-CpLeZf_M.js                            3.34 kB │ gzip:   1.37 kB
+#27 42.94 public/build/assets/delivery-Bzmb6Cf0.js                         3.40 kB │ gzip:   1.36 kB
+#27 42.94 public/build/assets/ownership-block-DRHKmU3H.js                  3.58 kB │ gzip:   1.51 kB
+#27 42.94 public/build/assets/register-D5_oGFVU.js                         3.78 kB │ gzip:   1.62 kB
+#27 42.94 public/build/assets/show-L27_1UX2.js                             3.79 kB │ gzip:   1.68 kB
+#27 42.94 public/build/assets/conversion-BhvQesdY.js                       3.92 kB │ gzip:   1.80 kB
+#27 42.94 public/build/assets/form-DABXVHJo.js                             4.11 kB │ gzip:   1.96 kB
+#27 42.94 public/build/assets/create-92m9XhkQ.js                           4.28 kB │ gzip:   1.41 kB
+#27 42.94 public/build/assets/membresia-BvNUbbYk.js                        4.40 kB │ gzip:   1.92 kB
+#27 42.94 public/build/assets/show-BIPn6t5x.js                             4.51 kB │ gzip:   1.80 kB
+#27 42.94 public/build/assets/coming-soon-Dns1Yvlx.js                      4.63 kB │ gzip:   1.82 kB
+#27 42.94 public/build/assets/show-DmeqIqEx.js                             4.87 kB │ gzip:   1.76 kB
+#27 42.94 public/build/assets/show-DyQWrPNq.js                             4.89 kB │ gzip:   2.10 kB
+#27 42.94 public/build/assets/image-upload-LJBxt9rq.js                     5.15 kB │ gzip:   2.55 kB
+#27 42.94 public/build/assets/dashboard-BT6UKY5B.js                        5.18 kB │ gzip:   2.07 kB
+#27 42.94 public/build/assets/primitives-DbZLjmIp.js                       5.28 kB │ gzip:   1.89 kB
+#27 42.94 public/build/assets/challenge-delivery-DaYSgMn8.js               5.29 kB │ gzip:   2.06 kB
+#27 42.94 public/build/assets/index-BaMPPd89.js                            5.30 kB │ gzip:   1.90 kB
+#27 42.94 public/build/assets/index-CWWTy9yz.js                            5.73 kB │ gzip:   2.30 kB
+#27 42.94 public/build/assets/form-CSG4lyH1.js                             5.77 kB │ gzip:   2.19 kB
+#27 42.94 public/build/assets/show-BvK6HUSA.js                             6.18 kB │ gzip:   1.94 kB
+#27 42.94 public/build/assets/show-D0Ragqbq.js                             6.20 kB │ gzip:   2.52 kB
+#27 42.94 public/build/assets/dashboard-FrWUtABR.js                        6.55 kB │ gzip:   2.73 kB
+#27 42.94 public/build/assets/form-e_hUfqa7.js                             6.80 kB │ gzip:   2.24 kB
+#27 42.94 public/build/assets/dist-BEQNN_jm.js                             6.97 kB │ gzip:   2.69 kB
+#27 42.94 public/build/assets/index-D-cpEC7K.js                            7.26 kB │ gzip:   2.69 kB
+#27 42.94 public/build/assets/create--9rNGy4m.js                           7.50 kB │ gzip:   2.68 kB
+#27 42.94 public/build/assets/profile-56dOFyqx.js                          7.59 kB │ gzip:   2.60 kB
+#27 42.94 public/build/assets/benefit-offer-adapter-DvZR-XM9.js            7.61 kB │ gzip:   3.09 kB
+#27 42.94 public/build/assets/index-DPtC1rPQ.js                            7.62 kB │ gzip:   2.80 kB
+#27 42.94 public/build/assets/create-BKKfOThD.js                           7.78 kB │ gzip:   2.78 kB
+#27 42.94 public/build/assets/challenge-offer-adapter-58daqD7_.js          7.78 kB │ gzip:   3.24 kB
+#27 42.94 public/build/assets/index-D594P-lC.js                            7.82 kB │ gzip:   2.68 kB
+#27 42.94 public/build/assets/index-BMnZstu3.js                            7.83 kB │ gzip:   3.12 kB
+#27 42.94 public/build/assets/opportunity-card-CjWtzPQi.js                 8.01 kB │ gzip:   2.81 kB
+#27 42.94 public/build/assets/meta-browser-tracker-Cy2PPpjd.js             8.39 kB │ gzip:   3.60 kB
+#27 42.94 public/build/assets/experience-offer-adapter-C1uLa8kw.js         8.60 kB │ gzip:   3.54 kB
+#27 42.94 public/build/assets/show-lLurRihh.js                             8.65 kB │ gzip:   3.04 kB
+#27 42.94 public/build/assets/dashboard-CIyiia_-.js                        8.74 kB │ gzip:   3.24 kB
+#27 42.94 public/build/assets/explore-Dl3J_sxk.js                          8.87 kB │ gzip:   2.84 kB
+#27 42.94 public/build/assets/show-BZLjxAx0.js                             9.23 kB │ gzip:   3.33 kB
+#27 42.94 public/build/assets/show-BmNyWIC1.js                             9.29 kB │ gzip:   3.16 kB
+#27 42.94 public/build/assets/show-B4gtLgNK.js                             9.61 kB │ gzip:   3.37 kB
+#27 42.94 public/build/assets/performance-BxllE9lc.js                      9.72 kB │ gzip:   3.48 kB
+#27 42.94 public/build/assets/login-CeSmZM_M.js                            9.85 kB │ gzip:   3.74 kB
+#27 42.94 public/build/assets/form-NHlNWkqu.js                            10.05 kB │ gzip:   3.50 kB
+#27 42.94 public/build/assets/show-pXqJSi1z.js                            10.57 kB │ gzip:   3.68 kB
+#27 42.94 public/build/assets/show-C83U7Bsy.js                            10.96 kB │ gzip:   3.88 kB
+#27 42.94 public/build/assets/index-B8BFuuaO.js                           11.40 kB │ gzip:   4.39 kB
+#27 42.94 public/build/assets/OfferConversionTemplate-DXZ0qNkg.js         12.02 kB │ gzip:   4.05 kB
+#27 42.94 public/build/assets/unlock-CGLfVP_2.js                          13.54 kB │ gzip:   5.08 kB
+#27 42.94 public/build/assets/react-D2-owoWK.js                           13.86 kB │ gzip:   4.60 kB
+#27 42.94 public/build/assets/mi-jakawi-BRIUJ6Lc.js                       14.38 kB │ gzip:   4.55 kB
+#27 42.94 public/build/assets/welcome-j2h-bT_3.js                         15.59 kB │ gzip:   4.96 kB
+#27 42.94 public/build/assets/use-two-factor-auth-3wvmubwH.js             17.17 kB │ gzip:   6.22 kB
+#27 42.94 public/build/assets/show-C5OfR1TU.js                            17.18 kB │ gzip:   5.05 kB
+#27 42.94 public/build/assets/show-vzyHO25r.js                            22.03 kB │ gzip:   7.48 kB
+#27 42.94 public/build/assets/utils-CQk6LZJn.js                           27.68 kB │ gzip:   8.76 kB
+#27 42.94 public/build/assets/show-BCbo0lkX.js                            29.71 kB │ gzip:  11.29 kB
+#27 42.94 public/build/assets/LandingVideo-ChoYDpgH.js                    30.65 kB │ gzip:  11.82 kB
+#27 42.94 public/build/assets/security-D8BfUTUa.js                        31.63 kB │ gzip:   9.90 kB
+#27 42.94 public/build/assets/dialog-BJ9RV55b.js                          32.03 kB │ gzip:  10.73 kB
+#27 42.94 public/build/assets/index-BorY8IyN.js                           34.24 kB │ gzip:  10.85 kB
+#27 42.94 public/build/assets/member-profile-CJ-wcoOX.js                  34.61 kB │ gzip:  10.59 kB
+#27 42.94 public/build/assets/app-6gx8JD9R.js                            157.71 kB │ gzip:  47.34 kB
+#27 42.94 public/build/assets/jsx-runtime-3K-vts_8.js                    345.86 kB │ gzip: 108.18 kB
+#27 42.94 public/build/assets/hls-BuMXb-yf.js                            575.76 kB │ gzip: 179.37 kB
+#27 42.94
+#27 42.94 [plugin builtin:vite-reporter]
+#27 42.94 (!) Some chunks are larger than 500 kB after minification. Consider:
+#27 42.94 - Using dynamic import() to code-split the application
+#27 42.94 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+#27 42.94 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+#27 42.95 ✓ built in 18.62s
+#27 42.95 [PLUGIN_TIMINGS] Your build spent 95% of 18.6s inside plugin hooks (17.6s).
+#27 42.95 Measured inside the callback, so queue time is excluded and time the callback itself awaited is not:
+#27 42.95   - @rolldown/plugin-babel transform (75%, 13.9s, 225 calls)
+#27 42.95   - @laravel/vite-plugin-wayfinder buildStart (9%, 1.6s, 1 call)
+#27 42.95   - @tailwindcss/vite:generate:build transform (6%, 1.2s, 2 calls)
+#27 42.95 See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+#27 42.95
+#27 43.23
+#27 43.23 > check:manifest
+#27 43.23 > node scripts/check-vite-manifest.mjs
+#27 43.23
+#27 43.31 Vite manifest PASS: 104 Inertia pages; all assets and dependencies exist.
+#27 43.50 Generating optimized autoload files
+#27 46.73 > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+#27 46.75 > @php artisan package:discover --ansi
+#27 46.97
+#27 46.97    INFO  Discovering packages.
+#27 46.97
+#27 46.97   inertiajs/inertia-laravel ............................................. DONE
+#27 46.97   laravel/fortify ....................................................... DONE
+#27 46.97   laravel/passkeys ...................................................... DONE
+#27 46.98   laravel/tinker ........................................................ DONE
+#27 46.98   laravel/wayfinder ..................................................... DONE
+#27 46.98   nesbot/carbon ......................................................... DONE
+#27 46.98   nunomaduro/termwind ................................................... DONE
+#27 46.98
+#27 46.99 Generated optimized autoload files containing 7793 classes
+#27 DONE 47.9s
+
+#28 [web web 3/5] COPY --from=build /var/www/html/public /var/www/html/public
+#28 DONE 0.2s
+
+#29 [web web 4/5] COPY app/scripts/check-production-artifact.sh /usr/local/bin/check-production-artifact
+#29 DONE 0.1s
+
+#30 [web web 5/5] RUN sh /usr/local/bin/check-production-artifact /var/www/html/public
+#30 0.340 Production artifact PASS: Vite hot file absent
+#30 DONE 0.4s
+
+#31 [web] exporting to image
+#31 exporting layers
+#31 exporting layers 0.7s done
+#31 exporting manifest sha256:c8896f339ae22d0339293e3ade24e96775a3caec771606596bbb6028d032cb87 0.0s done
+#31 exporting config sha256:7ac70dc7c250e996213b60918f7f9133334f57db58e1306542533fd9d7d464c2 0.0s done
+#31 exporting attestation manifest sha256:6bcf9d5aa33c2be2ea63e11bc26aa20e79e12c9383c5af471dd856113051645b 0.0s done
+#31 exporting manifest list sha256:d7809ce4d714b63ad7a5eea41ad19e79f299594304f464c5a60af29593cb76ef done
+#31 naming to docker.io/library/jakawi-web:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 done
+#31 unpacking to docker.io/library/jakawi-web:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 0.1s done
+#31 DONE 1.0s
+
+#32 [web] resolving provenance for metadata file
+#32 DONE 0.1s
+
+#33 [app build 6/7] COPY app/ ./
+#33 CACHED
+
+#34 [app build 7/7] RUN sh scripts/check-production-artifact.sh public     && php artisan route:clear     && npm run types:check     && npm run build     && composer dump-autoload --no-dev --optimize     && rm -rf node_modules
+#34 CACHED
+
+#35 [app build 1/7] RUN apt-get update     && apt-get install -y --no-install-recommends ca-certificates curl gnupg     && mkdir -p /etc/apt/keyrings     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list     && apt-get update     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*
+#35 CACHED
+
+#36 [app build 2/7] COPY app/composer.json app/composer.lock* ./
+#36 CACHED
+
+#37 [app build 3/7] RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#37 CACHED
+
+#38 [app build 4/7] COPY app/package.json app/package-lock.json ./
+#38 CACHED
+
+#39 [app build 5/7] RUN npm ci
+#39 CACHED
+
+#40 [app app 3/4] COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
+#40 DONE 3.4s
+
+#41 [app app 4/4] RUN sh scripts/check-production-artifact.sh public     && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#41 0.513 Production artifact PASS: Vite hot file absent
+#41 DONE 0.6s
+
+#42 [app] exporting to image
+#42 exporting layers
+#42 exporting layers 4.8s done
+#42 exporting manifest sha256:dc9599a2698b897c69cd441884087819ed39b53304eff7b940f4cab4d751d497
+#42 exporting manifest sha256:dc9599a2698b897c69cd441884087819ed39b53304eff7b940f4cab4d751d497 0.0s done
+#42 exporting config sha256:7ca76ebeac8a36e0b9e590471aeb976a6a99db2ab0fba8a4213f1876773f5fbb 0.0s done
+#42 exporting attestation manifest sha256:902e1af57ba341b1ece2b3972797d4eec36b734b5a19ddc0441ee731e7cb5800 0.0s done
+#42 exporting manifest list sha256:24ce46448b54370db6d3dbd6dd90cab118e71d8059e38df983fcc810e7579329 0.0s done
+#42 naming to docker.io/library/jakawi-app:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 done
+#42 unpacking to docker.io/library/jakawi-app:release-3fd45e30b4d641f9f6601f31c53f70ec57600048
+#42 unpacking to docker.io/library/jakawi-app:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 3.0s done
+#42 DONE 8.0s
+
+#43 [app] resolving provenance for metadata file
+#43 DONE 0.0s
+ Image jakawi-app:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 Built
+ Image jakawi-web:release-3fd45e30b4d641f9f6601f31c53f70ec57600048 Built

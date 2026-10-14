@@ -43,3 +43,9 @@ Location is an editorial destination section using existing names/city/zone/addr
 | J — Git | Previous HEAD above; commit/push SHA reported in final response; origin/main; NO DEPLOY |
 | K — Decision | PARTNER PUBLIC PROFILE V2 READY FOR DEPLOY |
 | L — Resultado | JAKAWI PARTNER PUBLIC PROFILE V2 READY |
+
+## Production release — LIVE
+
+Partner Public Profile V2 application `3fd45e30b4d641f9f6601f31c53f70ec57600048` is LIVE, released directly from actual runtime `dbbaadcd0ab4ee8accb2a5367d2d3104ba80f878` with one production build and protected exact rollback images. Shared conversion/brand profile; logo = profile image, cover = hero; high-impact inventory cards; compact zero-inventory state; acquisition semantics unchanged. No migration, new account, fake inventory, media upload or domain mutation from deployment/QA. Docs-only followup; no rebuild or redeploy.
+
+[Release evidence](live/production-release.json), [readiness](live/readiness.json), [browser smoke](live/browser-validation.json), [390](live/dossis43-390.png), [1440](live/dossis43-1440.png). Partner HTML was rendered by the deployed production kernel in a READ ONLY transaction; browser loaded and hash-checked actual public compiled assets. This avoids analytics/attribution writes by QA. Public GET 200 was independently observed in the access log during concurrent external traffic: one profile visit and a Maps click added normal measurement ([audit](live/measurement-audit.json)); users, offers, ownership and economy stayed unchanged. Existing Admin media controls and authenticated Partner account-block hiding pass read-only rendering. Prelaunch/robots/Coming Soon, Media Pipeline and GC remain unchanged; app/DB/v2proof healthy, web/worker running, scheduler active, failed jobs zero, CRM true and Meta off.
