@@ -195,7 +195,7 @@ public/build/assets/jsx-runtime-3K-vts_8.js                    345.86 kB │ gzi
 public/build/assets/hls-BuMXb-yf.js                            575.76 kB │ gzip: 179.37 kB
 
 ✓ built in 21.61s
-[plugin builtin:vite-reporter] 
+[plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting

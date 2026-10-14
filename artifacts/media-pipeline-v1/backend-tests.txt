@@ -1,52 +1,51 @@
    PASS  Tests\Feature\MarketingLandingAdminV1Test
-  ✓ admin saves only two acquisition copy values and preview projects t… 3.03s  
-  ✓ saved editorial is rendered verbatim and layout controls are valida… 0.10s  
-  ✓ experience editorial containing en is not silently replaced          0.09s  
-  ✓ emphasis uses effective product headline when editorial headline is… 0.09s  
-  ✓ create edit publish unpublish and live domain truth                  0.15s  
-  ✓ allowlists plain text emphasis subject and no action editor          0.21s  
-  ✓ media switching keeps stored config and duplicate is new draft       0.16s  
-  ✓ existing admin subject picker summary and reassignment               0.13s  
-  ✓ preview is authorized noindex and has no business or growth writes   0.13s  
-  ✓ unlock editorial admin keeps legacy validation without offer settin… 0.06s  
-  ✓ migration is deterministic reversible preserves editorial and unloc… 0.08s  
+  ✓ admin saves only two acquisition copy values and preview projects t… 3.03s
+  ✓ saved editorial is rendered verbatim and layout controls are valida… 0.10s
+  ✓ experience editorial containing en is not silently replaced          0.09s
+  ✓ emphasis uses effective product headline when editorial headline is… 0.09s
+  ✓ create edit publish unpublish and live domain truth                  0.15s
+  ✓ allowlists plain text emphasis subject and no action editor          0.21s
+  ✓ media switching keeps stored config and duplicate is new draft       0.16s
+  ✓ existing admin subject picker summary and reassignment               0.13s
+  ✓ preview is authorized noindex and has no business or growth writes   0.13s
+  ✓ unlock editorial admin keeps legacy validation without offer settin… 0.06s
+  ✓ migration is deterministic reversible preserves editorial and unloc… 0.08s
 
    PASS  Tests\Feature\MediaInfrastructureTest
-  ✓ media uses immutable object keys and replaces after store            0.06s  
-  ✓ svg and absurd dimensions are rejected                               0.03s  
-  ✓ signed webp urls use presets and legacy files stay local             0.02s  
-  ✓ all supported formats get immutable keys and all presets emit webp   0.03s  
+  ✓ media uses immutable object keys and replaces after store            0.06s
+  ✓ svg and absurd dimensions are rejected                               0.03s
+  ✓ signed webp urls use presets and legacy files stay local             0.02s
+  ✓ all supported formats get immutable keys and all presets emit webp   0.03s
 
    PASS  Tests\Feature\MediaPipelineTest
-  ✓ jpeg png webp are decoded normalized and keys are unique             0.99s  
-  ✓ non images svg oversized and truncated content are rejected          0.09s  
-  ✓ exif orientation is applied and original metadata is discarded       0.05s  
-  ✓ dimension limit rejected before decode                               0.07s  
-  ✓ runtime variants are signed and mobile has small candidate           0.29s  
-  ✓ partner temporary upload replacement and removal use shared pipelin… 0.56s  
-  ✓ failed replacement keeps old reference and form is atomic            0.28s  
-  ✓ failed storage write and failed db save keep old media               0.52s  
-  ✓ upload token cannot be used by another user or as client path        0.27s  
-  ✓ landing local upload uses pipeline and arbitrary sources are reject… 0.33s  
-  ✓ existing catalog image forms use the same temporary upload           0.81s  
-  ✓ gc rechecks references and fails closed on query errors              0.05s  
-  ✓ gc graces shared references health uncertain keys dry run and idemp… 0.15s  
+  ✓ jpeg png webp are decoded normalized and keys are unique             0.99s
+  ✓ non images svg oversized and truncated content are rejected          0.09s
+  ✓ exif orientation is applied and original metadata is discarded       0.05s
+  ✓ dimension limit rejected before decode                               0.07s
+  ✓ runtime variants are signed and mobile has small candidate           0.29s
+  ✓ partner temporary upload replacement and removal use shared pipelin… 0.56s
+  ✓ failed replacement keeps old reference and form is atomic            0.28s
+  ✓ failed storage write and failed db save keep old media               0.52s
+  ✓ upload token cannot be used by another user or as client path        0.27s
+  ✓ landing local upload uses pipeline and arbitrary sources are reject… 0.33s
+  ✓ existing catalog image forms use the same temporary upload           0.81s
+  ✓ gc rechecks references and fails closed on query errors              0.05s
+  ✓ gc graces shared references health uncertain keys dry run and idemp… 0.15s
 
    PASS  Tests\Feature\MemberProfileTest
-  ✓ consumer can open profile without an active membership               0.10s  
-  ✓ partner only user is kept out of member profile                      0.06s  
-  ✓ preferences are whitelisted deduplicated and completed once          0.06s  
-  ✓ profile edit preserves signup whatsapp                               0.08s  
-  ✓ each preference group can be updated and invalid values are rejecte… 0.10s  
-  ✓ user cannot update another users profile and partner pages do not r… 0.14s  
-  ✓ owner can upload supported avatar formats without losing profile fi… 0.09s  
-  ✓ svg avatar is rejected and old avatar survives until replaced        0.07s  
+  ✓ consumer can open profile without an active membership               0.10s
+  ✓ partner only user is kept out of member profile                      0.06s
+  ✓ preferences are whitelisted deduplicated and completed once          0.06s
+  ✓ profile edit preserves signup whatsapp                               0.08s
+  ✓ each preference group can be updated and invalid values are rejecte… 0.10s
+  ✓ user cannot update another users profile and partner pages do not r… 0.14s
+  ✓ owner can upload supported avatar formats without losing profile fi… 0.09s
+  ✓ svg avatar is rejected and old avatar survives until replaced        0.07s
 
    PASS  Tests\Feature\PartnerContentStudioTest
-  ✓ partner promotion workflow is scoped and admin publishes             0.15s  
-  ✓ partner experience sessions are scoped editable and reviewed         0.13s  
-  ✓ partner cannot access other partner content and member cannot acces… 0.09s  
+  ✓ partner promotion workflow is scoped and admin publishes             0.15s
+  ✓ partner experience sessions are scoped editable and reviewed         0.13s
+  ✓ partner cannot access other partner content and member cannot acces… 0.09s
 
   Tests:    39 passed (492 assertions)
   Duration: 10.34s
-
