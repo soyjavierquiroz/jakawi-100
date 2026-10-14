@@ -12,7 +12,7 @@ http.createServer((req, res) => {
         res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : 'application/octet-stream');
         res.end(fs.readFileSync(file)); return;
     }
-    if (pathname.startsWith('/storage/') && pathname.includes('partner-profile-qa-')) { res.setHeader('Content-Type', 'image/svg+xml'); res.end(svg); return; }
+    if (pathname.startsWith('/storage/') && pathname.includes('partner-profile-qa-')) { res.setHeader('Content-Type', 'image/svg+xml'); res.end(pathname.includes('-logo.') ? '<svg xmlns="http://www.w3.org/2000/svg" width="700" height="180"><rect width="700" height="180" fill="#fffdf9"/><text x="350" y="115" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="90" fill="#231f20">DOSIS 43</text></svg>' : svg); return; }
     if (['/jakawi-logo.svg', '/jakawi-mark.svg'].includes(pathname)) { res.setHeader('Content-Type', 'image/svg+xml'); res.end(fs.readFileSync(root + '/app/public' + pathname)); return; }
     const initial = req.method === 'GET' && !req.headers['x-inertia'] && req.headers.accept?.includes('text/html');
     const headers = { ...req.headers, host: '127.0.0.1:8098' }; if (initial) headers['x-inertia'] = 'true';

@@ -244,7 +244,7 @@ class PublicController extends Controller
 
     private function partner(Partner $p): array
     {
-        return $p->only(['id', 'slug', 'name', 'description', 'category', 'website', 'instagram', 'facebook', 'tiktok', 'phone', 'whatsapp', 'email', 'featured']) + $this->image($p->logo_path, 'thumbnail', 'logo') + $this->image($p->cover_path, 'partner_cover', 'cover');
+        return $p->only(['id', 'slug', 'name', 'description', 'category', 'website', 'instagram', 'facebook', 'tiktok', 'phone', 'whatsapp', 'email', 'featured']) + $this->image($p->logo_path, 'partner_logo', 'logo') + $this->image($p->cover_path, 'partner_cover', 'cover');
     }
 
     private function locationData(Location $l): array

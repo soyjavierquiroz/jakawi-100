@@ -1,0 +1,208 @@
+{
+  "checks": [
+    "V2: contained prominent profile logo, dominant separate cover, all three canonical Offer CTAs, hero scroll CTA, account below offers/location, existing map route",
+    "390 guest identity/location/all three inventory types, account/login visible, native Benefit URL, notice/noindex/root canonical, no overflow, context only/no rewards",
+    "PRIMARY: Partner → native Benefit → applicable Marketing Landing → three-step Micro Opt-in → real NEW account; DOSIS 43 referral ownership, no Partner signup click, zero commissions/domain actions",
+    "390 authenticated inventory visible; signup/login block hidden; owner unchanged",
+    "Real existing-account login returns to profile; no acquisition/referral/reward; pending candidate consumed; authenticated inventory and no account block",
+    "Direct profile signup uses existing register form, credits Partner only for NEW account, returns to root profile",
+    "1440 guest profile regression: three truthful inventory cards, no overflow",
+    "430 regression: no overflow, logo/cover/offers intact",
+    "390 missing media + zero inventory: branded cover/initials, compact editorial state, place CTA, location then guest acquisition, no broken media or overflow",
+    "Coming Soon remains isolated with no Partner links"
+  ],
+  "errors": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/l/dosis-benefit-landing-qa/acquisition"
+    },
+    {
+      "method": "POST",
+      "path": "/register"
+    },
+    {
+      "method": "POST",
+      "path": "/login"
+    },
+    {
+      "method": "POST",
+      "path": "/register"
+    }
+  ],
+  "responses": [
+    {
+      "status": 204,
+      "path": "/l/dosis-benefit-landing-qa/acquisition"
+    },
+    {
+      "status": 302,
+      "path": "/register"
+    },
+    {
+      "status": 302,
+      "path": "/login"
+    },
+    {
+      "status": 302,
+      "path": "/register"
+    }
+  ],
+  "states": {
+    "mobileMedia": {
+      "logo": {
+        "x": 25,
+        "y": 375.75,
+        "width": 102,
+        "height": 78,
+        "fit": "contain",
+        "loaded": true
+      },
+      "cover": {
+        "x": 20,
+        "y": 172,
+        "width": 350,
+        "height": 218.75,
+        "fit": "cover",
+        "loaded": true
+      },
+      "accountY": 3284.71875,
+      "locationY": 2865.671875,
+      "offersY": 849.828125
+    },
+    "guest": {
+      "partner_id": 35,
+      "user_id": null,
+      "pending": [
+        31
+      ],
+      "users": [
+        {
+          "id": 43,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "newSignup": {
+      "partner_id": 35,
+      "user_id": 44,
+      "pending": [],
+      "users": [
+        {
+          "id": 43,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        },
+        {
+          "id": 44,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 35,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "authenticatedNew": {
+      "partner_id": 35,
+      "user_id": 44,
+      "pending": [],
+      "users": [
+        {
+          "id": 43,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        },
+        {
+          "id": 44,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 35,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "existingLogin": {
+      "partner_id": 35,
+      "user_id": 43,
+      "pending": [],
+      "users": [
+        {
+          "id": 43,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        },
+        {
+          "id": 44,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 35,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "directSignup": {
+      "partner_id": 35,
+      "user_id": 45,
+      "pending": [],
+      "users": [
+        {
+          "id": 43,
+          "email": "partner-existing-qa@example.test",
+          "relationship": null
+        },
+        {
+          "id": 44,
+          "email": "partner-browser-new@example.test",
+          "relationship": {
+            "acquisition_partner_id": 35,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        },
+        {
+          "id": 45,
+          "email": "partner-browser-direct@example.test",
+          "relationship": {
+            "acquisition_partner_id": 35,
+            "referrer_user_id": null,
+            "referral_code": "DOSIS"
+          }
+        }
+      ],
+      "rewards": 0,
+      "redemptions": 0,
+      "reservations": 0,
+      "participations": 0
+    },
+    "desktopHero": {
+      "coverWidth": 556.203125,
+      "copyWidth": 611.796875,
+      "coverX": 771.796875,
+      "copyX": 112
+    }
+  },
+  "pass": true
+}

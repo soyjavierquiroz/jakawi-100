@@ -361,3 +361,221 @@
 .activation-option:focus-visible, .funnel-primary-action:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
 .activation-option:active, .funnel-primary-action:active { transform: translateY(1px); }
 .funnel-primary-action:hover { box-shadow: 0 3px 10px #00000020; }
+
+/* One shared Partner brand experience; existing semantic palette and fonts. */
+.partner-profile {
+  font-family: var(--font-discovery);
+}
+.partner-hero {
+  display: grid;
+  gap: 0;
+}
+.partner-cover {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: var(--surface-muted);
+}
+.partner-cover-fallback {
+  position: relative;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  align-items: center;
+  padding: 2rem;
+  background: var(--brand);
+  color: var(--ink);
+}
+.partner-cover-ring {
+  position: absolute;
+  width: 24rem;
+  height: 24rem;
+  border: 4.5rem solid var(--ink);
+  opacity: .15;
+  border-radius: 50%;
+  right: -9rem;
+  top: -7rem;
+}
+.partner-cover-dot {
+  position: absolute;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: var(--reward);
+  left: -4rem;
+  bottom: -5rem;
+}
+.partner-cover-word {
+  position: relative;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(2.5rem, 9vw, 5rem);
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+}
+.partner-cover-signature {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+.partner-hero-copy {
+  position: relative;
+  padding-top: 0;
+}
+.partner-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 112px;
+  height: 88px;
+  margin-top: -20px;
+  overflow: hidden;
+  border: 5px solid var(--background);
+  border-radius: 1rem;
+  background: var(--surface-raised);
+  color: var(--foreground);
+}
+.partner-name {
+  margin-top: 1.5rem;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+.partner-headline,
+.partner-name-solo {
+  margin-top: 1rem;
+  font-size: clamp(2rem, 8.5vw, 3.5rem);
+  line-height: 1.04;
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.partner-primary {
+  display: inline-flex;
+  min-height: 3.5rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: 0.8rem;
+  background: var(--brand);
+  color: var(--brand-foreground);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.4;
+  transition: transform 0.2s;
+}
+.partner-primary:hover {
+  transform: translateY(-2px);
+}
+.partner-section {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+.partner-kicker {
+  margin-bottom: 1rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.partner-section-title {
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  line-height: 1.02;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
+}
+.partner-offer {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow);
+}
+.partner-offer-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.partner-offer-label {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  border-radius: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+.partner-opportunity {
+  display: inline-block;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.4rem;
+  background: var(--reward);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.partner-offer .partner-primary {
+  margin-top: auto;
+}
+
+.partner-account {
+  padding: 2rem;
+  border: none;
+  border-radius: 1.5rem;
+  background: var(--surface-muted);
+}
+@media (max-width: 639px) {
+  .partner-hero-copy > div:last-child > .partner-primary {
+    width: 100%;
+  }
+}
+@media (min-width: 1024px) {
+  .partner-hero {
+    grid-template-columns: 1.1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .partner-cover {
+    grid-column: 2;
+    grid-row: 1;
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 560px;
+  }
+  .partner-hero-copy {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 2rem 0;
+  }
+  .partner-avatar {
+    margin-top: 0;
+  }
+  .partner-headline,
+  .partner-name-solo {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+  }
+  .partner-section {
+    margin-top: 5rem;
+    padding-top: 3rem;
+  }
+  .partner-account {
+    padding: 3rem;
+  }
+}
+
+.partner-profile section[id] { scroll-margin-top: 9rem; }

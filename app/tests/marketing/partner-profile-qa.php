@@ -8,6 +8,8 @@ if (config('app.env') !== 'testing' || config('database.connections.pgsql.databa
 
 if (PHP_SAPI !== 'cli-server') {
     if (($argv[1] ?? '') === 'clean') {
+        $empty = App\Models\Partner::whereSlug('empty-brand-qa')->first();
+        if ($empty) { $empty->locations()->delete(); App\Models\AttributionTouch::where('acquisition_partner_id', $empty->id)->delete(); $empty->delete(); }
         $partner = App\Models\Partner::whereSlug('dosis43')->first();
         if ($partner) {
             $benefit = $partner->benefits()->first();
@@ -19,13 +21,13 @@ if (PHP_SAPI !== 'cli-server') {
             $partner->users()->detach(); $partner->delete();
         }
         App\Models\User::whereIn('email', ['partner-owner-qa@example.test', 'partner-existing-qa@example.test', 'partner-browser-new@example.test', 'partner-browser-direct@example.test'])->delete();
-        echo json_encode(['fixture_partners' => App\Models\Partner::whereSlug('dosis43')->count(), 'fixture_users' => App\Models\User::where('email', 'like', 'partner-%@example.test')->count()]);
+        echo json_encode(['fixture_partners' => App\Models\Partner::whereIn('slug', ['dosis43', 'empty-brand-qa'])->count(), 'fixture_users' => App\Models\User::where('email', 'like', 'partner-%@example.test')->count()]);
         exit;
     }
     $partner = App\Models\Partner::factory()->published()->create(['slug' => 'dosis43', 'name' => 'DOSIS 43 — QA', 'category' => 'cafe', 'description' => 'Café para compartir en Cochabamba. Perfil de evaluación aislada.', 'logo_path' => 'partner-profile-qa-logo.svg', 'cover_path' => 'partner-profile-qa-cover.svg']);
     $owner = App\Models\User::factory()->create(['email' => 'partner-owner-qa@example.test']); $partner->users()->attach($owner, ['role' => 'owner']);
     App\Models\User::factory()->create(['email' => 'partner-existing-qa@example.test', 'name' => 'Usuario existente QA']);
-    $location = App\Models\Location::factory()->published()->withPartner($partner)->create(['slug' => 'dosis-location-qa', 'name' => 'DOSIS Centro — QA', 'city_id' => App\Models\City::whereSlug('cochabamba')->sole()->id, 'zone' => 'Centro', 'address' => 'Dirección de evaluación QA']);
+    $location = App\Models\Location::factory()->published()->withPartner($partner)->create(['slug' => 'dosis-location-qa', 'name' => 'DOSIS Centro — QA', 'city_id' => App\Models\City::whereSlug('cochabamba')->sole()->id, 'zone' => 'Centro', 'address' => 'Dirección de evaluación QA', 'maps_url' => 'https://maps.example.test/qa']);
     $location->setRedemptionPin('123456'); $location->save();
     $benefit = App\Models\Benefit::factory()->published()->forPartner($partner)->create(['slug' => 'dosis-benefit-qa', 'title' => 'Café para compartir — QA', 'short_description' => 'Un café de cortesía con tu consumo de evaluación.', 'estimated_savings' => 15, 'applies_to_all_locations' => true, 'image_path' => 'partner-profile-qa-coffee.svg', 'access_mode' => 'public']);
     $benefit->landingPresentations()->create(['name' => 'Partner Benefit — QA', 'slug' => 'dosis-benefit-landing-qa', 'status' => 'PUBLISHED', 'default_scope' => 'ALL', 'publish_scope' => 'ALL', 'template_key' => 'OFFER_CONVERSION', 'marketing_theme' => 'LIGHT_CONVERSION', 'media_mode' => 'IMAGE', 'hero_layout' => 'OFFER_FIRST', 'density' => 'STANDARD', 'headline' => 'COMPARTE TU PRÓXIMO CAFÉ.', 'subheadline' => 'Disfruta este café de evaluación con DOSIS 43 — QA.', 'hero_path' => 'partner-profile-qa-coffee.svg']);
@@ -33,6 +35,8 @@ if (PHP_SAPI !== 'cli-server') {
     $experience->partners()->attach($partner, ['role' => 'organizer']);
     App\Models\ExperienceSession::factory()->for($experience)->upcoming()->create(['location_id' => $location->id, 'starts_at' => now()->addDays(7)]);
     App\Models\Challenge::create(['partner_id' => $partner->id, 'slug' => 'dosis-challenge-qa', 'title' => 'Comparte tu café — QA', 'description' => 'Comparte tu foto del café.', 'status' => 'open', 'review_status' => 'APPROVED', 'reward_type' => 'JP', 'reward_jp_amount' => 25, 'ends_at' => now()->addDays(14), 'hero_path' => 'partner-profile-qa-coffee.svg']);
+    $empty = App\Models\Partner::factory()->published()->create(['slug' => 'empty-brand-qa', 'name' => 'Marca local QA', 'description' => 'Hay días en los que solo necesitas un buen café para seguir adelante. Café para llevar y bebidas de cafetería para acompañar tus recorridos por la ciudad. Un lugar de evaluación con descripción extensa para validar el perfil sin medios.', 'category' => 'cafe', 'logo_path' => null, 'cover_path' => null]);
+    App\Models\Location::factory()->published()->withPartner($empty)->create(['name' => 'Lugar sin medios QA', 'city' => 'Cochabamba']);
     echo 'Seeded isolated DOSIS 43 — QA'; exit;
 }
 

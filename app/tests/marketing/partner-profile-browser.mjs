@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 const { default: puppeteer } = await import(process.env.PARTNER_BROWSER_MODULE);
 const origin = process.env.PARTNER_ORIGIN ?? 'http://127.0.0.1:8098';
-const out = process.env.PARTNER_ARTIFACTS ?? 'artifacts/partner-public-profile-v1';
+const out = process.env.PARTNER_ARTIFACTS ?? 'artifacts/partner-public-profile-v2';
 const browser = await puppeteer.launch({ headless: true, executablePath: process.env.PARTNER_CHROMIUM, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
 const report = { checks: [], errors: [], mutations: [], responses: [], states: {} };
 async function session() {
@@ -31,6 +31,24 @@ try {
     assert.deepEqual(await page.$$eval('meta[name="robots"]', nodes => nodes.map(node => node.content)), ['noindex,nofollow']);
     assert.equal(await page.$eval('link[rel="canonical"]', node => node.href), origin + '/dosis43');
     assert.equal(await page.$eval('a[href="/beneficios/dosis-benefit-qa"]', node => node.textContent), 'VER BENEFICIO');
+    const media = await page.evaluate(() => {
+        const logo = document.querySelector('[data-partner-logo] img');
+        const cover = document.querySelector('[data-partner-cover] img');
+        const rect = node => ({ x: node.getBoundingClientRect().x, y: node.getBoundingClientRect().y, width: node.getBoundingClientRect().width, height: node.getBoundingClientRect().height });
+        return { logo: { ...rect(logo), fit: getComputedStyle(logo).objectFit, loaded: logo.naturalWidth > 0 }, cover: { ...rect(cover), fit: getComputedStyle(cover).objectFit, loaded: cover.naturalWidth > 0 }, accountY: rect(document.querySelector('[data-partner-account]')).y, locationY: rect(document.querySelector('#ubicaciones')).y, offersY: rect(document.querySelector('#propuestas')).y };
+    });
+    assert.equal(media.logo.fit, 'contain'); assert.equal(media.cover.fit, 'cover');
+    assert(media.logo.loaded && media.cover.loaded); assert(media.logo.width >= 100);
+    assert(media.cover.y < media.logo.y); assert(media.accountY > media.locationY && media.locationY > media.offersY);
+    report.states.mobileMedia = media;
+    for (const [journey, slug, label] of [['experiencias', 'dosis-experience-qa', 'VER EXPERIENCIA'], ['retos', 'dosis-challenge-qa', 'VER RETO']]) {
+        assert.equal(await page.$eval(`a[href="/${journey}/${slug}"]`, node => node.textContent.trim()), label);
+    }
+    assert(await page.$('a[href="/lugares/dosis-location-qa/mapa"]'));
+    await click(page, 'VER LO QUE HAY EN JAKAWI');
+    assert(await page.$eval('#propuestas', node => node.getBoundingClientRect().top >= 130 && node.getBoundingClientRect().top <= 150));
+    await page.evaluate(() => scrollTo(0, 0));
+    report.checks.push('V2: contained prominent profile logo, dominant separate cover, all three canonical Offer CTAs, hero scroll CTA, account below offers/location, existing map route');
     await page.screenshot({ path: out + '/partner-390.png', fullPage: true });
     report.states.guest = await state(page); assert(report.states.guest.pending.length > 0); assert.equal(report.states.guest.rewards, 0);
     report.checks.push('390 guest identity/location/all three inventory types, account/login visible, native Benefit URL, notice/noindex/root canonical, no overflow, context only/no rewards');
@@ -49,7 +67,7 @@ try {
     assert.equal(report.states.newSignup.user_id, acquired.id); assert.equal(acquired.relationship.acquisition_partner_id, report.states.newSignup.partner_id); assert.equal(report.states.newSignup.rewards, 0);
     for (const domain of ['redemptions', 'reservations', 'participations']) assert.equal(report.states.newSignup[domain], 0);
     report.checks.push('PRIMARY: Partner → native Benefit → applicable Marketing Landing → three-step Micro Opt-in → real NEW account; DOSIS 43 referral ownership, no Partner signup click, zero commissions/domain actions');
-    await go(page, '/dosis43'); assert.equal(await page.$('[data-partner-account]'), null); assert((await text(page)).includes('VER BENEFICIO')); assert.equal(await overflow(page), false);
+    await go(page, '/dosis43'); assert.equal(await page.$('[data-partner-account]'), null); assert(!(await text(page)).includes('CREAR MI CUENTA')); assert(!(await text(page)).includes('INICIA SESIÓN')); assert((await text(page)).includes('VER BENEFICIO')); assert.equal(await overflow(page), false);
     report.states.authenticatedNew = await state(page); assert.equal(report.states.authenticatedNew.users.find(user => user.id === acquired.id).relationship.acquisition_partner_id, report.states.newSignup.partner_id);
     await page.screenshot({ path: out + '/authenticated-390.png', fullPage: true }); report.checks.push('390 authenticated inventory visible; signup/login block hidden; owner unchanged');
     await primary.context.close();
@@ -71,6 +89,26 @@ try {
 
     const desktop = await session(); await desktop.page.setViewport({ width: 1440, height: 1000 }); await go(desktop.page, '/dosis43'); assert.equal(await overflow(desktop.page), false); assert.equal(await desktop.page.$$('article').then(nodes => nodes.length), 3); await desktop.page.screenshot({ path: out + '/partner-1440.png', fullPage: true });
     report.checks.push('1440 guest profile regression: three truthful inventory cards, no overflow');
+    const desktopHero = await desktop.page.evaluate(() => {
+        const cover = document.querySelector('[data-partner-cover]').getBoundingClientRect();
+        const copy = document.querySelector('.partner-hero-copy').getBoundingClientRect();
+        return { coverWidth: cover.width, copyWidth: copy.width, coverX: cover.x, copyX: copy.x };
+    });
+    assert(desktopHero.coverWidth > 500 && desktopHero.copyWidth > 550 && desktopHero.coverX > desktopHero.copyX);
+    report.states.desktopHero = desktopHero;
+    await desktop.page.setViewport({ width: 430, height: 932 }); await go(desktop.page, '/dosis43');
+    assert.equal(await overflow(desktop.page), false); await desktop.page.screenshot({ path: out + '/partner-430.png', fullPage: true });
+    report.checks.push('430 regression: no overflow, logo/cover/offers intact');
+    await desktop.page.setViewport({ width: 390, height: 844 }); await go(desktop.page, '/empty-brand-qa');
+    assert.equal(await overflow(desktop.page), false);
+    assert(await desktop.page.$('[data-partner-cover-fallback]')); assert(await desktop.page.$('[data-partner-logo-fallback]'));
+    assert.equal(await desktop.page.$('[data-partner-offer]'), null);
+    assert(await desktop.page.$eval('[data-partner-empty]', node => node.getBoundingClientRect().height < 120));
+    assert.equal(await desktop.page.$eval('.partner-hero-copy .partner-primary', node => node.textContent.trim()), 'CONOCER EL LUGAR');
+    assert(await desktop.page.$('[data-partner-account]'));
+    assert.equal(await desktop.page.$$eval('[data-partner-cover] img, [data-partner-logo] img', nodes => nodes.length), 0);
+    await desktop.page.screenshot({ path: out + '/empty-390.png', fullPage: true });
+    report.checks.push('390 missing media + zero inventory: branded cover/initials, compact editorial state, place CTA, location then guest acquisition, no broken media or overflow');
     await go(desktop.page, '/'); assert.equal(await desktop.page.$('a[href="/dosis43"]'), null); assert(await desktop.page.$('[data-coming-soon]')); report.checks.push('Coming Soon remains isolated with no Partner links'); await desktop.context.close();
     assert.deepEqual(report.errors, []);
     assert(report.responses.some(response => response.path === '/register' && [302, 303].includes(response.status)));

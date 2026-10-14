@@ -55,6 +55,23 @@ class PartnerPublicProfileTest extends TestCase
         $this->assertDatabaseCount('reward_transactions', 0);
     }
 
+    public function test_partner_media_projection_preserves_logo_proportions_and_optimizes_cover(): void
+    {
+        config(['media.imgproxy_url' => 'https://image.test', 'media.imgproxy_key' => str_repeat('ab', 32), 'media.imgproxy_salt' => str_repeat('cd', 32)]);
+        $partner = Partner::factory()->published()->create([
+            'slug' => 'brand-media', 'logo_path' => 'partners/1/logo/11111111-1111-4111-8111-111111111111.webp',
+            'cover_path' => 'partners/1/cover/22222222-2222-4222-8222-222222222222.webp',
+        ]);
+        $this->get('/brand-media')->assertInertia(fn (Assert $p) => $p
+            ->where('partner.logo_url', fn ($url) => str_contains($url, '/rs:fit:480:320/'))
+            ->where('partner.cover_url', fn ($url) => str_contains($url, '/rs:fill:960:640/'))
+            ->has('partner.logo_srcset', 2)->has('partner.cover_srcset', 4));
+        $partner->update(['logo_path' => null, 'cover_path' => null]);
+        $this->get('/brand-media')->assertInertia(fn (Assert $p) => $p
+            ->where('partner.logo_url', null)->where('partner.cover_url', null)
+            ->has('partner.logo_srcset', 0)->has('partner.cover_srcset', 0));
+    }
+
     public function test_empty_profile_and_only_current_public_inventory(): void
     {
         extract($this->inventory());

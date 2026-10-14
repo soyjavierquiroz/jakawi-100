@@ -1,0 +1,26 @@
+{
+  "app/resources/js/components/prelaunch-notice.tsx": {
+    "unchanged": true,
+    "sha256": "7c6384b1f667b767722ec9ee8162ff6ec42368f694edc9845c210df8783140ad"
+  },
+  "app/resources/js/layouts/public-mode-layout.tsx": {
+    "unchanged": true,
+    "sha256": "51b7ebc48565529dcba82118f433e3ee30b1674bdcd5263afa5722c6e64570ac"
+  },
+  "app/resources/js/layouts/consumer-layout.tsx": {
+    "unchanged": true,
+    "sha256": "335c3f5ad5fe4475f368c4d0858b405a0592765ffa08ea1c7fa12f0f67fb5322"
+  },
+  "app/app/Services/AttributionService.php": {
+    "unchanged": true,
+    "sha256": "2873af6564ca8dad53ca44ea2d88900282a398c65d5e2d2df958eefdb1d02027"
+  },
+  "app/app/Actions/Fortify/CreateNewUser.php": {
+    "unchanged": true,
+    "sha256": "1b536f5ce8dc0b0105fedd473f4d0bf91679d51dcb60af87be80cc177f7e9d82"
+  },
+  "app/resources/js/pages/coming-soon.tsx": {
+    "unchanged": true,
+    "sha256": "512e69b5221922eb726db3349d362300d534d4ba09e3225ac80cafd1a38ddf2a"
+  }
+}
