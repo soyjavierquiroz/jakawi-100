@@ -18,9 +18,20 @@ class CampaignTest extends TestCase
     public function test_admin_can_create_campaign_and_non_admin_cannot(): void
     {
         $payload = ['name' => 'Fundadores', 'code' => 'fundadores1000', 'status' => 'active', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'participant_types' => ['CREATOR'], 'start_at' => now()->subDay()->toDateTimeString(), 'end_at' => now()->addDay()->toDateTimeString()];
-        $this->actingAs(User::factory()->create())->post('/admin/campaigns', $payload)->assertRedirect('/login');
-        $this->actingAs(User::factory()->create(['is_admin' => true]))->post('/admin/campaigns', $payload)->assertSessionHasNoErrors();
+        $this->get('/admin/campaigns')->assertRedirect('/login');
+        $this->actingAs(User::factory()->create())->post('/admin/campaigns', $payload)->assertForbidden();
+        $this->assertDatabaseCount('campaigns', 0);
+        $this->actingAs(User::factory()->create(['is_admin' => true]))->post('/admin/campaigns', $payload)->assertRedirect()->assertSessionHasNoErrors();
         $this->assertDatabaseHas('campaigns', ['code' => 'fundadores1000']);
+        $campaign = Campaign::sole();
+        $this->assertSame(['CREATOR'], $campaign->participants()->pluck('participant_type')->all());
+        $this->post('/admin/campaigns', $payload)->assertSessionHasErrors('code');
+        $this->assertDatabaseCount('campaigns', 1);
+        $this->put('/admin/campaigns/'.$campaign->id, [...$payload, 'name' => 'Fundadores actualizado'])->assertRedirect()->assertSessionHasNoErrors();
+        $this->assertSame('Fundadores actualizado', $campaign->fresh()->name);
+        Campaign::create(['name' => 'Otra', 'code' => 'otra', 'status' => 'draft', 'event' => 'membership_purchased']);
+        $this->put('/admin/campaigns/'.$campaign->id, [...$payload, 'code' => 'otra'])->assertSessionHasErrors('code');
+        $this->assertSame('fundadores1000', $campaign->fresh()->code);
     }
 
     public function test_campaign_rules_win_without_stacking_and_fall_back_outside_window(): void

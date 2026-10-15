@@ -71,8 +71,12 @@ class UnlockCoreTest extends TestCase
         $unlock = $this->unlock(['secret_mode' => true, 'hide_partner_until_unlock' => true, 'hide_location_until_unlock' => true, 'hide_exact_offer_until_unlock' => true, 'free_user_offer' => 'SECRET OFFER', 'description' => 'SECRET OFFER', 'partner_id' => $partner->id]);
         $unlock->locations()->attach($location);
         $this->get('/d/'.$unlock->slug)->assertOk()->assertDontSee('Secret Partner')->assertDontSee('Secret Location')->assertDontSee('SECRET OFFER');
-        app(UnlockParticipationService::class)->commit($unlock, User::factory()->create());
-        $this->get('/d/'.$unlock->slug)->assertOk()->assertSee('Secret Partner')->assertSee('Secret Location')->assertSee('SECRET OFFER')->assertDontSee(User::first()->email);
+        $participant = User::factory()->create();
+        app(UnlockParticipationService::class)->commit($unlock, $participant);
+        $this->assertTrue($unlock->fresh()->revealable());
+        $this->get('/d/'.$unlock->slug)->assertOk()->assertDontSee('Secret Partner')->assertDontSee('Secret Location')->assertDontSee('SECRET OFFER')->assertDontSee($participant->email);
+        $this->actingAs(User::factory()->create())->get('/d/'.$unlock->slug)->assertOk()->assertDontSee('Secret Partner')->assertDontSee('Secret Location')->assertDontSee('SECRET OFFER');
+        $this->actingAs($participant)->get('/d/'.$unlock->slug)->assertOk()->assertSee('Secret Partner')->assertSee('Secret Location')->assertSee('SECRET OFFER')->assertInertia(fn (Assert $page) => $page->missing('unlock.participants'));
     }
 
     public function test_interest_commitment_eligibility_and_idempotency(): void

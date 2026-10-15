@@ -61,7 +61,7 @@ class UnlockMarketingLandingTest extends TestCase
         $user=User::factory()->create(); $this->actingAs($user);
         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.viewer.eligible',true)->where('copy.action.label','SUMARME')->where('copy.action.href',route('unlocks.show',$unlock)));
         $unlock->update(['free_user_eligible'=>false]);
-        $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.action.label','QUIERO MI BENEFICIO')->where('copy.action.href','/membresia?'.http_build_query(['journey'=>'UNLOCK','action'=>'COMMIT','resource_id'=>$unlock->id])));
+        $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.action.label','ACTIVAR MEMBRESÍA')->where('copy.action.href','/membresia?'.http_build_query(['journey'=>'UNLOCK','action'=>'COMMIT','resource_id'=>$unlock->id])));
         Membership::create(['user_id'=>$user->id,'status'=>'active','starts_at'=>now()->subDay(),'ends_at'=>now()->addMonth(),'amount_paid'=>100]);
         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.viewer.eligible',true)->where('copy.action.label','SUMARME'));
         $participation = $this->participate($unlock,UnlockParticipation::COMMITTED,$user);
@@ -127,6 +127,10 @@ class UnlockMarketingLandingTest extends TestCase
         $landing->update(['headline'=>'OFERTA SECRETA REVELADA','hero_path'=>'spoiler.jpg','hero_alt'=>'Oferta oculta','reward_display_override'=>'Oferta oculta']);
         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.description',null)->has('copy.offers',0)->where('copy.partner',null)->has('copy.locations',0)->where('copy.heroUrl',null)->where('copy.heroAlt',$unlock->title)->where('copy.headline',$unlock->title)->where('copy.valueNote',null));
         $unlock->update(['status'=>Unlock::UNLOCKED,'goal_reached_at'=>now()]);
+        $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.description',null)->has('copy.offers',0)->where('copy.partner',null)->has('copy.locations',0)->where('copy.heroUrl',null));
+        $participant = User::factory()->create();
+        $this->participate($unlock, UnlockParticipation::COMMITTED, $participant);
+        $this->actingAs($participant);
         $this->get('/l/unlock-plan')->assertInertia(fn (Assert $p) => $p->where('copy.reward',$unlock->description)->has('copy.offers',2)->where('copy.partner.name','Partner real')->has('copy.locations',1));
     }
 

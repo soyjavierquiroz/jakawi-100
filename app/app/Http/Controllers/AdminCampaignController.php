@@ -8,6 +8,7 @@ use App\Models\Campaign;
 use App\Models\Conversion;
 use App\Models\RewardTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -42,7 +43,10 @@ class AdminCampaignController extends Controller
 
     private function data(Request $request): array
     {
-        return $request->validate(['name' => ['required', 'string', 'max:255'], 'code' => ['required', 'alpha_dash', 'max:100', 'unique:campaigns,code,'.optional($request->route('campaign'))->id], 'description' => ['nullable', 'string'], 'status' => ['required', 'in:draft,active,inactive'], 'start_at' => ['nullable', 'date'], 'end_at' => ['nullable', 'date', 'after_or_equal:start_at'], 'event' => ['required', 'in:membership_purchased'], 'product_key' => ['nullable', 'string', 'max:100'], 'participant_types' => ['required', 'array', 'min:1'], 'participant_types.*' => ['in:PROMOTER,AFFILIATE,CREATOR,MEMBER,PARTNER']]);
+        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'code' => ['required', 'alpha_dash', 'max:100', Rule::unique('campaigns', 'code')->ignore($request->route('campaign'))], 'description' => ['nullable', 'string'], 'status' => ['required', 'in:draft,active,inactive'], 'start_at' => ['nullable', 'date'], 'end_at' => ['nullable', 'date', 'after_or_equal:start_at'], 'event' => ['required', 'in:membership_purchased'], 'product_key' => ['nullable', 'string', 'max:100'], 'participant_types' => ['required', 'array', 'min:1'], 'participant_types.*' => ['in:PROMOTER,AFFILIATE,CREATOR,MEMBER,PARTNER']]);
+        unset($data['participant_types']);
+
+        return $data;
     }
 
     private function summary(Campaign $campaign): array

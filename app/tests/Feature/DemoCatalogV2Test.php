@@ -17,7 +17,7 @@ class DemoCatalogV2Test extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_demo_catalog_lifecycle_is_idempotent_safe_and_public(): void
+    public function test_demo_catalog_lifecycle_is_idempotent_safe_and_respects_public_visibility(): void
     {
         Storage::fake('public');
         $real = Partner::factory()->published()->create(['slug' => 'real-partner']);
@@ -31,9 +31,12 @@ class DemoCatalogV2Test extends TestCase
         $this->assertSame(3, Experience::where('slug', 'demo-sunset-jakawi')->sole()->partners()->count());
         Artisan::call('jakawi:seed-demo-catalog');
         $this->assertCounts();
-        foreach (['/', '/beneficios', '/experiencias', '/partners/demo-altura-nube', '/lugares/demo-altura-nube-cala-cala', '/beneficios/demo-beneficio-01', '/experiencias/demo-sunset-jakawi'] as $url) {
+        $this->get('/partners/demo-altura-nube')->assertStatus(301)->assertRedirect(url('/demo-altura-nube'));
+        foreach (['/', '/beneficios', '/experiencias', '/demo-altura-nube', '/lugares/demo-altura-nube-cala-cala', '/beneficios/demo-beneficio-01'] as $url) {
             $this->get($url)->assertOk();
         }
+        $this->assertSame('hidden', Experience::where('slug', 'demo-sunset-jakawi')->sole()->catalog_visibility);
+        $this->get('/experiencias/demo-sunset-jakawi')->assertNotFound();
         Artisan::call('jakawi:clear-demo-catalog');
         $this->assertCounts(0, 0, 0, 0, 0);
         $this->assertDatabaseHas('partners', ['id' => $real->id]);

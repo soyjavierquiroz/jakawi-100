@@ -26,12 +26,13 @@ class ApplicationV2HttpTest extends TestCase
         $draftExperience = Experience::factory()->create(['status' => 'draft']);
 
         $this->get('/')->assertOk();
-        $this->get('/partners/'.$partner->slug)->assertOk()->assertDontSee('tax_id');
+        $this->get('/partners/'.$partner->slug)->assertStatus(301)->assertRedirect(route('partners.public', $partner));
+        $this->get(route('partners.public', $partner))->assertOk()->assertDontSee('tax_id');
         $this->get('/partners/'.$draftPartner->slug)->assertNotFound();
         $this->get('/lugares/'.$location->slug)->assertOk()->assertDontSee('redemption_pin_hash');
         $this->get('/lugares/'.$draftLocation->slug)->assertNotFound();
         $this->get('/beneficios/'.$benefit->slug)->assertOk();
-        $this->get('/beneficios/'.$draftBenefit->slug)->assertOk();
+        $this->get('/beneficios/'.$draftBenefit->slug)->assertNotFound();
         $this->get('/experiencias/'.$experience->slug)->assertOk();
         $this->get('/experiencias/'.$draftExperience->slug)->assertNotFound();
     }

@@ -174,7 +174,12 @@ class BenefitRedemptionContinuityTest extends TestCase
         [$user, $benefit, $locations] = $this->scenario();
         foreach ([['status' => 'draft'], ['status' => 'published', 'starts_at' => now()->addDay()]] as $state) {
             $benefit->update($state);
-            $this->actingAs($user)->get(route('redemptions.intent', $benefit))->assertInertia(fn (Assert $page) => $page->where('availability.available', false)->where('redemptionIntent', false));
+            $response = $this->actingAs($user)->get(route('redemptions.intent', $benefit));
+            if ($benefit->status === 'draft') {
+                $response->assertNotFound();
+            } else {
+                $response->assertInertia(fn (Assert $page) => $page->where('availability.available', false)->where('redemptionIntent', false));
+            }
             $this->post(route('redemptions.start', $benefit), ['location_id' => $locations->first()->id])->assertSessionHasErrors('redemption');
         }
         $this->assertDatabaseCount('redemptions', 0);

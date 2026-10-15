@@ -38,12 +38,16 @@ class LandingPresentationTest extends TestCase
         $config = ['source'=>['type'=>'youtube', 'url'=>'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing'=>'embedded-vertical'];
         $landing->update(['vsl'=>$config]);
         $this->get('/l/video-config')->assertInertia(fn (Assert $page) => $page->where('vsl', $config));
-        $unlock = Unlock::create(['title'=>'Private video', 'slug'=>'private-video', 'origin'=>'JAKAWI', 'type'=>'BENEFIT', 'minimum_commitments'=>2, 'status'=>Unlock::ACTIVE]);
+        $unlock = Unlock::create(['title'=>'Private video', 'slug'=>'private-video', 'origin'=>'JAKAWI', 'type'=>'BENEFIT', 'minimum_commitments'=>2, 'free_user_eligible'=>true, 'status'=>Unlock::ACTIVE]);
         $private = $unlock->landingPresentations()->create(['name'=>'Private', 'slug'=>'private-video-landing', 'status'=>'PUBLISHED', 'vsl'=>$config]);
         $this->get('/l/private-video-landing')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
         $this->actingAs(User::factory()->create())->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
         $this->actingAs(User::factory()->create(['is_admin'=>true]))->get('/admin/desbloqueos/private-video/landings/private-video-landing/preview')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
         $unlock->update(['status'=>Unlock::UNLOCKED]);
+        $this->get('/l/private-video-landing')->assertDontSee('hI-Ecy2D8pg')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
+        $participant = User::factory()->create();
+        $unlock->participations()->create(['user_id' => $participant->id, 'status' => \App\Models\UnlockParticipation::COMMITTED]);
+        $this->actingAs($participant);
         $this->get('/l/private-video-landing')->assertInertia(fn (Assert $page) => $page->where('vsl', $config));
     }
 

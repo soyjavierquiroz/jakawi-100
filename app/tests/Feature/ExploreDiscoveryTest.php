@@ -118,9 +118,10 @@ class ExploreDiscoveryTest extends TestCase
         );
         $this->withCookie('selected_city', $city->slug)->get('/explorar?q=caf%C3%A9&category=cafe')->assertInertia(fn (Assert $page) => $page
             ->has('opportunities', 2)
-            ->where('opportunities', fn ($opportunities): bool => collect($opportunities)->pluck('type')->sort()->values()->all() === ['BENEFIT', 'EXPERIENCE'])
+            ->where('opportunities', fn ($opportunities): bool => collect($opportunities)
+                ->map(fn ($item) => $item['type'].':'.$item['source_id'])->sort()->values()->all()
+                === collect(['BENEFIT:'.$benefit->id, 'EXPERIENCE:'.$experience->id])->sort()->values()->all())
         );
         $this->withCookie('selected_city', $city->slug)->get('/explorar?q=caf%C3%A9&type=unlocks&category=cafe')->assertInertia(fn (Assert $page) => $page->has('opportunities', 0));
-        $this->assertNotSame($benefit->id, $experience->id);
     }
 }

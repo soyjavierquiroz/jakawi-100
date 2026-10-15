@@ -48,7 +48,9 @@ class PublicV2HttpTest extends TestCase
             $this->get('/partners/'.Partner::factory()->create(['status' => $status])->slug)->assertNotFound();
             $this->get('/lugares/'.Location::factory()->create(['status' => $status])->slug)->assertNotFound();
         }
-        $this->get('/partners/'.$partner->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('partners/show')->where('locations.0.opening_hours.mon.0', '08:00-18:00')->missing('partner.legal_name')->missing('partner.tax_id')->missing('partner.contact_name')->missing('partner.contact_phone')->missing('partner.contact_email')->missing('partner.internal_notes'));
+        $this->get('/partners/'.$partner->slug)->assertStatus(301)->assertRedirect(route('partners.public', $partner));
+        $this->assertDatabaseCount('analytics_events', 0);
+        $this->get(route('partners.public', $partner))->assertOk()->assertInertia(fn (Assert $page) => $page->component('partners/show')->where('locations.0.opening_hours.mon.0', '08:00-18:00')->missing('partner.legal_name')->missing('partner.tax_id')->missing('partner.contact_name')->missing('partner.contact_phone')->missing('partner.contact_email')->missing('partner.internal_notes'));
         $this->get('/lugares/'.$location->slug)->assertOk()->assertInertia(fn (Assert $page) => $page->component('locations/show')->missing('location.manager_name')->missing('location.manager_phone')->missing('location.manager_email')->missing('location.redemption_pin_hash')->missing('location.redemption_pin'));
         $this->assertDatabaseCount('analytics_events', 2);
         $this->assertDatabaseHas('analytics_events', ['event_name' => 'partner_view', 'partner_id' => $partner->id]);
@@ -65,6 +67,10 @@ class PublicV2HttpTest extends TestCase
         $cafe = Benefit::factory()->published()->forPartner($partner)->create(['category' => 'cafe', 'applies_to_all_locations' => true]);
         foreach ([['draft'], ['paused'], ['published', now()->addDay()], ['published', null, now()->subDay()]] as $state) {
             $benefit = Benefit::factory()->forPartner($partner)->create(['status' => $state[0], 'starts_at' => $state[1] ?? null, 'ends_at' => $state[2] ?? null]);
+            if ($benefit->status === 'draft') {
+                $this->get('/beneficios/'.$benefit->slug)->assertNotFound();
+                continue;
+            }
             $this->get('/beneficios/'.$benefit->slug)->assertOk()->assertInertia(fn (Assert $page) => $page
                 ->where('availability.available', false)
                 ->where('availability.reason', 'ESTE BENEFICIO NO ESTÁ DISPONIBLE AHORA')
