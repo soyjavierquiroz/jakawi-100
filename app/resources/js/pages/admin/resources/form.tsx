@@ -1,3 +1,4 @@
+import BenefitForm from './benefit-form';
 import PartnerLocationForm from './partner-location-form';
 import { ImageUpload } from '@/components/media/image-upload';
 import { useState } from 'react';
@@ -374,5 +375,6 @@ function LegacyResourceForm({
 }
 
 export default function ResourceForm(props: any) {
+    if (props.resource === 'benefits') return <BenefitForm {...props} />;
     return ['partners', 'locations'].includes(props.resource) ? <PartnerLocationForm {...props} /> : <LegacyResourceForm {...props} />;
 }

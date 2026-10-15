@@ -128,7 +128,7 @@ class AdminController extends Controller
 
     public function benefitForm(?Benefit $benefit = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $benefit ? 'Editar beneficio' : 'Nuevo beneficio', 'resource' => 'benefits', 'item' => $benefit ? $benefit->load('locations')->toArray() + ['imageUrl' => app(MediaUrl::class)->url($benefit->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => $benefit?->partner?->locations()->get(['id', 'name']) ?? []]);
+        return Inertia::render('admin/resources/form', ['title' => $benefit ? 'Editar beneficio' : 'Nuevo beneficio', 'resource' => 'benefits', 'item' => $benefit ? $benefit->load('locations')->toArray() + ['imageUrl' => app(MediaUrl::class)->url($benefit->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'locations' => Location::orderBy('name')->get(['id', 'name', 'partner_id'])]);
     }
 
     public function saveBenefit(Request $request, ?Benefit $benefit = null)
