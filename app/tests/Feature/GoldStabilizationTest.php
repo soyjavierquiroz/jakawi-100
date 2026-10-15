@@ -60,7 +60,7 @@ class GoldStabilizationTest extends TestCase
                     'status' => 'PUBLISHED', 'default_scope' => $scope,
                 ]);
             }
-            $benefit->landingPresentations()->create(['name' => 'Draft', 'slug' => 'draft-'.$benefit->id, 'status' => 'DRAFT', 'default_scope' => 'GUESTS']);
+            $benefit->landingPresentations()->create(['name' => 'Draft', 'slug' => 'draft-'.$benefit->id, 'status' => 'DRAFT', 'default_scope' => 'NONE']);
         }
         foreach ([null, User::factory()->create()] as $viewer) {
             DB::enableQueryLog();
