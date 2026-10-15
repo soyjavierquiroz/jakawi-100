@@ -38,6 +38,10 @@
     --brand: #ff5a4f;
     --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
     --success: #24b47e;
+    /* External community CTA; independent of JAKAWI brand and success colors. */
+    --community-whatsapp-bg: #377A1A;
+    --community-whatsapp-hover: #5B7F0B;
+    --community-whatsapp-foreground: var(--palette-light-surface-raised);
     --reward: #ffc83d;
     --scrim: color-mix(in srgb, var(--ink) 82%, transparent);
     --shadow: 0 8px 24px color-mix(in srgb, var(--ink) 6%, transparent);
@@ -319,4 +323,28 @@
     --overlay: color-mix(in srgb, var(--ink) 48%, transparent);
     --shadow: 0 10px 28px color-mix(in srgb, var(--ink) 28%, transparent);
     --shadow-featured: 0 16px 36px color-mix(in srgb, var(--ink) 38%, transparent);
+}
+
+/* Shared external community action, including keyboard and motion preferences. */
+.community-whatsapp-cta {
+    background-color: var(--community-whatsapp-bg);
+    color: var(--community-whatsapp-foreground);
+    border-radius: var(--radius-control);
+    transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.community-whatsapp-cta:hover:not(:disabled) {
+    background-color: var(--community-whatsapp-hover);
+}
+
+.community-whatsapp-cta:focus-visible {
+    outline: 2px solid var(--community-whatsapp-foreground);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px var(--community-whatsapp-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .community-whatsapp-cta {
+        transition: none;
+    }
 }
