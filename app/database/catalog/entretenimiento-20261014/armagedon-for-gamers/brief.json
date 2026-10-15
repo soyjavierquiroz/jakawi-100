@@ -1,0 +1,26 @@
+{
+    "brief_version": "jakawi-product-brief-v1",
+    "domain": "Experience",
+    "title": "Duelo gamer",
+    "partner": "Armagedon for Gamers",
+    "summary": "Tu próximo rival puede estar sentado a tu lado.",
+    "description": "Tu próximo rival puede estar sentado a tu lado.\n\nUna experiencia de juego compartido que convierte una sesión gamer en un desafío entre amigos.\n\nIncluye propuesto, sujeto a confirmación operativa: Tiempo fijo de juego por participante, duración pendiente de confirmación. Una partida o dinámica de reto entre los participantes. Un snack sencillo elegible.\n\nPrecio comercial JAKAWI: Bs 45 por persona (BOB). Mínimo dos personas; Bs 90 total para el grupo mínimo.\n\nLugar de referencia: Armagedon for Gamers, Adela Zamudio 1621, Cochabamba.\n\nMínimo propuesto: dos participantes. No es un torneo oficial, competición profesional ni evento con premios. El equipamiento, las plataformas, los juegos, la capacidad y la modalidad deben confirmarse. La duración del juego no fue proporcionada y queda pendiente.\n\nCuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados.",
+    "commercial_truth": {
+        "experience_type": "social",
+        "prices": {
+            "currency": "BOB",
+            "regular_price": "45.00"
+        },
+        "reservation_mode": "informational",
+        "available_sessions": 0,
+        "conditions": [
+            "Precio comercial JAKAWI: Bs 45 por persona (BOB). Mínimo dos personas; Bs 90 total para el grupo mínimo. Cuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados. Disponibilidad sujeta a coordinación. El mínimo de participantes y la vigencia son condiciones comerciales propuestas, no automatizadas mediante sesiones ni reservas. Mínimo propuesto: dos participantes. No es un torneo oficial, competición profesional ni evento con premios. El equipamiento, las plataformas, los juegos, la capacidad y la modalidad deben confirmarse. La duración del juego no fue proporcionada y queda pendiente. Lugar de referencia: Armagedon for Gamers, Adela Zamudio 1621, Cochabamba. Pendientes operativos: Tipos de equipos; plataformas y videojuegos elegibles; tiempo de juego; capacidad y cantidad de puestos; modalidad del duelo; snack disponible; tarifas actuales; horarios y disponibilidad; condiciones de reserva y acceso; responsable operativo."
+        ]
+    },
+    "marketing_context": {
+        "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+        "landing_language": "es",
+        "city_first": true
+    },
+    "city": "Cochabamba"
+}

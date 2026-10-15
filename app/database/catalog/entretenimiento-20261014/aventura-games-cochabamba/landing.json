@@ -1,0 +1,33 @@
+{
+  "schema_version": "jakawi-landing-v1",
+  "subject_hint": "Salta con JAKAWI",
+  "internal_name": "Aventura Games Cochabamba — Salta con JAKAWI",
+  "slug": "aventura-games-cochabamba-salta-con-jakawi",
+  "template": "OFFER_CONVERSION",
+  "presentation": {
+    "theme": "LIGHT_CONVERSION",
+    "hero_layout": "OFFER_FIRST",
+    "density": "STANDARD"
+  },
+  "hero": {
+    "eyebrow": "Aventura Games Cochabamba · COCHABAMBA",
+    "headline": "Dos horas para soltar toda la energía.",
+    "headline_emphasis": "",
+    "supporting_copy": "Salta, juega y disfruta un plan diferente en Aventura Games Cochabamba."
+  },
+  "value": {
+    "supporting_copy": "Precio comercial JAKAWI: Bs 55 por persona (BOB)."
+  },
+  "acquisition": {
+    "headline": "La diversión empieza cuando cambias la rutina por una nueva aventura.",
+    "supporting_copy": "Propuesta en preparación. Cuenta JAKAWI, sin membresía de pago obligatoria. Pago directo al Partner tras activación."
+  },
+  "closing": {
+    "headline": "QUIERO SALTAR",
+    "supporting_copy": "CTA editorial preparado. Pre-lanzamiento privado: sin reservas, pagos ni canjes disponibles. Pendientes: Días y horarios elegibles; atracciones incluidas; condiciones de uso; restricciones reales de edad, estatura o capacidad; supervisión y equipamiento de seguridad; duración real autorizada; disponibilidad de medias; procedimiento de acceso y canje; responsabilidad y seguridad aplicables."
+  },
+  "media": {
+    "mode": "NONE",
+    "alt": ""
+  }
+}
