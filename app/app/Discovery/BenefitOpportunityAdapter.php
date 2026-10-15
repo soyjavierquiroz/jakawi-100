@@ -25,7 +25,7 @@ final readonly class BenefitOpportunityAdapter
             city: $city,
             subtitle: $benefit->short_description,
             image: $this->mediaUrl->url($benefit->image_path, 'benefit_card'),
-            partner: new DiscoveryPartner($partner->getKey(), $partner->name, $partner->slug),
+            partner: new DiscoveryPartner($partner->getKey(), $partner->name, $partner->slug, $this->mediaUrl->url($partner->logo_path, 'partner_logo'), $this->mediaUrl->srcset($partner->logo_path, 'partner_logo')),
             location: $location ? new DiscoveryLocation($location->getKey(), $location->name, $location->zone) : null,
             categories: filled($benefit->category) ? [$benefit->category] : [],
             availability: new DiscoveryAvailability($this->isListed($benefit), $benefit->status),

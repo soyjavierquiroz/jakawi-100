@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { ExplorerPartnerAvatar } from '@/components/discovery/explorer-partner-avatar';
 import { JakawiImage } from '@/components/jakawi-image';
 import { useOpportunityAnalytics } from '@/hooks/use-opportunity-analytics';
 import type { DiscoveryOpportunity } from '@/types/discovery';
@@ -109,10 +110,31 @@ function UnlockProgress({
 
 function OpportunityDetails({
     opportunity,
+    editorial = false,
 }: {
     opportunity: DiscoveryOpportunity;
+    editorial?: boolean;
 }) {
     const context = opportunity.location?.name ?? opportunity.partner?.name;
+    const subtitle = opportunity.subtitle?.trim();
+    const normalize = (text?: string | null) => text?.trim().replace(/\s+/g, ' ').toLocaleLowerCase('es');
+    const description = editorial && subtitle && normalize(subtitle) !== normalize(opportunity.title)
+        && (['BENEFIT', 'EXPERIENCE'].includes(opportunity.type)
+            || ![opportunity.primary_value, opportunity.secondary_value].some(value => normalize(value) === normalize(subtitle)))
+        ? <p className="mt-2 line-clamp-3 text-sm leading-relaxed font-medium text-muted-foreground">{subtitle}</p>
+        : null;
+
+    if (editorial && (opportunity.type === 'BENEFIT' || opportunity.type === 'EXPERIENCE')) {
+        const status = opportunity.type === 'EXPERIENCE'
+            ? experienceTiming(opportunity)
+            : opportunity.availability?.reason;
+        return <>
+            <h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{opportunity.title}</h3>
+            {description}
+            {status && ![opportunity.title, subtitle].some(text => normalize(text) === normalize(status)) ? <p className="mt-2 text-sm leading-tight font-bold text-foreground">{status}</p> : null}
+            {opportunity.partner?.name || opportunity.location?.name ? <p className="mt-2 text-sm font-medium text-muted-foreground">{opportunity.partner?.name ?? opportunity.location?.name}</p> : null}
+        </>;
+    }
     if (opportunity.type === 'BENEFIT') {
         const value = benefitValue(opportunity);
         return (
@@ -159,6 +181,7 @@ function OpportunityDetails({
                 <h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">
                     {opportunity.title}
                 </h3>
+                {description}
                 <p className="mt-2 text-sm font-bold">
                     {opportunity.primary_value}
                 </p>
@@ -172,6 +195,7 @@ function OpportunityDetails({
             <h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">
                 {opportunity.title}
             </h3>
+            {description}
             <UnlockProgress opportunity={opportunity} />
         </>
     );
@@ -204,7 +228,7 @@ export function OpportunityCard({
                 ref={elementRef}
                 href={opportunity.destination_url}
                 onClick={onOpen}
-                className="group grid min-h-40 grid-cols-[42%_1fr] overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-editorial transition duration-200 hover:-translate-y-0.5 hover:shadow-featured focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] sm:block"
+                className="explorer-card group grid min-h-40 grid-cols-[42%_1fr] overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-editorial transition duration-200 hover:-translate-y-0.5 hover:shadow-featured focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] sm:block"
             >
                 <div className="overflow-hidden bg-surface-muted sm:aspect-[5/4]">
                     <JakawiImage
@@ -215,13 +239,14 @@ export function OpportunityCard({
                         fallbackContent={false}
                     />
                 </div>
-                <div className="min-w-0 p-4 sm:p-[var(--space-card)]">
-                    <p className="discovery-eyebrow text-muted-foreground">
+                <div className={`explorer-card-copy min-w-0 p-4 sm:p-[var(--space-card)] ${opportunity.partner?.name?.trim() ? 'explorer-card-copy-with-avatar' : ''}`}>
+                    <ExplorerPartnerAvatar name={opportunity.partner?.name} src={opportunity.partner?.logo_url} srcset={opportunity.partner?.logo_srcset} />
+                    <p className="explorer-card-type discovery-eyebrow text-muted-foreground">
                         {opportunityType(opportunity.type)}
                     </p>
-                    <OpportunityDetails opportunity={opportunity} />
+                    <OpportunityDetails opportunity={opportunity} editorial />
                     <span
-                        className="mt-3 block text-xs font-extrabold tracking-[0.08em] text-muted-foreground transition group-hover:text-foreground"
+                        className="mt-3 block text-xs font-extrabold tracking-[0.08em] text-brand"
                         aria-hidden="true"
                     >
                         DESCUBRIR ↗

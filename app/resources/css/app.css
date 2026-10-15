@@ -25,6 +25,60 @@
     @apply text-xs font-extrabold tracking-[0.12em] uppercase;
 }
 
+/* Explorer only: retain the compact list on mobile and editorial grid above it. */
+.explorer-card:hover,
+.explorer-card:focus-visible {
+    box-shadow: 0 0 0 1px rgb(36 180 126 / 24%), var(--shadow-featured);
+}
+.explorer-card-copy {
+    position: relative;
+    overflow-wrap: break-word;
+}
+.explorer-card-copy-with-avatar {
+    padding-left: 24px;
+}
+.explorer-partner-avatar {
+    position: absolute;
+    top: 16px;
+    left: -14px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    overflow: hidden;
+    border: 2px solid #fff8f2;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    color: var(--foreground);
+    box-shadow: 0 2px 5px rgb(17 17 17 / 8%);
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1;
+}
+.explorer-card-type::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #24b47e;
+    vertical-align: middle;
+}
+@media (min-width: 640px) {
+    .explorer-card-copy-with-avatar {
+        padding-top: 28px;
+        padding-left: var(--space-card);
+    }
+    .explorer-partner-avatar {
+        top: -16px;
+        left: var(--space-card);
+        width: 32px;
+        height: 32px;
+        font-size: 10px;
+    }
+}
+
 @theme {
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,

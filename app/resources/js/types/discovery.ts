@@ -10,6 +10,8 @@ export type DiscoveryPartner = {
     id: number;
     name: string;
     slug: string;
+    logo_url?: string | null;
+    logo_srcset?: Array<{ src: string; width: number }>;
 };
 
 export type DiscoveryLocation = {

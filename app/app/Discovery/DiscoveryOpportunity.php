@@ -41,7 +41,7 @@ final readonly class DiscoveryOpportunity implements JsonSerializable
      * @return array{
      *     type: string, source_id: int|string, title: string, destination_url: string,
      *     city: array{id: int, name: string, slug: string}, subtitle: ?string, image: ?string,
-     *     partner: ?array{id: int, name: string, slug: string}, location: ?array{id: int, name: string, label: ?string},
+     *     partner: ?array{id: int, name: string, slug: string, logo_url: ?string, logo_srcset: array}, location: ?array{id: int, name: string, label: ?string},
      *     categories: list<string>, availability: ?array{is_available: bool, state: ?string, reason: ?string},
      *     starts_at: ?string, ends_at: ?string, primary_value: ?string, secondary_value: ?string,
      *     urgency: ?array{code: string, label: ?string, at: ?string}, editorial_priority: ?float,

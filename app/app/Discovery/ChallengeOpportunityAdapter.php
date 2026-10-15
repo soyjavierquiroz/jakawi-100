@@ -20,7 +20,7 @@ final readonly class ChallengeOpportunityAdapter {
         return new DiscoveryOpportunity(type: OpportunityType::CHALLENGE,sourceId:$challenge->id,title:$challenge->title,
             destinationUrl:$destinationUrl ?? route('social-challenges.show',$challenge),city:$city,subtitle:$action,
             image:app(\App\Services\MediaUrl::class)->url($challenge->hero_path,'hero'),
-            partner:$challenge->partner ? new DiscoveryPartner($challenge->partner->id,$challenge->partner->name,$challenge->partner->slug) : null,
+            partner:$challenge->partner ? new DiscoveryPartner($challenge->partner->id,$challenge->partner->name,$challenge->partner->slug,app(\App\Services\MediaUrl::class)->url($challenge->partner->logo_path,'partner_logo'),app(\App\Services\MediaUrl::class)->srcset($challenge->partner->logo_path,'partner_logo')) : null,
             startsAt:$challenge->starts_at,endsAt:$challenge->ends_at,primaryValue:$action,secondaryValue:$reward,
             metadata:['selection'=>$challenge->selection_type]);
     }

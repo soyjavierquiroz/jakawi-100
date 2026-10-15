@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Discovery\BenefitOpportunityAdapter;
+use App\Discovery\ChallengeOpportunityAdapter;
 use App\Discovery\DiscoveryCity;
 use App\Discovery\DiscoveryOpportunity;
 use App\Discovery\ExperienceOpportunityAdapter;
@@ -10,6 +11,7 @@ use App\Discovery\OpportunityType;
 use App\Discovery\UnlockOpportunityAdapter;
 use App\Discovery\UnlockProgress;
 use App\Models\Benefit;
+use App\Models\Challenge;
 use App\Models\Experience;
 use App\Models\ExperienceSession;
 use App\Models\Location;
@@ -42,7 +44,7 @@ class DiscoveryOpportunityAdapterTest extends TestCase
         $this->assertSame(OpportunityType::BENEFIT, $opportunity->type);
         $this->assertSame(41, $opportunity->sourceId);
         $this->assertSame(route('benefits.show', $benefit), $opportunity->destinationUrl);
-        $this->assertSame(['id' => 9, 'name' => 'Casa Café', 'slug' => 'casa-cafe'], $opportunity->partner?->toArray());
+        $this->assertSame(['id' => 9, 'name' => 'Casa Café', 'slug' => 'casa-cafe', 'logo_url' => null, 'logo_srcset' => []], $opportunity->partner?->toArray());
         $this->assertSame(['food'], $opportunity->categories);
         $this->assertSame(app(MediaUrl::class)->url('benefits/cafe.jpg', 'benefit_card'), $opportunity->image);
         $this->assertSame('2026-09-01T10:00:00+00:00', $opportunity->startsAt?->format(DATE_ATOM));
@@ -128,6 +130,46 @@ class DiscoveryOpportunityAdapterTest extends TestCase
         $this->assertSame(app(MediaUrl::class)->url('unlocks/cena.jpg', 'hero'), $opportunity->image);
         $this->assertSame(1_000_000.0, $opportunity->editorialPriority);
         $this->assertSame([], DB::getQueryLog());
+    }
+
+    public function test_all_adapters_expose_public_responsive_partner_logos_without_partner_queries(): void
+    {
+        config(['media.imgproxy_url' => 'https://img.example.test', 'media.imgproxy_key' => str_repeat('ab', 32), 'media.imgproxy_salt' => str_repeat('cd', 32)]);
+        $key = 'partners/9/logo/00000000-0000-4000-8000-000000000009.webp';
+        $partner = $this->model(Partner::class, ['id' => 9, 'name' => 'Casa Café', 'slug' => 'casa-cafe', 'logo_path' => $key]);
+        $benefit = $this->model(Benefit::class, ['id' => 41, 'slug' => 'cafe', 'title' => 'Título comercial', 'short_description' => 'Descripción corta', 'status' => 'published', 'featured' => false]);
+        $experience = $this->model(Experience::class, ['id' => 44, 'slug' => 'taller', 'title' => 'Taller', 'short_description' => 'Conoce el taller', 'featured' => false]);
+        $location = $this->model(Location::class, ['id' => 12, 'city_id' => 1, 'name' => 'Centro']);
+        $session = $this->model(ExperienceSession::class, ['id' => 99, 'location_id' => 12, 'status' => 'scheduled']);
+        $unlock = $this->model(Unlock::class, ['id' => 77, 'slug' => 'cena', 'title' => 'Cena', 'status' => Unlock::ACTIVE, 'secret_mode' => false]);
+        $challenge = $this->model(Challenge::class, ['id' => 55, 'slug' => 'reto', 'title' => 'Reto', 'qualification_type' => 'MANUAL', 'evidence_type' => 'MANUAL', 'reward_type' => 'JP', 'reward_jp_amount' => 10, 'selection_type' => 'ALL']);
+        $challenge->setRelation('partner', $partner);
+        DB::enableQueryLog();
+        DB::flushQueryLog();
+
+        $items = [
+            app(BenefitOpportunityAdapter::class)->adapt($benefit, $this->city(), $partner),
+            app(ExperienceOpportunityAdapter::class)->adapt($experience, $this->city(), $session, $location, $partner),
+            app(ExperienceOpportunityAdapter::class)->proposal($experience, $this->city(), $partner, '/experiencias/taller'),
+            app(UnlockOpportunityAdapter::class)->adapt($unlock, $this->city(), new UnlockProgress(8, 1), $partner),
+            app(ChallengeOpportunityAdapter::class)->adapt($challenge, $this->city()),
+        ];
+
+        $queriesBeforeSerialization = count(DB::getQueryLog());
+        $this->assertSame('Título comercial', $items[0]->title);
+        $this->assertSame('Descripción corta', $items[0]->subtitle);
+        $this->assertSame('Conoce el taller', $items[1]->subtitle);
+        $this->assertSame('Conoce el taller', $items[2]->subtitle);
+        foreach ($items as $item) {
+            $payload = $item->partner->toArray();
+            $this->assertSame(app(MediaUrl::class)->url($key, 'partner_logo'), $payload['logo_url']);
+            $this->assertStringStartsWith('https://img.example.test/', $payload['logo_url']);
+            $this->assertSame(app(MediaUrl::class)->srcset($key, 'partner_logo'), $payload['logo_srcset']);
+            $this->assertNotEmpty($payload['logo_srcset']);
+            $this->assertArrayNotHasKey('logo_path', $payload);
+        }
+        $this->assertCount($queriesBeforeSerialization, DB::getQueryLog());
+        $this->assertSame([], array_values(array_filter(DB::getQueryLog(), fn ($query) => str_contains($query['query'], '"partners"'))));
     }
 
     private function city(): DiscoveryCity

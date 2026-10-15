@@ -26,7 +26,7 @@ final readonly class UnlockOpportunityAdapter
             city: $city,
             subtitle: $unlock->short_description,
             image: $this->mediaUrl->url($unlock->hero_path, 'hero'),
-            partner: $partner && $partnerVisible ? new DiscoveryPartner($partner->getKey(), $partner->name, $partner->slug) : null,
+            partner: $partner && $partnerVisible ? new DiscoveryPartner($partner->getKey(), $partner->name, $partner->slug, $this->mediaUrl->url($partner->logo_path, 'partner_logo'), $this->mediaUrl->srcset($partner->logo_path, 'partner_logo')) : null,
             location: $location && $locationVisible ? new DiscoveryLocation($location->getKey(), $location->name, $location->zone) : null,
             categories: [],
             availability: new DiscoveryAvailability(in_array($unlock->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED], true), $unlock->status),
