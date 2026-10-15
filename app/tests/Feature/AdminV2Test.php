@@ -12,6 +12,7 @@ use App\Services\MembershipService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AdminV2Test extends TestCase
@@ -43,7 +44,7 @@ class AdminV2Test extends TestCase
         $location = Location::firstOrFail();
         $this->assertTrue($location->checkRedemptionPin('123456'));
         $hash = $location->redemption_pin_hash;
-        $this->actingAs($admin)->put('/admin/locations/'.$location->slug, ['partner_id' => $partner->id, 'city_id' => $cityId, 'name' => 'Centro', 'slug' => 'centro', 'location_type' => 'branch', 'status' => 'published', 'redemption_pin' => ''])->assertRedirect();
+        $this->actingAs($admin)->put('/admin/locations/'.$location->id, ['partner_id' => $partner->id, 'city_id' => $cityId, 'name' => 'Centro', 'slug' => 'centro', 'location_type' => 'branch', 'status' => 'published', 'redemption_pin' => ''])->assertRedirect();
         $this->assertSame($hash, $location->fresh()->redemption_pin_hash);
     }
 
@@ -98,5 +99,85 @@ class AdminV2Test extends TestCase
     public function test_admin_can_view_locations_index(): void
     {
         $this->actingAs($this->admin())->get('/admin/locations')->assertOk();
+    }
+
+    public function test_admin_location_edit_uses_ids_for_draft_and_published(): void
+    {
+        $this->actingAs($this->admin());
+
+        foreach (['draft', 'published'] as $status) {
+            $location = Location::factory()->create(['status' => $status]);
+
+            $this->get('/admin/locations/'.$location->id.'/edit')
+                ->assertOk()
+                ->assertInertia(fn (Assert $page) => $page
+                    ->component('admin/resources/form')
+                    ->where('item.id', $location->id)
+                    ->where('item.status', $status));
+        }
+    }
+
+    public function test_admin_location_update_uses_ids_without_changing_status(): void
+    {
+        $this->actingAs($this->admin());
+        $cityId = City::where('slug', 'cochabamba')->value('id');
+
+        foreach (['draft', 'published'] as $status) {
+            $location = Location::factory()->create(['status' => $status, 'city_id' => $cityId]);
+
+            $this->put('/admin/locations/'.$location->id, [
+                'name' => 'Dirección administrativa actualizada',
+                'slug' => $location->slug,
+                'location_type' => $location->location_type,
+                'status' => $status,
+                'city_id' => $cityId,
+            ])->assertRedirect(route('admin.locations.index'))->assertSessionHasNoErrors();
+
+            $this->assertDatabaseHas('locations', [
+                'id' => $location->id,
+                'slug' => $location->slug,
+                'name' => 'Dirección administrativa actualizada',
+                'status' => $status,
+                'city_id' => $cityId,
+            ]);
+        }
+    }
+
+    public function test_admin_location_unknown_ids_return_not_found(): void
+    {
+        $this->actingAs($this->admin());
+        $missingId = (Location::max('id') ?? 0) + 1;
+
+        $this->get('/admin/locations/'.$missingId.'/edit')->assertNotFound();
+        $this->put('/admin/locations/'.$missingId, [])->assertNotFound();
+    }
+
+    public function test_admin_location_edit_and_update_require_admin(): void
+    {
+        $location = Location::factory()->create();
+        $original = $location->fresh()->getAttributes();
+
+        $this->get('/admin/locations/'.$location->id.'/edit')->assertRedirect('/login');
+        $this->put('/admin/locations/'.$location->id, [])->assertRedirect('/login');
+
+        $this->actingAs(User::factory()->create(['is_admin' => false]));
+        $this->get('/admin/locations/'.$location->id.'/edit')->assertForbidden();
+        $this->put('/admin/locations/'.$location->id, [])->assertForbidden();
+        $this->assertSame($original, $location->fresh()->getAttributes());
+    }
+
+    public function test_public_location_binding_remains_slug(): void
+    {
+        $published = Location::factory()->published()->create(['maps_url' => 'https://maps.example.test/place']);
+        $draft = Location::factory()->create(['status' => 'draft']);
+
+        $this->assertSame('slug', $published->getRouteKeyName());
+        $this->get('/lugares/'.$published->slug)->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('locations/show')
+                ->where('location.id', $published->id));
+        $this->get('/lugares/'.$published->slug.'/mapa')->assertRedirect('https://maps.example.test/place');
+        $this->get('/lugares/'.$published->id)->assertNotFound();
+        $this->get('/lugares/'.$draft->slug)->assertNotFound();
     }
 }

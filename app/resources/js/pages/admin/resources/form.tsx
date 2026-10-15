@@ -1,3 +1,4 @@
+import PartnerLocationForm from './partner-location-form';
 import { ImageUpload } from '@/components/media/image-upload';
 import { useState } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
@@ -120,7 +121,7 @@ const defaults: Record<string, any> = {
     cover: null,
     logo: null,
 };
-export default function ResourceForm({
+function LegacyResourceForm({
     title,
     resource,
     item,
@@ -370,4 +371,8 @@ export default function ResourceForm({
             </form>
         </AdminLayout>
     );
+}
+
+export default function ResourceForm(props: any) {
+    return ['partners', 'locations'].includes(props.resource) ? <PartnerLocationForm {...props} /> : <LegacyResourceForm {...props} />;
 }

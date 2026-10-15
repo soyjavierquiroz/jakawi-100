@@ -287,8 +287,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('locations', [AdminController::class, 'locations'])->name('admin.locations.index');
     Route::get('locations/create', [AdminController::class, 'locationForm'])->name('admin.locations.create');
     Route::post('locations', [AdminController::class, 'saveLocation'])->name('admin.locations.store');
-    Route::get('locations/{location}/edit', [AdminController::class, 'locationForm'])->name('admin.locations.edit');
-    Route::put('locations/{location}', [AdminController::class, 'saveLocation'])->name('admin.locations.update');
+    Route::get('locations/{location:id}/edit', [AdminController::class, 'locationForm'])->name('admin.locations.edit');
+    Route::put('locations/{location:id}', [AdminController::class, 'saveLocation'])->name('admin.locations.update');
     Route::get('benefits', [AdminController::class, 'benefits'])->name('admin.benefits.index');
     Route::get('benefits/create', [AdminController::class, 'benefitForm'])->name('admin.benefits.create');
     Route::post('benefits', [AdminController::class, 'saveBenefit'])->name('admin.benefits.store');

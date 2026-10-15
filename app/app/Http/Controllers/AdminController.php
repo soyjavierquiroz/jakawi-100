@@ -47,12 +47,12 @@ class AdminController extends Controller
 
     public function partners(PartnerAcquisitionMetrics $acquisition): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'items' => Partner::orderBy('name')->get()->map(fn (Partner $partner) => $partner->toArray() + ['acquisition' => $acquisition->forPartner($partner)])]);
+        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'items' => Partner::with(['locations' => fn ($query) => $query->select('id', 'partner_id', 'name', 'status', 'city', 'city_id', 'is_primary'), 'locations.cityEntity:id,name'])->orderBy('name')->get()->map(fn (Partner $partner) => $partner->toArray() + ['acquisition' => $acquisition->forPartner($partner), 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'gallery_count' => count($partner->gallery_paths ?? []), 'publicUrl' => $partner->isPublished() ? route('partners.public', $partner) : null])]);
     }
 
     public function partnerForm(?Partner $partner = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['galleryUrls' => array_map(fn ($key) => app(MediaUrl::class)->url($key, 'partner_editorial'), $partner->gallery_paths ?? []), 'logoCropUrl' => $partner->logo_path ? route('admin.partners.logo-source', $partner->id, false) : null, 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'coverUrl' => app(MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner ? route('partners.public', $partner) : null]);
+        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['galleryUrls' => array_map(fn ($key) => app(MediaUrl::class)->url($key, 'partner_editorial'), $partner->gallery_paths ?? []), 'logoCropUrl' => $partner->logo_path ? route('admin.partners.logo-source', $partner->id, false) : null, 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'coverUrl' => app(MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner?->isPublished() ? route('partners.public', $partner) : null, 'locations' => $partner ? $partner->locations()->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'status', 'address', 'city']) : []]);
     }
 
     public function partnerLogoSource(Partner $partner)
@@ -81,7 +81,7 @@ class AdminController extends Controller
             $partner->gallery_paths = array_values(array_filter($paths, fn ($key) => $key !== null)) ?: null;
             $partner->save();
 
-            return to_route('admin.partners.index');
+            return to_route('admin.partners.index')->with('success', 'Partner guardado correctamente.');
         });
     }
 
@@ -99,9 +99,9 @@ class AdminController extends Controller
         return Inertia::render('admin/resources/index', ['title' => 'Locations', 'resource' => 'locations', 'items' => Location::with(['partner', 'cityEntity'])->orderBy('name')->get(), 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
     }
 
-    public function locationForm(?Location $location = null): Response
+    public function locationForm(Request $request, ?Location $location = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin(), 'imageUrl' => app(MediaUrl::class)->url($location->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'cities' => City::orderByDesc('priority')->orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('admin/resources/form', ['title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin(), 'imageUrl' => app(MediaUrl::class)->url($location->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'cities' => City::orderByDesc('priority')->orderBy('name')->get(['id', 'name']), 'initialPartnerId' => ! $location && $request->filled('partner') ? Partner::whereKey($request->integer('partner'))->value('id') : null]);
     }
 
     public function saveLocation(Request $request, ?Location $location = null)
@@ -117,7 +117,7 @@ class AdminController extends Controller
             } $location->save();
             $this->upload($request, $location, 'image', 'image_path', 'locations');
 
-            return to_route('admin.locations.index');
+            return to_route('admin.locations.index')->with('success', 'Location guardada correctamente.');
         });
     }
 
