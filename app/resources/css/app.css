@@ -39,21 +39,22 @@
 }
 .explorer-partner-avatar {
     position: absolute;
-    top: 16px;
-    left: -14px;
+    bottom: 16px;
+    left: -21px;
     display: grid;
     place-items: center;
-    width: 28px;
-    height: 28px;
+    width: 42px;
+    height: 42px;
     overflow: hidden;
     border: 2px solid #fff8f2;
     border-radius: 50%;
     background: var(--surface-raised);
     color: var(--foreground);
     box-shadow: 0 2px 5px rgb(17 17 17 / 8%);
-    font-size: 9px;
+    font-size: 13.5px;
     font-weight: 800;
     line-height: 1;
+    pointer-events: none;
 }
 .explorer-card-type::before {
     content: '';
@@ -71,11 +72,13 @@
         padding-left: var(--space-card);
     }
     .explorer-partner-avatar {
-        top: -16px;
-        left: var(--space-card);
-        width: 32px;
-        height: 32px;
-        font-size: 10px;
+        top: -24px;
+        right: var(--space-card);
+        bottom: auto;
+        left: auto;
+        width: 48px;
+        height: 48px;
+        font-size: 15px;
     }
 }
 
