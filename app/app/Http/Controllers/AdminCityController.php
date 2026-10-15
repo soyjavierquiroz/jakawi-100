@@ -38,7 +38,7 @@ class AdminCityController extends Controller
             'metadata' => ['before' => null, 'after' => $this->attributes($city)],
         ]);
 
-        return to_route('admin.cities.show', $city);
+        return to_route('admin.cities.show', $city)->with('success', 'Ciudad guardada correctamente.');
     }
 
     public function show(City $city, CityExpansionMetrics $metrics): Response
@@ -66,7 +66,7 @@ class AdminCityController extends Controller
 
     public function edit(City $city): Response
     {
-        return Inertia::render('admin/cities/form', ['city' => $city, 'statuses' => City::statuses()]);
+        return Inertia::render('admin/cities/form', ['city' => $city->makeVisible('community_invite_url'), 'statuses' => City::statuses()]);
     }
 
     public function update(Request $request, City $city)
@@ -82,7 +82,7 @@ class AdminCityController extends Controller
             'metadata' => ['before' => $before, 'after' => $this->attributes($city->fresh())],
         ]);
 
-        return to_route('admin.cities.show', $city);
+        return to_route('admin.cities.show', $city)->with('success', 'Ciudad guardada correctamente.');
     }
 
     public function updateStatus(Request $request, City $city)
@@ -104,7 +104,7 @@ class AdminCityController extends Controller
             ],
         ]);
 
-        return to_route('admin.cities.show', $city);
+        return to_route('admin.cities.show', $city)->with('success', 'Ciudad guardada correctamente.');
     }
 
     /** @return array<string, mixed> */
@@ -118,6 +118,9 @@ class AdminCityController extends Controller
             'region' => ['nullable', 'string', 'max:255'],
             'country_code' => ['required', 'string', 'size:2'],
             'priority' => ['required', 'integer'],
+            'community_enabled' => ['sometimes', 'boolean'],
+            'community_name' => ['required_if:community_enabled,1,true', 'nullable', 'string', 'max:255'],
+            'community_invite_url' => ['required_if:community_enabled,1,true', 'nullable', 'string', 'max:255', new \App\Rules\WhatsAppCommunityUrl],
         ];
 
         if ($includeStatus) {
@@ -130,6 +133,6 @@ class AdminCityController extends Controller
     /** @return array<string, mixed> */
     private function attributes(City $city): array
     {
-        return $city->only(['name', 'slug', 'region', 'country_code', 'status', 'priority']);
+        return $city->only(['name', 'slug', 'region', 'country_code', 'status', 'priority', 'community_enabled', 'community_name']);
     }
 }

@@ -1,10 +1,11 @@
+import { CityCommunityCard, type CityCommunityData } from '@/components/city-community-card';
 import { Head } from '@inertiajs/react';
 
 const title = 'JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba';
 const description = 'Beneficios, experiencias, retos y nuevos planes para vivir más Cochabamba. JAKAWI llega pronto.';
 
 /** The official prelaunch presence has no inventory or application navigation. */
-export default function ComingSoon() {
+export default function ComingSoon({ community }: { community?: CityCommunityData | null }) {
     return (
         <div data-coming-soon data-marketing-theme="light-conversion" className="min-h-screen overflow-hidden bg-[var(--cream)] font-discovery text-[var(--ink)]">
             <Head title={title}>
@@ -60,6 +61,7 @@ export default function ComingSoon() {
                     </p>
                     <p className="mt-6 text-xs font-extrabold tracking-[0.18em]">PRÓXIMAMENTE.</p>
                 </section>
+                {community && <div className="mx-auto max-w-7xl px-6 pb-8 sm:px-10"><CityCommunityCard community={community} /></div>}
             </main>
         </div>
     );

@@ -12,6 +12,7 @@ class RegisterResponse implements RegisterResponseContract
 {
     public function toResponse($request)
     {
+        $request->session()->put('community_onboarding', $request->user()->id);
         $partnerReturn = \App\Http\Controllers\PartnerPublicController::consumeReturn($request);
         if ($request->wantsJson()) {
             return response()->json('', 201);

@@ -55,6 +55,7 @@ class MembershipController extends Controller
         $jpBalance = app(JpBalanceService::class)->for($user);
 
         return Inertia::render('mi-jakawi', [
+            'community' => app(\App\Services\CityCommunity::class)->data($request, 'mi-jakawi'),
             'challenges' => ChallengeParticipation::where('user_id',$user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type','socialEntries:id,participation_id,likes,views,comments,validation_status','grant:id,participation_id,status,reward_type,jp_amount,benefit_id','grant.benefit:id,title'])->latest()->get()->map(function ($p) {
                 $c=$p->challenge; $metric=$c->qualification_metric;
                 return ['title'=>$c->title,'slug'=>$c->slug,'qualification_status'=>$p->qualification_status,'selection_status'=>$p->selection_status,

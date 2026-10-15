@@ -39,6 +39,7 @@ return [
         'enabled' => true,
         'visitor_cookie' => env('JAKAWI_ANALYTICS_VISITOR_COOKIE', 'jakawi_visitor_id'),
         'events' => [
+            'community_presented', 'community_opened', 'community_snoozed', 'community_declined', 'community_self_reported_joined', 'community_reset',
             'home_view', 'partner_view', 'location_view', 'benefit_view', 'experience_view',
             'social_challenge_view', 'social_challenge_intent_started', 'social_participation_submitted', 'social_participation_validation_result', 'social_challenge_qualified', 'social_challenge_reward_granted',
             'challenge_view', 'challenge_participation_started', 'challenge_entry_submitted', 'challenge_qualified', 'challenge_candidate', 'challenge_reward_granted',

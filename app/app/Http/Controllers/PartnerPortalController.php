@@ -30,6 +30,7 @@ class PartnerPortalController extends Controller
         }
 
         return Inertia::render('partner/index', [
+            'community' => app(\App\Services\CityCommunity::class)->data($request, 'mi-jakawi'),
             'partners' => $partners->map(fn ($partner) => [
                 'id' => $partner->id,
                 'name' => $partner->name,
@@ -44,6 +45,7 @@ class PartnerPortalController extends Controller
         $relation = $request->user()->partners()->whereKey($partner->id)->firstOrFail();
         $canViewAcquisition = in_array($relation->pivot->role, ['owner', 'manager'], true);
         return Inertia::render('partner/dashboard', [
+            'community' => app(\App\Services\CityCommunity::class)->data($request, 'mi-jakawi'),
             'partner' => $partner->only(['name', 'slug']) + ['public_url' => route('partners.public', $partner)] + ($canViewAcquisition ? ['referral_code' => $partner->referral_code, 'referral_link' => $partner->referral_code ? route('referrals.open', $partner->referral_code) : null] : []),
             'acquisition' => $canViewAcquisition ? $acquisition->forPartner($partner) : null,
             'rewards' => $canViewAcquisition ? collect([RewardTransaction::STATUS_PENDING, RewardTransaction::STATUS_AVAILABLE, RewardTransaction::STATUS_PAID])->mapWithKeys(fn ($status) => [$status => number_format((float) RewardTransaction::where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER)->where('beneficiary_id', $partner->id)->where('status', $status)->sum('amount'), 2, '.', '')])->all() : null,

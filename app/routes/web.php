@@ -140,6 +140,8 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::post('/partner/{partner:slug}/experiencias/{experience:slug}/enviar', [PartnerContentController::class, 'submitExperience'])->name('partner.experiences.submit');
 });
 
+Route::post('/comunidades/{city:slug}/interaccion', [\App\Http\Controllers\CityCommunityController::class, 'store'])->middleware(['auth', 'throttle:60,1'])->name('communities.interact');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/retos/{challenge:slug}/publicaciones', [ChallengeController::class, 'submit'])->middleware('throttle:10,1')->name('social-challenges.submit');
     Route::get('/retos/{challenge:slug}/publicaciones/{entry}/estado', [ChallengeController::class, 'entryStatus'])->middleware('throttle:600,1')->name('social-challenges.entry-status');

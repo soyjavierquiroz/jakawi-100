@@ -22,7 +22,21 @@ class City extends Model
 
     public const PAUSED = 'PAUSED';
 
-    protected $fillable = ['name', 'slug', 'region', 'country_code', 'status', 'priority'];
+    protected $fillable = ['name', 'slug', 'region', 'country_code', 'status', 'priority', 'community_enabled', 'community_name', 'community_invite_url'];
+
+    protected $hidden = ['community_invite_url'];
+
+    protected function casts(): array
+    {
+        return ['community_enabled' => 'boolean'];
+    }
+
+    public function hasCommunity(): bool
+    {
+        return $this->status === self::ACTIVE && $this->community_enabled
+            && filled($this->community_name)
+            && \App\Rules\WhatsAppCommunityUrl::valid($this->community_invite_url);
+    }
 
     public function getRouteKeyName(): string
     {

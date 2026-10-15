@@ -215,7 +215,9 @@ class AnalyticsTracker
         $data['occurred_at'] = now();
 
         try {
-            return AnalyticsEvent::create($data);
+            return str_starts_with($event, 'community_')
+                ? \Illuminate\Support\Facades\DB::transaction(fn () => AnalyticsEvent::create($data))
+                : AnalyticsEvent::create($data);
         } catch (QueryException $exception) {
             Log::warning('Analytics event could not be recorded.', ['event' => $event, 'exception' => $exception->getMessage()]);
 
@@ -254,6 +256,7 @@ class AnalyticsTracker
             return [];
         }
         $allowed = match ($event) {
+            'community_presented', 'community_opened', 'community_snoozed', 'community_declined', 'community_self_reported_joined', 'community_reset' => ['city_id', 'city_slug', 'source'],
             'experience_reserve_click' => ['reservation_method'],
             'journey_intent_started' => ['journey', 'action', 'resource_id', 'resource_slug', 'city', 'auth_state', 'membership_state'],
             'journey_auth_started' => ['journey', 'action', 'resource_id', 'auth_destination'],
@@ -280,7 +283,7 @@ class AnalyticsTracker
         if (isset($metadata['reservation_method']) && ! in_array($metadata['reservation_method'], config('jakawi.reservation_methods'), true)) {
             throw new InvalidArgumentException('Reservation method is not allowed.');
         }
-        if (isset($metadata['source']) && ! in_array($metadata['source'], config('jakawi.analytics.maps_sources'), true)) {
+        if (! str_starts_with($event, 'community_') && isset($metadata['source']) && ! in_array($metadata['source'], config('jakawi.analytics.maps_sources'), true)) {
             throw new InvalidArgumentException('Analytics source is not allowed.');
         }
         foreach (['journey' => ['EXPERIENCE', 'UNLOCK', 'BENEFIT'], 'action' => ['RESERVE', 'COMMIT', 'REDEEM'],

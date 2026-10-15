@@ -33,7 +33,9 @@ class PublicController extends Controller
     public function home(Request $request, AnalyticsTracker $analytics, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
         if (config('jakawi.prelaunch_mode')) {
-            return Inertia::render('coming-soon');
+            return Inertia::render('coming-soon', [
+                'community' => app(\App\Services\CityCommunity::class)->data($request, 'home'),
+            ]);
         }
 
         $analytics->homeViewed();
@@ -49,6 +51,7 @@ class PublicController extends Controller
         ));
 
         return Inertia::render('welcome', [
+            'community' => app(\App\Services\CityCommunity::class)->data($request, 'home'),
             'challenges' => array_map(fn ($item) => $item->toArray(), $discovery->explore(new DiscoveryContext(city: $city, user: $request->user(), surface: 'home'), OpportunityType::CHALLENGE, limit: 4)),
             'discovery' => [
                 'hero' => $result->hero?->toArray(),

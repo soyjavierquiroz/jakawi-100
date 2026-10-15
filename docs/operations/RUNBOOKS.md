@@ -125,3 +125,15 @@ Registrar hora, síntoma, alcance, responsable y evidencia sanitizada. Lecturas 
 **DO NOT:** No tratar ausencia de eventos Meta como fallo de runtime mientras está deshabilitado; no activar flags, enviar ni backfill para esta revisión.
 
 Referencias: [gate piloto](PILOT_READINESS.md), [inventario](MANUAL_DE_INVENTARIO.md), [Meta Provider V1](../../app/docs/meta-provider-v1.md).
+
+## Comunidades JAKAWI V1 — configuración posterior al despliegue
+
+Implementación preparada; este documento no acredita despliegue ni habilitación. La migración incremental `2026_10_15_000001_add_city_communities.php` añade configuración deshabilitada a `cities` y una tabla de interacción vacía; no crea comunidades ni enlaces. Aplicarla únicamente dentro de un release autorizado siguiendo [OPERATIONS](../OPERATIONS.md), con backup. No ejecutar migraciones de test contra producción.
+
+1. Una persona de JAKAWI crea la comunidad oficial en WhatsApp y configura los anuncios para que solo administradores publiquen. Revisar también privacidad y visibilidad de contacto en WhatsApp.
+2. Obtener el enlace oficial. El formato admitido es `https://chat.whatsapp.com/` más el código alfanumérico de 22 caracteres; pegar la forma canónica sin parámetros, puerto ni fragmento. No utilizar acortadores, `wa.me`, URLs de teléfono ni destinos arbitrarios. La validación comprueba formato y destino, no vigencia ni propiedad: el operador debe comprobar ambos en WhatsApp.
+3. Admin → Ciudades → Cochabamba → Editar: indicar nombre visible, pegar enlace oficial y marcar “Habilitar comunidad”. Guardar; la pantalla de ciudad confirma el guardado. La ciudad debe estar ACTIVE. Repetir individualmente para futuras ciudades.
+4. Comprobar con cuenta gratuita la tarjeta contextual y el acceso permanente en Mi JAKAWI, así como el aviso de plataforma externa. No usar cuentas reales para QA automatizado.
+5. Para desactivar: desmarcar “Habilitar comunidad” y guardar. No borrar ciudad ni interacciones. La medida es independiente por ciudad; una tarjeta antigua ya abierta también se rechaza al intentar usarla. Para revocar accesos ya conocidos, revocar el enlace también en WhatsApp: JAKAWI no administra sus miembros ni puede invalidar enlaces externos.
+
+Si no aparece una invitación: comprobar ciudad seleccionada/ACTIVE, habilitación, nombre y formato de URL; después estado por usuario/ciudad, intervalos 14/30 días, máximo tres exposiciones y supresión de sesión. El acceso de Mi JAKAWI sigue disponible después de rechazo o autodeclaración, siempre que la comunidad continúe habilitada. Las interacciones y los eventos no verifican miembros reales. Detalle de estados y frecuencia: [Manual de Funciones](../product/MANUAL_DE_FUNCIONES.md#comunidades-jakawi-v1--implementación-pendiente-de-despliegue).

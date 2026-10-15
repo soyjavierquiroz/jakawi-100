@@ -1,3 +1,4 @@
+import { CityCommunityCard, type CityCommunityData } from '@/components/city-community-card';
 import { Head, Link } from '@inertiajs/react';
 
 type Partner = {
@@ -7,7 +8,7 @@ type Partner = {
     role: 'owner' | 'manager' | 'staff';
 };
 
-export default function PartnerIndex({ partners }: { partners: Partner[] }) {
+export default function PartnerIndex({ partners, community }: { partners: Partner[]; community?: CityCommunityData | null }) {
     return (
         <>
             <Head title="Portal Partner" />
@@ -24,6 +25,7 @@ export default function PartnerIndex({ partners }: { partners: Partner[] }) {
                         ))}
                     </ul>
                 </div>
+                <CityCommunityCard community={community} permanent />
             </section>
         </>
     );
