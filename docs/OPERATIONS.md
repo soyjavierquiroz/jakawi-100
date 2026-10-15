@@ -76,8 +76,9 @@ Todas las pruebas y comandos contra base de test pasan por:
 ```bash
 ./bin/jakawi-test
 ./bin/jakawi-test php artisan test
-./bin/jakawi-test npm run types:check
 ```
+
+La imagen de tests contiene PHP/Composer; TypeScript y manifest se verifican en el target Docker `build`, que ejecuta `npm run types:check` y `npm run build`. No ejecutar npm/Artisan del host para suplir esa validación.
 
 El wrapper crea/usa `jakawi-test`, `app-test`, `db-test`, `jakawi_test` y el volumen `jakawi-test_jakawi_test_pgdata`; rechaza un entorno, host o base que no sean los esperados. Para detenerlo: `./bin/jakawi-test down`. `./bin/jakawi-test clean` borra únicamente el volumen de test aislado. No hay flujo preview operativo documentado para producción: `compose.preview.yaml` queda fuera de este runbook y no debe usarse como sustituto de tests ni de deploy.
 
@@ -176,3 +177,13 @@ Cambios sólo documentales: `git diff --check`, revisión de status/stat y enlac
 ## Modo público de pre-lanzamiento
 
 **PRELAUNCH MODE V1 LIVE.** `PRELAUNCH_MODE=true`: raíz Coming Soon estática e indexable; recorridos públicos directos disponibles con aviso permanente y `noindex,nofollow`. Admin/preview/auth sin cambios. Default `false` restaura Home/navegación/SEO existentes. Catálogo clean slate, ejemplos reales pendientes; Welcome Courtesy FUTURE / OFF. [Contrato y operación](operations/PRELAUNCH_MODE_V1.md).
+
+## Controles verificados en Gold stabilization (2026-10-15)
+
+Admin exige auth/verified/admin; el middleware Partner verifica el pivote y el Partner de la ruta, y Content Studio comprueba pertenencia del recurso. El POST firmado de canje mantiene firma, auth, verified y Partner, y ahora aplica el mismo límite 20/minuto de la validación manual. No se modifican canjes, grants ni reglas económicas. Los errores de estructura en Locations de un Benefit se resuelven como validación 422 antes de consultar pertenencia.
+
+Media mantiene auth y throttle 30/minuto en uploads, JPEG/PNG/WebP, máximo 10 MB, límites de dimensiones/píxeles, decodificación y normalización WebP; tokens cifrados con propietario y vencimiento, escritura privada comprobada y reemplazo sin borrar el original. No se ejecutan uploads QA ni purgas productivas durante estabilización.
+
+La revisión efectiva de producción comprueba únicamente valores no secretos: APP_DEBUG=false, sesión Secure/HttpOnly/SameSite=lax, PRELAUNCH=true, CRM=true y Meta provider/browser/CAPI=false. El nginx existente añade SAMEORIGIN, nosniff y Referrer-Policy; los secretos no se imprimen ni se rotan. Auditar dependencias con Composer audit --locked --no-dev dentro de Docker y npm audit sobre el lock; no ejecutar audit fix indiscriminado.
+
+El release Gold usa un worktree limpio desde el SHA LIVE porque el árbol original conserva trabajo previo. Las imágenes app/web se producen del mismo build y worker acompaña la imagen app. Guardar imágenes exactas anteriores de los tres servicios en un override de rollback bajo backups; `docker compose --project-name jakawicom -f compose.yaml -f backups/gold-stabilization-20261015/rollback.yaml up -d --no-deps --no-build --force-recreate app web social-worker` restaura el runtime sin tocar DB. La evidencia final y el estado están en [Gold report](../artifacts/gold-stabilization-20261015/REPORT.md).

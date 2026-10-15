@@ -1,0 +1,65 @@
+{
+  "integrated_initial": {
+    "passed": 687,
+    "failed": 14,
+    "assertions": 10165,
+    "new_fixture_failure_corrected": 1,
+    "preexisting_reproduced_on_live_sha": 12,
+    "preexisting_invalid_cross_table_id_assertion": 1
+  },
+  "focused_final": {
+    "passed": 45,
+    "failed": 0,
+    "assertions": 690
+  },
+  "performance": {
+    "fixture": "8 published Benefits in Explore",
+    "landing_queries_before": 8,
+    "landing_queries_after": 1,
+    "measurement": "isolated PostgreSQL query log; no production load test"
+  },
+  "typescript": "PASS",
+  "build": "PASS",
+  "manifest": {
+    "status": "PASS",
+    "inertia_pages": 109
+  },
+  "php_lint": {
+    "status": "PASS",
+    "files": 9
+  },
+  "npm_audit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "composer_audit": {
+    "advisories": 0,
+    "abandoned": 0,
+    "scope": "locked --no-dev"
+  },
+  "git_diff_check": "PASS",
+  "documentation_check": {
+    "files": 74,
+    "targets": 476,
+    "broken": 0
+  },
+  "candidate_smoke": {
+    "read_only_routes": 16,
+    "browser_views": 32,
+    "status": "PASS"
+  },
+  "live_smoke": {
+    "status": "PASS",
+    "read_only_routes": 16,
+    "browser_views": 32,
+    "page_errors": 0,
+    "root_public_robots": "PASS",
+    "data_snapshots": "IDENTICAL",
+    "up_local": 200,
+    "up_public": 200
+  }
+}

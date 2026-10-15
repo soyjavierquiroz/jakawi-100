@@ -20,6 +20,10 @@ flowchart LR
 
 El build Docker compila Vite una vez y copia el resultado tanto a la imagen `app` como a `web`. Por ello, cualquier cambio de frontend exige reconstruir/recrear ambos servicios en el mismo despliegue: mezclarlos deja manifests o chunks incompatibles.
 
+## Resolución de Landings en listados
+
+Discovery (Benefit, Experience, Unlock y Challenge) y el inventario del Partner cargan las presentaciones por lote con sólo ID, subject, slug, estado y alcance. ProductLandingResolver usa esa relación cargada; las llamadas individuales conservan su query. Sólo PUBLISHED con alcance aplicable puede ser presentación primaria: GUESTS/ALL para visitantes, ALL para autenticados; sin coincidencia se conserva la ficha nativa. No se añade caché entre usuarios ni cambia atribución.
+
 ## Aplicación y frontend consumidor
 
 Las rutas públicas principales son `/`, `/explorar`, partners, lugares, beneficios y experiencias. Las rutas autenticadas incluyen `/mi-jakawi` y `/perfil`; el shell móvil canónico muestra Inicio, Explorar, Mi JAKAWI y Perfil. “Cerca” es una faceta de Explorar, no una navegación primaria.

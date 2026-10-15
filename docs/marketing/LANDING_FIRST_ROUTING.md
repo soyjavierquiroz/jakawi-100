@@ -9,3 +9,7 @@ Direct generic product GET routes retain `ResolveProductLanding`, which forwards
 A Landing CTA is a domain action, never a presentation route. Guests open the existing Micro Opt-in/login flow and retain Partner acquisition context through the session. Authenticated viewers use `landingDirectAction` (Benefit: POST `redemptions.start`) or the Landing activation stage for required choices. Activation renders the existing conversion controls and does not run presentation selection. Existing users do not acquire new Partner ownership.
 
 PRELAUNCH_MODE, PrelaunchNotice, direct-page noindex,nofollow and the Coming Soon root's index,follow remain unchanged. This routing change requires no migration or product-data change.
+
+## Gold stabilization — resolución por lote
+
+Discovery y el inventario del Partner precargan las Landings para evitar una consulta adicional por tarjeta. ProductLandingResolver conserva PUBLISHED + alcance del viewer y fallback nativo, sin caché compartida ni cambio de adquisición o acciones. La relación cargada usa sólo columnas de resolución; el contenido editorial se obtiene al abrir la Landing.
