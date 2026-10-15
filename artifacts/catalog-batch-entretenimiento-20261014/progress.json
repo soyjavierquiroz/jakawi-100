@@ -1,0 +1,92 @@
+[
+    {
+        "key": "aventura-games-cochabamba",
+        "name": "Aventura Games Cochabamba",
+        "domain": "Benefit",
+        "partner_id": 12,
+        "location_id": 11,
+        "product_id": 8,
+        "landing_id": 12,
+        "title": "Salta con JAKAWI",
+        "price_bob": 55,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/beneficios/aventura-games-cochabamba-salta-con-jakawi/landings/aventura-games-cochabamba-salta-con-jakawi/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Benefit",
+            "title": "Salta con JAKAWI",
+            "partner": "Aventura Games Cochabamba",
+            "summary": "Dos horas para salir de la rutina y vivir la diversión.",
+            "description": "Dos horas para salir de la rutina y vivir la diversión.\n\nUn paquete de entretenimiento en Aventura Games para disfrutar una visita al parque con medias antideslizantes incluidas.\n\nIncluye propuesto, sujeto a confirmación operativa: Acceso recreativo durante 2 horas. Un par de medias antideslizantes para el participante.\n\nPrecio comercial JAKAWI: Bs 55 por persona (BOB).\n\nLugar de referencia: Aventura Games Cochabamba, Rafael Méndez Claure, Cochabamba.\n\nLas atracciones efectivamente incluidas deben confirmarse; no se afirma acceso a todas las atracciones. El uso dependerá de las reglas reales del parque y de las restricciones aplicables de edad, estatura o capacidad. Supervisión, equipamiento, condiciones de responsabilidad y seguridad están pendientes de confirmación.\n\nCuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados.",
+            "demo": false,
+            "commercial_truth": {
+                "benefit_type": "other",
+                "value": {
+                    "description": "Salta con JAKAWI"
+                },
+                "membership_required": false,
+                "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+                "available": false,
+                "validity": {
+                    "ends_at": "2026-11-30T23:59:59-04:00",
+                    "timezone": "America/La_Paz"
+                },
+                "requirements": [
+                    "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+                ],
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 55 por persona (BOB). Cuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados. Horarios sujetos a disponibilidad. Uso según las reglas reales del Benefit. Las atracciones efectivamente incluidas deben confirmarse; no se afirma acceso a todas las atracciones. El uso dependerá de las reglas reales del parque y de las restricciones aplicables de edad, estatura o capacidad. Supervisión, equipamiento, condiciones de responsabilidad y seguridad están pendientes de confirmación. Lugar de referencia: Aventura Games Cochabamba, Rafael Méndez Claure, Cochabamba. Pendientes operativos: Días y horarios elegibles; atracciones incluidas; condiciones de uso; restricciones reales de edad, estatura o capacidad; supervisión y equipamiento de seguridad; duración real autorizada; disponibilidad de medias; procedimiento de acceso y canje; responsabilidad y seguridad aplicables."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    },
+    {
+        "key": "armagedon-for-gamers",
+        "name": "Armagedon for Gamers",
+        "domain": "Experience",
+        "partner_id": 13,
+        "location_id": 12,
+        "product_id": 4,
+        "landing_id": 13,
+        "title": "Duelo gamer",
+        "price_bob": 45,
+        "status": "draft",
+        "landing_status": "DRAFT",
+        "preview": "https://jakawi.com/admin/experiencias/armagedon-for-gamers-duelo-gamer/landings/armagedon-for-gamers-duelo-gamer/preview",
+        "brief": {
+            "brief_version": "jakawi-product-brief-v1",
+            "domain": "Experience",
+            "title": "Duelo gamer",
+            "partner": "Armagedon for Gamers",
+            "summary": "Tu próximo rival puede estar sentado a tu lado.",
+            "description": "Tu próximo rival puede estar sentado a tu lado.\n\nUna experiencia de juego compartido que convierte una sesión gamer en un desafío entre amigos.\n\nIncluye propuesto, sujeto a confirmación operativa: Tiempo fijo de juego por participante, duración pendiente de confirmación. Una partida o dinámica de reto entre los participantes. Un snack sencillo elegible.\n\nPrecio comercial JAKAWI: Bs 45 por persona (BOB). Mínimo dos personas; Bs 90 total para el grupo mínimo.\n\nLugar de referencia: Armagedon for Gamers, Adela Zamudio 1621, Cochabamba.\n\nMínimo propuesto: dos participantes. No es un torneo oficial, competición profesional ni evento con premios. El equipamiento, las plataformas, los juegos, la capacidad y la modalidad deben confirmarse. La duración del juego no fue proporcionada y queda pendiente.\n\nCuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados.",
+            "commercial_truth": {
+                "experience_type": "social",
+                "prices": {
+                    "currency": "BOB",
+                    "regular_price": "45.00"
+                },
+                "reservation_mode": "informational",
+                "available_sessions": 0,
+                "conditions": [
+                    "Precio comercial JAKAWI: Bs 45 por persona (BOB). Mínimo dos personas; Bs 90 total para el grupo mínimo. Cuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados. Disponibilidad sujeta a coordinación. El mínimo de participantes y la vigencia son condiciones comerciales propuestas, no automatizadas mediante sesiones ni reservas. Mínimo propuesto: dos participantes. No es un torneo oficial, competición profesional ni evento con premios. El equipamiento, las plataformas, los juegos, la capacidad y la modalidad deben confirmarse. La duración del juego no fue proporcionada y queda pendiente. Lugar de referencia: Armagedon for Gamers, Adela Zamudio 1621, Cochabamba. Pendientes operativos: Tipos de equipos; plataformas y videojuegos elegibles; tiempo de juego; capacidad y cantidad de puestos; modalidad del duelo; snack disponible; tarifas actuales; horarios y disponibilidad; condiciones de reserva y acceso; responsable operativo."
+                ]
+            },
+            "marketing_context": {
+                "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+                "landing_language": "es",
+                "city_first": true
+            },
+            "city": "Cochabamba"
+        },
+        "action": "created"
+    }
+]

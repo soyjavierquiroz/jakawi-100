@@ -1,0 +1,33 @@
+{
+  "schema_version": "jakawi-landing-v1",
+  "subject_hint": "Duelo gamer",
+  "internal_name": "Armagedon for Gamers — Duelo gamer",
+  "slug": "armagedon-for-gamers-duelo-gamer",
+  "template": "OFFER_CONVERSION",
+  "presentation": {
+    "theme": "DARK_CONVERSION",
+    "hero_layout": "OFFER_FIRST",
+    "density": "STANDARD"
+  },
+  "hero": {
+    "eyebrow": "Armagedon for Gamers · COCHABAMBA",
+    "headline": "¿Quién gana el próximo duelo?",
+    "headline_emphasis": "",
+    "supporting_copy": "Invita a tu rival, prepara tu estrategia y convierte una sesión gamer en un plan para dos."
+  },
+  "value": {
+    "supporting_copy": "Precio comercial JAKAWI: Bs 45 por persona (BOB). Mínimo dos personas; Bs 90 total para el grupo mínimo."
+  },
+  "acquisition": {
+    "headline": "Hay partidas que se disfrutan más cuando tienes a alguien a quien desafiar.",
+    "supporting_copy": "Propuesta en preparación. Cuenta JAKAWI, sin membresía de pago obligatoria. Pago directo al Partner tras activación."
+  },
+  "closing": {
+    "headline": "ACEPTO EL RETO",
+    "supporting_copy": "CTA editorial preparado. Pre-lanzamiento privado: sin reservas, pagos ni canjes disponibles. Pendientes: Tipos de equipos; plataformas y videojuegos elegibles; tiempo de juego; capacidad y cantidad de puestos; modalidad del duelo; snack disponible; tarifas actuales; horarios y disponibilidad; condiciones de reserva y acceso; responsable operativo."
+  },
+  "media": {
+    "mode": "NONE",
+    "alt": ""
+  }
+}

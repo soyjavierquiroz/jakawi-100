@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "key": "aventura-games-cochabamba",
+      "brief": "PASS",
+      "landing": "PASS"
+    },
+    {
+      "key": "armagedon-for-gamers",
+      "brief": "PASS",
+      "landing": "PASS"
+    }
+  ]
+}

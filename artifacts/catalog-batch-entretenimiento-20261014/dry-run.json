@@ -1,0 +1,12 @@
+[
+    {
+        "key": "aventura-games-cochabamba",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 1, updated 0\nExperiences: created 0, updated 0\nExperience partners: created 0, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    },
+    {
+        "key": "armagedon-for-gamers",
+        "action": "validated-create",
+        "plan": "DRY RUN\nPartners: created 1, updated 0\nLocations: created 1, updated 0\nBenefits: created 0, updated 0\nExperiences: created 1, updated 0\nExperience partners: created 1, updated 0\nSessions: created 0, updated 0\nERRORS: 0\n"
+    }
+]

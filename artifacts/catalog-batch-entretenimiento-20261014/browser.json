@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "key": "aventura-games-cochabamba",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "aventura-games-cochabamba",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "armagedon-for-gamers",
+      "width": 390,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "key": "armagedon-for-gamers",
+      "width": 1440,
+      "preview": 200,
+      "overflow": false,
+      "operationalLinks": 0
+    },
+    {
+      "path": "/l/aventura-games-cochabamba-salta-con-jakawi",
+      "guestStatus": 404
+    },
+    {
+      "path": "/aventura-games-cochabamba",
+      "guestStatus": 404
+    },
+    {
+      "path": "/beneficios/aventura-games-cochabamba-salta-con-jakawi",
+      "guestStatus": 404
+    },
+    {
+      "path": "/l/armagedon-for-gamers-duelo-gamer",
+      "guestStatus": 404
+    },
+    {
+      "path": "/armagedon-for-gamers",
+      "guestStatus": 404
+    },
+    {
+      "path": "/experiencias/armagedon-for-gamers-duelo-gamer",
+      "guestStatus": 404
+    },
+    {
+      "path": "/explorar",
+      "privateDraftsAbsent": true
+    },
+    {
+      "path": "/beneficios",
+      "privateDraftsAbsent": true
+    },
+    {
+      "path": "/experiencias",
+      "privateDraftsAbsent": true
+    },
+    {
+      "existingMobileCarousel": "PASS"
+    }
+  ],
+  "errors": [],
+  "mutations": [],
+  "failedAssets": [],
+  "analyticsRequestsSuppressed": [
+    "https://jakawi.com/analytics/opportunities",
+    "https://jakawi.com/analytics/opportunities"
+  ]
+}

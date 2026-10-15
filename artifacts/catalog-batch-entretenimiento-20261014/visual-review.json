@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "viewports": [
+    390,
+    1440
+  ],
+  "reviewed_captures": 4,
+  "aventura_theme": "LIGHT_CONVERSION",
+  "armagedon_theme": "DARK_CONVERSION",
+  "no_overflow": true,
+  "cta_disabled": true,
+  "media_mode": "NONE",
+  "caveat": "Template existente conserva textos generales de canje/reserva. No habilitan acciones: previews con aviso, CTA disabled y enlaces sólo a #condiciones. Sedes privadas y duración gamer pendiente se informan sin crear disponibilidad."
+}

@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "records": [
+    {
+      "key": "aventura-games-cochabamba",
+      "partner_id": 12,
+      "location_id": 11,
+      "product_id": 8,
+      "landing_id": 12,
+      "action": "verified-existing"
+    },
+    {
+      "key": "armagedon-for-gamers",
+      "partner_id": 13,
+      "location_id": 12,
+      "product_id": 4,
+      "landing_id": 13,
+      "action": "verified-existing"
+    }
+  ],
+  "second_apply_writes": 0,
+  "full_catalog_snapshot_unchanged": true,
+  "duplicates_avoided": {
+    "partners": 2,
+    "locations": 2,
+    "products": 2,
+    "landings": 2
+  }
+}

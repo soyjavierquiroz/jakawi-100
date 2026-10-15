@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "key": "aventura-games-cochabamba",
+      "disabledActions": [
+        {
+          "text": "ESTE BENEFICIO NO ESTÁ DISPONIBLE AHORA",
+          "disabled": "true",
+          "href": "#condiciones"
+        },
+        {
+          "text": "ESTE BENEFICIO NO ESTÁ DISPONIBLE AHORA",
+          "disabled": "true",
+          "href": "#condiciones"
+        }
+      ],
+      "clickDoesNotNavigate": true,
+      "priceAndOperationalCaveats": true
+    },
+    {
+      "key": "armagedon-for-gamers",
+      "disabledActions": [
+        {
+          "text": "NO DISPONIBLE",
+          "disabled": "true",
+          "href": "#condiciones"
+        },
+        {
+          "text": "NO DISPONIBLE",
+          "disabled": "true",
+          "href": "#condiciones"
+        }
+      ],
+      "clickDoesNotNavigate": true,
+      "priceAndOperationalCaveats": true
+    }
+  ]
+}

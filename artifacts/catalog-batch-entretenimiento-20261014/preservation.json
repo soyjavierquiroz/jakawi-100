@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "table": "partners",
+      "preexisting_rows": 9,
+      "preserved": true,
+      "new_rows": 2
+    },
+    {
+      "table": "locations",
+      "preexisting_rows": 9,
+      "preserved": true,
+      "new_rows": 2
+    },
+    {
+      "table": "benefits",
+      "preexisting_rows": 6,
+      "preserved": true,
+      "new_rows": 1
+    },
+    {
+      "table": "benefit_location",
+      "preexisting_rows": 4,
+      "preserved": true,
+      "new_rows": 1
+    },
+    {
+      "table": "experiences",
+      "preexisting_rows": 3,
+      "preserved": true,
+      "new_rows": 1
+    },
+    {
+      "table": "experience_partner",
+      "preexisting_rows": 3,
+      "preserved": true,
+      "new_rows": 1
+    },
+    {
+      "table": "experience_sessions",
+      "preexisting_rows": 0,
+      "preserved": true,
+      "new_rows": 0
+    },
+    {
+      "table": "experience_reservations",
+      "preexisting_rows": 0,
+      "preserved": true,
+      "new_rows": 0
+    },
+    {
+      "table": "redemptions",
+      "preexisting_rows": 3,
+      "preserved": true,
+      "new_rows": 0
+    },
+    {
+      "table": "landing_presentations",
+      "preexisting_rows": 11,
+      "preserved": true,
+      "new_rows": 2
+    },
+    {
+      "table": "challenges",
+      "preexisting_rows": 0,
+      "preserved": true,
+      "new_rows": 0
+    },
+    {
+      "setting": "prelaunch",
+      "preserved": true
+    }
+  ],
+  "dossis43_current_description_preserved": true
+}

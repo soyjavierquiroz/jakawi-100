@@ -1,0 +1,7 @@
+{
+  "path": "/root/backups/jakawi/catalog-batch-entretenimiento-20261014/before.dump",
+  "sha256": "dfe6bbb0adbd2d1a359b6087408a109695daad407d3ffbec0d449844e9d82d57",
+  "bytes": 305877,
+  "pg_restore_list": "PASS",
+  "use": "Recuperaci\u00f3n de desastre; reversi\u00f3n del lote s\u00f3lo por IDs y snapshots exactos."
+}

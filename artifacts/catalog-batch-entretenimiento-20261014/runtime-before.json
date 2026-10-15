@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/jakawicom-app-1",
+    "image": "jakawi-cafe-batch-app:df8f543",
+    "image_id": "sha256:01c40f0ea937b4a64e0443015af401cb62cde347726f907b40584ef7681c0f49",
+    "status": "running"
+  },
+  {
+    "name": "/jakawicom-web-1",
+    "image": "jakawi-cafe-batch-web:df8f543",
+    "image_id": "sha256:8ed6105c7ebd31fd124c53e46fa90151bc24b596cceec0ac4c598570591ca25b",
+    "status": "running"
+  },
+  {
+    "name": "/jakawicom-social-worker-1",
+    "image": "jakawi-cafe-batch-app:df8f543",
+    "image_id": "sha256:01c40f0ea937b4a64e0443015af401cb62cde347726f907b40584ef7681c0f49",
+    "status": "running"
+  }
+]

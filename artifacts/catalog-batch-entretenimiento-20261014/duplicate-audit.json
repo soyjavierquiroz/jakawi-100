@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "key": "aventura-games-cochabamba",
+      "partner_matches": [],
+      "location_matches": []
+    },
+    {
+      "key": "armagedon-for-gamers",
+      "partner_matches": [],
+      "location_matches": []
+    }
+  ]
+}

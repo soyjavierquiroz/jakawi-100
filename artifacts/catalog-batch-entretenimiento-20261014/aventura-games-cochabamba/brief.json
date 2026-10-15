@@ -1,0 +1,34 @@
+{
+    "brief_version": "jakawi-product-brief-v1",
+    "domain": "Benefit",
+    "title": "Salta con JAKAWI",
+    "partner": "Aventura Games Cochabamba",
+    "summary": "Dos horas para salir de la rutina y vivir la diversión.",
+    "description": "Dos horas para salir de la rutina y vivir la diversión.\n\nUn paquete de entretenimiento en Aventura Games para disfrutar una visita al parque con medias antideslizantes incluidas.\n\nIncluye propuesto, sujeto a confirmación operativa: Acceso recreativo durante 2 horas. Un par de medias antideslizantes para el participante.\n\nPrecio comercial JAKAWI: Bs 55 por persona (BOB).\n\nLugar de referencia: Aventura Games Cochabamba, Rafael Méndez Claure, Cochabamba.\n\nLas atracciones efectivamente incluidas deben confirmarse; no se afirma acceso a todas las atracciones. El uso dependerá de las reglas reales del parque y de las restricciones aplicables de edad, estatura o capacidad. Supervisión, equipamiento, condiciones de responsabilidad y seguridad están pendientes de confirmación.\n\nCuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados.",
+    "demo": false,
+    "commercial_truth": {
+        "benefit_type": "other",
+        "value": {
+            "description": "Salta con JAKAWI"
+        },
+        "membership_required": false,
+        "access_requirement": "Disponible con tu cuenta JAKAWI. No requiere membresía activa.",
+        "available": false,
+        "validity": {
+            "ends_at": "2026-11-30T23:59:59-04:00",
+            "timezone": "America/La_Paz"
+        },
+        "requirements": [
+            "Disponible con tu cuenta JAKAWI. No requiere membresía activa."
+        ],
+        "conditions": [
+            "Precio comercial JAKAWI: Bs 55 por persona (BOB). Cuenta JAKAWI; sin membresía de pago obligatoria ni tarifa especial de miembros. Pago directo al Partner sólo después de activación; JAKAWI no cobra estos importes. Vigencia comercial propuesta hasta el 30 de noviembre de 2026, hora de Bolivia. Propuesta comercial privada diseñada por JAKAWI; todavía no representa un servicio operativamente aceptado por el establecimiento. Sin reservas, pagos ni canjes habilitados. Horarios sujetos a disponibilidad. Uso según las reglas reales del Benefit. Las atracciones efectivamente incluidas deben confirmarse; no se afirma acceso a todas las atracciones. El uso dependerá de las reglas reales del parque y de las restricciones aplicables de edad, estatura o capacidad. Supervisión, equipamiento, condiciones de responsabilidad y seguridad están pendientes de confirmación. Lugar de referencia: Aventura Games Cochabamba, Rafael Méndez Claure, Cochabamba. Pendientes operativos: Días y horarios elegibles; atracciones incluidas; condiciones de uso; restricciones reales de edad, estatura o capacidad; supervisión y equipamiento de seguridad; duración real autorizada; disponibilidad de medias; procedimiento de acceso y canje; responsabilidad y seguridad aplicables."
+        ]
+    },
+    "marketing_context": {
+        "primary_goal": "Conseguir que la persona reclame o active esta oferta específica",
+        "landing_language": "es",
+        "city_first": true
+    },
+    "city": "Cochabamba"
+}

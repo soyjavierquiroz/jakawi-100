@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "git_head": "e7015f1b1cbdbe8b66e392568c18bca5baf708d2",
+  "git_initial_untracked": [
+    "?? app/database/catalog/entretenimiento-20261014/",
+    "?? artifacts/catalog-batch-entretenimiento-20261014/",
+    "?? artifacts/landing-import-hero-responsive/",
+    "?? artifacts/partner-avatar-circular-v1/",
+    "?? artifacts/partner-gallery-carousel/",
+    "?? artifacts/partner-hero-responsive-fix/"
+  ],
+  "live_commit": "df8f543af38664c168d4465aca9d0099e5c3631c",
+  "contracts": [
+    "jakawi-product-brief-v1",
+    "jakawi-landing-v1"
+  ],
+  "importer_support": [
+    "Benefit",
+    "Experience"
+  ],
+  "runtime_code_changes_required": false,
+  "prelaunch": true,
+  "last_persisted_commercial_configuration": "before.json: estado actual completo, incluyendo Experience Toc Toc updated_at 2026-10-14 23:34:03 y Benefit Dossis 43 updated_at 2026-10-14 23:52:24; sin ejecutar configuraciones históricas.",
+  "prior_redemptions": 3,
+  "new_batch_operations": 0
+}

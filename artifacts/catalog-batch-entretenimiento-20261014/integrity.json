@@ -1,0 +1,23 @@
+{
+    "status": "PASS",
+    "checks": [
+        {
+            "key": "aventura-games-cochabamba",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        },
+        {
+            "key": "armagedon-for-gamers",
+            "identity": "PASS",
+            "contacts": "PASS",
+            "location_and_city": "PASS",
+            "relations": "PASS",
+            "private_states": "PASS",
+            "no_operation": "PASS"
+        }
+    ]
+}
