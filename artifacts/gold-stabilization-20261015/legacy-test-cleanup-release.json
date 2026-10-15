@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "previous_live": "95433f4a56675d46c858b8ebf002e1762130a57d",
+  "live": "89dcf27dc3fbb2eb55be42512fc2012b7658ceb6",
+  "rollback_available": true,
+  "rollback_executed": false,
+  "services": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "up_local": 200,
+  "up_public": 200,
+  "root_http": 200,
+  "read_only_routes": 17,
+  "browser_views": 34,
+  "production_test_writes": 0,
+  "migrations": 0,
+  "snapshots_equal": true,
+  "headers": {
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  }
+}

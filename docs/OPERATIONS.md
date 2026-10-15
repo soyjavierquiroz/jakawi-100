@@ -140,7 +140,7 @@ operativo primario; la identidad abreviada sólo sirve para desambiguación huma
 
 ## Desarrollo y verificación de frontend
 
-La raíz comparte el host productivo: no ejecutar bootstrap/reset como si fuera una base local vacía. `./bin/jakawi-test` es el wrapper aislado para tests; nunca PHP del host. Baseline conocido: CampaignTest::admin_can_create_campaign_and_non_admin_cannot (nombre PHPUnit con prefijo test_), redirect esperado frente a 403 recibido; no clasificar como regresión nueva.
+La raíz comparte el host productivo: no ejecutar bootstrap/reset como si fuera una base local vacía. `./bin/jakawi-test` es el wrapper aislado para tests; nunca PHP del host. Legacy Test Cleanup resolvió los 13 casos pendientes: la suite completa pasa con 701 tests y 10.517 aserciones. Guest redirige a login; un usuario autenticado no Admin recibe 403. No usar el antiguo mismatch de CampaignTest como excepción de baseline.
 
 Build de verificación, sólo cuando autorizado:
 
@@ -153,6 +153,8 @@ docker build -f docker/Dockerfile \
 `jakawi-frontend-check` es imagen temporal, no despliegue. Esta consolidación documental no ejecuta tests ni builds. Producción es directa; no existe staging/preview operativo. El archivo preview heredado no constituye un entorno aprobado.
 
 `social-worker` usa la misma imagen `jakawi-app`, consume social-interactive/social y debe acompañar cambios de imagen que le afecten; frontend exige `app` + `web` coherentes. No crear otro worker para CRM/Meta: `crm:dispatch` y `growth:dispatch-meta` ya corren cada minuto en Laravel Scheduler. CRM sync activo; Meta OFF. Runbook WordPress independiente: [CRM](CRM_FOUNDATION_V1.md).
+
+Las fixtures deben seguir los contratos actuales: Partner público canonical y redirect técnico 301; Benefits draft y Experiences hidden privados; secretos/VSL de Unlock requieren meta más participante elegible. Media usa imágenes decodificables y `Storage::fake(config('media.disk'))`, conservando el original al reemplazar. Explorer identifica oportunidades con tipo + ID; las secuencias de tablas distintas pueden coincidir. No desactivar tests ni cambiar producto para acomodar fixtures antiguas.
 
 ## Disco y Docker
 
@@ -187,3 +189,14 @@ Media mantiene auth y throttle 30/minuto en uploads, JPEG/PNG/WebP, máximo 10 M
 La revisión efectiva de producción comprueba únicamente valores no secretos: APP_DEBUG=false, sesión Secure/HttpOnly/SameSite=lax, PRELAUNCH=true, CRM=true y Meta provider/browser/CAPI=false. El nginx existente añade SAMEORIGIN, nosniff y Referrer-Policy; los secretos no se imprimen ni se rotan. Auditar dependencias con Composer audit --locked --no-dev dentro de Docker y npm audit sobre el lock; no ejecutar audit fix indiscriminado.
 
 El release Gold usa un worktree limpio desde el SHA LIVE porque el árbol original conserva trabajo previo. Las imágenes app/web se producen del mismo build y worker acompaña la imagen app. Guardar imágenes exactas anteriores de los tres servicios en un override de rollback bajo backups; `docker compose --project-name jakawicom -f compose.yaml -f backups/gold-stabilization-20261015/rollback.yaml up -d --no-deps --no-build --force-recreate app web social-worker` restaura el runtime sin tocar DB. La evidencia final y el estado están en [Gold report](../artifacts/gold-stabilization-20261015/REPORT.md).
+
+
+### Rollback del cierre Legacy Test Cleanup
+
+El fix de creación/edición de Campaigns conserva la semántica y corrige validación/persistencia; no requiere migración ni restauración de DB. Su baseline es `95433f4`, distinto del baseline de la primera estabilización. Rollback exacto de app/web/worker:
+
+```bash
+docker compose --project-name jakawicom -f compose.yaml -f backups/gold-stabilization-20261015/legacy-test-cleanup/rollback.yaml up -d --no-deps --no-build --force-recreate app web social-worker
+```
+
+Aplicar readiness y `/up` según el procedimiento anterior. Las pruebas de creación/duplicados/edición de Campaigns se ejecutan sólo en PostgreSQL aislado mediante `./bin/jakawi-test`; el smoke productivo del listado Admin es READ ONLY.

@@ -61,5 +61,129 @@
     "data_snapshots": "IDENTICAL",
     "up_local": 200,
     "up_public": 200
+  },
+  "legacy_test_cleanup": {
+    "status": "PASS",
+    "resolved": 13,
+    "total_pending": 13,
+    "full_suite": {
+      "runs": 1,
+      "passed": 701,
+      "failed": 0,
+      "assertions": 10517,
+      "duration_seconds": 120.77
+    },
+    "test_methods_removed": 0,
+    "tests_disabled": 0,
+    "runtime_defects": [
+      "Campaign unique validation excluded an empty bigint ID on create.",
+      "Campaign attempted to persist participant_types into campaigns instead of only the participant relation."
+    ],
+    "runtime_files_changed": [
+      "app/app/Http/Controllers/AdminCampaignController.php"
+    ],
+    "commit": "89dcf27dc3fbb2eb55be42512fc2012b7658ceb6",
+    "cases": [
+      {
+        "class": "AdminV2Test",
+        "method": "test_admin_creates_partner_location_pin_and_images",
+        "contract": "Imágenes GD válidas y fake del disco configurado.",
+        "status": "PASS"
+      },
+      {
+        "class": "AdminV2Test",
+        "method": "test_admin_uploads_accept_allowed_images_reject_invalid_files_and_preserve_old_files",
+        "contract": "Slug no reservado, binding por ID y reemplazo que conserva el original.",
+        "status": "PASS"
+      },
+      {
+        "class": "ApplicationV2HttpTest",
+        "method": "test_publication_routes_only_expose_published_records",
+        "contract": "Partner técnico redirige 301 al canonical; Benefit draft devuelve 404.",
+        "status": "PASS"
+      },
+      {
+        "class": "BenefitRedemptionContinuityTest",
+        "method": "test_inactive_and_future_benefits_cannot_redeem",
+        "contract": "Intent draft privado 404; futuro muestra indisponibilidad; ambos impiden canje.",
+        "status": "PASS"
+      },
+      {
+        "class": "CampaignTest",
+        "method": "test_admin_can_create_campaign_and_non_admin_cannot",
+        "contract": "Guest redirect, usuario normal 403; correcciones reales de unicidad PostgreSQL y persistencia del pivote.",
+        "status": "PASS"
+      },
+      {
+        "class": "DemoCatalogV2Test",
+        "method": "test_demo_catalog_lifecycle_is_idempotent_safe_and_respects_public_visibility",
+        "contract": "Redirect canonical y Experience nueva hidden privada; no se publica la fixture implícitamente.",
+        "status": "PASS"
+      },
+      {
+        "class": "LandingPresentationTest",
+        "method": "test_video_configuration_is_nullable_and_projected_only_when_unlock_is_revealable",
+        "contract": "VSL requiere meta y participante elegible, incluso cuando el viewer anterior era Admin.",
+        "status": "PASS"
+      },
+      {
+        "class": "PublicV2HttpTest",
+        "method": "test_partner_and_location_are_public_only_when_published_and_do_not_leak_private_fields",
+        "contract": "Redirect 301 sin pageview; privacidad comprobada en el canonical.",
+        "status": "PASS"
+      },
+      {
+        "class": "PublicV2HttpTest",
+        "method": "test_benefit_listing_filter_and_detail_follow_availability",
+        "contract": "Draft 404; paused/futuro/vencido con indisponibilidad.",
+        "status": "PASS"
+      },
+      {
+        "class": "UnlockCoreTest",
+        "method": "test_public_view_is_safe_for_guests_and_secret_data_reveals_only_after_goal",
+        "contract": "Meta más participante elegible; guest y no participante permanecen sin secretos; email propio no se confunde con fuga.",
+        "status": "PASS"
+      },
+      {
+        "class": "UnlockMarketingLandingTest",
+        "method": "test_guest_continuation_eligible_auth_membership_and_existing_participation",
+        "contract": "CTA actual ACTIVAR MEMBRESÍA y continuidad existente.",
+        "status": "PASS"
+      },
+      {
+        "class": "UnlockMarketingLandingTest",
+        "method": "test_visibility_terminal_preview_and_secret_disclosures_cannot_be_bypassed",
+        "contract": "Sin bypass Admin; sólo participante elegible revela la oferta después de la meta.",
+        "status": "PASS"
+      },
+      {
+        "class": "ExploreDiscoveryTest",
+        "method": "test_search_composes_category_with_todo_and_normalizes_blank_whitespace",
+        "contract": "Compara identidad tipo:ID del payload, sin asumir secuencias distintas entre tablas.",
+        "status": "PASS"
+      }
+    ],
+    "typescript": "PASS",
+    "frontend_builds": 1,
+    "manifest_inertia_pages": 109,
+    "candidate_smoke": {
+      "status": "PASS",
+      "read_only_routes": 17,
+      "browser_views": 34
+    },
+    "live_smoke": {
+      "status": "PASS",
+      "read_only_routes": 17,
+      "browser_views": 34,
+      "page_errors": 0,
+      "snapshots_equal": true,
+      "snapshot_tables": 16,
+      "up_local": 200,
+      "up_public": 200
+    },
+    "deploy": "YES",
+    "rollback_available": true,
+    "production_test_writes": 0,
+    "migrations": 0
   }
 }

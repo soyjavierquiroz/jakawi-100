@@ -1,10 +1,10 @@
 # JAKAWI — estado actual de producción
 
-**STATUS: CURRENT / AUTHORITATIVE.** Verificación Gold: 2026-10-15 (America/La_Paz). **PARTIAL: correcciones seguras LIVE; suite heredada pendiente.** Código productivo `95433f4a56675d46c858b8ebf002e1762130a57d`; anterior `9af13f88adea1fc416a416f36c99e4b284703042`. Rollback exacto app/web/worker protegido en `backups/gold-stabilization-20261015`; sin migraciones. [Gold report](../artifacts/gold-stabilization-20261015/REPORT.md) y [release](../artifacts/gold-stabilization-20261015/production-release.json). El commit documental posterior no requiere redeploy.
+**STATUS: CURRENT / AUTHORITATIVE.** Cierre Gold Legacy: 2026-10-15 (America/La_Paz). **GOLD PASS: 13/13 casos heredados resueltos.** Código productivo `89dcf27dc3fbb2eb55be42512fc2012b7658ceb6`; anterior `95433f4a56675d46c858b8ebf002e1762130a57d`. Rollback exacto app/web/worker protegido en `backups/gold-stabilization-20261015/legacy-test-cleanup`; sin migraciones. [Gold report](../artifacts/gold-stabilization-20261015/REPORT.md) y [release del cierre](../artifacts/gold-stabilization-20261015/legacy-test-cleanup-release.json). El commit documental posterior no requiere redeploy.
 
-PRELAUNCH_MODE=true; raíz Coming Soon 200, rutas públicas directas con PrelaunchNotice y noindex. CRM activo; Meta provider/browser/CAPI OFF. Salud local/pública 200, app healthy, web/worker running, DB healthy. Existe inventario comercial real; el reset del 13 de octubre es histórico y no describe los conteos actuales. Las secciones de releases anteriores que siguen son historial de contratos y entregas, no referencias LIVE actuales.
+Una única suite completa final: **701 PASS, 0 FAIL, 10.517 aserciones**. Correcciones de fixtures/expectativas y dos bugs preexistentes de Campaign (unicidad con ID vacío en PostgreSQL y participant_types enviado a la tabla incorrecta). Sólo cambia ese controlador en runtime; permisos, pivote, economía y contratos comerciales conservados. TypeScript/build/manifest y smoke candidato/LIVE PASS; 17 rutas READ ONLY y 34 vistas de navegador por entorno, sin escrituras QA.
 
-Gold limita intentos del POST firmado de canje, corrige validación malformada de Locations en Benefits y elimina queries por tarjeta para resolver Landings en Discovery/inventario del Partner. Parches npm compatibles sin cambiar Laravel/React/Vite. 45 tests focalizados PASS, TypeScript/build/manifest PASS, smoke candidato/LIVE PASS; 12 fallos heredados reproducidos y una aserción flaky de IDs entre tablas pendientes. Se mantienen Partner/Location, draft/published, Landing-first, adquisición, membresías, economía, Media y contenido editorial. No hay nuevas features ni infraestructura.
+PRELAUNCH_MODE=true; raíz Coming Soon 200, rutas públicas directas con PrelaunchNotice y noindex. CRM activo; Meta provider/browser/CAPI OFF. Salud local/pública 200, app healthy, web/worker running. Existe inventario comercial real; el reset del 13 de octubre y las secciones de releases anteriores que siguen son historial, no referencias LIVE actuales. Las correcciones de la primera estabilización se conservan. No se repitieron auditorías GOLD ni se hicieron refactors, migraciones o cambios de infraestructura/comerciales.
 
 ## Arquitectura actual auditada
 
@@ -24,7 +24,7 @@ CRM: https://crm.jakawi.com, WordPress + FluentCRM en runtime del host CyberPane
 
 **PHP DEL HOST: NUNCA USAR NI INSPECCIONAR.** Laravel y Composer usan Docker PHP 8.4. Frontend exige rebuild/recreación coherente de `app` + `web`; `social-worker` usa la misma imagen `jakawi-app` y debe acompañar cambios que le afecten. Producción directa: no hay entorno staging/preview operativo.
 
-Baseline conocido: `CampaignTest::admin_can_create_campaign_and_non_admin_cannot` (`test_admin_can_create_campaign_and_non_admin_cannot` en PHPUnit), redirect esperado vs 403. Es un mismatch ya conocido, no una nueva regresión; esta consolidación no ejecuta tests.
+CampaignTest queda resuelto: guest redirige a login; autenticado no Admin recibe 403. Creación/edición y duplicados comprobados contra PostgreSQL aislado; ya no hay una excepción vigente de baseline para este test.
 
 CRM sync: `CRM_SYNC_ENABLED=true`. Meta efectivo OFF: `META_PROVIDER_ENABLED=false`, `META_BROWSER_ENABLED=false`, `META_CAPI_ENABLED=false` (defaults false cuando no hay override). Consumer automations 1–4 DRAFT/INACTIVE; Partner Applicant V1 PUBLISHED/ACTIVE. Detalle en [CRM](CRM_FOUNDATION_V1.md).
 
