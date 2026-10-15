@@ -27,6 +27,6 @@ class ExperienceDiscoveryQuery
                     $operational->where('catalog_visibility', '!=', 'upcoming')->whereHas('sessions', $citySessions);
                 });
             })
-            ->with(['sessions' => fn ($sessions) => $citySessions($sessions)->with('location'), 'partners']);
+            ->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'sessions' => fn ($sessions) => $citySessions($sessions)->with('location'), 'partners']);
     }
 }

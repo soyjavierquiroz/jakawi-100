@@ -136,7 +136,7 @@ class AdminController extends Controller
         return DB::transaction(function () use ($request, $benefit) {
             $validator = Validator::make($request->all(), $this->benefitRules($benefit));
             $validator->after(function ($validator) use ($request) {
-                if ($request->input('location_scope') !== 'selected' || ! $request->filled('location_ids') || ! $request->filled('partner_id')) {
+                if ($validator->errors()->isNotEmpty() || $request->input('location_scope') !== 'selected' || ! $request->filled('location_ids') || ! $request->filled('partner_id')) {
                     return;
                 } $locationIds = $request->input('location_ids', []);
                 if (Location::query()->whereIn('id', $locationIds)->where('partner_id', $request->input('partner_id'))->count() !== count(array_unique($locationIds))) {

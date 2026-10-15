@@ -69,7 +69,7 @@ class PublicController extends Controller
             $touch = app(AttributionService::class)->recordTouch($request, $partner, $partner->referral_code_normalized);
             $request->session()->push('attribution_touch_ids', $touch->id);
         }
-        $challenges = $partner->challenges()->where('review_status', 'APPROVED')->where('status', 'open')
+        $challenges = $partner->challenges()->with('landingPresentations:id,subject_type,subject_id,slug,status,default_scope')->where('review_status', 'APPROVED')->where('status', 'open')
             ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
             ->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at', '>', now()))
             ->where(fn ($q) => $q->whereNull('published_from')->orWhere('published_from', '<=', now()))
@@ -79,8 +79,8 @@ class PublicController extends Controller
             'canonicalUrl' => rtrim(config('app.url'), '/').'/'.$partner->slug,
             'partner' => $this->partner($partner) + $this->image($partner->cover_path, 'partner_editorial', 'cover_desktop'),
             'locations' => $partner->locations()->published()->with('cityEntity')->orderBy('sort_order')->get()->map(fn ($x) => $this->locationData($x)),
-            'benefits' => $partner->benefits()->available()->publicAccess()->orderBy('sort_order')->get()->map(fn ($x) => $this->benefitData($x, true)),
-            'experiences' => $partner->experiences()->catalogVisible()->with(['sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
+            'benefits' => $partner->benefits()->available()->publicAccess()->with('landingPresentations:id,subject_type,subject_id,slug,status,default_scope')->orderBy('sort_order')->get()->map(fn ($x) => $this->benefitData($x, true)),
+            'experiences' => $partner->experiences()->catalogVisible()->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
             'challenges' => $challenges->map(fn ($x) => $x->only(['id', 'slug', 'title', 'description', 'ends_at', 'reward_type', 'reward_jp_amount', 'manual_prize_description']) + ['destination_url' => app(ProductLandingResolver::class)->navigationUrl($x, (bool) $request->user())] + $this->image($x->hero_path, 'hero')),
         ]);
     }

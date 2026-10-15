@@ -23,6 +23,6 @@ class BenefitDiscoveryQuery
             })
             // DiscoveryService deliberately selects a city location from these
             // bounded relations; this prevents per-card partner/location reads.
-            ->with(['partner.locations' => fn ($locations) => $locations->published()->where('city_id', $city->id), 'locations' => fn ($locations) => $locations->published()->where('city_id', $city->id)]);
+            ->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'partner.locations' => fn ($locations) => $locations->published()->where('city_id', $city->id), 'locations' => fn ($locations) => $locations->published()->where('city_id', $city->id)]);
     }
 }

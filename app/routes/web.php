@@ -93,7 +93,7 @@ Route::get('/experiencias/{experience:slug}/reservar', [PublicController::class,
 Route::get('/partner/login', [PartnerLoginController::class, 'create'])->middleware('guest')->name('partner.login');
 Route::post('/partner/login', [PartnerLoginController::class, 'store'])->middleware('guest')->name('partner.login.store');
 Route::get('/partner/{partner:slug}/canjes/{redemption_public_id}', [RedemptionController::class, 'scan'])->middleware('signed')->name('partner.redemptions.scan');
-Route::post('/partner/{partner:slug}/canjes/{redemption_public_id}', [RedemptionController::class, 'scanConfirm'])->middleware(['auth', 'verified', 'partner', 'signed'])->name('partner.redemptions.scan.confirm');
+Route::post('/partner/{partner:slug}/canjes/{redemption_public_id}', [RedemptionController::class, 'scanConfirm'])->middleware(['auth', 'verified', 'partner', 'signed', 'throttle:20,1'])->name('partner.redemptions.scan.confirm');
 Route::get('/partner/{partner:slug}/asistencias/{reservation_public_id}', [ExperienceCheckInController::class, 'scan'])->middleware('signed')->name('partner.checkins.scan');
 Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner/{partner:slug}/retos', [\App\Http\Controllers\PartnerChallengeController::class, 'index'])->name('partner.challenges.index');

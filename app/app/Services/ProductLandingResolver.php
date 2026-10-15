@@ -19,6 +19,14 @@ class ProductLandingResolver
 
     public function forViewer(Model $subject, bool $authenticated = false): ?LandingPresentation
     {
+        if ($subject->relationLoaded('landingPresentations')) {
+            return $subject->landingPresentations
+                ->where('status', 'PUBLISHED')
+                ->whereIn('default_scope', $authenticated ? ['ALL'] : ['GUESTS', 'ALL'])
+                ->sortBy(fn (LandingPresentation $presentation) => [$presentation->default_scope === 'GUESTS' ? 0 : 1, $presentation->id])
+                ->first();
+        }
+
         return LandingPresentation::query()->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey())->where('status', 'PUBLISHED')
             ->whereIn('default_scope', $authenticated ? ['ALL'] : ['GUESTS', 'ALL'])

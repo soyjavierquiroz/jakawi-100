@@ -14,6 +14,6 @@ class UnlockDiscoveryQuery
         return Unlock::query()
             ->whereIn('status', [Unlock::ACTIVE, Unlock::GOAL_REACHED])
             ->whereHas('locations', fn (Builder $locations) => $locations->where('city_id', $city->id))
-            ->with(['partner', 'locations' => fn ($locations) => $locations->where('city_id', $city->id)]);
+            ->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'partner', 'locations' => fn ($locations) => $locations->where('city_id', $city->id)]);
     }
 }

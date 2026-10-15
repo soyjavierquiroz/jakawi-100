@@ -72,7 +72,7 @@ final readonly class DiscoveryService
         foreach ($unlocks as $unlock) {
             $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->navigationUrl($unlock, $context->user !== null));
         }
-        foreach ($this->challengesForCity($context->city)->with(['partner:id,name,slug,logo_path', 'benefit:id,title'])->limit($limit)->get() as $challenge) {
+        foreach ($this->challengesForCity($context->city)->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'partner:id,name,slug,logo_path', 'benefit:id,title'])->limit($limit)->get() as $challenge) {
             $items[] = $this->challengeAdapter->adapt($challenge, $city, $this->landingResolver->navigationUrl($challenge, $context->user !== null));
         }
 
@@ -165,7 +165,7 @@ final readonly class DiscoveryService
             }
         }
         if (($type === null || $type === OpportunityType::CHALLENGE) && $category === null) {
-            $challenges = $this->challengesForCity($context->city)->with(['partner:id,name,slug,logo_path', 'benefit:id,title']);
+            $challenges = $this->challengesForCity($context->city)->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'partner:id,name,slug,logo_path', 'benefit:id,title']);
             if ($like !== null) {
                 $challenges->where(fn (Builder $q) => $q->where('title', 'ilike', $like)->orWhere('description', 'ilike', $like));
             }
