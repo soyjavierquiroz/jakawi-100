@@ -1,0 +1,44 @@
+[
+  {
+    "name": "root",
+    "path": "/",
+    "role": "guest",
+    "status": "PASS"
+  },
+  {
+    "name": "home",
+    "path": "/",
+    "role": "user",
+    "status": "PASS"
+  },
+  {
+    "name": "mi-jakawi",
+    "path": "/mi-jakawi",
+    "role": "user",
+    "status": "PASS"
+  },
+  {
+    "name": "explore",
+    "path": "/explorar",
+    "role": "guest",
+    "status": "PASS"
+  },
+  {
+    "name": "admin-cities",
+    "path": "/admin/ciudades",
+    "role": "admin",
+    "status": "PASS"
+  },
+  {
+    "name": "admin-city-edit",
+    "path": "/admin/ciudades/cochabamba/editar",
+    "role": "admin",
+    "status": "PASS"
+  },
+  {
+    "name": "admin-city-create",
+    "path": "/admin/ciudades/crear",
+    "role": "admin",
+    "status": "PASS"
+  }
+]

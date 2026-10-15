@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "live": "089f6d68bba46588e7ff2dbc550c046e32b8c3da",
+  "previous_live": "1ed2d0c17029edfdff8d68e5b1f335a1a640d4e3",
+  "deployed_at_utc": "2026-10-15T22:56:09.180194+00:00",
+  "images": {
+    "app": "sha256:c1910915195cbbb18728142a2b9ecf39ab3cf9b05702e0dd495446d26ae9530c",
+    "web": "sha256:e6ad0b26c463e9711562f5e1def2163d143d5b8370406002f7056b8c96ea4bc1",
+    "social-worker": "sha256:c1910915195cbbb18728142a2b9ecf39ab3cf9b05702e0dd495446d26ae9530c"
+  },
+  "previous_images": {
+    "app": {
+      "container": "jakawicom-app-1",
+      "image": "sha256:e692d93f864925cef509f91dd1cfd1556adf0bbbb33e7ca2b5a10b45d40d0179",
+      "revision": "1ed2d0c17029edfdff8d68e5b1f335a1a640d4e3"
+    },
+    "web": {
+      "container": "jakawicom-web-1",
+      "image": "sha256:6974a1cd41650b895c76752c9a11cc0913c88e9942607d056a71111b57f31ee4",
+      "revision": "1ed2d0c17029edfdff8d68e5b1f335a1a640d4e3"
+    },
+    "social-worker": {
+      "container": "jakawicom-social-worker-1",
+      "image": "sha256:e692d93f864925cef509f91dd1cfd1556adf0bbbb33e7ca2b5a10b45d40d0179",
+      "revision": "1ed2d0c17029edfdff8d68e5b1f335a1a640d4e3"
+    }
+  },
+  "backup": {
+    "path": "/home/jakawi.com/backups/communities-v1-20261015-release/postgres-before.dump",
+    "bytes": 318825,
+    "sha256": "d18061066a3db0f1c8352ecaed7ab873dada186ed5f2d4518a9ab1ad8c028e24",
+    "pg_restore_list": "PASS"
+  },
+  "rollback_available": true,
+  "rollback_executed": false,
+  "rollback_script": "backups/communities-v1-20261015-release/rollback.sh",
+  "schema_rollback_policy": "Retain additive schema; no automatic migrate:rollback. Restore backup only under documented recovery procedure.",
+  "migration": "2026_10_15_000001_add_city_communities",
+  "migration_status": "PASS",
+  "migrations_executed": 1,
+  "release_compilations": 1,
+  "services_recreated": [
+    "app",
+    "web",
+    "social-worker"
+  ],
+  "up": {
+    "local": 200,
+    "public": 200
+  },
+  "admin_cities": "PASS",
+  "cities_off": 5,
+  "configured_urls": 0,
+  "community_interactions": 0,
+  "community_events": 0,
+  "users_created": 0,
+  "flags_before": {
+    "prelaunch": true,
+    "crm": true,
+    "meta": false,
+    "meta_browser": false,
+    "meta_capi": false
+  },
+  "flags_after": {
+    "prelaunch": true,
+    "crm": true,
+    "meta": false,
+    "meta_browser": false,
+    "meta_capi": false
+  },
+  "root": "official Coming Soon; no normal navigation; community null",
+  "prelaunch_demo_notice": "unchanged exact copy",
+  "candidate_browser_views": 14,
+  "live_browser_views": 14,
+  "javascript_errors": [],
+  "production_qa_writes": 0,
+  "whatsapp_requests": 0,
+  "v2proof_touched": false,
+  "blockers": []
+}

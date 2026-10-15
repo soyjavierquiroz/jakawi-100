@@ -176,7 +176,7 @@ Partner publicado sin oferta muestra “PRÓXIMAMENTE HABRÁ MÁS PARA VIVIR AQU
 
 Real-inventory Notice V1 está LIVE y actualiza el texto del aviso compartido para el laboratorio con Partners/ubicaciones/precios reales y cumplimiento controlado para invitados, sin lanzamiento público ni cambio de condiciones de dominio. Inventario real **PENDING** hasta la primera carga deliberada. Welcome Courtesy **FUTURE / OFF**. Contrato vigente del aviso: [Prelaunch Mode](../operations/PRELAUNCH_MODE_V1.md).
 
-## Comunidades JAKAWI V1 — implementación pendiente de despliegue
+## Comunidades JAKAWI V1 — configuración por ciudad
 
 Comunidad oficial de WhatsApp por ciudad activa, gratuita y voluntaria para cualquier cuenta registrada, sin Membership de pago. JAKAWI conserva la verdad del producto; WhatsApp distribuye novedades y anuncios seleccionados. Inicio (incluida la portada de pre-lanzamiento para usuarios autenticados) muestra una tarjeta contextual después del contenido principal. Tras el registro se utiliza esa tarjeta al llegar a Inicio o Mi JAKAWI, conservando primero el retorno al producto original; no existe un onboarding paralelo ni bloqueo. Mi JAKAWI conserva acceso manual aunque se descarten recordatorios. Las cuentas exclusivas de Partner mantienen su redirección habitual al portal, donde también tienen el acceso permanente.
 

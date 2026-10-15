@@ -1,0 +1,79 @@
+{
+  "stage": "candidate",
+  "status": "PASS",
+  "views": [
+    {
+      "name": "root",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "home",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-cities",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-city-edit",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-city-create",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "root",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "home",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-cities",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-city-edit",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-city-create",
+      "width": 1440,
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "productionWrites": 0,
+  "whatsappRequests": 0
+}

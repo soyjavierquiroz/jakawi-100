@@ -1,6 +1,6 @@
 # Comunidades JAKAWI V1
 
-2026-10-15 · America/La_Paz. Implementación local. Sin despliegue ni habilitación de producción.
+2026-10-15 · America/La_Paz. Implementación y despliegue completados. Comunidades deshabilitadas hasta configuración manual.
 
 ## A. Qué encontré
 
@@ -59,10 +59,19 @@ Evidencia adicional en este directorio: browser.mjs, browser.json, capturas PNG 
 
 ## E. Qué queda manual
 
-Autorizar y ejecutar release coherente app/web y la migración, con backup y procedimiento existente. Crear comunidad real en WhatsApp; obtener y verificar el enlace oficial; permitir publicaciones solo a administradores de JAKAWI; revisar privacidad; Admin → Ciudades → Cochabamba → Editar, nombre/enlace/habilitación. No se ha insertado ningún enlace oficial ni habilitado ninguna ciudad real.
+Release app/web/worker y migración completados con backup; ver evidencia de despliegue al final. Crear comunidad real en WhatsApp; obtener y verificar el enlace oficial; permitir publicaciones solo a administradores de JAKAWI; revisar privacidad; Admin → Ciudades → Cochabamba → Editar, nombre/enlace/habilitación. No se ha insertado ningún enlace oficial ni habilitado ninguna ciudad real.
 
 ## F. Estado y límites
 
-Implementado y probado en Docker/PostgreSQL aislado. Pendiente de despliegue y configuración humana. **No habilitado en producción**. No hubo escrituras de negocio ni migraciones en producción. Sin configuración válida la funcionalidad permanece oculta. El servidor temporal se detuvo y los fixtures se retiraron: cero cuentas QA y cero comunidades habilitadas en jakawi_test (cleanup.json).
+Implementado, probado y desplegado en producción; la migración aditiva está aplicada. **Las cinco comunidades permanecen OFF y sin enlaces configurados**. Pendiente únicamente de configuración humana. No se crearon usuarios, interacciones ni eventos QA en producción. Sin configuración válida la funcionalidad permanece oculta. El servidor temporal se detuvo y los fixtures se retiraron: cero cuentas QA y cero comunidades habilitadas en jakawi_test (cleanup.json).
 
 Clic ≠ incorporación real: V1 no verifica pertenencia, vigencia ni propiedad del enlace; solo valida su destino y formato. El operador debe comprobarlos en WhatsApp. No hay directorio multiciudad ni gestión de miembros. Mi JAKAWI mantiene la redirección Partner-only preexistente; el índice y dashboard Partner reutilizan la tarjeta permanente en el destino de esa redirección. Los enlaces canónicos admitidos tienen código alfanumérico de 22 caracteres, sin query/fragmento. Revocar un enlace ya compartido requiere actuar también en WhatsApp.
+
+
+## Deploy directo — PASS
+
+Referencia LIVE `089f6d68bba46588e7ff2dbc550c046e32b8c3da`, sobre runtime real `1ed2d0c17029edfdff8d68e5b1f335a1a640d4e3`; se conserva el aviso DEMO posterior a Gold. Comparación del baseline: 606 archivos, cero diferencias con ese SHA. Release limitado a Comunidades y dependencias directas. Una compilación desde git archive; app/web y social-worker existente comparten release, sin tocar DB/imgproxy/v2proof.
+
+Migración exclusiva `2026_10_15_000001_add_city_communities`: PASS. Cinco ciudades OFF, nombres/enlaces nulos, cero interacciones/eventos y usuarios sin cambios. `/up` local/público 200. Admin Ciudades/listado/crear/editar y campos Cochabamba PASS; Inicio autenticado/guest mantiene Coming Soon sin navegación normal, Mi JAKAWI/Explorar mantienen PrelaunchNotice DEMO exacto. 14 vistas candidatas y 14 LIVE de navegador sin errores JS; renders en transacciones READ ONLY, sin sesiones persistidas, sin clics ni WhatsApp. Se reutilizan identidades existentes únicamente en memoria.
+
+Flags conservados: PRELAUNCH true, CRM true, Meta provider/browser/CAPI false. Backup PostgreSQL custom validado con pg_restore --list y SHA-256; imágenes anteriores protegidas. Rollback de aplicación disponible en `backups/communities-v1-20261015-release/rollback.sh`; mantener el esquema aditivo, sin rollback automático de base. Evidencia sanitizada: [release.json](deploy/release.json). No se repitieron suite completa ni auditoría Gold.
