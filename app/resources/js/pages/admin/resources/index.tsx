@@ -104,7 +104,7 @@ export default function ResourceIndex({ title, resource, items: page, partners =
             onChange={(event) => { setStatus(event.target.value); submit({ status: event.target.value }); }}
           >
             <option value="">Todos los estados</option>
-            {[...new Set(["draft", "published", ...items.map((item) => item.status)])].map(
+            {[...new Set(["draft", "published", "paused", "archived", ...items.map((item) => item.status)])].map(
               (value) => (
                 <option key={value} value={value}>
                   {statusLabels[value] ?? value}
