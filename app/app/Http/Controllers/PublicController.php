@@ -124,7 +124,7 @@ class PublicController extends Controller
     public function explore(Request $request, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
         $request->validate(['page' => 'nullable|integer|min:1', 'per_page' => 'nullable|integer|min:1|max:18', 'q' => 'nullable|string|max:200', 'sort' => 'nullable|in:featured,newest,name']);
-        $sort = $request->query('sort', 'featured');
+        $sort = $request->query('sort') ?: 'featured';
         $city = $selectedCity->resolve($request);
         $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
         $category = $request->query('category');
@@ -149,7 +149,7 @@ class PublicController extends Controller
         };
         $page = $type === 'places'
             ? \App\Support\ListingPage::make($partners->reorder()->when($sort === 'featured', fn ($q) => $q->orderByDesc('featured'))->when($sort === 'newest', fn ($q) => $q->orderByDesc('published_at'))->orderByRaw('lower(name)')->orderBy('id'), 18)
-            : $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, $request->integer('page', 1));
+            : $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, max(1, $request->integer('page', 1)));
         return Inertia::render('explore', [
             'query' => $term,
             'category' => $category,

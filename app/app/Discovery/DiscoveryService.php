@@ -147,7 +147,7 @@ final readonly class DiscoveryService
         $query->orderBy('kind')->orderBy('id');
         $result = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
         if ($page > $result->lastPage()) {
-            $result = $query->paginate($perPage, ['*'], 'page', $result->lastPage())->withQueryString();
+            $result = $query->paginate($perPage, ['*'], 'page', $result->lastPage(), total: $result->total())->withQueryString();
         }
         $keys = $result->getCollection();
         $ids = fn (string $kind) => $keys->where('kind', $kind)->pluck('id')->all();

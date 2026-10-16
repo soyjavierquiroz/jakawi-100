@@ -68,6 +68,7 @@ class GlobalPaginationTest extends TestCase
         $this->get('/admin/locations?partner='.$wanted->id)->assertInertia(fn (Assert $p) => $p->has('items.data', 25)->where('items.total', 30)->where('items.next_page_url', fn ($url) => str_contains($url, 'partner='.$wanted->id)));
         $this->get('/admin/partners?q=missing')->assertInertia(fn (Assert $p) => $p->has('items.data', 0)->where('items.total', 0));
         $this->get('/admin/partners?per_page=101')->assertSessionHasErrors('per_page');
+        $this->get('/explorar?sort=&page=')->assertOk();
         $this->get('/explorar?sort=unsafe')->assertSessionHasErrors('sort');
         $this->get('/explorar?per_page=19')->assertSessionHasErrors('per_page');
         $this->get('/explorar?page=-1')->assertSessionHasErrors('page');
