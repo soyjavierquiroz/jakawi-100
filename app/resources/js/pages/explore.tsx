@@ -34,6 +34,11 @@ export default function Explore({ query = '', category, type, categories = [], o
         loadingRef.current = true; setLoading(true);
         router.get(pagination.next_page_url, {}, { only: ['opportunities', 'places', 'pagination'], preserveState: true, preserveScroll: true, onFinish: () => { loadingRef.current = false; setLoading(false); } });
     };
+    useEffect(() => {
+        const start = router.on('start', () => { loadingRef.current = true; setLoading(true); });
+        const finish = router.on('finish', () => { loadingRef.current = false; setLoading(false); });
+        return () => { start(); finish(); };
+    }, []);
     const activeTypeRef = useRef<HTMLButtonElement>(null);
     const visit = (next: Record<string, string>) => router.get('/explorar', { q: value, category: category ?? '', type: type ?? '', sort, ...next }, { preserveState: true, reset: ['opportunities', 'places'] });
     const hasFilters = value !== '' || category !== null || type;

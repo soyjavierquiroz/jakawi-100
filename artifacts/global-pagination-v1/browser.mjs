@@ -7,7 +7,7 @@ const fixtures=Object.fromEntries(Object.entries(rawFixtures).map(([key,value])=
 const manifest=JSON.parse(fs.readFileSync(`${root}/public/build/manifest.json`));
 const entry=manifest['resources/js/app.tsx'];
 const css=[...new Set([...Object.values(manifest).flatMap(x=>x.css??[])])];
-const html=(data)=>`<!DOCTYPE html><html lang="es"><head><meta name="viewport" content="width=device-width,initial-scale=1">${css.map(x=>`<link rel="stylesheet" href="/build/${x}">`).join('')}<script type="module" src="/build/${entry.file}"></script></head><body><div id="app" data-page="${JSON.stringify(data).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;')}"></div></body></html>`;
+const html=(data)=>`<!DOCTYPE html><html lang="es"><head><meta name="viewport" content="width=device-width,initial-scale=1">${css.map(x=>`<link rel="stylesheet" href="/build/${x}">`).join('')}<script type="module" src="/build/${entry.file}"></script></head><body><div id="app"></div><script data-page="app" type="application/json">${JSON.stringify(data).replaceAll('<','\\u003c')}</script></body></html>`;
 const browser=await puppeteer.launch({executablePath:'/root/.cache/puppeteer/chrome/linux-155.0.8059.39/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const result={status:'FAIL',checks:[],errors:[],requests:[]};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -50,8 +50,9 @@ try {
   await page.$eval('button.discovery-primary-action',el=>{el.click();el.click();});await page.waitForFunction(()=>document.querySelectorAll('.explorer-card').length===54);assert.equal(result.requests.length-before,1);
   const identities=await page.$$eval('.explorer-card',els=>els.map(el=>el.getAttribute('href')));assert.equal(new Set(identities).size,54);
   // Changing sort replaces accumulated results and resets the URL page.
-  await page.select('select[aria-label="Ordenar oportunidades"]','name');await page.waitForFunction(()=>document.querySelectorAll('.explorer-card').length===18);assert(!new URL(page.url()).searchParams.has('page'));
-  await page.$eval('button.discovery-primary-action',el=>el.click());await page.waitForFunction(()=>document.querySelectorAll('.explorer-card').length===36);
+  await page.select('select[aria-label="Ordenar oportunidades"]','name');await page.waitForFunction(()=>document.querySelectorAll('.explorer-card').length===18 && !document.querySelector('button.discovery-primary-action')?.disabled);assert(!new URL(page.url()).searchParams.has('page'));
+  await page.$eval('button.discovery-primary-action',el=>el.click());await page.waitForFunction(()=>document.querySelectorAll('.explorer-card').length===36 && !document.querySelector('button.discovery-primary-action')?.disabled);
+  await sleep(200);
   const scroll=await page.evaluate(()=>{window.scrollTo(0,800);return window.scrollY;});
   // A normal navigation and browser back restores the accumulated response and position.
   await page.evaluate(()=>window.Inertia); // no global store is introduced
