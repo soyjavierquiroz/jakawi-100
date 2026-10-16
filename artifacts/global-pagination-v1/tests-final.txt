@@ -1,0 +1,428 @@
+ Image jakawi-app-test Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 526B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.73kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#3 DONE 0.1s
+
+#4 [internal] load metadata for docker.io/library/composer:2
+#4 DONE 0.1s
+
+#5 [php-base 1/5] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#5 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.0s done
+#5 DONE 0.1s
+
+#6 FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#6 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.0s done
+#6 DONE 0.1s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 278B done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 125.31kB 0.1s done
+#8 DONE 0.2s
+
+#9 [php-base 2/5] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libjpeg62-turbo-dev         libpng-dev         libwebp-dev         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-configure gd --with-jpeg --with-webp     && docker-php-ext-install         gd         exif         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#9 CACHED
+
+#10 [php-base 3/5] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#10 CACHED
+
+#11 [php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#11 CACHED
+
+#12 [php-base 5/5] WORKDIR /var/www/html
+#12 CACHED
+
+#13 [test 1/5] COPY app/composer.json app/composer.lock* ./
+#13 CACHED
+
+#14 [test 2/5] RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#14 CACHED
+
+#15 [test 3/5] COPY --chown=www-data:www-data app/ ./
+#15 DONE 0.7s
+
+#16 [test 4/5] RUN cp .env.example .env     && composer dump-autoload --optimize
+#16 1.014 Generating optimized autoload files
+#16 7.495 > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+#16 7.538 > @php artisan package:discover --ansi
+#16 8.026 
+#16 8.026   [37;44m INFO [39;49m Discovering packages.  
+#16 8.026 
+#16 8.035   inertiajs/inertia-laravel [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.039   laravel/fortify [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.039   laravel/pail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.043   laravel/pao [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.043   laravel/passkeys [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.043   laravel/sail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.043   laravel/tinker [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.044   laravel/wayfinder [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.045   nesbot/carbon [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.046   nunomaduro/collision [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.047   nunomaduro/termwind [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.048 
+#16 8.060 Generated optimized autoload files containing 10200 classes
+#16 DONE 8.2s
+
+#17 [test 5/5] RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && touch .phpunit.result.cache     && chown www-data:www-data .phpunit.result.cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#17 DONE 0.8s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 1.3s done
+#18 exporting manifest sha256:bb1ed925ac9ac01a77a087744cfc5330563c50161093c5d63aaf73ff6263c863
+#18 exporting manifest sha256:bb1ed925ac9ac01a77a087744cfc5330563c50161093c5d63aaf73ff6263c863 0.0s done
+#18 exporting config sha256:876b7da079880dab27b9780660cd713a78d85656f22a844f7bd76e307c86d64b 0.0s done
+#18 exporting attestation manifest sha256:199f1cec13e801d7f8e0801925b005d57f0e582e6fedd2806647f73e303fe453 0.0s done
+#18 exporting manifest list sha256:c64598b6d99004108f7619a42333a31a8d75398b624e7ede53ddba452f015147 0.0s done
+#18 naming to docker.io/library/jakawi-app-test:latest done
+#18 unpacking to docker.io/library/jakawi-app-test:latest
+#18 unpacking to docker.io/library/jakawi-app-test:latest 0.6s done
+#18 DONE 2.1s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
+ Image jakawi-app-test Built 
+ Container jakawi-test-db-test-1 Running 
+ Container jakawi-test-app-test-1 Recreate 
+ Container jakawi-test-app-test-1 Recreated 
+ Container jakawi-test-db-test-1 Waiting 
+ Container jakawi-test-db-test-1 Healthy 
+ Container jakawi-test-app-test-1 Starting 
+ Container jakawi-test-app-test-1 Started 
+
+  Dropping all tables .......................................... 774.10ms DONE
+
+   INFO  Preparing database.  
+
+  Creating migration table ...................................... 28.21ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table .......................... 51.06ms DONE
+  0001_01_01_000001_create_cache_table .......................... 32.18ms DONE
+  0001_01_01_000002_create_jobs_table ........................... 49.50ms DONE
+  2024_01_01_000000_create_passkeys_table ....................... 27.31ms DONE
+  2025_08_14_170933_add_two_factor_columns_to_users_table ........ 2.45ms DONE
+  2026_09_21_000001_add_is_admin_to_users_table .................. 1.61ms DONE
+  2026_09_21_000004_create_memberships_table .................... 22.45ms DONE
+  2026_09_22_000001_create_partners_table ....................... 18.17ms DONE
+  2026_09_22_000002_create_locations_table ...................... 20.57ms DONE
+  2026_09_22_000003_create_benefits_table ....................... 21.53ms DONE
+  2026_09_22_000004_create_benefit_location_table ............... 14.06ms DONE
+  2026_09_22_000005_create_redemptions_table .................... 53.89ms DONE
+  2026_09_22_000006_create_experiences_table .................... 17.38ms DONE
+  2026_09_22_000007_create_experience_partner_table ............. 13.65ms DONE
+  2026_09_22_000008_create_experience_sessions_table ............ 22.37ms DONE
+  2026_09_22_000009_create_analytics_events_table ............... 86.81ms DONE
+  2026_09_23_000001_create_partner_user_table ................... 15.16ms DONE
+  2026_09_23_000002_add_internal_experience_reservations ........ 45.42ms DONE
+  2026_09_23_000003_add_party_size_to_experience_reservations .... 2.26ms DONE
+  2026_09_23_000004_add_check_in_to_experience_reservations ..... 16.15ms DONE
+  2026_09_24_000001_add_content_review_metadata ................. 39.35ms DONE
+  2026_09_24_000005_create_user_profiles_table .................. 16.62ms DONE
+  2026_09_25_000001_add_theme_preference_to_users_table .......... 2.42ms DONE
+  2026_09_26_000001_add_referral_code_to_users_table ............. 9.27ms DONE
+  2026_09_26_000002_create_attribution_foundation_tables ....... 116.22ms DONE
+  2026_09_26_000003_create_manual_membership_sales_tables ...... 116.21ms DONE
+  2026_09_26_000004_create_reward_payouts_tables ................ 50.61ms DONE
+  2026_09_26_000008_add_partner_acquisition_attribution ......... 64.53ms DONE
+  2026_09_26_000009_add_generic_reward_beneficiaries ............ 18.67ms DONE
+  2026_09_26_000010_create_campaigns ............................ 51.29ms DONE
+  2026_09_26_000011_create_operational_adjustments_table ........ 25.12ms DONE
+  2026_09_27_000012_add_requested_by_to_reward_payouts ........... 9.02ms DONE
+  2026_09_27_000013_create_unlocks_tables ....................... 72.47ms DONE
+  2026_09_27_000014_add_unlock_to_analytics_events ............... 9.25ms DONE
+  2026_09_27_000015_create_jp_holds_table ....................... 19.42ms DONE
+  2026_09_27_000016_add_unlock_fulfillment_lifecycle ............ 26.01ms DONE
+  2026_09_27_000017_add_unlock_growth_context ................... 12.88ms DONE
+  2026_09_30_000001_create_cities_table ......................... 14.79ms DONE
+  2026_10_01_000001_add_city_id_to_locations_and_seed_canonical_cities  9.76ms DONE
+  2026_10_02_000001_create_city_interests_table ................. 42.25ms DONE
+  2026_10_03_000001_create_partner_applications_table ........... 37.31ms DONE
+  2026_10_05_000001_add_whatsapp_to_user_profiles ................ 1.80ms DONE
+  2026_10_05_000001_create_program_applications_table ........... 36.98ms DONE
+  2026_10_06_000001_create_ownership_assignments_table .......... 21.54ms DONE
+  2026_10_06_000002_add_public_journey_attribution_to_touches .... 6.83ms DONE
+  2026_10_07_000001_create_membership_purchase_requests ......... 36.50ms DONE
+  2026_10_07_000002_create_social_challenges ................... 109.69ms DONE
+  2026_10_07_000003_add_jp_ledger_references .................... 30.82ms DONE
+  2026_10_07_000004_add_social_challenge_jp_rewards ............. 10.62ms DONE
+  2026_10_07_000005_generalize_challenges ....................... 68.03ms DONE
+  2026_10_07_000006_challenge_product_experience ................ 13.94ms DONE
+  2026_10_08_000001_create_landing_presentations ................ 23.19ms DONE
+  2026_10_08_000002_add_challenge_marketing_editorial ............ 4.26ms DONE
+  2026_10_08_000003_add_landing_default_scope ................... 11.23ms DONE
+  2026_10_09_000001_extend_analytics_events_for_growth .......... 39.54ms DONE
+  2026_10_09_000002_add_acquisition_provider .................... 12.65ms DONE
+  2026_10_09_000003_create_growth_provider_deliveries ........... 27.61ms DONE
+  2026_10_09_180000_create_crm_foundation ....................... 56.77ms DONE
+  2026_10_11_000001_add_vsl_to_landing_presentations ............. 1.56ms DONE
+  2026_10_12_000001_add_offer_presentation_settings ............. 13.46ms DONE
+  2026_10_12_000002_add_offer_layout_controls .................... 2.23ms DONE
+  2026_10_12_000003_add_acquisition_copy_to_landing_presentations  2.14ms DONE
+  2026_10_14_000001_add_gallery_paths_to_partners ................ 2.00ms DONE
+  2026_10_14_000002_add_experience_catalog_controls .............. 4.29ms DONE
+  2026_10_15_000001_add_city_communities ........................ 16.48ms DONE
+
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AcquisitionProviderActivationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mprefetch and admin preview cannot change effective provider[39m[90m         [39m [90m3.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminAdjustmentExportTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin records effective jp and separate cash adjustments[39m[90m            [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnon admin and missing reason are denied[39m[90m                             [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner adjustment keeps partner beneficiary[39m[90m                        [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mattribution correction preserves touch and audits old relationship[39m[90m  [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpaid reward cannot be rewritten[39m[90m                                     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin csvs are authorized filtered private and formula safe[39m[90m         [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminBenefitFormUxTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcreate and edit expose partner locations and preserve the save cont[39m[90m…[39m [90m0.20s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminCatalogTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexisting draft can be opened and saved by admin without duplicating[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublished edit and authorization are preserved[39m[90m                      [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcatalog search filters order pagination and empty results[39m[90m           [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefits and challenges share catalog and only offer valid actions[39m[90m  [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminCityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mnon admin is forbidden from city administration[39m[90m                     [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin lists cities[39m[90m                                                  [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin views city detail[39m[90m                                             [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin creates a city and normalizes country code[39m[90m                    [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcity slug must be unique and status must be valid[39m[90m                   [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin edits a city and priority persists with audit[39m[90m                 [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin changes city status explicitly with audit[39m[90m                     [39m [90m0.19s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminExpansionTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin sees per city read only expansion metrics[39m[90m                     [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpansion requires admin and filters by status[39m[90m                      [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcity detail includes the expansion metrics[39m[90m                          [39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminPartnerLocationsUxTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner editor and listing expose locations and only published publ[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90massociated create uses existing flow and preserves owner and state[39m[90m… [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner identity save preserves slug media and location draft[39m[90m       [39m [90m0.20s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminPromoterManagementTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin enrolls existing member and prevents duplicate active enrollm[39m[90m…[39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin creates safe promoter with code and non admin cannot manage[39m[90m   [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeactivation and expiry remove operational access without deleting[39m[90m… [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral code is generated without silent overwrite and link attrib[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mindividual commission wins over program rule without stacking and i[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoters cannot see another promoters sales[39m[90m                        [39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminV2Test[39m
+  [32;1m✓[39;22m[90m [39m[90madmin creates partner location pin and images[39m[90m                       [39m [90m0.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin uploads accept allowed images reject invalid files and preser[39m[90m…[39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin enforces benefit location ownership and experience relations[39m[90m  [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin access membership and redemption index[39m[90m                        [39m [90m0.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can view locations index[39m[90m                                      [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location edit uses ids for draft and published[39m[90m                [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location update uses ids without changing status[39m[90m              [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location unknown ids return not found[39m[90m                         [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location edit and update require admin[39m[90m                        [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic location binding remains slug[39m[90m                                [39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AffiliatePayoutTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin pays idempotently and requires reference[39m[90m                      [39m [90m0.26s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AffiliateProgramTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin enrolls existing or new affiliate safely[39m[90m                      [39m [90m0.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdashboard requires active affiliate and isolated[39m[90m                    [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral records touch relationship and dashboard metrics[39m[90m           [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst valid affiliate gets one reward when no credited seller and r[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoter context wins and preserves affiliate attribution without d[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno rule succeeds refund cancels affiliate reward and only admin can[39m[90m…[39m [90m0.29s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ApplicationV2HttpTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin is server side protected[39m[90m                                      [39m [90m0.16s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AttributionFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin can update window and non admin cannot[39m[90m                        [39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\RegistrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mregistration cannot assign administrator privileges[39m[90m                 [39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitAuthenticatedAccessTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin accepts authenticated and rejects unknown access mode[39m[90m         [39m [90m0.16s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitDraftPrivacyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdraft admin preview survives and guests cannot enter[39m[90m                [39m [90m0.16s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitMarketingLandingTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin reuses management create edit preview publish defaults and ar[39m[90m…[39m [90m0.46s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin can create campaign and non admin cannot[39m[90m                      [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign rules win without stacking and fall back outside window[39m[90m    [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mraw unknown utm is preserved and campaign link is historical[39m[90m        [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CatalogImporterV2Test[39m
+  [32;1m✓[39;22m[90m [39m[90mreimport updates catalog and preserves admin only fields[39m[90m            [39m [90m0.24s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeGeneralizationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmanual evidence has no sharecontest and requires admin review[39m[90m       [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin contract validation and public rules[39m[90m                          [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeProductExperienceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner submission review and publication gate[39m[90m                      [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner cannot use another partners benefit[39m[90m                         [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic landing discovery and individual progress[39m[90m                    [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mranking uses one best eligible entry per participant and visibility[39m[90m [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscheduler queues only stale top n social entries[39m[90m                    [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst n slots manual landing and membership return[39m[90m                  [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrules cannot change after participation[39m[90m                             [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclosed ranking stays provisional until candidate is confirmed[39m[90m       [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90minflight inspection at close writes final snapshot[39m[90m                  [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired social challenge closes and queues final snapshot[39m[90m           [39m [90m0.16s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityCommunityTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin configuration validation and authorization[39m[90m                    [39m [90m0.33s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityInterestTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin sees accurate interest totals without public identity data[39m[90m    [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityLocationTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin location persists city and synchronizes legacy city string[39m[90m    [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DiscoveryServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[90maggregates all domains in one city and batches unlock progress[39m[90m      [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90meach opportunity type can be the hero when it is the only candidate[39m[90m [39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExperienceMarketingLandingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mgeneric admin lifecycle and preview subject guard[39m[90m                   [39m [90m0.35s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExperienceV2Test[39m
+  [32;1m✓[39;22m[90m [39m[90madmin can publish an informational landing only after authorizing v[39m[90m…[39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can save pending fields and preserve values and relationships[39m[90m [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can create without knowing slugs and duplicate titles get dis[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin preview is private and works without a landing or sessions[39m[90m    [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExploreDiscoveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexplore keeps opportunity types categories search city and places s[39m[90m…[39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplore paginates each explicit result set at eighteen[39m[90m              [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90msearch matches the supported fields without crossing domains or cit[39m[90m…[39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90msearch composes category with todo and normalizes blank whitespace[39m[90m  [39m [90m0.26s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\GlobalPaginationTest[39m
+  [32;1m✓[39;22m[90m [39m[90munion paginates all eligible domains before hydration at 100 and 50[39m[90m…[39m [90m4.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin partner and location filters run before pagination and keep u[39m[90m…[39m [90m0.79s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\GoldStabilizationTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin rejects malformed locations without mutating a benefit[39m[90m        [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\JpLedgerIntegrityTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin credit debit retry and canonical snapshots[39m[90m                    [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin rejects overdraw ambiguous sign and key reuse[39m[90m                 [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mjp reversal and admin status correction keep original[39m[90m               [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LandingAiBriefTest[39m
+  [32;1m✓[39;22m[90m [39m[90mversion order json and read only admin projection are stable[39m[90m        [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LandingPresentationTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin persists valid video rejects invalid configuration and remove[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can preview publish and restore product default[39m[90m               [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin visitors everyone archive and invalid scope[39m[90m                   [39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ManualMembershipSalesTest[39m
+  [32;1m✓[39;22m[90m [39m[90monly admin refunds and refund preserves history and cancels reward[39m[90m  [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MarketingLandingAdminV1Test[39m
+  [32;1m✓[39;22m[90m [39m[90madmin saves only two acquisition copy values and preview projects t[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90msaved editorial is rendered verbatim and layout controls are valida[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience editorial containing en is not silently replaced[39m[90m         [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90memphasis uses effective product headline when editorial headline is[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcreate edit publish unpublish and live domain truth[39m[90m                 [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90moffer desktop sources use master portrait preset for each domain[39m[90m    [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90meditorial save preserves selected identity publication and sibling[39m[90m  [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mallowlists plain text emphasis subject and no action editor[39m[90m         [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmedia switching keeps stored config and duplicate is new draft[39m[90m      [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting admin subject picker summary and reassignment[39m[90m              [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview is authorized noindex and has no business or growth writes[39m[90m  [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock editorial admin keeps legacy validation without offer settin[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmigration is deterministic reversible preserves editorial and unloc[39m[90m…[39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MembershipConversionJourneyTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin sale completes request with original attribution and single u[39m[90m…[39m [90m0.33s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\OwnershipAssignmentTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmanual application assignment rejects applicant and non admin has n[39m[90m…[39m [90m0.27s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerAccessTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin without partner relation cannot access partner portal or vali[39m[90m…[39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerApplicationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mauthenticated submit admin workflow city metrics and paused protect[39m[90m…[39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerContentStudioTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner promotion workflow is scoped and admin publishes[39m[90m            [39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerEditorialMediaTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin three slots upload replace remove are atomic and keep logo co[39m[90m…[39m [90m1.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin rejects raw paths fourth slot and non admin writes[39m[90m            [39m [90m0.28s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerIdentityRefinementTest[39m
+  [32;1m✓[39;22m[90m [39m[90monly admin can reopen existing master without overwriting it[39m[90m        [39m [90m0.28s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerPayoutTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin pays idempotently or rejects partner payout[39m[90m                   [39m [90m0.19s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerPublicProfileTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpublic identity inventory locations canonical and prelaunch[39m[90m         [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner media projection preserves logo proportions and optimizes c[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mempty profile and only current public inventory[39m[90m                     [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreserved rule covers registered routes and invalid slugs on creatio[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprimary downstream new signup owns partner without partner signup b[39m[90m…[39m [90m0.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdirect signup returns to public profile[39m[90m                             [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting login consumes candidate without ownership even after logo[39m[90m…[39m [90m0.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting identity cannot signup and existing owner is never reassig[39m[90m…[39m [90m0.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst valid partner wins even when landing latest touch is differen[39m[90m…[39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale and unscoped anonymous touches do not become new ownership[39m[90m    [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner management shows public url and other accounts cannot manag[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner inventory and generic entry share landing first for both au[39m[90m…[39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90minapplicable landings fall back and guest priority is preserved[39m[90m     [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding cta continues domain action without presentation loop[39m[90m       [39m [90m0.44s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PrelaunchModeTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin and saved preview and auth are excluded[39m[90m                       [39m [90m0.24s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ProgramAcquisitionJourneyTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin filters transitions activates once and preserves referral cod[39m[90m…[39m [90m0.27s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\QrPaymentGatewayTest[39m
+  [32;1m✓[39;22m[90m [39m[90ma regular client cannot activate a membership through the admin end[39m[90m…[39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Settings\ProfileUpdateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mprofile update cannot assign administrator privileges[39m[90m               [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockAdminOperationsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mnon admin is denied all operations[39m[90m                                  [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclose early requires reason and blocks new commitments without reve[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mremove requires reason releases hold without forfeit or bonus and i[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexceptional release requires reason releases once and removes activ[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate correction requires reason allows only confirmed to cancelled[39m[90m…[39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockCoreTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin creates and approves an unlock with linked results[39m[90m            [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin unlock index and forms are reachable only by admins[39m[90m           [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeadline failure admin cancellation audit and partner material lock[39m[90m [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockMarketingLandingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mgeneric admin create edit preview publish defaults archive and subj[39m[90m…[39m [90m0.29s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockMetricsTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin metrics are domain derived and zero safe[39m[90m                      [39m [90m0.09s[39m  
+
+  [90mTests:[39m    [32;1m145 passed[39;22m[90m (3206 assertions)[39m
+  [90mDuration:[39m [39m36.60s[39m
+

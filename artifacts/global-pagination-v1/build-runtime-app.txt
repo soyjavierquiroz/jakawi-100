@@ -1,0 +1,47 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from runtime-final.Dockerfile
+#1 transferring dockerfile: 722B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/jakawi-pagination-app:194b2e70d458
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 278B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [app 1/4] FROM docker.io/library/jakawi-pagination-app:194b2e70d458@sha256:5699d376057ea68b12b2d22788804b79f5cc1c686bc1d9ae0f1fbd1c8990ea27
+#5 resolve docker.io/library/jakawi-pagination-app:194b2e70d458@sha256:5699d376057ea68b12b2d22788804b79f5cc1c686bc1d9ae0f1fbd1c8990ea27 0.0s done
+#5 CACHED
+
+#4 [internal] load build context
+#4 transferring context: 2.04MB 0.1s done
+#4 DONE 0.1s
+
+#6 [app 2/4] COPY --chown=www-data:www-data app/app/ /var/www/html/app/
+#6 DONE 0.3s
+
+#7 [app 3/4] COPY --chown=www-data:www-data app/tests/ /var/www/html/tests/
+#7 DONE 0.1s
+
+#8 [app 4/4] RUN php -l app/Http/Controllers/AdminLandingPresentationController.php && php -l app/Http/Controllers/PublicController.php && php -l app/Discovery/DiscoveryService.php && sh scripts/check-production-artifact.sh public
+#8 0.271 No syntax errors detected in app/Http/Controllers/AdminLandingPresentationController.php
+#8 0.317 No syntax errors detected in app/Http/Controllers/PublicController.php
+#8 0.373 No syntax errors detected in app/Discovery/DiscoveryService.php
+#8 0.392 Production artifact PASS: Vite hot file absent
+#8 DONE 0.4s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 0.4s done
+#9 exporting manifest sha256:a565007f37871f32aa308fd94b954ed8ae0fb2a84563e1007b42a2ae1f3a2055 0.0s done
+#9 exporting config sha256:bda24f92294cc25261d5bc257d2eb47f72bda89652bd2ccffdb55907fdb85642 0.0s done
+#9 exporting attestation manifest sha256:636375e54cf703449b8766c4ca5c68497d386718c4e74b728ceb9131071f6a8d 0.0s done
+#9 exporting manifest list sha256:47a91f290eedc794560d2393a038b49e6ef29698906c4bc2a4fdcf1ae1d536f4 0.0s done
+#9 naming to docker.io/library/jakawi-pagination-app:a9803e8c7036 done
+#9 unpacking to docker.io/library/jakawi-pagination-app:a9803e8c7036 0.1s done
+#9 DONE 0.7s

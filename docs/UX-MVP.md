@@ -33,7 +33,7 @@ Inventario focalizado y cobertura:
 | Admin ventas / pagos | 30; filtros backend | 25; navegación; filtros de venta expuestos |
 | Canjes / ajustes inmutables | 50/30, navegación ausente | 50; navegación; búsqueda en canjes; filtros operativos conservados |
 | Campañas / reglas / ciudades / expansión | `get()` sin límite | 25; búsqueda en primeras tres; estado existente en expansión; métricas limitadas a la página |
-| Marketing Landings de un producto | todas sus presentaciones | 25; default publicado resuelto independientemente de la página; editor conservado |
+| Marketing Landings de un producto | todas sus presentaciones | 25; default publicado independiente de la página; guardar/duplicar vuelve a la página del registro persistido |
 | Revisión editorial Benefit/Experience | todos los pendientes | 25 independientes por dominio; acciones preservadas |
 | Auditoría de afiliado/promotor/creador | todo el historial | 50, `audit_page` |
 | Portal Partner contenido/retos/desbloqueos | `get()` sin límite | 25; scope de propiedad conservado |
@@ -53,7 +53,9 @@ contrato de secciones pequeñas.
 
 «Cargar más» solicita únicamente resultados y metadatos mediante una visita
 parcial Inertia; `Inertia::merge` añade los resultados, filtro nuevo reinicia arrays,
-se bloquean dobles clics y se conserva scroll. El historial de Inertia conserva el
+se bloquean dobles clics y se conserva scroll. El reset solicita explícitamente
+resultados, metadatos y filtros juntos; las navegaciones pendientes bloquean
+la continuación. Los mapas de filtros vacíos se serializan como objetos. El historial de Inertia conserva el
 conjunto cargado y el scroll al volver de una ficha; no hay store global ni
 localStorage. Recargar una URL `page=N` muestra esa página coherente y permite
 continuar. Admin muestra hasta cinco números cercanos más extremos en desktop;
@@ -79,6 +81,10 @@ Excepciones y pendientes explícitos (la cobertura **no es global completa**):
 - Formularios, selectores de asociaciones, menús, configuración y catálogos
   estáticos no se paginan. Algunos selectores dinámicos cargan todas sus opciones;
   sustituirlos por autocomplete queda fuera de esta pasada de listados.
+
+Membresías usa `q` y el contrato `membership.is_active` esperado por su UI; la
+acción de cancelar utiliza la ruta DELETE existente, sin cambiar el servicio
+comercial.
 
 No hay migraciones ni índices nuevos. PostgreSQL aislado verifica 100 y 500
 registros mixtos, estabilidad, no duplicación, extremos, filtros y privacidad.

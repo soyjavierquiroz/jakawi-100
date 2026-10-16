@@ -1,0 +1,74 @@
+[
+  {
+    "name": "root",
+    "path": "/",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "explore",
+    "path": "/explorar",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "benefit",
+    "path": "/beneficios/le-petit-brunch-bakery-brunch-a-tu-ritmo",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "experience",
+    "path": "/experiencias/toctoccafe-descubre-el-cafe-boliviano",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "landing-one",
+    "path": "/l/dossis-43-cafe-y-antojo",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "landing-two",
+    "path": "/l/el-re-pollo-almuerzo-resuelto",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "partners",
+    "path": "/admin/partners",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "locations",
+    "path": "/admin/locations",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "benefits",
+    "path": "/admin/benefits",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "preview-one",
+    "path": "/admin/beneficios/dossis43-parada-estrategica/landings/dossis43-parada-estrategica/preview",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "preview-two",
+    "path": "/admin/beneficios/dossis43-parada-estrategica/landings/dossis-43-cafe-y-antojo/preview",
+    "status": "PASS",
+    "readOnly": true
+  },
+  {
+    "name": "preview-three",
+    "path": "/admin/beneficios/elrepollo-almuerzo/landings/elrepollo-almuerzo/preview",
+    "status": "PASS",
+    "readOnly": true
+  }
+]

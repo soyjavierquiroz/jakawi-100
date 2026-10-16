@@ -1,0 +1,1243 @@
+ Image jakawi-app-test Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 526B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.73kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 ...
+
+#4 [internal] load metadata for docker.io/library/php:8.4-fpm-bookworm
+#4 DONE 0.3s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 DONE 0.3s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 278B done
+#5 DONE 0.0s
+
+#6 FROM docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+#6 resolve docker.io/library/composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac 0.0s done
+#6 DONE 0.0s
+
+#7 [php-base 1/5] FROM docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601
+#7 resolve docker.io/library/php:8.4-fpm-bookworm@sha256:6bfef8e416977aa41f48e3e42a40c1e08050d24e4a938c6edb421400bff24601 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 253.12kB 0.1s done
+#8 DONE 0.1s
+
+#9 [test 1/5] COPY app/composer.json app/composer.lock* ./
+#9 CACHED
+
+#10 [php-base 2/5] RUN apt-get update     && apt-get install -y --no-install-recommends         git         libjpeg62-turbo-dev         libpng-dev         libwebp-dev         libicu-dev         libpq-dev         libzip-dev         unzip         zip     && docker-php-ext-configure gd --with-jpeg --with-webp     && docker-php-ext-install         gd         exif         bcmath         intl         opcache         pdo_pgsql         pgsql         zip     && apt-get purge -y --auto-remove     && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [php-base 3/5] COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+#11 CACHED
+
+#12 [php-base 4/5] COPY docker/php/media.ini /usr/local/etc/php/conf.d/media.ini
+#12 CACHED
+
+#13 [php-base 5/5] WORKDIR /var/www/html
+#13 CACHED
+
+#14 [test 2/5] RUN composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+#14 CACHED
+
+#15 [test 3/5] COPY --chown=www-data:www-data app/ ./
+#15 DONE 1.1s
+
+#16 [test 4/5] RUN cp .env.example .env     && composer dump-autoload --optimize
+#16 1.084 Generating optimized autoload files
+#16 8.260 > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+#16 8.293 > @php artisan package:discover --ansi
+#16 8.551 
+#16 8.551   [37;44m INFO [39;49m Discovering packages.  
+#16 8.551 
+#16 8.555   inertiajs/inertia-laravel [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.556   laravel/fortify [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.557   laravel/pail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.558   laravel/pao [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.559   laravel/passkeys [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.560   laravel/sail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.560   laravel/tinker [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.561   laravel/wayfinder [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.562   nesbot/carbon [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.563   nunomaduro/collision [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.563   nunomaduro/termwind [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+#16 8.564 
+#16 8.573 Generated optimized autoload files containing 10200 classes
+#16 DONE 8.7s
+
+#17 [test 5/5] RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache     && touch .phpunit.result.cache     && chown www-data:www-data .phpunit.result.cache     && chown -R www-data:www-data storage bootstrap/cache     && find storage bootstrap/cache -type d -exec chmod 775 {} +     && find storage bootstrap/cache -type f -exec chmod 664 {} +
+#17 DONE 0.8s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 1.0s done
+#18 exporting manifest sha256:eba4fb2bdeca92df8badd5af8a78fc58ec9820923d2dc19c7a9a108e973f8693 0.0s done
+#18 exporting config sha256:8e9f49c1274713862d3a89206bb7e04d3de430c75fcacbc806b1ca58575feb1d 0.0s done
+#18 exporting attestation manifest sha256:82af2d6d9919826a273142648f933284e912a64fd318d859a5e3e63ad78207e3 0.0s done
+#18 exporting manifest list sha256:38dce4e1cf1ac8fe74ff9d7f38aa6b7a84c0c0bd4e3bd49d9925541773d60c16 0.0s done
+#18 naming to docker.io/library/jakawi-app-test:latest done
+#18 unpacking to docker.io/library/jakawi-app-test:latest
+#18 unpacking to docker.io/library/jakawi-app-test:latest 0.7s done
+#18 DONE 1.9s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.1s
+ Image jakawi-app-test Built 
+ Container jakawi-test-db-test-1 Running 
+ Container jakawi-test-app-test-1 Recreate 
+ Container jakawi-test-app-test-1 Recreated 
+ Container jakawi-test-db-test-1 Waiting 
+ Container jakawi-test-db-test-1 Healthy 
+ Container jakawi-test-app-test-1 Starting 
+ Container jakawi-test-app-test-1 Started 
+
+  Dropping all tables .......................................... 517.83ms DONE
+
+   INFO  Preparing database.  
+
+  Creating migration table ...................................... 15.36ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table .......................... 46.07ms DONE
+  0001_01_01_000001_create_cache_table .......................... 33.76ms DONE
+  0001_01_01_000002_create_jobs_table ........................... 45.16ms DONE
+  2024_01_01_000000_create_passkeys_table ....................... 21.47ms DONE
+  2025_08_14_170933_add_two_factor_columns_to_users_table ........ 2.20ms DONE
+  2026_09_21_000001_add_is_admin_to_users_table .................. 1.84ms DONE
+  2026_09_21_000004_create_memberships_table .................... 22.40ms DONE
+  2026_09_22_000001_create_partners_table ....................... 55.33ms DONE
+  2026_09_22_000002_create_locations_table ...................... 21.43ms DONE
+  2026_09_22_000003_create_benefits_table ....................... 19.46ms DONE
+  2026_09_22_000004_create_benefit_location_table ............... 10.03ms DONE
+  2026_09_22_000005_create_redemptions_table .................... 61.07ms DONE
+  2026_09_22_000006_create_experiences_table .................... 18.59ms DONE
+  2026_09_22_000007_create_experience_partner_table ............. 13.08ms DONE
+  2026_09_22_000008_create_experience_sessions_table ............ 24.26ms DONE
+  2026_09_22_000009_create_analytics_events_table ............... 67.95ms DONE
+  2026_09_23_000001_create_partner_user_table ................... 12.03ms DONE
+  2026_09_23_000002_add_internal_experience_reservations ........ 29.29ms DONE
+  2026_09_23_000003_add_party_size_to_experience_reservations .... 1.94ms DONE
+  2026_09_23_000004_add_check_in_to_experience_reservations ..... 18.82ms DONE
+  2026_09_24_000001_add_content_review_metadata ................. 31.30ms DONE
+  2026_09_24_000005_create_user_profiles_table .................. 12.53ms DONE
+  2026_09_25_000001_add_theme_preference_to_users_table .......... 1.98ms DONE
+  2026_09_26_000001_add_referral_code_to_users_table ............. 4.47ms DONE
+  2026_09_26_000002_create_attribution_foundation_tables ........ 96.05ms DONE
+  2026_09_26_000003_create_manual_membership_sales_tables ....... 93.83ms DONE
+  2026_09_26_000004_create_reward_payouts_tables ................ 39.37ms DONE
+  2026_09_26_000008_add_partner_acquisition_attribution ......... 30.86ms DONE
+  2026_09_26_000009_add_generic_reward_beneficiaries ............ 16.64ms DONE
+  2026_09_26_000010_create_campaigns ............................ 44.37ms DONE
+  2026_09_26_000011_create_operational_adjustments_table ........ 25.90ms DONE
+  2026_09_27_000012_add_requested_by_to_reward_payouts ........... 8.18ms DONE
+  2026_09_27_000013_create_unlocks_tables ....................... 94.96ms DONE
+  2026_09_27_000014_add_unlock_to_analytics_events .............. 10.11ms DONE
+  2026_09_27_000015_create_jp_holds_table ....................... 23.33ms DONE
+  2026_09_27_000016_add_unlock_fulfillment_lifecycle ............ 39.81ms DONE
+  2026_09_27_000017_add_unlock_growth_context ................... 13.94ms DONE
+  2026_09_30_000001_create_cities_table ......................... 18.46ms DONE
+  2026_10_01_000001_add_city_id_to_locations_and_seed_canonical_cities  11.29ms DONE
+  2026_10_02_000001_create_city_interests_table ................. 33.30ms DONE
+  2026_10_03_000001_create_partner_applications_table ........... 38.64ms DONE
+  2026_10_05_000001_add_whatsapp_to_user_profiles ................ 1.23ms DONE
+  2026_10_05_000001_create_program_applications_table ........... 29.17ms DONE
+  2026_10_06_000001_create_ownership_assignments_table .......... 28.38ms DONE
+  2026_10_06_000002_add_public_journey_attribution_to_touches .... 7.36ms DONE
+  2026_10_07_000001_create_membership_purchase_requests ......... 34.99ms DONE
+  2026_10_07_000002_create_social_challenges ................... 142.97ms DONE
+  2026_10_07_000003_add_jp_ledger_references .................... 42.56ms DONE
+  2026_10_07_000004_add_social_challenge_jp_rewards ............. 20.17ms DONE
+  2026_10_07_000005_generalize_challenges ...................... 121.95ms DONE
+  2026_10_07_000006_challenge_product_experience ................ 22.68ms DONE
+  2026_10_08_000001_create_landing_presentations ................ 26.89ms DONE
+  2026_10_08_000002_add_challenge_marketing_editorial ............ 6.95ms DONE
+  2026_10_08_000003_add_landing_default_scope ................... 17.14ms DONE
+  2026_10_09_000001_extend_analytics_events_for_growth .......... 42.24ms DONE
+  2026_10_09_000002_add_acquisition_provider .................... 13.32ms DONE
+  2026_10_09_000003_create_growth_provider_deliveries ........... 35.97ms DONE
+  2026_10_09_180000_create_crm_foundation ....................... 54.08ms DONE
+  2026_10_11_000001_add_vsl_to_landing_presentations ............. 2.68ms DONE
+  2026_10_12_000001_add_offer_presentation_settings ............. 21.91ms DONE
+  2026_10_12_000002_add_offer_layout_controls .................... 2.45ms DONE
+  2026_10_12_000003_add_acquisition_copy_to_landing_presentations  2.41ms DONE
+  2026_10_14_000001_add_gallery_paths_to_partners ................ 1.82ms DONE
+  2026_10_14_000002_add_experience_catalog_controls .............. 4.17ms DONE
+  2026_10_15_000001_add_city_communities ........................ 35.15ms DONE
+
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\DiscoveryOpportunityAdapterTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbenefit adapter maps public read fields without economic or redempt[39m[90m…[39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience adapter uses only the explicit selected city session and[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience adapter rejects a wrong city session without using venue[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock adapter uses supplied progress and hides secret partner with[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall adapters expose public responsive partner logos without partner[39m[90m…[39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\DiscoveryOpportunityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbenefit shaped opportunity serializes without a domain model[39m[90m        [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience shaped opportunity serializes[39m[90m                            [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock shaped opportunity serializes with empty categories[39m[90m          [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90moptional fields are null or empty without persistence[39m[90m               [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtype and source id are a stable identity and metadata is adapter ow[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontract is non persisted so a future adapter needs no schema chang[39m[90m…[39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\DiscoveryRankerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcategory affinity applies to benefits and experiences but not unloc[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mties are deterministic by type then source id[39m[90m                       [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthat true is true[39m[90m                                                   [39m [90m2.44s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AcquisitionProviderActivationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mparser only recognizes explicit canonical values[39m[90m                    [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90macq alone creates canonical touches and view snapshots without econ[39m[90m…[39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid acq does not activate or persist raw values[39m[90m                 [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mswitching and direct continuity use one touch lifecycle[39m[90m             [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90morganic home and product detail do not activate[39m[90m                     [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprefetch and admin preview cannot change effective provider[39m[90m         [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovider authorization is separate from economic campaign[39m[90m           [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmigration backfills none and enforces storage contract[39m[90m              [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminAdjustmentExportTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin records effective jp and separate cash adjustments[39m[90m            [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnon admin and missing reason are denied[39m[90m                             [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner adjustment keeps partner beneficiary[39m[90m                        [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mattribution correction preserves touch and audits old relationship[39m[90m  [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpaid reward cannot be rewritten[39m[90m                                     [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin csvs are authorized filtered private and formula safe[39m[90m         [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminBenefitFormUxTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcreate and edit expose partner locations and preserve the save cont[39m[90m…[39m [90m0.25s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminCatalogTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexisting draft can be opened and saved by admin without duplicating[39m[90m…[39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublished edit and authorization are preserved[39m[90m                      [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcatalog search filters order pagination and empty results[39m[90m           [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefits and challenges share catalog and only offer valid actions[39m[90m  [39m [90m0.18s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\AdminCityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mnon admin is forbidden from city administration[39m[90m                     [39m [90m0.09s[39m  
+  [31;1m⨯[39;22m[90m [39m[90madmin lists cities[39m[90m                                                  [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin views city detail[39m[90m                                             [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin creates a city and normalizes country code[39m[90m                    [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcity slug must be unique and status must be valid[39m[90m                   [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin edits a city and priority persists with audit[39m[90m                 [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin changes city status explicitly with audit[39m[90m                     [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminExpansionTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin sees per city read only expansion metrics[39m[90m                     [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpansion requires admin and filters by status[39m[90m                      [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcity detail includes the expansion metrics[39m[90m                          [39m [90m0.14s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\AdminPartnerLocationsUxTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner editor and listing expose locations and only published publ[39m[90m…[39m [90m0.18s[39m  
+  [31;1m⨯[39;22m[90m [39m[90massociated create uses existing flow and preserves owner and state[39m[90m… [39m [90m0.12s[39m  
+  [31;1m⨯[39;22m[90m [39m[90mpartner identity save preserves slug media and location draft[39m[90m       [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminPromoterManagementTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin enrolls existing member and prevents duplicate active enrollm[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin creates safe promoter with code and non admin cannot manage[39m[90m   [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeactivation and expiry remove operational access without deleting[39m[90m… [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral code is generated without silent overwrite and link attrib[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mindividual commission wins over program rule without stacking and i[39m[90m…[39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoters cannot see another promoters sales[39m[90m                        [39m [90m0.12s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\AdminV2Test[39m
+  [32;1m✓[39;22m[90m [39m[90madmin creates partner location pin and images[39m[90m                       [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin uploads accept allowed images reject invalid files and preser[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin enforces benefit location ownership and experience relations[39m[90m  [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin access membership and redemption index[39m[90m                        [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can view locations index[39m[90m                                      [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location edit uses ids for draft and published[39m[90m                [39m [90m0.09s[39m  
+  [31;1m⨯[39;22m[90m [39m[90madmin location update uses ids without changing status[39m[90m              [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location unknown ids return not found[39m[90m                         [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location edit and update require admin[39m[90m                        [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic location binding remains slug[39m[90m                                [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AffiliatePayoutTest[39m
+  [32;1m✓[39;22m[90m [39m[90maffiliate can only request available cash at or above the persisten[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbelow threshold is rejected and dashboard has payment data[39m[90m          [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin pays idempotently and requires reference[39m[90m                      [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrejection requires reason releases rewards and refund is blocked wh[39m[90m…[39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AffiliateProgramTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin enrolls existing or new affiliate safely[39m[90m                      [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdashboard requires active affiliate and isolated[39m[90m                    [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral records touch relationship and dashboard metrics[39m[90m           [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst valid affiliate gets one reward when no credited seller and r[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoter context wins and preserves affiliate attribution without d[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno rule succeeds refund cancels affiliate reward and only admin can[39m[90m…[39m [90m0.20s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AnalyticsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mschema has json metadata occurred at and nullable foreign keys[39m[90m      [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdomain deletion nulls analytics foreign keys without deleting event[39m[90m [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtracker records view contexts and never copies domain data into met[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtracker validates events metadata and can be disabled[39m[90m               [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisabled tracker and metadata whitelist do not accept arbitrary dat[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvisitor middleware generates preserves and replaces ids[39m[90m             [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated request records both user and visitor[39m[90m                 [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclick events only allow safe small metadata[39m[90m                         [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mredemption events are transactional and idempotent[39m[90m                  [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ApplicationV2HttpTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpublication routes only expose published records[39m[90m                    [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin is server side protected[39m[90m                                      [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AttributionFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90manonymous referral is associated at signup[39m[90m                          [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst referrer remains within window and second is a touch[39m[90m          [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired relationship allows next referrer[39m[90m                           [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual code applies but does not overwrite valid referrer[39m[90m           [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mself referral is not created[39m[90m                                        [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconversion recording is idempotent[39m[90m                                  [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can update window and non admin cannot[39m[90m                        [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown code and redirect stay safe[39m[90m                                 [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\AuthenticationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mlogin screen can be rendered[39m[90m                                        [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90musers can authenticate using the login screen[39m[90m                       [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner user authenticates and is redirected to the partner portal[39m[90m  [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90musers with two factor enabled are redirected to two factor challeng[39m[90m…[39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90musers can not authenticate with invalid password[39m[90m                    [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90musers can logout[39m[90m                                                    [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90musers are rate limited[39m[90m                                              [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\EmailVerificationTest[39m
+  [32;1m✓[39;22m[90m [39m[90memail verification screen can be rendered[39m[90m                           [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail can be verified[39m[90m                                               [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail is not verified with invalid hash[39m[90m                             [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail is not verified with invalid user id[39m[90m                          [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified user is redirected to dashboard from verification prompt[39m[90m   [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90malready verified user visiting verification link is redirected with[39m[90m…[39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\PasswordConfirmationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconfirm password screen can be rendered[39m[90m                             [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword confirmation requires authentication[39m[90m                       [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\PasswordResetTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreset password link screen can be rendered[39m[90m                          [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreset password link can be requested[39m[90m                                [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreset password screen can be rendered[39m[90m                               [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword can be reset with valid token[39m[90m                              [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword cannot be reset with invalid token[39m[90m                         [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic signup user can choose password with reset and then log in[39m[90m   [39m [90m0.56s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\RegistrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mregistration screen can be rendered[39m[90m                                 [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnew users can register[39m[90m                                              [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregistration cannot assign administrator privileges[39m[90m                 [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90msupplied password is ignored and whatsapp can be shared[39m[90m             [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting email does not create or authenticate or record signup eve[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid whatsapp is rejected[39m[90m                                        [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregistration resumes and consumes a safe continuation[39m[90m               [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mintended url is used only for allowed local destinations[39m[90m            [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\TwoFactorChallengeTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo factor challenge redirects to login when not authenticated[39m[90m      [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo factor challenge can be rendered[39m[90m                                [39m [90m0.27s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Auth\VerificationNotificationTest[39m
+  [32;1m✓[39;22m[90m [39m[90msends verification notification[39m[90m                                     [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdoes not send verification notification if email is verified[39m[90m        [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitAuthenticatedAccessTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpublic non member is denied at controller and service[39m[90m               [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembers can redeem both ordinary modes[39m[90m                              [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfree account owned delivery pin idempotency and limit[39m[90m               [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing pin and foreign location remain blocked[39m[90m                     [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest partner landing signup activation and delivery preserve acqui[39m[90m…[39m [90m0.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin accepts authenticated and rejects unknown access mode[39m[90m         [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitDraftPrivacyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdraft native and published landing never expose commercial copy[39m[90m     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdraft admin preview survives and guests cannot enter[39m[90m                [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitMarketingLandingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mrenderer real value partner places conditions contextual faq and at[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90meditorial overrides never replace the offer and hero fallback[39m[90m       [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmember membership expired unavailable and redeemed states[39m[90m           [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90msocial challenge offer is not public even with published all landin[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mentitled challenge winner gets existing reward path without members[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90maudience navigation one item direct native and seo[39m[90m                  [39m [90m0.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin reuses management create edit preview publish defaults and ar[39m[90m…[39m [90m0.24s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitRedemptionContinuityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbenefit context is visible on register and login without changing i[39m[90m…[39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgeneric auth has no benefit context and auth choice is not a return[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest login restores benefit intent and location without redeeming[39m[90m  [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest without location resumes selection not a redemption[39m[90m           [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90msignup without a location returns to benefit without verification b[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmulti location requires selection and rejects foreign or unusable l[39m[90m…[39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90msingle location resolves deterministically[39m[90m                          [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mzero locations disables action and cannot redeem[39m[90m                    [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale auth context is not authorization[39m[90m                             [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnon member context survives membership gate and unverified member c[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90minactive and future benefits cannot redeem[39m[90m                          [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchallenge grant verification is not removed[39m[90m                         [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90munverified owner reaches delivery and non owner is denied[39m[90m           [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontext rejects foreign locations and arbitrary return urls[39m[90m         [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BenefitTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbenefit requires partner[39m[90m                                            [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefit slug is unique[39m[90m                                              [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefit persists decimal casts featured and nullable limit[39m[90m          [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefit rules cover configured values and dates[39m[90m                     [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublished scope excludes drafts[39m[90m                                     [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mavailability requires published partner benefit and valid dates[39m[90m     [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall locations are dynamic and only published locations are returned[39m[90m [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mselected locations are published same partner locations only[39m[90m        [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mindependent locations are rejected and switching to all clears pivo[39m[90m…[39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin can create campaign and non admin cannot[39m[90m                      [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign rules win without stacking and fall back outside window[39m[90m    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mraw unknown utm is preserved and campaign link is historical[39m[90m        [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CatalogImporterV2Test[39m
+  [32;1m✓[39;22m[90m [39m[90mtemplate creates exact empty csvs[39m[90m                                   [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdry run has zero writes and apply is idempotent[39m[90m                     [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid late row has no partial writes[39m[90m                              [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreference key is nullable but unique per experience when present[39m[90m    [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreimport updates catalog and preserves admin only fields[39m[90m            [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid input reports file row field and never writes[39m[90m               [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalidation matrix rejects structural boolean reference and benefit[39m[90m… [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcsv headers duplicates and missing files fail before writes[39m[90m         [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnumeric date geo json reservation duplicate and reference validatio[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate slugs demo slugs and references fail before writes[39m[90m        [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeDeliveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90munverified user explicitly joins social challenge and reaches deliv[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdelivery has authoritative instructions and title once without veri[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgets never participate and result requires owned participation[39m[90m      [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90munverified submission remains blocked at evidence boundary[39m[90m          [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified participant can submit evidence without automatic reward[39m[90m   [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual reward still requires verified identity[39m[90m                      [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90msigned verification returns to same delivery and updates capability[39m[90m [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership dates and manual instructions remain authoritative[39m[90m       [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock restricted source stays protected[39m[90m                            [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeDirectJoinTest[39m
+  [32;1m✓[39;22m[90m [39m[90mauthenticated explicit landing action joins directly and is idempot[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlegacy activation get never joins or renders confirmation[39m[90m           [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfinal guest participation intent registers and joins without second[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit login intent joins directly[39m[90m                                [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgeneric signup and incidental context do not join without explicit[39m[90m… [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit intent cannot bypass membership or mismatched subject[39m[90m      [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience session choice keeps activation and does not reserve[39m[90m     [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefit location choice keeps activation and does not redeem[39m[90m        [39m [90m0.18s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeFirstNConcurrencyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo qualified users racing for last first n slot get one grant[39m[90m      [39m [90m1.54s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeGeneralizationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmultiple entries one participation immutable references and limits[39m[90m  [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate url across users and identity from sharecontest are rejec[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrefresh updates only target entry and never creates participation[39m[90m   [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90many qualifying entry qualifies once and records entry[39m[90m               [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst n counts participants and free user does not reserve slot[39m[90m     [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrejected first n candidate releases slot to next participant[39m[90m        [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmember activation rechecks qualified participant and grants if slot[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtop n uses best eligible entry per participant and threshold[39m[90m        [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtop n ties resolve by qualification time then participation id[39m[90m      [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed final inspection goes to review and does not block other ent[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual evidence has no sharecontest and requires admin review[39m[90m       [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreward types keep single grant and jp ledger[39m[90m                        [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexclusive benefit redemption and manual prize fulfillment stay inta[39m[90m…[39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin contract validation and public rules[39m[90m                          [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeProductExperienceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner submission review and publication gate[39m[90m                      [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner cannot use another partners benefit[39m[90m                         [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic landing discovery and individual progress[39m[90m                    [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mranking uses one best eligible entry per participant and visibility[39m[90m [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscheduler queues only stale top n social entries[39m[90m                    [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst n slots manual landing and membership return[39m[90m                  [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrules cannot change after participation[39m[90m                             [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclosed ranking stays provisional until candidate is confirmed[39m[90m       [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90minflight inspection at close writes final snapshot[39m[90m                  [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired social challenge closes and queues final snapshot[39m[90m           [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ChallengeSocialImmediateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbafabo sharecontest request and immediate verification[39m[90m              [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtimestamp bounds are not serialized as provider date rules[39m[90m          [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90msubmit is single interactive entry with stable reference and duplic[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatus is owned scoped and has no provider payload or other pii[39m[90m     [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhashtag casefold missing and unavailable data have distinct results[39m[90m [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mplatform public visibility and mentions are checked without guessin[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalid evidence qualifies once and metric below target remains valid[39m[90m [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mintegration error does not invalidate entry and background job uses[39m[90m…[39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityCommunityConcurrencyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo simultaneous first exposures count once even with different ses[39m[90m…[39m [90m0.46s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityCommunityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mfloating access ignores promotional frequency and preserves joined[39m[90m… [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfloating access excludes non consumer surfaces and guests[39m[90m           [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfloating access respects explicit rejection and disabled city[39m[90m       [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest cannot use any private community action[39m[90m                       [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfree unverified account can open but is not a verified member[39m[90m       [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpages do not count exposures and both home modes offer the card[39m[90m     [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisabled missing and invalid configuration fail closed[39m[90m              [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90msnooze interval session deduplication and limit of three[39m[90m            [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mignored invitation waits fourteen days and same session stays suppr[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mopening suspends automatic invites for thirty days[39m[90m                  [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mopt out and self report preserve manual access and can be corrected[39m[90m [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactive city uses independent state and one exposure per session acr[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregistration marks nonblocking onboarding without counting an expos[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin configuration validation and authorization[39m[90m                    [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner only account keeps permanent access through existing member[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90manalytics disabled does not block community access[39m[90m                  [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityDiscoveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mresolver falls back and only accepts active cities[39m[90m                  [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpaused selected city is invalidated without exposing its discovery[39m[90m  [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcity selection is guest safe and rejects non active cities[39m[90m          [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhome and explore are city scoped without economic side effects[39m[90m      [39m [90m0.45s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityInterestTest[39m
+  [32;1m✓[39;22m[90m [39m[90minactive city has a public landing with real count only[39m[90m             [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactive city redirects into selected city experience[39m[90m                 [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest interest is idempotent and does not select inactive city or c[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated interest is idempotent and each city is distinct[39m[90m      [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90minterest preserves available attribution without changing referral[39m[90m… [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrepeat interest retains its original attribution snapshot[39m[90m           [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpaused city never exposes discovery or accepts interest[39m[90m             [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin sees accurate interest totals without public identity data[39m[90m    [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CityLocationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcanonical cities exist in deterministic order after migration[39m[90m       [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation belongs to city without changing partner location relation[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin location persists city and synchronizes legacy city string[39m[90m    [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90monline location can have no city but physical location requires one[39m[90m [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcity cannot be deleted while referenced by a location[39m[90m               [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcity work does not change benefit session or redemption relationshi[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmigration backfills only exact cochabamba legacy city without chang[39m[90m…[39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CrmFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdisabled and incomplete configuration fail closed[39m[90m                   [39m [90m1.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90msignup is after commit encrypted and single opt in[39m[90m                  [39m [90m1.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90munchecked and missing signup are false and existing users null[39m[90m      [39m [90m0.85s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrollback discards signup delivery[39m[90m                                   [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner email eligible phone only succeeds without delivery[39m[90m         [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprogram uses authenticated user identity[39m[90m                            [39m [90m0.85s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership request activation and domain fields[39m[90m                     [39m [90m1.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mproduct successes signal after commit without http[39m[90m                  [39m [90m2.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprofile grant revoke and email change use link[39m[90m                      [39m [90m0.74s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst latest coherent tie order and none has no organic tag[39m[90m         [39m [90m0.98s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprojection excludes growth and click ids and uses domain activity t[39m[90m…[39m [90m0.87s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpiration and confirmed partner projection[39m[90m                         [39m [90m1.48s[39m  
+  [32;1m✓[39;22m[90m [39m[90msigned dispatch link and retry body are stable[39m[90m                      [39m [90m0.82s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconflict is dead and does not merge or rollback domain[39m[90m              [39m [90m0.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstorage failure does not rollback signup[39m[90m                            [39m [90m0.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauth is finite and network retry exhausts[39m[90m                           [39m [90m0.75s[39m  
+  [32;1m✓[39;22m[90m [39m[90mui defaults and preference copy[39m[90m                                     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompeting dispatcher skips locked delivery[39m[90m                          [39m [90m0.86s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnetwork failure keeps domain committed and new link is used before[39m[90m… [39m [90m0.87s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CrmRestCompatibilityTest[39m
+  [32;1m✓[39;22m[90m [39m[90monly exact production endpoints are accepted[39m[90m                        [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclient sends fallback unchanged with hmac[39m[90m                           [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrequeue preserves all other columns and creates no rows[39m[90m             [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DashboardTest[39m
+  [32;1m✓[39;22m[90m [39m[90mguests are redirected to the login page[39m[90m                             [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated users are redirected to home from dashboard compatibi[39m[90m…[39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DemoCatalogV2Test[39m
+  [32;1m✓[39;22m[90m [39m[90mdemo catalog lifecycle is idempotent safe and respects public visib[39m[90m…[39m [90m1.98s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DiscoveryAnalyticsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mopportunity events allow only discovery metadata[39m[90m                    [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mobservation endpoint uses canonical selected city and has no econom[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mendpoint accepts open for search and omits unlock category[39m[90m          [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DiscoveryEligibilityQueryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbenefit query preserves availability and city geography[39m[90m             [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience query returns only relevant city sessions without new pu[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock query preserves states geography and publication semantics w[39m[90m…[39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DiscoveryServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[90maggregates all domains in one city and batches unlock progress[39m[90m      [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90meach opportunity type can be the hero when it is the only candidate[39m[90m [39m [90m0.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExperienceMarketingLandingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmember price accent requires authoritative lower price[39m[90m              [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrenderer facts editorial conditions faq and campaign isolation[39m[90m      [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest membership member multiple sessions and existing booking[39m[90m      [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprice missing free external unavailable past and media fallback[39m[90m     [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefaults discovery unique native marketing and seo[39m[90m                  [39m [90m0.62s[39m  
+  [32;1m✓[39;22m[90m [39m[90mother types compact sessions and no invented capacity claims[39m[90m        [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgeneric admin lifecycle and preview subject guard[39m[90m                   [39m [90m0.27s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExperienceMvpPublicFlowTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdetail exposes one upcoming session location and organizer[39m[90m          [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmultiple sessions and both external targets are exposed in configur[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno future session has no reservation target and external destinatio[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwhatsapp and external clicks are tracked without a dead target[39m[90m      [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mphone destination uses existing external reservation flow[39m[90m           [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90munpublished experience is not publicly exposed[39m[90m                      [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExperienceReservationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mactive member requests once and the event is recorded once[39m[90m          [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mparty size persists and existing active reservation keeps its origi[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mparty size must be between one and ten[39m[90m                              [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest and member without membership cannot request[39m[90m                  [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal and invalid or past sessions cannot create internal reserv[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner can confirm or reject only its own reservations and member[39m[90m… [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner view shows only member name party size and confirmed attend[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner cannot view another partners member data[39m[90m                    [39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExperienceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexperience persists editorial fields and defaults[39m[90m                   [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mslug is unique and publication scope excludes drafts[39m[90m                [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience rules cover types prices and reservation destinations[39m[90m    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmulti partner roles allow zero partners and multiple roles per part[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90msession rules and upcoming logic[39m[90m                                    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupcoming experiences require published status and order sessions[39m[90m    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90msession location may be partner owned independent or unrelated or n[39m[90m…[39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExperienceV2Test[39m
+  [32;1m✓[39;22m[90m [39m[90mupcoming without sessions is discoverable and has a real native des[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublished landing can present an upcoming experience without operat[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can publish an informational landing only after authorizing v[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhidden draft paused and archived do not leak even through published[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90msessions do not accidentally activate an upcoming proposal[39m[90m          [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal activation requires confirmation channel and real sessions[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprices are optional and membership eligibility is real for internal[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can save pending fields and preserve values and relationships[39m[90m [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can create without knowing slugs and duplicate titles get dis[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid prices return errors and optional member price can be blank[39m[90m [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit member price copy is coherent but a general member amount[39m[90m… [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madditive migration and rollback preserve existing commercial data[39m[90m   [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin preview is private and works without a landing or sessions[39m[90m    [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mproposals follow city category and search filters without invented[39m[90m… [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExploreDiscoveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexplore keeps opportunity types categories search city and places s[39m[90m…[39m [90m0.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplore paginates each explicit result set at eighteen[39m[90m              [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90msearch matches the supported fields without crossing domains or cit[39m[90m…[39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90msearch composes category with todo and normalizes blank whitespace[39m[90m  [39m [90m0.21s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\GlobalPaginationTest[39m
+  [31;1m⨯[39;22m[90m [39m[90munion paginates all eligible domains before hydration at 100 and 50[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin partner and location filters run before pagination and keep u[39m[90m…[39m [90m0.41s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\GoldStabilizationTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin rejects malformed locations without mutating a benefit[39m[90m        [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90msigned redemption pin endpoint limits attempts[39m[90m                      [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplorer landing queries are bounded and preserve viewer scope[39m[90m      [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\GrowthMeasurementTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdirect landing does not supersede economic attribution[39m[90m              [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdirect landing records context without an empty touch[39m[90m               [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90meach explicit acquisition signal creates a touch[39m[90m                    [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalid referral on a landing keeps existing capture contract[39m[90m         [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblank signals do not fabricate acquisition[39m[90m                          [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnull campaign key remains null in landing view and cta[39m[90m              [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal campaign key is preserved in landing view and cta[39m[90m              [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mempty and whitespace campaign keys normalize in shared growth write[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest cta continuity and privacy and repeated clicks[39m[90m                [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90msignup membership activation and return keep acquisition context[39m[90m    [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnative challenge and unlock outcomes are idempotent and no economic[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrollback does not record outcome and expired touch is not reused[39m[90m    [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview prefetch and partial reload do not count acquisition[39m[90m        [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall four landings record one server view with subject context[39m[90m       [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated product action keeps guest identity and landing[39m[90m       [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal cta is intent only and unknown categories are rejected[39m[90m     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnative signup still has visitor without landing or touch[39m[90m            [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtracking failure does not roll back valid domain operation[39m[90m          [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstorage enforces unique event id and domain identity[39m[90m                [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\HomePersonalizationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhome exposes mixed discovery sections without duplicates and keeps[39m[90m… [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhome allows a null hero and empty optional sections for empty inven[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhome uses selected city for guest discovery[39m[90m                         [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner only user keeps generic discovery ranking[39m[90m                   [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\JpLedgerConcurrencyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo concurrent debits of eighty allow only one[39m[90m                      [39m [90m1.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo concurrent holds cannot overreserve[39m[90m                             [39m [90m1.73s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\JpLedgerIntegrityTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin credit debit retry and canonical snapshots[39m[90m                    [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin rejects overdraw ambiguous sign and key reuse[39m[90m                 [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhold releases without entry and forfeiture posts once[39m[90m               [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mjp reversal and admin status correction keep original[39m[90m               [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpending jp can cancel without entry and cash stays on existing path[39m[90m [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnegative ledger is visible while available clamps and mi jakawi use[39m[90m…[39m [90m0.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LandingAcquisitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mguest native routes resolve published guest or all default and pres[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest native routes without published default render product detail[39m[90m [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated free and active members resolve all landing and direc[39m[90m…[39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated guest only default and no default use product detail[39m[90m  [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership request preserves landing and location and returns after[39m[90m…[39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience membership continuation preserves landing and selected s[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership rejects a landing from a different subject[39m[90m               [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregister preserves landing subject action and resumes benefit locat[39m[90m…[39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlogin preserves each landing context without reserving joining or c[39m[90m…[39m [90m1.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchallenge explicit registration returns to delivery without bypassi[39m[90m…[39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontextual registration rejects invalid phone and invalid login kee[39m[90m…[39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90macquisition copy fallback and saved copy are projected without unlo[39m[90m…[39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale foreign and nonpublic landing context cannot resume[39m[90m           [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LandingAiBriefTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbenefit exports authoritative truth without treating savings as dis[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience exports all upcoming sessions prices and reservation mod[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchallenge exports objective evidence selection reward and verificat[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mallowlist excludes internal and private data even from public text[39m[90m  [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing facts are omitted and grant access is not public membership[39m[90m [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mversion order json and read only admin projection are stable[39m[90m        [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock is excluded[39m[90m                                                  [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LandingPresentationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpreview preserves real challenge participation state[39m[90m                [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvideo configuration is nullable and projected only when unlock is r[39m[90m…[39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvideo configuration validates allowlists and null removal[39m[90m           [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin persists valid video rejects invalid configuration and remove[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmultiple presentations atomic default and native fallback[39m[90m           [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdraft and archived cannot be default or public[39m[90m                      [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublished non default is public and captures campaign without econo[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefault changes challenge navigation without duplicating the item[39m[90m   [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin can preview publish and restore product default[39m[90m               [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding exposes participant state and immediate verification contex[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpresenter uses domain values for top first and manual[39m[90m               [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mother product native urls remain available[39m[90m                          [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90maudience matrix for every product type[39m[90m                              [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguests navigation direct urls and seo do not leak between viewers[39m[90m   [39m [90m0.48s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin visitors everyone archive and invalid scope[39m[90m                   [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdatabase rejects invalid scopes unpublished defaults and duplicate[39m[90m… [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincremental migration preserves legacy and qa non default[39m[90m           [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnative routes resolve all default for every viewer[39m[90m                  [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LandingPublisherWorkflowTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmapped import fields persist reload and project into saved preview[39m[90m  [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90marcilla editorial prose saves without changing domain truth[39m[90m         [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal editorial limits and structural security remain specific[39m[90m       [39m [90m0.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LocationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner can have three locations and locations can be independent[39m[90m   [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation contacts do not inherit partner contacts[39m[90m                   [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation persists address geo precision and opening hours[39m[90m           [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation publication and primary cast work[39m[90m                          [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation pin is hashed checked and hidden[39m[90m                           [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation rules validate types coordinates and pin[39m[90m                   [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ManualMembershipSalesTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpromoter enrollment controls portal and sales are isolated[39m[90m          [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoter creates safe customer and manual sale uses config[39m[90m          [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmarketing attribution is preserved while promoter is credited[39m[90m       [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmatching reward is pending and retry does not duplicate financial r[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno rule still succeeds and fixed rule is calculated[39m[90m                 [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly admin refunds and refund preserves history and cancels reward[39m[90m  [39m [90m0.18s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MarketingLandingAdminV1Test[39m
+  [32;1m✓[39;22m[90m [39m[90madmin saves only two acquisition copy values and preview projects t[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90msaved editorial is rendered verbatim and layout controls are valida[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience editorial containing en is not silently replaced[39m[90m         [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90memphasis uses effective product headline when editorial headline is[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcreate edit publish unpublish and live domain truth[39m[90m                 [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90moffer desktop sources use master portrait preset for each domain[39m[90m    [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90meditorial save preserves selected identity publication and sibling[39m[90m  [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mallowlists plain text emphasis subject and no action editor[39m[90m         [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmedia switching keeps stored config and duplicate is new draft[39m[90m      [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting admin subject picker summary and reassignment[39m[90m              [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview is authorized noindex and has no business or growth writes[39m[90m  [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock editorial admin keeps legacy validation without offer settin[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmigration is deterministic reversible preserves editorial and unloc[39m[90m…[39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MediaInfrastructureTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmedia uses immutable object keys and replaces after store[39m[90m           [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90msvg and absurd dimensions are rejected[39m[90m                              [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90msigned webp urls use presets and legacy files stay local[39m[90m            [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall supported formats get immutable keys and all presets emit webp[39m[90m  [39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MediaPipelineTest[39m
+  [32;1m✓[39;22m[90m [39m[90mjpeg png webp are decoded normalized and keys are unique[39m[90m            [39m [90m0.96s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnon images svg oversized and truncated content are rejected[39m[90m         [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexif orientation is applied and original metadata is discarded[39m[90m      [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdimension limit rejected before decode[39m[90m                              [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mruntime variants are signed and mobile has small candidate[39m[90m          [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner temporary upload replacement and removal use shared pipelin[39m[90m…[39m [90m0.54s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed replacement keeps old reference and form is atomic[39m[90m           [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed storage write and failed db save keep old media[39m[90m              [39m [90m0.52s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupload token cannot be used by another user or as client path[39m[90m       [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding local upload uses pipeline and arbitrary sources are reject[39m[90m…[39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting catalog image forms use the same temporary upload[39m[90m          [39m [90m0.87s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgc rechecks references and fails closed on query errors[39m[90m             [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgc graces shared references health uncertain keys dry run and idemp[39m[90m…[39m [90m0.18s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MemberAffinityServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexplicit interest remains stronger than capped behavior[39m[90m             [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirmed redemptions are capped and old activity is ignored[39m[90m        [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcheckins are strongest and not double counted as confirmed reservat[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirmed reservations and recent views have their own caps[39m[90m         [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbehavior only member gets ranked home without creating a profile[39m[90m    [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner only users do not receive consumer behavioral affinity[39m[90m      [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MemberProfileTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconsumer can open profile without an active membership[39m[90m              [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner only user is kept out of member profile[39m[90m                     [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreferences are whitelisted deduplicated and completed once[39m[90m         [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprofile edit preserves signup whatsapp[39m[90m                              [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90meach preference group can be updated and invalid values are rejecte[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser cannot update another users profile and partner pages do not r[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner can upload supported avatar formats without losing profile fi[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90msvg avatar is rejected and old avatar survives until replaced[39m[90m       [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MemberReferralJpTest[39m
+  [32;1m✓[39;22m[90m [39m[90mactive member generates global code and confirmed purchase creates[39m[90m… [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfree or expired referrer does not earn but history survives expiry[39m[90m  [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommercial programs win over member and refund cancels jp[39m[90m           [39m [90m0.19s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MembershipConversionJourneyTest[39m
+  [32;1m✓[39;22m[90m [39m[90moffer states and registration return[39m[90m                                [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrequest freezes intent and touch and rejects payloads and duplicate[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin sale completes request with original attribution and single u[39m[90m…[39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience return restores valid session without reserving[39m[90m          [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmember gate and invalid session return stays on experience detail[39m[90m   [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefit and unlock gates and active member cannot request[39m[90m           [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstandard utms are optional metadata only[39m[90m                            [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mutms preserve existing intent and request flow[39m[90m                      [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtracking allowlist keeps unknown queries and invalid intents reject[39m[90m…[39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MembershipRedemptionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mactivation has configured price duration and activator[39m[90m              [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership active rules and history[39m[90m                                 [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfuture expired and cancelled memberships are not active[39m[90m             [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancel preserves history and allows a new membership[39m[90m                [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstart requires active membership and reuses valid pending code[39m[90m      [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstart creates location aware snapshots and code[39m[90m                     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstart rejects invalid benefit location or missing pin[39m[90m               [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirm is idempotent and uses the location pin[39m[90m                     [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirm revalidates and expires codes[39m[90m                               [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlimit counts only confirmed and unlimited allows many[39m[90m               [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90msnapshots and roi are historical[39m[90m                                    [39m [90m0.18s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MetaDeliveryConcurrencyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mseparate database session skips a delivery locked during http[39m[90m       [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MetaProviderTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdefaults are disabled and missing configuration fails closed[39m[90m        [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovider gate and independent channels[39m[90m                              [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall nine mappings and server outcomes preserve canonical id and tim[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding browser descriptor and capi share name id and safe data[39m[90m     [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcta uuid is idempotent and provider is server authoritative[39m[90m         [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisabled events do not become backlog on idempotent replay[39m[90m          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90moutbox unique and transaction rollback[39m[90m                              [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mretries retain event id and use finite backoff[39m[90m                      [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtimeouts retry permanent errors die and attempt limit is finite[39m[90m     [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpayload is minimal private and test code stays server side[39m[90m          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontinuity switching prefetch preview and partial traffic[39m[90m           [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdelivery failure does not rollback domain or change economics[39m[90m       [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdelivery logging never exposes response or token[39m[90m                    [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdispatcher kill switch does not send pending and no history is scan[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing identity or invalid success response fails closed[39m[90m           [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90moutbox storage is minimal and dispatcher is scheduled every minute[39m[90m  [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal signup uses the guest canonical identity and server only deliv[39m[90m…[39m [90m0.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MicroOptInJourneyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpasswordless identification authenticates and returns same benefit[39m[90m… [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting email is not authenticated or modified[39m[90m                     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormalized existing phone cannot create duplicate identity[39m[90m          [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90maccess email is queued and uses existing reset token without verify[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmail failure does not block current session[39m[90m                         [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting login resumes each item and never auto mutates[39m[90m             [39m [90m1.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefit explicit action delivers only real owned code location and[39m[90m… [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience explicit reservation returns pending truth to same landi[39m[90m…[39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchallenge explicit acquisition joins before returning to delivery[39m[90m   [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal experience handoff delivers selected session without claim[39m[90m…[39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified challenge explicit participation delivers instructions and[39m[90m…[39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchallenge verification link returns to delivery without another par[39m[90m…[39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock source requires explicit domain commit reveal and authentica[39m[90m…[39m [90m0.35s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\OwnershipAssignmentTest[39m
+  [32;1m✓[39;22m[90m [39m[90mregistration uses only an eligible user referral and remains sticky[39m[90m [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregular referrer and partner referrer do not assign registration[39m[90m    [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprogram application inherits user owner once or stays unassigned[39m[90m    [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner application inherits authenticated owner and guest requires[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest partner and touch without code do not assign partner applicat[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual endpoints validate eligibility target self assignment and ke[39m[90m…[39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual application assignment rejects applicant and non admin has n[39m[90m…[39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreassignment leaves referral and existing economic records unchange[39m[90m…[39m [90m0.18s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerAccessTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner user can open portal and member cannot[39m[90m                      [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner cannot validate another partners redemption[39m[90m                 [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin without partner relation cannot access partner portal or vali[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmulti partner user can only open related partner context[39m[90m            [39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerAcquisitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner code is global and referral records partner source[39m[90m          [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst partner remains and confirmed purchase is aggregated without[39m[90m… [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner does not replace user referrer and expired policy can repla[39m[90m…[39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerApplicationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpublic flow derives city accepts guest contacts and has no economic[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact validation duplicate and city independence[39m[90m                  [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate application retains its original attribution snapshot[39m[90m     [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated submit admin workflow city metrics and paused protect[39m[90m…[39m [90m0.16s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerContentStudioTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner promotion workflow is scoped and admin publishes[39m[90m            [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner experience sessions are scoped editable and reviewed[39m[90m        [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner cannot access other partner content and member cannot acces[39m[90m…[39m [90m0.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerEditorialMediaTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpublic gallery is optional and preserves editorial order with signe[39m[90m…[39m [90m0.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmodel rejects four images and external or foreign keys[39m[90m              [39m [90m1.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin three slots upload replace remove are atomic and keep logo co[39m[90m…[39m [90m1.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin rejects raw paths fourth slot and non admin writes[39m[90m            [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgc preserves all gallery references and collects removed assets onl[39m[90m…[39m [90m0.87s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerIdentityRefinementTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexisting social fields are projected without new domain data[39m[90m        [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90msquare logo uses immutable shared media pipeline and keeps cover[39m[90m    [39m [90m0.46s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly admin can reopen existing master without overwriting it[39m[90m        [39m [90m0.28s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerKpiServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmetrics are scoped and follow value interaction definitions[39m[90m         [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstaff and unrelated partner cannot open performance[39m[90m                 [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerLoginTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner login renders[39m[90m                                               [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner login uses fortify credentials and redirects to portal[39m[90m      [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner login respects an intended partner url[39m[90m                      [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmember cannot use partner login[39m[90m                                     [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mroot login redirects by role[39m[90m                                        [39m [90m0.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner only member page and stale intended urls use the right cont[39m[90m…[39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mautomated tests are configured for the isolated database[39m[90m            [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerPayoutTest[39m
+  [32;1m✓[39;22m[90m [39m[90mowner and manager request only their partner available bob cash and[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mthreshold is independent and staff or other partner is denied[39m[90m       [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin pays idempotently or rejects partner payout[39m[90m                   [39m [90m0.21s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\PartnerPublicProfileTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpublic identity inventory locations canonical and prelaunch[39m[90m         [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner media projection preserves logo proportions and optimizes c[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mempty profile and only current public inventory[39m[90m                     [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreserved rule covers registered routes and invalid slugs on creatio[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprimary downstream new signup owns partner without partner signup b[39m[90m…[39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdirect signup returns to public profile[39m[90m                             [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting login consumes candidate without ownership even after logo[39m[90m…[39m [90m0.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting identity cannot signup and existing owner is never reassig[39m[90m…[39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst valid partner wins even when landing latest touch is differen[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale and unscoped anonymous touches do not become new ownership[39m[90m    [39m [90m0.11s[39m  
+  [31;1m⨯[39;22m[90m [39m[90mpartner management shows public url and other accounts cannot manag[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner inventory and generic entry share landing first for both au[39m[90m…[39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90minapplicable landings fall back and guest priority is preserved[39m[90m     [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding cta continues domain action without presentation loop[39m[90m       [39m [90m0.28s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerRewardTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartner attribution earns configured cash as partner and specific r[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno partner rule does not block conversion and promoter wins without[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrefund cancels unpaid partner reward and retry does not duplicate i[39m[90m…[39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit creates organization and individual partners[39m[90m                     [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner rules accept configured types and reject unknown ones[39m[90m       [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublished scope excludes drafts[39m[90m                                     [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfeatured cast and internal fields persist correctly[39m[90m                 [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner has many locations[39m[90m                                          [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnersLandingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpublic landing uses selected city and existing application flow[39m[90m     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding uses the product fallback when city cookie is missing or st[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding and cta do not duplicate application events[39m[90m                 [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PrelaunchModeTest[39m
+  [32;1m✓[39;22m[90m [39m[90mroot is static coming soon and indexable without inventory[39m[90m          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding native fallback and explore remain available with public po[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin and saved preview and auth are excluded[39m[90m                       [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisabling flag restores home and previous public seo[39m[90m                [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ProgramAcquisitionJourneyTest[39m
+  [32;1m✓[39;22m[90m [39m[90meach program resumes registration and prevents duplicate active app[39m[90m…[39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlogin continuation and external destinations are safe[39m[90m               [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin filters transitions activates once and preserves referral cod[39m[90m…[39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrejection allows reapplication and existing enrollment is reused[39m[90m    [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mattribution snapshot and analytics do not include personal contact[39m[90m… [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst and conversion touches are preserved separately[39m[90m               [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactive enrollment never accepts a public application[39m[90m                [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest cannot submit and program type is allowlisted[39m[90m                 [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PublicCampaignJourneysTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexplicit landing captures attribution and keeps campaign key server[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90minactive and unknown landings are not public and existing routes ar[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlanding cta tracks safe metadata and internal target is validated[39m[90m   [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit route collision fails clearly[39m[90m                              [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign key alone never selects economic campaign or reward rule[39m[90m   [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgo uses only configured destination and emits no sensitive metadata[39m[90m [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgo rejects unknown inactive expired and unsafe destinations[39m[90m         [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PublicJourneyAnalyticsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mviews do not start intent and guest actions track each journey and[39m[90m… [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregister and login return only when valid continuation is consumed[39m[90m  [39m [90m0.69s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormal registration does not emit auth return[39m[90m                       [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauth return tracking failure does not block product redirect[39m[90m        [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership gates follow existing flags and member state[39m[90m             [39m [90m0.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership link intent is explicit and deduplicated[39m[90m                 [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal modal click starts one intent before exit[39m[90m                  [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated actions track intent and preserve domain event meanin[39m[90m…[39m [90m0.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal exits are explicit and metadata contains no destination or[39m[90m…[39m [90m0.25s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PublicJourneyContinuationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mset get consume and allowed destination[39m[90m                             [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90munapproved actions and external destinations are rejected[39m[90m           [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontext is limited to a valid experience session[39m[90m                    [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalid continuation has priority over intended url[39m[90m                   [39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PublicJourneyWiringTest[39m
+  [32;1m✓[39;22m[90m [39m[90mguest reserve returns to experience after signup without reserving[39m[90m  [39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest commit returns to unlock after signup without committing[39m[90m      [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting user returns to resource after login without executing act[39m[90m…[39m [90m0.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting user returns to experience after login without reserving[39m[90m   [39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign or expired experience session is not restored[39m[90m               [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest benefit intent returns after signup without redeeming[39m[90m         [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleted benefit continuation falls back safely[39m[90m                      [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting user returns to benefit after login without redeeming[39m[90m      [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock detail exposes existing eligibility and jp values[39m[90m            [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing and closed resources do not create a continuation[39m[90m           [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresource removed after capture falls back safely[39m[90m                    [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PublicV2HttpTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhome is public tracks views and keeps a first party visitor[39m[90m         [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner and location are public only when published and do not leak[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbenefit listing filter and detail follow availability[39m[90m               [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplore keeps unlocks distinct and active unlocks use their public[39m[90m… [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexperience publication sessions partners and reservation redirects[39m[90m… [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact redirects and empty states are safe[39m[90m                         [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmi jakawi access empty and roi are safe[39m[90m                             [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmi jakawi uses confirmed redemptions for value and orders real acti[39m[90m…[39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmi jakawi shows expired membership history and payback[39m[90m              [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\QrCheckInTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconfirmed reservation can be reviewed and checked in once by its pa[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual code is partner scoped and wrong partner is forbidden[39m[90m        [39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\QrPaymentGatewayTest[39m
+  [32;1m✓[39;22m[90m [39m[90mfake gateway creates a pending payment and can simulate terminal st[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisabled gateway returns a controlled unavailable error[39m[90m             [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfake gateway cannot be resolved in production[39m[90m                       [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90ma regular client cannot activate a membership through the admin end[39m[90m…[39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\RedemptionHttpTest[39m
+  [32;1m✓[39;22m[90m [39m[90mstart requires auth membership and an explicit valid location[39m[90m       [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstart creates and reuses pending redemption without double tracking[39m[90m [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid locations and missing pin are rejected without a redemption[39m[90m [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmember redemption page enforces ownership and never exposes pin[39m[90m     [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalidation confirms once and handles wrong or expired codes private[39m[90m…[39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired redemption and member limits reject safely[39m[90m                  [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalidation endpoint is throttled after twenty requests[39m[90m              [39m [90m0.30s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Settings\ProfileUpdateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mprofile page is displayed[39m[90m                                           [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprofile information can be updated[39m[90m                                  [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprofile update cannot assign administrator privileges[39m[90m               [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail verification status is unchanged when the email address is un[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can delete their account[39m[90m                                       [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcorrect password must be provided to delete account[39m[90m                 [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Settings\SecurityTest[39m
+  [32;1m✓[39;22m[90m [39m[90msecurity page is displayed[39m[90m                                          [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90msecurity page requires password confirmation when enabled[39m[90m           [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90msecurity page renders without two factor when feature is disabled[39m[90m   [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword can be updated[39m[90m                                             [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcorrect password must be provided to update password[39m[90m                [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ThemePreferenceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtheme preference defaults to system[39m[90m                                 [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated user can save each allowed theme[39m[90m                      [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid theme is rejected[39m[90m                                           [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtheme endpoint only updates authenticated user[39m[90m                      [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprofile still renders after a theme change[39m[90m                          [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TocTocExperienceConfigurationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mapproved commercial draft has no public action or membership gate[39m[90m   [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockAdminOperationsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mnon admin is denied all operations[39m[90m                                  [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclose early requires reason and blocks new commitments without reve[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mremove requires reason releases hold without forfeit or bonus and i[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexceptional release requires reason releases once and removes activ[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate correction requires reason allows only confirmed to cancelled[39m[90m…[39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockCoreTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin creates and approves an unlock with linked results[39m[90m            [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin unlock index and forms are reachable only by admins[39m[90m           [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner owner and manager can propose but staff cannot and cannot a[39m[90m…[39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic view is safe for guests and secret data reveals only after g[39m[90m…[39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90minterest commitment eligibility and idempotency[39m[90m                     [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcapacity goal cancellation and jp gate have correct semantics[39m[90m       [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeadline failure admin cancellation audit and partner material lock[39m[90m [39m [90m0.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockFulfillmentTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconfirmation is idempotent and expiry releases only unconfirmed hol[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirmed no show forfeits once without bonus[39m[90m                       [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockJpCommitmentTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhold is atomic and excluded from spendable balance[39m[90m                  [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancellation failure and unlock cancellation release once[39m[90m           [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgoal reached does not release and production guard blocks activatio[39m[90m…[39m [90m0.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockLifecycleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mscheduled unlock before start remains scheduled[39m[90m                     [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdue scheduled unlock activates once without a human audit actor[39m[90m     [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale scheduled unlock is not activated and existing expiry marks i[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancelled and rejected unlocks never activate[39m[90m                       [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting no show processing still works[39m[90m                             [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockMarketingLandingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mrenderer real reward progress editorial conditions faq and attribut[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest continuation eligible auth membership and existing participat[39m[90m…[39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnot eligible jp guard balance deadline and capacity disable actions[39m[90m [39m [90m0.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccess uses native result and does not solicit contribution[39m[90m        [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvisibility terminal preview and secret disclosures cannot be bypass[39m[90m…[39m [90m0.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguarantee copy matches release and forfeit semantics without mutati[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprogress zero target over target and media fallback without fake de[39m[90m…[39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefaults discovery unique direct routes and seo[39m[90m                     [39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgeneric admin create edit preview publish defaults archive and subj[39m[90m…[39m [90m0.38s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockMetricsTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin metrics are domain derived and zero safe[39m[90m                      [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner metrics and rate are scoped[39m[90m                                 [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfulfillment rate is fulfilled over committed not confirmed[39m[90m          [39m [90m0.21s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\UnlockTrustedFulfillmentTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtrusted fulfillment releases hold and awards configured bonus once[39m[90m  [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mzero deposit free user receives bonus and zero bonus creates none[39m[90m   [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mredemption signal uses same idempotent financial outcome[39m[90m            [39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner owner and manager may fulfill only their own unlock[39m[90m         [39m [90m0.23s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\VerificationContinuityTest[39m
+  [32;1m✓[39;22m[90m [39m[90minternal reservation verifies in context and returns selected sessi[39m[90m…[39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90minternal native fallback stays protected and foreign landing or ses[39m[90m…[39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal result is viewable unverified without local reservation[39m[90m    [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock returns to same state without commit jp or reveal[39m[90m            [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90munlock existing state and intended action survive without replaying[39m[90m…[39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid verification proof does not enable mutation[39m[90m                 [39m [90m0.25s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\AdminCityTest[22m [90m>[39m admin lists cities                     
+[39;1m  Property [cities.5.id] does not match the expected value.
+Failed asserting that 5 is identical to 7.[39;22m
+
+  at [32mtests/Feature/AdminCityTest.php[39m:[32m33[39m
+     29▕ 
+     30▕         $this->actingAs($admin)->get('/admin/ciudades')->assertOk()->assertInertia(fn (Assert $page) => $page
+     31▕             ->component('admin/cities/index')
+     32▕             ->has('cities', 6)
+  ➜  33▕             ->where('cities.5.id', $city->id));
+     34▕     }
+     35▕ 
+     36▕     public function test_admin_views_city_detail(): void
+     37▕     {
+
+      [2m+2 vendor frames [22m
+  [33m3   [39m[39;1mtests/Feature/AdminCityTest.php[39;22m:[39;1m30[39;22m
+
+  [31m────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\AdminPartnerLocationsUxTest[22m [90m>[39m associated create use…   
+[39;1m  Failed asserting that two strings are equal.
+  [39;22m[31m-'https://jakawi.com/admin/locations'[39m[39;1m
+  [39;22m[32m+'https://jakawi.com/admin/locations?status=draft'[39m[39;1m
+  [39;22m
+
+  at [32mtests/Feature/AdminPartnerLocationsUxTest.php[39m:[32m45[39m
+     41▕         $city = City::where('slug', 'cochabamba')->firstOrFail();
+     42▕         $this->get('/admin/locations/create?partner='.$partner->id)->assertInertia(fn (Assert $page) => $page
+     43▕             ->where('initialPartnerId', $partner->id)->where('item', null));
+     44▕         $payload = ['partner_id' => $partner->id, 'city_id' => $city->id, 'name' => 'Sede editorial', 'slug' => 'sede-editorial', 'location_type' => 'branch', 'status' => 'draft', 'opening_hours' => ['monday' => '09:00-18:00']];
+  ➜  45▕         $this->post('/admin/locations', $payload)->assertRedirect('/admin/locations')->assertSessionHasNoErrors()->assertSessionHas('success');
+     46▕         $location = Location::where('slug', 'sede-editorial')->sole();
+     47▕         $this->put('/admin/locations/'.$location->id, [...$payload, 'name' => 'Sede actualizada'])->assertRedirect('/admin/locations')->assertSessionHasNoErrors();
+     48▕         $this->assertSame($partner->id, $location->fresh()->partner_id);
+     49▕         $this->assertSame('draft', $location->fresh()->status);
+
+  [31m────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\AdminPartnerLocationsUxTest[22m [90m>[39m partner identity save…   
+[39;1m  Failed asserting that two strings are equal.
+  [39;22m[31m-'https://jakawi.com/admin/partners'[39m[39;1m
+  [39;22m[32m+'https://jakawi.com/admin/partners?status=published'[39m[39;1m
+  [39;22m
+
+  at [32mtests/Feature/AdminPartnerLocationsUxTest.php[39m:[32m64[39m
+     60▕         $location = Location::factory()->for($partner)->create(['status' => 'draft']);
+     61▕         $this->put('/admin/partners/'.$partner->id, [
+     62▕             'name' => 'Nuevo nombre editorial', 'slug' => $partner->slug, 'entity_type' => $partner->entity_type,
+     63▕             'partner_type' => $partner->partner_type, 'status' => 'published',
+  ➜  64▕         ])->assertRedirect('/admin/partners')->assertSessionHasNoErrors()->assertSessionHas('success');
+     65▕         $saved = $partner->fresh();
+     66▕         $this->assertSame($partner->slug, $saved->slug);
+     67▕         $this->assertSame('existing-logo.webp', $saved->logo_path);
+     68▕         $this->assertSame('existing-cover.webp', $saved->cover_path);
+
+  [31m────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\AdminV2Test[22m [90m>[39m admin location update uses ids withou…   
+[39;1m  Failed asserting that two strings are equal.
+  [39;22m[31m-'https://jakawi.com/admin/locations'[39m[39;1m
+  [39;22m[32m+'https://jakawi.com/admin/locations?status=draft'[39m[39;1m
+  [39;22m
+
+  at [32mtests/Feature/AdminV2Test.php[39m:[32m142[39m
+    138▕                 'slug' => $location->slug,
+    139▕                 'location_type' => $location->location_type,
+    140▕                 'status' => $status,
+    141▕                 'city_id' => $cityId,
+  ➜ 142▕             ])->assertRedirect(route('admin.locations.index'))->assertSessionHasNoErrors();
+    143▕ 
+    144▕             $this->assertDatabaseHas('locations', [
+    145▕                 'id' => $location->id,
+    146▕                 'slug' => $location->slug,
+
+  [31m────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\GlobalPaginationTest[22m [90m>[39m union pagina… [41;1m QueryException [49;22m  
+[39;1m  SQLSTATE[23514]: Check violation: 7 ERROR:  new row for relation "challenges" violates check constraint "social_challenges_jp_reward_check"
+DETAIL:  Failing row contains (1, null, 1, Alfa, pagination-1, null, open, null, null, [], [], [], null, null, CONTINUOUS, JP, null, null, 2026-10-16 02:06:28, 2026-10-16 02:06:28, null, SOCIAL_POST, VALID_EVIDENCE, null, null, ALL_QUALIFIED, null, null, AUTOMATIC, ALL_USERS, ALL_USERS, null, APPROVED, null, null, null, NONE, 30, null, null, null, null, null). (Connection: pgsql, Host: db-test, Port: 5432, Database: jakawi_test, SQL: insert into "challenges" ("city_id", "created_at", "review_status", "reward_type", "slug", "status", "title", "updated_at") values (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-1, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-2, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-3, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-4, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-5, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-6, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-7, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-8, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-9, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-10, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-11, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-12, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-13, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-14, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-15, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-16, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-17, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-18, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-19, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-20, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-21, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-22, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-23, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-24, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-25, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-26, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-27, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-28, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-29, open, Alfa, 2026-10-16 02:06:28), (1, 2026-10-16 02:06:28, APPROVED, JP, pagination-30, open, Alfa, 2026-10-16 02:06:28))[39;22m
+
+  at [32mvendor/laravel/framework/src/Illuminate/Database/Connection.php[39m:[32m857[39m
+    853▕             $exceptionType = ($isUniqueConstraintError = $this->isUniqueConstraintError($e))
+    854▕                 ? UniqueConstraintViolationException::class
+    855▕                 : QueryException::class;
+    856▕ 
+  ➜ 857▕             $exception = new $exceptionType(
+    858▕                 $this->getNameWithReadWriteType(),
+    859▕                 $query,
+    860▕                 $this->prepareBindings($bindings),
+    861▕                 $e,
+
+      [2m+12 vendor frames [22m
+  [33m13  [39m[39;1mtests/Feature/GlobalPaginationTest.php[39;22m:[39;1m21[39;22m
+
+  [31m────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\PartnerPublicProfileTest[22m [90m>[39m partner management shows…   
+[39;1m  Failed asserting that two strings are equal.
+  [39;22m[31m-'https://jakawi.com/admin/partners'[39m[39;1m
+  [39;22m[32m+'https://jakawi.com/admin/partners?status=published'[39m[39;1m
+  [39;22m
+
+  at [32mtests/Feature/PartnerPublicProfileTest.php[39m:[32m182[39m
+    178▕         $this->actingAs(User::factory()->create(['is_admin' => true]))->get('/admin/partners/'.$partner->id.'/edit')->assertInertia(fn (Assert $p) => $p->where('publicUrl', route('partners.public', $partner)));
+    179▕         $data = $partner->only(['name', 'slug', 'status', 'entity_type', 'partner_type', 'category']);
+    180▕         $this->put('/admin/partners/'.$partner->id, [...$data, 'slug' => 'login'])->assertSessionHasErrors('slug');
+    181▕         $this->assertSame('dosis43', $partner->fresh()->slug);
+  ➜ 182▕         $this->put('/admin/partners/'.$partner->id, [...$data, 'description' => 'Perfil actualizado QA'])->assertRedirect('/admin/partners');
+    183▕         $this->assertSame('Perfil actualizado QA', $partner->fresh()->description);
+    184▕     }
+    185▕     public function test_partner_inventory_and_generic_entry_share_landing_first_for_both_audiences(): void
+    186▕     {
+
+
+  [90mTests:[39m    [31;1m6 failed[39;22m[90m,[39m[39m [39m[32;1m714 passed[39;22m[90m (10973 assertions)[39m
+  [90mDuration:[39m [39m140.68s[39m
+

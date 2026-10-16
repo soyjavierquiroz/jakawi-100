@@ -1,0 +1,119 @@
+{
+  "status": "PASS",
+  "live": "a9803e8c7036b28b532ed49d80596d4ac6f321d5",
+  "baselineRuntime": "277e14631e56909d3549e5ada13b426870e61712",
+  "globalCoverageComplete": false,
+  "sizes": {
+    "consumer": 18,
+    "admin": 25,
+    "extensiveHistory": 50,
+    "generalClientParameterMaximum": 100,
+    "explorerClientParameterMaximum": 18,
+    "sizesFixedByBackend": true
+  },
+  "explorer": {
+    "sqlUnionBeforePagination": true,
+    "loadMore": "PASS",
+    "initial": 18,
+    "browserAccumulated": 54,
+    "duplicateProtection": "PASS",
+    "finalPageAndEmpty": "PASS",
+    "sortAndFilterReset": "PASS",
+    "historyAndScroll": "PASS",
+    "postgresFixtures": [
+      100,
+      500
+    ]
+  },
+  "responsive": [
+    375,
+    390,
+    430,
+    1024,
+    1440
+  ],
+  "browserErrors": 0,
+  "liveBrowserChecks": 14,
+  "liveReadOnlyRoutes": 12,
+  "sorts": {
+    "explorer": [
+      "featured",
+      "newest",
+      "name"
+    ],
+    "benefits": [
+      "featured",
+      "newest",
+      "name",
+      "ending"
+    ],
+    "adminCatalog": [
+      "updated",
+      "newest",
+      "name"
+    ],
+    "partnerLocation": [
+      "name",
+      "newest"
+    ]
+  },
+  "performance": [
+    "Only the selected 18 mixed-domain models are hydrated",
+    "Growing covered Admin lists load 25 rows and histories 50",
+    "Landing destinations eager loaded",
+    "Out-of-range pagination reuses total",
+    "Recent activity bounded before merging; full counts remain SQL aggregates"
+  ],
+  "exceptions": [
+    "Location detail benefits and upcoming sessions",
+    "Admin Challenge detail participation/final ranking and specialized public ranking",
+    "Nested attribution touches/conversions",
+    "Audit within sale and payout detail",
+    "Legacy per-row aggregates in Unlock/commercial metrics",
+    "Association selectors and intentional small dashboard summaries"
+  ],
+  "validation": {
+    "integratedInitial": {
+      "passed": 714,
+      "failed": 6,
+      "total": 720,
+      "note": "Initial failures corrected; affected surfaces revalidated, no second full suite"
+    },
+    "affectedFinal": {
+      "passed": 145,
+      "assertions": 3206
+    },
+    "membershipFinal": {
+      "passed": 12,
+      "assertions": 857
+    },
+    "publisherPaginationFinal": {
+      "passed": 17,
+      "assertions": 519
+    },
+    "searchFinal": {
+      "passed": 7,
+      "assertions": 987
+    },
+    "typescript": "PASS",
+    "manifestPages": 109,
+    "diffCheck": "PASS"
+  },
+  "release": {
+    "cutovers": 1,
+    "localHealth": 200,
+    "publicHealth": 200,
+    "publicHtmlManifest": "PASS",
+    "appWebAssetsIdentical": true,
+    "frontendBuildSource": "194b2e70d458",
+    "frontendChangedAfterBuild": false,
+    "rollback": "/home/jakawi.com/backups/global-pagination-v1/rollback.sh",
+    "backup": "/home/jakawi.com/backups/global-pagination-v1/pre-cutover.dump",
+    "backupSha256": "f938cf855f154935c82843059b37707d799d1d48a3ff4b2b712e0bfc1c43f4d9",
+    "productionMigrations": false,
+    "productionQaFixtures": false,
+    "commercialStateUnchanged": true,
+    "prelaunch": true,
+    "v2proofChanged": false
+  }
+}

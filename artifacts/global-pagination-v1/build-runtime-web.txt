@@ -1,0 +1,30 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from runtime-final.Dockerfile
+#1 transferring dockerfile: 722B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/jakawi-pagination-web:194b2e70d458
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 278B done
+#3 DONE 0.0s
+
+#4 [web 1/2] FROM docker.io/library/jakawi-pagination-web:194b2e70d458@sha256:d2047ac4b729d83b101d420e2c455a3ac2363825953337a1c287982c050c4ce3
+#4 resolve docker.io/library/jakawi-pagination-web:194b2e70d458@sha256:d2047ac4b729d83b101d420e2c455a3ac2363825953337a1c287982c050c4ce3 0.0s done
+#4 DONE 0.0s
+
+#5 [web 2/2] RUN sh /usr/local/bin/check-production-artifact /var/www/html/public
+#5 CACHED
+
+#6 exporting to image
+#6 exporting layers done
+#6 exporting manifest sha256:1d0fefd8c77acd8814dacfe58e4e59751932432c6524ba31592c5794c0fd51d4
+#6 exporting manifest sha256:1d0fefd8c77acd8814dacfe58e4e59751932432c6524ba31592c5794c0fd51d4 0.0s done
+#6 exporting config sha256:ae1e02d50b9259a9dbe6f402b2ae5b2ff35837113536805afff8b01ec2752858 0.0s done
+#6 exporting attestation manifest sha256:e53d0ceaa1c69e36fcf48f9f1f4624a1f7371c834dea2de3be7c0e8860851c29 0.0s done
+#6 exporting manifest list sha256:a793e70a1b6b0d988ab3a8e4e25b63f0781da497d1fbdbb59393272d474bc907 0.0s done
+#6 naming to docker.io/library/jakawi-pagination-web:a9803e8c7036 done
+#6 unpacking to docker.io/library/jakawi-pagination-web:a9803e8c7036 0.0s done
+#6 DONE 0.1s

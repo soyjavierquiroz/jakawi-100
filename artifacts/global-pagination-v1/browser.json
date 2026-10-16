@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "width": 375,
+      "first": 18,
+      "appended": 54,
+      "duplicates": 0,
+      "doubleClick": "PASS",
+      "sortReset": "PASS",
+      "history": "PASS",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "first": 18,
+      "appended": 54,
+      "duplicates": 0,
+      "doubleClick": "PASS",
+      "sortReset": "PASS",
+      "history": "PASS",
+      "overflow": false
+    },
+    {
+      "width": 430,
+      "first": 18,
+      "appended": 54,
+      "duplicates": 0,
+      "doubleClick": "PASS",
+      "sortReset": "PASS",
+      "history": "PASS",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "first": 18,
+      "appended": 54,
+      "duplicates": 0,
+      "doubleClick": "PASS",
+      "sortReset": "PASS",
+      "history": "PASS",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "first": 18,
+      "appended": 54,
+      "duplicates": 0,
+      "doubleClick": "PASS",
+      "sortReset": "PASS",
+      "history": "PASS",
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "requests": [
+    "/explorar?page=2",
+    "/explorar?page=3",
+    "/explorar?sort=name",
+    "/explorar?page=2&sort=name",
+    "/admin/benefits?page=2",
+    "/explorar?page=2",
+    "/explorar?page=3",
+    "/explorar?sort=name",
+    "/explorar?page=2&sort=name",
+    "/admin/benefits?page=2",
+    "/explorar?page=2",
+    "/explorar?page=3",
+    "/explorar?sort=name",
+    "/explorar?page=2&sort=name",
+    "/admin/benefits?page=2",
+    "/explorar?page=2",
+    "/explorar?page=3",
+    "/explorar?sort=name",
+    "/explorar?page=2&sort=name",
+    "/admin/benefits?page=2",
+    "/explorar?page=2",
+    "/explorar?page=3",
+    "/explorar?sort=name",
+    "/explorar?page=2&sort=name",
+    "/admin/benefits?page=2",
+    "/explorar?page=2&type=challenges"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "stage": "candidate",
+  "checks": [
+    {
+      "name": "explore",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "partners",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "locations",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "benefits",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "preview-one",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "preview-two",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "preview-three",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "explore",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "partners",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "locations",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "benefits",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "preview-one",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "preview-two",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "preview-three",
+      "width": 1440,
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "writes": 0
+}
