@@ -136,7 +136,7 @@ class PublicController extends Controller
             $partners->where('category', $category);
         }
         if ($term !== '') {
-            $like = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%';
+            $like = '%'.addcslashes($term, '\\%_').'%';
             $partners->where(fn ($query) => $query->where('name', 'ilike', $like)->orWhere('description', 'ilike', $like));
         }
 

@@ -153,7 +153,7 @@ final readonly class DiscoveryService
         $ids = fn (string $kind) => $keys->where('kind', $kind)->pluck('id')->all();
         $city = new DiscoveryCity($context->city->id, $context->city->name, $context->city->slug);
 
-        $like = $term !== null && $term !== '' ? '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%' : null;
+        $like = $term !== null && $term !== '' ? '%'.addcslashes($term, '\\%_').'%' : null;
         // Destinations are resolved per viewer; this payload is not shared in a cache.
         $items = [];
 

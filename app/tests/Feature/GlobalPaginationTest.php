@@ -57,6 +57,17 @@ class GlobalPaginationTest extends TestCase
         $this->assertSame(470, $service->explorePage($context, category: 'food')->total());
     }
 
+    public function test_explorer_literal_search_uses_the_same_predicate_for_selection_and_hydration(): void
+    {
+        $city = City::where('slug', 'cochabamba')->sole();
+        $partner = Partner::factory()->published()->create();
+        Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
+        Benefit::factory()->published()->forPartner($partner)->create(['title' => 'Oferta %_'.chr(92).' literal', 'applies_to_all_locations' => true]);
+        $page = app(DiscoveryService::class)->explorePage(new DiscoveryContext(city: $city, surface: 'explore'), term: '%_'.chr(92));
+        $this->assertSame(1, $page->total());
+        $this->assertCount(1, $page->items());
+    }
+
     public function test_admin_partner_and_location_filters_run_before_pagination_and_keep_urls(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
