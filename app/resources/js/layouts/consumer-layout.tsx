@@ -1,11 +1,13 @@
 import { DeliveryLayout } from '@/components/marketing/delivery';
 import { Link, usePage } from '@inertiajs/react';
 import MobileBottomNav from '@/components/mobile-bottom-nav';
+import { CommunityFloatingBubble } from '@/components/community-floating-bubble';
+import type { CityCommunityData } from '@/components/city-community-card';
 import ThemeToggle from '@/components/theme-toggle';
 
 /** Consumer pages never inherit staff or partner navigation. */
 export default function ConsumerLayout({ children }: { children: React.ReactNode }) {
-    const { component } = usePage();
+    const { component, url, props } = usePage<{ communityBubble: CityCommunityData | null }>();
     if (component === 'redemptions/show') return <DeliveryLayout>{children}</DeliveryLayout>;
     return <div className="min-h-screen bg-background pb-[var(--pwa-install-clearance,0px)] text-foreground">
         <header className="sticky top-0 z-30 hidden border-b border-border/70 bg-background/90 backdrop-blur lg:block">
@@ -44,5 +46,6 @@ export default function ConsumerLayout({ children }: { children: React.ReactNode
         </header>
         {children}
         <MobileBottomNav />
+        <CommunityFloatingBubble key={`${url}-${props.communityBubble?.city_slug}`} community={props.communityBubble} />
     </div>;
 }

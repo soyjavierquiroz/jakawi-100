@@ -54,6 +54,9 @@ class HandleInertiaRequests extends Middleware
             ),
             'newAcquisitionAccount' => $request->user() && $request->session()->get('acquisition_new_user_id') === $request->user()->id,
             'accessEmailQueued' => (bool) $request->session()->get('acquisition_access_email_queued', false),
+            'communityBubble' => \Inertia\Inertia::always(fn () => $request->routeIs(
+                'explore', 'partners.public', 'partners.show', 'locations.show', 'benefits.show', 'experiences.show', 'mi-jakawi',
+            ) ? app(\App\Services\CityCommunity::class)->data($request, 'floating') : null),
             'benefitJourney' => fn () => $this->benefitJourney($request),
             'auth' => [
                 'user' => $request->user() ? $request->user()->toArray() + ['is_partner_only' => $request->user()->isPartnerOnly()] : null,

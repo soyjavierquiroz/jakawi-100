@@ -26,8 +26,8 @@ class CityCommunity
         return [
             'city_slug' => $city->slug, 'city_name' => $city->name, 'name' => $city->community_name,
             'status' => $state ? $state->status : 'not_invited',
-            'automatic' => ($surface === 'home' || $onboarding) && $this->eligible($state, $request),
-            'source' => $onboarding ? 'onboarding' : $surface,
+            'automatic' => (in_array($surface, ['home', 'floating'], true) || $onboarding) && $this->eligible($state, $request),
+            'source' => $surface === 'floating' ? 'floating' : ($onboarding ? 'onboarding' : $surface),
         ];
     }
 

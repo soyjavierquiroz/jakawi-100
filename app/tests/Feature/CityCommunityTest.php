@@ -16,6 +16,45 @@ class CityCommunityTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_floating_invitation_uses_existing_frequency_and_official_open_action(): void
+    {
+        $city = $this->city();
+        $this->actingAs(User::factory()->create());
+        foreach (['/explorar', '/mi-jakawi'] as $path) {
+            $this->get($path)->assertInertia(fn (Assert $page) => $page
+                ->where('communityBubble.automatic', true)
+                ->where('communityBubble.source', 'floating')
+                ->missing('communityBubble.url'));
+        }
+        $this->assertDatabaseCount('community_interactions', 0);
+        $this->action($city, 'presented', 'floating')->assertOk()->assertJson(['accepted' => true]);
+        $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble.automatic', false));
+        $this->action($city, 'opened', 'floating')->assertOk()->assertJson(['url' => $city->community_invite_url]);
+        $this->assertDatabaseHas('community_interactions', ['exposure_count' => 1, 'status' => 'opened']);
+    }
+
+    public function test_floating_invitation_fails_closed_on_non_consumer_surfaces_and_guest(): void
+    {
+        $this->city();
+        $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble', null));
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        foreach (['/', '/admin/ciudades', '/perfil'] as $path) {
+            $this->get($path)->assertInertia(fn (Assert $page) => $page->where('communityBubble', null));
+        }
+    }
+
+    public function test_floating_invitation_respects_opt_out_and_disabled_city(): void
+    {
+        $city = $this->city();
+        $this->actingAs(User::factory()->create());
+        foreach (['declined', 'self_reported_joined', 'snoozed', 'opened'] as $action) {
+            $this->action($city, $action)->assertOk();
+            $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble.automatic', false));
+        }
+        $city->update(['community_enabled' => false]);
+        $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble', null));
+    }
+
     private function city(): City
     {
         $city = City::where('slug', 'cochabamba')->firstOrFail();

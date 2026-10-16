@@ -15,7 +15,7 @@ class CityCommunityController extends Controller
     {
         $data = $request->validate([
             'action' => ['required', Rule::in(['presented', 'opened', 'snoozed', 'declined', 'self_reported_joined', 'reset'])],
-            'source' => ['required', Rule::in(['onboarding', 'home', 'mi-jakawi'])],
+            'source' => ['required', Rule::in(['onboarding', 'home', 'mi-jakawi', 'floating'])],
         ]);
         abort_unless($selectedCity->resolve($request)->id === $city->id, 409);
         if ($data['source'] === 'onboarding') {

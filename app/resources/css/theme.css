@@ -348,3 +348,69 @@
         transition: none;
     }
 }
+
+/* Community discovery invitation: shares the official WhatsApp CTA palette. */
+.community-bubble {
+    position: fixed;
+    z-index: 35;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: calc(5.75rem + env(safe-area-inset-bottom) + var(--pwa-install-clearance, 0px));
+    animation: community-bubble-enter 360ms ease-out both;
+}
+.community-bubble-float { position: relative; animation: community-bubble-float 9s ease-in-out 1s infinite; }
+.community-bubble-action {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    box-shadow: var(--shadow-featured);
+}
+.community-bubble-action svg { width: 26px; height: 26px; }
+.community-bubble-action:disabled { opacity: .65; cursor: wait; }
+.community-bubble-dismiss {
+    position: absolute;
+    top: -18px;
+    right: -10px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--muted-foreground);
+    box-shadow: var(--shadow);
+}
+.community-bubble-dismiss svg { width: 14px; height: 14px; }
+.community-bubble-dismiss:hover { color: var(--foreground); background: var(--muted); }
+.community-bubble-dismiss:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.community-bubble-error {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 20px);
+    width: min(240px, calc(100vw - 2rem));
+    padding: .75rem;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    color: var(--foreground);
+    box-shadow: var(--shadow);
+    font-size: .875rem;
+}
+@media (min-width: 1024px) {
+    .community-bubble { right: 1.5rem; bottom: 26vh; }
+    .community-bubble-action { width: 56px; height: 56px; }
+}
+@keyframes community-bubble-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes community-bubble-float {
+    0%, 15%, 45%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .community-bubble { animation: community-bubble-fade 240ms ease-out both; }
+    .community-bubble-float { animation: none; }
+}
+@keyframes community-bubble-fade { from { opacity: 0; } to { opacity: 1; } }
