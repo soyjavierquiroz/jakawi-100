@@ -289,7 +289,10 @@ class AdminController extends Controller
 
     public function memberships(): Response
     {
-        return Inertia::render('admin/memberships/index', ['users' => \App\Support\ListingPage::make(User::with('activeMembership')->when(request('q'), fn ($q) => $q->where(fn ($q) => $q->where('name', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')->orWhere('email', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%'))), 25), 'membershipConfig' => config('jakawi.membership'), 'paymentMethods' => ['cash', 'transfer', 'other']]);
+        $query = User::with('activeMembership')->when(request('q'), fn ($q) => $q->where(fn ($q) => $q->where('name', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')->orWhere('email', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')));
+        $page = \App\Support\ListingPage::make($query, 25)->through(fn (User $user) => $user->only('id', 'name', 'email') + ['membership' => $user->activeMembership ? $user->activeMembership->only('id', 'status', 'starts_at', 'ends_at', 'amount_paid') + ['is_active' => $user->activeMembership->isActive()] : null]);
+
+        return Inertia::render('admin/memberships/index', ['users' => $page, 'membershipConfig' => config('jakawi.membership'), 'paymentMethods' => ['cash', 'transfer', 'other']]);
     }
 
     public function activateMembership(Request $request, MembershipService $service)

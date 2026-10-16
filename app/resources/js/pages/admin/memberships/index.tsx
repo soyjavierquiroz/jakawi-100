@@ -143,23 +143,17 @@ function ActivateForm({
 
 export default function AdminMembershipsIndex({
     users,
-    filters,
     membershipConfig,
     paymentMethods,
 }: {
     users: PaginatedUsers;
-    filters: { search: string };
     membershipConfig: MembershipConfig;
     paymentMethods: string[];
 }) {
     const { flash } = usePage().props as { flash?: Flash };
 
     function cancelMembership(id: number) {
-        router.patch(
-            `/admin/memberships/${id}/cancel`,
-            {},
-            { preserveScroll: true },
-        );
+        router.delete(`/admin/memberships/${id}`, { preserveScroll: true });
     }
 
     return (
@@ -173,20 +167,7 @@ export default function AdminMembershipsIndex({
                         {membershipConfig.duration_days} dias
                     </p>
                 </div>
-                <form className="flex gap-2" method="get">
-                    <input
-                        className="min-h-10 rounded-md border border-border bg-background px-3 text-sm"
-                        defaultValue={filters.search}
-                        name="search"
-                        placeholder="Buscar name/email"
-                    />
-                    <button
-                        className="rounded-md border border-border px-3 text-sm font-medium"
-                        type="submit"
-                    >
-                        Buscar
-                    </button>
-                </form>
+                <ListFilters />
             </div>
 
             {flash?.success ? (
