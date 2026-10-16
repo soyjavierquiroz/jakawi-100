@@ -47,7 +47,7 @@ class AdminController extends Controller
 
     public function partners(Request $request, PartnerAcquisitionMetrics $acquisition): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'filters' => $request->only('q', 'status', 'city', 'sort'), 'cities' => \App\Models\City::orderBy('name')->pluck('name'), 'items' => \App\Support\ListingPage::make($this->placeQuery($request, Partner::query(), true)->with(['locations' => fn ($query) => $query->select('id', 'partner_id', 'name', 'status', 'city', 'city_id', 'is_primary'), 'locations.cityEntity:id,name'])->orderBy('id'))->through(fn (Partner $partner) => $partner->toArray() + ['acquisition' => $acquisition->forPartner($partner), 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'gallery_count' => count($partner->gallery_paths ?? []), 'publicUrl' => $partner->isPublished() ? route('partners.public', $partner) : null])]);
+        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'filters' => (object) $request->only('q', 'status', 'city', 'sort'), 'cities' => \App\Models\City::orderBy('name')->pluck('name'), 'items' => \App\Support\ListingPage::make($this->placeQuery($request, Partner::query(), true)->with(['locations' => fn ($query) => $query->select('id', 'partner_id', 'name', 'status', 'city', 'city_id', 'is_primary'), 'locations.cityEntity:id,name'])->orderBy('id'))->through(fn (Partner $partner) => $partner->toArray() + ['acquisition' => $acquisition->forPartner($partner), 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'gallery_count' => count($partner->gallery_paths ?? []), 'publicUrl' => $partner->isPublished() ? route('partners.public', $partner) : null])]);
     }
 
     private function placeQuery(Request $request, $query, bool $partner)
@@ -117,7 +117,7 @@ class AdminController extends Controller
 
     public function locations(Request $request): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Locations', 'resource' => 'locations', 'filters' => $request->only('q', 'status', 'partner', 'sort'), 'items' => \App\Support\ListingPage::make($this->placeQuery($request, Location::with(['partner', 'cityEntity']), false)->orderBy('id')), 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('admin/resources/index', ['title' => 'Locations', 'resource' => 'locations', 'filters' => (object) $request->only('q', 'status', 'partner', 'sort'), 'items' => \App\Support\ListingPage::make($this->placeQuery($request, Location::with(['partner', 'cityEntity']), false)->orderBy('id')), 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
     }
 
     public function locationForm(Request $request, ?Location $location = null): Response

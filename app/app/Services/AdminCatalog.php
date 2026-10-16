@@ -41,7 +41,7 @@ class AdminCatalog
 
         return [
             'title' => $title, 'resource' => $resource, 'baseUrl' => $base, 'createUrl' => $create,
-            'items' => $items, 'filters' => $filters,
+            'items' => $items, 'filters' => (object) $filters,
             'partners' => Partner::orderBy('name')->get(['id', 'name']),
             'statuses' => $model::query()->distinct()->orderBy('status')->pluck('status'),
             'prelaunch' => (bool) config('jakawi.prelaunch_mode'),

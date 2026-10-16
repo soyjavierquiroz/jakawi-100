@@ -46,11 +46,11 @@ class GlobalPaginationTest extends TestCase
         }
         $fixtures = [];
         foreach (['/explorar', '/explorar?page=2', '/explorar?page=3', '/explorar?sort=name', '/explorar?sort=name&page=2', '/explorar?q=Alfa', '/explorar?q=missing', '/explorar?type=challenges', '/explorar?type=challenges&page=2'] as $url) {
-            $fixtures[$url] = $this->get($url, ['X-Inertia' => 'true'])->assertOk()->json();
+            $fixtures[$url] = json_decode($this->get($url, ['X-Inertia' => 'true'])->assertOk()->getContent());
         }
         $this->actingAs(User::factory()->create(['is_admin' => true]));
         foreach (['/admin/benefits', '/admin/benefits?page=2', '/admin/partners', '/admin/locations', '/admin/campaigns', '/admin/memberships', '/admin/redemptions', '/admin/reward-rules', '/admin/expansion', '/admin/solicitudes-membresia'] as $url) {
-            $fixtures[$url] = $this->get($url, ['X-Inertia' => 'true'])->assertOk()->json();
+            $fixtures[$url] = json_decode($this->get($url, ['X-Inertia' => 'true'])->assertOk()->getContent());
         }
         file_put_contents(storage_path('app/pagination-browser.json'), json_encode($fixtures));
         $this->assertSame(0, $service->explorePage($context, term: 'nothing-matches')->total());
