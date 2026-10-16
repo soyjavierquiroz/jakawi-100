@@ -357,7 +357,7 @@
     bottom: calc(5.75rem + env(safe-area-inset-bottom) + var(--pwa-install-clearance, 0px));
     animation: community-bubble-enter 360ms ease-out both;
 }
-.community-bubble-float { position: relative; animation: community-bubble-float 9s ease-in-out 1s infinite; }
+.community-bubble-float { position: relative; animation: community-bubble-float 3.2s ease-in-out 1s infinite; }
 .community-bubble-action {
     display: grid;
     place-items: center;
@@ -370,19 +370,19 @@
 .community-bubble-action:disabled { opacity: .65; cursor: wait; }
 .community-bubble-dismiss {
     position: absolute;
-    top: -18px;
-    right: -10px;
+    top: -10px;
+    right: -6px;
     display: grid;
     place-items: center;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     border: 1px solid var(--border);
     border-radius: 50%;
-    background: var(--surface);
+    background: color-mix(in srgb, var(--surface) 90%, var(--muted));
     color: var(--muted-foreground);
-    box-shadow: var(--shadow);
+    transition: background-color 160ms ease, color 160ms ease;
 }
-.community-bubble-dismiss svg { width: 14px; height: 14px; }
+.community-bubble-dismiss svg { width: 12px; height: 12px; }
 .community-bubble-dismiss:hover { color: var(--foreground); background: var(--muted); }
 .community-bubble-dismiss:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 .community-bubble-error {
@@ -406,11 +406,12 @@
     to { opacity: 1; transform: translateY(0); }
 }
 @keyframes community-bubble-float {
-    0%, 15%, 45%, 100% { transform: translateY(0); }
-    30% { transform: translateY(-4px); }
+    0%, 10%, 90%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
 }
 @media (prefers-reduced-motion: reduce) {
     .community-bubble { animation: community-bubble-fade 240ms ease-out both; }
     .community-bubble-float { animation: none; }
+    .community-bubble-dismiss { transition: none; }
 }
 @keyframes community-bubble-fade { from { opacity: 0; } to { opacity: 1; } }
