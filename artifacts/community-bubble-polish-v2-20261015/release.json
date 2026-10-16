@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "live": "277e14631e56909d3549e5ada13b426870e61712",
+  "baseline": "f5e377e184909626bdd0238d2a23f52d46f37f20",
+  "runtimeSourceChanged": [
+    "app/resources/css/theme.css"
+  ],
+  "dismiss": {
+    "containerPx": 24,
+    "iconPx": 12,
+    "shadow": "none",
+    "keyboardFocus": "PASS"
+  },
+  "motion": {
+    "durationSeconds": 3.2,
+    "amplitudePx": 4,
+    "easing": "ease-in-out",
+    "measuredRanges": {
+      "candidate": [
+        4,
+        3.99485
+      ],
+      "live": [
+        3.99872,
+        4
+      ]
+    },
+    "reducedMotion": "PASS"
+  },
+  "widths": [
+    390,
+    1440
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "typescript": "PASS",
+  "diffCheck": "PASS",
+  "releaseCompilations": 1,
+  "manifestPages": 109,
+  "browserChecks": {
+    "candidate": 12,
+    "live": 12
+  },
+  "javascriptErrors": 0,
+  "overflow": false,
+  "communityRequestsDuringQa": 0,
+  "stateUnchanged": true,
+  "prelaunch": true,
+  "demoNoticeUnchanged": true,
+  "health": {
+    "local": 200,
+    "public": 200
+  },
+  "productionMigrations": false,
+  "persistentQaData": false,
+  "goldSuiteRepeated": false,
+  "rollback": "backups/community-bubble-polish-v2-20261015/rollback.sh",
+  "unrelatedChanges": []
+}

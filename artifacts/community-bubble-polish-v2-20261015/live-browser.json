@@ -1,0 +1,219 @@
+{
+  "stage": "live",
+  "status": "PASS",
+  "checks": [
+    {
+      "route": "root",
+      "width": 390,
+      "hidden": true
+    },
+    {
+      "route": "admin",
+      "width": 390,
+      "hidden": true
+    },
+    {
+      "route": "explore",
+      "width": 390,
+      "dark": false,
+      "info": {
+        "dismiss": {
+          "width": 24,
+          "height": 24,
+          "icon": 12,
+          "shadow": "none",
+          "radius": "50%",
+          "background": "color(srgb 0.996471 0.986274 0.969804)"
+        },
+        "action": 52,
+        "right": 380,
+        "navVisible": true,
+        "navTop": 835,
+        "bottom": 808,
+        "overflow": false,
+        "duration": "3.2s",
+        "easing": "ease-in-out"
+      },
+      "hover": {
+        "background": "rgb(246, 238, 232)",
+        "color": "rgb(17, 17, 17)"
+      },
+      "status": "PASS"
+    },
+    {
+      "route": "explore",
+      "width": 390,
+      "dark": true,
+      "info": {
+        "dismiss": {
+          "width": 24,
+          "height": 24,
+          "icon": 12,
+          "shadow": "none",
+          "radius": "50%",
+          "background": "oklab(0.9904 0.00112107 0.00613332)"
+        },
+        "action": 52,
+        "right": 380,
+        "navVisible": true,
+        "navTop": 835,
+        "bottom": 808,
+        "overflow": false,
+        "duration": "3.2s",
+        "easing": "ease-in-out"
+      },
+      "hover": {
+        "background": "rgb(36, 33, 31)",
+        "color": "rgb(255, 248, 242)"
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "floatRange": 3.99872,
+      "samples": [
+        -0.18981,
+        -0.669642,
+        -1.33394,
+        -2.21435,
+        -2.96843,
+        -3.54708,
+        -3.89076,
+        -3.99872,
+        -3.86484,
+        -3.43846,
+        -2.81319,
+        -2.03673,
+        -1.17165,
+        -0.550677,
+        -0.158811,
+        -0.000847062,
+        0,
+        0,
+        0,
+        0,
+        -0.0811463,
+        -0.392398,
+        -1.01491
+      ],
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "reduced": {
+        "float": "none",
+        "dismissTransition": "0s",
+        "appearance": "community-bubble-fade"
+      },
+      "dismissSession": "PASS"
+    },
+    {
+      "route": "root",
+      "width": 1440,
+      "hidden": true
+    },
+    {
+      "route": "admin",
+      "width": 1440,
+      "hidden": true
+    },
+    {
+      "route": "explore",
+      "width": 1440,
+      "dark": false,
+      "info": {
+        "dismiss": {
+          "width": 24,
+          "height": 24,
+          "icon": 12,
+          "shadow": "none",
+          "radius": "50%",
+          "background": "color(srgb 0.996471 0.986274 0.969804)"
+        },
+        "action": 56,
+        "right": 1422,
+        "navVisible": false,
+        "navTop": 0,
+        "bottom": 666,
+        "overflow": false,
+        "duration": "3.2s",
+        "easing": "ease-in-out"
+      },
+      "hover": {
+        "background": "rgb(246, 238, 232)",
+        "color": "rgb(17, 17, 17)"
+      },
+      "status": "PASS"
+    },
+    {
+      "route": "explore",
+      "width": 1440,
+      "dark": true,
+      "info": {
+        "dismiss": {
+          "width": 24,
+          "height": 24,
+          "icon": 12,
+          "shadow": "none",
+          "radius": "50%",
+          "background": "oklab(0.9904 0.00112107 0.00613332)"
+        },
+        "action": 56,
+        "right": 1422,
+        "navVisible": false,
+        "navTop": 0,
+        "bottom": 666,
+        "overflow": false,
+        "duration": "3.2s",
+        "easing": "ease-in-out"
+      },
+      "hover": {
+        "background": "rgb(36, 33, 31)",
+        "color": "rgb(255, 248, 242)"
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "floatRange": 4,
+      "samples": [
+        -0.158235,
+        -0.54993,
+        -1.2514,
+        -2.03555,
+        -2.81262,
+        -3.49389,
+        -3.86464,
+        -4,
+        -3.89109,
+        -3.49455,
+        -2.8928,
+        -2.12651,
+        -1.25239,
+        -0.609114,
+        -0.190245,
+        -0.00422439,
+        0,
+        0,
+        0,
+        0,
+        -0.0443937,
+        -0.345543,
+        -0.868836
+      ],
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "reduced": {
+        "float": "none",
+        "dismissTransition": "0s",
+        "appearance": "community-bubble-fade"
+      },
+      "dismissSession": "PASS"
+    }
+  ],
+  "errors": [],
+  "communityRequests": 0,
+  "productionWrites": 0
+}
