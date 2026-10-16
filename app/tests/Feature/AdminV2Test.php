@@ -97,7 +97,7 @@ class AdminV2Test extends TestCase
         $admin = $this->admin();
         $user = User::factory()->create();
         app(MembershipService::class)->activate($user, $admin);
-        $this->actingAs($admin)->get('/admin/memberships')->assertOk();
+        $this->actingAs($admin)->get('/admin/memberships?q='.urlencode($user->email))->assertOk()->assertInertia(fn (Assert $page) => $page->has('users.data', 1)->where('users.per_page', 25)->where('users.data.0.id', $user->id)->where('users.data.0.membership.is_active', true));
         $membership = $user->activeMembership()->firstOrFail();
         $this->actingAs($admin)->delete('/admin/memberships/'.$membership->id)->assertRedirect();
         $this->assertSame('cancelled', $membership->fresh()->status);

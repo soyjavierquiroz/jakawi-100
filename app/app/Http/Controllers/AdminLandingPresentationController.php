@@ -177,7 +177,7 @@ class AdminLandingPresentationController extends Controller
             $data['editorial_version'] = $changed ? 1 : ($presentation?->editorial_version ?? 1);
         }
         $data['publish_scope'] = $scope;
-        DB::transaction(function () use ($request, $subject, $target, $presentation, $data, $scope) {
+        $saved = DB::transaction(function () use ($request, $subject, $target, $presentation, $data, $scope) {
             foreach (collect([$subject, $target])->unique(fn ($s) => $s->getMorphClass().':'.$s->id)->sortBy(fn ($s) => $s->getMorphClass().':'.$s->id) as $locked) {
                 $locked->newQuery()->whereKey($locked->id)->lockForUpdate()->firstOrFail();
             }
@@ -195,9 +195,13 @@ class AdminLandingPresentationController extends Controller
             if ($presentation->status === 'PUBLISHED' && $scope !== 'NONE') {
                 app(LandingPresentationDefaults::class)->choose($target, $presentation, $scope);
             }
+
+            return $presentation;
         });
 
-        return redirect($this->baseUrl($target));
+        $page = intdiv($target->landingPresentations()->where('id', '<=', $saved->id)->count() - 1, 25) + 1;
+
+        return redirect($this->baseUrl($target).($page > 1 ? '?page='.$page : ''));
     }
 
     public function publish(Request $request, string $subjectSlug, LandingPresentation $presentation)
@@ -262,7 +266,9 @@ class AdminLandingPresentationController extends Controller
         $clone->publish_scope = $presentation->status === 'PUBLISHED' ? $presentation->default_scope : $presentation->publish_scope;
         $clone->save();
 
-        return redirect($this->baseUrl($subject));
+        $page = intdiv($subject->landingPresentations()->where('id', '<=', $clone->id)->count() - 1, 25) + 1;
+
+        return redirect($this->baseUrl($subject).($page > 1 ? '?page='.$page : ''));
     }
 
     public function unpublish(Request $request, string $subjectSlug, LandingPresentation $presentation)

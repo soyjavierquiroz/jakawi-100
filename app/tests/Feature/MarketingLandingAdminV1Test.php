@@ -41,6 +41,19 @@ class MarketingLandingAdminV1Test extends TestCase
         return array_replace(['name' => 'Oferta editorial', 'slug' => 'oferta-editorial', 'template_key' => 'OFFER_CONVERSION', 'marketing_theme' => 'LIGHT_CONVERSION', 'media_mode' => 'NONE', 'headline' => 'TU CAFÉ DE CORTESÍA.', 'headline_emphasis' => 'CAFÉ DE CORTESÍA.', 'eyebrow' => 'BENEFICIO JAKAWI', 'subheadline' => 'Disfruta tu próximo plan.', 'final_cta_headline' => 'PREPARA TU VISITA.', 'final_cta_description' => 'Continúa con JAKAWI.', 'campaign_key' => 'cafe-piloto', 'default_scope' => 'GUESTS'], $overrides);
     }
 
+    public function test_save_and_duplicate_return_the_page_containing_the_persisted_presentation(): void
+    {
+        $subject = $this->subject();
+        $this->admin();
+        for ($n = 1; $n <= 25; $n++) $subject->landingPresentations()->create(['name' => 'Draft '.$n, 'slug' => 'pagination-draft-'.$n, 'status' => 'DRAFT']);
+        $base = $this->base($subject);
+        $this->post($base, $this->fields())->assertRedirect($base.'?page=2');
+        $this->get($base.'?page=2')->assertInertia(fn (Assert $page) => $page->has('presentations', 1)->where('presentations.0.slug', 'oferta-editorial'));
+        $this->put($base.'/oferta-editorial', $this->fields(['name' => 'Saved again']))->assertRedirect($base.'?page=2');
+        $this->post($base.'/oferta-editorial/duplicate', ['name' => 'Copy', 'slug' => 'pagination-copy'])->assertRedirect($base.'?page=2');
+        $this->get($base.'?page=2')->assertInertia(fn (Assert $page) => $page->has('presentations', 2)->where('presentations.1.slug', 'pagination-copy'));
+    }
+
     public function test_admin_saves_only_two_acquisition_copy_values_and_preview_projects_them(): void
     {
         $subject = $this->subject();
