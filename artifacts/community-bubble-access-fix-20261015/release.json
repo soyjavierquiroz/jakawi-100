@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "live": "f5e377e184909626bdd0238d2a23f52d46f37f20",
+  "baseline": "067bf0624b55e9c9dd1584ae1313f51434363093",
+  "cause": "Floating access incorrectly used invitation frequency; existing opened state within 30 days produced automatic=false before any timer.",
+  "cochabamba": {
+    "active": true,
+    "communityEnabled": true,
+    "urlFormatValid": true
+  },
+  "invitationExposureOnRender": false,
+  "selfReportedJoinedAccess": true,
+  "explicitDeclineRespected": true,
+  "manualSessionDismissRespected": true,
+  "guestAccess": false,
+  "publicOpeningContractExists": false,
+  "typescript": "PASS",
+  "tests": {
+    "passed": 16,
+    "assertions": 404
+  },
+  "browser": {
+    "beforeReproduction": "PASS",
+    "candidateChecks": 18,
+    "liveChecks": 18,
+    "javascriptErrors": 0,
+    "widths": [
+      390,
+      1440
+    ]
+  },
+  "health": {
+    "local": 200,
+    "public": 200
+  },
+  "prelaunch": true,
+  "demoNoticeUnchanged": true,
+  "stateUnchanged": true,
+  "productionMigrations": false,
+  "persistentQaData": false,
+  "releaseCompilations": 1,
+  "rollback": "backups/community-bubble-access-fix-20261015/rollback.sh",
+  "unrelatedChanges": []
+}

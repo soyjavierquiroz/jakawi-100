@@ -1,0 +1,20 @@
+[
+  {
+    "service": "app",
+    "revision": "f5e377e184909626bdd0238d2a23f52d46f37f20",
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "service": "web",
+    "revision": "f5e377e184909626bdd0238d2a23f52d46f37f20",
+    "running": true,
+    "health": null
+  },
+  {
+    "service": "social-worker",
+    "revision": "f5e377e184909626bdd0238d2a23f52d46f37f20",
+    "running": true,
+    "health": null
+  }
+]

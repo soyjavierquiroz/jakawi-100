@@ -1,0 +1,17 @@
+{
+  "stage": "before",
+  "status": "PASS",
+  "checks": [
+    {
+      "before": true,
+      "status": "opened",
+      "automatic": false,
+      "visible": false,
+      "waitMs": 10500
+    }
+  ],
+  "errors": [],
+  "communityRequests": [],
+  "timers": [],
+  "productionWrites": 0
+}

@@ -1,0 +1,17 @@
+{
+    "city": {
+        "active": true,
+        "enabled": true,
+        "url_valid": true,
+        "has_community": true
+    },
+    "authentication_required": true,
+    "states": [
+        {
+            "status": "opened",
+            "exposures": 0,
+            "opened_within_30_days": true,
+            "eligible_before": false
+        }
+    ]
+}

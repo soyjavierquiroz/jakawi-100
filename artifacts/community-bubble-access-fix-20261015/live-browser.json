@@ -1,0 +1,212 @@
+{
+  "stage": "live",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "root",
+      "width": 390,
+      "visible": false,
+      "status": "PASS"
+    },
+    {
+      "name": "admin",
+      "width": 390,
+      "visible": false,
+      "status": "PASS"
+    },
+    {
+      "name": "guest",
+      "width": 390,
+      "visible": false,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 390,
+      "realAffectedUserProps": true,
+      "elapsed": 4886,
+      "info": {
+        "size": 52,
+        "height": 52,
+        "bottom": 808,
+        "right": 374,
+        "navTop": 835,
+        "navVisible": true,
+        "overflow": false,
+        "hit": true,
+        "zIndex": "35",
+        "opacity": "1"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "partner",
+      "width": 390,
+      "realAffectedUserProps": true,
+      "elapsed": 6393,
+      "info": {
+        "size": 52,
+        "height": 52,
+        "bottom": 808,
+        "right": 374,
+        "navTop": 835,
+        "navVisible": true,
+        "overflow": false,
+        "hit": true,
+        "zIndex": "35",
+        "opacity": "1"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 390,
+      "realAffectedUserProps": true,
+      "elapsed": 5505,
+      "info": {
+        "size": 52,
+        "height": 52,
+        "bottom": 808,
+        "right": 374,
+        "navTop": 835,
+        "navVisible": true,
+        "overflow": false,
+        "hit": true,
+        "zIndex": "35",
+        "opacity": "1"
+      },
+      "status": "PASS"
+    },
+    {
+      "scenario": "joined",
+      "width": 390,
+      "propsFixture": true,
+      "status": "PASS"
+    },
+    {
+      "scenario": "off",
+      "width": 390,
+      "propsFixture": true,
+      "status": "PASS"
+    },
+    {
+      "scenario": "declined",
+      "width": 390,
+      "propsFixture": true,
+      "status": "PASS"
+    },
+    {
+      "name": "root",
+      "width": 1440,
+      "visible": false,
+      "status": "PASS"
+    },
+    {
+      "name": "admin",
+      "width": 1440,
+      "visible": false,
+      "status": "PASS"
+    },
+    {
+      "name": "guest",
+      "width": 1440,
+      "visible": false,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 1440,
+      "realAffectedUserProps": true,
+      "elapsed": 8431,
+      "info": {
+        "size": 56,
+        "height": 56,
+        "bottom": 666,
+        "right": 1416,
+        "navTop": 0,
+        "navVisible": false,
+        "overflow": false,
+        "hit": true,
+        "zIndex": "35",
+        "opacity": "1"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "partner",
+      "width": 1440,
+      "realAffectedUserProps": true,
+      "elapsed": 9774,
+      "info": {
+        "size": 56,
+        "height": 56,
+        "bottom": 666,
+        "right": 1416,
+        "navTop": 0,
+        "navVisible": false,
+        "overflow": false,
+        "hit": true,
+        "zIndex": "35",
+        "opacity": "1"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 1440,
+      "realAffectedUserProps": true,
+      "elapsed": 7618,
+      "info": {
+        "size": 56,
+        "height": 56,
+        "bottom": 666,
+        "right": 1416,
+        "navTop": 0,
+        "navVisible": false,
+        "overflow": false,
+        "hit": true,
+        "zIndex": "35",
+        "opacity": "1"
+      },
+      "status": "PASS"
+    },
+    {
+      "scenario": "joined",
+      "width": 1440,
+      "propsFixture": true,
+      "status": "PASS"
+    },
+    {
+      "scenario": "off",
+      "width": 1440,
+      "propsFixture": true,
+      "status": "PASS"
+    },
+    {
+      "scenario": "declined",
+      "width": 1440,
+      "propsFixture": true,
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "communityRequests": [
+    {
+      "action": "opened",
+      "source": "floating"
+    },
+    {
+      "action": "opened",
+      "source": "floating"
+    }
+  ],
+  "timers": [
+    4443.569423264525,
+    6001.333790832563,
+    5206.0416314670565,
+    8038.062982173749,
+    9251.426598374908,
+    7201.068545183788
+  ],
+  "productionWrites": 0
+}
