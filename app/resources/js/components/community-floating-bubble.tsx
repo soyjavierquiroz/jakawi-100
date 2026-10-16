@@ -6,32 +6,29 @@ const dismissedKey = 'jakawi:community-bubble:dismissed';
 
 export function CommunityFloatingBubble({ community }: { community?: CityCommunityData | null }) {
     const [visible, setVisible] = useState(false);
+    const [suppressed, setSuppressed] = useState(false);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        if (!community?.automatic) return;
-        let cancelled = false;
+        if (!community?.access || suppressed) return;
         try {
             if (sessionStorage.getItem(dismissedKey)) return;
-        } catch { /* Storage may be unavailable; backend frequency still applies. */ }
-        const timer = window.setTimeout(() => {
-            void interact(community, 'presented').then(result => {
-                if (!cancelled && result.accepted) setVisible(true);
-            }).catch(() => { /* A failed presentation stays hidden. */ });
-        }, 3000 + Math.random() * 7000);
-        return () => { cancelled = true; window.clearTimeout(timer); };
-    }, [community]);
+        } catch { /* Storage may be unavailable; the current view can still be dismissed. */ }
+        const timer = window.setTimeout(() => setVisible(true), 3000 + Math.random() * 7000);
+        return () => window.clearTimeout(timer);
+    }, [community, suppressed]);
 
     useEffect(() => {
         const hide = (event: Event) => {
-            if ((event as CustomEvent<string>).detail === community?.city_slug) setVisible(false);
+            const detail = (event as CustomEvent<{ city_slug: string; status: string }>).detail;
+            if (detail.city_slug === community?.city_slug) setSuppressed(detail.status === 'declined');
         };
         window.addEventListener('jakawi:community-interaction', hide);
         return () => window.removeEventListener('jakawi:community-interaction', hide);
     }, [community?.city_slug]);
 
-    if (!visible || !community) return null;
+    if (!visible || !community?.access || suppressed) return null;
 
     function dismiss() {
         try { sessionStorage.setItem(dismissedKey, '1'); } catch { /* Hide this view even without storage. */ }

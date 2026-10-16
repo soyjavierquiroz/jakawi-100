@@ -26,7 +26,9 @@ class CityCommunity
         return [
             'city_slug' => $city->slug, 'city_name' => $city->name, 'name' => $city->community_name,
             'status' => $state ? $state->status : 'not_invited',
-            'automatic' => (in_array($surface, ['home', 'floating'], true) || $onboarding) && $this->eligible($state, $request),
+            // Floating access is independent from promotional invitation frequency.
+            'access' => $state?->status !== 'declined',
+            'automatic' => $surface !== 'floating' && ($surface === 'home' || $onboarding) && $this->eligible($state, $request),
             'source' => $surface === 'floating' ? 'floating' : ($onboarding ? 'onboarding' : $surface),
         ];
     }

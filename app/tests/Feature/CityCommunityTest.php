@@ -16,24 +16,34 @@ class CityCommunityTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_floating_invitation_uses_existing_frequency_and_official_open_action(): void
+    public function test_floating_access_ignores_promotional_frequency_and_preserves_joined_state(): void
     {
         $city = $this->city();
-        $this->actingAs(User::factory()->create());
-        foreach (['/explorar', '/mi-jakawi'] as $path) {
-            $this->get($path)->assertInertia(fn (Assert $page) => $page
-                ->where('communityBubble.automatic', true)
-                ->where('communityBubble.source', 'floating')
-                ->missing('communityBubble.url'));
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $state = CommunityInteraction::create([
+            'user_id' => $user->id, 'city_id' => $city->id,
+            'status' => 'self_reported_joined', 'exposure_count' => 3,
+            'last_invited_at' => now(), 'last_snoozed_at' => now(), 'last_opened_at' => now(),
+            'last_session_hash' => hash('sha256', session()->getId()),
+        ]);
+        $this->withSession(['community_exposure_session_hash' => hash('sha256', session()->getId())]);
+        foreach (['opened', 'invited', 'self_reported_joined'] as $status) {
+            $state->update(['status' => $status]);
+            foreach (['/explorar', '/mi-jakawi'] as $path) {
+                $this->get($path)->assertInertia(fn (Assert $page) => $page
+                    ->where('communityBubble.access', true)
+                    ->where('communityBubble.automatic', false)
+                    ->where('communityBubble.source', 'floating')
+                    ->missing('communityBubble.url'));
+            }
         }
-        $this->assertDatabaseCount('community_interactions', 0);
-        $this->action($city, 'presented', 'floating')->assertOk()->assertJson(['accepted' => true]);
-        $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble.automatic', false));
-        $this->action($city, 'opened', 'floating')->assertOk()->assertJson(['url' => $city->community_invite_url]);
-        $this->assertDatabaseHas('community_interactions', ['exposure_count' => 1, 'status' => 'opened']);
+        $this->action($city, 'opened', 'floating')->assertOk()->assertJson(['status' => 'self_reported_joined', 'url' => $city->community_invite_url]);
+        $this->assertDatabaseHas('community_interactions', ['exposure_count' => 3, 'status' => 'self_reported_joined']);
+        $this->assertDatabaseMissing('analytics_events', ['event_name' => 'community_presented']);
     }
 
-    public function test_floating_invitation_fails_closed_on_non_consumer_surfaces_and_guest(): void
+    public function test_floating_access_excludes_non_consumer_surfaces_and_guests(): void
     {
         $this->city();
         $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble', null));
@@ -43,16 +53,17 @@ class CityCommunityTest extends TestCase
         }
     }
 
-    public function test_floating_invitation_respects_opt_out_and_disabled_city(): void
+    public function test_floating_access_respects_explicit_rejection_and_disabled_city(): void
     {
         $city = $this->city();
         $this->actingAs(User::factory()->create());
-        foreach (['declined', 'self_reported_joined', 'snoozed', 'opened'] as $action) {
-            $this->action($city, $action)->assertOk();
-            $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble.automatic', false));
-        }
+        $this->action($city, 'declined')->assertOk();
+        $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble.access', false));
+        $this->action($city, 'reset')->assertOk();
+        $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble.access', true));
         $city->update(['community_enabled' => false]);
         $this->get('/explorar')->assertInertia(fn (Assert $page) => $page->where('communityBubble', null));
+        $this->action($city, 'opened', 'floating')->assertNotFound();
     }
 
     private function city(): City

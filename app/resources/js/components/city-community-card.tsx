@@ -7,6 +7,7 @@ export type CityCommunityData = {
     name: string;
     status: string;
     automatic: boolean;
+    access?: boolean;
     source: 'onboarding' | 'home' | 'mi-jakawi' | 'floating';
 };
 type Action =
@@ -40,8 +41,8 @@ export async function interact(
     if (!response.ok)
         throw new Error('No pudimos guardar tu elección. Inténtalo de nuevo.');
     const result: Result = await response.json();
-    if (result.accepted && action !== 'presented' && action !== 'reset') {
-        window.dispatchEvent(new CustomEvent('jakawi:community-interaction', { detail: community.city_slug }));
+    if (result.accepted && action !== 'presented') {
+        window.dispatchEvent(new CustomEvent('jakawi:community-interaction', { detail: { city_slug: community.city_slug, status: result.status } }));
     }
     return result;
 }
