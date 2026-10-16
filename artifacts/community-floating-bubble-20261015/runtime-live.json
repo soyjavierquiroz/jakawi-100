@@ -1,0 +1,24 @@
+{
+  "stateUnchanged": true,
+  "prelaunch": true,
+  "services": [
+    {
+      "service": "app",
+      "revision": "067bf0624b55e9c9dd1584ae1313f51434363093",
+      "running": true,
+      "health": "healthy"
+    },
+    {
+      "service": "web",
+      "revision": "067bf0624b55e9c9dd1584ae1313f51434363093",
+      "running": true,
+      "health": null
+    },
+    {
+      "service": "social-worker",
+      "revision": "067bf0624b55e9c9dd1584ae1313f51434363093",
+      "running": true,
+      "health": null
+    }
+  ]
+}

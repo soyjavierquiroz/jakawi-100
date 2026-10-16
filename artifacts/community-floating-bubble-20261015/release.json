@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "live": "067bf0624b55e9c9dd1584ae1313f51434363093",
+  "baseline": "05032d3918bd0bab270ed094ef7290baf14477d0",
+  "releaseCompilations": 1,
+  "typescript": "PASS",
+  "diffCheck": "PASS",
+  "tests": {
+    "passed": 16,
+    "assertions": 375
+  },
+  "manifestPages": 109,
+  "browserViews": {
+    "candidate": 16,
+    "live": 16
+  },
+  "javascriptErrors": 0,
+  "responsive": [
+    390,
+    1440
+  ],
+  "health": {
+    "local": 200,
+    "public": 200
+  },
+  "prelaunch": true,
+  "demoNoticeUnchanged": true,
+  "communityActionReused": true,
+  "stateUnchanged": true,
+  "productionMigrations": false,
+  "persistentQaData": false,
+  "unrelatedChanges": [],
+  "rollback": "backups/community-floating-bubble-20261015/rollback.sh"
+}

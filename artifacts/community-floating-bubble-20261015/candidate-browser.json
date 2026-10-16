@@ -1,0 +1,236 @@
+{
+  "stage": "candidate",
+  "status": "PASS",
+  "views": [
+    {
+      "name": "root",
+      "width": 390,
+      "realProps": true,
+      "automatic": false,
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 390,
+      "realProps": true,
+      "automatic": true,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 390,
+      "realProps": true,
+      "automatic": true,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-cities",
+      "width": 390,
+      "realProps": true,
+      "automatic": false,
+      "status": "PASS"
+    },
+    {
+      "name": "partner",
+      "width": 390,
+      "realProps": true,
+      "automatic": true,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 390,
+      "fixture": "browser memory only; writes intercepted",
+      "elapsed": 4865,
+      "info": {
+        "width": 52,
+        "height": 52,
+        "right": 374,
+        "bottom": 808,
+        "navTop": 835,
+        "navVisible": true,
+        "overflow": false,
+        "bg": "rgb(55, 122, 26)",
+        "floatAnimation": "community-bubble-float"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "partner",
+      "width": 390,
+      "fixture": "browser memory only; writes intercepted",
+      "elapsed": 4836,
+      "info": {
+        "width": 52,
+        "height": 52,
+        "right": 374,
+        "bottom": 808,
+        "navTop": 835,
+        "navVisible": true,
+        "overflow": false,
+        "bg": "rgb(55, 122, 26)",
+        "floatAnimation": "community-bubble-float"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 390,
+      "fixture": "browser memory only; writes intercepted",
+      "elapsed": 6596,
+      "info": {
+        "width": 52,
+        "height": 52,
+        "right": 374,
+        "bottom": 808,
+        "navTop": 835,
+        "navVisible": true,
+        "overflow": false,
+        "bg": "rgb(55, 122, 26)",
+        "floatAnimation": "community-bubble-float"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "root",
+      "width": 1440,
+      "realProps": true,
+      "automatic": false,
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 1440,
+      "realProps": true,
+      "automatic": true,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 1440,
+      "realProps": true,
+      "automatic": true,
+      "status": "PASS"
+    },
+    {
+      "name": "admin-cities",
+      "width": 1440,
+      "realProps": true,
+      "automatic": false,
+      "status": "PASS"
+    },
+    {
+      "name": "partner",
+      "width": 1440,
+      "realProps": true,
+      "automatic": true,
+      "status": "PASS"
+    },
+    {
+      "name": "explore",
+      "width": 1440,
+      "fixture": "browser memory only; writes intercepted",
+      "elapsed": 6877,
+      "info": {
+        "width": 56,
+        "height": 56,
+        "right": 1416,
+        "bottom": 666,
+        "navTop": 0,
+        "navVisible": false,
+        "overflow": false,
+        "bg": "rgb(55, 122, 26)",
+        "floatAnimation": "community-bubble-float"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "partner",
+      "width": 1440,
+      "fixture": "browser memory only; writes intercepted",
+      "elapsed": 5272,
+      "info": {
+        "width": 56,
+        "height": 56,
+        "right": 1416,
+        "bottom": 666,
+        "navTop": 0,
+        "navVisible": false,
+        "overflow": false,
+        "bg": "rgb(55, 122, 26)",
+        "floatAnimation": "community-bubble-float"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "mi-jakawi",
+      "width": 1440,
+      "fixture": "browser memory only; writes intercepted",
+      "elapsed": 9748,
+      "info": {
+        "width": 56,
+        "height": 56,
+        "right": 1416,
+        "bottom": 666,
+        "navTop": 0,
+        "navVisible": false,
+        "overflow": false,
+        "bg": "rgb(55, 122, 26)",
+        "floatAnimation": "community-bubble-float"
+      },
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "route": "explore",
+      "action": "presented",
+      "source": "floating"
+    },
+    {
+      "route": "partner",
+      "action": "presented",
+      "source": "floating"
+    },
+    {
+      "route": "partner",
+      "action": "opened",
+      "source": "floating"
+    },
+    {
+      "route": "mi-jakawi",
+      "action": "presented",
+      "source": "floating"
+    },
+    {
+      "route": "explore",
+      "action": "presented",
+      "source": "floating"
+    },
+    {
+      "route": "partner",
+      "action": "presented",
+      "source": "floating"
+    },
+    {
+      "route": "partner",
+      "action": "opened",
+      "source": "floating"
+    },
+    {
+      "route": "mi-jakawi",
+      "action": "presented",
+      "source": "floating"
+    }
+  ],
+  "timers": [
+    4567.859414769895,
+    4537.75032885208,
+    6266.4028585113365,
+    6565.318847966448,
+    4984.811163931781,
+    9430.10648221977
+  ],
+  "externalRequests": 0
+}
