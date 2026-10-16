@@ -1,3 +1,4 @@
+import { ListPagination, type ListPage } from '@/components/list-pagination';
 import { ImageUpload } from '@/components/media/image-upload';
 import { LandingPreviewPane } from '@/components/marketing/LandingPreviewPane';
 import { LandingJsonControls } from '@/components/marketing/LandingJsonControls';
@@ -68,7 +69,7 @@ export default function Index({
     subject,
     subjectChoices = {},
     autoCreate = false,
-    presentations,
+    presentations, pagination, defaultPresentation,
     baseUrl = '/admin/landings',
     productUrl = '/admin',
 }: {
@@ -77,7 +78,7 @@ export default function Index({
         Record<SubjectType, { id: number; title: string; slug: string }[]>
     >;
     autoCreate?: boolean;
-    presentations: Presentation[];
+    presentations: Presentation[]; pagination: ListPage | null; defaultPresentation: Presentation | null;
     baseUrl?: string;
     productUrl?: string;
 }) {
@@ -213,7 +214,7 @@ export default function Index({
             {label}
         </h3>
     );
-    const defaultItem = presentations.find(
+    const defaultItem = defaultPresentation ?? presentations.find(
         (item) => item.status === 'PUBLISHED' && item.default_scope !== 'NONE',
     );
     return (
@@ -1274,6 +1275,7 @@ export default function Index({
                     )}
                 </>
             )}
+            {pagination && <ListPagination page={pagination} />}
         </AdminLayout>
     );
 }

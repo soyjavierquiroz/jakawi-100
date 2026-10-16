@@ -28,11 +28,15 @@ class MembershipController extends Controller
                 ->where('ends_at', '<', now())
                 ->latest('ends_at')
                 ->first();
-        $confirmed = $membership?->confirmedRedemptions()->latest('confirmed_at')->get() ?? collect();
-        $checkIns = $request->user()->experienceReservations()
+        $confirmedQuery = $membership?->confirmedRedemptions();
+        $confirmedCount = $confirmedQuery ? (clone $confirmedQuery)->count() : 0;
+        $confirmed = $confirmedQuery?->latest('confirmed_at')->orderByDesc('id')->limit(8)->get() ?? collect();
+        $checkInQuery = $request->user()->experienceReservations()->whereNotNull('checked_in_at');
+        $checkInCount = (clone $checkInQuery)->count();
+        $checkIns = $checkInQuery
             ->with(['experience', 'partner'])
             ->whereNotNull('checked_in_at')
-            ->latest('checked_in_at')
+            ->latest('checked_in_at')->orderByDesc('id')->limit(8)
             ->get();
 
         $activity = $confirmed->map(fn ($redemption) => [
@@ -54,9 +58,11 @@ class MembershipController extends Controller
         $isActiveMember = $user->hasActiveMembership();
         $jpBalance = app(JpBalanceService::class)->for($user);
 
+        $challengePage = \App\Support\ListingPage::make(ChallengeParticipation::where('user_id',$user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type','socialEntries:id,participation_id,likes,views,comments,validation_status','grant:id,participation_id,status,reward_type,jp_amount,benefit_id','grant.benefit:id,title'])->latest(), 50);
         return Inertia::render('mi-jakawi', [
             'community' => app(\App\Services\CityCommunity::class)->data($request, 'mi-jakawi'),
-            'challenges' => ChallengeParticipation::where('user_id',$user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type','socialEntries:id,participation_id,likes,views,comments,validation_status','grant:id,participation_id,status,reward_type,jp_amount,benefit_id','grant.benefit:id,title'])->latest()->get()->map(function ($p) {
+            'challengePagination' => array_diff_key($challengePage->toArray(), ['data' => true]),
+            'challenges' => $challengePage->getCollection()->map(function ($p) {
                 $c=$p->challenge; $metric=$c->qualification_metric;
                 return ['title'=>$c->title,'slug'=>$c->slug,'qualification_status'=>$p->qualification_status,'selection_status'=>$p->selection_status,
                     'progress'=>$metric ? $p->socialEntries->filter(fn ($e) => $e->validation_status==='valid')->max($metric) ?? 0 : null,
@@ -70,8 +76,8 @@ class MembershipController extends Controller
                 'duration_days' => config('jakawi.membership.duration_days'),
             ],
             'valueStats' => [
-                'benefits_used' => $confirmed->count(),
-                'experiences_lived' => $checkIns->count(),
+                'benefits_used' => $confirmedCount,
+                'experiences_lived' => $checkInCount,
             ],
             'activity' => $activity,
             'memberReferral' => [

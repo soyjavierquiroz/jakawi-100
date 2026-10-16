@@ -1,10 +1,13 @@
+import { ListPagination, type ListPage } from '@/components/list-pagination';
+import { ListFilters } from '@/components/list-filters';
 import { Head, Link } from '@inertiajs/react';
-export default function ExperiencesIndex({ experiences = [] }: any) {
+export default function ExperiencesIndex({ experiences = [], pagination }: any) {
     return (
         <main className="min-h-screen bg-background p-5 text-foreground">
             <Head title="Experiencias" />
             <Link href="/">JAKAWI</Link>
             <h1 className="mt-6 text-4xl font-semibold">Experiencias</h1>
+            <ListFilters sort featured />
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 {experiences.length ? (
                     experiences.map((x: any) => (
@@ -23,6 +26,7 @@ export default function ExperiencesIndex({ experiences = [] }: any) {
                     </p>
                 )}
             </div>
+            <ListPagination page={pagination} />
         </main>
     );
 }

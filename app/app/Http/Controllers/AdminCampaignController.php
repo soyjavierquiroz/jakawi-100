@@ -16,11 +16,13 @@ class AdminCampaignController extends Controller
 {
     public function index(Request $request): Response
     {
-        $campaigns = Campaign::query()->with('participants')->withCount('conversions')
+        $campaigns = Campaign::query()->when($request->filled('q'), fn ($q) => $q->where('name', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%'))->with('participants')->withCount('conversions')
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->when($request->participant_type, fn ($q, $type) => $q->whereHas('participants', fn ($p) => $p->where('participant_type', $type)))
-            ->latest()->get()->map(fn (Campaign $campaign) => $this->summary($campaign));
-        return Inertia::render('admin/campaigns/index', ['campaigns' => $campaigns, 'filters' => $request->only('status', 'participant_type')]);
+            ->orderByDesc('created_at')->orderByDesc('id');
+        $page = \App\Support\ListingPage::make($campaigns);
+        $campaigns = $page->getCollection()->map(fn (Campaign $campaign) => $this->summary($campaign));
+        return Inertia::render('admin/campaigns/index', ['pagination' => array_diff_key($page->toArray(), ['data' => true]), 'campaigns' => $campaigns, 'filters' => $request->only('status', 'participant_type')]);
     }
 
     public function store(Request $request)
@@ -52,7 +54,7 @@ class AdminCampaignController extends Controller
     private function summary(Campaign $campaign): array
     {
         $confirmed = $campaign->conversions()->where('status', 'confirmed');
-        $conversionIds = (clone $confirmed)->pluck('id');
+        $conversionIds = (clone $confirmed)->select('id');
         return $campaign->toArray() + ['participant_types' => $campaign->participants->pluck('participant_type')->values(), 'clicks' => AttributionTouch::where('utm_campaign', $campaign->code)->count(), 'conversions_count' => $confirmed->count(), 'revenue' => (string) $confirmed->sum('eligible_amount'), 'rewards_generated' => (string) RewardTransaction::whereIn('conversion_id', $conversionIds)->where('status', '!=', RewardTransaction::STATUS_CANCELLED)->sum('amount')];
     }
 

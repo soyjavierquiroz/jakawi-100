@@ -101,17 +101,58 @@ final readonly class DiscoveryService
         return new DiscoveryResult($hero, $forYou, $happeningNow, array_slice($remaining, 0, max(0, $context->discoverMoreLimit)));
     }
 
-    /**
-     * Bounded, flat Discovery output for Explore. Filters are applied to the
-     * source-domain predicates before adapting, so a category never becomes a
-     * synthetic property of an Unlock.
-     *
-     * @return list<DiscoveryOpportunity>
-     */
+    /** Home retains its small, bounded section contract. Explorer uses explorePage. */
     public function explore(DiscoveryContext $context, ?OpportunityType $type = null, ?string $category = null, ?string $term = null, int $limit = 24): array
     {
+        return $this->explorePage($context, $type, $category, $term, 'featured', 1, min(100, max(1, $limit)))->items();
+    }
+
+    /** Filter and order one eligible SQL union before loading only the selected models. */
+    public function explorePage(DiscoveryContext $context, ?OpportunityType $type = null, ?string $category = null, ?string $term = null, string $sort = 'featured', int $page = 1, int $perPage = 18): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        $queries = [
+            'BENEFIT' => [$this->benefits->forCity($context->city), 'featured', 'sort_order', 'published_at', 'partner'],
+            'EXPERIENCE' => [$this->experiences->forCity($context->city), 'featured', 'sort_order', 'published_at', 'partners'],
+            'UNLOCK' => [$this->unlocks->forCity($context->city), 'featured', '0', 'NULL::timestamp', null],
+            'CHALLENGE' => [$this->challengesForCity($context->city), 'false', '0', 'published_from', null],
+        ];
+        $union = null;
+        $like = $term ? '%'.addcslashes($term, '\\%_').'%' : null;
+        foreach ($queries as $kind => [$query, $featured, $priority, $published, $partner]) {
+            if (($type && $type->value !== $kind) || ($category && in_array($kind, ['UNLOCK', 'CHALLENGE']))) {
+                continue;
+            }
+            if ($category) {
+                $query->where('category', $category);
+            }
+            if ($like) {
+                $query->where(function (Builder $q) use ($like, $partner, $kind) {
+                    $q->where('title', 'ilike', $like);
+                    if ($partner) {
+                        $q->orWhereHas($partner, fn ($p) => $p->where('name', 'ilike', $like));
+                    } else {
+                        $q->orWhere($kind === 'UNLOCK' ? 'short_description' : 'description', 'ilike', $like);
+                    }
+                });
+            }
+            $part = $query->reorder()->selectRaw("id, '$kind'::text as kind, title, $featured as editorial_featured, $priority as editorial_order, $published as publication_date")->toBase();
+            $union = $union ? $union->unionAll($part) : $part;
+        }
+        $query = \Illuminate\Support\Facades\DB::query()->fromSub($union ?? \Illuminate\Support\Facades\DB::query()->selectRaw("NULL::bigint as id, ''::text as kind, ''::text as title, false as editorial_featured, 0 as editorial_order, NULL::timestamp as publication_date")->whereRaw('false'), 'eligible');
+        match ($sort) {
+            'newest' => $query->orderByRaw('publication_date DESC NULLS LAST'),
+            'name' => $query->orderByRaw('lower(title) ASC'),
+            default => $query->orderByDesc('editorial_featured')->orderBy('editorial_order'),
+        };
+        $query->orderBy('kind')->orderBy('id');
+        $result = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
+        if ($page > $result->lastPage()) {
+            $result = $query->paginate($perPage, ['*'], 'page', $result->lastPage())->withQueryString();
+        }
+        $keys = $result->getCollection();
+        $ids = fn (string $kind) => $keys->where('kind', $kind)->pluck('id')->all();
         $city = new DiscoveryCity($context->city->id, $context->city->name, $context->city->slug);
-        $limit = max(1, $limit);
+
         $like = $term !== null && $term !== '' ? '%'.str_replace(['%', '_'], ['\\%', '\\_'], $term).'%' : null;
         // Destinations are resolved per viewer; this payload is not shared in a cache.
         $items = [];
@@ -124,7 +165,7 @@ final readonly class DiscoveryService
             if ($like !== null) {
                 $benefits->where(fn (Builder $query) => $query->where('title', 'ilike', $like)->orWhereHas('partner', fn (Builder $partner) => $partner->where('name', 'ilike', $like)));
             }
-            foreach ($benefits->limit($limit)->get() as $benefit) {
+            foreach ($benefits->whereKey($ids('BENEFIT'))->get() as $benefit) {
                 $location = $benefit->applies_to_all_locations ? $benefit->partner->locations->first() : $benefit->locations->first();
                 $items[] = $this->benefitAdapter->adapt($benefit, $city, $benefit->partner, $location, $this->landingResolver->navigationUrl($benefit, $context->user !== null));
             }
@@ -138,7 +179,7 @@ final readonly class DiscoveryService
             if ($like !== null) {
                 $experiences->where(fn (Builder $query) => $query->where('title', 'ilike', $like)->orWhereHas('partners', fn (Builder $partner) => $partner->where('name', 'ilike', $like)));
             }
-            foreach ($experiences->limit($limit)->get() as $experience) {
+            foreach ($experiences->whereKey($ids('EXPERIENCE'))->get() as $experience) {
                 if ($experience->catalog_visibility === 'upcoming') {
                     $items[] = $this->experienceAdapter->proposal($experience, $city, $experience->partners->first(fn ($p) => $p->isPublished()), $this->landingResolver->navigationUrl($experience, $context->user !== null));
 
@@ -158,7 +199,7 @@ final readonly class DiscoveryService
             if ($like !== null) {
                 $unlocks->where(fn (Builder $query) => $query->where('title', 'ilike', $like)->orWhere('short_description', 'ilike', $like));
             }
-            $unlocks = $unlocks->limit($limit)->get();
+            $unlocks = $unlocks->whereKey($ids('UNLOCK'))->get();
             $progress = $this->progress->forUnlocks($unlocks->pluck('id')->all(), $unlocks->mapWithKeys(fn (Unlock $unlock): array => [$unlock->id => $unlock->minimum_commitments])->all());
             foreach ($unlocks as $unlock) {
                 $items[] = $this->unlockAdapter->adapt($unlock, $city, $progress[$unlock->id], $unlock->partner, $unlock->locations->first(), $this->landingResolver->navigationUrl($unlock, $context->user !== null));
@@ -169,15 +210,16 @@ final readonly class DiscoveryService
             if ($like !== null) {
                 $challenges->where(fn (Builder $q) => $q->where('title', 'ilike', $like)->orWhere('description', 'ilike', $like));
             }
-            foreach ($challenges->limit($limit)->get() as $challenge) {
+            foreach ($challenges->whereKey($ids('CHALLENGE'))->get() as $challenge) {
                 $items[] = $this->challengeAdapter->adapt($challenge, $city, $this->landingResolver->navigationUrl($challenge, $context->user !== null));
             }
         }
 
-        $items = array_values(collect($items)->unique(fn (DiscoveryOpportunity $item): string => $item->type->value.'|'.$item->sourceId)->all());
-        $ranked = $this->ranker->rank($items, $this->affinity->explicitCategoryAffinity($context->user), $this->affinity->behavioralCategoryAffinity($context->user));
 
-        return array_slice($type === null ? $this->diversify($ranked) : $ranked, 0, $limit);
+        $adapted = collect($items)->keyBy(fn ($item) => $item->type->value.':'.$item->sourceId);
+        $result->setCollection($keys->map(fn ($key) => $adapted->get($key->kind.':'.$key->id))->filter()->values());
+
+        return $result;
     }
 
     /** @param list<DiscoveryOpportunity> $ranked @return list<DiscoveryOpportunity> */
@@ -238,6 +280,8 @@ final readonly class DiscoveryService
         return Challenge::query()->where('review_status', 'APPROVED')->where('status', 'open')
             ->where(fn (Builder $q) => $q->whereNull('city_id')->orWhere('city_id', $city->id))
             ->where(fn (Builder $q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
-            ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at', '>', now()));
+            ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at', '>', now()))
+            ->where(fn (Builder $q) => $q->whereNull('published_from')->orWhere('published_from', '<=', now()))
+            ->where(fn (Builder $q) => $q->whereNull('published_until')->orWhere('published_until', '>=', now()));
     }
 }

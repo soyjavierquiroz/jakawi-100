@@ -1,3 +1,5 @@
+import { ListFilters } from '@/components/list-filters';
+import { ListPagination, type ListPage } from '@/components/list-pagination';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AdminLayout from '../layout';
@@ -18,7 +20,7 @@ type UserRow = {
     membership: Membership | null;
 };
 
-type PaginatedUsers = {
+type PaginatedUsers = ListPage & {
     data: UserRow[];
 };
 
@@ -271,6 +273,6 @@ export default function AdminMembershipsIndex({
                     </div>
                 ))}
             </div>
-        </AdminLayout>
+        <ListPagination page={users} /></AdminLayout>
     );
 }

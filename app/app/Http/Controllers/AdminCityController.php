@@ -14,10 +14,17 @@ use Inertia\Response;
 
 class AdminCityController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $query = City::query();
+        $request->validate(['q' => 'nullable|string|max:200', 'status' => 'nullable|string|max:30', 'sort' => 'nullable|in:name,newest']);
+        if ($request->filled('q')) $query->where('name', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%');
+        if ($request->filled('status')) $query->where('status', $request->string('status'));
+        if (! $request->filled('sort')) $query->orderByDesc('priority');
+        $query->orderBy($request->query('sort') === 'newest' ? 'created_at' : 'name', $request->query('sort') === 'newest' ? 'desc' : 'asc');
+        $page = \App\Support\ListingPage::make($query);
         return Inertia::render('admin/cities/index', [
-            'cities' => City::orderByDesc('priority')->orderBy('name')->get(),
+            'pagination' => array_diff_key($page->toArray(), ['data' => true]), 'cities' => $page->items(),
         ]);
     }
 
@@ -43,7 +50,7 @@ class AdminCityController extends Controller
 
     public function show(City $city, CityExpansionMetrics $metrics): Response
     {
-        $interests = CityInterest::query()->where('city_id', $city->id)->with('user:id,name,email')->latest()->paginate(20)->withQueryString();
+        $interests = \App\Support\ListingPage::make(CityInterest::query()->where('city_id', $city->id)->with('user:id,name,email')->latest(), 50);
         $expansionMetrics = $metrics->query()->whereKey($city)->sole();
 
         return Inertia::render('admin/cities/show', [

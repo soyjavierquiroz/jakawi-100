@@ -18,7 +18,7 @@ class PartnerChallengeController extends Controller {
     private function own(Partner $partner, Challenge $challenge): void { abort_unless($challenge->partner_id === $partner->id, 404); }
     public function index(Request $request, Partner $partner) {
         $this->authorizePartner($request,$partner);
-        return Inertia::render('partner/challenges/index',['partner'=>$partner->only('name','slug'),'challenges'=>Challenge::where('partner_id',$partner->id)->latest()->get(['title','slug','status','review_status','review_comment'])]);
+        return Inertia::render('partner/challenges/index',['partner'=>$partner->only('name','slug'),'challenges'=>\App\Support\ListingPage::make(Challenge::where('partner_id',$partner->id)->when($request->filled('q'),fn($q)=>$q->where('title','ilike','%'.addcslashes($request->string('q')->toString(),'\\%_').'%'))->latest())]);
     }
     public function form(Request $request, Partner $partner, ?Challenge $challenge=null) {
         $this->authorizePartner($request,$partner);

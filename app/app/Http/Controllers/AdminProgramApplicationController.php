@@ -26,7 +26,7 @@ class AdminProgramApplicationController extends Controller
         if (! empty($filters['program'])) $query->where('program_type', $filters['program']);
         if (! empty($filters['status'])) $query->where('status', $filters['status']);
         return Inertia::render('admin/program-applications/index', [
-            'applications' => $query->paginate(20)->withQueryString(), 'filters' => $filters,
+            'applications' => \App\Support\ListingPage::make($query, 25), 'filters' => $filters,
             'programs' => ProgramApplication::programTypes(), 'statuses' => ProgramApplication::statuses(),
         ]);
     }

@@ -13,9 +13,15 @@ use Inertia\Response;
 
 class AdminRewardRuleController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return Inertia::render('admin/reward-rules/index', ['rules' => RewardRule::latest()->get(), 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'campaigns' => Campaign::latest()->get(['id', 'name', 'code'])]);
+        $query = RewardRule::query();
+        $request->validate(['q' => 'nullable|string|max:200', 'status' => 'nullable|string|max:30', 'sort' => 'nullable|in:name,newest']);
+        if ($request->filled('q')) $query->where('name', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%');
+        if ($request->filled('status')) $query->where('status', $request->string('status'));
+        $query->orderBy($request->query('sort') === 'newest' ? 'created_at' : 'name', $request->query('sort') === 'newest' ? 'desc' : 'asc');
+        $page = \App\Support\ListingPage::make($query);
+        return Inertia::render('admin/reward-rules/index', ['pagination' => array_diff_key($page->toArray(), ['data' => true]), 'rules' => $page->items(), 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'campaigns' => Campaign::latest()->get(['id', 'name', 'code'])]);
     }
 
     public function store(Request $request)

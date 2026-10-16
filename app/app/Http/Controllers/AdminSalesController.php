@@ -28,7 +28,7 @@ class AdminSalesController extends Controller
             $query->whereDate('created_at', $request->string('date'));
         }
 
-        return Inertia::render('admin/sales/index', ['sales' => $query->paginate(30)->withQueryString(), 'promoters' => User::whereHas('programEnrollments', fn ($q) => $q->active()->where('program_type', ProgramEnrollment::TYPE_PROMOTER))->orderBy('name')->get(['id', 'name']), 'filters' => $request->only('status', 'promoter', 'date')]);
+        return Inertia::render('admin/sales/index', ['sales' => \App\Support\ListingPage::make($query, 25), 'promoters' => User::whereHas('programEnrollments', fn ($q) => $q->active()->where('program_type', ProgramEnrollment::TYPE_PROMOTER))->orderBy('name')->get(['id', 'name']), 'filters' => $request->only('status', 'promoter', 'date')]);
     }
 
     public function create(Request $request): Response

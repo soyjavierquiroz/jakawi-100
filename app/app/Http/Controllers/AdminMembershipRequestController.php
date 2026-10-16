@@ -11,7 +11,7 @@ class AdminMembershipRequestController extends Controller
     public function index(): Response
     {
         return Inertia::render('admin/membership-requests/index', [
-            'requests' => MembershipPurchaseRequest::query()->with('user:id,name,email')->latest('requested_at')->paginate(30),
+            'requests' => \App\Support\ListingPage::make(MembershipPurchaseRequest::query()->when(request('q'), fn ($q) => $q->whereHas('user', fn ($u) => $u->where(fn ($u) => $u->where('name', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')->orWhere('email', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%'))))->when(request('status'), fn ($q) => $q->where('status', request('status')))->with('user:id,name,email')->latest('requested_at'), 25),
         ]);
     }
 

@@ -36,7 +36,7 @@ class AdminAffiliateController extends Controller
             $query->whereHas('programEnrollments', fn ($q) => $q->where('program_type', $this->programType())->where('status', $request->string('status')));
         }
 
-        return Inertia::render($this->page('index'), ['affiliates' => $query->orderBy('name')->paginate(20)->through(fn (User $user) => $this->summary($user, $metrics)), 'filters' => $request->only('q', 'status')]);
+        return Inertia::render($this->page('index'), ['affiliates' => \App\Support\ListingPage::make($query->orderBy('name')->orderBy('id'), 25)->through(fn (User $user) => $this->summary($user, $metrics)), 'filters' => $request->only('q', 'status')]);
     }
 
     public function create(Request $request): Response
@@ -87,9 +87,10 @@ class AdminAffiliateController extends Controller
         $rule = app(RewardResolver::class)->ruleFor($user, RewardRule::BENEFICIARY_USER, $this->programType(), 'membership_purchased', config('jakawi.membership.product_key', 'jakawi_annual'));
         $conversions = Conversion::query()->where('type', 'membership_purchased')->whereHas('relationship', fn ($q) => $q->where('referrer_user_id', $user->id))->latest('occurred_at')->limit(10)->get(['id', 'order_reference', 'eligible_amount', 'currency', 'status', 'occurred_at']);
         $rewards = RewardTransaction::query()->where('beneficiary_user_id', $user->id)->with('rule')->latest()->limit(10)->get();
-        $audit = AuditLog::query()->where(fn ($q) => $q->where('subject_type', User::class)->where('subject_id', $user->id)->orWhere('subject_type', ProgramEnrollment::class)->where('subject_id', $enrollment->id)->orWhere('subject_type', RewardRule::class)->whereIn('subject_id', RewardRule::where('beneficiary_user_id', $user->id)->pluck('id'))->orWhere('subject_type', RewardTransaction::class)->whereIn('subject_id', RewardTransaction::where('beneficiary_user_id', $user->id)->pluck('id')))->latest()->get();
+        $auditPage = \App\Support\ListingPage::make(AuditLog::query()->where(fn ($q) => $q->where('subject_type', User::class)->where('subject_id', $user->id)->orWhere('subject_type', ProgramEnrollment::class)->where('subject_id', $enrollment->id)->orWhere('subject_type', RewardRule::class)->whereIn('subject_id', RewardRule::where('beneficiary_user_id', $user->id)->pluck('id'))->orWhere('subject_type', RewardTransaction::class)->whereIn('subject_id', RewardTransaction::where('beneficiary_user_id', $user->id)->pluck('id')))->latest(), 50, 'audit_page');
+        $audit = $auditPage->getCollection();
 
-        return Inertia::render($this->page('show'), ['affiliate' => $this->summary($user, $metrics), 'commission' => ['effective' => $rule, 'source' => $rule ? ($rule->beneficiary_user_id ? 'individual' : ($rule->participant_type ? 'program' : 'global')) : null, 'individual' => RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('reward_type', 'CASH')->latest()->first()], 'conversions' => $conversions, 'rewards' => $rewards, 'audit' => $audit]);
+        return Inertia::render($this->page('show'), ['affiliate' => $this->summary($user, $metrics), 'commission' => ['effective' => $rule, 'source' => $rule ? ($rule->beneficiary_user_id ? 'individual' : ($rule->participant_type ? 'program' : 'global')) : null, 'individual' => RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('reward_type', 'CASH')->latest()->first()], 'conversions' => $conversions, 'rewards' => $rewards, 'audit' => $audit, 'auditPagination' => array_diff_key($auditPage->toArray(), ['data' => true])]);
     }
 
     public function updateEnrollment(Request $request, User $user)

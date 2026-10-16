@@ -75,8 +75,8 @@ class AdminCatalogTest extends TestCase
         }
         $this->get('/admin/experiences?q=sin-coincidencias')->assertInertia(fn (Assert $p) => $p->has('items.data', 0));
         $this->get('/admin/experiences?q=%25')->assertInertia(fn (Assert $p) => $p->has('items.data', 0));
-        Experience::factory()->draft()->count(21)->create();
-        $this->get('/admin/experiences?status_filter=draft')->assertInertia(fn (Assert $p) => $p->has('items.data', 20)->where('items.last_page', 2)->where('items.total', 22));
+        Experience::factory()->draft()->count(26)->create();
+        $this->get('/admin/experiences?status_filter=draft')->assertInertia(fn (Assert $p) => $p->has('items.data', 25)->where('items.last_page', 2)->where('items.total', 27));
         $this->get('/admin/experiences?status_filter=draft&page=2')->assertInertia(fn (Assert $p) => $p->has('items.data', 2)->where('items.current_page', 2));
     }
 

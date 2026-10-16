@@ -30,7 +30,7 @@ class AdminPayoutController extends Controller
             $query->whereDate('requested_at', $request->string('date'));
         }
 
-        $page = $query->paginate(30)->withQueryString();
+        $page = \App\Support\ListingPage::make($query, 25);
         $names = Partner::whereIn('id', $page->getCollection()->where('beneficiary_type', 'PARTNER')->pluck('beneficiary_id'))->pluck('name', 'id');
         $page->getCollection()->each(function (RewardPayout $payout) use ($names): void { $type = $payout->beneficiary_type ?: 'USER'; $payout->setAttribute('beneficiary_label', $type === 'PARTNER' ? $names[$payout->beneficiary_id] ?? 'Partner eliminado' : $payout->beneficiary?->name); $payout->setAttribute('beneficiary_kind', $type === 'PARTNER' ? 'Partner' : 'Affiliate / Creator'); });
         return Inertia::render('admin/payouts/index', ['payouts' => $page, 'affiliates' => User::whereHas('programEnrollments', fn ($q) => $q->where('program_type', ProgramEnrollment::TYPE_AFFILIATE))->orderBy('name')->get(['id', 'name']), 'filters' => $request->only('status', 'affiliate', 'date'), 'minimumPayout' => $payouts->minimum(), 'partnerMinimumPayout' => $payouts->partnerMinimum()]);

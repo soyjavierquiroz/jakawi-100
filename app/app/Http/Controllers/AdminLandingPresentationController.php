@@ -33,13 +33,16 @@ class AdminLandingPresentationController extends Controller
         $subject = $request->route()->hasParameter('unlock') || $request->route()->hasParameter('experience') || $request->route()->hasParameter('benefit') || $request->route()->hasParameter('challenge') ? $this->subject($request) : ($request->filled('subject_type') && $request->filled('subject_id') ? app(LandingPresentationEditor::class)->selected($request->string('subject_type')->toString(), $request->integer('subject_id')) : null);
         $editor = app(LandingPresentationEditor::class);
 
+        $page = $subject ? \App\Support\ListingPage::make($subject->landingPresentations()->orderBy('id')) : null;
         return Inertia::render('admin/landing-presentations/index', [
             'subject' => $subject ? $editor->context($subject, $request) : null,
             'subjectChoices' => $editor->choices(),
             'autoCreate' => $request->boolean('create'),
             'baseUrl' => $subject ? $this->baseUrl($subject) : '/admin/landings',
             'productUrl' => ! $subject ? '/admin' : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug))),
-            'presentations' => $subject ? $subject->landingPresentations()->orderBy('id')->get()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
+            'defaultPresentation' => $subject?->landingPresentations()->where('status', 'PUBLISHED')->whereIn('default_scope', ['ALL', 'GUESTS'])->orderBy('id')->first(),
+            'pagination' => $page ? array_diff_key($page->toArray(), ['data' => true]) : null,
+            'presentations' => $subject ? $page->getCollection()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
         ]);
     }
 

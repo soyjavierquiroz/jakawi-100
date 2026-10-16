@@ -46,7 +46,7 @@ class DiscoveryServiceTest extends TestCase
 
         $this->assertEqualsCanonicalizing([OpportunityType::BENEFIT, OpportunityType::EXPERIENCE, OpportunityType::UNLOCK], $items->pluck('type')->unique()->all());
         $this->assertTrue($items->every(fn ($item) => $item->city->id === $city->id));
-        $this->assertFalse($items->contains(fn ($item) => $item->sourceId === $wrongCity->id));
+        $this->assertFalse($items->contains(fn ($item) => $item->type === OpportunityType::BENEFIT && $item->sourceId === $wrongCity->id));
         $this->assertSame(1, collect($queries)->filter(fn (array $query) => str_contains($query['query'], 'unlock_participations'))->count());
     }
 

@@ -76,14 +76,20 @@ class PublicController extends Controller
             ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
             ->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at', '>', now()))
             ->where(fn ($q) => $q->whereNull('published_from')->orWhere('published_from', '<=', now()))
-            ->where(fn ($q) => $q->whereNull('published_until')->orWhere('published_until', '>=', now()))->get();
+            ->where(fn ($q) => $q->whereNull('published_until')->orWhere('published_until', '>=', now()));
+        $challengePage = \App\Support\ListingPage::make($challenges, 18, 'challenges_page');
+        $challenges = $challengePage->getCollection();
 
+        $locationsPage = \App\Support\ListingPage::make($partner->locations()->published()->with('cityEntity')->orderBy('sort_order'), 18, 'locations_page');
+        $benefitsPage = \App\Support\ListingPage::make($partner->benefits()->available()->publicAccess()->with('landingPresentations:id,subject_type,subject_id,slug,status,default_scope')->orderBy('sort_order'), 18, 'benefits_page');
+        $experiencesPage = \App\Support\ListingPage::make($partner->experiences()->catalogVisible()->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')]), 18, 'experiences_page');
         return Inertia::render('partners/show', [
+            'pagination' => ['locations' => array_diff_key($locationsPage->toArray(), ['data' => true]), 'benefits' => array_diff_key($benefitsPage->toArray(), ['data' => true]), 'experiences' => array_diff_key($experiencesPage->toArray(), ['data' => true]), 'challenges' => array_diff_key($challengePage->toArray(), ['data' => true])],
             'canonicalUrl' => rtrim(config('app.url'), '/').'/'.$partner->slug,
             'partner' => $this->partner($partner) + $this->image($partner->cover_path, 'partner_editorial', 'cover_desktop'),
-            'locations' => $partner->locations()->published()->with('cityEntity')->orderBy('sort_order')->get()->map(fn ($x) => $this->locationData($x)),
-            'benefits' => $partner->benefits()->available()->publicAccess()->with('landingPresentations:id,subject_type,subject_id,slug,status,default_scope')->orderBy('sort_order')->get()->map(fn ($x) => $this->benefitData($x, true)),
-            'experiences' => $partner->experiences()->catalogVisible()->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'sessions' => fn ($q) => $q->upcoming()->with('location')->orderBy('starts_at')])->get()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
+            'locations' => $locationsPage->getCollection()->map(fn ($x) => $this->locationData($x)),
+            'benefits' => $benefitsPage->getCollection()->map(fn ($x) => $this->benefitData($x, true)),
+            'experiences' => $experiencesPage->getCollection()->unique('id')->values()->map(fn ($x) => $this->experienceData($x)),
             'challenges' => $challenges->map(fn ($x) => $x->only(['id', 'slug', 'title', 'description', 'ends_at', 'reward_type', 'reward_jp_amount', 'manual_prize_description']) + ['destination_url' => app(ProductLandingResolver::class)->navigationUrl($x, (bool) $request->user())] + $this->image($x->hero_path, 'hero')),
         ]);
     }
@@ -98,16 +104,27 @@ class PublicController extends Controller
 
     public function benefits(Request $request): Response
     {
-        $query = Benefit::available()->publicAccess()->with('partner')->orderByDesc('featured')->orderBy('sort_order')->orderBy('title');
+        $request->validate(['q' => 'nullable|string|max:200', 'sort' => 'nullable|in:featured,newest,name,ending']);
+        $query = Benefit::available()->publicAccess()->with(['partner', 'landingPresentations:id,subject_type,subject_id,slug,status,default_scope']);
         if ($request->filled('category')) {
             $query->where('category', $request->string('category'));
         }
 
-        return Inertia::render('benefits/index', ['benefits' => $query->get()->map(fn ($b) => $this->benefitData($b)), 'category' => $request->query('category')]);
+        if ($request->filled('q')) $query->where('title', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%');
+        match ($request->query('sort', 'featured')) {
+            'name' => $query->orderByRaw('lower(title)'),
+            'newest' => $query->orderByRaw('published_at DESC NULLS LAST'),
+            'ending' => $query->orderByRaw('ends_at ASC NULLS LAST'),
+            default => $query->orderByDesc('featured')->orderBy('sort_order'),
+        };
+        $page = \App\Support\ListingPage::make($query, 18);
+        return Inertia::render('benefits/index', ['pagination' => array_diff_key($page->toArray(), ['data' => true]), 'benefits' => $page->getCollection()->map(fn ($b) => $this->benefitData($b)), 'category' => $request->query('category')]);
     }
 
     public function explore(Request $request, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
+        $request->validate(['page' => 'nullable|integer|min:1', 'per_page' => 'nullable|integer|min:1|max:18', 'q' => 'nullable|string|max:200', 'sort' => 'nullable|in:featured,newest,name']);
+        $sort = $request->query('sort', 'featured');
         $city = $selectedCity->resolve($request);
         $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
         $category = $request->query('category');
@@ -130,16 +147,18 @@ class PublicController extends Controller
             'challenges' => OpportunityType::CHALLENGE,
             default => null,
         };
-        $opportunities = $type === 'places' ? [] : $discovery->explore(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore', candidateLimitPerDomain: 24), $opportunityType, $category, $term, 24);
-        $places = $type === 'places' ? $partners->limit(24)->get()->map(fn (Partner $partner) => $this->partner($partner))->values() : collect();
-
+        $page = $type === 'places'
+            ? \App\Support\ListingPage::make($partners->reorder()->when($sort === 'featured', fn ($q) => $q->orderByDesc('featured'))->when($sort === 'newest', fn ($q) => $q->orderByDesc('published_at'))->orderByRaw('lower(name)')->orderBy('id'), 18)
+            : $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, $request->integer('page', 1));
         return Inertia::render('explore', [
             'query' => $term,
             'category' => $category,
             'type' => $type,
             'categories' => config('jakawi.categories'),
-            'opportunities' => array_map(fn ($item) => $item->toArray(), $opportunities),
-            'places' => $places,
+            'sort' => $sort,
+            'pagination' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'next_page_url' => $page->nextPageUrl()],
+            'opportunities' => Inertia::merge($type === 'places' ? [] : array_map(fn ($item) => $item->toArray() + ['identity' => $item->type->value.':'.$item->sourceId], $page->items()))->matchOn('identity'),
+            'places' => Inertia::merge($type === 'places' ? $page->getCollection()->map(fn ($partner) => $this->partner($partner))->all() : [])->matchOn('id'),
         ]);
     }
 
@@ -176,12 +195,20 @@ class PublicController extends Controller
 
     public function experiences(Request $request): Response
     {
-        $query = Experience::catalogVisible()->with('sessions.location')->orderByDesc('featured')->orderBy('sort_order');
+        $request->validate(['q' => 'nullable|string|max:200', 'sort' => 'nullable|in:featured,newest,name']);
+        $query = Experience::catalogVisible()->with(['sessions.location', 'landingPresentations:id,subject_type,subject_id,slug,status,default_scope']);
         if ($request->filled('category')) {
             $query->where('category', $request->string('category'));
         }
 
-        return Inertia::render('experiences/index', ['experiences' => $query->get()->map(fn ($e) => $this->experienceData($e))]);
+        if ($request->filled('q')) $query->where('title', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%');
+        match ($request->query('sort', 'featured')) {
+            'name' => $query->orderByRaw('lower(title)'),
+            'newest' => $query->orderByRaw('published_at DESC NULLS LAST'),
+            default => $query->orderByDesc('featured')->orderBy('sort_order'),
+        };
+        $page = \App\Support\ListingPage::make($query, 18);
+        return Inertia::render('experiences/index', ['pagination' => array_diff_key($page->toArray(), ['data' => true]), 'experiences' => $page->getCollection()->map(fn ($e) => $this->experienceData($e))]);
     }
 
     public function experience(Request $request, Experience $experience, AnalyticsTracker $analytics): Response

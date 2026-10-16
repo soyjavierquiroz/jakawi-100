@@ -1,3 +1,4 @@
+import { ListPagination, type ListPage } from '@/components/list-pagination';
 import { Link, router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import AdminLayout from "../layout";
@@ -36,41 +37,25 @@ type Partner = {
 type Props = {
   title: string;
   resource: "partners" | "locations";
-  items: (Partner & Location)[];
+  items: ListPage & { data: (Partner & Location)[] };
+  filters?: Record<string, string>;
+  cities?: string[];
   partners?: { id: number; name: string }[];
 };
-export default function ResourceIndex({ title, resource, items = [], partners = [] }: Props) {
+export default function ResourceIndex({ title, resource, items: page, partners = [], filters = {}, cities = [] }: Props) {
+  const items = page.data;
   const { url } = usePage();
   const isPartner = resource === "partners";
-  const [q, setQ] = useState("");
-  const [status, setStatus] = useState("");
+  const [q, setQ] = useState(filters.q ?? "");
+  const [status, setStatus] = useState(filters.status ?? "");
   const [owner, setOwner] = useState(
     () => new URLSearchParams(url.split("?")[1] ?? "").get("partner") ?? "",
   );
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(filters.city ?? "");
   const { flash } = usePage<{ flash: { success?: string } }>().props;
-  const normalize = (value: string) =>
-    value
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLocaleLowerCase("es");
   const cityName = (location: Location) => location.city_entity?.name || location.city || "";
-  const cities = [
-    ...new Set(
-      isPartner ? items.flatMap((item) => item.locations.map(cityName)).filter(Boolean) : [],
-    ),
-  ].sort();
-  const visible = items.filter(
-    (item) =>
-      (!status || item.status === status) &&
-      (isPartner
-        ? (!city || item.locations.some((location) => cityName(location) === city)) &&
-          normalize(`${item.name} ${item.slug}`).includes(normalize(q.trim()))
-        : (!owner || String(item.partner_id) === owner) &&
-          normalize(
-            `${item.name} ${item.partner?.name ?? ""} ${item.address ?? ""} ${cityName(item)}`,
-          ).includes(normalize(q.trim()))),
-  );
+  const visible = items;
+  const submit = (next: Record<string, string> = {}) => router.get(`/admin/${resource}`, { q, status, partner: owner, city, sort: filters.sort ?? 'name', ...next });
   const columns = isPartner
     ? "xl:grid-cols-[minmax(0,1.7fr)_minmax(0,1.2fr)_minmax(0,.8fr)_minmax(0,1fr)_minmax(0,.9fr)_minmax(0,1.2fr)]"
     : "xl:grid-cols-[minmax(0,1.5fr)_minmax(0,2fr)_minmax(0,.8fr)_minmax(0,1fr)_minmax(0,.6fr)]";
@@ -83,15 +68,7 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
               ? "Gestiona los negocios, sus perfiles públicos y sus ubicaciones en JAKAWI."
               : "Administra las sedes y direcciones asociadas a los Partners."}
           </p>
-          {isPartner && (
-            <p className="mt-3 text-sm">
-              <strong>{items.length}</strong> Partners{" "}
-              <span className="mx-2 text-muted-foreground">·</span>
-              <strong>{items.filter((item) => item.status === "published").length}</strong>{" "}
-              publicados <span className="mx-2 text-muted-foreground">·</span>
-              <strong>{items.filter((item) => item.status === "draft").length}</strong> borradores
-            </p>
-          )}
+
         </div>
         <Link className={primaryClass} href={`/admin/${resource}/create`}>
           CREAR {isPartner ? "PARTNER" : "LOCATION"}
@@ -106,7 +83,7 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
         </p>
       )}
       <form
-        onSubmit={(event) => event.preventDefault()}
+        onSubmit={(event) => { event.preventDefault(); submit(); }}
         className="my-5 grid gap-3 rounded-xl border border-border bg-card p-4 md:grid-cols-2 xl:grid-cols-[minmax(0,2fr)_1fr_1fr_auto] xl:items-end"
       >
         <label className="grid min-w-0 gap-1 text-sm font-medium">
@@ -124,7 +101,7 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
           <select
             className={inputClass}
             value={status}
-            onChange={(event) => setStatus(event.target.value)}
+            onChange={(event) => { setStatus(event.target.value); submit({ status: event.target.value }); }}
           >
             <option value="">Todos los estados</option>
             {[...new Set(["draft", "published", ...items.map((item) => item.status)])].map(
@@ -142,7 +119,7 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
             <select
               className={inputClass}
               value={city}
-              onChange={(event) => setCity(event.target.value)}
+              onChange={(event) => { setCity(event.target.value); submit({ city: event.target.value }); } }
             >
               <option value="">Todas las ciudades</option>
               {cities.map((value) => (
@@ -156,7 +133,7 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
             <select
               className={inputClass}
               value={owner}
-              onChange={(event) => setOwner(event.target.value)}
+              onChange={(event) => { setOwner(event.target.value); submit({ partner: event.target.value }); } }
             >
               <option value="">Todos los Partners</option>
               {partners.map((partner) => (
@@ -175,13 +152,16 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
             setStatus("");
             setOwner("");
             setCity("");
+            router.get(`/admin/${resource}`);
           }}
         >
           Limpiar
         </button>
+        <button className={actionClass}>Buscar</button>
+        <label className="grid gap-1 text-sm">Ordenar<select className={inputClass} value={filters.sort ?? 'name'} onChange={e => submit({ sort: e.target.value })}><option value="name">Nombre A–Z</option><option value="newest">Más recientes</option></select></label>
       </form>
       <p role="status" className="mb-3 text-sm text-muted-foreground">
-        {visible.length} de {items.length} {isPartner ? "Partners" : "Locations"}
+        {visible.length} de {page.total} {isPartner ? "Partners" : "Locations"}
       </p>
       <div className="space-y-3 xl:space-y-0 xl:overflow-hidden xl:rounded-xl xl:border xl:border-border">
         <div
@@ -295,7 +275,7 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
               </div>
             )}
             <div className="flex flex-wrap gap-2 xl:flex-col xl:items-start">
-              <Link className={actionClass} href={`/admin/${resource}/${item.id}/edit`}>
+              <Link className={actionClass} href={`/admin/${resource}/${item.id}/edit${url.includes("?") ? `?${url.split("?")[1]}` : ""}`}>
                 Editar
               </Link>
               {isPartner && (
@@ -324,6 +304,7 @@ export default function ResourceIndex({ title, resource, items = [], partners = 
           </p>
         )}
       </div>
+      <ListPagination page={page} />
     </AdminLayout>
   );
 }

@@ -30,7 +30,7 @@ class AdminPromoterController extends Controller
         if (in_array($request->string('status')->toString(), ['active', 'inactive'], true)) {
             $query->whereHas('programEnrollments', fn ($q) => $q->where('program_type', ProgramEnrollment::TYPE_PROMOTER)->where('status', $request->string('status')));
         }
-        $promoters = $query->orderBy('name')->paginate(20)->through(fn (User $user) => $this->summary($user));
+        $promoters = \App\Support\ListingPage::make($query->orderBy('name')->orderBy('id'), 25)->through(fn (User $user) => $this->summary($user));
 
         return Inertia::render('admin/promoters/index', ['promoters' => $promoters, 'filters' => $request->only('q', 'status')]);
     }
@@ -84,9 +84,10 @@ class AdminPromoterController extends Controller
         $enrollment = $this->enrollment($user);
         $sales = MembershipPurchase::query()->where('collected_by_user_id', $user->id)->with('beneficiary')->latest()->limit(10)->get();
         $rule = app(RewardResolver::class)->ruleFor($user, RewardRule::BENEFICIARY_USER, ProgramEnrollment::TYPE_PROMOTER, 'membership_purchased', 'jakawi_annual');
-        $audit = AuditLog::query()->where(fn ($q) => $q->where('subject_type', User::class)->where('subject_id', $user->id)->orWhere('subject_type', ProgramEnrollment::class)->where('subject_id', $enrollment->id)->orWhere('subject_type', RewardRule::class)->whereIn('subject_id', RewardRule::where('beneficiary_user_id', $user->id)->pluck('id')))->latest()->get();
+        $auditPage = \App\Support\ListingPage::make(AuditLog::query()->where(fn ($q) => $q->where('subject_type', User::class)->where('subject_id', $user->id)->orWhere('subject_type', ProgramEnrollment::class)->where('subject_id', $enrollment->id)->orWhere('subject_type', RewardRule::class)->whereIn('subject_id', RewardRule::where('beneficiary_user_id', $user->id)->pluck('id')))->latest(), 50, 'audit_page');
+        $audit = $auditPage->getCollection();
 
-        return Inertia::render('admin/promoters/show', ['promoter' => $this->summary($user, $enrollment), 'commission' => ['effective' => $rule, 'source' => $rule ? ($rule->beneficiary_user_id ? 'individual' : ($rule->participant_type ? 'program' : 'global')) : null, 'individual' => RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('reward_type', 'CASH')->latest()->first()], 'sales' => $sales, 'audit' => $audit]);
+        return Inertia::render('admin/promoters/show', ['promoter' => $this->summary($user, $enrollment), 'commission' => ['effective' => $rule, 'source' => $rule ? ($rule->beneficiary_user_id ? 'individual' : ($rule->participant_type ? 'program' : 'global')) : null, 'individual' => RewardRule::where('beneficiary_user_id', $user->id)->where('event', 'membership_purchased')->where('reward_type', 'CASH')->latest()->first()], 'sales' => $sales, 'audit' => $audit, 'auditPagination' => array_diff_key($auditPage->toArray(), ['data' => true])]);
     }
 
     public function updateEnrollment(Request $request, User $user)

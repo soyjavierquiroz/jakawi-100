@@ -1,5 +1,5 @@
 import { ImageUpload } from "@/components/media/image-upload";
-import { Link, useForm } from "@inertiajs/react";
+import { usePage, Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import AdminLayout from "../layout";
 import {
@@ -138,6 +138,8 @@ export default function PartnerLocationForm({
   publicUrl,
   initialPartnerId,
 }: Props) {
+  const { url } = usePage();
+  const listingQuery = url.includes('?') ? `?${url.split('?')[1]}` : '';
   const isPartner = resource === "partners";
   const title = `${item ? "Editar" : "Crear"} ${isPartner ? "Partner" : "Location"}`;
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
@@ -181,7 +183,7 @@ export default function PartnerLocationForm({
       ...(!isPartner ? { opening_hours: hours } : {}),
       ...(item ? { _method: "put" } : {}),
     }));
-    form.post(`/admin/${resource}${item ? `/${item.id}` : ""}`, {
+    form.post(`/admin/${resource}${item ? `/${item.id}` : ""}${listingQuery}`, {
       onError: () => document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(),
     });
   };
@@ -320,7 +322,7 @@ export default function PartnerLocationForm({
   return (
     <AdminLayout title={title}>
       <div className="mx-auto max-w-5xl space-y-6">
-        <Link href={`/admin/${resource}`} className={`${actionClass} border-transparent px-0`}>
+        <Link href={`/admin/${resource}${listingQuery}`} className={`${actionClass} border-transparent px-0`}>
           ← Volver a {isPartner ? "Partners" : "Locations"}
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -572,7 +574,7 @@ export default function PartnerLocationForm({
             </div>
           )}
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
-            <Link className={actionClass} href={`/admin/${resource}`}>
+            <Link className={actionClass} href={`/admin/${resource}${listingQuery}`}>
               Volver al listado
             </Link>
             {save}

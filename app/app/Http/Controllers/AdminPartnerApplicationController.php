@@ -20,7 +20,7 @@ class AdminPartnerApplicationController extends Controller
         $query = PartnerApplication::with('city:id,name,slug')->latest();
         if ($request->filled('city')) $query->where('city_id', $request->integer('city'));
         if ($request->filled('status')) $query->where('status', $request->string('status'));
-        return Inertia::render('admin/partner-applications/index', ['applications' => $query->paginate(20)->withQueryString(), 'cities' => City::orderBy('name')->get(['id', 'name']), 'statuses' => PartnerApplication::statuses(), 'filters' => $request->only('city', 'status')]);
+        return Inertia::render('admin/partner-applications/index', ['applications' => \App\Support\ListingPage::make($query, 25), 'cities' => City::orderBy('name')->get(['id', 'name']), 'statuses' => PartnerApplication::statuses(), 'filters' => $request->only('city', 'status')]);
     }
     public function show(PartnerApplication $partnerApplication, OwnershipAssignmentService $ownership): Response
     {

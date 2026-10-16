@@ -79,7 +79,7 @@ class AdminChallengeController extends Controller {
         $challenge ? $challenge->update($data) : $challenge=Challenge::create($data);
         return $request->attributes->get('partner_challenge')
             ? to_route('partner.challenges.index', $request->attributes->get('partner_slug'))
-            : to_route('admin.social-challenges.index', $request->only(['q', 'status_filter', 'partner_filter', 'review_filter', 'page']));
+            : to_route('admin.social-challenges.index', $request->only(['q', 'status_filter', 'partner_filter', 'review_filter', 'sort', 'page']));
     }
     public function editorial(Request $request, Challenge $challenge) {
         $data = $request->validate(['decision'=>['required',Rule::in(['APPROVED','CHANGES_REQUESTED','REJECTED'])], 'comment'=>['required_if:decision,CHANGES_REQUESTED','nullable','string','max:2000']]);

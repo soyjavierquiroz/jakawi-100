@@ -18,10 +18,12 @@ class AdminExpansionController extends Controller
             ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
             ->orderByDesc('priority')
             ->orderBy('name')
-            ->get();
+            ;
+        $page = \App\Support\ListingPage::make($cities);
+        $cities = $page->items();
 
         return Inertia::render('admin/expansion/index', [
-            'cities' => $cities,
+            'cities' => $cities, 'pagination' => array_diff_key($page->toArray(), ['data' => true]),
             'filters' => ['status' => $filters['status'] ?? null],
             'statuses' => City::statuses(),
         ]);

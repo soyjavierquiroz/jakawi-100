@@ -1,7 +1,9 @@
+import { ListFilters } from '@/components/list-filters';
+import { ListPagination, type ListPage } from '@/components/list-pagination';
 import AdminLayout from '../layout';
 export default function Redemptions({ redemptions }: any) {
     return (
-        <AdminLayout title="Canjes">
+        <AdminLayout title="Canjes"><ListFilters />
             <div className="overflow-x-auto">
                 <table>
                     <thead>
@@ -30,6 +32,6 @@ export default function Redemptions({ redemptions }: any) {
                     </tbody>
                 </table>
             </div>
-        </AdminLayout>
+        <ListPagination page={redemptions} /></AdminLayout>
     );
 }

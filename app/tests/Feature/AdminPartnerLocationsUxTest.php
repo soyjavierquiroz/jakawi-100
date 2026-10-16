@@ -20,10 +20,10 @@ class AdminPartnerLocationsUxTest extends TestCase
         $partner = Partner::factory()->create(['status' => 'draft', 'name' => 'A Partner']);
         $location = Location::factory()->for($partner)->create(['status' => 'draft']);
         $this->get('/admin/partners')->assertInertia(fn (Assert $page) => $page
-            ->where('items.0.id', $partner->id)
-            ->where('items.0.publicUrl', null)
-            ->where('items.0.gallery_count', 0)
-            ->where('items.0.locations.0.id', $location->id));
+            ->where('items.data.0.id', $partner->id)
+            ->where('items.data.0.publicUrl', null)
+            ->where('items.data.0.gallery_count', 0)
+            ->where('items.data.0.locations.0.id', $location->id));
         $this->get('/admin/partners/'.$partner->id.'/edit')->assertInertia(fn (Assert $page) => $page
             ->where('publicUrl', null)
             ->where('locations.0.id', $location->id)
@@ -49,8 +49,8 @@ class AdminPartnerLocationsUxTest extends TestCase
         $this->assertSame('draft', $location->fresh()->status);
         $this->assertSame($payload['opening_hours'], $location->fresh()->opening_hours);
         $this->get('/admin/locations')->assertInertia(fn (Assert $page) => $page
-            ->where('items.0.partner.name', $partner->name)
-            ->where('items.0.city_entity.name', $city->name));
+            ->where('items.data.0.partner.name', $partner->name)
+            ->where('items.data.0.city_entity.name', $city->name));
     }
 
     public function test_partner_identity_save_preserves_slug_media_and_location_draft(): void

@@ -27,11 +27,15 @@ class PartnerReservationController extends Controller
             'confirmed_attendee_count' => (int) ($confirmedTotals[$r->experience_session_id] ?? 0), 'checked_in_at' => $r->checked_in_at,
         ]);
 
+        $pending = \App\Support\ListingPage::make((clone $query)->where('status', 'pending')->orderBy('created_at'), 25, 'pending_page');
+        $upcoming = \App\Support\ListingPage::make((clone $query)->where('status', 'confirmed')->whereHas('session', fn ($q) => $q->where('starts_at', '>', now()))->orderBy('experience_session_id'), 25, 'upcoming_page');
+        $history = \App\Support\ListingPage::make((clone $query)->whereIn('status', ['rejected', 'cancelled'])->latest(), 50, 'history_page');
         return Inertia::render('partner/reservations', [
+            'pagination' => ['pending' => array_diff_key($pending->toArray(), ['data' => true]), 'upcomingConfirmed' => array_diff_key($upcoming->toArray(), ['data' => true]), 'history' => array_diff_key($history->toArray(), ['data' => true])],
             'partner' => $partner->only(['name', 'slug']),
-            'pending' => $data((clone $query)->where('status', 'pending')->orderBy('created_at')->get()),
-            'upcomingConfirmed' => $data((clone $query)->where('status', 'confirmed')->whereHas('session', fn ($q) => $q->where('starts_at', '>', now()))->orderBy('experience_session_id')->get()),
-            'history' => $data((clone $query)->whereIn('status', ['rejected', 'cancelled'])->latest()->take(30)->get()),
+            'pending' => $data($pending->getCollection()),
+            'upcomingConfirmed' => $data($upcoming->getCollection()),
+            'history' => $data($history->getCollection()),
         ]);
     }
 

@@ -45,9 +45,30 @@ class AdminController extends Controller
         ]]);
     }
 
-    public function partners(PartnerAcquisitionMetrics $acquisition): Response
+    public function partners(Request $request, PartnerAcquisitionMetrics $acquisition): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'items' => Partner::with(['locations' => fn ($query) => $query->select('id', 'partner_id', 'name', 'status', 'city', 'city_id', 'is_primary'), 'locations.cityEntity:id,name'])->orderBy('name')->get()->map(fn (Partner $partner) => $partner->toArray() + ['acquisition' => $acquisition->forPartner($partner), 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'gallery_count' => count($partner->gallery_paths ?? []), 'publicUrl' => $partner->isPublished() ? route('partners.public', $partner) : null])]);
+        return Inertia::render('admin/resources/index', ['title' => 'Partners', 'resource' => 'partners', 'filters' => $request->only('q', 'status', 'city', 'sort'), 'cities' => \App\Models\City::orderBy('name')->pluck('name'), 'items' => \App\Support\ListingPage::make($this->placeQuery($request, Partner::query(), true)->with(['locations' => fn ($query) => $query->select('id', 'partner_id', 'name', 'status', 'city', 'city_id', 'is_primary'), 'locations.cityEntity:id,name'])->orderBy('id'))->through(fn (Partner $partner) => $partner->toArray() + ['acquisition' => $acquisition->forPartner($partner), 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'gallery_count' => count($partner->gallery_paths ?? []), 'publicUrl' => $partner->isPublished() ? route('partners.public', $partner) : null])]);
+    }
+
+    private function placeQuery(Request $request, $query, bool $partner)
+    {
+        $filters = $request->validate(['q' => 'nullable|string|max:200', 'status' => 'nullable|string|max:30', 'city' => 'nullable|string|max:150', 'partner' => 'nullable|integer|min:1', 'sort' => 'nullable|in:name,newest']);
+        if ($term = trim($filters['q'] ?? '')) {
+            $like = '%'.addcslashes($term, '\\%_').'%';
+            $query->where(function ($q) use ($partner, $like) {
+                $q->where('name', 'ilike', $like);
+                if ($partner) {
+                    $q->orWhere('slug', 'ilike', $like);
+                } else {
+                    $q->orWhere('address', 'ilike', $like)->orWhere('city', 'ilike', $like)->orWhereHas('partner', fn ($p) => $p->where('name', 'ilike', $like))->orWhereHas('cityEntity', fn ($c) => $c->where('name', 'ilike', $like));
+                }
+            });
+        }
+        if ($filters['status'] ?? null) $query->where('status', $filters['status']);
+        if ($partner && ($filters['city'] ?? null)) $query->whereHas('locations', fn ($q) => $q->where(fn ($q) => $q->where('city', $filters['city'])->orWhereHas('cityEntity', fn ($c) => $c->where('name', $filters['city']))));
+        if (! $partner && ($filters['partner'] ?? null)) $query->where('partner_id', $filters['partner']);
+
+        return ($filters['sort'] ?? 'name') === 'newest' ? $query->orderByDesc('created_at') : $query->orderByRaw('lower(name)');
     }
 
     public function partnerForm(?Partner $partner = null): Response
@@ -81,7 +102,7 @@ class AdminController extends Controller
             $partner->gallery_paths = array_values(array_filter($paths, fn ($key) => $key !== null)) ?: null;
             $partner->save();
 
-            return to_route('admin.partners.index')->with('success', 'Partner guardado correctamente.');
+            return to_route('admin.partners.index', \Illuminate\Support\Arr::only($request->query(), ['q', 'status', 'city', 'sort', 'page']))->with('success', 'Partner guardado correctamente.');
         });
     }
 
@@ -94,9 +115,9 @@ class AdminController extends Controller
         return back();
     }
 
-    public function locations(): Response
+    public function locations(Request $request): Response
     {
-        return Inertia::render('admin/resources/index', ['title' => 'Locations', 'resource' => 'locations', 'items' => Location::with(['partner', 'cityEntity'])->orderBy('name')->get(), 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
+        return Inertia::render('admin/resources/index', ['title' => 'Locations', 'resource' => 'locations', 'filters' => $request->only('q', 'status', 'partner', 'sort'), 'items' => \App\Support\ListingPage::make($this->placeQuery($request, Location::with(['partner', 'cityEntity']), false)->orderBy('id')), 'partners' => Partner::orderBy('name')->get(['id', 'name'])]);
     }
 
     public function locationForm(Request $request, ?Location $location = null): Response
@@ -117,7 +138,7 @@ class AdminController extends Controller
             } $location->save();
             $this->upload($request, $location, 'image', 'image_path', 'locations');
 
-            return to_route('admin.locations.index')->with('success', 'Location guardada correctamente.');
+            return to_route('admin.locations.index', \Illuminate\Support\Arr::only($request->query(), ['q', 'status', 'partner', 'sort', 'page']))->with('success', 'Location guardada correctamente.');
         });
     }
 
@@ -157,7 +178,7 @@ class AdminController extends Controller
                 $benefit->syncLocations($data['location_ids'] ?? []);
             } $this->upload($request, $benefit, 'image', 'image_path', 'benefits');
 
-            return to_route('admin.benefits.index', $request->only(['q', 'status_filter', 'partner_filter', 'page']));
+            return to_route('admin.benefits.index', $request->only(['q', 'status_filter', 'partner_filter', 'sort', 'page']));
         });
     }
 
@@ -235,7 +256,7 @@ class AdminController extends Controller
             $this->upload($request, $experience, 'image', 'image_path', 'experiences');
             $this->upload($request, $experience, 'cover', 'cover_path', 'experiences');
 
-            return to_route('admin.experiences.edit', ['experience' => $experience] + $request->only(['q', 'status_filter', 'partner_filter', 'page']))->with('success', 'Experiencia guardada.');
+            return to_route('admin.experiences.edit', ['experience' => $experience] + $request->only(['q', 'status_filter', 'partner_filter', 'sort', 'page']))->with('success', 'Experiencia guardada.');
         });
     }
 
@@ -268,7 +289,7 @@ class AdminController extends Controller
 
     public function memberships(): Response
     {
-        return Inertia::render('admin/memberships/index', ['users' => User::with('activeMembership')->paginate(25), 'membershipConfig' => config('jakawi.membership'), 'paymentMethods' => ['cash', 'transfer', 'other']]);
+        return Inertia::render('admin/memberships/index', ['users' => \App\Support\ListingPage::make(User::with('activeMembership')->when(request('q'), fn ($q) => $q->where(fn ($q) => $q->where('name', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')->orWhere('email', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%'))), 25), 'membershipConfig' => config('jakawi.membership'), 'paymentMethods' => ['cash', 'transfer', 'other']]);
     }
 
     public function activateMembership(Request $request, MembershipService $service)
@@ -288,7 +309,7 @@ class AdminController extends Controller
 
     public function redemptions(): Response
     {
-        return Inertia::render('admin/redemptions/index', ['redemptions' => Redemption::with('user')->latest()->paginate(50)]);
+        return Inertia::render('admin/redemptions/index', ['redemptions' => \App\Support\ListingPage::make(Redemption::with('user')->when(request('q'), fn ($q) => $q->where(fn ($q) => $q->where('benefit_title', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')->orWhere('partner_name', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')))->when(request('status'), fn ($q) => $q->where('status', request('status')))->latest(), 50)]);
     }
 
     public function attribution(Request $request): Response
@@ -298,7 +319,7 @@ class AdminController extends Controller
             $query->where(fn ($q) => $q->where('email', 'ilike', '%'.$request->string('q').'%')->orWhere('name', 'ilike', '%'.$request->string('q').'%'));
         }
 
-        return Inertia::render('admin/attribution/index', ['users' => $query->latest()->paginate(25)->withQueryString(), 'windowDays' => (int) (AppSetting::where('key', 'attribution_window_days')->first()?->value['days'] ?? 30), 'filters' => $request->only('q')]);
+        return Inertia::render('admin/attribution/index', ['users' => \App\Support\ListingPage::make($query->latest(), 25), 'windowDays' => (int) (AppSetting::where('key', 'attribution_window_days')->first()?->value['days'] ?? 30), 'filters' => $request->only('q')]);
     }
 
     public function updateAttributionSettings(Request $request)

@@ -16,7 +16,7 @@ class PromoterSalesController extends Controller
 {
     public function index(Request $request): Response
     {
-        $sales = MembershipPurchase::query()->where('recorded_by_user_id', $request->user()->id)->with(['beneficiary', 'membership', 'conversion'])->latest()->paginate(20);
+        $sales = \App\Support\ListingPage::make(MembershipPurchase::query()->where('recorded_by_user_id', $request->user()->id)->with(['beneficiary', 'membership', 'conversion'])->latest(), 25);
         $today = MembershipPurchase::query()->where('recorded_by_user_id', $request->user()->id)->whereDate('created_at', today())->where('status', 'confirmed');
         $conversionIds = (clone $today)->pluck('conversion_id')->filter();
 

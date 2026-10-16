@@ -1,11 +1,13 @@
+import { ListPagination, type ListPage } from '@/components/list-pagination';
+import { ListFilters } from '@/components/list-filters';
 import { Head, Link } from '@inertiajs/react';
 import BenefitCard from '@/components/benefit-card';
 import type { BenefitSummary } from '@/types';
 
 export default function BenefitsIndex({
-    benefits,
+    benefits, pagination,
 }: {
-    benefits: BenefitSummary[];
+    benefits: BenefitSummary[]; pagination: ListPage;
 }) {
     return (
         <>
@@ -30,6 +32,7 @@ export default function BenefitsIndex({
                         </div>
                     </div>
 
+                    <ListFilters sort featured ending />
                     {benefits.length ? (
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {benefits.map((benefit) => (
@@ -44,6 +47,7 @@ export default function BenefitsIndex({
                             Todavía no hay beneficios disponibles.
                         </div>
                     )}
+                    <ListPagination page={pagination} />
                 </section>
             </main>
         </>

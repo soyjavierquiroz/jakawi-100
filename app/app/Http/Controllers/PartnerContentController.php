@@ -17,7 +17,7 @@ class PartnerContentController extends Controller
 {
     public function benefits(Partner $partner): Response
     {
-        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'benefit', 'items' => Benefit::where('partner_id', $partner->id)->latest()->get()]);
+        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'benefit', 'items' => \App\Support\ListingPage::make(Benefit::where('partner_id', $partner->id)->latest())]);
     }
 
     public function benefitForm(Partner $partner, ?Benefit $benefit = null): Response
@@ -58,7 +58,7 @@ class PartnerContentController extends Controller
 
     public function experiences(Partner $partner): Response
     {
-        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'experience', 'items' => Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->withCount('sessions')->latest()->get()]);
+        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'experience', 'items' => \App\Support\ListingPage::make(Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->withCount('sessions')->latest())]);
     }
 
     public function experienceForm(Partner $partner, ?Experience $experience = null): Response

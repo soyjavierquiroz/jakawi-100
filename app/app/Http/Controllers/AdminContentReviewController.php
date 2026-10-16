@@ -13,7 +13,7 @@ class AdminContentReviewController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('admin/review', ['benefits' => Benefit::with(['partner', 'submittedBy'])->where('review_status', 'submitted')->get(), 'experiences' => Experience::with(['partners', 'submittedBy'])->where('review_status', 'submitted')->get()]);
+        return Inertia::render('admin/review', ['benefits' => \App\Support\ListingPage::make(Benefit::with(['partner', 'submittedBy'])->where('review_status', 'submitted')->orderBy('submitted_at'), 25, 'benefits_page'), 'experiences' => \App\Support\ListingPage::make(Experience::with(['partners', 'submittedBy'])->where('review_status', 'submitted')->orderBy('submitted_at'), 25, 'experiences_page')]);
     }
 
     public function benefit(Request $request, Benefit $benefit)

@@ -25,7 +25,7 @@ class AdminAdjustmentController extends Controller
         if ($request->filled('actor')) $query->where('actor_user_id', $request->integer('actor'));
         if ($request->filled('from')) $query->whereDate('created_at', '>=', $request->date('from'));
         if ($request->filled('to')) $query->whereDate('created_at', '<=', $request->date('to'));
-        return Inertia::render('admin/adjustments/index', ['adjustments' => $query->paginate(30)->withQueryString(), 'filters' => $request->only('type', 'actor', 'from', 'to'), 'users' => User::orderBy('name')->get(['id', 'name']), 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'idempotencyKey' => (string) Str::uuid()]);
+        return Inertia::render('admin/adjustments/index', ['adjustments' => \App\Support\ListingPage::make($query, 50), 'filters' => $request->only('type', 'actor', 'from', 'to'), 'users' => User::orderBy('name')->get(['id', 'name']), 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'idempotencyKey' => (string) Str::uuid()]);
     }
 
     public function ledger(Request $request)

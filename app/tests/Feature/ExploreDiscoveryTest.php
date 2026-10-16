@@ -56,14 +56,14 @@ class ExploreDiscoveryTest extends TestCase
         $this->assertNotSame($unlock->id, $otherUnlock->id);
     }
 
-    public function test_explore_caps_each_explicit_result_set_at_twenty_four(): void
+    public function test_explore_paginates_each_explicit_result_set_at_eighteen(): void
     {
         $city = City::query()->where('slug', 'cochabamba')->sole();
         $partner = Partner::factory()->published()->create();
         Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
         Benefit::factory()->count(25)->published()->forPartner($partner)->create(['applies_to_all_locations' => true]);
 
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=benefits')->assertInertia(fn (Assert $page) => $page->has('opportunities', 24));
+        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=benefits')->assertInertia(fn (Assert $page) => $page->has('opportunities', 18)->where('pagination.total', 25)->where('pagination.last_page', 2));
     }
 
     public function test_search_matches_the_supported_fields_without_crossing_domains_or_cities(): void

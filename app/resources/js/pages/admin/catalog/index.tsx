@@ -1,3 +1,4 @@
+import { ListPagination, type ListPage } from '@/components/list-pagination';
 import { Link, router } from '@inertiajs/react';
 import { ImageOff, Search } from 'lucide-react';
 import { useState } from 'react';
@@ -23,6 +24,7 @@ type Item = {
     reviewUrl: string | null;
 };
 type Filters = {
+    sort?: string;
     review_filter?: string;
     q?: string;
     status_filter?: string;
@@ -38,7 +40,7 @@ type Props = {
     filters: Filters;
     partners: Partner[];
     statuses: string[];
-    items: {
+    items: ListPage & {
         data: Item[];
         total: number;
         from: number | null;
@@ -119,6 +121,7 @@ export default function Catalog({
     statuses,
     items,
 }: Props) {
+    const [sort, setSort] = useState(filters.sort ?? 'updated');
     const [q, setQ] = useState(filters.q ?? '');
     const [status, setStatus] = useState(filters.status_filter ?? '');
     const [partner, setPartner] = useState(
@@ -127,6 +130,7 @@ export default function Catalog({
     const context = new URLSearchParams();
     if (filters.review_filter)
         context.set('review_filter', filters.review_filter);
+    if (filters.sort) context.set('sort', filters.sort);
     if (filters.q) context.set('q', filters.q);
     if (filters.status_filter)
         context.set('status_filter', filters.status_filter);
@@ -180,7 +184,7 @@ export default function Catalog({
                         baseUrl,
                         {
                             q,
-                            status_filter: status,
+                            sort, status_filter: status,
                             partner_filter: partner,
                             review_filter: filters.review_filter ?? '',
                         },
@@ -235,6 +239,7 @@ export default function Catalog({
                 <Link className={actionClass} href={baseUrl}>
                     Limpiar
                 </Link>
+                <label className="grid gap-1 text-sm">Ordenar<select className="min-h-11 rounded-lg border border-border bg-surface px-3" value={sort} onChange={e => setSort(e.target.value)}><option value="updated">Última actualización</option><option value="newest">Más recientes</option><option value="name">Nombre A–Z</option></select></label>
             </form>
             <div className="space-y-3 lg:space-y-0 lg:overflow-hidden lg:rounded-xl lg:border lg:border-border">
                 <div
@@ -387,35 +392,7 @@ export default function Catalog({
                     </div>
                 )}
             </div>
-            {items.last_page > 1 && (
-                <nav
-                    aria-label="Paginación del catálogo"
-                    className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm"
-                >
-                    <span>
-                        {items.from}–{items.to} de {items.total} · Página{' '}
-                        {items.current_page} de {items.last_page}
-                    </span>
-                    <div className="flex gap-2">
-                        {items.prev_page_url && (
-                            <Link
-                                className={actionClass}
-                                href={items.prev_page_url}
-                            >
-                                Anterior
-                            </Link>
-                        )}
-                        {items.next_page_url && (
-                            <Link
-                                className={actionClass}
-                                href={items.next_page_url}
-                            >
-                                Siguiente
-                            </Link>
-                        )}
-                    </div>
-                </nav>
-            )}
+            <ListPagination page={items} />
         </AdminLayout>
     );
 }

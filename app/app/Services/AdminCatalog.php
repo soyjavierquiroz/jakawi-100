@@ -18,7 +18,7 @@ class AdminCatalog
             'challenges' => [Challenge::class, 'Retos', 'partner', '/admin/retos', '/admin/retos/crear'],
         };
         $filters = $request->validate([
-            'review_filter' => 'nullable|in:SUBMITTED', 'q' => 'nullable|string|max:200', 'status_filter' => 'nullable|string|max:30',
+            'sort' => 'nullable|in:updated,newest,name', 'review_filter' => 'nullable|in:SUBMITTED', 'q' => 'nullable|string|max:200', 'status_filter' => 'nullable|string|max:30',
             'partner_filter' => 'nullable|integer|min:1', 'page' => 'nullable|integer|min:1',
         ]);
         $query = $model::query()->with([$relation, 'landingPresentations']);
@@ -36,7 +36,7 @@ class AdminCatalog
         if ($filters['partner_filter'] ?? null) {
             $query->whereHas($relation, fn ($p) => $p->where('partners.id', $filters['partner_filter']));
         }
-        $items = $query->orderByDesc('updated_at')->orderByDesc('id')->paginate(20)->withQueryString();
+        $items = \App\Support\ListingPage::make($query->orderBy(($filters['sort'] ?? '') === 'name' ? 'title' : (($filters['sort'] ?? '') === 'newest' ? 'created_at' : 'updated_at'), ($filters['sort'] ?? '') === 'name' ? 'asc' : 'desc')->orderByDesc('id'), 25);
         $items->through(fn ($item) => $this->row($item, $resource));
 
         return [

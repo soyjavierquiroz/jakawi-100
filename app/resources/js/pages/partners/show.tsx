@@ -1,3 +1,4 @@
+import { ListPagination, type ListPage } from '@/components/list-pagination';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowDown, ArrowUpRight, MapPin } from 'lucide-react';
 import { PartnerGallery } from '@/components/partner-gallery';
@@ -200,14 +201,14 @@ export default function PartnerShow({
     locations = [],
     benefits = [],
     experiences = [],
-    challenges = [],
+    challenges = [], pagination,
 }: {
     partner: Partner;
     canonicalUrl: string;
     locations: Location[];
     benefits: Card[];
     experiences: Card[];
-    challenges: Card[];
+    challenges: Card[]; pagination: Record<string, ListPage>;
 }) {
     const { auth } = usePage().props;
     const hasInventory =
@@ -403,6 +404,7 @@ export default function PartnerShow({
                                 cta="VER RETO"
                             />
                         </div>
+                        {['benefits', 'experiences', 'challenges'].map(key => pagination[key].last_page > 1 && <div key={key}><p className="mt-4 font-semibold">{{benefits:'Beneficios',experiences:'Experiencias',challenges:'Retos'}[key]}</p><ListPagination page={pagination[key]} /></div>)}
                     </section>
                 ) : (
                     <section
@@ -523,6 +525,7 @@ export default function PartnerShow({
                         </div>
                     </section>
                 )}
+                {pagination.locations.last_page > 1 && <ListPagination page={pagination.locations} />}
                 {!auth.user && (
                     <section
                         data-partner-account
