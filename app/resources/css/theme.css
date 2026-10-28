@@ -38,6 +38,13 @@
     --brand: #ff5a4f;
     --marketing-sticky-surface: var(--cream);
     --marketing-video-gutter: 1rem;
+    --marketing-hero-max-width: 74rem;
+    --marketing-hero-gap: clamp(3rem, 4.5vw, 4rem);
+    --marketing-hero-video-width: 28.75rem;
+    --marketing-hero-title-size: clamp(3rem, 4.2vw, 3.75rem);
+    --marketing-hero-subtitle-size: clamp(1.125rem, 1.5vw, 1.3125rem);
+    --marketing-hero-purchase-gap: 1.75rem;
+    --marketing-hero-action-width: 27.5rem;
     --marketing-sticky-text: var(--ink);
     --marketing-sticky-action: color-mix(in srgb, var(--brand) 80%, var(--ink));
     --marketing-sticky-action-text: var(--palette-light-surface-raised);

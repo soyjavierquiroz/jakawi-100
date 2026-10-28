@@ -428,11 +428,66 @@
     .video-landing-action { display: block; position: fixed; z-index: 40; inset-inline: 0; bottom: var(--marketing-bar-offset, 0px); padding: .75rem 1rem max(.75rem, env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: var(--marketing-sticky-surface); color: var(--marketing-sticky-text); box-shadow: var(--shadow-featured); }
     .video-landing-action .funnel-primary-action { background: var(--marketing-sticky-action); color: var(--marketing-sticky-action-text); }
 }
+/* Wrapper boxes are absent on mobile, retaining the existing spacing and order. */
+.offer-headline-separator { display: none; }
+.offer-video-context, .offer-video-purchase { display: contents; }
+.offer-video-desktop-purchase { display: none; }
 @media (min-width: 1024px) {
-    .offer-hero-v3.offer-video-first { grid-template-rows: auto 1fr; }
-    .offer-hero-v3.offer-video-first .offer-video-subtitle { grid-column: 1; grid-row: 2; max-width: 32rem; }
-    .offer-video-first [data-video-framing="native-vertical"],
-    .offer-video-first [data-video-framing="embedded-vertical"] { width: min(100%, 24rem); }
+    [data-video-first] > div:first-child { max-width: calc(var(--marketing-hero-max-width) + 6rem); }
+    .offer-video-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, var(--marketing-hero-video-width));
+        grid-template-rows: max-content max-content minmax(0, 1fr) max-content;
+        column-gap: var(--marketing-hero-gap);
+        row-gap: 0;
+        align-items: start;
+        padding-top: 3rem;
+    }
+    .offer-video-layout .offer-hero-v3.offer-video-first,
+    .offer-video-layout .offer-video-details { display: contents; }
+    .offer-video-layout .offer-intro { grid-column: 1; grid-row: 1; }
+    .offer-video-layout .offer-intro h1 {
+        max-width: none;
+        font-size: var(--marketing-hero-title-size);
+        line-height: 1.02;
+        font-weight: 800;
+        text-wrap: balance;
+    }
+    .offer-video-layout .offer-intro h1 br { display: none; }
+    .offer-video-layout .offer-intro h1 span.block { display: inline; margin-top: 0; }
+    .offer-video-layout .offer-headline-separator { display: inline; }
+    .offer-video-layout .offer-video-subtitle {
+        grid-column: 1; grid-row: 2;
+        max-width: 34rem;
+        margin: 1.5rem 0 0;
+        font-size: var(--marketing-hero-subtitle-size);
+        line-height: 1.5;
+    }
+    .offer-video-layout .offer-video-purchase {
+        display: block;
+        grid-column: 1; grid-row: 3;
+        margin-top: var(--marketing-hero-purchase-gap);
+        padding-bottom: 3rem;
+        max-width: var(--marketing-hero-action-width);
+        min-width: 0;
+        width: 100%;
+    }
+    .offer-video-purchase > dl:first-child { margin-top: 0; }
+    .offer-video-purchase a[data-growth-location="hero"] { width: 100%; }
+    .offer-video-layout .offer-media {
+        grid-column: 2; grid-row: 1 / 4;
+        align-self: start;
+        width: 100%;
+        max-width: var(--marketing-hero-video-width);
+        margin: 0 0 3rem;
+    }
+    .offer-video-layout .offer-video-context {
+        display: block;
+        grid-column: 1 / -1; grid-row: 4;
+        padding-bottom: 2rem;
+    }
+    .offer-video-desktop-purchase { display: block; }
+    [data-offer-density="COMPACT"] .offer-video-layout { padding-top: 2rem; }
 }
 
 /* Funnel actions retain coral with sufficient contrast for white labels. */

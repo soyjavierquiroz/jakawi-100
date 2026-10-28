@@ -1,3 +1,4 @@
+import { MarketingVideoHero } from '../MarketingVideoHero';
 import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import {
     MarketingFAQ,
@@ -78,13 +79,17 @@ export function OfferConversionTemplate({
     const mediaLed = heroLayout ? heroLayout === 'MEDIA_LED' : true;
     const editorial = treatment === 'editorial';
     const trackGrowthClick = useGrowthLandingClicks();
-    const offerDetails = (
+    const offerContext = (
         <>
             <MarketingValueBlock
                 value={distinctOfferValue(p)}
                 supplement={renderValueSupplement?.()}
             />
             <MarketingFactStrip facts={p.facts} />
+        </>
+    );
+    const offerPurchase = (
+        <>
             <MarketingPrices prices={p.prices} />
             {p.essentialConditions.map((condition, index) => (
                 <p
@@ -125,6 +130,7 @@ export function OfferConversionTemplate({
                 ))}
         </>
     );
+    const offerDetails = <>{offerContext}{offerPurchase}</>;
     const intro = (
         <>
             <OfferHero
@@ -150,7 +156,18 @@ export function OfferConversionTemplate({
             ))}
         </>
     );
-    const hero = (
+    const hero = videoFirst ? (
+        <MarketingVideoHero
+            label={p.hero.eyebrow}
+            intro={intro}
+            media={<OptionalMarketingMedia media={p.media} compact={compact} videoFirst />}
+            framing={p.media?.type === 'vsl' ? p.media.config.framing ?? 'horizontal' : undefined}
+            description={p.hero.description}
+            context={<>{renderNotice?.()}{renderHeroAnnotation?.()}{renderHeroSupport?.()}{offerContext}</>}
+            purchase={offerPurchase}
+            detailsClassName="pb-8"
+        />
+    ) : (
         <section
             data-offer-chapter="hero"
             aria-label={p.hero.eyebrow}
@@ -190,12 +207,12 @@ export function OfferConversionTemplate({
         >
             <div className={offerContainer(compact)}>
                 {hero}
-                <section id="landing-details" tabIndex={-1} aria-label="Estado y detalles de la propuesta" className="scroll-mt-6">
+                {!videoFirst && <section id="landing-details" tabIndex={-1} aria-label="Estado y detalles de la propuesta" className="scroll-mt-6">
                     {renderNotice?.()}
                     {videoFirst && renderHeroAnnotation?.()}
                     {videoFirst && renderHeroSupport?.()}
                     {videoFirst && <div className="pb-8">{offerDetails}</div>}
-                </section>
+                </section>}
                 {stepsPlacement === 'content' && (
                     <MarketingSteps steps={p.steps} compact={compact} />
                 )}

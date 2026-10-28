@@ -81,7 +81,8 @@ export function OfferHero({
     const content = lines.map((line, index) => {
         const offset =
             hero.emphasis && !emphasized ? line.indexOf(hero.emphasis) : -1;
-        const text =
+        const separator = index > 0 ? <span className="offer-headline-separator" aria-hidden="true"> </span> : null;
+        const text = <>{separator}{
             offset < 0 ? (
                 line
             ) : (
@@ -92,7 +93,7 @@ export function OfferHero({
                     </span>
                     {line.slice(offset + hero.emphasis!.length)}
                 </>
-            );
+            )}</>;
         if (offset >= 0) emphasized = true;
         if (compact)
             return line === hero.emphasis && offset >= 0 ? (
@@ -100,7 +101,7 @@ export function OfferHero({
                     key={index}
                     className="block text-[var(--marketing-emphasis)]"
                 >
-                    {line}
+                    {separator}{line}
                 </span>
             ) : (
                 <Fragment key={index}>

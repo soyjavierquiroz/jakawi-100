@@ -209,27 +209,26 @@ img.media {
     top: var(--vsl-desktop-top);
     transform: none;
 }
-@media (max-width: 1023px) {
-    .player.marketingFrame {
-        --vsl-frame-ratio: 3 / 4;
-        width: 100%;
-        max-width: none;
-    }
-    .marketingFrame video.media {
-        width: 100% !important;
-        height: 100% !important;
-        left: 0 !important;
-        top: 0 !important;
-        object-fit: cover !important;
-        object-position: center !important;
-    }
-    .marketingFrame .youtube iframe,
-    .marketingFrame[data-marketing-video-frame='embedded-vertical'] video.media {
-        width: var(--vsl-mobile-width) !important;
-        height: var(--vsl-mobile-height) !important;
-        left: var(--vsl-mobile-left) !important;
-        top: var(--vsl-mobile-top) !important;
-    }
+/* Marketing uses the approved 3:4 cover geometry at every viewport. */
+.player.marketingFrame {
+    --vsl-frame-ratio: 3 / 4;
+    width: 100%;
+    max-width: none;
+}
+.marketingFrame video.media {
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    object-fit: cover !important;
+    object-position: center !important;
+}
+.marketingFrame .youtube iframe,
+.marketingFrame[data-marketing-video-frame='embedded-vertical'] video.media {
+    width: var(--vsl-mobile-width) !important;
+    height: var(--vsl-mobile-height) !important;
+    left: var(--vsl-mobile-left) !important;
+    top: var(--vsl-mobile-top) !important;
 }
 
 /* Course controls share the media frame; VSL rules above remain independent. */

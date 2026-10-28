@@ -1,3 +1,4 @@
+import { MarketingVideoHero } from '@/components/marketing/MarketingVideoHero';
 import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { OfferHero } from '@/components/marketing/offer/blocks';
@@ -68,14 +69,15 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
         <Head title={copy.headline}><link rel="canonical" href={canonical}/><meta name="description" content={copy.subheadline}/>{noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"}/>}</Head>
         <main data-video-first={vsl ? '' : undefined} onClickCapture={trackGrowthClick} className="overflow-x-clip break-words font-discovery">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                {vsl ? <>
-                    <section data-offer-chapter="hero" className="offer-hero-v3 offer-media-led offer-with-media offer-video-first">
-                        <div className="offer-intro min-w-0"><OfferHero hero={{ eyebrow: copy.eyebrow, headline: copy.headline, description: copy.subheadline }} treatment="editorial" /></div>
-                        <div className="offer-media min-w-0" data-video-framing={vsl.framing ?? 'horizontal'}><LandingVideo config={{ ...vsl, theme: 'inherit' }} fullFrame /></div>
-                        <p data-video-subtitle className="offer-video-subtitle text-lg leading-7">{copy.subheadline}</p>
-                    </section>
-                    <section id="landing-details" className="pb-8">{progress}</section>
-                </> : <>
+                {vsl ? <MarketingVideoHero
+                    intro={<OfferHero hero={{ eyebrow: copy.eyebrow, headline: copy.headline, description: copy.subheadline }} treatment="editorial" />}
+                    media={<LandingVideo config={{ ...vsl, theme: 'inherit' }} fullFrame />}
+                    framing={vsl.framing ?? 'horizontal'}
+                    description={copy.subheadline}
+                    context={progress}
+                    purchase={<div className="offer-video-desktop-purchase"><p className="font-semibold">{copy.membership}</p>{copy.valueNote && <p className="mt-2 text-sm">{copy.valueNote}</p>}<div className="mt-4"><MarketingCTA action={action} location="hero" className="sm:w-full" /></div></div>}
+                    detailsClassName="pb-8"
+                /> : <>
                     <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10"><JakawiImage src={copy.heroUrl} srcset={copy.heroSrcset} sizes="(max-width: 640px) 100vw, 80vw" alt={copy.heroAlt} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority /></div>
                     <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={heroDescription} action={action} aside={progress} />
                 </>}
