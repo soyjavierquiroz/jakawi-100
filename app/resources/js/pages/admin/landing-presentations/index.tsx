@@ -6,7 +6,7 @@ import { LandingVideoFields } from '@/components/media/jakawi-vsl-player/Landing
 import type { LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { landingEditorFieldLabel } from '@/lib/landing-editor-labels';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdminLayout from '../layout';
 
 type SubjectType = 'BENEFIT' | 'EXPERIENCE' | 'CHALLENGE';
@@ -69,6 +69,7 @@ export default function Index({
     subject,
     subjectChoices = {},
     autoCreate = false,
+    autoEdit = null,
     presentations, pagination, defaultPresentation,
     baseUrl = '/admin/landings',
     productUrl = '/admin',
@@ -78,6 +79,7 @@ export default function Index({
         Record<SubjectType, { id: number; title: string; slug: string }[]>
     >;
     autoCreate?: boolean;
+    autoEdit?: Presentation | null;
     presentations: Presentation[]; pagination: ListPage | null; defaultPresentation: Presentation | null;
     baseUrl?: string;
     productUrl?: string;
@@ -172,6 +174,11 @@ export default function Index({
         setSaved(false);
         setPublishWarning('');
     };
+    useEffect(() => {
+        if (autoEdit) begin(autoEdit);
+        // The selected record initializes the existing editor once on navigation.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoEdit?.id]);
     const field = (key: string, label: string, multiline = false) => (
         <label className="flex min-w-0 flex-col gap-1 text-sm font-bold">
             {label}
@@ -276,6 +283,7 @@ export default function Index({
                             router.get('/admin/landings', {
                                 subject_type: type,
                                 subject_id: selected,
+                                create: 1,
                             })
                         }
                     >
@@ -319,7 +327,7 @@ export default function Index({
                     <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
                         <h2 className="text-xl font-extrabold">Landings</h2>
                         <button className={button} onClick={() => begin(null)}>
-                            CREAR LANDING
+                            Nueva Landing
                         </button>
                     </div>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

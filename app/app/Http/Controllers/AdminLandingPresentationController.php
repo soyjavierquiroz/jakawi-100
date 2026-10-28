@@ -9,7 +9,9 @@ use App\Models\Benefit;
 use App\Models\Challenge;
 use App\Models\Experience;
 use App\Models\LandingPresentation;
+use App\Models\Partner;
 use App\Models\Unlock;
+use App\Services\AdminLandingCatalog;
 use App\Services\BenefitMarketingLandingPresenter;
 use App\Services\ChallengeMarketingLandingPresenter;
 use App\Services\ExperienceMarketingLandingPresenter;
@@ -19,6 +21,7 @@ use App\Services\LandingPresentationEditor;
 use App\Services\LandingVideoConfiguration;
 use App\Services\MediaUploadService;
 use App\Services\MediaUrl;
+use App\Support\ListingPage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,13 +34,45 @@ class AdminLandingPresentationController extends Controller
     public function index(Request $request, string $subjectSlug = '')
     {
         $subject = $request->route()->hasParameter('unlock') || $request->route()->hasParameter('experience') || $request->route()->hasParameter('benefit') || $request->route()->hasParameter('challenge') ? $this->subject($request) : ($request->filled('subject_type') && $request->filled('subject_id') ? app(LandingPresentationEditor::class)->selected($request->string('subject_type')->toString(), $request->integer('subject_id')) : null);
+        if (! $subject) {
+            return Inertia::render('admin/landing-presentations/catalog', app(AdminLandingCatalog::class)->page($request));
+        }
+
+        return $this->editorPage($request, $subject);
+    }
+
+    public function create(Request $request)
+    {
+        return $this->editorPage($request);
+    }
+
+    public function edit(Request $request, LandingPresentation $presentation)
+    {
+        abort_unless($presentation->subject, 404);
+
+        return $this->editorPage($request, $presentation->subject, $presentation);
+    }
+
+    public function partners(Request $request)
+    {
+        $data = $request->validate(['q' => ['nullable', 'string', 'max:200']]);
+        $term = trim($data['q'] ?? '');
+        $like = '%'.str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $term).'%';
+
+        return response()->json(Partner::query()->when($term !== '', fn ($q) => $q->where('name', 'ilike', $like))->orderBy('name')->orderBy('id')->limit(20)->get(['id', 'name']));
+    }
+
+    private function editorPage(Request $request, ?Model $subject = null, ?LandingPresentation $editing = null)
+    {
         $editor = app(LandingPresentationEditor::class);
 
-        $page = $subject ? \App\Support\ListingPage::make($subject->landingPresentations()->orderBy('id')) : null;
+        $page = $subject ? ListingPage::make($subject->landingPresentations()->orderBy('id')) : null;
+
         return Inertia::render('admin/landing-presentations/index', [
             'subject' => $subject ? $editor->context($subject, $request) : null,
             'subjectChoices' => $editor->choices(),
             'autoCreate' => $request->boolean('create'),
+            'autoEdit' => $editing ? [...$editing->toArray(), 'editorHeroUrl' => app(MediaUrl::class)->url($editing->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')] : null,
             'baseUrl' => $subject ? $this->baseUrl($subject) : '/admin/landings',
             'productUrl' => ! $subject ? '/admin' : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug))),
             'defaultPresentation' => $subject?->landingPresentations()->where('status', 'PUBLISHED')->whereIn('default_scope', ['ALL', 'GUESTS'])->orderBy('id')->first(),

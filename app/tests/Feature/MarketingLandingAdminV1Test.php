@@ -239,7 +239,7 @@ class MarketingLandingAdminV1Test extends TestCase
         $subject = $this->subject();
         $experience = Experience::factory()->published()->create();
         $this->admin();
-        $this->get('/admin/landings')->assertOk()->assertInertia(fn (Assert $page) => $page->component('admin/landing-presentations/index')->where('subject', null)->has('subjectChoices.BENEFIT', 1)->has('subjectChoices.EXPERIENCE', 1)->missing('subjectChoices.UNLOCK'));
+        $this->get('/admin/landings/new')->assertOk()->assertInertia(fn (Assert $page) => $page->component('admin/landing-presentations/index')->where('subject', null)->has('subjectChoices.BENEFIT', 1)->has('subjectChoices.EXPERIENCE', 1)->missing('subjectChoices.UNLOCK'));
         $this->get('/admin/landings?subject_type=BENEFIT&subject_id='.$subject->id.'&create=1')->assertOk()->assertInertia(fn (Assert $page) => $page->where('subject.type', 'BENEFIT')->where('subject.defaults.headline', $subject->title)->has('subject.truth', 5)->where('autoCreate', true));
         $this->get('/admin/landings/subject?subject_type=EXPERIENCE&subject_id='.$experience->id)->assertOk()->assertJsonPath('type', 'EXPERIENCE')->assertJsonPath('id', $experience->id);
         $base = $this->base($subject);

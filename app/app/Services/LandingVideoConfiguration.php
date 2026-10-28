@@ -8,6 +8,25 @@ use Illuminate\Validation\Rule;
 /** One nullable configuration, using the existing Unlock disclosure boundary. */
 class LandingVideoConfiguration
 {
+    /** Same HTTPS sources as the existing player. No network probes or provider calls. */
+    public static function configuredSql(): string
+    {
+        return <<<'SQL'
+            (
+                (subject_type = 'App\Models\Unlock' OR media_mode IS NULL OR media_mode = 'VSL')
+                AND vsl->'source'->>'type' IN ('youtube', 'mp4', 'bunny')
+                AND vsl->'source'->>'url' ~* '^https://([a-z0-9]([a-z0-9.-]*[a-z0-9])?|\[[0-9a-f:]+\])(:[0-9]{1,5})?([/?#][^[:space:]<>"'']*)?$'
+                AND (
+                    vsl->'source'->>'type' <> 'youtube'
+                    OR vsl->'source'->>'url' ~* '^https://youtu\.be/[a-z0-9_-]{11}([?#][^[:space:]]*)?$'
+                    OR vsl->'source'->>'url' ~* '^https://(www\.|m\.|music\.)?youtube\.com/(embed|shorts|live|v)/[a-z0-9_-]{11}([?#][^[:space:]]*)?$'
+                    OR vsl->'source'->>'url' ~* '^https://(www\.)?youtube-nocookie\.com/(embed|shorts|live|v)/[a-z0-9_-]{11}([?#][^[:space:]]*)?$'
+                    OR vsl->'source'->>'url' ~* '^https://((www\.|m\.|music\.)?youtube\.com|(www\.)?youtube-nocookie\.com)/watch\?([^#]*&)?v=[a-z0-9_-]{11}(&[^#]*)?(#.*)?$'
+                )
+            ) IS TRUE
+            SQL;
+    }
+
     public static function rules(): array
     {
         $url = ['nullable', 'string', 'url:https', 'max:2048', 'regex:~^https://[^\s<>"\x27]+$~i'];

@@ -186,6 +186,9 @@ Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(fun
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('landings/subject', [AdminLandingPresentationController::class, 'subjectContext'])->name('admin.marketing-landings.subject');
+    Route::get('landings/new', [AdminLandingPresentationController::class, 'create'])->name('admin.marketing-landings.create');
+    Route::get('landings/partners', [AdminLandingPresentationController::class, 'partners'])->name('admin.marketing-landings.partners');
+    Route::get('landings/{presentation:slug}/edit', [AdminLandingPresentationController::class, 'edit'])->name('admin.marketing-landings.edit');
     Route::get('landings', [AdminLandingPresentationController::class, 'index'])->name('admin.marketing-landings.index');
     Route::get('desbloqueos/{unlock:slug}/landings', [AdminLandingPresentationController::class, 'index'])->name('admin.unlock-landing-presentations.index');
     Route::post('desbloqueos/{unlock:slug}/landings', [AdminLandingPresentationController::class, 'save'])->name('admin.unlock-landing-presentations.store');
