@@ -93,7 +93,8 @@ export function resolveFraming(
     return {
         kind,
         sourceAspectRatio,
-        viewportAspectRatio: kind === 'horizontal' ? 16 / 9 : 3 / 4,
+        viewportAspectRatio: framing?.viewportAspectRatio && Number.isFinite(framing.viewportAspectRatio) && framing.viewportAspectRatio > 0
+            ? framing.viewportAspectRatio : kind === 'horizontal' ? 16 / 9 : 3 / 4,
         contentAspectRatio:
             kind === 'embedded-vertical'
                 ? (framing?.contentAspectRatio ?? 9 / 16)

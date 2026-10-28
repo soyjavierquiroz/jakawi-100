@@ -38,6 +38,7 @@ export default function MarketingLayout({
     return (
         <AcquisitionProvider>
             <div
+                data-video-marketing={page.props.vsl ? '' : undefined}
                 data-marketing-theme={
                     theme ?? persistedTheme ?? marketingThemeForPage(component)
                 }

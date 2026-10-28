@@ -414,7 +414,7 @@ export default function ChallengeOfferAdapter({
                 )}
                 renderAfterFinal={() => (
                     <>
-                        {stickyVisible && (
+                        {!vsl && stickyVisible && (
                             <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom)+var(--pwa-install-clearance,0px))] shadow-featured backdrop-blur lg:hidden">
                                 <MarketingCTA
                                     action={primaryAction}

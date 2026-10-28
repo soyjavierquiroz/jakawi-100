@@ -72,6 +72,7 @@ export interface JakawiVslPlayerProps {
         kind: 'auto' | 'native-vertical' | 'horizontal' | 'embedded-vertical';
         sourceAspectRatio?: number;
         contentAspectRatio?: number;
+        viewportAspectRatio?: number;
         focalX?: number;
         focalY?: number;
     };

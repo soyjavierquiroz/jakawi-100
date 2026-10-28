@@ -406,6 +406,30 @@
     [data-offer-density="COMPACT"] [data-offer-operational] section { padding-block: 2rem; }
 }
 
+/* Video composition uses the same DOM/player in public and Admin preview. */
+.offer-hero-v3.offer-video-first .offer-video-subtitle { order: 3; margin: 0; }
+.offer-hero-v3.offer-video-first .offer-media { order: 2; }
+.offer-video-first [data-video-framing="native-vertical"],
+.offer-video-first [data-video-framing="embedded-vertical"] { width: min(100%, 22rem, calc(62svh * 9 / 16)); margin-inline: auto; }
+.video-landing-action { display: none; }
+@media (max-width: 1023px) {
+    [data-video-marketing] { padding-bottom: max(var(--pwa-install-clearance, 0px), var(--marketing-sticky-clearance, calc(7rem + env(safe-area-inset-bottom)))); }
+    .offer-video-first .offer-intro { text-align: center; }
+    .offer-video-first .offer-intro h1 { margin-inline: auto; max-width: 24rem; font-size: clamp(1.75rem, 7.8vw, 2.4rem); line-height: 1.04; }
+    .offer-video-first .offer-intro > p { font-size: 0.75rem; }
+    .offer-hero-v3.offer-video-first .offer-video-subtitle { text-align: center; max-width: 32rem; margin-inline: auto; }
+    [data-video-first] a[data-growth-location] { display: none; }
+    [data-video-first] [data-video-sticky] a[data-growth-location] { display: flex; }
+    .video-landing-action { display: block; position: fixed; z-index: 40; inset-inline: 0; bottom: var(--marketing-bar-offset, 0px); padding: .75rem 1rem max(.75rem, env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: var(--marketing-sticky-surface); color: var(--marketing-sticky-text); box-shadow: var(--shadow-featured); }
+    .video-landing-action .funnel-primary-action { background: var(--marketing-sticky-action); color: var(--marketing-sticky-action-text); }
+}
+@media (min-width: 1024px) {
+    .offer-hero-v3.offer-video-first { grid-template-rows: auto 1fr; }
+    .offer-hero-v3.offer-video-first .offer-video-subtitle { grid-column: 1; grid-row: 2; max-width: 32rem; }
+    .offer-video-first [data-video-framing="native-vertical"],
+    .offer-video-first [data-video-framing="embedded-vertical"] { width: min(100%, 24rem); }
+}
+
 /* Funnel actions retain coral with sufficient contrast for white labels. */
 .funnel-primary-action {
     color: #fff;

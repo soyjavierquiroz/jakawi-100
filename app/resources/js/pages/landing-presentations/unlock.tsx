@@ -1,5 +1,7 @@
 import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
+import { OfferHero } from '@/components/marketing/offer/blocks';
+import { VideoLandingAction, useVideoLandingAction } from '@/components/marketing/VideoLandingAction';
 import { LandingVideo, type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -36,7 +38,7 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
     const intentSent = useRef(false);
     const authenticated = Boolean(usePage().props.auth.user);
     const disabled = preview || copy.action.kind === 'unavailable';
-    const action = { ...copy.action, href: copy.action.kind === 'membership' ? copy.action.href + `&landing_presentation_id=${landingId}` : copy.action.href, label: copy.action.kind === 'guest' ? 'QUIERO DESBLOQUEARLO' : copy.action.label, disabled, onClick: (event: MouseEvent<Element>) => {
+    const commercialAction = { ...copy.action, href: copy.action.kind === 'membership' ? copy.action.href + `&landing_presentation_id=${landingId}` : copy.action.href, label: copy.action.kind === 'guest' ? 'QUIERO DESBLOQUEARLO' : copy.action.label, disabled, onClick: (event: MouseEvent<Element>) => {
         if (disabled) { event.preventDefault(); return; }
         // Auth and explicit domain actions remain over this Landing.
         if (copy.action.kind === 'guest') { event.preventDefault(); acquire(); return; }
@@ -47,6 +49,8 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
             trackJourneyIntent('unlock', copy.slug);
         }
     } };
+    const videoAction = useVideoLandingAction(commercialAction, '#condiciones');
+    const action = vsl ? videoAction.action : commercialAction;
     const number = (value: number) => new Intl.NumberFormat('es-BO', { maximumFractionDigits: 1 }).format(value);
     const heroDescription = `${copy.subheadline} ${number(copy.progress.current)} / ${number(copy.progress.target)} compromisos${!copy.success && !copy.failed && !copy.expired ? ` · Faltan ${number(copy.progress.remaining)}` : ''}.`;
     const progress = <section aria-label="Progreso real del desbloqueo" className="rounded-[var(--radius-card)] bg-surface-muted p-6 sm:p-8">
@@ -62,11 +66,20 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
     const trackGrowthClick = useGrowthLandingClicks();
     return <>
         <Head title={copy.headline}><link rel="canonical" href={canonical}/><meta name="description" content={copy.subheadline}/>{noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"}/>}</Head>
-        <main onClickCapture={trackGrowthClick} className="overflow-x-clip break-words font-discovery">
+        <main data-video-first={vsl ? '' : undefined} onClickCapture={trackGrowthClick} className="overflow-x-clip break-words font-discovery">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                {preview && <StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mt-5"/>}
-                <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10">{vsl ? <LandingVideo config={{...vsl, theme: 'inherit'}}/> : (<JakawiImage src={copy.heroUrl} srcset={copy.heroSrcset} sizes="(max-width: 640px) 100vw, 80vw" alt={copy.heroAlt} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority/>)}</div>
-                <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={heroDescription} action={action} aside={progress}/>
+                {vsl ? <>
+                    <section data-offer-chapter="hero" className="offer-hero-v3 offer-media-led offer-with-media offer-video-first">
+                        <div className="offer-intro min-w-0"><OfferHero hero={{ eyebrow: copy.eyebrow, headline: copy.headline, description: copy.subheadline }} treatment="editorial" /></div>
+                        <div className="offer-media min-w-0" data-video-framing={vsl.framing ?? 'horizontal'}><LandingVideo config={{ ...vsl, theme: 'inherit' }} fullFrame /></div>
+                        <p data-video-subtitle className="offer-video-subtitle text-lg leading-7">{copy.subheadline}</p>
+                    </section>
+                    <section id="landing-details" className="pb-8">{progress}</section>
+                </> : <>
+                    <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-surface-muted sm:mt-10"><JakawiImage src={copy.heroUrl} srcset={copy.heroSrcset} sizes="(max-width: 640px) 100vw, 80vw" alt={copy.heroAlt} className="aspect-[4/3] w-full object-cover sm:aspect-[16/7]" fallbackClassName="aspect-[4/3] sm:aspect-[16/7] border-0 bg-surface-muted" loading="eager" priority /></div>
+                    <MarketingHero eyebrow={copy.eyebrow} title={copy.headline} description={heroDescription} action={action} aside={progress} />
+                </>}
+                {preview && <StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mt-5" />}
                 <section className="border-t border-border py-14 sm:py-20"><p className="discovery-eyebrow text-foreground">LO QUE DESBLOQUEAMOS</p><h2 className="mt-3 max-w-3xl text-3xl font-extrabold uppercase sm:text-5xl">{copy.title}</h2><p className="mt-6 max-w-3xl whitespace-pre-line leading-7 text-foreground-soft">{copy.reward}</p>{copy.offers.length > 0 && <dl className="mt-7 grid gap-6 sm:grid-cols-2">{copy.offers.map(offer => <div key={offer.label} className="rounded-[var(--radius-card)] bg-surface-muted p-6"><dt className="discovery-eyebrow text-foreground">{offer.label}</dt><dd className="mt-3 whitespace-pre-line text-lg font-bold">{offer.value}</dd></div>)}</dl>}{copy.valueNote && <p className="mt-5 leading-7">{copy.valueNote}</p>}</section>
                 <MarketingBenefits eyebrow="POR QUÉ PARTICIPAR" title={copy.success ? 'LA META SE LOGRÓ' : (copy.failed || copy.expired ? 'EL RESULTADO' : 'HAGAMOS QUE SUCEDA')} items={copy.benefits}/>
                 <section className="border-t border-border py-14"><p className="discovery-eyebrow text-foreground">CÓMO FUNCIONA</p><h2 className="mt-3 text-3xl font-extrabold uppercase">DE LA PROPUESTA AL RESULTADO</h2><div className="mt-10 grid gap-7 md:grid-cols-3">{copy.steps.map((step, index) => <article key={step.title} className="border-t border-border pt-5"><span className="font-extrabold text-foreground">0{index + 1}</span><h3 className="mt-4 text-xl font-extrabold">{step.title}</h3><p className="mt-3 leading-7 text-foreground-soft">{step.description}</p></article>)}</div></section>
@@ -75,6 +88,7 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
                 <MarketingFAQ items={copy.faq}/>
             </div>
             <section data-marketing-surface="dark" aria-label="CTA final" className="bg-background py-16 text-foreground sm:py-24"><div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"><p className="discovery-eyebrow text-foreground/70">{copy.stateLabel}</p><h2 className="mt-3 max-w-4xl text-4xl leading-tight font-extrabold uppercase sm:text-6xl">{copy.finalHeadline}</h2><p className="mt-5 text-foreground/75">{copy.title} · {number(copy.progress.current)} / {number(copy.progress.target)} compromisos{!copy.success && !copy.failed && !copy.expired && ` · Faltan ${number(copy.progress.remaining)}`}</p><div className="mt-8"><MarketingCTA action={action}/></div></div></section>
+            {vsl && <VideoLandingAction {...videoAction} />}
         </main>
     </>;
 }

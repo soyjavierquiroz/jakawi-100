@@ -312,6 +312,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('memberships', [AdminController::class, 'activateMembership'])->name('admin.memberships.store');
     Route::delete('memberships/{membership}', [AdminController::class, 'cancelMembership'])->name('admin.memberships.cancel');
     Route::get('redemptions', [AdminController::class, 'redemptions'])->name('admin.redemptions.index');
+    Route::get('settings', [\App\Http\Controllers\AdminSiteSettingsController::class, 'index'])->name('admin.site-settings');
+    Route::put('settings', [\App\Http\Controllers\AdminSiteSettingsController::class, 'update'])->name('admin.site-settings.update');
     Route::get('attribution', [AdminController::class, 'attribution'])->name('admin.attribution.index');
     Route::post('attribution/{user}/correction', [AdminAdjustmentController::class, 'attribution'])->name('admin.attribution.correction');
     Route::put('attribution/settings', [AdminController::class, 'updateAttributionSettings'])->name('admin.attribution.settings.update');

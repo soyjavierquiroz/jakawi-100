@@ -6,6 +6,7 @@ import {
 import type { ReactNode, Ref } from 'react';
 import type { OfferPresentationV1 } from './presentation';
 import { distinctOfferValue } from './composition';
+import { useVideoLandingAction, VideoLandingAction } from '../VideoLandingAction';
 import {
     MarketingFactStrip,
     MarketingFinalCTA,
@@ -61,6 +62,9 @@ export function OfferConversionTemplate({
     heroActionRef,
     finalActionRef,
 }: Props) {
+    const videoFirst = p.media?.type === 'vsl';
+    const videoAction = useVideoLandingAction(action);
+    const effectiveAction = videoFirst ? videoAction.action : action;
     const treatment = density
         ? density === 'COMPACT'
             ? 'compact'
@@ -90,7 +94,7 @@ export function OfferConversionTemplate({
             ))}
             <div ref={heroActionRef} className="mt-4">
                 <MarketingPrimaryCTA
-                    action={action}
+                    action={effectiveAction}
                     location="hero"
                     className={
                         compact
@@ -126,7 +130,9 @@ export function OfferConversionTemplate({
                 treatment={treatment}
                 hookClassName={hookClassName}
             />
-            {renderHeroAnnotation?.()}
+            {!videoFirst && renderHeroAnnotation?.()}
+            {!videoFirst && (
+                <>
             {renderHeroSupport ? (
                 renderHeroSupport()
             ) : (
@@ -142,21 +148,23 @@ export function OfferConversionTemplate({
                     {p.hero.description}
                 </p>
             )}
+                </>
+            )}
         </>
     );
     const hero = (
         <section
             data-offer-chapter="hero"
             aria-label={p.hero.eyebrow}
-            className={`offer-hero-v3 ${mediaLed ? 'offer-media-led' : 'offer-first'} ${p.media ? 'offer-with-media' : ''}`}
+            className={`offer-hero-v3 ${videoFirst || mediaLed ? 'offer-media-led' : 'offer-first'} ${p.media ? 'offer-with-media' : ''} ${videoFirst ? 'offer-video-first' : ''}`}
         >
             <div className="offer-intro min-w-0">{intro}</div>
             {p.media && (
-                <div className="offer-media min-w-0">
-                    <OptionalMarketingMedia media={p.media} compact={compact} />
+                <div className="offer-media min-w-0" data-video-framing={p.media.type === 'vsl' ? p.media.config.framing ?? 'horizontal' : undefined}>
+                    <OptionalMarketingMedia media={p.media} compact={compact} videoFirst={videoFirst} />
                 </div>
             )}
-            <div className="offer-details min-w-0">{offerDetails}</div>
+            {videoFirst ? <p data-video-subtitle className="offer-video-subtitle min-w-0 text-lg leading-7 text-[var(--marketing-text-secondary)]">{p.hero.description}</p> : <div className="offer-details min-w-0">{offerDetails}</div>}
         </section>
     );
     const faq = p.faq.length > 0 && (
@@ -169,6 +177,7 @@ export function OfferConversionTemplate({
     );
     return (
         <main
+            data-video-first={videoFirst ? '' : undefined}
             data-offer-hero={mediaLed ? 'MEDIA_LED' : 'OFFER_FIRST'}
             data-offer-density={compact ? 'COMPACT' : 'STANDARD'}
             onClickCapture={trackGrowthClick}
@@ -182,8 +191,14 @@ export function OfferConversionTemplate({
             }
         >
             <div className={offerContainer(compact)}>
-                {renderNotice?.()}
                 {hero}
+                <section id="landing-details" tabIndex={-1} aria-label="Estado y detalles de la propuesta" className="scroll-mt-6">
+                    {renderNotice?.()}
+                    {videoFirst && renderHeroAnnotation?.()}
+                    {videoFirst && renderHeroSupport?.()}
+                    {videoFirst && videoAction.informational && !renderNotice && <p className="py-5 font-semibold">EN PREPARACIÓN · Esta presentación no admite reservas, pagos ni canjes.</p>}
+                    {videoFirst && <div className="pb-8">{offerDetails}</div>}
+                </section>
                 {stepsPlacement === 'content' && (
                     <MarketingSteps steps={p.steps} compact={compact} />
                 )}
@@ -192,11 +207,12 @@ export function OfferConversionTemplate({
             </div>
             <MarketingFinalCTA
                 finalCta={p.finalCta}
-                action={action}
+                action={effectiveAction}
                 treatment={treatment}
                 sectionRef={finalActionRef}
             />
             {renderAfterFinal?.()}
+            {videoFirst && <VideoLandingAction {...videoAction} />}
         </main>
     );
 }

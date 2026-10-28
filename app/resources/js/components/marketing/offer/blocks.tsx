@@ -16,9 +16,11 @@ export const offerContainer = (compact: boolean) =>
 export function OptionalMarketingMedia({
     media,
     compact = false,
+    videoFirst = false,
 }: {
     media?: OfferPresentationV1['media'];
     compact?: boolean;
+    videoFirst?: boolean;
 }) {
     if (!media) return null;
     return (
@@ -31,7 +33,7 @@ export function OptionalMarketingMedia({
             }
         >
             {media.type === 'vsl' ? (
-                <LandingVideo config={{ ...media.config, theme: 'inherit' }} />
+                <LandingVideo config={{ ...media.config, theme: 'inherit' }} fullFrame={videoFirst} />
             ) : (
                 <picture>
                     {!!media.desktopSrcset?.length && (

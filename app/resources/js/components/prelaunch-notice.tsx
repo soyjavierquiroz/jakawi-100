@@ -1,5 +1,8 @@
-/** Shared public notice: in document flow, above the journey and below modal layers. */
+import { usePage } from '@inertiajs/react';
+
+/** The global visual switch is independent of PRELAUNCH_MODE and noindex. */
 export default function PrelaunchNotice() {
+    if (!usePage().props.showDemoBanner) return null;
     return (
         <aside
             data-prelaunch-notice

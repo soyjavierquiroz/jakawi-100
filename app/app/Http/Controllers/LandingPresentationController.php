@@ -151,7 +151,7 @@ class LandingPresentationController extends Controller
                 && $request->user() && ! $request->user()->hasVerifiedEmail()
                 && (($subject instanceof Experience && $subject->reservation_method === 'jakawi') || $subject instanceof Unlock),
             'landingUrl' => route('landing-presentations.show', $presentation, false),
-            'vsl' => ! ($subject instanceof Unlock) && in_array($presentation->media_mode?->value, ['IMAGE', 'NONE'], true) ? null : app(LandingVideoConfiguration::class)->forPresentation($presentation),
+            'vsl' => app(LandingVideoConfiguration::class)->forPresentation($presentation),
             'presentation' => $presentation->only(['id', 'name', 'slug', 'status', 'default_scope', 'campaign_key', 'hero_alt', 'template_key', 'marketing_theme', 'media_mode', 'hero_layout', 'density']),
             'selectedLocationId' => $resumed ? $request->session()->get('landing_continuation_context.location_id') : null,
             'acquisitionResumed' => (bool) $resumed,

@@ -70,6 +70,11 @@ class LandingVideoConfiguration
         $subject = $presentation->subject;
         // Never serialize the configuration (including poster) while disclosure is locked.
         if ($subject instanceof Unlock && (! $subject->revealable() || ! app(\App\Http\Controllers\UnlockController::class)->authorizedReveal($subject))) return null;
-        return $presentation->vsl;
+        if (! ($subject instanceof Unlock) && in_array($presentation->media_mode?->value, ['IMAGE', 'NONE'], true)) return null;
+        $config = $presentation->vsl;
+        if (! is_array($config) || ! is_array($config['source'] ?? null)) return null;
+        $rules = array_intersect_key(self::rules(), array_flip(['vsl.source', 'vsl.source.type', 'vsl.source.url']));
+
+        return validator(['vsl' => $config], $rules)->passes() ? $config : null;
     }
 }

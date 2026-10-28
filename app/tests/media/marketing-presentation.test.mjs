@@ -20,6 +20,16 @@ test('configured vertical and horizontal ratios select layout before loading', (
     assert.equal(resolveFraming('youtube').kind, 'horizontal');
     assert.equal(resolveFraming('development-fixture').kind, 'native-vertical');
 });
+test('full vertical presentation preserves the entire native or embedded content height', () => {
+    for (const type of ['mp4', 'bunny', 'youtube']) {
+        for (const kind of ['native-vertical', 'embedded-vertical']) {
+            const frame = resolveFraming(type, { kind, viewportAspectRatio: 9 / 16 });
+            assert.equal(frame.viewportAspectRatio, 9 / 16);
+            close(verticalFraming(frame).heightPercent, 100);
+            close(verticalFraming(frame).topPercent, 0);
+        }
+    }
+});
 test('embedded content requires explicit framing, never inferred from a 16:9 canvas', () => {
     assert.equal(
         resolveFraming('mp4', { kind: 'auto', sourceAspectRatio: 16 / 9 }).kind,

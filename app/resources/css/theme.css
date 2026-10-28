@@ -36,6 +36,10 @@
     --text-muted: var(--palette-light-text-muted);
     --border: var(--palette-light-border);
     --brand: #ff5a4f;
+    --marketing-sticky-surface: var(--cream);
+    --marketing-sticky-text: var(--ink);
+    --marketing-sticky-action: color-mix(in srgb, var(--brand) 80%, var(--ink));
+    --marketing-sticky-action-text: var(--palette-light-surface-raised);
     --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
     --success: #24b47e;
     /* External community CTA; independent of JAKAWI brand and success colors. */

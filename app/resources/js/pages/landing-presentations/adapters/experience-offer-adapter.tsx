@@ -98,6 +98,7 @@ export default function ExperienceOfferAdapter({
     const continueAction = useLandingAction();
     const guest = !(usePage().props.auth as { user?: unknown })?.user;
     const sent = useRef(false);
+    const preparing = copy.action.label === 'EN PREPARACIÓN';
     const disabled = preview || copy.action.kind === 'unavailable';
     const action = {
         ...copy.action,
@@ -194,7 +195,7 @@ export default function ExperienceOfferAdapter({
             memberAdvantage: price.memberAdvantage,
         })),
         essentialConditions: [],
-        actionExplanation: {
+        actionExplanation: preparing ? undefined : {
             description: externalReservation
                 ? 'La reserva continúa en la ficha y se gestiona con el partner.'
                 : copy.membership,
@@ -204,7 +205,7 @@ export default function ExperienceOfferAdapter({
             headline: 'Cómo reservar',
             items: copy.steps,
         },
-        faq: distinctOfferFaq(copy.faq, [
+        faq: distinctOfferFaq(preparing ? copy.faq.filter(item => !item.answer.includes(copy.membership)) : copy.faq, [
             copy.membership,
             ...copy.steps.map((step) => step.description),
             ...copy.sessions.flatMap((session) => [
@@ -257,19 +258,6 @@ export default function ExperienceOfferAdapter({
                 stepsPlacement="operational"
                 className="experience-marketing-v3 overflow-x-clip font-discovery break-words"
                 faqClassName="experience-faq border-t border-border"
-                renderNotice={() =>
-                    (preview || copy.action.label === 'EN PREPARACIÓN') && (
-                        <StatusBanner
-                            title={preview ? 'VISTA PREVIA' : 'PRÓXIMAMENTE'}
-                            description={
-                                preview
-                                    ? 'Las acciones están desactivadas en esta vista.'
-                                    : 'Presentación comercial en preparación. No admite reservas, pagos ni canjes. El precio preferencial está previsto y requiere futura activación y verificación.'
-                            }
-                            className="mt-5"
-                        />
-                    )
-                }
                 renderOperationalContent={() => (
                     <>
                         <section
@@ -299,6 +287,7 @@ export default function ExperienceOfferAdapter({
                             className="border-t border-border py-12 sm:py-16 lg:grid lg:grid-cols-[0.9fr_1.1fr] lg:gap-14"
                         >
                             <div>
+                                {preview && <StatusBanner title="VISTA PREVIA" description="Las acciones están desactivadas en esta vista." className="mb-6" />}
                                 <p className="text-sm font-extrabold tracking-widest">
                                     PREPARA TU PLAN
                                 </p>
@@ -307,8 +296,8 @@ export default function ExperienceOfferAdapter({
                                 </h2>
                                 {copy.action.kind === 'unavailable' && (
                                     <StatusBanner
-                                        title={copy.action.label}
-                                        description="Consulta la ficha para conocer el estado de la experiencia."
+                                        title={preparing ? 'PRÓXIMAMENTE' : copy.action.label}
+                                        description={preparing ? 'Presentación comercial en preparación. No admite reservas, pagos ni canjes. El precio preferencial está previsto y requiere futura activación y verificación.' : 'Consulta la ficha para conocer el estado de la experiencia.'}
                                         className="mt-6"
                                     />
                                 )}
