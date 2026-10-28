@@ -130,7 +130,7 @@ class PublicController extends Controller
         $category = $request->query('category');
         $category = in_array($category, config('jakawi.categories'), true) ? $category : null;
         $type = in_array($request->query('type'), ['benefits', 'experiences', 'challenges', 'unlocks', 'places'], true) ? $request->query('type') : null;
-        $partners = Partner::query()->published()->whereHas('locations', fn (Builder $query) => $query->published()->where('city_id', $city->id))->orderByDesc('featured')->orderBy('name');
+        $partners = Partner::query()->published()->whereHas('locations', fn (Builder $query) => $query->published()->where('city_id', $city->id));
 
         if ($category !== null) {
             $partners->where('category', $category);
@@ -148,7 +148,8 @@ class PublicController extends Controller
             default => null,
         };
         $page = $type === 'places'
-            ? \App\Support\ListingPage::make($partners->reorder()->when($sort === 'featured', fn ($q) => $q->orderByDesc('featured'))->when($sort === 'newest', fn ($q) => $q->orderByDesc('published_at'))->orderByRaw('lower(name)')->orderBy('id'), 18)
+            ? \App\Support\ListingPage::make($partners->when($sort === 'featured', fn ($q) => $q->orderByDesc('featured')->orderBy('sort_order'))
+                ->when($sort === 'newest', fn ($q) => $q->orderByRaw('published_at DESC NULLS LAST')->orderByDesc('id'), fn ($q) => $q->orderByRaw('lower(name)')->orderBy('id')), 18)
             : $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, max(1, $request->integer('page', 1)));
         return Inertia::render('explore', [
             'query' => $term,

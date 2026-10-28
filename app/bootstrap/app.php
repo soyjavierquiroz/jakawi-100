@@ -70,7 +70,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->trustProxies(
-            at: ['172.18.0.0/16'],
+            at: ['172.18.0.0/16', '10.94.0.0/24'],
             headers: Request::HEADER_X_FORWARDED_FOR
                 | Request::HEADER_X_FORWARDED_HOST
                 | Request::HEADER_X_FORWARDED_PORT

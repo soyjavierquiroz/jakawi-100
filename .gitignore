@@ -27,3 +27,14 @@
 /.docker-data/
 
 /.vsl-state/
+
+# Recovery: production credentials and private recovery material are never source.
+production.env
+db.env
+.env.*
+!.env.example
+.ssh/
+*.pem
+*.key
+*.dump
+*.private.*
