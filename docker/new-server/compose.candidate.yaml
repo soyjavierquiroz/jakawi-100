@@ -1,0 +1,61 @@
+# Candidate only. Release variables and env files stay outside Git.
+name: jakawi
+x-log: &log
+  driver: json-file
+  options: {max-size: "5m", max-file: "3"}
+x-php: &php
+  image: ${APP_IMAGE:?Set an immutable tested app release}
+  pull_policy: never
+  restart: unless-stopped
+  env_file: ["${APP_ENV_FILE:?Set absolute path to private app env}"]
+  volumes: ["${STATE_ROOT:-/srv/sites/jakawi.com}/storage:/var/www/html/storage"]
+  networks: [private, egress]
+  depends_on:
+    db: {condition: service_healthy}
+  logging: *log
+services:
+  app:
+    <<: *php
+    mem_limit: 384m
+  web:
+    image: ${WEB_IMAGE:?Set matching immutable web release}
+    pull_policy: never
+    restart: unless-stopped
+    volumes: ["${STATE_ROOT:-/srv/sites/jakawi.com}/storage/app/public:/var/www/html/public/storage:ro"]
+    depends_on: [app]
+    networks:
+      private: {}
+      egress: {}
+      web: {aliases: [jakawi-web]}
+    mem_limit: 64m
+    logging: *log
+  db:
+    image: ${DB_IMAGE:?Set the currently verified PostgreSQL image digest}
+    pull_policy: never
+    restart: unless-stopped
+    env_file: ["${DB_ENV_FILE:?Set absolute path to private DB env}"]
+    volumes: ["${STATE_ROOT:-/srv/sites/jakawi.com}/postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "${DB_HEALTH_DATABASE:?Set the effective application database}"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [private]
+    mem_limit: 256m
+    logging: *log
+  worker:
+    <<: *php
+    profiles: [production-jobs]
+    user: "82:82"
+    command: [php, artisan, "queue:work", database, "--queue=social-interactive,social", "--sleep=3", "--tries=3", "--max-time=3600"]
+    mem_limit: 192m
+  scheduler:
+    <<: *php
+    profiles: [production-jobs]
+    user: "82:82"
+    command: [php, artisan, "schedule:work"]
+    mem_limit: 128m
+networks:
+  private: {external: true, name: "${PRIVATE_NETWORK:-jakawi_private}"}
+  egress: {external: true, name: "${EGRESS_NETWORK:-jakawi_egress}"}
+  web: {external: true, name: "${WEB_NETWORK:-web}"}

@@ -1,0 +1,17 @@
+**
+!app
+!app/**
+!docker
+!docker/new-server
+!docker/new-server/**
+app/.env*
+app/vendor
+app/node_modules
+app/bootstrap/cache/*.php
+app/storage/**
+app/public/hot
+app/public/storage
+**/*.pem
+**/*.key
+**/*.dump
+**/*.log

@@ -5,7 +5,7 @@ public_html
 app/.env
 app/vendor
 app/node_modules
-app/public/build
+# New-server targets consume assets freshly generated before docker build.
 app/bootstrap/cache/*.php
 app/storage/logs
 
@@ -14,3 +14,11 @@ app/storage/logs
 
 # Laravel must never switch release HTML to a local Vite development server.
 app/public/hot
+
+# Private runtime material is never a build input.
+**/.env*
+**/*.env
+**/*.pem
+**/*.key
+**/*.dump
+artifacts
