@@ -3,7 +3,7 @@ import { usePage } from '@inertiajs/react';
 import { MarketingCTA, type MarketingAction } from './primitives';
 
 /** Preserve the authorized handler; private/non-operational previews only navigate to details. */
-export function useVideoLandingAction(action: MarketingAction, details = '#landing-details') {
+export function useVideoLandingAction(action: MarketingAction, details = '#landing-details'): { informational: boolean; action: MarketingAction } {
     const { props } = usePage();
     const status = (props.presentation as { status?: string } | undefined)?.status;
     const informational = props.preview === true || (status !== undefined && status !== 'PUBLISHED') || action.disabled === true || action.kind === 'unavailable';

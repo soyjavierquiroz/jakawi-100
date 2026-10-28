@@ -5,7 +5,8 @@ import ts from 'typescript';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
 
-async function render(source, stubHead = false) {
+async function render(source, stubHead = false, banner = true) {
+    source = source.replace("import { usePage } from '@inertiajs/react';", `const usePage = () => ({props: {showDemoBanner: ${banner}}});`);
     if (stubHead) source = source.replace("import { Head } from '@inertiajs/react';", 'const Head = ({children}) => <>{children}</>;');
     let code = ts.transpileModule(source, { compilerOptions: { jsx: ts.JsxEmit.ReactJSX, module: ts.ModuleKind.ESNext } }).outputText;
     code = code.replaceAll('"react/jsx-runtime"', JSON.stringify(import.meta.resolve('react/jsx-runtime')));
@@ -21,13 +22,17 @@ test('Coming Soon renders exact copy with no product links, inventory, theme tog
     assert(html.includes('href="https://jakawi.com/"'));
 });
 
-test('Notice renders commercially truthful, permanent in-flow sticky message without controls', async () => {
+test('Notice renders commercially truthful, globally enabled in-flow sticky message without controls', async () => {
     const html = await render(fs.readFileSync('resources/js/components/prelaunch-notice.tsx', 'utf8'));
     assert(html.includes('MODO PRE-LANZAMIENTO'));
-    assert(html.includes('JAKAWI está en pruebas. Algunas experiencias, beneficios y premios pueden estar disponibles únicamente para participantes invitados. Revisa las condiciones de cada propuesta.'));
+    assert(html.includes('JAKAWI está en modo DEMO. Las experiencias, beneficios, retos o premios son ilustrativos y no corresponden a items reales.'));
     assert(!html.includes('Experiencia ilustrativa'));
     assert(!html.includes('no están disponibles comercialmente'));
     assert.equal((html.match(/data-prelaunch-notice/g) ?? []).length, 1);
     assert(html.includes('sticky top-0 z-40'));
     assert(!/<button|<a |fixed|ficticio/.test(html));
+});
+
+test('Disabled global banner emits no markup or reserved space', async () => {
+    assert.equal(await render(fs.readFileSync('resources/js/components/prelaunch-notice.tsx', 'utf8'), false, false), '');
 });

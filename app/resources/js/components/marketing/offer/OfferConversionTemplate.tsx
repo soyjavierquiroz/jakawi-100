@@ -131,9 +131,7 @@ export function OfferConversionTemplate({
                 hookClassName={hookClassName}
             />
             {!videoFirst && renderHeroAnnotation?.()}
-            {!videoFirst && (
-                <>
-            {renderHeroSupport ? (
+            {!videoFirst && (renderHeroSupport ? (
                 renderHeroSupport()
             ) : (
                 <p
@@ -147,9 +145,7 @@ export function OfferConversionTemplate({
                 >
                     {p.hero.description}
                 </p>
-            )}
-                </>
-            )}
+            ))}
         </>
     );
     const hero = (

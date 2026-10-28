@@ -40,7 +40,7 @@ export default function MarketingLayout({
             <div
                 data-video-marketing={page.props.vsl ? '' : undefined}
                 data-marketing-theme={
-                    theme ?? persistedTheme ?? marketingThemeForPage(component)
+                    theme ?? (page.props.vsl ? 'light-conversion' : persistedTheme ?? marketingThemeForPage(component))
                 }
                 className="min-h-screen bg-background pb-[var(--pwa-install-clearance,0px)] font-discovery text-foreground"
             >
