@@ -93,6 +93,7 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
             ? verticalFraming({
                   sourceAspectRatio: framing.sourceAspectRatio,
                   contentAspectRatio: framing.contentAspectRatio,
+                  viewportAspectRatio: framing.viewportAspectRatio,
                   focalX: framingOptions?.focalX,
                   focalY: framingOptions?.focalY,
               })
