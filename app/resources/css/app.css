@@ -433,8 +433,9 @@
 .offer-video-context, .offer-video-purchase { display: contents; }
 .offer-video-desktop-purchase { display: none; }
 @media (min-width: 1024px) {
-    [data-video-first] > div:first-child { max-width: calc(var(--marketing-hero-max-width) + 6rem); }
     .offer-video-layout {
+        width: min(calc(100vw - 6rem), var(--marketing-hero-max-width));
+        margin-inline: calc((100% - min(calc(100vw - 6rem), var(--marketing-hero-max-width))) / 2);
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, var(--marketing-hero-video-width));
         grid-template-rows: max-content max-content minmax(0, 1fr) max-content;
@@ -456,7 +457,7 @@
     .offer-video-layout .offer-intro h1 br { display: none; }
     .offer-video-layout .offer-intro h1 span.block { display: inline; margin-top: 0; }
     .offer-video-layout .offer-headline-separator { display: inline; }
-    .offer-video-layout .offer-video-subtitle {
+    .offer-video-layout .offer-hero-v3.offer-video-first .offer-video-subtitle {
         grid-column: 1; grid-row: 2;
         max-width: 34rem;
         margin: 1.5rem 0 0;
