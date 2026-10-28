@@ -430,7 +430,7 @@
 }
 /* Wrapper boxes are absent on mobile, retaining the existing spacing and order. */
 .offer-headline-separator { display: none; }
-.offer-video-context, .offer-video-purchase { display: contents; }
+.offer-video-purchase { display: contents; }
 .offer-video-desktop-purchase { display: none; }
 @media (min-width: 1024px) {
     .offer-video-layout {

@@ -35,8 +35,8 @@ export function MarketingVideoHero({
                     {description}
                 </p>
             </section>
-            <section id="landing-details" tabIndex={-1} aria-label="Estado y detalles de la propuesta" className={`offer-video-details scroll-mt-6 ${detailsClassName}`}>
-                <div className="offer-video-context">{context}</div>
+            <section aria-label="Estado y detalles de la propuesta" className={`offer-video-details scroll-mt-6 ${detailsClassName}`}>
+                <div id="landing-details" tabIndex={-1} className="offer-video-context scroll-mt-6">{context}</div>
                 <div className="offer-video-purchase">{purchase}</div>
             </section>
         </div>
