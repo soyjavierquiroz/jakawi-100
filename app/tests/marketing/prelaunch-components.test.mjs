@@ -7,7 +7,7 @@ import { createElement } from 'react';
 
 async function render(source, stubHead = false, banner = true) {
     // This static test renders Coming Soon without its optional community prop.
-    source = source.replace("import { CityCommunityCard } from '@/components/city-community-card';", 'const CityCommunityCard = () => null;');
+    source = source.replace("import { CityCommunityCard, type CityCommunityData } from '@/components/city-community-card';", 'const CityCommunityCard = () => null;');
     source = source.replace("import { usePage } from '@inertiajs/react';", `const usePage = () => ({props: {showDemoBanner: ${banner}}});`);
     if (stubHead) source = source.replace("import { Head } from '@inertiajs/react';", 'const Head = ({children}) => <>{children}</>;');
     let code = ts.transpileModule(source, { compilerOptions: { jsx: ts.JsxEmit.ReactJSX, module: ts.ModuleKind.ESNext } }).outputText;
