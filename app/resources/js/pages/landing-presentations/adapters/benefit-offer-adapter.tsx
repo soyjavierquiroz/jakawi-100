@@ -189,6 +189,7 @@ export default function BenefitOfferAdapter({
                 presentation={offer}
                 theme={presentation.marketing_theme || undefined}
                 action={action}
+                detailsHref="#condiciones"
                 treatment="plain"
                 className="benefit-discovery-v1 overflow-x-clip font-discovery break-words"
                 faqClassName="benefit-faq border-t border-border"

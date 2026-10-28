@@ -40,6 +40,7 @@ type Props = {
     renderAfterFinal?: () => ReactNode;
     heroActionRef?: Ref<HTMLDivElement>;
     finalActionRef?: Ref<HTMLElement>;
+    detailsHref?: string;
 };
 
 export function OfferConversionTemplate({
@@ -61,9 +62,10 @@ export function OfferConversionTemplate({
     renderAfterFinal,
     heroActionRef,
     finalActionRef,
+    detailsHref = '#landing-details',
 }: Props) {
     const videoFirst = p.media?.type === 'vsl';
-    const videoAction = useVideoLandingAction(action);
+    const videoAction = useVideoLandingAction(action, detailsHref);
     const effectiveAction = videoFirst ? videoAction.action : action;
     const treatment = density
         ? density === 'COMPACT'
@@ -192,7 +194,6 @@ export function OfferConversionTemplate({
                     {renderNotice?.()}
                     {videoFirst && renderHeroAnnotation?.()}
                     {videoFirst && renderHeroSupport?.()}
-                    {videoFirst && videoAction.informational && !renderNotice && <p className="py-5 font-semibold">EN PREPARACIÓN · Esta presentación no admite reservas, pagos ni canjes.</p>}
                     {videoFirst && <div className="pb-8">{offerDetails}</div>}
                 </section>
                 {stepsPlacement === 'content' && (

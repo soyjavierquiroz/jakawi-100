@@ -254,6 +254,7 @@ export default function ExperienceOfferAdapter({
                 presentation={offer}
                 theme={presentation.marketing_theme || undefined}
                 action={action}
+                detailsHref="#condiciones"
                 treatment="editorial"
                 stepsPlacement="operational"
                 className="experience-marketing-v3 overflow-x-clip font-discovery break-words"
