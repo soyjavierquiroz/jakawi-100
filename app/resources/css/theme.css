@@ -37,6 +37,7 @@
     --border: var(--palette-light-border);
     --brand: #ff5a4f;
     --marketing-sticky-surface: var(--cream);
+    --marketing-video-gutter: 1rem;
     --marketing-sticky-text: var(--ink);
     --marketing-sticky-action: color-mix(in srgb, var(--brand) 80%, var(--ink));
     --marketing-sticky-action-text: var(--palette-light-surface-raised);

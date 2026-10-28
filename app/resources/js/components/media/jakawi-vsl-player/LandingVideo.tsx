@@ -10,5 +10,5 @@ export type LandingVideoConfig = Pick<JakawiVslPlayerProps, 'poster' | 'theme' |
 
 export function LandingVideo({ config, fullFrame = false }: { config: LandingVideoConfig; fullFrame?: boolean }) {
     const kind = config.framing ?? 'horizontal';
-    return <JakawiVslPlayer {...config} mode="vsl" {...(fullFrame ? { fit: kind === 'embedded-vertical' ? 'cover' : 'contain', framing: { kind, viewportAspectRatio: kind === 'horizontal' ? 16 / 9 : 9 / 16 } } : {})} />;
+    return <JakawiVslPlayer {...config} mode="vsl" {...(fullFrame ? { marketingFrame: true, fit: kind === 'embedded-vertical' ? 'cover' : 'contain', framing: { kind, viewportAspectRatio: kind === 'horizontal' ? 16 / 9 : 9 / 16 } } : {})} />;
 }

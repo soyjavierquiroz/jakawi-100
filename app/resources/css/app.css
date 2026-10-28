@@ -413,6 +413,11 @@
 .offer-video-first [data-video-framing="embedded-vertical"] { width: min(100%, 22rem, calc(58svh * 9 / 16)); margin-inline: auto; }
 .video-landing-action { display: none; }
 @media (max-width: 1023px) {
+    .offer-hero-v3.offer-video-first .offer-media {
+        width: calc(100vw - 2 * var(--marketing-video-gutter));
+        max-width: none;
+        margin-inline: calc((100% - 100vw + 2 * var(--marketing-video-gutter)) / 2);
+    }
     [data-video-marketing] { padding-bottom: max(var(--pwa-install-clearance, 0px), var(--marketing-sticky-clearance, calc(7rem + env(safe-area-inset-bottom)))); }
     .offer-video-first .offer-intro { text-align: center; }
     .offer-video-first .offer-intro h1 { margin-inline: auto; max-width: 24rem; font-size: clamp(1.75rem, 7.8vw, 2.4rem); line-height: 1.04; }

@@ -63,6 +63,8 @@ export interface JakawiVslPlayerProps {
     theme?: 'inherit' | 'custom';
     colors?: { accent?: string; text?: string; overlay?: string };
     fit?: 'cover' | 'contain';
+    /** Marketing landing: mobile 3:4 cover, with the configured desktop frame retained. */
+    marketingFrame?: boolean;
     focalPosition?: string;
     /** Stable layout fixed before loading. Auto uses sourceAspectRatio or defaults
      * to horizontal (vertical for the development fixture), never media metadata.

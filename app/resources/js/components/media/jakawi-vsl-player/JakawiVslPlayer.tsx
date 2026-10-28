@@ -85,6 +85,8 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
                 ? 'Intentar de nuevo'
                 : 'Ver video';
     const framing = resolveFraming(props.source.type, props.framing);
+    const desktopCover = verticalFraming(framing);
+    const mobileCover = verticalFraming({ ...framing, viewportAspectRatio: 3 / 4 });
     const geometry =
         (props.framing || !focalPosition || focalPosition === 'center') &&
         !youtube &&
@@ -102,6 +104,9 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
         const iframe = youtubeRef.current?.querySelector('iframe');
         if (!iframe) return;
         iframe.removeAttribute('style');
+        // The landing frame changes through CSS, without recreating playback on resize.
+        // Remove the engine's one-time inline crop so both breakpoints can use their geometry.
+        if (props.marketingFrame) return;
         if (framing.kind === 'embedded-vertical') {
             applyYouTubeCrop(
                 iframe,
@@ -127,6 +132,7 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
         framing.kind,
         framingOptions?.focalX,
         framingOptions?.focalY,
+        props.marketingFrame,
         youtubeRef,
     ]);
     const mediaStyle = geometry
@@ -171,10 +177,21 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
     return (
         <div
             data-theme={props.theme ?? 'inherit'}
+            data-marketing-video-frame={props.marketingFrame ? framing.kind : undefined}
             style={{
                 '--jakawi-video-accent': colors.accent,
                 '--jakawi-video-text': colors.text,
                 '--jakawi-video-overlay': colors.overlay,
+                ...(props.marketingFrame ? {
+                    '--vsl-desktop-width': `${desktopCover.widthPercent}%`,
+                    '--vsl-desktop-height': `${desktopCover.heightPercent}%`,
+                    '--vsl-desktop-left': `${desktopCover.leftPercent}%`,
+                    '--vsl-desktop-top': `${desktopCover.topPercent}%`,
+                    '--vsl-mobile-width': `${mobileCover.widthPercent}%`,
+                    '--vsl-mobile-height': `${mobileCover.heightPercent}%`,
+                    '--vsl-mobile-left': `${mobileCover.leftPercent}%`,
+                    '--vsl-mobile-top': `${mobileCover.topPercent}%`,
+                } : {}),
             } as CSSProperties}
             role="region"
             aria-label={title}
@@ -184,12 +201,13 @@ export function JakawiVslPlayer(props: JakawiVslPlayerProps) {
             className={cn(
                 styles.player,
                 framing.kind === 'horizontal' && styles.horizontal,
+                props.marketingFrame && styles.marketingFrame,
                 className,
             )}
         >
             <div
                 className={styles.frame}
-                style={{ aspectRatio: framing.viewportAspectRatio }}
+                style={{ aspectRatio: props.marketingFrame ? `var(--vsl-frame-ratio, ${framing.viewportAspectRatio})` : framing.viewportAspectRatio }}
             >
                 {youtube ? (
                     <>

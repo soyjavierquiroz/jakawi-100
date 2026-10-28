@@ -30,6 +30,18 @@ test('full vertical presentation preserves the entire native or embedded content
         }
     }
 });
+test('mobile 3:4 cover fills the frame without stretching any source framing', () => {
+    for (const type of ['mp4', 'bunny', 'youtube']) {
+        for (const kind of ['native-vertical', 'embedded-vertical', 'horizontal']) {
+            const frame = { ...resolveFraming(type, { kind }), viewportAspectRatio: 3 / 4 };
+            const cover = verticalFraming(frame);
+            assert.ok(cover.widthPercent >= 100 && cover.heightPercent >= 100);
+            close((cover.widthPercent * (3 / 4)) / cover.heightPercent, frame.sourceAspectRatio);
+            close(cover.leftPercent, (100 - cover.widthPercent) / 2);
+            close(cover.topPercent, (100 - cover.heightPercent) / 2);
+        }
+    }
+});
 test('embedded content requires explicit framing, never inferred from a 16:9 canvas', () => {
     assert.equal(
         resolveFraming('mp4', { kind: 'auto', sourceAspectRatio: 16 / 9 }).kind,
