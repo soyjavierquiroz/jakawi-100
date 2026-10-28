@@ -43,6 +43,7 @@ class MarketingVideoFirstTest extends TestCase
     public function test_effective_video_is_shared_by_public_preview_and_admin_without_media_guessing(): void
     {
         $experience = Experience::factory()->published()->create(['catalog_visibility' => 'upcoming', 'operations_confirmed' => false]);
+        $experience->syncPartnersWithRoles([['partner_id' => Partner::factory()->published()->create()->id, 'role' => 'organizer']]);
         $landing = $experience->landingPresentations()->create(['name' => 'Video real configurado', 'slug' => 'video-source', 'status' => 'PUBLISHED', 'media_mode' => 'VSL']);
         $before = $experience->getAttributes();
         foreach ([['youtube', 'https://www.youtube.com/shorts/P42gDOTL6Ys'], ['mp4', 'https://media.example.test/a.mp4'], ['bunny', 'https://media.example.test/a.m3u8']] as [$type, $url]) {
