@@ -45,7 +45,7 @@ class MarketingVideoFirstTest extends TestCase
         $experience = Experience::factory()->published()->create(['catalog_visibility' => 'upcoming', 'operations_confirmed' => false]);
         $experience->syncPartnersWithRoles([['partner_id' => Partner::factory()->published()->create()->id, 'role' => 'organizer']]);
         $landing = $experience->landingPresentations()->create(['name' => 'Video real configurado', 'slug' => 'video-source', 'status' => 'PUBLISHED', 'media_mode' => 'VSL']);
-        $before = $experience->getAttributes();
+        $before = $experience->fresh()->getAttributes();
         foreach ([['youtube', 'https://www.youtube.com/shorts/P42gDOTL6Ys'], ['mp4', 'https://media.example.test/a.mp4'], ['bunny', 'https://media.example.test/a.m3u8']] as [$type, $url]) {
             $landing->update(['vsl' => ['source' => compact('type', 'url'), 'framing' => 'native-vertical']]);
             $this->get('/l/video-source')->assertInertia(fn (Assert $p) => $p->where('vsl.source.url', $url)->where('copy.action.kind', 'unavailable')->where('copy.action.label', 'EN PREPARACIÓN'));
