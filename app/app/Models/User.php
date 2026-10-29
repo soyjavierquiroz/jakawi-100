@@ -18,6 +18,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 /**
+ * @property string $global_subject_id
  * @property int $id
  * @property string $name
  * @property string $email
@@ -36,6 +37,14 @@ class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+
+    protected static function booted(): void
+    {
+        // The database is the sole issuer; expose its generated UUID immediately after insert.
+        static::created(function (self $user): void {
+            $user->setAttribute('global_subject_id', static::query()->whereKey($user->id)->value('global_subject_id'));
+        });
+    }
 
     /** @return HasMany<Membership> */
     public function memberships(): HasMany

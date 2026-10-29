@@ -51,6 +51,12 @@ use App\Support\PublicJourneyConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['auth', 'throttle:20,1'])->group(function (): void {
+    Route::get('/identity/club/link/{handoff}', [\App\Http\Controllers\Identity\ClubLinkConsentController::class, 'show'])->whereUuid('handoff')->name('identity.club.consent');
+    Route::post('/identity/club/link/{handoff}', [\App\Http\Controllers\Identity\ClubLinkConsentController::class, 'store'])->whereUuid('handoff')->name('identity.club.authorize');
+    Route::post('/identity/club/link/{handoff}/reauthenticate', [\App\Http\Controllers\Identity\ClubLinkConsentController::class, 'reauthenticate'])->whereUuid('handoff')->name('identity.club.reauthenticate');
+});
+
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/membresia', [MembershipOfferController::class, 'show'])->name('membership.show');
 Route::get('/membresia/registro', [MembershipOfferController::class, 'register'])->middleware('guest')->name('membership.register');

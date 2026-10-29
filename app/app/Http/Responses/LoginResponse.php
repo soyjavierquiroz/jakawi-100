@@ -12,6 +12,15 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
+        $identityIntended = $request->session()->get('url.intended');
+        $identityPath = is_string($identityIntended) ? parse_url($identityIntended, PHP_URL_PATH) : null;
+        if (! $request->wantsJson() && is_string($identityPath)
+            && preg_match('~^/identity/club/link/[a-f0-9-]{36}$~D', $identityPath)) {
+            $request->session()->forget('url.intended');
+
+            return redirect()->to($identityPath);
+        }
+
         app(\App\Services\AttributionService::class)->consumeExistingLogin($request->user(), $request);
         $partnerReturn = \App\Http\Controllers\PartnerPublicController::consumeReturn($request);
 

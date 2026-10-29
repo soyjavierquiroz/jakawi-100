@@ -85,3 +85,10 @@ Artisan::command('crm:dispatch', function (CrmDeliveryDispatcher $dispatcher) {
 Schedule::command('crm:dispatch')->everyMinute()->withoutOverlapping(15);
 
 Schedule::command('media:gc')->dailyAt('03:20')->timezone('America/La_Paz')->withoutOverlapping(120);
+
+// Nonces outlive the complete signature validity window; handoffs/subjects remain durable.
+Artisan::command('identity:prune-nonces', function () {
+    $count = DB::table('identity_request_nonces')->where('received_at', '<', now()->subMinutes(15))->delete();
+    $this->info("{$count} expired identity request nonces removed.");
+})->purpose('Prune expired identity transport nonces without deleting links or subjects');
+Schedule::command('identity:prune-nonces')->hourly()->withoutOverlapping();
