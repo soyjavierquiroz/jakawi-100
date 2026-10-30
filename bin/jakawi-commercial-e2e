@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+"""Actual COM sender -> HTTPS -> unmodified CLUB receiver -> protected panel.
+
+Both databases are disposable on the existing internal OIDC test network.
+Never reads a production secret or connects to a production database.
+"""
+import json, os, pathlib, subprocess, tempfile, time
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+CLUB = pathlib.Path('/opt/sites/jakawi.club')
+EVIDENCE = pathlib.Path(os.environ.get('COMMERCIAL_EVIDENCE', '/root/jakawi-commercial-v1/evidence'))
+EVIDENCE.mkdir(parents=True, exist_ok=True)
+NETWORK = 'jakawi-oidc-test'
+NAMES = ['com-commercial-e2e', 'club-commercial-e2e-tls', 'club-commercial-e2e-app']
+
+def run(args, **kwargs):
+    return subprocess.check_output(args, **kwargs)
+
+assert json.loads(run(['docker', 'network', 'inspect', NETWORK]))[0]['Internal']
+state = json.loads(run(['docker', 'inspect', 'jakawi-oidc-db-test']))[0]
+assert list(state['NetworkSettings']['Networks']) == [NETWORK]
+assert state['State']['Health']['Status'] == 'healthy'
+for db in ['jakawi_commercial_e2e', 'jakawi_club_e2e']:
+    run(['docker', 'exec', 'jakawi-oidc-db-test', 'psql', '-U', 'jakawi_test_user', '-d', 'jakawi_test', '-v', 'ON_ERROR_STOP=1', '-c', 'CREATE DATABASE '+db])
+try:
+    with tempfile.TemporaryDirectory(prefix='commercial-e2e-') as directory:
+        tmp = pathlib.Path(directory)
+        (tmp/'hmac').write_text('c'*64)
+        run(['openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-keyout', str(tmp/'tls.key'), '-out', str(tmp/'tls.crt'), '-subj', '/CN=jakawi.club', '-addext', 'subjectAltName=DNS:jakawi.club'], stderr=subprocess.DEVNULL)
+        (tmp/'nginx.conf').write_text('events {} http { server { listen 443 ssl; server_name jakawi.club; ssl_certificate /test/tls.crt; ssl_certificate_key /test/tls.key; location / { proxy_pass http://club-commercial-e2e-app:8080; proxy_set_header Host jakawi.club; proxy_set_header X-Forwarded-Proto https; } } }')
+        # TLS router sets HTTPS from this dedicated test proxy, not from client headers.
+        (tmp/'router.php').write_text("<?php $_SERVER['HTTPS']='on';$_SERVER['SERVER_PORT']=443;require '/var/www/html/public/index.php';")
+        common = ['--network', NETWORK, '--memory', '320m', '--cpus', '0.65', '-w', '/var/www/html']
+        env = ['-e', 'APP_ENV=testing', '-e', 'APP_DEBUG=false', '-e', 'APP_KEY=base64:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=', '-e', 'DB_CONNECTION=pgsql', '-e', 'DB_HOST=db-test', '-e', 'DB_USERNAME=jakawi_test_user', '-e', 'DB_PASSWORD=jakawi_test_password', '-e', 'SESSION_DRIVER=array', '-e', 'CACHE_STORE=array', '-e', 'MAIL_MAILER=array', '-e', 'LOG_CHANNEL=stderr', '-e', 'BCRYPT_ROUNDS=4', '-e', 'APP_CONFIG_CACHE=/tmp/config.php', '-e', 'APP_ROUTES_CACHE=/tmp/routes.php']
+        run(['docker', 'run', '-d', '--name', NAMES[2], *common, *env, '-e', 'DB_DATABASE=jakawi_club_e2e', '-e', 'APP_URL=https://jakawi.club',
+             '-v', str(CLUB/'app')+':/var/www/html:ro', '-v', str(ROOT/'bin')+':/tests:ro', '-v', str(EVIDENCE)+':/evidence',
+             '-v', str(tmp)+':/test:ro', '-v', str(tmp/'hmac')+':/run/secrets/com_commercial_hmac:ro',
+             '--tmpfs', '/var/www/html/storage:rw,mode=1777', '--tmpfs', '/var/www/html/bootstrap/cache:rw,mode=1777',
+             'jakawi-club-php:8.4-base-v1', 'php', '-S', '0.0.0.0:8080', '/test/router.php'])
+        run(['docker', 'exec', NAMES[2], 'sh', '-c', 'mkdir -p storage/logs storage/framework/views storage/framework/sessions storage/framework/cache/data'])
+        run(['docker', 'exec', NAMES[2], 'php', '/tests/commercial-e2e-club.php', 'prepare'])
+        run(['docker', 'run', '-d', '--name', NAMES[1], '--network', NETWORK, '--network-alias', 'jakawi.club', '--memory', '64m', '--cpus', '0.4',
+             '-v', str(tmp)+':/test:ro', '-v', str(tmp/'nginx.conf')+':/etc/nginx/nginx.conf:ro', 'nginx:stable-alpine'])
+        output = run(['docker', 'run', '--rm', '--name', NAMES[0], *common, *env, '-e', 'DB_DATABASE=jakawi_commercial_e2e', '-e', 'APP_URL=https://jakawi.com',
+             '-e', 'CLUB_COMMERCIAL_ENABLED=true', '-e', 'CLUB_COMMERCIAL_HMAC_SECRET='+'c'*64,
+             '-v', str(ROOT/'app')+':/var/www/html', '-v', str(ROOT/'bin')+':/tests:ro', '-v', str(EVIDENCE)+':/evidence', '-v', str(tmp)+':/test:ro',
+             'jakawi-build-v1:dependencies', 'php', '-d', 'curl.cainfo=/test/tls.crt', '-d', 'openssl.cafile=/test/tls.crt', '/tests/commercial-e2e-com.php'])
+        print(output.decode(), end='')
+        print(run(['docker', 'exec', NAMES[2], 'php', '/tests/commercial-e2e-club.php']).decode(), end='')
+finally:
+    for name in NAMES:
+        subprocess.run(['docker', 'rm', '-f', name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    for db in ['jakawi_commercial_e2e', 'jakawi_club_e2e']:
+        run(['docker', 'exec', 'jakawi-oidc-db-test', 'psql', '-U', 'jakawi_test_user', '-d', 'jakawi_test', '-v', 'ON_ERROR_STOP=1', '-c', 'DROP DATABASE '+db+' WITH (FORCE)'])

@@ -61,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        Redemption::observe(\App\Observers\CommercialRedemptionObserver::class);
         foreach ([User::class, UserProfile::class, PartnerApplication::class, ProgramApplication::class,
             MembershipPurchaseRequest::class, Membership::class, Redemption::class,
             ExperienceReservation::class, ChallengeParticipation::class, UnlockParticipation::class] as $model) {

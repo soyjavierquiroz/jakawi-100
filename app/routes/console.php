@@ -86,6 +86,11 @@ Schedule::command('crm:dispatch')->everyMinute()->withoutOverlapping(15);
 
 Schedule::command('media:gc')->dailyAt('03:20')->timezone('America/La_Paz')->withoutOverlapping(120);
 
+Artisan::command('commercial:dispatch', function (\App\Services\Commercial\CommercialDispatcher $dispatcher) {
+    $this->info($dispatcher->run().' commercial deliveries processed.');
+})->purpose('Deliver committed pilot conversions to CLUB from the independent outbox');
+Schedule::command('commercial:dispatch')->everyMinute()->withoutOverlapping(15);
+
 // Nonces outlive the complete signature validity window; handoffs/subjects remain durable.
 Artisan::command('identity:prune-nonces', function () {
     $count = DB::table('identity_request_nonces')->where('received_at', '<', now()->subMinutes(15))->delete();
