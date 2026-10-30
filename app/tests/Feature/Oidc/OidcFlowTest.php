@@ -139,6 +139,25 @@ class OidcFlowTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_inertia_login_resumes_with_a_full_browser_visit_before_external_callback(): void
+    {
+        $user = User::factory()->create();
+        $url = '/oauth/authorize?'.http_build_query($this->parameters());
+        $this->get($url)->assertRedirect(route('login'));
+        $headers = ['X-Inertia' => 'true', 'Accept' => 'text/html'];
+        $this->assertResumesOidc($this->post('/login', ['email' => $user->email, 'password' => 'password'], $headers), $this->parameters());
+        $response = $this->get($url, $headers)->assertStatus(409);
+        $location = $response->headers->get('X-Inertia-Location');
+        $this->assertSame('/oauth/authorize', parse_url($location, PHP_URL_PATH));
+        parse_str(parse_url($location, PHP_URL_QUERY), $query);
+        $this->assertEquals($this->parameters(), $query);
+        $this->assertDatabaseCount('oauth_auth_codes', 0);
+        // Simulate Inertia's window.location visit, which has no X-Inertia header.
+        $this->flushHeaders();
+        $claims = $this->claims($this->exchange($this->authorize())->assertOk()->json('id_token'));
+        $this->assertSame($user->global_subject_id, $claims['sub']);
+    }
+
     public function test_prompt_none_as_guest_returns_login_required_with_state(): void
     {
         $response = $this->get('/oauth/authorize?'.http_build_query($this->parameters(['prompt' => 'none'])));

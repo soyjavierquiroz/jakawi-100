@@ -210,6 +210,23 @@ echo json_encode($out);
                 csrf = re.search(rb'name="csrf-token" content="([^"]+)"', html).group(1).decode()
                 status, headers, _ = fetch(normal, issuer+'/login', {'email':'oidc-http@example.test','password':'isolated-http-password','_token':csrf})
                 check(status==302 and urllib.parse.urlparse(headers['Location']).path=='/admin', 'ordinary COM admin login preserves its existing destination')
+                inertia = client()
+                inertia_parameters = dict(parameters)
+                inertia_parameters.pop('prompt', None)
+                inertia_url = issuer+'/oauth/authorize?'+urllib.parse.urlencode(inertia_parameters)
+                fetch(inertia, inertia_url)
+                _, _, html = fetch(inertia, issuer+'/login')
+                csrf = re.search(rb'name="csrf-token" content="([^"]+)"', html).group(1).decode()
+                inertia_headers = {'X-Inertia':'true', 'Accept':'text/html'}
+                status, headers, _ = fetch(inertia, issuer+'/login', {'email':'oidc-http@example.test','password':'isolated-http-password','_token':csrf}, inertia_headers)
+                assert status == 302
+                status, headers, _ = fetch(inertia, urllib.parse.urljoin(issuer, headers['Location']), headers=inertia_headers)
+                check(status == 409 and urllib.parse.urlparse(headers.get('X-Inertia-Location','')).path == '/oauth/authorize', 'React Inertia login switches to a full browser visit before external callback')
+                status, headers, _ = fetch(inertia, headers['X-Inertia-Location'])
+                assert status == 302 and headers['Location'].startswith(CALLBACK+'?')
+                inertia_code = dict(urllib.parse.parse_qsl(urllib.parse.urlparse(headers['Location']).query))['code']
+                status, _, raw = token(inertia_code)
+                check(status == 200 and validate(json.loads(raw)['id_token'], inertia_parameters['nonce'])['sub']==before['subject'], 'Inertia browser continuation completes the same signed OIDC flow')
                 print(json.dumps({'result':'PASS','image_revision':revision,'checks':checks,'checks_count':len(checks),
                                   'concurrent_statuses':sorted(r[0] for r in results),'fixture_only':True,'production_users_or_sessions_used':False},indent=2))
             finally:

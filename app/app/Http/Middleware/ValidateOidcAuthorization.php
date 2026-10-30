@@ -40,6 +40,12 @@ class ValidateOidcAuthorization
             return $this->error('invalid_scope');
         }
 
+        // Fortify's React forms may resume this URL through an Inertia XHR.
+        // Switch to a full browser visit before Passport redirects across origins.
+        if ($request->header('X-Inertia')) {
+            return \Inertia\Inertia::location($request->fullUrl());
+        }
+
         try {
             $response = $next($request);
         } catch (OAuthServerException $e) {
