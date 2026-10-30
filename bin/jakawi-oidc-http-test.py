@@ -186,6 +186,7 @@ echo json_encode($out);
                     return claims
                 check(validate(tokens['id_token'], nonce)['email']=='oidc-http@example.test', 'RP verifies JWKS signature issuer audience nonce expiry and global UUID')
                 check(token(code)[0] == 400 and token('invalid')[0] == 400, 'used and invalid codes are rejected')
+                check('no-store' in token('invalid')[1].get('Cache-Control', ''), 'standard OAuth error responses also cannot be cached')
                 parameters['prompt']='none'
                 parameters['nonce']=b64(secrets.token_bytes(32))
                 status, headers, _ = fetch(browser, issuer+'/oauth/authorize?'+urllib.parse.urlencode(parameters))

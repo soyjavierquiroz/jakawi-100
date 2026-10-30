@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Identity;
 
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,13 +43,18 @@ class OidcTokenController extends AccessTokenController
                 DB::rollBack();
             }
 
-            $response->headers->set('Cache-Control', 'no-store');
-            $response->headers->set('Pragma', 'no-cache');
-
-            return $response;
+        } catch (OAuthServerException $e) {
+            DB::rollBack();
+            // Preserve Passport's standard error/status while applying token cache policy.
+            $response = $e->getResponse();
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
         }
+
+        $response->headers->set('Cache-Control', 'no-store');
+        $response->headers->set('Pragma', 'no-cache');
+
+        return $response;
     }
 }

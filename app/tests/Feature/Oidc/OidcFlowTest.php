@@ -143,6 +143,7 @@ class OidcFlowTest extends TestCase
     {
         $response = $this->get('/oauth/authorize?'.http_build_query($this->parameters(['prompt' => 'none'])));
         $response->assertRedirect();
+        $response->assertHeader('Cache-Control', 'no-store, private');
         parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $query);
         $this->assertSame('login_required', $query['error']);
         $this->assertSame(str_repeat('s', 43), $query['state']);
@@ -150,11 +151,11 @@ class OidcFlowTest extends TestCase
 
     public function test_invalid_code_and_repeated_code_are_rejected(): void
     {
-        $this->exchange('invalid')->assertStatus(400)->assertJsonPath('error', 'invalid_grant');
+        $this->exchange('invalid')->assertStatus(400)->assertJsonPath('error', 'invalid_grant')->assertHeader('Cache-Control', 'no-store, private');
         $this->actingAs(User::factory()->create());
         $code = $this->authorize();
         $this->exchange($code)->assertOk();
-        $this->exchange($code)->assertStatus(400)->assertJsonPath('error', 'invalid_grant');
+        $this->exchange($code)->assertStatus(400)->assertJsonPath('error', 'invalid_grant')->assertHeader('Cache-Control', 'no-store, private');
         $this->exchange(strtoupper($code))->assertStatus(400)->assertJsonPath('error', 'invalid_grant');
         $this->assertDatabaseCount('oauth_access_tokens', 1);
     }
@@ -163,8 +164,8 @@ class OidcFlowTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
         $code = $this->authorize();
-        $this->exchange($code, ['code_verifier' => str_repeat('x', 64)])->assertStatus(400);
-        $this->exchange($code, ['client_secret' => 'wrong'])->assertStatus(401);
+        $this->exchange($code, ['code_verifier' => str_repeat('x', 64)])->assertStatus(400)->assertHeader('Cache-Control', 'no-store, private');
+        $this->exchange($code, ['client_secret' => 'wrong'])->assertStatus(401)->assertHeader('Cache-Control', 'no-store, private');
         $this->exchange($code, ['redirect_uri' => 'https://evil.example/callback'])->assertStatus(400);
         $this->assertDatabaseCount('oauth_access_tokens', 0);
         $this->exchange($code)->assertOk();

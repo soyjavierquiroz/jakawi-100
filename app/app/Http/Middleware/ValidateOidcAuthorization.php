@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Laravel\Passport\Exceptions\OAuthServerException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ValidateOidcAuthorization
@@ -39,7 +40,11 @@ class ValidateOidcAuthorization
             return $this->error('invalid_scope');
         }
 
-        $response = $next($request);
+        try {
+            $response = $next($request);
+        } catch (OAuthServerException $e) {
+            $response = $e->getResponse();
+        }
         $response->headers->set('Cache-Control', 'no-store');
         $response->headers->set('Pragma', 'no-cache');
         $response->headers->set('Referrer-Policy', 'no-referrer');
