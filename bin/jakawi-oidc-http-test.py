@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Exercise an immutable COM image over HTTP, only on the disposable OIDC network."""
-import base64, concurrent.futures, hashlib, http.cookiejar, json, os, pathlib, re, secrets, socket, subprocess, sys, tempfile, time
+import base64, concurrent.futures, hashlib, http.cookiejar, ipaddress, json, os, pathlib, re, secrets, subprocess, sys, tempfile, time
 import urllib.error, urllib.parse, urllib.request
 
 NETWORK = 'jakawi-oidc-test'
@@ -68,10 +68,9 @@ def main():
             os.chown(root/'oauth-private.key', 82, 82)
             os.chmod(root/'oauth-private.key', 0o400)
             os.chmod(root/'oauth-public.key', 0o444)
-            with socket.socket() as sock:
-                sock.bind(('127.0.0.1', 0))
-                port = sock.getsockname()[1]
-            issuer = f'http://127.0.0.1:{port}'
+            # An internal Docker network intentionally does not publish host ports.
+            address = str(ipaddress.ip_network(network['IPAM']['Config'][0]['Subnet']).network_address + 4)
+            issuer = 'http://' + address
             client_id = run(['python3', '-c', 'import uuid;print(uuid.uuid4())'], text=True).strip()
             secret = secrets.token_urlsafe(48)
             env = {
@@ -111,8 +110,7 @@ echo json_encode($out);
                 for task in [['migrate','--force','--no-interaction'],['oidc:register-club'],['config:cache'],['route:cache'],['view:cache']]:
                     run(['docker','exec',NAME,'php','artisan',*task])
                 before = json.loads(run(['docker','exec',NAME,'php','/oidc-fixture/fixture.php','create']))
-                run(['docker','run','-d','--name',WEB,'--network',NETWORK,'--memory','64m','--cpus','0.25',
-                     '-p',f'127.0.0.1:{port}:80',web_image])
+                run(['docker','run','-d','--name',WEB,'--network',NETWORK,'--ip',address,'--memory','64m','--cpus','0.25',web_image])
                 for attempt in range(30):
                     try:
                         if fetch(client(), issuer+'/up')[0] == 200:
@@ -121,6 +119,11 @@ echo json_encode($out);
                         pass
                     time.sleep(0.5)
                 else:
+                    for container in [NAME, WEB]:
+                        details = json.loads(run(['docker', 'inspect', container]))[0]
+                        print(json.dumps({'test_container': container, 'state': details['State']['Status'], 'ports': details['NetworkSettings']['Ports']}), file=sys.stderr)
+                        logs = subprocess.run(['docker', 'logs', '--tail', '15', container], capture_output=True)
+                        sys.stderr.write(logs.stdout.decode(errors='replace') + logs.stderr.decode(errors='replace'))
                     raise RuntimeError('isolated FPM/nginx did not become healthy')
                 checks = []
                 def check(condition, label):
