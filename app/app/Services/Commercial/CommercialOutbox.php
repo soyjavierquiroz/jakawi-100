@@ -47,6 +47,13 @@ final class CommercialOutbox
             ->where('referred_user_id', $redemption->user_id)->first())) {
             $attribution['referral'] = ['com_referral_id' => (string) $relationship->id];
         }
+        if ($clubOrigin = app(ClubReferralOrigin::class)->forRedemption($request, $redemption)) {
+            $attribution['origin'] = ['landing' => $clubOrigin['landing']];
+            if ($clubOrigin['campaign'] !== null && $clubOrigin['campaign'] !== '') {
+                $attribution['origin']['campaign'] = $clubOrigin['campaign'];
+            }
+            $attribution['referral']['club_referral_code'] = $clubOrigin['club_referral_code'];
+        }
         if ($subject = $redemption->user?->global_subject_id) {
             $attribution['global_subject_id'] = $subject;
         }

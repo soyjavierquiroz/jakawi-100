@@ -23,8 +23,36 @@ de COM que coincida exactamente con landing y beneficio. Sin esa evidencia se
 omite `origin`, incluso si existe una landing del mismo producto. Campaña: valor
 capturado originalmente; si está ausente, se omite. Referido: solo el ID del registro
 COM vinculado al touch exacto y al cliente. No se deduce de email, partner, identidad
-global o sesión. COM no captura actualmente códigos CLUB en este flujo; sus códigos
-locales no se envían como `club_referral_code`. No hay cambios de afiliación.
+global o sesión. Los códigos COM no se envían como códigos CLUB.
+
+Las landings publicadas de productos de Partners admiten exclusivamente el parámetro
+explícito `?club_ref=AB12CD34EF56`: 12 caracteres ASCII `[A-Z0-9]`, sin normalización.
+La visita real captura código, landing, campaña original, Partner, producto y fecha
+en la sesión comercial existente, separada de `public_journey.continuation` y de los
+touches económicos COM. GET de preview, prefetch, render parcial y productos sin
+Partner no capturan. No se consultan ni crean referentes, comisiones o touches COM.
+Una visita sin código o con código inválido no crea ni borra una captura válida.
+Para un mismo producto, una nueva visita con código válido sustituye la captura
+previa hasta iniciar la operación; productos distintos mantienen su propio origen.
+Se conservan hasta 20 productos por sesión y se aplica la ventana vigente de
+atribución COM, además de la duración de la sesión. No hay seguimiento entre dispositivos.
+
+Al iniciar el canje, solo la petición del propio cliente puede aportar una captura
+del mismo producto y Partner; una captura ya vinculada a otra cuenta se descarta.
+Se asocia al cliente y queda congelada en `commercial_conversion_origins`, dentro
+de la transacción existente del canje. No requiere migraciones. El retorno de
+login/registro y el paso por membresía conservan la sesión; consumir la continuación
+de navegación no elimina esta procedencia. Una operación pendiente reutilizada
+conserva el origen de su creación, incluso si después llega otro código.
+
+Al confirmar con PIN, el evento existente añade `referral.club_referral_code` solo
+si esa captura existe; puede coexistir con `referral.com_referral_id`. Usa la landing
+y campaña de la visita original, incluso si no es la landing piloto del producto.
+El operador no participa en la captura y sus cookies o identidad no la reemplazan.
+CLUB verifica la existencia del código con el receptor vigente. No cambian el
+contrato HTTP, HMAC, ID estable, referencia original, estado o identidad global.
+Sin código el evento sigue funcionando, sin inventar referente.
+No hay cambios de afiliación ni nuevas comisiones.
 
 El scheduler existente ejecuta **`php artisan commercial:dispatch`** cada minuto.
 Solo lee canjes confirmados y comprometidos, junto a la procedencia capturada.
@@ -61,7 +89,9 @@ en PostgreSQL desechable. Requiere el servicio interno `jakawi-oidc-db-test` san
 solo lectura. Crea dos bases desechables en ese PostgreSQL aislado y las elimina al
 terminar. No lee secretos LIVE ni tiene acceso de red a producción. Prueba canje
 con PIN → 201 → duplicado 200 → recuperación concurrente → ruta administrativa
-protegida y filtros de atribución de CLUB. Los fixtures nunca llegan a LIVE.
+protegida y filtros de atribución de CLUB. Incluye visita real con código CLUB,
+operación del cliente, confirmación HTTP con PIN por otro operador, reconocimiento
+del código en CLUB y un segundo recorrido sin `club_ref`. Los fixtures nunca llegan a LIVE.
 
 Panel real: `https://jakawi.club/admin/conversiones-com`. El resultado aislado
 no acredita una conversión LIVE. Al iniciar esta fase no había un canje confirmado,
@@ -73,9 +103,9 @@ Operación: consultar `status`, `attempts`, `last_http_status`, `last_error_code
 Ante `DEAD` corregir la causa y revisar el recibo CLUB antes de reencolar el mismo
 evento; un conflicto no autoriza sustituir ID o contenido.
 
-La publicación recrea exclusivamente app/web/worker/scheduler de COM y aplica
-solo `2026_10_30_040000_create_commercial_outbox`. Backup privado y controlador
-en `/root/jakawi-commercial-v1/evidence/`; controlador vigente copiado a
+La publicación de Fase 06A recrea exclusivamente app/web/worker/scheduler de COM,
+sin migraciones ni cambios de configuración. Backup privado y controlador
+en `/root/jakawi-club-referral-v1/evidence/`; controlador vigente copiado a
 `/opt/sites/jakawi.com/release-control.py`. El rollback restaura imágenes/configuración
 previas y conserva ambas tablas, procedencia, recibos y clave. No ejecutar rollback
 de migraciones ni restaurar dumps sobre conversiones/identidades emitidas.

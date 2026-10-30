@@ -131,6 +131,7 @@ class LandingPresentationController extends Controller
         $this->assertVisible($subject, $preview);
         $benefitProps = $subject instanceof Benefit ? app(PublicController::class)->benefitPublicProps($subject, $request, $preview) : null;
         if (! $stage && ! $preview && ! str_contains(strtolower($request->header('Purpose', '').$request->header('Sec-Purpose', '')), 'prefetch') && ! $request->header('X-Inertia-Partial-Component')) {
+            app(\App\Services\Commercial\ClubReferralOrigin::class)->capture($request, $presentation);
             $ref = $request->query('ref');
             $referrer = is_string($ref) ? $attribution->findReferrer($ref) : null;
             $touch = $attribution->recordLandingTouch($request, $referrer, $presentation->campaign_key);

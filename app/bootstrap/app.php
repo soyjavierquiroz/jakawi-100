@@ -8,11 +8,11 @@ use App\Http\Middleware\EnsurePromoter;
 use App\Http\Middleware\EnsureVisitorId;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Models\Experience;
 use App\Models\Benefit;
+use App\Models\Experience;
 use App\Models\Unlock;
-use App\Services\PublicJourneyContinuation;
 use App\Services\AnalyticsTracker;
+use App\Services\PublicJourneyContinuation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -29,6 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // CLUB codes are an explicit, exact-format external identifier.
+        $middleware->trimStrings(except: ['club_ref']);
         $middleware->redirectGuestsTo(function (Request $request): string {
             $route = $request->route();
             $resource = match ($route?->getName()) {
