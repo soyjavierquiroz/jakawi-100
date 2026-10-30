@@ -43,9 +43,10 @@ $request->setLaravelSession(app('session')->driver());
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle($request);
 $page = json_decode($response->getContent(), true);
-$visible = $page['props']['events']['data'][0] ?? [];
+$visible = collect($page['props']['events']['data'] ?? [])->firstWhere('event_id', $event['event_id']) ?? [];
 if ($response->getStatusCode() !== 200 || ($visible['event_id'] ?? null) !== $event['event_id']
-    || ($visible['landing'] ?? null) !== $event['origin']['landing'] || ($visible['conversion_status'] ?? null) !== 'confirmed') {
+    || ($visible['landing'] ?? null) !== $event['origin']['landing'] || ($visible['conversion_status'] ?? null) !== 'confirmed'
+    || ($visible['referral_verification'] ?? null) !== 'club_code_verified') {
     throw new RuntimeException('Admin panel did not expose received attribution: HTTP '.$response->getStatusCode());
 }
 $result = ['result' => 'PASS', 'environment' => 'isolated COM and CLUB databases, internal TLS network',

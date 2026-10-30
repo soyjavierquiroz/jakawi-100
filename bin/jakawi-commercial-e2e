@@ -10,6 +10,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 CLUB = pathlib.Path('/opt/sites/jakawi.club')
 EVIDENCE = pathlib.Path(os.environ.get('COMMERCIAL_EVIDENCE', '/root/jakawi-commercial-v1/evidence'))
 EVIDENCE.mkdir(parents=True, exist_ok=True)
+(EVIDENCE/'e2e-result.json').unlink(missing_ok=True)
 NETWORK = 'jakawi-oidc-test'
 NAMES = ['com-commercial-e2e', 'club-commercial-e2e-tls', 'club-commercial-e2e-app']
 
