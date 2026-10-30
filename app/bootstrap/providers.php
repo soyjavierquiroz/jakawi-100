@@ -8,4 +8,5 @@ return [
     AppServiceProvider::class,
     FortifyServiceProvider::class,
     App\Providers\IdentityServiceProvider::class,
+    App\Providers\OidcServiceProvider::class,
 ];

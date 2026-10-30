@@ -12,6 +12,10 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
+        if (! $request->wantsJson() && ($oidcReturn = \App\Services\Identity\OidcContinuation::pull($request)) !== null) {
+            return redirect()->to($oidcReturn);
+        }
+
         $identityIntended = $request->session()->get('url.intended');
         $identityPath = is_string($identityIntended) ? parse_url($identityIntended, PHP_URL_PATH) : null;
         if (! $request->wantsJson() && is_string($identityPath)

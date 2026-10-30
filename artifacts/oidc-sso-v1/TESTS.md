@@ -1,0 +1,7 @@
+# Fase 04 — verificación focalizada antes de despliegue
+
+- `bin/jakawi-oidc-test php vendor/bin/phpunit tests/Feature/Oidc tests/Feature/Auth tests/Feature/Identity`: **84 pruebas, 490 aserciones PASS**, PostgreSQL 16 en red interna desechable exclusiva.
+- Cubre login nativo → continuación OIDC, sesión COM existente sin contraseña y `prompt=none`, HTTP Basic y client_secret_post, firma RS256, issuer/audience, nonce ligado a cada código y canje en orden inverso, `sub` UUID global, scopes/claims, código inválido/repetido/expirado, PKCE incorrecto/ausente/plain, URI exacta, secreto incorrecto, cliente revocado, state/nonce ausentes, 2FA pendiente/completo, reautenticación explícita y conservación de login/admin/Partner/credenciales e identidad Fase 03.
+- `composer validate --strict --no-check-publish`, sintaxis PHP de aplicación y `git diff --check` se ejecutan antes de construir. El audit tras el parche de symfony/mime no encuentra avisos de seguridad.
+- `bin/jakawi-oidc-http-test.py <imagen-app> <imagen-web>` es el control HTTP reproducible de la imagen inmutable: cookies, CSRF real, login → callback, state, PKCE, JWT verificado con clave derivada del JWKS y tres canjes simultáneos. Su resultado posterior a la construcción y el control LIVE se conservan en el informe operativo; no se dan por ejecutados en este registro previo.
+- No se prueba una sesión del piloto por suplantación ni se modifica CLUB/CRM. La callback CLUB queda registrada para su implementación separada.

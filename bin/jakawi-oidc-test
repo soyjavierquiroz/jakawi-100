@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Only the dedicated disposable OIDC database and internal network are allowed.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+[[ "${APP_ENV:-testing}" == testing && "${DB_HOST:-db-test}" == db-test && "${DB_DATABASE:-jakawi_test}" == jakawi_test ]] || exit 78
+[[ "$(docker inspect jakawi-oidc-db-test --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}')" == jakawi-oidc-test ]] || exit 78
+[[ "$(docker inspect jakawi-oidc-db-test --format '{{.State.Health.Status}}')" == healthy ]] || exit 78
+exec 9>/tmp/jakawi-oidc-test.lock
+flock -n 9 || exit 75
+if [[ "$#" == 0 ]]; then set -- php vendor/bin/phpunit tests/Feature/Oidc tests/Feature/Auth tests/Feature/Identity; fi
+docker run --rm --network jakawi-oidc-test --memory 512m --cpus 0.75 \
+    -v "$PWD/app:/var/www/html" -w /var/www/html \
+    -e APP_ENV=testing -e APP_DEBUG=false -e APP_URL=https://jakawi.com \
+    -e APP_KEY=base64:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY= \
+    -e DB_HOST=db-test -e DB_CONNECTION=pgsql -e DB_DATABASE=jakawi_test \
+    -e DB_USERNAME=jakawi_test_user -e DB_PASSWORD=jakawi_test_password \
+    -e CACHE_STORE=array -e SESSION_DRIVER=array -e QUEUE_CONNECTION=sync -e MAIL_MAILER=array \
+    jakawi-build-v1:dependencies "$@"
