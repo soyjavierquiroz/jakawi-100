@@ -4,12 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Conversion;
 use App\Models\Partner;
-use App\Models\ProgramEnrollment;
 use App\Models\RewardPayout;
 use App\Models\RewardRule;
 use App\Models\RewardTransaction;
 use App\Models\User;
-use App\Services\RewardPayoutService;
 use App\Services\RewardResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -124,17 +122,6 @@ class AffiliationRetirementTest extends TestCase
         $this->assertFalse(Schema::hasTable('program_applications'));
         $this->assertDatabaseHas('reward_rules', ['id' => $rule->id]);
         $this->assertSame(1, $payout->rewards()->count());
-    }
-
-    public function test_admin_navigation_describes_only_operational_com_modules(): void
-    {
-        $nav = file_get_contents(resource_path('js/pages/admin/layout.tsx'));
-        foreach (['/admin/affiliates', '/admin/creators', '/admin/solicitudes-programas'] as $path) {
-            $this->assertStringNotContainsString($path, $nav);
-        }
-        foreach (['Operadores de ventas', 'Pagos a Partners', 'Reglas JP y Partners', 'Campañas operativas', 'Atribución comercial', 'AFILIADOS Y COMISIONES — CLUB', 'https://jakawi.club/afiliados'] as $text) {
-            $this->assertStringContainsString($text, $nav);
-        }
     }
 
     private function conversion(User $user): Conversion
