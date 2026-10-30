@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function (): void {
             require __DIR__.'/../routes/identity.php';
+            require __DIR__.'/../routes/catalog.php';
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
