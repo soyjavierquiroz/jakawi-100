@@ -44,23 +44,24 @@ class ManualMembershipSalesTest extends TestCase
         $this->assertSame($marketing->id, $snapshot['referrer_user_id']); $this->assertSame('tiktok', $snapshot['utm_source']); $this->assertSame($promoter->id, $snapshot['credited_seller_user_id']);
     }
 
-    public function test_matching_reward_is_pending_and_retry_does_not_duplicate_financial_records(): void
+    public function test_retired_reward_never_accrues_and_retry_does_not_duplicate_sale(): void
     {
         $promoter = $this->promoter(); RewardRule::create(['name' => 'Promotor 10%', 'participant_type' => 'PROMOTER', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'reward_type' => 'CASH', 'calculation_type' => 'PERCENTAGE', 'value' => 10, 'currency' => 'BOB', 'priority' => 0, 'status' => 'active']);
         $customer = User::factory()->create(); $key = '6a415fb1-d4b0-4dfa-a86f-2d0f9c07a6d0'; $first = app(MembershipPurchaseService::class)->confirmManualCash($customer, $promoter, $promoter, 'R-1', $key); $second = app(MembershipPurchaseService::class)->confirmManualCash($customer, $promoter, $promoter, 'R-1', $key);
-        $this->assertSame($first->id, $second->id); $this->assertSame(1, MembershipPurchase::count()); $this->assertSame(1, RewardTransaction::count()); $this->assertSame('pending', RewardTransaction::first()->status); $this->assertSame('10.00', RewardTransaction::first()->amount);
+        $this->assertSame($first->id, $second->id); $this->assertSame(1, MembershipPurchase::count()); $this->assertSame(0, RewardTransaction::count());
     }
 
-    public function test_no_rule_still_succeeds_and_fixed_rule_is_calculated(): void
+    public function test_no_rule_and_retired_fixed_rule_both_allow_sale_without_commission(): void
     {
         $promoter = $this->promoter(); $this->sale($promoter, User::factory()->create()); $this->assertSame(0, RewardTransaction::count());
         RewardRule::create(['name' => 'Fijo', 'participant_type' => 'PROMOTER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 17, 'priority' => 0, 'status' => 'active']); $this->sale($promoter, User::factory()->create());
-        $this->assertSame('17.00', RewardTransaction::firstOrFail()->amount);
+        $this->assertSame(0, RewardTransaction::count());
     }
 
     public function test_only_admin_refunds_and_refund_preserves_history_and_cancels_reward(): void
     {
         $promoter = $this->promoter(); RewardRule::create(['name' => 'Fijo', 'participant_type' => 'PROMOTER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 5, 'priority' => 0, 'status' => 'active']); $sale = $this->sale($promoter, User::factory()->create()); $admin = User::factory()->create(['is_admin' => true]);
+        RewardTransaction::create(['beneficiary_user_id' => $promoter->id, 'beneficiary_type' => 'USER', 'beneficiary_id' => $promoter->id, 'conversion_id' => $sale->conversion_id, 'reward_rule_id' => RewardRule::sole()->id, 'reward_type' => 'CASH', 'amount' => 5, 'currency' => 'BOB', 'status' => 'pending']);
         $this->actingAs($promoter)->post('/admin/sales/'.$sale->id.'/refund', ['reason' => 'No procede'])->assertForbidden();
         $this->actingAs($admin)->post('/admin/sales/'.$sale->id.'/refund', ['reason' => 'Recibo anulado'])->assertRedirect(); $sale->refresh();
         $this->assertSame('refunded', $sale->status); $this->assertSame('cancelled', $sale->membership->fresh()->status); $this->assertSame('refunded', $sale->conversion->fresh()->status); $this->assertSame('cancelled', RewardTransaction::firstOrFail()->fresh()->status);

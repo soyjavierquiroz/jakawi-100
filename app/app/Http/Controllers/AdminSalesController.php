@@ -55,7 +55,7 @@ class AdminSalesController extends Controller
     {
         $sale->load(['beneficiary', 'recordedBy', 'collectedBy', 'membership', 'conversion']);
 
-        return Inertia::render('admin/sales/show', ['sale' => $sale, 'reward' => $sale->conversion_id ? RewardTransaction::where('conversion_id', $sale->conversion_id)->first() : null, 'audit' => AuditLog::where('subject_type', MembershipPurchase::class)->where('subject_id', $sale->id)->orWhere(fn ($q) => $q->where('subject_type', RewardTransaction::class)->whereIn('subject_id', RewardTransaction::where('conversion_id', $sale->conversion_id)->pluck('id')))->latest()->get()]);
+        return Inertia::render('admin/sales/show', ['sale' => $sale, 'reward' => $sale->conversion_id ? RewardTransaction::operational()->where('conversion_id', $sale->conversion_id)->first() : null, 'audit' => AuditLog::where('subject_type', MembershipPurchase::class)->where('subject_id', $sale->id)->orWhere(fn ($q) => $q->where('subject_type', RewardTransaction::class)->whereIn('subject_id', RewardTransaction::operational()->where('conversion_id', $sale->conversion_id)->pluck('id')))->latest()->get()]);
     }
 
     public function refund(Request $request, MembershipPurchase $sale, MembershipPurchaseService $purchases)

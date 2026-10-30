@@ -17,14 +17,14 @@ class CampaignTest extends TestCase
 
     public function test_admin_can_create_campaign_and_non_admin_cannot(): void
     {
-        $payload = ['name' => 'Fundadores', 'code' => 'fundadores1000', 'status' => 'active', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'participant_types' => ['CREATOR'], 'start_at' => now()->subDay()->toDateTimeString(), 'end_at' => now()->addDay()->toDateTimeString()];
+        $payload = ['name' => 'Fundadores', 'code' => 'fundadores1000', 'status' => 'active', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'participant_types' => ['MEMBER'], 'start_at' => now()->subDay()->toDateTimeString(), 'end_at' => now()->addDay()->toDateTimeString()];
         $this->get('/admin/campaigns')->assertRedirect('/login');
         $this->actingAs(User::factory()->create())->post('/admin/campaigns', $payload)->assertForbidden();
         $this->assertDatabaseCount('campaigns', 0);
         $this->actingAs(User::factory()->create(['is_admin' => true]))->post('/admin/campaigns', $payload)->assertRedirect()->assertSessionHasNoErrors();
         $this->assertDatabaseHas('campaigns', ['code' => 'fundadores1000']);
         $campaign = Campaign::sole();
-        $this->assertSame(['CREATOR'], $campaign->participants()->pluck('participant_type')->all());
+        $this->assertSame(['MEMBER'], $campaign->participants()->pluck('participant_type')->all());
         $this->post('/admin/campaigns', $payload)->assertSessionHasErrors('code');
         $this->assertDatabaseCount('campaigns', 1);
         $this->put('/admin/campaigns/'.$campaign->id, [...$payload, 'name' => 'Fundadores actualizado'])->assertRedirect()->assertSessionHasNoErrors();
@@ -38,13 +38,13 @@ class CampaignTest extends TestCase
     {
         $creator = User::factory()->create();
         $campaign = Campaign::create(['name' => 'Fundadores', 'code' => 'fundadores1000', 'status' => 'active', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'start_at' => now()->subDay(), 'end_at' => now()->addDay()]);
-        CampaignParticipant::create(['campaign_id' => $campaign->id, 'participant_type' => 'CREATOR']);
-        $base = ['participant_type' => 'CREATOR', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'currency' => 'BOB', 'status' => 'active'];
+        CampaignParticipant::create(['campaign_id' => $campaign->id, 'participant_type' => 'MEMBER']);
+        $base = ['participant_type' => 'MEMBER', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'reward_type' => 'JP', 'calculation_type' => 'FIXED', 'currency' => 'JP', 'status' => 'active'];
         RewardRule::create([...$base, 'name' => 'global', 'value' => 10]);
         RewardRule::create([...$base, 'name' => 'campaign', 'campaign_id' => $campaign->id, 'value' => 15]);
         $specific = RewardRule::create([...$base, 'name' => 'specific', 'campaign_id' => $campaign->id, 'beneficiary_type' => 'USER', 'beneficiary_id' => $creator->id, 'beneficiary_user_id' => $creator->id, 'value' => 20]);
-        $this->assertSame($specific->id, app(RewardResolver::class)->ruleFor($creator, 'USER', 'CREATOR', 'membership_purchased', 'jakawi_annual', 'CASH', $campaign->id, now())?->id);
-        $this->assertSame('10.00', (string) app(RewardResolver::class)->ruleFor($creator, 'USER', 'CREATOR', 'membership_purchased', 'jakawi_annual')?->value);
+        $this->assertSame($specific->id, app(RewardResolver::class)->ruleFor($creator, 'USER', 'MEMBER', 'membership_purchased', 'jakawi_annual', 'JP', $campaign->id, now())?->id);
+        $this->assertSame('10.00', (string) app(RewardResolver::class)->ruleFor($creator, 'USER', 'MEMBER', 'membership_purchased', 'jakawi_annual', 'JP')?->value);
     }
 
     public function test_raw_unknown_utm_is_preserved_and_campaign_link_is_historical(): void

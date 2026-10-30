@@ -24,6 +24,11 @@ class RewardTransaction extends Model
         return ['amount' => 'decimal:2', 'available_at' => 'datetime'];
     }
 
+    public function scopeOperational(\Illuminate\Database\Eloquent\Builder $query): void
+    {
+        $query->where(fn ($q) => $q->where('reward_type', 'JP')->orWhere('beneficiary_type', 'PARTNER'));
+    }
+
     public function beneficiary(): BelongsTo
     {
         return $this->belongsTo(User::class, 'beneficiary_user_id');

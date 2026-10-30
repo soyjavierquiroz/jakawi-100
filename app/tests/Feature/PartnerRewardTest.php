@@ -35,7 +35,7 @@ class PartnerRewardTest extends TestCase
         $this->assertSame($partner->id, $sale->conversion->relationship->acquisition_partner_id);
     }
 
-    public function test_no_partner_rule_does_not_block_conversion_and_promoter_wins_without_erasing_partner_attribution(): void
+    public function test_no_partner_rule_does_not_block_conversion_and_retired_promoter_rule_cannot_accrue(): void
     {
         $partner = Partner::factory()->published()->create();
         $customer = User::factory()->create();
@@ -48,7 +48,7 @@ class PartnerRewardTest extends TestCase
         RewardRule::create(['name' => 'Promoter', 'participant_type' => 'PROMOTER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 9, 'currency' => 'BOB', 'status' => 'active']);
         $other = User::factory()->create(); $this->attribute($partner, $other);
         $sale = app(MembershipPurchaseService::class)->confirmManualCash($other, $promoter, $promoter, 'P-'.Str::random(8), (string) Str::uuid());
-        $this->assertSame($promoter->id, RewardTransaction::firstOrFail()->beneficiary_user_id);
+        $this->assertSame(0, RewardTransaction::count());
         $this->assertSame($partner->id, $sale->conversion->relationship->acquisition_partner_id);
     }
 

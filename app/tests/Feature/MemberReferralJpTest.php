@@ -47,17 +47,17 @@ class MemberReferralJpTest extends TestCase
         $this->actingAs($member)->get('/mi-jakawi')->assertInertia(fn ($page) => $page->where('memberReferral.eligible', false)->where('memberReferral.jp_balance', 41));
     }
 
-    public function test_commercial_programs_win_over_member_and_refund_cancels_jp(): void
+    public function test_retired_promoter_commission_does_not_replace_member_jp_and_refund_reverses_jp(): void
     {
         $member = $this->member(); $friend = User::factory()->create(); $this->relationship($member, $friend); $this->jpRule();
         $promoter = User::factory()->create(); ProgramEnrollment::create(['user_id' => $promoter->id, 'program_type' => 'PROMOTER', 'status' => 'active']);
         RewardRule::create(['name' => 'Promoter', 'participant_type' => 'PROMOTER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 9, 'currency' => 'BOB', 'priority' => 0, 'status' => 'active']);
         app(MembershipPurchaseService::class)->confirmManualCash($friend, $promoter, $promoter, 'JP-3', (string) Str::uuid());
-        $this->assertSame('CASH', RewardTransaction::sole()->reward_type);
+        $this->assertSame('JP', RewardTransaction::sole()->reward_type);
 
         $friend2 = User::factory()->create(); $this->relationship($member, $friend2);
         $sale = app(MembershipPurchaseService::class)->confirmManualCash($friend2, User::factory()->create(), null, 'JP-4', (string) Str::uuid());
-        $jp = RewardTransaction::where('reward_type', 'JP')->sole();
+        $jp = RewardTransaction::where('conversion_id', $sale->conversion_id)->where('reward_type', 'JP')->sole();
         app(MembershipPurchaseService::class)->refund($sale, User::factory()->create(['is_admin' => true]), 'refund');
         $this->assertSame('available', $jp->fresh()->status);
         $this->assertDatabaseHas('reward_transactions', ['reversal_of_reward_transaction_id' => $jp->id, 'amount' => -41, 'source' => 'reversal']);

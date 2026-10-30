@@ -9,7 +9,6 @@ class OwnershipAssignment extends Model
 {
     public const TARGET_USER = 'USER';
     public const TARGET_PARTNER_APPLICATION = 'PARTNER_APPLICATION';
-    public const TARGET_PROGRAM_APPLICATION = 'PROGRAM_APPLICATION';
 
     public const SOURCE_REFERRAL_RELATIONSHIP = 'REFERRAL_RELATIONSHIP';
     public const SOURCE_USER_OWNERSHIP = 'USER_OWNERSHIP';

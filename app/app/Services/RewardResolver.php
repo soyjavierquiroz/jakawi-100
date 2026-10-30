@@ -13,6 +13,11 @@ class RewardResolver
 {
     public function createFor(Conversion $conversion, User|Partner $beneficiary, string $participantType): ?RewardTransaction
     {
+        // COM has no affiliate commission engine. Historical rules cannot reactivate it.
+        if (! (($beneficiary instanceof User && $participantType === 'MEMBER')
+            || ($beneficiary instanceof Partner && $participantType === 'PARTNER'))) {
+            return null;
+        }
         $rewardType = $participantType === 'MEMBER' ? RewardRule::TYPE_JP : RewardRule::TYPE_CASH;
         $beneficiaryType = $beneficiary instanceof Partner ? RewardRule::BENEFICIARY_PARTNER : RewardRule::BENEFICIARY_USER;
         $rule = $this->ruleFor($beneficiary, $beneficiaryType, $participantType, $conversion->type, $conversion->product_key, $rewardType, $conversion->campaign_id, $conversion->occurred_at);
@@ -41,6 +46,10 @@ class RewardResolver
 
     public function ruleFor(Model $beneficiary, string $beneficiaryType, string $participantType, string $event, ?string $productKey, string $rewardType = RewardRule::TYPE_CASH, ?int $campaignId = null, $at = null): ?RewardRule
     {
+        if (! (($beneficiary instanceof User && $participantType === 'MEMBER' && $rewardType === 'JP')
+            || ($beneficiary instanceof Partner && $participantType === 'PARTNER' && $rewardType === 'CASH'))) {
+            return null;
+        }
         $at ??= now();
         $base = RewardRule::query()->where('status', RewardRule::STATUS_ACTIVE)->where('event', $event)
             ->where('reward_type', $rewardType)

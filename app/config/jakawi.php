@@ -27,10 +27,6 @@ return [
         'product_key' => 'jakawi_annual',
     ],
     'membership_statuses' => ['active', 'cancelled'],
-    'affiliate' => [
-        // The database setting is authoritative once an admin has configured it.
-        'minimum_payout' => env('JAKAWI_AFFILIATE_MINIMUM_PAYOUT', 0),
-    ],
     'redemption' => [
         'code_ttl_minutes' => 10,
     ],
@@ -47,13 +43,12 @@ return [
             'redeem_started', 'redeem_confirmed', 'experience_reserve_click', 'maps_click', 'whatsapp_click',
             'journey_intent_started', 'journey_auth_started', 'journey_auth_returned', 'journey_membership_gate_viewed', 'journey_external_exit',
             'anonymous_session_created', 'referral_link_opened', 'referral_shared', 'referral_code_entered', 'signup_completed',
-            'affiliate_payout_requested', 'affiliate_payout_completed',
+            'partner_payout_completed',
             'reward_created', 'reward_available', 'reward_cancelled',
             'unlock_impression', 'unlock_viewed', 'unlock_interested', 'unlock_commitment_started', 'unlock_committed', 'unlock_commitment_cancelled', 'unlock_shared', 'unlock_referral_opened', 'unlock_referral_committed', 'unlock_referral_fulfilled', 'unlock_goal_reached', 'unlock_revealed', 'unlock_confirmation_requested', 'unlock_confirmed', 'unlock_confirmation_declined', 'unlock_fulfilled', 'unlock_no_show', 'unlock_jp_held', 'unlock_jp_released', 'unlock_jp_bonus_awarded', 'unlock_jp_forfeited',
             'city_viewed', 'city_interest_recorded', 'partner_application_started', 'partner_application_submitted',
             'landing_view', 'landing_cta_click', 'membership_purchase_requested', 'membership_activated', 'benefit_redeemed', 'experience_reserved', 'challenge_joined',
             'external_redirect',
-            'program_application_submitted',
             'membership_view', 'membership_assistance_requested', 'membership_purchase_confirmed', 'membership_returned_to_intent',
         ],
         'maps_sources' => ['location_detail', 'benefit_detail', 'experience_detail'],

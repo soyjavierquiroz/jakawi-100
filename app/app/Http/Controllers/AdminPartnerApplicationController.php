@@ -30,7 +30,7 @@ class AdminPartnerApplicationController extends Controller
             'statuses' => PartnerApplication::statuses(),
             'ownership' => $assignment?->load('owner:id,name'),
             'ownerCandidates' => User::query()->where(fn ($q) => $q->where('is_admin', true)
-                ->orWhereHas('programEnrollments', fn ($enrollments) => $enrollments->active()->whereIn('program_type', [ProgramEnrollment::TYPE_AFFILIATE, ProgramEnrollment::TYPE_CREATOR, ProgramEnrollment::TYPE_PROMOTER])))
+                ->orWhereHas('programEnrollments', fn ($enrollments) => $enrollments->active()->whereIn('program_type', [ProgramEnrollment::TYPE_PROMOTER])))
                 ->when($partnerApplication->user_id, fn ($q) => $q->whereKeyNot($partnerApplication->user_id))
                 ->orderBy('name')->get(['id', 'name']),
         ]);

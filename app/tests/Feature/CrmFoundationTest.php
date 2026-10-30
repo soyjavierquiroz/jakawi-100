@@ -14,7 +14,6 @@ use App\Models\ExperienceSession;
 use App\Models\Membership;
 use App\Models\MembershipPurchaseRequest;
 use App\Models\Partner;
-use App\Models\ProgramApplication;
 use App\Models\Redemption;
 use App\Models\Unlock;
 use App\Models\UnlockParticipation;
@@ -120,17 +119,6 @@ class CrmFoundationTest extends TestCase
         $this->assertContains('partner-applicant', $v['tags_add']);
         $this->assertNotContains('partners', $v['lists_add']);
         $this->assertSame('GRANT', $v['marketing']['action']);
-    }
-
-    public function test_program_uses_authenticated_user_identity(): void
-    {
-        $u = User::factory()->create();
-        $app = DB::transaction(fn () => ProgramApplication::create(['user_id' => $u->id, 'program_type' => 'AFFILIATE', 'status' => 'SUBMITTED']));
-        $v = CrmDelivery::sole()->payload;
-        $this->assertSame($u->email, $v['contact']['email']);
-        $this->assertSame((string) $u->id, $v['identity']['jakawi_user_id']);
-        $this->assertContains('program-applicant', $v['tags_add']);
-        $this->assertSame('UNCHANGED', $v['marketing']['action']);
     }
 
     public function test_membership_request_activation_and_domain_fields(): void

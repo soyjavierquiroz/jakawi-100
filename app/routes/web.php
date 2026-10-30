@@ -3,10 +3,6 @@
 use App\Http\Controllers\AdminContentReviewController;
 use App\Http\Controllers\AdminCityController;
 use App\Http\Controllers\AdminExpansionController;
-use App\Http\Controllers\AdminAffiliateController;
-use App\Http\Controllers\AffiliateDashboardController;
-use App\Http\Controllers\CreatorDashboardController;
-use App\Http\Controllers\AdminCreatorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminRewardRuleController;
 use App\Http\Controllers\AdminCampaignController;
@@ -33,9 +29,7 @@ use App\Http\Controllers\CityLandingController;
 use App\Http\Controllers\PartnerApplicationController;
 use App\Http\Controllers\PartnersLandingController;
 use App\Http\Controllers\AdminPartnerApplicationController;
-use App\Http\Controllers\AdminProgramApplicationController;
 use App\Http\Controllers\AdminOwnershipAssignmentController;
-use App\Http\Controllers\ProgramApplicationController;
 use App\Http\Controllers\PromoterSalesController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\ReferralController;
@@ -68,14 +62,14 @@ Route::get('/l/{presentation:slug}', [LandingPresentationController::class, 'sho
 Route::post('/analytics/public-landings/{key}/cta', [PublicJourneyLandingController::class, 'cta'])->where('key', '[a-z0-9]+(?:-[a-z0-9]+)*')->middleware('throttle:60,1')->name('public-landings.cta');
 Route::get('/r/{code}', [ReferralController::class, 'open'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.open');
 Route::get('/r/{code}/d/{unlock:slug}', [ReferralController::class, 'unlock'])->where('code', '[A-Za-z0-9_-]+')->name('referrals.unlock');
+Route::get('/{program}', fn () => redirect()->away('https://jakawi.club/afiliados'))->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.show');
+Route::get('/{program}/aplicar', fn () => redirect()->away('https://jakawi.club/afiliados'))->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.apply');
 Route::get('/explorar', [PublicController::class, 'explore'])->name('explore');
 Route::get('/retos', [ChallengeController::class, 'index'])->name('social-challenges.index');
 Route::get('/retos/{challenge:slug}', [ChallengeController::class, 'show'])->middleware(\App\Http\Middleware\ResolveProductLanding::class)->name('social-challenges.show');
 Route::post('/retos/{challenge:slug}/participar', [ChallengeController::class, 'intent'])->name('social-challenges.intent');
 Route::get('/partners', [PartnersLandingController::class, 'show'])->name('partners.index');
 Route::get('/partners/aplicar', [PartnersLandingController::class, 'apply'])->name('partners.apply');
-Route::get('/{program}', [ProgramApplicationController::class, 'show'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.show');
-Route::get('/{program}/aplicar', [ProgramApplicationController::class, 'apply'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->name('programs.apply');
 Route::post('/analytics/opportunities', [OpportunityAnalyticsController::class, 'store'])->middleware('throttle:120,1')->name('analytics.opportunities.store');
 Route::post('/analytics/journey-intent/{journey}/{slug}', [PublicJourneyIntentController::class, 'store'])->whereIn('journey', ['experience', 'unlock', 'benefit'])->middleware('throttle:60,1')->name('analytics.journey-intent.store');
 Route::get('/ciudades/{city:slug}', [CityLandingController::class, 'show'])->name('cities.show');
@@ -154,7 +148,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/retos/{challenge:slug}/actualizar', [ChallengeController::class, 'refresh'])->name('social-challenges.refresh');
     Route::post('/membresia/solicitar', [MembershipOfferController::class, 'request'])->middleware('throttle:20,1')->name('membership.request');
     Route::post('/membresia/volver/{purchaseRequest}', [MembershipOfferController::class, 'returnToIntent'])->name('membership.return');
-    Route::post('/{program}/solicitudes', [ProgramApplicationController::class, 'store'])->whereIn('program', ['afiliados', 'creadores', 'promotores'])->middleware('throttle:20,1')->name('programs.applications.store');
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
     Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
     Route::post('mi-jakawi/referral-shared', [MembershipController::class, 'shared'])->name('mi-jakawi.referral-shared');
@@ -179,18 +172,13 @@ Route::middleware(['auth', 'verified', 'promoter'])->prefix('promoter')->group(f
     Route::get('sales/{purchase}', [PromoterSalesController::class, 'show'])->name('promoter.sales.show');
 });
 
-Route::middleware(['auth', 'verified', 'affiliate'])->prefix('affiliate')->group(function () {
-    Route::get('/', [AffiliateDashboardController::class, 'show'])->name('affiliate.dashboard');
-    Route::post('shared', [AffiliateDashboardController::class, 'shared'])->name('affiliate.shared');
-    Route::post('payouts', [AffiliateDashboardController::class, 'requestPayout'])->name('affiliate.payouts.store');
-});
-Route::middleware(['auth', 'verified', 'creator'])->prefix('creator')->group(function () {
-    Route::get('/', [CreatorDashboardController::class, 'show'])->name('creator.dashboard');
-    Route::post('shared', [CreatorDashboardController::class, 'shared'])->name('creator.shared');
-    Route::post('payouts', [CreatorDashboardController::class, 'requestPayout'])->name('creator.payouts.store');
-});
+Route::get('/affiliate/{retired?}', fn () => redirect()->away('https://jakawi.club/afiliados'))->where('retired', '.*');
+Route::get('/creator/{retired?}', fn () => redirect()->away('https://jakawi.club/afiliados'))->where('retired', '.*');
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('affiliates/{retired?}', fn () => redirect()->away('https://jakawi.club/afiliados'))->where('retired', '.*');
+    Route::get('creators/{retired?}', fn () => redirect()->away('https://jakawi.club/afiliados'))->where('retired', '.*');
+    Route::get('solicitudes-programas/{retired?}', fn () => redirect()->away('https://jakawi.club/afiliados'))->where('retired', '.*');
     Route::get('landings/subject', [AdminLandingPresentationController::class, 'subjectContext'])->name('admin.marketing-landings.subject');
     Route::get('landings/new', [AdminLandingPresentationController::class, 'create'])->name('admin.marketing-landings.create');
     Route::get('landings/partners', [AdminLandingPresentationController::class, 'partners'])->name('admin.marketing-landings.partners');
@@ -268,9 +256,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::put('ciudades/{city}', [AdminCityController::class, 'update'])->name('admin.cities.update');
     Route::post('ciudades/{city}/estado', [AdminCityController::class, 'updateStatus'])->name('admin.cities.status.update');
     Route::get('solicitudes-partner', [AdminPartnerApplicationController::class, 'index'])->name('admin.partner-applications.index');
-    Route::get('solicitudes-programas', [AdminProgramApplicationController::class, 'index'])->name('admin.program-applications.index');
-    Route::get('solicitudes-programas/{programApplication}', [AdminProgramApplicationController::class, 'show'])->name('admin.program-applications.show');
-    Route::post('solicitudes-programas/{programApplication}/estado', [AdminProgramApplicationController::class, 'status'])->name('admin.program-applications.status');
     Route::get('solicitudes-partner/{partnerApplication}', [AdminPartnerApplicationController::class, 'show'])->name('admin.partner-applications.show');
     Route::post('solicitudes-partner/{partnerApplication}/estado', [AdminPartnerApplicationController::class, 'status'])->name('admin.partner-applications.status');
     Route::get('desbloqueos', [AdminUnlockController::class, 'index'])->name('admin.unlocks.index');
@@ -339,24 +324,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('promoters', [\App\Http\Controllers\AdminPromoterController::class, 'store'])->name('admin.promoters.store');
     Route::get('promoters/{user}', [\App\Http\Controllers\AdminPromoterController::class, 'show'])->name('admin.promoters.show');
     Route::put('promoters/{user}/enrollment', [\App\Http\Controllers\AdminPromoterController::class, 'updateEnrollment'])->name('admin.promoters.enrollment.update');
-    Route::post('promoters/{user}/referral-code', [\App\Http\Controllers\AdminPromoterController::class, 'referralCode'])->name('admin.promoters.referral-code');
-    Route::put('promoters/{user}/commission', [\App\Http\Controllers\AdminPromoterController::class, 'commission'])->name('admin.promoters.commission');
-    Route::get('affiliates', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');
-    Route::get('affiliates/create', [AdminAffiliateController::class, 'create'])->name('admin.affiliates.create');
-    Route::post('affiliates', [AdminAffiliateController::class, 'store'])->name('admin.affiliates.store');
-    Route::get('affiliates/{user}', [AdminAffiliateController::class, 'show'])->name('admin.affiliates.show');
-    Route::put('affiliates/{user}/enrollment', [AdminAffiliateController::class, 'updateEnrollment'])->name('admin.affiliates.enrollment.update');
-    Route::post('affiliates/{user}/referral-code', [AdminAffiliateController::class, 'referralCode'])->name('admin.affiliates.referral-code');
-    Route::put('affiliates/{user}/commission', [AdminAffiliateController::class, 'commission'])->name('admin.affiliates.commission');
-    Route::post('affiliates/{user}/rewards/{reward}/available', [AdminAffiliateController::class, 'makeAvailable'])->name('admin.affiliates.rewards.available');
-    Route::get('creators', [AdminCreatorController::class, 'index'])->name('admin.creators.index');
-    Route::get('creators/create', [AdminCreatorController::class, 'create'])->name('admin.creators.create');
-    Route::post('creators', [AdminCreatorController::class, 'store'])->name('admin.creators.store');
-    Route::get('creators/{user}', [AdminCreatorController::class, 'show'])->name('admin.creators.show');
-    Route::put('creators/{user}/enrollment', [AdminCreatorController::class, 'updateEnrollment'])->name('admin.creators.enrollment.update');
-    Route::post('creators/{user}/referral-code', [AdminCreatorController::class, 'referralCode'])->name('admin.creators.referral-code');
-    Route::put('creators/{user}/commission', [AdminCreatorController::class, 'commission'])->name('admin.creators.commission');
-    Route::post('creators/{user}/rewards/{reward}/available', [AdminCreatorController::class, 'makeAvailable'])->name('admin.creators.rewards.available');
     Route::get('payouts', [AdminPayoutController::class, 'index'])->name('admin.payouts.index');
     Route::put('payouts/settings', [AdminPayoutController::class, 'settings'])->name('admin.payouts.settings');
     Route::get('payouts/{payout}', [AdminPayoutController::class, 'show'])->name('admin.payouts.show');

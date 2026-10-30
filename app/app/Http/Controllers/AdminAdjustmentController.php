@@ -20,7 +20,7 @@ class AdminAdjustmentController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = OperationalAdjustment::query()->with('actor:id,name')->latest();
+        $query = OperationalAdjustment::query()->where(fn ($q) => $q->whereNull('unit')->orWhere('unit', 'JP')->orWhere('beneficiary_type', 'PARTNER'))->with('actor:id,name')->latest();
         if ($request->filled('type')) $query->where('type', $request->string('type'));
         if ($request->filled('actor')) $query->where('actor_user_id', $request->integer('actor'));
         if ($request->filled('from')) $query->whereDate('created_at', '>=', $request->date('from'));
@@ -31,6 +31,7 @@ class AdminAdjustmentController extends Controller
     public function ledger(Request $request)
     {
         $data = $request->validate(['beneficiary_type' => 'required|in:USER,PARTNER', 'beneficiary_id' => 'required|integer', 'unit' => 'required|in:CASH,JP', 'amount' => 'required|numeric|not_in:0', 'type' => 'required_if:unit,JP|nullable|in:ledger_credit,ledger_debit', 'idempotency_key' => 'required_if:unit,JP|nullable|uuid', 'reason' => 'required|string|max:2000', 'confirm' => 'accepted']);
+        abort_unless(($data['unit'] === 'JP' && $data['beneficiary_type'] === 'USER') || ($data['unit'] === 'CASH' && $data['beneficiary_type'] === 'PARTNER'), 422);
         $this->beneficiaryExists($data['beneficiary_type'], $data['beneficiary_id']);
         if ($data['unit'] === 'JP') {
             if ($data['beneficiary_type'] !== 'USER' || ! ctype_digit((string) $data['amount']) || (int) $data['amount'] <= 0) {
@@ -49,6 +50,7 @@ class AdminAdjustmentController extends Controller
 
     public function rewardStatus(Request $request, RewardTransaction $reward)
     {
+        abort_unless($reward->reward_type === 'JP' || $reward->beneficiary_type === 'PARTNER', 404);
         $data = $request->validate(['status' => 'required|in:available,cancelled', 'reason' => 'required|string|max:2000', 'confirm' => 'accepted']);
         abort_if($reward->status === RewardTransaction::STATUS_PAID, 422, 'Una recompensa pagada requiere un ajuste financiero, no reescritura.');
         $allowed = ($reward->status === RewardTransaction::STATUS_PENDING && $data['status'] === RewardTransaction::STATUS_AVAILABLE)

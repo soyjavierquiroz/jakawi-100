@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\MembershipPurchase;
-use App\Models\RewardTransaction;
 use App\Models\User;
 use App\Services\CustomerAccountService;
 use App\Services\MembershipPurchaseService;
@@ -18,9 +17,8 @@ class PromoterSalesController extends Controller
     {
         $sales = \App\Support\ListingPage::make(MembershipPurchase::query()->where('recorded_by_user_id', $request->user()->id)->with(['beneficiary', 'membership', 'conversion'])->latest(), 25);
         $today = MembershipPurchase::query()->where('recorded_by_user_id', $request->user()->id)->whereDate('created_at', today())->where('status', 'confirmed');
-        $conversionIds = (clone $today)->pluck('conversion_id')->filter();
 
-        return Inertia::render('promoter/sales/index', ['sales' => $sales, 'stats' => ['memberships_sold' => (clone $today)->count(), 'sales_amount' => (string) $today->sum('amount'), 'commission_generated' => (string) RewardTransaction::whereIn('conversion_id', $conversionIds)->sum('amount')]]);
+        return Inertia::render('promoter/sales/index', ['sales' => $sales, 'stats' => ['memberships_sold' => (clone $today)->count(), 'sales_amount' => (string) $today->sum('amount')]]);
     }
 
     public function create(Request $request): Response
@@ -60,6 +58,6 @@ class PromoterSalesController extends Controller
     {
         $purchase->load(['beneficiary', 'membership', 'conversion']);
 
-        return $purchase->toArray() + ['reward' => $purchase->conversion_id ? RewardTransaction::where('conversion_id', $purchase->conversion_id)->first() : null];
+        return $purchase->toArray();
     }
 }

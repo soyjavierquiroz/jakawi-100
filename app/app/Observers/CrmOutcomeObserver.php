@@ -7,7 +7,6 @@ use App\Models\ExperienceReservation;
 use App\Models\Membership;
 use App\Models\MembershipPurchaseRequest;
 use App\Models\PartnerApplication;
-use App\Models\ProgramApplication;
 use App\Models\Redemption;
 use App\Models\UnlockParticipation;
 use App\Models\User;
@@ -22,7 +21,7 @@ final class CrmOutcomeObserver
         // Signup is signaled explicitly after attribution association, not at User insert.
         $event = match (true) {
             $m instanceof UserProfile && $m->city => 'profile_updated',
-            $m instanceof PartnerApplication => 'partner_application_submitted',$m instanceof ProgramApplication => 'program_application_submitted',$m instanceof MembershipPurchaseRequest => 'membership_purchase_requested',$m instanceof ExperienceReservation => 'experience_reserved',$m instanceof ChallengeParticipation => 'challenge_joined',default => null
+            $m instanceof PartnerApplication => 'partner_application_submitted',$m instanceof MembershipPurchaseRequest => 'membership_purchase_requested',$m instanceof ExperienceReservation => 'experience_reserved',$m instanceof ChallengeParticipation => 'challenge_joined',default => null
         };
         if ($event) {
             $this->signal($m, $event, $m instanceof PartnerApplication ? ($m->marketing_opt_in ? 'GRANT' : 'REVOKE') : 'UNCHANGED');

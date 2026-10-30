@@ -23,10 +23,10 @@ class AdminAdjustmentExportTest extends TestCase
     {
         $admin = User::factory()->create(['is_admin' => true]); $user = User::factory()->create();
         $this->actingAs($admin)->post('/admin/adjustments/ledger', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'JP', 'type' => 'ledger_credit', 'amount' => 100, 'idempotency_key' => (string) Str::uuid(), 'reason' => 'Manual JP correction', 'confirm' => true])->assertRedirect();
-        $this->actingAs($admin)->post('/admin/adjustments/ledger', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'CASH', 'amount' => 12.5, 'reason' => 'Manual cash correction', 'confirm' => true])->assertRedirect();
+        $this->actingAs($admin)->post('/admin/adjustments/ledger', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'CASH', 'amount' => 12.5, 'reason' => 'Manual cash correction', 'confirm' => true])->assertUnprocessable();
         $this->assertDatabaseHas('operational_adjustments', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'JP', 'amount' => 100]);
-        $this->assertDatabaseHas('operational_adjustments', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'CASH', 'amount' => 12.5]);
-        $this->assertSame(2, OperationalAdjustment::count());
+        $this->assertDatabaseMissing('operational_adjustments', ['beneficiary_type' => 'USER', 'beneficiary_id' => $user->id, 'unit' => 'CASH']);
+        $this->assertSame(1, OperationalAdjustment::count());
         $this->assertSame(1, RewardTransaction::where('reward_type', 'JP')->count());
         $this->assertSame(['ledger_balance' => 100, 'held' => 0, 'available_balance' => 100], app(JpBalanceService::class)->for($user));
     }
@@ -59,7 +59,7 @@ class AdminAdjustmentExportTest extends TestCase
     public function test_paid_reward_cannot_be_rewritten(): void
     {
         $admin = User::factory()->create(['is_admin' => true]); $reward = $this->reward('paid');
-        $this->actingAs($admin)->post('/admin/adjustments/rewards/'.$reward->id.'/status', ['status' => 'cancelled', 'reason' => 'No rewrite', 'confirm' => true])->assertStatus(422);
+        $this->actingAs($admin)->post('/admin/adjustments/rewards/'.$reward->id.'/status', ['status' => 'cancelled', 'reason' => 'No rewrite', 'confirm' => true])->assertNotFound();
         $this->assertSame('paid', $reward->fresh()->status);
     }
 

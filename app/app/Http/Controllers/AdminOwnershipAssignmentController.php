@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\OwnershipAssignment;
 use App\Models\PartnerApplication;
-use App\Models\ProgramApplication;
 use App\Models\User;
 use App\Services\OwnershipAssignmentService;
 use Illuminate\Http\Request;
@@ -27,12 +26,11 @@ class AdminOwnershipAssignmentController extends Controller
         return back();
     }
 
-    private function target(string $type, int $id): User|PartnerApplication|ProgramApplication
+    private function target(string $type, int $id): User|PartnerApplication
     {
         return match ($type) {
             OwnershipAssignment::TARGET_USER => User::findOrFail($id),
             OwnershipAssignment::TARGET_PARTNER_APPLICATION => PartnerApplication::findOrFail($id),
-            OwnershipAssignment::TARGET_PROGRAM_APPLICATION => ProgramApplication::findOrFail($id),
             default => abort(404),
         };
     }

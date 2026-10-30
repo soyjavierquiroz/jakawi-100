@@ -19,7 +19,6 @@ class PublicJourneyContinuation
         'EXPERIENCE' => ['RESERVE'],
         'UNLOCK' => ['COMMIT', 'INTEREST', 'CANCEL', 'CONFIRM'],
         'BENEFIT' => ['REDEEM'],
-        'ACQUISITION' => ['APPLY'],
         'SOCIAL_CHALLENGE' => ['PARTICIPATE'],
     ];
 
@@ -104,9 +103,6 @@ class PublicJourneyContinuation
             'BENEFIT' => ($benefit = Benefit::find($intent['resource_id'])) ? route('redemptions.intent', ['benefit' => $benefit->slug] + ($intent['context'] ?? []), false) : null,
             'UNLOCK' => ($unlock = Unlock::find($intent['resource_id'])) && in_array($unlock->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true)
                 ? route('unlocks.show', $unlock->slug, false) : null,
-            'ACQUISITION' => route('programs.show', ['program' => match ($intent['resource_id']) {
-                'AFFILIATE' => 'afiliados', 'CREATOR' => 'creadores', 'PROMOTER' => 'promotores',
-            }], false).'#solicitud',
             'SOCIAL_CHALLENGE' => ($challenge = Challenge::find($intent['resource_id'])) && $challenge->isPublic() ? route('social-challenges.show', $challenge->slug, false) : null,
         };
     }
@@ -212,9 +208,6 @@ class PublicJourneyContinuation
 
     private function allowed(string $journey, int|string $resourceId, string $action): bool
     {
-        if ($journey === 'ACQUISITION') {
-            return in_array($resourceId, ['AFFILIATE', 'CREATOR', 'PROMOTER'], true) && $action === 'APPLY';
-        }
         return is_int($resourceId) && $resourceId > 0 && in_array($action, self::ACTIONS[$journey] ?? [], true);
     }
 }

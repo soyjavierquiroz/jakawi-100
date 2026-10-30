@@ -51,26 +51,6 @@ class AdminPromoterManagementTest extends TestCase
         $this->assertDatabaseHas('audit_logs', ['action' => 'promoter_deactivated']);
     }
 
-    public function test_referral_code_is_generated_without_silent_overwrite_and_link_attributes_prospectively(): void
-    {
-        $admin = User::factory()->create(['is_admin' => true]); $promoter = $this->promoter();
-        $this->actingAs($admin)->post('/admin/promoters/'.$promoter->id.'/referral-code')->assertRedirect(); $first = $promoter->fresh()->referral_code;
-        $this->actingAs($admin)->post('/admin/promoters/'.$promoter->id.'/referral-code')->assertRedirect(); $this->assertSame($first, $promoter->fresh()->referral_code);
-        $this->actingAs($admin)->post('/admin/promoters/'.$promoter->id.'/referral-code', ['regenerate' => true])->assertRedirect(); $this->assertNotSame($first, $promoter->fresh()->referral_code);
-        $this->get('/r/'.$promoter->fresh()->referral_code)->assertRedirect('/');
-        $this->assertDatabaseHas('audit_logs', ['action' => 'promoter_referral_code_changed']);
-    }
-
-    public function test_individual_commission_wins_over_program_rule_without_stacking_and_is_audited(): void
-    {
-        $admin = User::factory()->create(['is_admin' => true]); $promoter = $this->promoter();
-        RewardRule::create(['name' => 'Programa', 'participant_type' => 'PROMOTER', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'reward_type' => 'CASH', 'calculation_type' => 'PERCENTAGE', 'value' => 10, 'currency' => 'BOB', 'priority' => 0, 'status' => 'active']);
-        $this->actingAs($admin)->put('/admin/promoters/'.$promoter->id.'/commission', ['mode' => 'custom', 'calculation_type' => 'FIXED', 'value' => 25, 'currency' => 'BOB', 'status' => 'active'])->assertRedirect();
-        $this->sale($promoter);
-        $this->assertSame(1, RewardTransaction::count()); $this->assertSame('25.00', RewardTransaction::firstOrFail()->amount);
-        $this->assertDatabaseHas('audit_logs', ['action' => 'individual_reward_rule_added']);
-    }
-
     public function test_promoters_cannot_see_another_promoters_sales(): void
     {
         $one = $this->promoter(); $two = $this->promoter(); $sale = $this->sale($two);

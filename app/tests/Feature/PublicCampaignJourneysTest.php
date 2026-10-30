@@ -90,8 +90,8 @@ class PublicCampaignJourneysTest extends TestCase
         DB::statement('SET LOCAL enable_bitmapscan = off');
         $user = User::factory()->create();
         $campaign = Campaign::create(['name' => 'Economic', 'code' => 'test-journey', 'status' => 'active', 'event' => 'membership_purchased']);
-        CampaignParticipant::create(['campaign_id' => $campaign->id, 'participant_type' => 'CREATOR']);
-        $base = ['participant_type' => 'CREATOR', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'currency' => 'BOB', 'status' => 'active'];
+        CampaignParticipant::create(['campaign_id' => $campaign->id, 'participant_type' => 'MEMBER']);
+        $base = ['participant_type' => 'MEMBER', 'event' => 'membership_purchased', 'product_key' => 'jakawi_annual', 'reward_type' => 'JP', 'calculation_type' => 'FIXED', 'currency' => 'JP', 'status' => 'active'];
         $global = RewardRule::create([...$base, 'name' => 'global', 'value' => 10]);
         $specific = RewardRule::create([...$base, 'name' => 'campaign', 'campaign_id' => $campaign->id, 'value' => 20]);
 
@@ -104,7 +104,7 @@ class PublicCampaignJourneysTest extends TestCase
         $firstTouch = AttributionTouch::findOrFail($first->attribution_touch_id);
         $this->assertSame('test-journey', $firstTouch->campaign_key);
         $this->assertSame('meta-seminar', $firstTouch->utm_campaign);
-        $this->assertSame($global->id, app(RewardResolver::class)->ruleFor($user, 'USER', 'CREATOR', 'membership_purchased', 'jakawi_annual')?->id);
+        $this->assertSame($global->id, app(RewardResolver::class)->ruleFor($user, 'USER', 'MEMBER', 'membership_purchased', 'jakawi_annual', 'JP')?->id);
 
         $this->get('/test-public-journey?utm_campaign=test-journey')->assertOk();
         $secondTouch = AttributionTouch::where('user_id', $user->id)->orderByDesc('id')->firstOrFail();
@@ -122,7 +122,7 @@ class PublicCampaignJourneysTest extends TestCase
         $this->assertSame($secondTouch->id, $second->attribution_touch_id);
         $this->assertSame('test-journey', $second->attribution_snapshot['utm_campaign']);
         $this->assertSame($campaign->id, $second->campaign_id);
-        $this->assertSame($specific->id, app(RewardResolver::class)->ruleFor($user, 'USER', 'CREATOR', 'membership_purchased', 'jakawi_annual', 'CASH', $second->campaign_id)?->id);
+        $this->assertSame($specific->id, app(RewardResolver::class)->ruleFor($user, 'USER', 'MEMBER', 'membership_purchased', 'jakawi_annual', 'JP', $second->campaign_id)?->id);
     }
 
     public function test_go_uses_only_configured_destination_and_emits_no_sensitive_metadata(): void

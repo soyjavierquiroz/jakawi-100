@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\AuditLog;
 use App\Models\OwnershipAssignment;
 use App\Models\PartnerApplication;
-use App\Models\ProgramApplication;
 use App\Models\ProgramEnrollment;
 use App\Models\ReferralRelationship;
 use App\Models\User;
@@ -14,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 class OwnershipAssignmentService
 {
-    public function current(User|PartnerApplication|ProgramApplication $target): ?OwnershipAssignment
+    public function current(User|PartnerApplication $target): ?OwnershipAssignment
     {
         return OwnershipAssignment::query()->where('target_type', $this->targetType($target))
             ->where('target_id', $target->getKey())->whereNull('ended_at')->first();
@@ -23,10 +22,10 @@ class OwnershipAssignmentService
     public function eligible(User $owner): bool
     {
         return $owner->is_admin || $owner->programEnrollments()->active()
-            ->whereIn('program_type', [ProgramEnrollment::TYPE_AFFILIATE, ProgramEnrollment::TYPE_CREATOR, ProgramEnrollment::TYPE_PROMOTER])->exists();
+            ->whereIn('program_type', [ProgramEnrollment::TYPE_PROMOTER])->exists();
     }
 
-    public function assignIfUnowned(User|PartnerApplication|ProgramApplication $target, User $owner, string $source, ?User $actor = null, ?string $reason = null): OwnershipAssignment
+    public function assignIfUnowned(User|PartnerApplication $target, User $owner, string $source, ?User $actor = null, ?string $reason = null): OwnershipAssignment
     {
         return DB::transaction(function () use ($target, $owner, $source, $actor, $reason): OwnershipAssignment {
             $this->lockTarget($target);
@@ -36,7 +35,7 @@ class OwnershipAssignmentService
         });
     }
 
-    public function reassign(User|PartnerApplication|ProgramApplication $target, User $owner, User $actor, string $reason): OwnershipAssignment
+    public function reassign(User|PartnerApplication $target, User $owner, User $actor, string $reason): OwnershipAssignment
     {
         abort_unless($actor->is_admin, 403);
         return DB::transaction(function () use ($target, $owner, $actor, $reason): OwnershipAssignment {
@@ -51,7 +50,7 @@ class OwnershipAssignmentService
         });
     }
 
-    public function unassign(User|PartnerApplication|ProgramApplication $target, User $actor, string $reason): void
+    public function unassign(User|PartnerApplication $target, User $actor, string $reason): void
     {
         abort_unless($actor->is_admin, 403);
         DB::transaction(function () use ($target, $actor, $reason): void {
@@ -63,7 +62,7 @@ class OwnershipAssignmentService
         });
     }
 
-    public function inheritFromUser(PartnerApplication|ProgramApplication $application, User $user): ?OwnershipAssignment
+    public function inheritFromUser(PartnerApplication $application, User $user): ?OwnershipAssignment
     {
         if ($application->user_id !== $user->id) return null;
         return DB::transaction(function () use ($application, $user): ?OwnershipAssignment {
@@ -95,21 +94,21 @@ class OwnershipAssignmentService
             ? $this->assignIfUnowned($application, $referrer, OwnershipAssignment::SOURCE_CONVERSION_REFERRAL) : null;
     }
 
-    private function validateOwner(User|PartnerApplication|ProgramApplication $target, User $owner): void
+    private function validateOwner(User|PartnerApplication $target, User $owner): void
     {
         $owner = User::findOrFail($owner->id);
         if (! $this->eligible($owner) || ($target instanceof User && $target->id === $owner->id)
-            || (($target instanceof PartnerApplication || $target instanceof ProgramApplication) && $target->user_id === $owner->id)) {
+            || (($target instanceof PartnerApplication) && $target->user_id === $owner->id)) {
             throw ValidationException::withMessages(['owner_user_id' => 'Responsable no elegible para este objetivo.']);
         }
     }
 
-    private function lockTarget(User|PartnerApplication|ProgramApplication $target): void
+    private function lockTarget(User|PartnerApplication $target): void
     {
         $target::query()->whereKey($target->getKey())->lockForUpdate()->firstOrFail();
     }
 
-    private function create(User|PartnerApplication|ProgramApplication $target, User $owner, string $source, ?User $actor, ?string $reason): OwnershipAssignment
+    private function create(User|PartnerApplication $target, User $owner, string $source, ?User $actor, ?string $reason): OwnershipAssignment
     {
         return OwnershipAssignment::create([
             'target_type' => $this->targetType($target), 'target_id' => $target->getKey(),
@@ -118,16 +117,15 @@ class OwnershipAssignmentService
         ]);
     }
 
-    private function targetType(User|PartnerApplication|ProgramApplication $target): string
+    private function targetType(User|PartnerApplication $target): string
     {
         return match (true) {
             $target instanceof User => OwnershipAssignment::TARGET_USER,
             $target instanceof PartnerApplication => OwnershipAssignment::TARGET_PARTNER_APPLICATION,
-            $target instanceof ProgramApplication => OwnershipAssignment::TARGET_PROGRAM_APPLICATION,
         };
     }
 
-    private function audit(User|PartnerApplication|ProgramApplication $target, User $actor, string $action, ?int $before, ?int $after, string $reason): void
+    private function audit(User|PartnerApplication $target, User $actor, string $action, ?int $before, ?int $after, string $reason): void
     {
         AuditLog::create(['actor_user_id' => $actor->id, 'action' => $action,
             'subject_type' => $target::class, 'subject_id' => $target->getKey(),

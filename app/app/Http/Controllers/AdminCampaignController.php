@@ -45,7 +45,7 @@ class AdminCampaignController extends Controller
 
     private function data(Request $request): array
     {
-        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'code' => ['required', 'alpha_dash', 'max:100', Rule::unique('campaigns', 'code')->ignore($request->route('campaign'))], 'description' => ['nullable', 'string'], 'status' => ['required', 'in:draft,active,inactive'], 'start_at' => ['nullable', 'date'], 'end_at' => ['nullable', 'date', 'after_or_equal:start_at'], 'event' => ['required', 'in:membership_purchased'], 'product_key' => ['nullable', 'string', 'max:100'], 'participant_types' => ['required', 'array', 'min:1'], 'participant_types.*' => ['in:PROMOTER,AFFILIATE,CREATOR,MEMBER,PARTNER']]);
+        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'code' => ['required', 'alpha_dash', 'max:100', Rule::unique('campaigns', 'code')->ignore($request->route('campaign'))], 'description' => ['nullable', 'string'], 'status' => ['required', 'in:draft,active,inactive'], 'start_at' => ['nullable', 'date'], 'end_at' => ['nullable', 'date', 'after_or_equal:start_at'], 'event' => ['required', 'in:membership_purchased'], 'product_key' => ['nullable', 'string', 'max:100'], 'participant_types' => ['required', 'array', 'min:1'], 'participant_types.*' => ['in:MEMBER,PARTNER']]);
         unset($data['participant_types']);
 
         return $data;
@@ -55,7 +55,7 @@ class AdminCampaignController extends Controller
     {
         $confirmed = $campaign->conversions()->where('status', 'confirmed');
         $conversionIds = (clone $confirmed)->select('id');
-        return $campaign->toArray() + ['participant_types' => $campaign->participants->pluck('participant_type')->values(), 'clicks' => AttributionTouch::where('utm_campaign', $campaign->code)->count(), 'conversions_count' => $confirmed->count(), 'revenue' => (string) $confirmed->sum('eligible_amount'), 'rewards_generated' => (string) RewardTransaction::whereIn('conversion_id', $conversionIds)->where('status', '!=', RewardTransaction::STATUS_CANCELLED)->sum('amount')];
+        return $campaign->toArray() + ['participant_types' => $campaign->participants->pluck('participant_type')->values(), 'clicks' => AttributionTouch::where('utm_campaign', $campaign->code)->count(), 'conversions_count' => $confirmed->count(), 'revenue' => (string) $confirmed->sum('eligible_amount'), 'rewards_generated' => (string) RewardTransaction::operational()->whereIn('conversion_id', $conversionIds)->where('status', '!=', RewardTransaction::STATUS_CANCELLED)->sum('amount')];
     }
 
     private function audit(Request $request, string $action, Campaign $campaign, ?array $before = null): void

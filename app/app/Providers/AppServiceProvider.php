@@ -9,7 +9,6 @@ use App\Models\ExperienceReservation;
 use App\Models\Membership;
 use App\Models\MembershipPurchaseRequest;
 use App\Models\PartnerApplication;
-use App\Models\ProgramApplication;
 use App\Models\Redemption;
 use App\Models\UnlockParticipation;
 use App\Models\User;
@@ -62,7 +61,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         Redemption::observe(\App\Observers\CommercialRedemptionObserver::class);
-        foreach ([User::class, UserProfile::class, PartnerApplication::class, ProgramApplication::class,
+        foreach ([User::class, UserProfile::class, PartnerApplication::class,
             MembershipPurchaseRequest::class, Membership::class, Redemption::class,
             ExperienceReservation::class, ChallengeParticipation::class, UnlockParticipation::class] as $model) {
             $model::observe(CrmOutcomeObserver::class);

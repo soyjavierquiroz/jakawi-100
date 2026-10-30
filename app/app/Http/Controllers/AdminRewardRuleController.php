@@ -15,7 +15,7 @@ class AdminRewardRuleController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = RewardRule::query();
+        $query = RewardRule::query()->where(fn ($q) => $q->where('reward_type', 'JP')->orWhere(fn ($p) => $p->where('participant_type', 'PARTNER')->where('reward_type', 'CASH')));
         $request->validate(['q' => 'nullable|string|max:200', 'status' => 'nullable|string|max:30', 'sort' => 'nullable|in:name,newest']);
         if ($request->filled('q')) $query->where('name', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%');
         if ($request->filled('status')) $query->where('status', $request->string('status'));
@@ -34,6 +34,7 @@ class AdminRewardRuleController extends Controller
 
     public function update(Request $request, RewardRule $rule)
     {
+        abort_unless(($rule->participant_type === 'MEMBER' && $rule->reward_type === 'JP') || ($rule->participant_type === 'PARTNER' && $rule->reward_type === 'CASH'), 404);
         $before = $rule->toArray();
         $rule->update($this->data($request));
         $this->audit($request, 'reward_rule_updated', $rule, $before);
@@ -43,7 +44,8 @@ class AdminRewardRuleController extends Controller
 
     private function data(Request $request): array
     {
-        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'campaign_id' => ['nullable', 'exists:campaigns,id'], 'beneficiary_type' => ['nullable', 'in:USER,PARTNER'], 'beneficiary_id' => ['nullable', 'integer'], 'participant_type' => ['nullable', 'in:PROMOTER,AFFILIATE,CREATOR,PARTNER,MEMBER'], 'event' => ['required', 'string', 'max:100'], 'product_key' => ['nullable', 'string', 'max:100'], 'reward_type' => ['required', 'in:CASH,JP'], 'calculation_type' => ['required', 'in:FIXED,PERCENTAGE'], 'value' => ['required', 'numeric', 'gt:0'], 'currency' => ['nullable', 'string', 'size:3'], 'starts_at' => ['nullable', 'date'], 'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'], 'priority' => ['required', 'integer', 'min:0'], 'status' => ['required', 'in:active,inactive'], 'maximum_rewards' => ['nullable', 'integer', 'min:1'], 'maximum_per_user' => ['nullable', 'integer', 'min:1']]);
+        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'campaign_id' => ['nullable', 'exists:campaigns,id'], 'beneficiary_type' => ['nullable', 'in:USER,PARTNER'], 'beneficiary_id' => ['nullable', 'integer'], 'participant_type' => ['required', 'in:PARTNER,MEMBER'], 'event' => ['required', 'string', 'max:100'], 'product_key' => ['nullable', 'string', 'max:100'], 'reward_type' => ['required', 'in:CASH,JP'], 'calculation_type' => ['required', 'in:FIXED,PERCENTAGE'], 'value' => ['required', 'numeric', 'gt:0'], 'currency' => ['nullable', 'string', 'size:3'], 'starts_at' => ['nullable', 'date'], 'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'], 'priority' => ['required', 'integer', 'min:0'], 'status' => ['required', 'in:active,inactive'], 'maximum_rewards' => ['nullable', 'integer', 'min:1'], 'maximum_per_user' => ['nullable', 'integer', 'min:1']]);
+        abort_unless(($data['participant_type'] === 'MEMBER' && $data['reward_type'] === 'JP' && ($data['beneficiary_type'] ?? null) !== 'PARTNER') || ($data['participant_type'] === 'PARTNER' && $data['reward_type'] === 'CASH' && ($data['beneficiary_type'] ?? null) !== 'USER'), 422, 'COM solo gestiona JP de miembros y pagos comerciales a Partners.');
         if ($data['campaign_id'] ?? null) { $campaign = Campaign::findOrFail($data['campaign_id']); abort_unless($campaign->event === $data['event'] && $campaign->eligibleFor($data['participant_type']), 422, 'La regla debe coincidir con el evento y participante de la campaña.'); }
         abort_if(($data['beneficiary_type'] ?? null) === 'PARTNER' && ! Partner::whereKey($data['beneficiary_id'])->exists(), 422, 'Partner beneficiary invalid.');
         abort_if(($data['beneficiary_type'] ?? null) === 'USER' && ! User::whereKey($data['beneficiary_id'])->exists(), 422, 'User beneficiary invalid.');

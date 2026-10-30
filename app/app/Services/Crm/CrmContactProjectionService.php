@@ -41,7 +41,7 @@ final class CrmContactProjectionService
 
     public function project(Model $source, string $event, string $action = 'UNCHANGED'): ?array
     {
-        $activities = ['lead_submitted', 'signup_completed', 'profile_updated', 'marketing_preference_changed', 'membership_purchase_requested', 'membership_activated', 'benefit_redeemed', 'experience_reserved', 'challenge_joined', 'unlock_committed', 'partner_application_submitted', 'program_application_submitted'];
+        $activities = ['lead_submitted', 'signup_completed', 'profile_updated', 'marketing_preference_changed', 'membership_purchase_requested', 'membership_activated', 'benefit_redeemed', 'experience_reserved', 'challenge_joined', 'unlock_committed', 'partner_application_submitted'];
         if (! in_array($event, [...$activities, 'membership_updated'], true)) {
             return null;
         }
@@ -93,7 +93,7 @@ final class CrmContactProjectionService
             }
         }
         $tag = match ($event) {
-            'membership_purchase_requested' => 'membership-requested','partner_application_submitted' => 'partner-applicant','program_application_submitted' => 'program-applicant','benefit_redeemed' => 'benefit-redeemer','experience_reserved' => 'experience-reserver','challenge_joined' => 'challenge-participant','unlock_committed' => 'unlock-participant',default => null
+            'membership_purchase_requested' => 'membership-requested','partner_application_submitted' => 'partner-applicant','benefit_redeemed' => 'benefit-redeemer','experience_reserved' => 'experience-reserver','challenge_joined' => 'challenge-participant','unlock_committed' => 'unlock-participant',default => null
         };
         if ($tag) {
             $tags[] = $tag;
@@ -111,8 +111,8 @@ final class CrmContactProjectionService
                 $fields['jakawi_city'] = $source->city?->name;
             }
         }
-        if (! isset($fields['lead_source']) && in_array($event, ['signup_completed', 'program_application_submitted', 'lead_submitted'], true)) {
-            $fields['lead_source'] = $event === 'signup_completed' ? 'registration' : ($event === 'program_application_submitted' ? 'program_application' : 'lead');
+        if (! isset($fields['lead_source']) && in_array($event, ['signup_completed', 'lead_submitted'], true)) {
+            $fields['lead_source'] = $event === 'signup_completed' ? 'registration' : 'lead';
             $fields['lead_form'] = $fields['lead_source'];
         }
         $touches = AttributionTouch::query();

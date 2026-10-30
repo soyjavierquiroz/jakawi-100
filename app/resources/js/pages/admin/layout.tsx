@@ -1,49 +1,37 @@
 import { Head, Link } from '@inertiajs/react';
-export default function AdminLayout({
-    title,
-    children,
-}: {
-    title: string;
-    children: React.ReactNode;
-}) {
-    return (
-        <main className="min-h-screen bg-background p-5 text-foreground">
-            <Head title={title} />
-            <nav className="flex flex-wrap gap-4 text-sm">
-                <Link href="/admin">Admin</Link>
-                <Link href="/admin/landings">Marketing Landings</Link>
-                <Link href="/admin/review">Revisión</Link>
-                <Link href="/admin/ciudades">Ciudades</Link>
-                <Link href="/admin/expansion">Expansión</Link>
-                <Link href="/admin/solicitudes-partner">
-                    Solicitudes Partner
-                </Link>
-                <Link href="/admin/solicitudes-programas">
-                    Solicitudes de programas
-                </Link>
-                <Link href="/admin/partners">Partners</Link>
-                <Link href="/admin/locations">Locations</Link>
-                <Link href="/admin/benefits">Beneficios</Link>
-                <Link href="/admin/experiences">Experiencias</Link>
-                <Link href="/admin/memberships">Membresías</Link>
-                <Link href="/admin/sales">Ventas</Link>
-                <Link href="/admin/solicitudes-membresia">
-                    Solicitudes de membresía
-                </Link>
-                <Link href="/admin/promoters">Promotores</Link>
-                <Link href="/admin/affiliates">Afiliados</Link>
-                <Link href="/admin/creators">Creadores</Link>
-                <Link href="/admin/payouts">Pagos</Link>
-                <Link href="/admin/reward-rules">Reglas de recompensa</Link>
-                <Link href="/admin/campaigns">Campañas</Link>
-                <Link href="/admin/retos">Retos sociales</Link>
-                <Link href="/admin/redemptions">Canjes</Link>
-                <Link href="/admin/attribution">Atribución</Link>
-                <Link href="/admin/adjustments">Ajustes de saldo</Link>
-                <Link href="/admin/settings">Ajustes</Link>
-            </nav>
-            <h1 className="mt-8 text-3xl font-semibold">{title}</h1>
-            <div className="mt-6">{children}</div>
-        </main>
-    );
+
+const groups = [
+    ['Catálogo y experiencias', [
+        ['/admin/partners', 'Partners'], ['/admin/locations', 'Locations'],
+        ['/admin/benefits', 'Beneficios'], ['/admin/experiences', 'Experiencias'],
+        ['/admin/retos', 'Retos sociales'], ['/admin/redemptions', 'Canjes'],
+    ]],
+    ['Operación comercial', [
+        ['/admin/memberships', 'Membresías'], ['/admin/sales', 'Ventas y cobros'],
+        ['/admin/solicitudes-membresia', 'Solicitudes de membresía'],
+        ['/admin/promoters', 'Operadores de ventas'], ['/admin/payouts', 'Pagos a Partners'],
+        ['/admin/reward-rules', 'Reglas JP y Partners'], ['/admin/adjustments', 'Ajustes JP y Partners'],
+    ]],
+    ['Marketing y administración', [
+        ['/admin/landings', 'Marketing Landings'], ['/admin/campaigns', 'Campañas operativas'],
+        ['/admin/attribution', 'Atribución comercial'], ['/admin/review', 'Revisión'],
+        ['/admin/ciudades', 'Ciudades'], ['/admin/expansion', 'Expansión'],
+        ['/admin/solicitudes-partner', 'Solicitudes Partner'], ['/admin/settings', 'Ajustes'],
+    ]],
+] as const;
+
+export default function AdminLayout({ title, children }: { title: string; children: React.ReactNode }) {
+    return <main className="min-h-screen bg-background p-5 text-foreground">
+        <Head title={title} />
+        <nav aria-label="Administración" className="space-y-3 text-sm">
+            <Link href="/admin" className="font-semibold">Admin</Link>
+            {groups.map(([name, links]) => <div key={name} className="flex flex-wrap gap-x-4 gap-y-2">
+                <span className="w-full font-semibold text-muted-foreground">{name}</span>
+                {links.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}
+            </div>)}
+            <a className="inline-block font-semibold" href="https://jakawi.club/afiliados" target="_blank" rel="noopener noreferrer">AFILIADOS Y COMISIONES — CLUB</a>
+        </nav>
+        <h1 className="mt-8 text-3xl font-semibold">{title}</h1>
+        <div className="mt-6">{children}</div>
+    </main>;
 }
