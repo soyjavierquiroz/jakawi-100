@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ExtractMembershipReceipt;
 use App\Models\AnalyticsEvent;
 use App\Models\MembershipBankPayment;
 use App\Models\User;
@@ -53,25 +54,27 @@ class MembershipBankController extends Controller
     public function submit(Request $request, MembershipBankCheckout $checkout)
     {
         abort_unless($checkout->ready(), 422, 'Los cobros aún no están habilitados.');
-        $data = $request->validate(['receipt' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
-            'declared_reference' => ['nullable', 'string', 'max:255'], 'paid_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
-            'paid_time' => ['required', 'date_format:H:i'], 'origin_bank' => ['nullable', 'string', 'max:255'], 'payer_name' => ['nullable', 'string', 'max:255']]);
+        $request->validate(['receipt' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240']]);
         $path = null;
         try {
-            DB::transaction(function () use ($request, $checkout, $data, &$path) {
+            DB::transaction(function () use ($request, $checkout, &$path) {
                 User::lockForUpdate()->findOrFail($request->user()->id);
                 $payment = MembershipBankPayment::where('user_id', $request->user()->id)->whereIn('status', ['awaiting_payment', 'rejected'])->lockForUpdate()->first();
                 abort_unless($payment, 422, 'No hay una solicitud que admita correcciones.');
                 $file = $request->file('receipt');
-                $path = $file->storeAs('receipts/'.$payment->reference, (string) Str::uuid().'.'.$file->extension(), 'membership-private');
-                $payment->fill(collect($data)->except('receipt')->all())->forceFill(['declared_reference' => MembershipBankCheckout::reference($data['declared_reference'] ?? null),
-                    'receipt_path' => $path, 'receipt_mime' => $file->getMimeType(), 'status' => 'under_review', 'submitted_at' => now(),
-                    'review_note' => null, 'reviewed_by' => null, 'reviewed_at' => null])->save();
+                $path = $file->storeAs('memberships/receipts/'.$payment->reference, (string) Str::uuid().'.'.$file->extension(), ['disk' => 'minio-media', 'visibility' => 'private']);
+                $version = (string) Str::uuid();
+                $payment->forceFill(['declared_reference' => null, 'paid_date' => null, 'paid_time' => null, 'origin_bank' => null, 'payer_name' => null,
+                    'receipt_path' => $path, 'receipt_disk' => 'minio-media', 'receipt_sha256' => hash_file('sha256', $file->getRealPath()), 'receipt_mime' => $file->getMimeType(),
+                    'status' => 'under_review', 'submitted_at' => now(), 'review_note' => null, 'reviewed_by' => null, 'reviewed_at' => null,
+                    'extraction_version' => $version, 'extraction_status' => 'pending', 'extraction_json' => null, 'extraction_error' => null,
+                    'extraction_attempts' => 0, 'extraction_claimed_at' => null, 'extraction_processed_at' => null])->save();
+                ExtractMembershipReceipt::dispatch($payment->id, $version);
                 $checkout->audit($payment, $request->user(), 'membership_bank_submitted');
             });
         } catch (\Throwable $e) {
             if ($path) {
-                Storage::disk('membership-private')->delete($path);
+                Storage::disk('minio-media')->delete($path);
             }
             throw $e;
         }
@@ -140,10 +143,11 @@ class MembershipBankController extends Controller
 
     public function receipt(Request $request, MembershipBankPayment $payment, MembershipBankCheckout $checkout)
     {
+        abort_unless($request->user()->is_admin || $payment->user_id === $request->user()->id, 403);
         abort_unless($payment->receipt_path, 404);
         $checkout->audit($payment, $request->user(), 'membership_bank_receipt_viewed');
 
-        return Storage::disk('membership-private')->download($payment->receipt_path, 'comprobante-'.$payment->reference.'.'.pathinfo($payment->receipt_path, PATHINFO_EXTENSION),
+        return Storage::disk($payment->receipt_disk ?? 'membership-private')->download($payment->receipt_path, 'comprobante-'.$payment->reference.'.'.pathinfo($payment->receipt_path, PATHINFO_EXTENSION),
             ['Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff', 'Content-Type' => $payment->receipt_mime]);
     }
 }

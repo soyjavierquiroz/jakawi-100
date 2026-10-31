@@ -33,3 +33,7 @@ La única columna adicional es `payer_name`, nullable: quien pagó por el miembr
 El destinatario visible tiene configuración independiente en app_settings (`membership_bank_qr_recipient`), dentro de la misma sección del QR; por defecto: Javier Enrrique Marcos Quiroz Sueldo. Guardar solo el destinatario no escribe ni reemplaza el objeto QR de MinIO.
 
 `GET /membresia/checkout/qr/descargar` requiere la sesión COM y sirve exactamente el original PNG/JPG con Content-Disposition attachment y cache privado/no-store, sin nueva pestaña. En revisión/aprobado no se ofrece otro pago; el comprobante observado permite corregir la misma intención.
+
+## Actualización: comprobante único
+
+El comprador ahora envía únicamente su comprobante privado. Los campos de transacción se extraen de forma asíncrona o se corrigen en administración; ya no se solicitan al comprador. Configuración, tratamiento externo y operación: [receipt-ai-processing.md](receipt-ai-processing.md).

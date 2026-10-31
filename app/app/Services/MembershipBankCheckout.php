@@ -106,13 +106,13 @@ class MembershipBankCheckout
         if ($exact->isNotEmpty()) {
             $claims = MembershipBankPayment::where('status', 'under_review')->where('declared_reference', $payment->declared_reference)->count();
 
-            return ['classification' => $exact->count() === 1 && $claims === 1 ? 'strong_unique' : 'ambiguous', 'candidates' => $exact->all()];
+            return ['classification' => $exact->count() === 1 && $claims === 1 && app(MembershipReceiptVision::class)->supportsStrongMatch($payment) ? 'strong_unique' : 'ambiguous', 'candidates' => $exact->all()];
         }
         // A different explicit reference is a conflict, never a time-based match.
         $near = $payment->paid_date ? $available->where('paid_date', $payment->paid_date->format('Y-m-d'))
             ->when($payment->declared_reference, fn ($q) => $q->whereNull('reference'))->orderBy('paid_time')->limit(100)->get() : collect();
 
-        return ['classification' => $near->isEmpty() ? 'no_match' : 'ambiguous', 'candidates' => $near->all()];
+        return ['classification' => $near->isEmpty() ? 'no_match' : ($payment->extraction_status !== null && $near->count() === 1 && app(MembershipReceiptVision::class)->supportsStrongMatch($payment) ? 'probable' : 'ambiguous'), 'candidates' => $near->all()];
     }
 
     public function audit(MembershipBankPayment $payment, User $actor, string $action, array $metadata = []): void

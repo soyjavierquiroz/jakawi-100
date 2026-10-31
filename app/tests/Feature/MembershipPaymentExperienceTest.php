@@ -77,12 +77,12 @@ class MembershipPaymentExperienceTest extends TestCase
         $p = MembershipBankPayment::sole();
         $this->post('/membresia/checkout/comprobante', ['payer_name' => 'Pagador Distinto', 'receipt' => UploadedFile::fake()->image('receipt.png'), 'paid_date' => '2026-10-29', 'paid_time' => '10:20', 'declared_reference' => 'REF123', 'origin_bank' => 'Banco declarado'])->assertRedirect();
         $p->refresh();
-        $this->assertSame('Pagador Distinto', $p->payer_name);
+        $this->assertNull($p->payer_name);
         $this->assertSame($buyer->id, $p->user_id);
         $this->assertSame('Titular Real', $p->user->name);
-        $this->assertSame('REF123', $p->declared_reference);
+        $this->assertNull($p->declared_reference);
         $this->assertNotNull($p->submitted_at);
-        Storage::disk('membership-private')->assertExists($p->receipt_path);
+        Storage::disk('minio-media')->assertExists($p->receipt_path);
         $event = AnalyticsEvent::where('event_name', 'initiate_checkout')->sole();
         $this->assertStringNotContainsString('Pagador Distinto', json_encode($event->metadata));
         $this->assertStringNotContainsString($buyer->email, json_encode($event->metadata));

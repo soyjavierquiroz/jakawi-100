@@ -351,7 +351,9 @@ Route::post('/media/uploads', [\App\Http\Controllers\MediaUploadController::clas
 // COM is the sole authority for bank membership checkout and reconciliation.
 Route::get('/membresia/checkout', [\App\Http\Controllers\MembershipBankController::class,'show'])->middleware('throttle:30,1')->name('membership.checkout');
 Route::middleware(['auth','throttle:30,1'])->group(function () {
+    Route::view('/membresia/checkout/privacidad-comprobante','membership-bank.receipt-privacy')->name('membership.checkout.receipt-privacy');
     Route::get('/membresia/checkout/qr/descargar', [\App\Http\Controllers\MembershipBankController::class,'downloadQr'])->name('membership.checkout.qr.download');
+    Route::get('/membresia/checkout/comprobante/{payment}', [\App\Http\Controllers\MembershipBankController::class,'receipt'])->name('membership.checkout.receipt');
     Route::get('/membresia/checkout/qr', [\App\Http\Controllers\MembershipBankController::class,'qr'])->name('membership.checkout.qr');
     Route::post('/membresia/checkout/comprobante', [\App\Http\Controllers\MembershipBankController::class,'submit'])->name('membership.checkout.submit');
 });
@@ -359,6 +361,8 @@ Route::middleware(['auth','admin','throttle:60,1'])->prefix('admin/conciliacion-
     Route::get('/', [\App\Http\Controllers\MembershipBankController::class,'index'])->name('admin.membership-bank.index');
     Route::get('/qr', [\App\Http\Controllers\AdminMembershipBankQrController::class,'show'])->name('admin.membership-bank.qr.show');
     Route::post('/qr', [\App\Http\Controllers\AdminMembershipBankQrController::class,'store'])->name('admin.membership-bank.qr.store');
+    Route::post('/{payment}/extraccion', [\App\Http\Controllers\AdminReceiptExtractionController::class,'update'])->name('admin.membership-bank.extraction.update');
+    Route::post('/{payment}/extraccion/reintentar', [\App\Http\Controllers\AdminReceiptExtractionController::class,'retry'])->name('admin.membership-bank.extraction.retry');
     Route::post('/importar', [\App\Http\Controllers\MembershipBankController::class,'import'])->name('admin.membership-bank.import');
     Route::post('/aprobar', [\App\Http\Controllers\MembershipBankController::class,'approve'])->name('admin.membership-bank.approve');
     Route::post('/lote', [\App\Http\Controllers\MembershipBankController::class,'batch'])->name('admin.membership-bank.batch');

@@ -102,13 +102,13 @@ class MembershipBankCheckoutTest extends TestCase
         $this->qr();
         $u = $this->buyer();
         $this->actingAs($u)->get('/membresia/checkout');
-        $data = ['receipt' => UploadedFile::fake()->image('receipt.png'), 'declared_reference' => ' abc123 ', 'paid_date' => '2026-10-29', 'paid_time' => '14:30'];
+        $data = ['receipt' => UploadedFile::fake()->image('receipt.png')];
         $this->post('/membresia/checkout/comprobante', $data)->assertRedirect('/membresia/checkout');
         $p = MembershipBankPayment::first();
         $this->assertSame('under_review', $p->status);
-        $this->assertSame('ABC123', $p->declared_reference);
-        Storage::disk('membership-private')->assertExists($p->receipt_path);
-        $this->get('/membresia/checkout')->assertSee('Recibimos tu comprobante.');
+        $this->assertNull($p->declared_reference);
+        Storage::disk('minio-media')->assertExists($p->receipt_path);
+        $this->get('/membresia/checkout')->assertSee('¡Recibimos tu comprobante!');
         $this->get('/admin/conciliacion-membresias/'.$p->id.'/comprobante')->assertForbidden();
         $this->actingAs($this->admin())->get('/admin/conciliacion-membresias/'.$p->id.'/comprobante')->assertOk()->assertDownload();
         $this->post('/admin/conciliacion-membresias/'.$p->id.'/revision', ['decision' => 'rejected', 'note' => 'Corrige referencia'])->assertRedirect();
