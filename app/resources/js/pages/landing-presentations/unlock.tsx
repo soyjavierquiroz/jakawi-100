@@ -1,3 +1,4 @@
+import { LandingSeo } from '@/components/marketing/LandingSeo';
 import { MarketingVideoHero } from '@/components/marketing/MarketingVideoHero';
 import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
@@ -31,7 +32,7 @@ type Props = {
     };
 };
 
-export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }: Props) {
+export default function UnlockLanding({ vsl, preview, copy }: Props) {
     const { prelaunchPublic } = usePage().props;
     const acquire = useAcquisition();
     const continueAction = useLandingAction();
@@ -66,7 +67,7 @@ export default function UnlockLanding({ vsl, canonical, noindex, preview, copy }
     </section>;
     const trackGrowthClick = useGrowthLandingClicks();
     return <>
-        <Head title={copy.headline}><link rel="canonical" href={canonical}/><meta name="description" content={copy.subheadline}/>{noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"}/>}</Head>
+        <LandingSeo />
         <main data-video-first={vsl ? '' : undefined} onClickCapture={trackGrowthClick} className="overflow-x-clip break-words font-discovery">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 {vsl ? <MarketingVideoHero

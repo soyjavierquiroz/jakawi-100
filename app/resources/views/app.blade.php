@@ -3,7 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-        @if (($page['props']['prelaunchMode'] ?? false) && $page['component'] === 'coming-soon')
+        @if ($page['props']['landingSeo'] ?? null)
+            @include('partials.landing-seo', ['seo' => $page['props']['landingSeo']])
+        @elseif ($page['props']['landingSeoPrivate'] ?? false)
+            <meta data-inertia="robots" name="robots" content="noindex,nofollow">
+        @elseif (($page['props']['prelaunchMode'] ?? false) && $page['component'] === 'coming-soon')
             <title data-inertia="">JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba</title>
             <meta data-inertia="robots" name="robots" content="index,follow">
             <link data-inertia="canonical" rel="canonical" href="https://jakawi.com/">
@@ -63,7 +67,7 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>
-            @unless ($page['component'] === 'coming-soon')
+            @unless ($page['component'] === 'coming-soon' || ($page['props']['landingSeo'] ?? null))
                 <title>{{ config('app.name', 'Laravel') }}</title>
             @endunless
         </x-inertia::head>

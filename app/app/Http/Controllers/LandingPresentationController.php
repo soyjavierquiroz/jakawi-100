@@ -160,6 +160,9 @@ class LandingPresentationController extends Controller
             'canonical' => $presentation->default_scope === 'ALL' ? route('landing-presentations.show', $presentation->slug) : $resolver->nativeUrl($subject),
             'noindex' => $presentation->default_scope !== 'ALL' || $preview,
         ];
+        $shared['landingSeo'] = ! $preview && ! $stage && $presentation->status === 'PUBLISHED'
+            ? app(\App\Services\LandingSeo::class)->metadata($presentation, $subject, $shared['canonical'], $shared['noindex'] || (bool) config('jakawi.prelaunch_mode')) : null;
+        $shared['landingSeoPrivate'] = $preview || (bool) $stage;
         if ($subject instanceof Unlock) {
             $copy = app(UnlockMarketingLandingPresenter::class)->present($subject, $presentation, $request);
             if (! $preview) {

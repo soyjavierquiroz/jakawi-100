@@ -1,3 +1,4 @@
+import { LandingSeo } from '@/components/marketing/LandingSeo';
 import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
 import { distinctOfferFaq } from '@/components/marketing/offer/composition';
@@ -85,8 +86,6 @@ export default function ExperienceOfferAdapter({
     heroUrl,
     heroSrcset,
     heroDesktopSrcset,
-    canonical,
-    noindex,
     preview,
     copy,
 }: ExperienceOfferProps) {
@@ -234,20 +233,7 @@ export default function ExperienceOfferAdapter({
             offerEditorial.finalDescription ?? undefined;
     return (
         <>
-            <Head title={offer.hero.headline}>
-                <link rel="canonical" href={canonical} />
-                {noindex && (
-                    <meta
-                        head-key="robots"
-                        name="robots"
-                        content={
-                            prelaunchPublic
-                                ? 'noindex,nofollow'
-                                : 'noindex,follow'
-                        }
-                    />
-                )}
-            </Head>
+            <LandingSeo />
             <OfferConversionTemplate
                 hero={presentation.hero_layout ?? undefined}
                 density={presentation.density ?? undefined}

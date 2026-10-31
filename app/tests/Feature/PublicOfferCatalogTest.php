@@ -154,7 +154,7 @@ class PublicOfferCatalogTest extends TestCase
         $offer = Benefit::factory()->published()->for($partner)->create(['image_path' => 'public-image.jpg']);
         $this->landing($offer, ['default_scope' => 'NONE']);
         $guest = $this->landing($offer, ['slug' => 'guest-offer', 'default_scope' => 'GUESTS', 'media_mode' => 'NONE']);
-        $this->getJson(self::URL)->assertJsonCount(1, 'data')->assertJsonPath('data.0.image_url', null)
+        $this->getJson(self::URL)->assertJsonCount(1, 'data')->assertJsonPath('data.0.image_url', 'https://jakawi.com/storage/public-image.jpg')
             ->assertJsonPath('data.0.landing_url', route('landing-presentations.show', $guest->slug));
         $offer->update(['status' => 'paused']);
         $this->getJson(self::URL)->assertJsonPath('data.0.id', 'benefit:'.$offer->id)->assertJsonPath('data.0.availability_status', 'paused');

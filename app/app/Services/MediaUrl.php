@@ -14,7 +14,8 @@ class MediaUrl
         if (! $presetConfig || ! config('media.imgproxy_url') || ! config('media.imgproxy_key') || ! config('media.imgproxy_salt')) return null;
         $width ??= $presetConfig['width'];
         $height = (int) round($presetConfig['height'] * ($width / $presetConfig['width']));
-        $path = sprintf('/rs:%s:%d:%d/q:%d/f:webp/plain/s3://%s/%s', $presetConfig['fit'], $width, $height, $presetConfig['quality'], config('media.bucket'), $key);
+        $resize = $preset === 'social' ? ':1' : '';
+        $path = sprintf('/rs:%s:%d:%d%s/q:%d/f:%s/plain/s3://%s/%s', $presetConfig['fit'], $width, $height, $resize, $presetConfig['quality'], $presetConfig['format'] ?? 'webp', config('media.bucket'), $key);
 
         return config('media.imgproxy_url').'/'.$this->signature($path).$path;
     }

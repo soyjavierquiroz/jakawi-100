@@ -1,4 +1,7 @@
 const fieldLabels: Record<string, string> = {
+    seo_title: 'Título SEO/social',
+    seo_description: 'Descripción SEO/social',
+    social_image: 'Imagen social',
     name: 'Nombre interno',
     slug: 'Slug único',
     headline: 'Headline',

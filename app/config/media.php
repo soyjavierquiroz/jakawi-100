@@ -8,7 +8,9 @@ return [
     'bucket' => env('MEDIA_AWS_BUCKET', 'jakawi-media'),
     'max_bytes' => 10 * 1024 * 1024,
     'max_pixels' => 24_000_000,
+    'social_fallback' => 'landings/1/image/00000000-0000-4000-8000-000000000001.webp',
     'presets' => [
+        'social' => ['width' => 1200, 'height' => 630, 'quality' => 85, 'fit' => 'fill', 'format' => 'jpg'],
         'hero' => ['width' => 1600, 'height' => 1000, 'quality' => 82, 'fit' => 'fill'],
         'benefit_card' => ['width' => 640, 'height' => 480, 'quality' => 80, 'fit' => 'fill'],
         'experience_card' => ['width' => 720, 'height' => 480, 'quality' => 80, 'fit' => 'fill'],

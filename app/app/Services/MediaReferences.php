@@ -21,13 +21,13 @@ class MediaReferences
         Experience::class => ['image_path', 'cover_path'],
         Challenge::class => ['hero_path'],
         Unlock::class => ['hero_path'],
-        LandingPresentation::class => ['hero_path'],
+        LandingPresentation::class => ['hero_path', 'social_image_path'],
         UserProfile::class => ['avatar_path'],
     ];
 
     public function all(): array
     {
-        $keys = [];
+        $keys = [config('media.social_fallback') => true];
         foreach (self::FIELDS as $model => $fields) {
             $model::query()->select(['id', ...$fields])->chunkById(500, function ($rows) use ($fields, &$keys) {
                 foreach ($rows as $row) {
@@ -47,6 +47,7 @@ class MediaReferences
 
     public function contains(string $key): bool
     {
+        if ($key === config('media.social_fallback')) return true;
         foreach (self::FIELDS as $model => $fields) {
             if ($model::query()->where(function ($query) use ($fields, $key) {
                 foreach ($fields as $field) {

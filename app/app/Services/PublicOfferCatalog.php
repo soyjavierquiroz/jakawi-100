@@ -66,7 +66,7 @@ class PublicOfferCatalog
         }
 
         $landings = LandingPresentation::query()->whereKey($models->pluck('catalog_landing_id'))
-            ->get(['id', 'slug', 'status', 'hero_path', 'media_mode'])->keyBy('id');
+            ->get(['id', 'slug', 'status', 'hero_path', 'social_image_path', 'media_mode'])->keyBy('id');
         $cities = $this->cities($models);
         $data = [];
         foreach ($keys as $key) {
@@ -82,7 +82,7 @@ class PublicOfferCatalog
                 'type' => $key->type,
                 'name' => $model->title,
                 'short_description' => $model->short_description,
-                'image_url' => $this->publicImage($image),
+                'image_url' => $this->publicImage($image) ?: app(MediaUrl::class)->url(app(LandingSeo::class)->imagePath($landing, $model), 'social'),
                 'partners' => ($model instanceof Benefit ? collect([$model->partner]) : $model->partners)
                     ->unique('id')->sortBy('id')->map(fn ($p) => ['id' => $p->id, 'name' => $p->name])->values()->all(),
                 'cities' => $cities[$key->type.':'.$model->id] ?? [],

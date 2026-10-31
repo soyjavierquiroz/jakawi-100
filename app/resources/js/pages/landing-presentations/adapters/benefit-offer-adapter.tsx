@@ -1,3 +1,4 @@
+import { LandingSeo } from '@/components/marketing/LandingSeo';
 import { usePage } from '@inertiajs/react';
 import { useLandingAction } from '@/components/marketing/landing-action-context';
 import { useAcquisition } from '@/components/marketing/acquisition-context';
@@ -8,7 +9,7 @@ import type {
     LandingOfferEditorial,
 } from '@/components/marketing/offer/presentation';
 import { type LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { useRef } from 'react';
 import { StatusBanner } from '@/components/state-panel';
 import { trackJourneyIntent } from '@/lib/journey-analytics';
@@ -68,8 +69,6 @@ export default function BenefitOfferAdapter({
     heroUrl,
     heroSrcset,
     heroDesktopSrcset,
-    canonical,
-    noindex,
     preview,
 }: BenefitOfferProps) {
     const { prelaunchPublic } = usePage().props;
@@ -179,10 +178,7 @@ export default function BenefitOfferAdapter({
             offerEditorial.finalDescription ?? undefined;
     return (
         <>
-            <Head title={offer.hero.headline}>
-                <link rel="canonical" href={canonical} />
-                {noindex && <meta head-key="robots" name="robots" content={prelaunchPublic ? "noindex,nofollow" : "noindex,follow"} />}
-            </Head>
+            <LandingSeo />
             <OfferConversionTemplate
                 hero={presentation.hero_layout ?? undefined}
                 density={presentation.density ?? undefined}

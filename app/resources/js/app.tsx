@@ -13,7 +13,7 @@ import MarketingLayout from '@/layouts/marketing-layout';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 void createInertiaApp({
-    title: (title) => title === 'JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba'
+    title: (title) => (title.endsWith(' | JAKAWI') || title === 'JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba')
         ? title
         : (title ? `${title} - ${appName}` : appName),
     layout: (name) => {

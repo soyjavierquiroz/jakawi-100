@@ -72,12 +72,12 @@ class AdminLandingPresentationController extends Controller
             'subject' => $subject ? $editor->context($subject, $request) : null,
             'subjectChoices' => $editor->choices(),
             'autoCreate' => $request->boolean('create'),
-            'autoEdit' => $editing ? [...$editing->toArray(), 'editorHeroUrl' => app(MediaUrl::class)->url($editing->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')] : null,
+            'autoEdit' => $editing ? [...$editing->toArray(), 'editorSocialUrl' => app(MediaUrl::class)->url($editing->social_image_path, 'social'), 'editorHeroUrl' => app(MediaUrl::class)->url($editing->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')] : null,
             'baseUrl' => $subject ? $this->baseUrl($subject) : '/admin/landings',
             'productUrl' => ! $subject ? '/admin' : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug))),
             'defaultPresentation' => $subject?->landingPresentations()->where('status', 'PUBLISHED')->whereIn('default_scope', ['ALL', 'GUESTS'])->orderBy('id')->first(),
             'pagination' => $page ? array_diff_key($page->toArray(), ['data' => true]) : null,
-            'presentations' => $subject ? $page->getCollection()->map(fn ($item) => [...$item->toArray(), 'editorHeroUrl' => app(MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
+            'presentations' => $subject ? $page->getCollection()->map(fn ($item) => [...$item->toArray(), 'editorSocialUrl' => app(MediaUrl::class)->url($item->social_image_path, 'social'), 'editorHeroUrl' => app(MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
         ]);
     }
 
@@ -119,6 +119,9 @@ class AdminLandingPresentationController extends Controller
             'headline' => ['nullable', 'string', 'max:180', $plain],
             'headline_emphasis' => ['nullable', 'string', 'max:180', $plain],
             'subheadline' => ['nullable', 'string', 'max:1000', $plain],
+            'seo_title' => ['nullable', 'string', 'max:180', $plain],
+            'seo_description' => ['nullable', 'string', 'max:1000', $plain],
+            'social_image_path' => ['prohibited'],
             'hero_path' => ['nullable', 'string', 'max:2048', function ($attribute, $value, $fail) use ($presentation, $target) {
                 if ($value && $value !== $presentation?->hero_path && $value !== ($target->hero_path ?? $target->cover_path ?? $target->image_path ?? null)) {
                     $fail('Selecciona una imagen desde tu dispositivo.');
@@ -176,8 +179,8 @@ class AdminLandingPresentationController extends Controller
             'marketing_theme' => 'Theme', 'media_mode' => 'Media', 'default_scope' => 'Audiencia al publicar',
             'subject_type' => 'Tipo de producto', 'subject_id' => 'Producto', 'vsl' => 'Video', 'vsl.*' => 'Configuración de video',
         ]);
-        $request->validate(['hero' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:10240']]);
-        if ($offer && $request->boolean('hero_remove') && ! $request->filled('hero_upload') && ! $request->hasFile('hero')) {
+        $request->validate(['hero' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:10240'], 'social_image' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:10240']]);
+        if ($offer && ($data['media_mode'] ?? $presentation?->media_mode?->value ?? 'IMAGE') === 'IMAGE' && $request->boolean('hero_remove') && ! $request->filled('hero_upload') && ! $request->hasFile('hero')) {
             $data['media_mode'] = 'NONE';
         }
         // Project the candidate through the same presenter used by preview.
@@ -226,7 +229,10 @@ class AdminLandingPresentationController extends Controller
             } else {
                 $presentation = $target->landingPresentations()->create($data + ['status' => 'DRAFT', 'default_scope' => 'NONE']);
             }
-            $presentation->update(['hero_path' => app(MediaUploadService::class)->fromRequest($request, 'hero', 'landings', $presentation->id, 'cover', $presentation->hero_path)]);
+            $presentation->update([
+                'hero_path' => app(MediaUploadService::class)->fromRequest($request, 'hero', 'landings', $presentation->id, 'cover', $presentation->hero_path),
+                'social_image_path' => app(MediaUploadService::class)->fromRequest($request, 'social_image', 'landings', $presentation->id, 'image', $presentation->social_image_path),
+            ]);
             if ($presentation->status === 'PUBLISHED' && $scope !== 'NONE') {
                 app(LandingPresentationDefaults::class)->choose($target, $presentation, $scope);
             }

@@ -40,6 +40,10 @@ const empty = {
     headline: '',
     headline_emphasis: '',
     subheadline: '',
+    seo_title: '',
+    seo_description: '',
+    social_image_upload: '',
+    social_image_remove: '0',
     hero_path: '',
     hero_upload: '',
     hero_remove: '0',
@@ -528,7 +532,7 @@ export default function Index({
                                             return;
                                         }
                                         setEditing(persisted);
-                                        const savedForm = {...form, media_mode: String(persisted.media_mode ?? form.media_mode), hero_path: String(persisted.hero_path ?? ''), hero_upload: '', hero_remove: '0'};
+                                        const savedForm = {...form, media_mode: String(persisted.media_mode ?? form.media_mode), hero_path: String(persisted.hero_path ?? ''), hero_upload: '', hero_remove: '0', social_image_upload: '', social_image_remove: '0'};
                                         setForm(savedForm);
                                         setBaseline(signature(savedForm, video, formSubject));
                                         setSaved(true);
@@ -951,6 +955,13 @@ export default function Index({
                                             errors={errors}
                                         />
                                     )}
+                                    {section('SEO Y REDES SOCIALES')}
+                                    {field('seo_title', 'Título SEO/social (opcional)')}
+                                    {field('seo_description', 'Descripción SEO/social (opcional)', true)}
+                                    <div className="col-span-full min-w-0">
+                                        <p className="mb-3 text-sm text-foreground-soft">Se comparte como JPEG 1200 × 630. Si la dejas vacía, se usa la imagen de la landing o la imagen corporativa JAKAWI. Compatible con video.</p>
+                                        <ImageUpload key={`social-${editing?.id ?? 'new'}`} name="social_image" label="Imagen social (opcional)" currentUrl={editing?.editorSocialUrl ? String(editing.editorSocialUrl) : null} error={errors.social_image} onChange={(token, remove) => setForm(value => ({...value, social_image_upload: token, social_image_remove: remove ? '1' : '0'}))} />
+                                    </div>
                                     {section('CAPTACIÓN')}
                                     {field(
                                         'acquisition_headline',
