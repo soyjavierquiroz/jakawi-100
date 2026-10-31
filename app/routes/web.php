@@ -347,3 +347,18 @@ Route::get('/p/{partner:slug}', [\App\Http\Controllers\PartnerPublicController::
 Route::get('/{partner:slug}', [PublicController::class, 'partners'])->where('partner', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('partners.public');
 
 Route::post('/media/uploads', [\App\Http\Controllers\MediaUploadController::class, 'store'])->middleware(['auth', 'throttle:30,1'])->name('media.uploads');
+
+// COM is the sole authority for bank membership checkout and reconciliation.
+Route::middleware(['auth','throttle:30,1'])->group(function () {
+    Route::get('/membresia/checkout', [\App\Http\Controllers\MembershipBankController::class,'show'])->name('membership.checkout');
+    Route::get('/membresia/checkout/qr', [\App\Http\Controllers\MembershipBankController::class,'qr'])->name('membership.checkout.qr');
+    Route::post('/membresia/checkout/comprobante', [\App\Http\Controllers\MembershipBankController::class,'submit'])->name('membership.checkout.submit');
+});
+Route::middleware(['auth','admin','throttle:60,1'])->prefix('admin/conciliacion-membresias')->group(function () {
+    Route::get('/', [\App\Http\Controllers\MembershipBankController::class,'index'])->name('admin.membership-bank.index');
+    Route::post('/importar', [\App\Http\Controllers\MembershipBankController::class,'import'])->name('admin.membership-bank.import');
+    Route::post('/aprobar', [\App\Http\Controllers\MembershipBankController::class,'approve'])->name('admin.membership-bank.approve');
+    Route::post('/lote', [\App\Http\Controllers\MembershipBankController::class,'batch'])->name('admin.membership-bank.batch');
+    Route::post('/{payment}/revision', [\App\Http\Controllers\MembershipBankController::class,'review'])->name('admin.membership-bank.review');
+    Route::get('/{payment}/comprobante', [\App\Http\Controllers\MembershipBankController::class,'receipt'])->name('admin.membership-bank.receipt');
+});

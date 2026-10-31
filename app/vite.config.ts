@@ -14,7 +14,7 @@ export default defineConfig({
         laravel({
             // Blade requests each resolved page by source path. Static imports
             // must not merge those pages out of the production manifest.
-            input: ['resources/css/app.css', 'resources/js/app.tsx', ...inertiaPages()],
+            input: ['resources/js/membership-checkout.ts', 'resources/css/app.css', 'resources/js/app.tsx', ...inertiaPages()],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

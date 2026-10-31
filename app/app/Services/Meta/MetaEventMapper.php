@@ -5,6 +5,7 @@ namespace App\Services\Meta;
 class MetaEventMapper
 {
     public const EVENTS = [
+        'initiate_checkout' => ['name' => 'InitiateCheckout', 'standard' => true],
         'landing_view' => ['name' => 'ViewContent', 'standard' => true],
         'landing_cta_click' => ['name' => 'JakawiLandingCTA', 'standard' => false],
         'signup_completed' => ['name' => 'CompleteRegistration', 'standard' => true],

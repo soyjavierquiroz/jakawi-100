@@ -14,7 +14,7 @@ class MetaEventPayloadFactory
             Benefit::class => 'benefit', Experience::class => 'experience',
             Challenge::class => 'challenge', Unlock::class => 'unlock', default => null,
         };
-        $data = [];
+        $data = $event->event_name === 'initiate_checkout' ? ['value'=>100,'currency'=>'BOB','order_id'=>$event->metadata['payment_reference']] : [];
         if ($category && $event->subject_id) {
             $data = ['content_category' => $category, 'content_ids' => [$category.':'.$event->subject_id]];
         }
@@ -50,6 +50,7 @@ class MetaEventPayloadFactory
             && ! parse_url($base, PHP_URL_QUERY) && ! parse_url($base, PHP_URL_FRAGMENT) && ! parse_url($base, PHP_URL_USER)) {
             $path = match ($event->event_name) {
                 'signup_completed' => '/register',
+                'initiate_checkout' => '/membresia/checkout',
                 'membership_purchase_requested', 'membership_activated' => '/membresia',
                 'benefit_redeemed' => '/beneficios', 'experience_reserved' => '/experiencias',
                 'challenge_joined' => '/retos', 'unlock_committed' => '/desbloqueos', default => '/',

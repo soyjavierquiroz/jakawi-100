@@ -29,6 +29,10 @@ return [
     */
 
     'disks' => [
+        'membership-private' => [
+            'driver' => 'local', 'root' => storage_path('app/membership-private'),
+            'visibility' => 'private', 'serve' => false, 'throw' => true,
+        ],
 
         'local' => [
             'driver' => 'local',

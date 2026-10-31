@@ -31,6 +31,7 @@ export default function AdminLayout({ title, children }: { title: string; childr
             </div>)}
             <a className="inline-block font-semibold" href="https://jakawi.club/afiliados" target="_blank" rel="noopener noreferrer">AFILIADOS Y COMISIONES — CLUB</a>
         </nav>
+        <a href="/admin/conciliacion-membresias" className="mt-4 inline-block font-semibold text-brand">Conciliación de membresías</a>
         <h1 className="mt-8 text-3xl font-semibold">{title}</h1>
         <div className="mt-6">{children}</div>
     </main>;

@@ -2,7 +2,7 @@ export type MetaBrowserEvent = {
     event_id: string;
     event_name: string;
     standard: boolean;
-    custom_data: Record<string, string | string[]>;
+    custom_data: Record<string, string | string[] | number>;
 };
 export type MetaBrowserContext = {
     provider: 'META';
