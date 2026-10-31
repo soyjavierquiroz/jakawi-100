@@ -356,6 +356,8 @@ Route::middleware(['auth','throttle:30,1'])->group(function () {
 });
 Route::middleware(['auth','admin','throttle:60,1'])->prefix('admin/conciliacion-membresias')->group(function () {
     Route::get('/', [\App\Http\Controllers\MembershipBankController::class,'index'])->name('admin.membership-bank.index');
+    Route::get('/qr', [\App\Http\Controllers\AdminMembershipBankQrController::class,'show'])->name('admin.membership-bank.qr.show');
+    Route::post('/qr', [\App\Http\Controllers\AdminMembershipBankQrController::class,'store'])->name('admin.membership-bank.qr.store');
     Route::post('/importar', [\App\Http\Controllers\MembershipBankController::class,'import'])->name('admin.membership-bank.import');
     Route::post('/aprobar', [\App\Http\Controllers\MembershipBankController::class,'approve'])->name('admin.membership-bank.approve');
     Route::post('/lote', [\App\Http\Controllers\MembershipBankController::class,'batch'])->name('admin.membership-bank.batch');

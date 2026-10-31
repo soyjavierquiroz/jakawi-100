@@ -1,7 +1,6 @@
 <?php
 
 return [
-    // Private disk path to a real bank-issued PNG/JPG. Empty means no collection.
-    'qr_path' => env('MEMBERSHIP_BANK_QR_PATH'),
+    // The bank QR is managed in COM administration and stored privately in MinIO.
     'timezone' => 'America/La_Paz',
 ];

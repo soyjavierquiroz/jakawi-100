@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Notifications\MembershipBankActivated;
 use App\Services\Meta\MetaDeliveryOutbox;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -17,10 +16,7 @@ class MembershipBankCheckout
 {
     public function ready(): bool
     {
-        $path = config('membership_checkout.qr_path');
-
-        return is_string($path) && preg_match('/\Aqr\/[a-zA-Z0-9_-]+\.(png|jpg|jpeg)\z/', $path)
-            && Storage::disk('membership-private')->exists($path);
+        return app(MembershipBankQr::class)->ready();
     }
 
     public static function reference(?string $value): ?string

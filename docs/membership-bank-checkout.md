@@ -12,9 +12,13 @@ Aprobación, asociación única al ingreso, activación real por MembershipServi
 
 `membership.activated` viaja por commercial_outbox y el cliente HMAC existentes, con event_id estable, global_subject_id, referencia de membresía, fecha real de activación y referencia comercial. No contiene recibos ni referencias bancarias. Si CLUB no admite el evento, conserva cuerpo original y reintenta con backoff. No se modifica CLUB.
 
-## Habilitar el QR real
+## Habilitar o reemplazar el QR real
 
-Desplegado inicialmente sin QR y sin habilitar cobros. El operador debe guardar el PNG/JPG bancario real en `storage/app/membership-private/qr/<nombre>.png` (directorio persistente privado, accesible al usuario PHP), configurar `MEMBERSHIP_BANK_QR_PATH=qr/<nombre>.png` en el entorno COM y refrescar config cache/reiniciar los cuatro servicios COM. No introducir un QR generado o de prueba. El QR se sirve únicamente a compradores autenticados. Las declaraciones permanecen bloqueadas si falta el archivo o la configuración.
+Administración autenticada: `/admin/conciliacion-membresias#configuracion-qr`, sección «Configuración del QR bancario». Seleccionar el PNG/JPG real del banco, revisar la vista previa y escanearla para verificar destinatario/importe; pulsar «Guardar cambios». La misma sección permite reemplazarlo. Validación de tipo, decodificación, dimensiones 128–4096 px por lado y máximo 10 MB. No se interpreta ni se modifica el contenido bancario del QR.
+
+El original se guarda privado en el MinIO existente (`minio-media`, prefijo `memberships/bank-qr/`), sin recortes, redimensionamiento, recompresión ni imgproxy. Se compara SHA-256 tras escribir y antes de servir o habilitar cobros. La referencia actual y la auditoría se guardan en `app_settings`/`audit_logs` existentes; no hace falta modificar variables de entorno ni reiniciar. La imagen anterior se conserva privada; si falla la carga o guardado, la referencia anterior permanece.
+
+La vista previa persistida requiere administrador. El checkout autenticado utiliza `/membresia/checkout/qr` y recibe los mismos bytes originales con cache privado/no-store. Si falta la configuración, el objeto no está disponible o su integridad no coincide, el cobro permanece bloqueado. La antigua variable `MEMBERSHIP_BANK_QR_PATH` ya no habilita cobros.
 
 Recibos y extractos se guardan en el disco membership-private, fuera de public/storage, sin URLs firmadas públicas, imgproxy ni rutas de descarga pública. Solo el administrador descarga recibos y cada consulta queda auditada. Comprobantes JPG/PNG/PDF hasta 10 MB; nombre aleatorio y descarga forzada.
 

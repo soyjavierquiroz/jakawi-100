@@ -10,6 +10,7 @@ use App\Services\Commercial\CommercialDispatcher;
 use App\Services\GrowthMeasurementService;
 use App\Services\MembershipBankCheckout;
 use App\Services\MembershipBankImport;
+use App\Services\MembershipBankQr;
 use App\Services\MembershipService;
 use App\Services\Meta\MetaEventPayloadFactory;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
@@ -45,8 +46,8 @@ class MembershipBankCheckoutTest extends TestCase
     private function qr(): void
     {
         Storage::fake('membership-private');
-        Storage::disk('membership-private')->put('qr/bank.png', 'real-configured-image');
-        config(['membership_checkout.qr_path' => 'qr/bank.png']);
+        Storage::fake('minio-media');
+        app(MembershipBankQr::class)->save(UploadedFile::fake()->image('test-bank-image.png', 400, 400), $this->admin());
     }
 
     private function payment(?User $u = null, ?string $ref = 'ABC123'): MembershipBankPayment

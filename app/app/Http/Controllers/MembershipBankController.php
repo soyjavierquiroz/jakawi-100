@@ -7,6 +7,7 @@ use App\Models\MembershipBankPayment;
 use App\Models\User;
 use App\Services\MembershipBankCheckout;
 use App\Services\MembershipBankImport;
+use App\Services\MembershipBankQr;
 use App\Services\Meta\MetaBrowserContext;
 use App\Services\Meta\MetaEventMapper;
 use Illuminate\Http\Request;
@@ -39,11 +40,9 @@ class MembershipBankController extends Controller
         return response()->view('membership-bank.checkout', ['metaBrowser' => $metaBrowser, 'payment' => $payment, 'ready' => $checkout->ready(), 'active' => $payment->membership?->isActive() ?? false])->header('Cache-Control', 'private, no-store');
     }
 
-    public function qr(MembershipBankCheckout $checkout)
+    public function qr(MembershipBankQr $qr)
     {
-        abort_unless($checkout->ready(), 404);
-
-        return Storage::disk('membership-private')->response(config('membership_checkout.qr_path'), null, ['Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff']);
+        return $qr->response();
     }
 
     public function submit(Request $request, MembershipBankCheckout $checkout)
@@ -86,7 +85,7 @@ class MembershipBankController extends Controller
         }
         $movements = DB::table('membership_bank_movements')->where('amount', '100.00')->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'))->latest('id')->paginate(50, ['*'], 'movements_page');
 
-        return response()->view('membership-bank.admin', compact('payments', 'matches', 'movements'))->header('Cache-Control', 'private, no-store');
+        return response()->view('membership-bank.admin', ['qrConfigured' => app(MembershipBankQr::class)->ready(), ...compact('payments', 'matches', 'movements')])->header('Cache-Control', 'private, no-store');
     }
 
     public function import(Request $request, MembershipBankImport $import)

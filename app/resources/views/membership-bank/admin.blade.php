@@ -2,6 +2,36 @@
 @section('title','Conciliación de membresías')
 @section('content')
 <a href="/admin">← Administración COM</a><h1>Conciliación de membresías</h1><p>Ingresos de Bs 100. Cada aprobación activa la membresía y utiliza un único movimiento bancario.</p>
+<section class="card" id="configuracion-qr" aria-labelledby="qr-heading">
+<h2 id="qr-heading">Configuración del QR bancario</h2>
+<p>QR bancario real para la membresía de <strong>Bs 100</strong>. Comprueba el destinatario y que el QR se pueda escanear antes de guardar.</p>
+@if($qrConfigured)
+<p class="badge">QR configurado · Pago habilitado</p><div><img src="/admin/conciliacion-membresias/qr" alt="QR bancario configurado para la membresía de Bs 100" width="400" style="object-fit:contain"></div>
+<a href="/admin/conciliacion-membresias/qr" target="_blank" rel="noopener">Abrir imagen original</a> · <a href="/membresia/checkout">Ver checkout de Bs 100</a>
+@else
+<p class="notice">No hay un QR válido disponible. El checkout mantiene los cobros deshabilitados.</p>
+@endif
+<form method="post" action="/admin/conciliacion-membresias/qr" enctype="multipart/form-data">@csrf
+<label for="qr_image">{{$qrConfigured ? 'Reemplazar imagen PNG/JPG' : 'Subir imagen PNG/JPG'}}</label>
+<input id="qr_image" name="qr_image" type="file" accept="image/png,image/jpeg" required aria-describedby="qr-help">
+<p class="muted" id="qr-help">Se conserva el archivo original en MinIO, sin recortes ni recompresión. De 128 a 4096 píxeles por lado; máximo 10 MB. La nueva imagen se aplica al guardar.</p>
+<div id="qr-local-preview" hidden><p><strong>Vista previa de la nueva imagen</strong></p><img id="qr-local-image" alt="Vista previa del QR seleccionado" width="400" style="object-fit:contain"></div>
+<button>Guardar cambios</button></form>
+<script>
+(() => {
+    const input = document.getElementById('qr_image');
+    const preview = document.getElementById('qr-local-preview');
+    const image = document.getElementById('qr-local-image');
+    let objectUrl;
+    input.addEventListener('change', () => {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        const file = input.files[0];
+        preview.hidden = !file || !['image/png', 'image/jpeg'].includes(file.type);
+        image.removeAttribute('src');
+        if (!preview.hidden) { objectUrl = URL.createObjectURL(file); image.src = objectUrl; }
+    });
+})();
+</script></section>
 <div class="card"><h2>Importar extracto</h2><p>Exporta desde el banco o convierte desde Excel a CSV UTF-8 normalizado. Fechas y horas en Bolivia. Usa siempre el mismo identificador de cuenta para detectar movimientos repetidos.</p><details><summary>Formato CSV</summary><pre style="overflow:auto">date,time,reference,description,amount,direction
 2026-10-30,14:30,OPERACION,Abono,100.00,credit</pre><p>Fecha YYYY-MM-DD; hora HH:MM o HH:MM:SS; punto decimal sin separadores de miles. Hora y referencia pueden quedar vacías. Direction: credit o debit. Solo se importan créditos. Máximo 10.000 filas / 10 MB. Una referencia repetida en la misma cuenta, fecha e importe se conserva una vez; los ingresos indistinguibles sin referencia se consolidan por seguridad.</p></details>
 <form method="post" action="/admin/conciliacion-membresias/importar" enctype="multipart/form-data">@csrf<label for="account_key">Identificador estable de cuenta (sin número bancario)</label><input id="account_key" name="account_key" placeholder="CUENTA-PRINCIPAL" pattern="[A-Z0-9_-]{1,100}" required><label for="statement">Extracto CSV</label><input id="statement" name="statement" type="file" accept=".csv,text/csv" required><button>Importar ingresos</button></form></div>

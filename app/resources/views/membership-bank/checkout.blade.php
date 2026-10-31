@@ -12,7 +12,7 @@
 @if($payment->status==='rejected')<h2>Corrige tu declaración</h2><p class="notice">{{$payment->review_note}}</p>@endif
 @if(!$ready)<h2>El pago por QR estará disponible pronto.</h2><p class="notice">Aún no habilitamos los cobros. Vuelve cuando el QR bancario esté disponible.</p>
 @else
-<h2>Paga con tu app bancaria</h2><ol><li>Escanea el QR y verifica el destinatario antes de confirmar.</li><li>Paga exactamente <strong>Bs 100</strong> y guarda el comprobante.</li><li>Pulsa “Ya pagué” y envíanos los datos.</li></ol><img src="/membresia/checkout/qr" alt="QR bancario para pagar la membresía JAKAWI" width="340">
+<h2>Paga con tu app bancaria</h2><ol><li>Escanea el QR y verifica el destinatario antes de confirmar.</li><li>Paga exactamente <strong>Bs 100</strong> y guarda el comprobante.</li><li>Pulsa “Ya pagué” y envíanos los datos.</li></ol><img src="/membresia/checkout/qr" alt="QR bancario para pagar la membresía JAKAWI" width="340" style="object-fit:contain"><p><a href="/membresia/checkout/qr" target="_blank" rel="noopener">Abrir QR en tamaño original</a></p>
 <details @if($errors->any()||$payment->status==='rejected') open @endif><summary class="button">Ya pagué</summary><p>Tu declaración se revisará contra los ingresos bancarios antes de activar la membresía.</p>
 <form method="post" action="/membresia/checkout/comprobante" enctype="multipart/form-data">@csrf
 <label for="receipt">Comprobante JPG, PNG o PDF (máximo 10 MB)</label><input id="receipt" name="receipt" type="file" accept="image/jpeg,image/png,application/pdf" required>
