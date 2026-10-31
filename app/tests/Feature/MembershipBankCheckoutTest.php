@@ -13,11 +13,11 @@ use App\Services\MembershipBankImport;
 use App\Services\MembershipBankQr;
 use App\Services\MembershipService;
 use App\Services\Meta\MetaEventPayloadFactory;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Tests\Support\EvidenceDatabaseTruncation as DatabaseTruncation;
 use Tests\TestCase;
 
 class MembershipBankCheckoutTest extends TestCase

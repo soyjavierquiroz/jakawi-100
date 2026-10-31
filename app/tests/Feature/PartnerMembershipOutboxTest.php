@@ -4,10 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Partner;
 use App\Services\Commercial\CommercialDispatcher;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Tests\Support\EvidenceDatabaseTruncation as DatabaseTruncation;
 use Tests\TestCase;
 
 class PartnerMembershipOutboxTest extends TestCase

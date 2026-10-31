@@ -21,10 +21,10 @@ use App\Models\User;
 use App\Services\Crm\CrmConfiguration;
 use App\Services\Crm\CrmContactProjectionService;
 use App\Services\Crm\CrmDeliveryDispatcher;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
+use Tests\Support\EvidenceDatabaseTruncation as DatabaseTruncation;
 use Tests\TestCase;
 
 class CrmFoundationTest extends TestCase

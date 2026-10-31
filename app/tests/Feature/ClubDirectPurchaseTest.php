@@ -171,6 +171,9 @@ class ClubDirectPurchaseTest extends TestCase
         $this->receipt($p)->assertCreated();
         $p = $this->approve($p);
         $this->assertSame($u->id, $p->user_id);
+        $evidence = app(\App\Services\Commercial\MembershipEvidence::class)->resolve($p->reference, null);
+        $this->assertTrue($evidence['first_paid_acquisition']);
+        $this->assertSame($u->global_subject_id, $evidence['global_subject_id']);
         $this->assertTrue($u->hasActiveMembership());
         $this->assertSame($u->global_subject_id, json_decode(DB::table('commercial_outbox')->sole()->raw_body, true)['global_subject_id']);
     }

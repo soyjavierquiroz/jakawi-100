@@ -7,10 +7,10 @@ use App\Models\RewardTransaction;
 use App\Models\Unlock;
 use App\Models\User;
 use App\Services\JpBalanceService;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
+use Tests\Support\EvidenceDatabaseTruncation as DatabaseTruncation;
 use Tests\TestCase;
 
 class JpLedgerConcurrencyTest extends TestCase
@@ -97,6 +97,7 @@ PHP;
             $results[] = trim($process->getOutput());
         }
         sort($results);
+
         return $results;
     }
 

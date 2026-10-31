@@ -15,10 +15,10 @@ use App\Services\Commercial\CommercialDispatcher;
 use App\Services\Commercial\CommercialOutbox;
 use App\Services\ConversionRecorder;
 use App\Services\RedemptionService;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\Support\EvidenceDatabaseTruncation as DatabaseTruncation;
 use Tests\TestCase;
 
 class ClubReferralTest extends TestCase

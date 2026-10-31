@@ -22,3 +22,5 @@ app/public/hot
 **/*.key
 **/*.dump
 artifacts
+# The isolated test image bootstraps Laravel from the public environment template.
+!app/.env.example

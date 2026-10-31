@@ -8,10 +8,10 @@ use App\Models\ChallengeRewardGrant;
 use App\Models\ChallengeSocialEntry;
 use App\Models\User;
 use App\Services\ChallengeService;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
+use Tests\Support\EvidenceDatabaseTruncation as DatabaseTruncation;
 use Tests\TestCase;
 
 class ChallengeFirstNConcurrencyTest extends TestCase
@@ -52,6 +52,7 @@ class ChallengeFirstNConcurrencyTest extends TestCase
                 'validation_status' => 'valid', 'inspection_status' => 'inspected', 'checked_at' => now(),
             ]);
             $participation->update(['qualified_entry_id' => $entry->id]);
+
             return $participation;
         });
 
@@ -96,7 +97,9 @@ PHP;
         $this->assertNull($loser->grant);
         $this->assertNotNull(ChallengeRewardGrant::sole()->participation_id);
 
-        foreach ($participations as $participation) app(ChallengeService::class)->selectAndMaybeGrant($participation);
+        foreach ($participations as $participation) {
+            app(ChallengeService::class)->selectAndMaybeGrant($participation);
+        }
         $this->assertSame(1, ChallengeRewardGrant::count());
         $this->assertSame('pending', $loser->fresh()->selection_status);
     }

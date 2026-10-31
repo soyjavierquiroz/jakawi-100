@@ -15,11 +15,11 @@ use App\Services\Commercial\CommercialOutbox;
 use App\Services\PublicJourneyContinuation;
 use App\Services\RedemptionService;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Tests\Support\EvidenceDatabaseTruncation as DatabaseTruncation;
 use Tests\TestCase;
 
 class CommercialTest extends TestCase

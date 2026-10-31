@@ -19,3 +19,6 @@ Route::post('/internal/club/origins/resolve', [\App\Http\Controllers\ComOriginCo
 // Server-to-server access resolution; shares existing HMAC and nonce protection.
 Route::post('/internal/club/partners/access', \App\Http\Controllers\ClubPartnerAccessController::class)
     ->middleware([AuthenticateClubPurchase::class, 'throttle:60,1']);
+
+Route::post('/internal/club/acquisitions/evidence', \App\Http\Controllers\ClubAcquisitionEvidenceController::class)
+    ->middleware([AuthenticateClubPurchase::class, 'throttle:60,1']);
