@@ -17,10 +17,18 @@ class PartnerPublicController extends Controller
     public function authenticate(Request $request, Partner $partner, string $method)
     {
         abort_unless($partner->isPublished() && PartnerSlug::valid($partner->slug), 404);
+        app(\App\Services\Commercial\MembershipAcquisition::class)->capture($request, $partner);
         // Server-resolved profile, never a public numeric Partner parameter.
         $request->session()->put('partner_profile_return', $partner->id);
         app(\App\Services\PublicJourneyContinuation::class)->consume();
         return redirect()->route($method);
+    }
+
+    public function checkout(Request $request, Partner $partner)
+    {
+        abort_unless($partner->isPublished() && PartnerSlug::valid($partner->slug), 404);
+        app(\App\Services\Commercial\MembershipAcquisition::class)->capture($request, $partner);
+        return redirect()->route('membership.checkout');
     }
 
     public static function consumeReturn(Request $request): ?string

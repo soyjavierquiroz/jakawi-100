@@ -90,6 +90,8 @@ Route::get('/beneficios/{benefit:slug}', [PublicController::class, 'benefit'])->
 Route::get('/experiencias', [PublicController::class, 'experiences'])->name('experiences.index');
 Route::get('/experiencias/{experience:slug}', [PublicController::class, 'experience'])->middleware(\App\Http\Middleware\ResolveProductLanding::class)->name('experiences.show');
 Route::get('/experiencias/{experience:slug}/reservar', [PublicController::class, 'reserve'])->name('experiences.reserve');
+Route::get('/p/{partner:slug}/membership', [\App\Http\Controllers\PartnerPublicController::class, 'checkout'])->name('partners.membership');
+Route::get('/p/{partner:slug}/club/{destination}', [\App\Http\Controllers\ComOriginController::class, 'redirect'])->whereIn('destination', ['carta', 'checkout'])->name('partners.club');
 Route::get('/partner/login', [PartnerLoginController::class, 'create'])->middleware('guest')->name('partner.login');
 Route::post('/partner/login', [PartnerLoginController::class, 'store'])->middleware('guest')->name('partner.login.store');
 Route::get('/partner/{partner:slug}/canjes/{redemption_public_id}', [RedemptionController::class, 'scan'])->middleware('signed')->name('partner.redemptions.scan');

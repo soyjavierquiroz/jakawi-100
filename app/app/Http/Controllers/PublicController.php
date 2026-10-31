@@ -68,8 +68,8 @@ class PublicController extends Controller
     {
         abort_unless($partner->isPublished() && PartnerSlug::valid($partner->slug), 404);
         $analytics->partnerViewed($partner);
-        if (! $request->user() && ! app(AcquisitionProviderResolver::class)->suppressed($request)) {
-            $touch = app(AttributionService::class)->recordTouch($request, $partner, $partner->referral_code_normalized);
+        app(\App\Services\Commercial\MembershipAcquisition::class)->capture($request, $partner);
+        if (! $request->user() && ($touch = app(AttributionService::class)->recordLandingTouch($request))) {
             $request->session()->push('attribution_touch_ids', $touch->id);
         }
         $challenges = $partner->challenges()->with('landingPresentations:id,subject_type,subject_id,slug,status,default_scope')->where('review_status', 'APPROVED')->where('status', 'open')

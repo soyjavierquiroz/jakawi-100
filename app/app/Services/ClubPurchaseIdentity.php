@@ -41,6 +41,7 @@ class ClubPurchaseIdentity
         }
         if ($p->user_id === $target->id) {
             $p->update(['identity_status' => 'linked']);
+            app(\App\Services\Commercial\MembershipAcquisition::class)->identityLinked($p, $target);
 
             return true;
         }
@@ -56,6 +57,7 @@ class ClubPurchaseIdentity
             $membership->update(['user_id' => $target->id]);
         }
         $p->update(['user_id' => $p->membership_id ? $target->id : null, 'identity_status' => 'linked']);
+        app(\App\Services\Commercial\MembershipAcquisition::class)->identityLinked($p, $target);
         if ($p->membership_id) {
             $this->linkedEvent($p, $target);
         }

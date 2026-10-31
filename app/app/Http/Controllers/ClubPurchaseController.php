@@ -31,6 +31,8 @@ class ClubPurchaseController extends Controller
             'phone' => ['required', 'string', 'max:40'], 'amount' => ['required', 'in:100,100.00'],
             'currency' => ['required', 'in:BOB'], 'origin' => ['required', 'in:CLUB'],
             'claim_secret' => ['required', 'string', 'min:32', 'max:128'],
+            'com_origin' => ['sometimes', 'nullable', 'string', 'max:8192'],
+            'original_club_referral_code' => ['sometimes', 'nullable', 'regex:/\A[A-Z0-9]{12}\z/'],
         ]);
         $hash = hash('sha256', json_encode($d, JSON_THROW_ON_ERROR));
 
@@ -47,6 +49,16 @@ class ClubPurchaseController extends Controller
                 'club_reference' => $d['club_reference'], 'club_user_uuid' => $d['club_user_uuid'] ?? null,
                 'guest_purchase_id' => $d['guest_purchase_id'] ?? null, 'buyer_name' => $d['name'], 'buyer_email' => $d['email'],
                 'buyer_phone' => $d['phone'], 'intent_hash' => $hash, 'claim_hash' => hash('sha256', $d['claim_secret']), 'identity_status' => 'pending']);
+
+            $origins = app(\App\Services\Commercial\MembershipAcquisition::class);
+            $candidate = ! empty($d['com_origin']) ? app(\App\Services\Commercial\ComOriginProof::class)->read($d['com_origin']) : null;
+            if (! empty($d['original_club_referral_code'])) {
+                $candidate = ['source' => 'jakawi.com', 'kind' => 'club_referral', 'club_referral_code' => $d['original_club_referral_code'], 'beneficiary_resolution' => 'CLUB'];
+            }
+            $target = $identity->resolve($p);
+            $origin = $target ? $origins->fixUser($target, null, 'purchase', imported: $candidate)
+                : $origins->insert($candidate ?? ['source' => 'jakawi.com', 'kind' => 'none'], 'purchase');
+            $origins->purchase($p, $origin, $target);
 
             return response()->json($this->result($p), 201);
         }, 3);
@@ -128,6 +140,7 @@ class ClubPurchaseController extends Controller
             'membership_reference' => $p->membership_id ? (string) $p->membership_id : null,
             'activated_at' => $activatedAt?->toRfc3339String(), 'receipt_received' => $p->receipt_path !== null,
             'receipt_sha256' => $p->receipt_sha256, 'review_note' => $p->review_note,
+            'acquisition' => $p->acquisition_origin_id ? json_decode(DB::table('membership_acquisition_origins')->where('id', $p->acquisition_origin_id)->value('attribution'), true, 32, JSON_THROW_ON_ERROR) : null,
             'qr_ready' => app(MembershipBankQr::class)->ready(), 'qr_path' => '/internal/club/purchases/qr'];
     }
 }

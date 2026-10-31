@@ -35,7 +35,7 @@ final class CommercialDispatcher
                     $result = ['sent' => false, 'retry' => true, 'http' => null, 'code' => 'DELIVERY_UNAVAILABLE'];
                 }
                 // CLUB may not recognize membership.activated yet; retain and retry the original body.
-                if (! $result['sent'] && in_array((json_decode($row->raw_body, true)['event_type'] ?? null), ['membership.activated', 'membership.identity_linked'], true)) {
+                if (! $result['sent'] && in_array((json_decode($row->raw_body, true)['event_type'] ?? null), ['membership.activated', 'membership.identity_linked', 'member.registered', 'membership.attribution_fixed', 'membership.attribution_identity_linked'], true)) {
                     $result['retry'] = true;
                 }
                 $attempts = $row->attempts + 1;

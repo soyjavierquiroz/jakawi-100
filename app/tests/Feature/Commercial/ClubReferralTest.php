@@ -65,7 +65,7 @@ class ClubReferralTest extends TestCase
         app(RedemptionService::class)->confirm($redemption->code, '123456');
         $this->assertSame(1, app(CommercialOutbox::class)->collect());
 
-        return json_decode(DB::table('commercial_outbox')->sole()->raw_body, true, 512, JSON_THROW_ON_ERROR);
+        return json_decode(DB::table('commercial_outbox')->where('event_id', 'com:redemption:'.$redemption->public_id.':confirmed')->sole()->raw_body, true, 512, JSON_THROW_ON_ERROR);
     }
 
     public function test_guest_login_membership_gate_and_operator_pin_preserve_the_customer_origin(): void

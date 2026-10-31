@@ -84,6 +84,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             EnsureVisitorId::class,
+            \App\Http\Middleware\CaptureMembershipOrigin::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::using(limit: 10),

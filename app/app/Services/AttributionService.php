@@ -79,8 +79,13 @@ class AttributionService
             $manualTouch->update(['user_id' => $user->id]);
             $touches->push($manualTouch);
         }
-        $candidate = $touches->first(fn (AttributionTouch $touch) => $touch->referrer_user_id !== null || $touch->acquisition_partner_id !== null);
-        if ($candidate) { $this->applyFirstValidReferrer($user, $candidate); }
+        $origins = app(\App\Services\Commercial\MembershipAcquisition::class);
+        $origin = $origins->fixUser($user, $request, 'lead', $manualCode);
+        $candidate = $touches->first(fn (AttributionTouch $touch) => ($origin['kind'] ?? null) === 'partner'
+            ? $touch->acquisition_partner_id === ($origin['partner_id'] ?? null)
+            : (($origin['kind'] ?? null) === 'com_referral' && $touch->referrer?->global_subject_id === ($origin['referrer_global_subject_id'] ?? null)));
+        if ($candidate && ($origin['legacy_explicit'] ?? false)) { $this->applyFirstValidReferrer($user, $candidate); }
+        $origins->lead($user, $origin);
         $request->session()->forget('attribution_touch_ids');
     }
 
@@ -89,6 +94,7 @@ class AttributionService
     {
         $this->pendingTouches($request)->update(['user_id' => $user->id]);
         $request->session()->forget('attribution_touch_ids');
+        app(\App\Services\Commercial\MembershipAcquisition::class)->bindLogin($request, $user);
     }
 
     private function pendingTouches(Request $request): \Illuminate\Database\Eloquent\Builder

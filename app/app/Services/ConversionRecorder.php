@@ -22,6 +22,10 @@ class ConversionRecorder
         $campaign = $touch?->utm_campaign ? Campaign::query()->where('code', $touch->utm_campaign)->operationalAt($occurredAt)->first() : null;
         $snapshot = ['referrer_user_id' => $relationship?->referrer_user_id, 'acquisition_partner_id' => $relationship?->acquisition_partner_id, 'referral_code' => $relationship?->referral_code, 'utm_source' => $touch?->utm_source, 'utm_medium' => $touch?->utm_medium, 'utm_campaign' => $touch?->utm_campaign, 'utm_content' => $touch?->utm_content, 'campaign_code' => $campaign?->code];
 
+        if ($origin = app(\App\Services\Commercial\MembershipAcquisition::class)->forUser($user)) {
+            $snapshot['membership_acquisition'] = $origin;
+            if ($origin['kind'] === 'partner') $snapshot['acquisition_partner_id'] = $origin['partner_id'];
+        }
         return Conversion::create([...$data, 'user_id' => $user->id, 'currency' => $data['currency'] ?? 'BOB', 'eligible_amount' => $data['eligible_amount'] ?? $data['gross_amount'], 'status' => $data['status'] ?? 'pending', 'occurred_at' => $occurredAt, 'referral_relationship_id' => $relationship?->id, 'attribution_touch_id' => $touch?->id, 'campaign_id' => $campaign?->id, 'attribution_snapshot' => [...$snapshot, ...($data['attribution_snapshot'] ?? [])]]);
     }
 }

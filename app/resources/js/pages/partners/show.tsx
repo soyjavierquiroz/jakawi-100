@@ -526,6 +526,15 @@ export default function PartnerShow({
                     </section>
                 )}
                 {pagination.locations.last_page > 1 && <ListPagination page={pagination.locations} />}
+                <section data-partner-membership className="partner-section">
+                    <p className="partner-kicker">VIVE MÁS TU CIUDAD</p>
+                    <h2 className="text-3xl font-extrabold">Activa tu membresía JAKAWI</h2>
+                    <div className="mt-5 flex flex-wrap gap-4">
+                        <a href={`/p/${partner.slug}/membership`} className="partner-primary">ACTIVAR EN JAKAWI.COM</a>
+                        <a href={`/p/${partner.slug}/club/carta`} className="partner-secondary">VER MEMBRESÍA EN CLUB</a>
+                        <a href={`/p/${partner.slug}/club/checkout`} className="partner-secondary">COMPRAR EN CLUB</a>
+                    </div>
+                </section>
                 {!auth.user && (
                     <section
                         data-partner-account

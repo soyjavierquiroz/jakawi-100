@@ -44,6 +44,8 @@ class MembershipBankCheckout
             }
             $payment = MembershipBankPayment::create(['user_id' => $user->id, 'reference' => (string) Str::uuid(),
                 'checkout_event_id' => (string) Str::uuid(), 'checkout_at' => now(), 'status' => 'awaiting_payment', 'amount' => '100.00']);
+            $origin = app(\App\Services\Commercial\MembershipAcquisition::class)->fixUser($user, request()->user()?->id === $user->id ? request() : null, 'purchase');
+            app(\App\Services\Commercial\MembershipAcquisition::class)->purchase($payment, $origin, $user);
             // Durable canonical event, even if an advertising provider is not configured.
             $context = app(GrowthMeasurementService::class)->context($user->id);
             unset($context['_default_scope']);

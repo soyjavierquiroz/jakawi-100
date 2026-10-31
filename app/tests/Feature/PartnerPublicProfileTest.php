@@ -97,22 +97,23 @@ class PartnerPublicProfileTest extends TestCase
     {
         extract($this->inventory());
         $this->get('/dosis43')->assertOk();
-        $touch = AttributionTouch::sole(); $this->assertSame($partner->id, $touch->acquisition_partner_id);
-        $this->assertNull($touch->user_id); $this->assertDatabaseCount('referral_relationships', 0); $this->assertDatabaseCount('reward_transactions', 0);
+        $this->assertDatabaseCount('attribution_touches', 0);
+        $this->assertDatabaseCount('membership_acquisition_origins', 0);
+        $this->assertDatabaseCount('referral_relationships', 0); $this->assertDatabaseCount('reward_transactions', 0);
         $this->get('/beneficios/'.$benefit->slug)->assertRedirect(route('landing-presentations.show', $landing));
         $this->get('/l/'.$landing->slug)->assertOk();
         $this->post('/l/'.$landing->slug.'/acquisition', ['method' => 'register'])->assertNoContent();
         $user = $this->signup();
-        $this->assertDatabaseHas('referral_relationships', ['referred_user_id' => $user->id, 'acquisition_partner_id' => $partner->id, 'attribution_touch_id' => $touch->id]);
-        $this->assertDatabaseHas('attribution_touches', ['id' => $touch->id, 'user_id' => $user->id]);
+        $this->assertSame($partner->id, app(\App\Services\Commercial\MembershipAcquisition::class)->forUser($user)['partner_id']);
+        $this->assertDatabaseCount('referral_relationships', 0);
         $this->assertDatabaseCount('reward_transactions', 0);
         $this->get('/dosis43')->assertInertia(fn (Assert $p) => $p->where('auth.user.id', $user->id)->has('benefits', 1));
-        $this->assertDatabaseCount('attribution_touches', 1);
+        $this->assertDatabaseCount('attribution_touches', 0);
         RewardRule::create(['name' => 'Existing Partner QA rule', 'participant_type' => 'PARTNER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 10, 'currency' => 'BOB', 'status' => 'active']);
         $admin = User::factory()->create(['is_admin' => true]);
         $sale = app(MembershipPurchaseService::class)->confirmManualCash($user, $admin, null, 'PROFILE-QA', (string) \Illuminate\Support\Str::uuid());
         $this->assertDatabaseCount('reward_transactions', 0);
-        $this->assertSame($partner->id, $sale->conversion->relationship->acquisition_partner_id);
+        $this->assertSame($partner->id, $sale->conversion->attribution_snapshot['membership_acquisition']['partner_id']);
         $this->assertTrue($user->fresh()->hasActiveMembership());
         $this->assertSame('membership_purchased', $sale->conversion->type);
     }
@@ -123,20 +124,20 @@ class PartnerPublicProfileTest extends TestCase
         $this->get('/dosis43'); $this->get('/p/dosis43/auth/register')->assertRedirect('/register');
         $this->post('/register', ['name' => 'Direct QA', 'email' => 'direct@example.test', 'whatsapp' => '71234567'])->assertRedirect('/dosis43');
         $user = User::whereEmail('direct@example.test')->sole();
-        $this->assertDatabaseHas('referral_relationships', ['referred_user_id' => $user->id, 'acquisition_partner_id' => $partner->id]);
+        $this->assertSame($partner->id, app(\App\Services\Commercial\MembershipAcquisition::class)->forUser($user)['partner_id']);
         $this->assertDatabaseCount('reward_transactions', 0);
     }
 
     public function test_existing_login_consumes_candidate_without_ownership_even_after_logout_and_new_registration(): void
     {
         extract($this->inventory()); $user = User::factory()->create();
-        $this->get('/dosis43'); $touch = AttributionTouch::sole();
+        $this->get('/dosis43'); $this->assertDatabaseCount('attribution_touches', 0);
         $this->get('/p/dosis43/auth/login')->assertRedirect('/login');
         $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect('/dosis43')->assertSessionMissing('attribution_touch_ids');
         $this->assertDatabaseCount('referral_relationships', 0); $this->assertDatabaseCount('reward_transactions', 0);
-        $this->assertSame($user->id, $touch->fresh()->user_id);
+        $this->assertDatabaseCount('membership_acquisition_origins', 0);
         $this->get('/dosis43')->assertInertia(fn (Assert $p) => $p->where('auth.user.id', $user->id));
-        $this->assertDatabaseCount('attribution_touches', 1);
+        $this->assertDatabaseCount('attribution_touches', 0);
         $this->post('/logout'); $this->signup('later@example.test');
         $this->assertDatabaseCount('referral_relationships', 0);
     }
@@ -155,13 +156,13 @@ class PartnerPublicProfileTest extends TestCase
         $this->assertSame($other->id, $relationship->fresh()->acquisition_partner_id); $this->assertDatabaseCount('referral_relationships', 1);
     }
 
-    public function test_first_valid_partner_wins_even_when_landing_latest_touch_is_different(): void
+    public function test_latest_profile_before_signup_is_the_candidate_until_a_referral_is_fixed(): void
     {
         extract($this->inventory()); $other = Partner::factory()->published()->create(['slug' => 'second-partner']);
         $this->get('/dosis43'); $this->get('/second-partner');
         $this->get('/l/'.$landing->slug.'?utm_source=poster');
         $user = $this->signup();
-        $this->assertDatabaseHas('referral_relationships', ['referred_user_id' => $user->id, 'acquisition_partner_id' => $partner->id]);
+        $this->assertSame($other->id, app(\App\Services\Commercial\MembershipAcquisition::class)->forUser($user)['partner_id']);
     }
 
     public function test_stale_and_unscoped_anonymous_touches_do_not_become_new_ownership(): void
@@ -236,14 +237,15 @@ class PartnerPublicProfileTest extends TestCase
         extract($this->inventory());
         $benefit->update(['access_mode' => 'authenticated']);
         $this->get('/dosis43')->assertOk();
-        $touch = AttributionTouch::sole();
+        $this->assertDatabaseCount('attribution_touches', 0);
         $this->get('/l/'.$landing->slug)->assertInertia(fn (Assert $p) => $p
             ->where('copy.action.kind', 'guest')->where('acquisition.endpoint', '/l/'.$landing->slug.'/acquisition'));
         $this->post('/l/'.$landing->slug.'/acquisition', ['method' => 'register'])->assertNoContent();
         $this->post('/register', ['name' => 'Landing User', 'email' => 'landing-first@example.test', 'whatsapp' => '71234567'])
             ->assertRedirect('/l/'.$landing->slug.'/activar');
         $user = User::whereEmail('landing-first@example.test')->sole();
-        $this->assertDatabaseHas('referral_relationships', ['referred_user_id' => $user->id, 'acquisition_partner_id' => $partner->id, 'attribution_touch_id' => $touch->id]);
+        $this->assertSame($partner->id, app(\App\Services\Commercial\MembershipAcquisition::class)->forUser($user)['partner_id']);
+        $this->assertDatabaseCount('referral_relationships', 0);
         $this->actingAs($user)->get('/l/'.$landing->slug)->assertInertia(fn (Assert $p) => $p
             ->where('copy.action.kind', 'native')->where('landingDirectAction.endpoint', route('redemptions.start', $benefit, false))
             ->where('landingDirectAction.data.location_id', $location->id));
