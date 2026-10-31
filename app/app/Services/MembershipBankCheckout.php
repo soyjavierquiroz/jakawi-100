@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AnalyticsEvent;
 use App\Models\AuditLog;
+use App\Models\Membership;
 use App\Models\MembershipBankPayment;
 use App\Models\User;
 use App\Notifications\MembershipBankActivated;
@@ -62,7 +63,16 @@ class MembershipBankCheckout
 
         return DB::transaction(function () use ($id, $movementId, $admin, $strongOnly) {
             // Serialize every decision, including across two requests by the same buyer.
-            $owner = MembershipBankPayment::findOrFail($id)->user_id;
+            $candidate = MembershipBankPayment::findOrFail($id);
+            $clubOwner = null;
+            if ($candidate->origin === 'CLUB') {
+                app(ClubPurchaseIdentity::class)->lock($candidate->club_reference);
+                $candidate->refresh();
+                if ($candidate->status !== 'approved') {
+                    $clubOwner = app(ClubPurchaseIdentity::class)->activationOwner($candidate);
+                }
+            }
+            $owner = $clubOwner?->id ?? $candidate->user_id;
             $user = User::lockForUpdate()->findOrFail($owner);
             $payment = MembershipBankPayment::lockForUpdate()->findOrFail($id);
             if ($payment->status === 'approved') {
@@ -81,17 +91,28 @@ class MembershipBankCheckout
             abort_unless($user->global_subject_id, 422, 'Falta la identidad global del comprador.');
             abort_if($user->hasActiveMembership(), 422, 'El comprador ya tiene membresía activa.');
             // Existing operational activation service; no conversion/reward recorder.
-            $membership = app(MembershipService::class)->activate($user, $admin, null, 'bank_qr', $payment->reference, null, '100.00');
-            $payment->update(['status' => 'approved', 'bank_movement_id' => $movementId, 'membership_id' => $membership->id,
+            $activate = fn () => app(MembershipService::class)->activate($user, $admin, null, 'bank_qr', $payment->reference, null, '100.00');
+            $membership = $payment->origin === 'CLUB' && $payment->identity_status !== 'linked'
+                ? Membership::withoutEvents($activate) : $activate();
+            $payment->update(['status' => 'approved', 'user_id' => $user->id, 'bank_movement_id' => $movementId, 'membership_id' => $membership->id,
                 'reviewed_by' => $admin->id, 'reviewed_at' => now(), 'activated_at' => $membership->starts_at]);
             $eventId = 'com:membership:'.$payment->reference.':activated';
             $body = ['schema_version' => 1, 'event_id' => $eventId, 'event_type' => 'membership.activated',
-                'global_subject_id' => $user->global_subject_id, 'membership_reference' => (string) $membership->id,
+                'global_subject_id' => $payment->origin === 'CLUB' && $payment->identity_status !== 'linked' ? null : $user->global_subject_id, 'membership_reference' => (string) $membership->id,
                 'com_reference' => ['type' => 'membership', 'id' => (string) $membership->id],
                 'payment_reference' => $payment->reference, 'occurred_at' => $membership->starts_at->toRfc3339String()];
+            if ($payment->origin === 'CLUB') {
+                $body['origin'] = 'CLUB';
+                $body['club_reference'] = $payment->club_reference;
+                $body['club_user_uuid'] = $payment->club_user_uuid;
+                $body['guest_purchase_id'] = $payment->guest_purchase_id;
+                $body['identity_status'] = $payment->identity_status;
+            }
             DB::table('commercial_outbox')->insertOrIgnore(['event_id' => $eventId, 'raw_body' => json_encode($body, JSON_THROW_ON_ERROR),
                 'status' => 'PENDING', 'attempts' => 0, 'created_at' => now(), 'updated_at' => now()]);
-            $user->notify(new MembershipBankActivated($payment->reference));
+            if ($payment->origin !== 'CLUB' || $payment->identity_status === 'linked') {
+                $user->notify(new MembershipBankActivated($payment->reference));
+            }
             $this->audit($payment, $admin, 'membership_bank_approved', ['movement_id' => $movementId, 'membership_id' => $membership->id]);
 
             return $payment->refresh();

@@ -35,7 +35,9 @@ final class CommercialDispatcher
                     $result = ['sent' => false, 'retry' => true, 'http' => null, 'code' => 'DELIVERY_UNAVAILABLE'];
                 }
                 // CLUB may not recognize membership.activated yet; retain and retry the original body.
-                if (! $result['sent'] && (json_decode($row->raw_body,true)['event_type'] ?? null) === 'membership.activated') $result['retry'] = true;
+                if (! $result['sent'] && in_array((json_decode($row->raw_body, true)['event_type'] ?? null), ['membership.activated', 'membership.identity_linked'], true)) {
+                    $result['retry'] = true;
+                }
                 $attempts = $row->attempts + 1;
                 $delay = min(21600, 60 * (2 ** min(9, $attempts - 1))) + random_int(0, 30);
                 DB::table('commercial_outbox')->where('id', $row->id)->update([

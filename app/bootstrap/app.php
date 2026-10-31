@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function (): void {
             require __DIR__.'/../routes/identity.php';
             require __DIR__.'/../routes/catalog.php';
+            require __DIR__.'/../routes/club-purchases.php';
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -90,6 +91,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*', 'internal/identity/*') || $request->expectsJson(),
+            fn (Request $request) => $request->is('api/*', 'internal/identity/*', 'internal/club/*') || $request->expectsJson(),
         );
     })->create();
