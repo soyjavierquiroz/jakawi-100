@@ -52,14 +52,30 @@ class MembershipBankQr
         return $this->current() !== null;
     }
 
-    public function response()
+    public function recipient(): string
+    {
+        return AppSetting::where('key', 'membership_bank_qr_recipient')->first()?->value['name']
+            ?? 'Javier Enrrique Marcos Quiroz Sueldo';
+    }
+
+    public function saveRecipient(string $name, User $admin): void
+    {
+        abort_unless($admin->is_admin, 403);
+        DB::transaction(function () use ($name, $admin) {
+            $setting = AppSetting::updateOrCreate(['key' => 'membership_bank_qr_recipient'], ['value' => ['name' => trim($name)]]);
+            AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'membership_bank_qr_recipient_saved',
+                'subject_type' => AppSetting::class, 'subject_id' => $setting->id]);
+        });
+    }
+
+    public function response(bool $download = false)
     {
         $image = $this->current();
         abort_unless($image, 404);
 
         return response($image['bytes'], 200, [
             'Content-Type' => $image['mime'], 'Content-Length' => (string) $image['size'],
-            'Content-Disposition' => 'inline; filename="qr-membresia.'.($image['mime'] === 'image/png' ? 'png' : 'jpg').'"',
+            'Content-Disposition' => ($download ? 'attachment' : 'inline').'; filename="qr-membresia.'.($image['mime'] === 'image/png' ? 'png' : 'jpg').'"',
             'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff',
         ]);
     }

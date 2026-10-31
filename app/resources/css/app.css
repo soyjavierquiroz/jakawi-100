@@ -748,3 +748,66 @@
 }
 
 .partner-profile section[id] { scroll-margin-top: 9rem; }
+
+/* Membership payment uses the same Discovery typography, controls and tokens. */
+.membership-checkout { color-scheme: light; }
+.membership-checkout .payment-header { border-bottom: 1px solid var(--border); background: var(--background); }
+.membership-checkout .payment-header nav { max-width: 1120px; margin: auto; min-height: 88px; padding: 16px var(--space-gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.membership-checkout .payment-header img { width: 122px; height: auto; }
+.membership-checkout .payment-header .discovery-secondary-action { gap: 12px; }
+.membership-checkout .payment-main { max-width: 1040px; margin: auto; padding: 40px var(--space-gutter) 56px; }
+.membership-checkout .payment-intro { margin-bottom: 28px; }
+.membership-checkout h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.08; letter-spacing: -.05em; font-weight: 800; margin: 12px 0; }
+.membership-checkout .payment-subtitle { color: var(--text-secondary); font-size: 15px; line-height: 1.65; }
+.membership-checkout .payment-price { font-size: 40px; letter-spacing: -.04em; font-weight: 800; margin-top: 20px; }
+.membership-checkout .payment-price span { color: var(--text-muted); font-size: 12px; letter-spacing: .08em; font-weight: 600; margin-left: 6px; }
+.membership-checkout .payment-grid { display: grid; gap: 20px; align-items: start; }
+.membership-checkout .payment-summary { display: grid; gap: 20px; min-width: 0; }
+.membership-checkout .payment-card { border-radius: var(--radius-card); background: var(--surface-raised); border: 1px solid var(--border); padding: 24px; min-width: 0; box-shadow: var(--shadow); }
+.membership-checkout h2 { font-size: 21px; line-height: 1.35; font-weight: 800; letter-spacing: -.025em; }
+.membership-checkout .payment-buyer { margin-top: 16px; }
+.membership-checkout .payment-email { color: var(--text-secondary); font-size: 14px; margin-top: 6px; overflow-wrap: anywhere; }
+.membership-checkout .payment-text-link { color: var(--brand); font-size: 13px; font-weight: 700; display: inline-block; margin-top: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.membership-checkout .payment-reference { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 16px; font-size: 11px; color: var(--text-muted); }
+.membership-checkout .payment-reference div { display: flex; align-items: start; gap: 8px; margin-top: 8px; }
+.membership-checkout .payment-reference code { overflow-wrap: anywhere; line-height: 1.7; min-width: 0; }
+.membership-checkout .payment-copy { min-height: 36px; font-weight: 700; color: var(--foreground); cursor: pointer; padding: 0 8px; border: 1px solid var(--border); border-radius: 8px; flex-shrink: 0; }
+.membership-checkout #copy-status { display: block; margin-top: 6px; }
+.membership-checkout .payment-small { color: var(--text-muted); font-size: 12px; line-height: 1.7; margin-top: 10px; }
+.membership-checkout .payment-chip { display: inline-flex; border-radius: var(--radius-chip); background: var(--brand-subtle); padding: 7px 12px; font-size: 11px; font-weight: 700; margin-bottom: 24px; }
+.membership-checkout .payment-recipient-name { font-weight: 800; font-size: 17px; line-height: 1.5; margin-top: 10px; }
+.membership-checkout .payment-recipient > p:last-child { margin-top: 20px; display: flex; justify-content: space-between; gap: 12px; }
+.membership-checkout .payment-qr { margin: 24px auto 20px; text-align: center; }
+.membership-checkout .payment-qr img { display: block; width: min(100%, 340px); height: auto; margin: auto; object-fit: contain; }
+.membership-checkout .payment-qr figcaption { max-width: 300px; margin: 14px auto 0; color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+.membership-checkout .payment-download { width: 100%; gap: 10px; min-height: 48px; }
+.membership-checkout .payment-declaration { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px; }
+.membership-checkout .payment-declaration summary { width: 100%; justify-content: space-between; min-height: 50px; cursor: pointer; list-style: none; }
+.membership-checkout .payment-declaration summary::-webkit-details-marker { display: none; }
+.membership-checkout .payment-form-content { padding-top: 24px; }
+.membership-checkout .payment-field { min-width: 0; margin-top: 20px; }
+.membership-checkout label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; line-height: 1.5; }
+.membership-checkout label span { font-weight: 500; color: var(--text-muted); }
+.membership-checkout input { width: 100%; min-width: 0; min-height: 48px; border: 1px solid var(--border-strong); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); padding: 12px; font-family: inherit; font-size: 14px; }
+.membership-checkout input[type=file] { font-size: 12px; }
+.membership-checkout input::file-selector-button { border: 0; border-radius: 8px; background: var(--surface-muted); padding: 8px; margin-right: 8px; font: inherit; font-weight: 600; }
+.membership-checkout :is(a,button,input,summary):focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+.membership-checkout .payment-form-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; }
+.membership-checkout .payment-submit { width: 100%; min-height: 50px; margin-top: 24px; }
+.membership-checkout .payment-state { text-align: center; padding: 16px 0; }
+.membership-checkout .payment-state h2 { margin: 14px 0; font-size: 26px; }
+.membership-checkout .payment-state > p:not(.discovery-eyebrow) { color: var(--text-secondary); line-height: 1.7; font-size: 14px; }
+.membership-checkout .payment-state-icon { display: grid; place-items: center; margin: 0 auto 20px; width: 64px; height: 64px; border-radius: 50%; background: var(--brand-subtle); color: var(--foreground); font-size: 32px; }
+.membership-checkout .payment-state-success .payment-state-icon { background: var(--success-surface); color: var(--success); }
+.membership-checkout .payment-state :is(.discovery-primary-action,.discovery-secondary-action) { margin-top: 24px; }
+.membership-checkout .payment-notice { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-control); padding: 18px; margin-bottom: 20px; font-size: 13px; line-height: 1.7; }
+.membership-checkout .payment-notice-error { border-color: var(--brand); background: var(--brand-subtle); }
+.membership-checkout .payment-notice h2 { margin: 8px 0; }
+.membership-checkout .payment-footer { max-width: 1040px; margin: 0 auto; padding: 0 var(--space-gutter) 28px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 11px; color: var(--text-muted); }
+.membership-checkout .payment-footer a { text-decoration: underline; text-underline-offset: 4px; }
+@media (min-width: 768px) {
+    .membership-checkout .payment-main { padding-top: 56px; }
+    .membership-checkout .payment-grid { grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 28px; }
+    .membership-checkout .payment-card { padding: 32px; }
+    .membership-checkout .payment-intro { margin-bottom: 32px; }
+}

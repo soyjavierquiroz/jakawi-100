@@ -23,3 +23,13 @@ La vista previa persistida requiere administrador. El checkout autenticado utili
 Recibos y extractos se guardan en el disco membership-private, fuera de public/storage, sin URLs firmadas públicas, imgproxy ni rutas de descarga pública. Solo el administrador descarga recibos y cada consulta queda auditada. Comprobantes JPG/PNG/PDF hasta 10 MB; nombre aleatorio y descarga forzada.
 
 Pruebas aisladas: `bin/jakawi-test php artisan test --filter=MembershipBankCheckoutTest`. No crear fixtures LIVE.
+
+## Experiencia de pago
+
+La pantalla de comprador reutiliza el CSS, Montserrat, tokens y acciones Discovery de COM; los estados se presentan en español. El titular sale exclusivamente de la sesión autenticada y la relación `membership_bank_payments.user_id → users`, incluyendo el global_subject_id existente. Se conserva nombre/correo actuales y el contacto de user_profiles para uso administrativo. La referencia, checkout_at, importe fijo Bs 100/BOB y el evento InitiateCheckout original permanecen estables al recargar. La cuenta ajena nunca selecciona pagos por query string. El perfil existente `/settings/profile` permite completar el nombre.
+
+La única columna adicional es `payer_name`, nullable: quien pagó por el miembro. No altera al titular ni aparece en eventos publicitarios. El administrador ve el titular, su global_subject_id, contacto existente, referencia/fecha de inicio, importe y pagador opcional, junto a la declaración y comprobante privados ya existentes.
+
+El destinatario visible tiene configuración independiente en app_settings (`membership_bank_qr_recipient`), dentro de la misma sección del QR; por defecto: Javier Enrrique Marcos Quiroz Sueldo. Guardar solo el destinatario no escribe ni reemplaza el objeto QR de MinIO.
+
+`GET /membresia/checkout/qr/descargar` requiere la sesión COM y sirve exactamente el original PNG/JPG con Content-Disposition attachment y cache privado/no-store, sin nueva pestaña. En revisión/aprobado no se ofrece otro pago; el comprobante observado permite corregir la misma intención.

@@ -37,7 +37,7 @@ class MembershipBankController extends Controller
             }
         }
 
-        return response()->view('membership-bank.checkout', ['metaBrowser' => $metaBrowser, 'payment' => $payment, 'ready' => $checkout->ready(), 'active' => $payment->membership?->isActive() ?? false])->header('Cache-Control', 'private, no-store');
+        return response()->view('membership-bank.checkout', ['buyer' => $request->user(), 'recipient' => app(MembershipBankQr::class)->recipient(), 'metaBrowser' => $metaBrowser, 'payment' => $payment, 'ready' => $checkout->ready(), 'active' => $payment->membership?->isActive() ?? false])->header('Cache-Control', 'private, no-store');
     }
 
     public function qr(MembershipBankQr $qr)
@@ -45,12 +45,17 @@ class MembershipBankController extends Controller
         return $qr->response();
     }
 
+    public function downloadQr(MembershipBankQr $qr)
+    {
+        return $qr->response(true);
+    }
+
     public function submit(Request $request, MembershipBankCheckout $checkout)
     {
         abort_unless($checkout->ready(), 422, 'Los cobros aún no están habilitados.');
         $data = $request->validate(['receipt' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
             'declared_reference' => ['nullable', 'string', 'max:255'], 'paid_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
-            'paid_time' => ['required', 'date_format:H:i'], 'origin_bank' => ['nullable', 'string', 'max:255']]);
+            'paid_time' => ['required', 'date_format:H:i'], 'origin_bank' => ['nullable', 'string', 'max:255'], 'payer_name' => ['nullable', 'string', 'max:255']]);
         $path = null;
         try {
             DB::transaction(function () use ($request, $checkout, $data, &$path) {
@@ -76,7 +81,7 @@ class MembershipBankController extends Controller
 
     public function index(Request $request, MembershipBankCheckout $checkout)
     {
-        $payments = MembershipBankPayment::with('user:id,name,email')->orderByRaw("CASE WHEN status='under_review' THEN 0 ELSE 1 END")->latest('id')->paginate(40);
+        $payments = MembershipBankPayment::with(['user:id,name,email,global_subject_id', 'user.profile:user_id,whatsapp'])->orderByRaw("CASE WHEN status='under_review' THEN 0 ELSE 1 END")->latest('id')->paginate(40);
         $matches = [];
         foreach ($payments as $payment) {
             if ($payment->status === 'under_review') {
@@ -85,7 +90,7 @@ class MembershipBankController extends Controller
         }
         $movements = DB::table('membership_bank_movements')->where('amount', '100.00')->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'))->latest('id')->paginate(50, ['*'], 'movements_page');
 
-        return response()->view('membership-bank.admin', ['qrConfigured' => app(MembershipBankQr::class)->ready(), ...compact('payments', 'matches', 'movements')])->header('Cache-Control', 'private, no-store');
+        return response()->view('membership-bank.admin', ['qrConfigured' => app(MembershipBankQr::class)->ready(), 'recipient' => app(MembershipBankQr::class)->recipient(), ...compact('payments', 'matches', 'movements')])->header('Cache-Control', 'private, no-store');
     }
 
     public function import(Request $request, MembershipBankImport $import)
