@@ -25,6 +25,14 @@ class MembershipBankCheckoutTest extends TestCase
 
     protected array $exceptTables = ['cities'];
 
+    protected function tearDown(): void
+    {
+        // Committed outbox tests must leave no fixtures for suites using transactions.
+        $this->truncateTablesForAllConnections();
+        parent::tearDown();
+    }
+
+
     private function buyer(): User
     {
         return User::factory()->create();
