@@ -5,7 +5,7 @@ type Partner = { name: string; slug: string };
 
 /** The root shell for every partner-facing Inertia page. */
 export default function PartnerLayout({ children }: PropsWithChildren) {
-    const { partner, partnerAccess } = usePage<{ partner?: Partner; partnerAccess?: { can_manage: boolean; can_operate: boolean } }>().props;
+    const { partner, partnerAccess } = usePage<{ partner?: Partner; partnerAccess?: { can_manage: boolean; can_operate: boolean; can_view_economics: boolean } }>().props;
 
     return (
         <main className="min-h-screen bg-background p-5 text-foreground">
@@ -24,6 +24,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                                 <Link href={`/partner/${partner.slug}/reservas`}>Reservas</Link>
                                 {partnerAccess?.can_operate && <Link href={`/partner/${partner.slug}/validar`}>Validar</Link>}
                                 {partnerAccess?.can_operate && <Link href={`/partner/${partner.slug}/asistencias`}>Registrar asistencia</Link>}
+                                {partnerAccess?.can_view_economics && <a href="https://jakawi.club/afiliados">Mis referidos y comisiones</a>}
                                 <Link href="/partner">Cambiar partner</Link>
                                 <Link href="/logout" method="post" as="button" className="text-left">Cerrar sesión</Link>
                             </nav>

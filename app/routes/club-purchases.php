@@ -15,3 +15,7 @@ Route::prefix('internal/club/purchases')->middleware([AuthenticateClubPurchase::
 // Same backend purchase HMAC, with a distinct canonical request path. No browser session.
 Route::post('/internal/club/origins/resolve', [\App\Http\Controllers\ComOriginController::class, 'resolve'])
     ->middleware([AuthenticateClubPurchase::class, 'throttle:60,1']);
+
+// Server-to-server access resolution; shares existing HMAC and nonce protection.
+Route::post('/internal/club/partners/access', \App\Http\Controllers\ClubPartnerAccessController::class)
+    ->middleware([AuthenticateClubPurchase::class, 'throttle:60,1']);

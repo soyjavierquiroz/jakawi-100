@@ -24,6 +24,9 @@ class EnsurePartner
             $canManage = in_array($relation->pivot->role, ['owner', 'manager'], true);
             $request->attributes->set('partner_access', [
                 'can_manage' => $canManage,
+                'can_view_economics' => app(\App\Services\PartnerEconomicAccess::class)->allows(
+                    $relation->status, $relation->pivot->role, (bool) $relation->pivot->economic_access,
+                ),
                 'can_edit_content' => $canManage && in_array($partner->status, ['draft', 'published'], true),
                 'can_operate' => $partner->isPublished(),
             ]);

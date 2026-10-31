@@ -163,7 +163,7 @@ class User extends Authenticatable implements PasskeyUser, OAuthenticatable
     public function partners(): BelongsToMany
     {
         return $this->belongsToMany(Partner::class)
-            ->withPivot('role')
+            ->withPivot(['role', 'economic_access'])
             ->withTimestamps();
     }
 
