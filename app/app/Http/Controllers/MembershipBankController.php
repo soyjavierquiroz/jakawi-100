@@ -18,6 +18,12 @@ class MembershipBankController extends Controller
 {
     public function show(Request $request, MembershipBankCheckout $checkout)
     {
+        if (! $request->user()) {
+            // Use the existing allowed membership return path without changing SSO.
+            $request->session()->put('url.intended', url('/membresia?checkout=bank'));
+
+            return redirect('/login');
+        }
         $payment = $checkout->start($request->user());
 
         $metaBrowser = null;
@@ -133,7 +139,7 @@ class MembershipBankController extends Controller
         abort_unless($payment->receipt_path, 404);
         $checkout->audit($payment, $request->user(), 'membership_bank_receipt_viewed');
 
-        return Storage::disk('membership-private')->download($payment->receipt_path,'comprobante-'.$payment->reference.'.'.pathinfo($payment->receipt_path,PATHINFO_EXTENSION),
+        return Storage::disk('membership-private')->download($payment->receipt_path, 'comprobante-'.$payment->reference.'.'.pathinfo($payment->receipt_path, PATHINFO_EXTENSION),
             ['Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff', 'Content-Type' => $payment->receipt_mime]);
     }
 }

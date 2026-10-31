@@ -17,8 +17,11 @@ use Inertia\Response;
 
 class MembershipOfferController extends Controller
 {
-    public function show(Request $request, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, AttributionService $attribution): Response
+    public function show(Request $request, PublicJourneyContinuation $continuation, AnalyticsTracker $analytics, AttributionService $attribution): Response|RedirectResponse
     {
+        if ($request->query('checkout') === 'bank') {
+            return redirect('/membresia/checkout');
+        }
         // Attribution metadata must never define or override the business intent.
         $query = array_diff_key($request->query(), array_flip([
             'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',

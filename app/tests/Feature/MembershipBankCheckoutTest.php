@@ -32,7 +32,6 @@ class MembershipBankCheckoutTest extends TestCase
         parent::tearDown();
     }
 
-
     private function buyer(): User
     {
         return User::factory()->create();
@@ -295,6 +294,17 @@ class MembershipBankCheckoutTest extends TestCase
         $admin = $this->admin();
         app(MembershipBankCheckout::class)->approve($p->id, $mid, $admin);
         app(MembershipBankCheckout::class)->approve($p->id, $mid, $admin);
-        $this->assertDatabaseCount('jobs',1);
+        $this->assertDatabaseCount('jobs', 1);
+    }
+
+    public function test_existing_login_returns_to_checkout_without_a_second_account(): void
+    {
+        $u = User::factory()->create();
+        $this->get('/membresia/checkout')->assertRedirect('/login');
+        $this->post(route('login.store'), ['email' => $u->email, 'password' => 'password'])->assertRedirect(url('/membresia?checkout=bank'));
+        $this->get('/membresia?checkout=bank')->assertRedirect('/membresia/checkout');
+        $this->get('/membresia/checkout')->assertOk();
+        $this->assertDatabaseCount('users', 1);
+        $this->assertDatabaseCount('membership_bank_payments', 1);
     }
 }

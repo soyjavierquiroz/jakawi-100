@@ -349,8 +349,8 @@ Route::get('/{partner:slug}', [PublicController::class, 'partners'])->where('par
 Route::post('/media/uploads', [\App\Http\Controllers\MediaUploadController::class, 'store'])->middleware(['auth', 'throttle:30,1'])->name('media.uploads');
 
 // COM is the sole authority for bank membership checkout and reconciliation.
+Route::get('/membresia/checkout', [\App\Http\Controllers\MembershipBankController::class,'show'])->middleware('throttle:30,1')->name('membership.checkout');
 Route::middleware(['auth','throttle:30,1'])->group(function () {
-    Route::get('/membresia/checkout', [\App\Http\Controllers\MembershipBankController::class,'show'])->name('membership.checkout');
     Route::get('/membresia/checkout/qr', [\App\Http\Controllers\MembershipBankController::class,'qr'])->name('membership.checkout.qr');
     Route::post('/membresia/checkout/comprobante', [\App\Http\Controllers\MembershipBankController::class,'submit'])->name('membership.checkout.submit');
 });
