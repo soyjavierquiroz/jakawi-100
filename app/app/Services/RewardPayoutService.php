@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\AppSetting;
 use App\Models\AuditLog;
 use App\Models\Partner;
-use App\Models\RewardRule;
 use App\Models\RewardPayout;
+use App\Models\RewardRule;
 use App\Models\RewardTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +26,7 @@ class RewardPayoutService
             $rewards = RewardTransaction::query()
                 ->where('beneficiary_type', RewardRule::BENEFICIARY_PARTNER)->where('beneficiary_id', $partner->id)
                 ->where('reward_type', 'CASH')->where('currency', 'BOB')
+                ->whereHas('conversion', fn ($query) => $query->where('type', '!=', 'membership_purchased'))
                 ->where('status', RewardTransaction::STATUS_AVAILABLE)
                 ->whereDoesntHave('payouts', fn ($query) => $query->where('status', RewardPayout::STATUS_REQUESTED))
                 ->lockForUpdate()->get();
@@ -41,7 +42,9 @@ class RewardPayoutService
             ]);
             $payout->rewards()->attach($rewards->pluck('id'));
             $this->audit($actor, 'partner_payout_requested', $payout, null, ['beneficiary' => 'PARTNER:'.$partner->id, 'amount' => (string) $amount, 'reward_ids' => $rewards->pluck('id')->all()]);
-            foreach ($rewards as $reward) $this->audit($actor, 'reward_reserved_for_payout', $reward, ['status' => $reward->status], ['payout_id' => $payout->id, 'payout_reference' => $payout->reference]);
+            foreach ($rewards as $reward) {
+                $this->audit($actor, 'reward_reserved_for_payout', $reward, ['status' => $reward->status], ['payout_id' => $payout->id, 'payout_reference' => $payout->reference]);
+            }
 
             return $payout;
         });

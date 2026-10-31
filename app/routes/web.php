@@ -108,7 +108,6 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner/reservas', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'partner.reservations.index'));
     Route::get('/validar', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'redemptions.validate'));
     Route::get('/partner/{partner:slug}', [PartnerPortalController::class, 'show'])->name('partner.portal.show');
-    Route::post('/partner/{partner:slug}/payouts', [PartnerPortalController::class, 'requestPayout'])->name('partner.payouts.store');
     Route::get('/partner/{partner:slug}/desbloqueos', [PartnerUnlockController::class, 'index'])->name('partner.unlocks.index');
     Route::get('/partner/{partner:slug}/desbloqueos/crear', [PartnerUnlockController::class, 'form'])->name('partner.unlocks.create');
     Route::post('/partner/{partner:slug}/desbloqueos', [PartnerUnlockController::class, 'save'])->name('partner.unlocks.store');
@@ -123,7 +122,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::post('/partner/{partner:slug}/asistencias', [ExperienceCheckInController::class, 'find'])->middleware('throttle:20,1')->name('partner.checkins.find');
     Route::post('/partner/{partner:slug}/asistencias/{reservation_public_id}', [ExperienceCheckInController::class, 'confirm'])->name('partner.checkins.confirm');
     Route::get('/partner/{partner:slug}/validar', [RedemptionController::class, 'form'])->name('redemptions.validate');
-    Route::post('/partner/{partner:slug}/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1');
+    Route::post('/partner/{partner:slug}/validar', [RedemptionController::class, 'confirm'])->middleware('throttle:20,1')->name('redemptions.confirm');
     Route::get('/partner/{partner:slug}/promociones', [PartnerContentController::class, 'benefits'])->name('partner.benefits.index');
     Route::get('/partner/{partner:slug}/promociones/crear', [PartnerContentController::class, 'benefitForm'])->name('partner.benefits.create');
     Route::post('/partner/{partner:slug}/promociones', [PartnerContentController::class, 'saveBenefit'])->name('partner.benefits.store');
@@ -258,6 +257,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('solicitudes-partner', [AdminPartnerApplicationController::class, 'index'])->name('admin.partner-applications.index');
     Route::get('solicitudes-partner/{partnerApplication}', [AdminPartnerApplicationController::class, 'show'])->name('admin.partner-applications.show');
     Route::post('solicitudes-partner/{partnerApplication}/estado', [AdminPartnerApplicationController::class, 'status'])->name('admin.partner-applications.status');
+    Route::post('solicitudes-partner/{partnerApplication}/convertir', [AdminPartnerApplicationController::class, 'convert'])->name('admin.partner-applications.convert');
+    Route::post('solicitudes-partner/{partnerApplication}/owner', [AdminPartnerApplicationController::class, 'owner'])->name('admin.partner-applications.owner');
     Route::get('desbloqueos', [AdminUnlockController::class, 'index'])->name('admin.unlocks.index');
     Route::get('desbloqueos/crear', [AdminUnlockController::class, 'form'])->name('admin.unlocks.create');
     Route::post('desbloqueos', [AdminUnlockController::class, 'save'])->name('admin.unlocks.store');

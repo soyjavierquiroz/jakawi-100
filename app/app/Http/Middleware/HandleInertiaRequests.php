@@ -42,6 +42,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'metaBrowser' => \Inertia\Inertia::always(fn () => app(\App\Services\Meta\MetaBrowserContext::class)->forRequest($request)),
             'name' => config('app.name'),
+            'partnerAccess' => fn () => $request->attributes->get('partner_access'),
             'prelaunchMode' => \Inertia\Inertia::always((bool) config('jakawi.prelaunch_mode')),
             'showDemoBanner' => \Inertia\Inertia::always(fn () => \App\Models\AppSetting::showDemoBanner()),
             'prelaunchPublic' => \Inertia\Inertia::always(

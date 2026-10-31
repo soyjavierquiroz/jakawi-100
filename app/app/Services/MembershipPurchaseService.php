@@ -8,7 +8,6 @@ use App\Models\MembershipPurchaseRequest;
 use App\Models\RewardPayout;
 use App\Models\RewardTransaction;
 use App\Models\User;
-use App\Services\AnalyticsTracker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -22,6 +21,7 @@ class MembershipPurchaseService
                 if ($purchaseRequestId !== null) {
                     abort_unless(MembershipPurchaseRequest::whereKey($purchaseRequestId)->where('membership_purchase_id', $existing->id)->where('user_id', $beneficiary->id)->exists(), 422, 'La solicitud no corresponde a esta venta.');
                 }
+
                 return $existing;
             }
 
@@ -54,6 +54,7 @@ class MembershipPurchaseService
             }
             $candidate = app(RewardBeneficiaryResolver::class)->forMembershipAcquisition($conversion);
             $reward = $candidate
+                && $candidate['beneficiary'] instanceof User && $candidate['participant_type'] === 'MEMBER'
                 ? app(RewardResolver::class)->createFor($conversion, $candidate['beneficiary'], $candidate['participant_type'])
                 : null;
             AuditLog::create(['actor_user_id' => $recordedBy->id, 'action' => 'membership_sale_created', 'subject_type' => MembershipPurchase::class, 'subject_id' => $purchase->id, 'metadata' => ['reference' => $purchase->reference, 'amount' => $purchase->amount]]);

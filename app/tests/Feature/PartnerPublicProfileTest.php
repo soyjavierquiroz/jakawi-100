@@ -93,7 +93,7 @@ class PartnerPublicProfileTest extends TestCase
         $this->expectException(ValidationException::class); $partner->update(['slug' => 'api']);
     }
 
-    public function test_primary_downstream_new_signup_owns_partner_without_partner_signup_button_and_rewards_only_on_purchase(): void
+    public function test_primary_downstream_signup_preserves_partner_attribution_without_membership_cash_accrual(): void
     {
         extract($this->inventory());
         $this->get('/dosis43')->assertOk();
@@ -111,7 +111,9 @@ class PartnerPublicProfileTest extends TestCase
         RewardRule::create(['name' => 'Existing Partner QA rule', 'participant_type' => 'PARTNER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 10, 'currency' => 'BOB', 'status' => 'active']);
         $admin = User::factory()->create(['is_admin' => true]);
         $sale = app(MembershipPurchaseService::class)->confirmManualCash($user, $admin, null, 'PROFILE-QA', (string) \Illuminate\Support\Str::uuid());
-        $reward = RewardTransaction::sole(); $this->assertSame($partner->id, $reward->beneficiary_id); $this->assertSame('10.00', $reward->amount);
+        $this->assertDatabaseCount('reward_transactions', 0);
+        $this->assertSame($partner->id, $sale->conversion->relationship->acquisition_partner_id);
+        $this->assertTrue($user->fresh()->hasActiveMembership());
         $this->assertSame('membership_purchased', $sale->conversion->type);
     }
 

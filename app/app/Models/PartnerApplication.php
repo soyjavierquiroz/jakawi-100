@@ -43,4 +43,9 @@ class PartnerApplication extends Model
     {
         return $this->belongsTo(AttributionTouch::class);
     }
+
+    public function partner(): BelongsTo
+    {
+        return $this->belongsTo(Partner::class);
+    }
 }

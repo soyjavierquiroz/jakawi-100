@@ -99,7 +99,8 @@ class AffiliationRetirementTest extends TestCase
         $partner = Partner::factory()->published()->create();
         $this->actingAs(User::factory()->create(['is_admin' => true]));
         $base = ['name' => 'Operational', 'event' => 'membership_purchased', 'calculation_type' => 'FIXED', 'value' => 10, 'priority' => 0, 'status' => 'inactive'];
-        $this->post('/admin/reward-rules', $base + ['participant_type' => 'PARTNER', 'beneficiary_type' => 'PARTNER', 'beneficiary_id' => $partner->id, 'reward_type' => 'CASH'])->assertRedirect()->assertSessionHasNoErrors();
+        $this->postJson('/admin/reward-rules', $base + ['participant_type' => 'PARTNER', 'beneficiary_type' => 'PARTNER', 'beneficiary_id' => $partner->id, 'reward_type' => 'CASH'])->assertUnprocessable();
+        $this->post('/admin/reward-rules', array_replace($base, ['event' => 'redemption.confirmed', 'participant_type' => 'PARTNER', 'beneficiary_type' => 'PARTNER', 'beneficiary_id' => $partner->id, 'reward_type' => 'CASH']))->assertRedirect()->assertSessionHasNoErrors();
         $this->post('/admin/reward-rules', $base + ['participant_type' => 'MEMBER', 'reward_type' => 'JP'])->assertRedirect()->assertSessionHasNoErrors();
         $this->assertDatabaseCount('reward_rules', 2);
         $this->get('/admin/reward-rules')->assertInertia(fn (Assert $page) => $page->has('rules', 2));

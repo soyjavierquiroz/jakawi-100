@@ -4,12 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\AttributionTouch;
 use App\Models\Partner;
+use App\Models\ProgramEnrollment;
 use App\Models\ReferralRelationship;
 use App\Models\RewardRule;
 use App\Models\RewardTransaction;
 use App\Models\User;
-use App\Models\ProgramEnrollment;
 use App\Services\MembershipPurchaseService;
+use App\Services\RewardResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -18,7 +19,7 @@ class PartnerRewardTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_partner_attribution_earns_configured_cash_as_partner_and_specific_rule_wins(): void
+    public function test_partner_attribution_cannot_earn_cash_even_with_legacy_global_and_specific_rules(): void
     {
         $partner = Partner::factory()->published()->create();
         $customer = User::factory()->create();
@@ -26,12 +27,11 @@ class PartnerRewardTest extends TestCase
         RewardRule::create(['name' => 'Partner default', 'participant_type' => 'PARTNER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 10, 'currency' => 'BOB', 'status' => 'active']);
         $specific = RewardRule::create(['name' => 'Partner individual', 'beneficiary_type' => 'PARTNER', 'beneficiary_id' => $partner->id, 'participant_type' => 'PARTNER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 15, 'currency' => 'BOB', 'status' => 'active']);
         $sale = $this->sale($customer);
-        $reward = RewardTransaction::firstOrFail();
-        $this->assertSame($specific->id, $reward->reward_rule_id);
-        $this->assertSame('PARTNER', $reward->beneficiary_type);
-        $this->assertSame($partner->id, $reward->beneficiary_id);
-        $this->assertNull($reward->beneficiary_user_id);
-        $this->assertSame('15.00', $reward->amount);
+        $this->assertDatabaseCount('reward_transactions', 0);
+        $this->assertDatabaseHas('reward_rules', ['id' => $specific->id, 'value' => 15]);
+        $this->assertTrue($customer->fresh()->hasActiveMembership());
+        $this->assertNull(app(RewardResolver::class)->createFor($sale->conversion, $partner, 'PARTNER'));
+        $this->assertNull(app(RewardResolver::class)->ruleFor($partner, 'PARTNER', 'PARTNER', 'membership_purchased', null));
         $this->assertSame($partner->id, $sale->conversion->relationship->acquisition_partner_id);
     }
 
@@ -46,18 +46,27 @@ class PartnerRewardTest extends TestCase
         $promoter = User::factory()->create();
         ProgramEnrollment::create(['user_id' => $promoter->id, 'program_type' => 'PROMOTER', 'status' => 'active']);
         RewardRule::create(['name' => 'Promoter', 'participant_type' => 'PROMOTER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 9, 'currency' => 'BOB', 'status' => 'active']);
-        $other = User::factory()->create(); $this->attribute($partner, $other);
+        $other = User::factory()->create();
+        $this->attribute($partner, $other);
         $sale = app(MembershipPurchaseService::class)->confirmManualCash($other, $promoter, $promoter, 'P-'.Str::random(8), (string) Str::uuid());
         $this->assertSame(0, RewardTransaction::count());
         $this->assertSame($partner->id, $sale->conversion->relationship->acquisition_partner_id);
     }
 
-    public function test_refund_cancels_unpaid_partner_reward_and_retry_does_not_duplicate_it(): void
+    public function test_retry_and_refund_keep_legacy_partner_reward_history_without_new_accrual(): void
     {
-        $partner = Partner::factory()->published()->create(); $customer = User::factory()->create(); $this->attribute($partner, $customer);
+        $partner = Partner::factory()->published()->create();
+        $customer = User::factory()->create();
+        $this->attribute($partner, $customer);
         RewardRule::create(['name' => 'Partner', 'participant_type' => 'PARTNER', 'event' => 'membership_purchased', 'reward_type' => 'CASH', 'calculation_type' => 'FIXED', 'value' => 10, 'currency' => 'BOB', 'status' => 'active']);
-        $key = (string) Str::uuid(); $sale = $this->sale($customer, $key); $this->sale($customer, $key);
-        $this->assertSame(1, RewardTransaction::count());
+        $key = (string) Str::uuid();
+        $sale = $this->sale($customer, $key);
+        $this->sale($customer, $key);
+        $this->assertDatabaseCount('reward_transactions', 0);
+        // Simulate a historical obligation, not a newly generated commission.
+        RewardTransaction::create(['beneficiary_type' => 'PARTNER', 'beneficiary_id' => $partner->id,
+            'conversion_id' => $sale->conversion_id, 'reward_rule_id' => RewardRule::sole()->id,
+            'reward_type' => 'CASH', 'amount' => 10, 'currency' => 'BOB', 'status' => 'pending']);
         app(MembershipPurchaseService::class)->refund($sale, User::factory()->create(['is_admin' => true]), 'refund');
         $this->assertSame(RewardTransaction::STATUS_CANCELLED, RewardTransaction::firstOrFail()->status);
     }
@@ -71,6 +80,7 @@ class PartnerRewardTest extends TestCase
     private function sale(User $customer, ?string $key = null)
     {
         $admin = User::factory()->create(['is_admin' => true]);
+
         return app(MembershipPurchaseService::class)->confirmManualCash($customer, $admin, null, 'R-'.Str::random(8), $key ?? (string) Str::uuid());
     }
 }

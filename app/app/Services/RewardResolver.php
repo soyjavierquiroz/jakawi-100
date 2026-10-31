@@ -3,16 +3,19 @@
 namespace App\Services;
 
 use App\Models\Conversion;
+use App\Models\Partner;
 use App\Models\RewardRule;
 use App\Models\RewardTransaction;
 use App\Models\User;
-use App\Models\Partner;
 use Illuminate\Database\Eloquent\Model;
 
 class RewardResolver
 {
     public function createFor(Conversion $conversion, User|Partner $beneficiary, string $participantType): ?RewardTransaction
     {
+        if ($beneficiary instanceof Partner && $conversion->type === 'membership_purchased') {
+            return null;
+        }
         // COM has no affiliate commission engine. Historical rules cannot reactivate it.
         if (! (($beneficiary instanceof User && $participantType === 'MEMBER')
             || ($beneficiary instanceof Partner && $participantType === 'PARTNER'))) {
@@ -46,6 +49,9 @@ class RewardResolver
 
     public function ruleFor(Model $beneficiary, string $beneficiaryType, string $participantType, string $event, ?string $productKey, string $rewardType = RewardRule::TYPE_CASH, ?int $campaignId = null, $at = null): ?RewardRule
     {
+        if ($event === 'membership_purchased' && ($beneficiary instanceof Partner || $beneficiaryType === 'PARTNER' || $participantType === 'PARTNER')) {
+            return null;
+        }
         if (! (($beneficiary instanceof User && $participantType === 'MEMBER' && $rewardType === 'JP')
             || ($beneficiary instanceof Partner && $participantType === 'PARTNER' && $rewardType === 'CASH'))) {
             return null;
@@ -63,8 +69,11 @@ class RewardResolver
         if ($campaignId) {
             $campaignRule = (clone $base)->where('campaign_id', $campaignId)->whereHas('campaign.participants', fn ($q) => $q->where('participant_type', $participantType))
                 ->orderByRaw('CASE WHEN beneficiary_type IS NOT NULL THEN 0 WHEN beneficiary_user_id IS NOT NULL THEN 0 ELSE 1 END')->orderByDesc('priority')->orderBy('id')->first();
-            if ($campaignRule) return $campaignRule;
+            if ($campaignRule) {
+                return $campaignRule;
+            }
         }
+
         return $base->whereNull('campaign_id')->orderByRaw('CASE WHEN beneficiary_type IS NOT NULL THEN 0 WHEN beneficiary_user_id IS NOT NULL THEN 0 WHEN participant_type IS NOT NULL THEN 1 ELSE 2 END')->orderByDesc('priority')->orderBy('id')->first();
     }
 

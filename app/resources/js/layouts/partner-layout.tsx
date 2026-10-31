@@ -5,7 +5,7 @@ type Partner = { name: string; slug: string };
 
 /** The root shell for every partner-facing Inertia page. */
 export default function PartnerLayout({ children }: PropsWithChildren) {
-    const { partner } = usePage<{ partner?: Partner }>().props;
+    const { partner, partnerAccess } = usePage<{ partner?: Partner; partnerAccess?: { can_manage: boolean; can_operate: boolean } }>().props;
 
     return (
         <main className="min-h-screen bg-background p-5 text-foreground">
@@ -18,12 +18,12 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                             <p className="mt-1 text-xs text-muted-foreground">Portal Partner</p>
                             <nav className="mt-6 flex flex-col gap-3">
                                 <Link href={`/partner/${partner.slug}`}>Inicio</Link>
-                                <Link href={`/partner/${partner.slug}/rendimiento`}>Rendimiento</Link>
+                                {partnerAccess?.can_manage && <Link href={`/partner/${partner.slug}/rendimiento`}>Rendimiento</Link>}
                                 <Link href={`/partner/${partner.slug}/promociones`}>Promociones</Link>
                                 <Link href={`/partner/${partner.slug}/experiencias`}>Experiencias</Link>
                                 <Link href={`/partner/${partner.slug}/reservas`}>Reservas</Link>
-                                <Link href={`/partner/${partner.slug}/validar`}>Validar</Link>
-                                <Link href={`/partner/${partner.slug}/asistencias`}>Registrar asistencia</Link>
+                                {partnerAccess?.can_operate && <Link href={`/partner/${partner.slug}/validar`}>Validar</Link>}
+                                {partnerAccess?.can_operate && <Link href={`/partner/${partner.slug}/asistencias`}>Registrar asistencia</Link>}
                                 <Link href="/partner">Cambiar partner</Link>
                                 <Link href="/logout" method="post" as="button" className="text-left">Cerrar sesión</Link>
                             </nav>

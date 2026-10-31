@@ -1,8 +1,12 @@
 # Operaciones
 
-## Partner payouts
+## Partners y recompensas
 
-Admin → Pagos mantiene mínimos BOB independientes: `affiliate_minimum_payout` y `partner_minimum_payout`. Owner/manager solicita el total elegible de su Partner; Admin registra el pago manual con referencia externa o rechaza con motivo. Los pagos PAID son historia financiera y se corrigen sólo con ajustes operativos auditables.
+Desde Fase 10A, las comisiones por membresías captadas y sus nuevos payouts son
+responsabilidad exclusiva de CLUB. COM no genera PARTNER/CASH por venta de
+membresía ni ofrece su solicitud de retiro en el portal Partner. Los servicios
+compartidos, JP, ajustes y registros históricos se conservan; no crear reglas de
+captación en COM. Ver [onboarding y separación Fase 10A](integrations/partners-phase10a.md).
 
 Este runbook describe el stack actual. No autoriza despliegues, cambios de datos ni cambios de infraestructura por sí mismo.
 

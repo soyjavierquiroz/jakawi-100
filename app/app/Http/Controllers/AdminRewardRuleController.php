@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\Campaign;
-use App\Models\RewardRule;
 use App\Models\Partner;
+use App\Models\RewardRule;
 use App\Models\User;
+use App\Support\ListingPage;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,10 +19,15 @@ class AdminRewardRuleController extends Controller
     {
         $query = RewardRule::query()->where(fn ($q) => $q->where('reward_type', 'JP')->orWhere(fn ($p) => $p->where('participant_type', 'PARTNER')->where('reward_type', 'CASH')));
         $request->validate(['q' => 'nullable|string|max:200', 'status' => 'nullable|string|max:30', 'sort' => 'nullable|in:name,newest']);
-        if ($request->filled('q')) $query->where('name', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%');
-        if ($request->filled('status')) $query->where('status', $request->string('status'));
+        if ($request->filled('q')) {
+            $query->where('name', 'ilike', '%'.addcslashes($request->string('q')->toString(), '\\%_').'%');
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->string('status'));
+        }
         $query->orderBy($request->query('sort') === 'newest' ? 'created_at' : 'name', $request->query('sort') === 'newest' ? 'desc' : 'asc');
-        $page = \App\Support\ListingPage::make($query);
+        $page = ListingPage::make($query);
+
         return Inertia::render('admin/reward-rules/index', ['pagination' => array_diff_key($page->toArray(), ['data' => true]), 'rules' => $page->items(), 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'campaigns' => Campaign::latest()->get(['id', 'name', 'code'])]);
     }
 
@@ -45,15 +52,24 @@ class AdminRewardRuleController extends Controller
     private function data(Request $request): array
     {
         $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'campaign_id' => ['nullable', 'exists:campaigns,id'], 'beneficiary_type' => ['nullable', 'in:USER,PARTNER'], 'beneficiary_id' => ['nullable', 'integer'], 'participant_type' => ['required', 'in:PARTNER,MEMBER'], 'event' => ['required', 'string', 'max:100'], 'product_key' => ['nullable', 'string', 'max:100'], 'reward_type' => ['required', 'in:CASH,JP'], 'calculation_type' => ['required', 'in:FIXED,PERCENTAGE'], 'value' => ['required', 'numeric', 'gt:0'], 'currency' => ['nullable', 'string', 'size:3'], 'starts_at' => ['nullable', 'date'], 'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'], 'priority' => ['required', 'integer', 'min:0'], 'status' => ['required', 'in:active,inactive'], 'maximum_rewards' => ['nullable', 'integer', 'min:1'], 'maximum_per_user' => ['nullable', 'integer', 'min:1']]);
+        if ($data['participant_type'] === 'PARTNER' && $data['event'] === 'membership_purchased') {
+            throw ValidationException::withMessages(['event' => 'Las comisiones por membresías captadas se gestionan exclusivamente en CLUB.']);
+        }
         abort_unless(($data['participant_type'] === 'MEMBER' && $data['reward_type'] === 'JP' && ($data['beneficiary_type'] ?? null) !== 'PARTNER') || ($data['participant_type'] === 'PARTNER' && $data['reward_type'] === 'CASH' && ($data['beneficiary_type'] ?? null) !== 'USER'), 422, 'COM solo gestiona JP de miembros y pagos comerciales a Partners.');
-        if ($data['campaign_id'] ?? null) { $campaign = Campaign::findOrFail($data['campaign_id']); abort_unless($campaign->event === $data['event'] && $campaign->eligibleFor($data['participant_type']), 422, 'La regla debe coincidir con el evento y participante de la campaña.'); }
+        if ($data['campaign_id'] ?? null) {
+            $campaign = Campaign::findOrFail($data['campaign_id']);
+            abort_unless($campaign->event === $data['event'] && $campaign->eligibleFor($data['participant_type']), 422, 'La regla debe coincidir con el evento y participante de la campaña.');
+        }
         abort_if(($data['beneficiary_type'] ?? null) === 'PARTNER' && ! Partner::whereKey($data['beneficiary_id'])->exists(), 422, 'Partner beneficiary invalid.');
         abort_if(($data['beneficiary_type'] ?? null) === 'USER' && ! User::whereKey($data['beneficiary_id'])->exists(), 422, 'User beneficiary invalid.');
-        if (($data['beneficiary_type'] ?? null) === 'USER') $data['beneficiary_user_id'] = $data['beneficiary_id'];
+        if (($data['beneficiary_type'] ?? null) === 'USER') {
+            $data['beneficiary_user_id'] = $data['beneficiary_id'];
+        }
         if ($data['reward_type'] === 'JP') {
             abort_unless($data['participant_type'] === 'MEMBER' && $data['calculation_type'] === 'FIXED' && floor((float) $data['value']) === (float) $data['value'], 422, 'JP requiere MEMBER, FIXED y un valor entero.');
             $data['currency'] = 'JP';
         }
+
         return $data;
     }
 
