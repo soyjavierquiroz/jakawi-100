@@ -92,3 +92,20 @@ importación duplicada, solapamiento, importe incorrecto, movimiento utilizado,
 evento/job repetido, banco contradictorio, PDF inválido, compra ya activa y
 casos ambiguos. PDFs/personas son sintéticos; PostgreSQL usa exclusivamente
 `db-test` / `jakawi_test`. No se importan fixtures en LIVE.
+
+## Comprobantes BNB y desfase de segundos (decisión v2)
+
+Se admite hasta 5 segundos de diferencia únicamente con comprobante válido,
+importe/moneda/fecha/destinatario completos, banco remitente explícito equivalente,
+nombre del pagador igual a una línea completa del extracto y cuenta de origen
+con máscara que coincida con al menos tres dígitos visibles en cada extremo.
+El pagador puede ser distinto del comprador. Se preservan todas las retenciones,
+contradicciones, verificación del extracto y unicidad entre compras y créditos,
+incluidos créditos usados o retenidos. BNB equivale a Banco Nacional de Bolivia.
+El destinatario debe contener exactamente todos los mismos términos, admitiendo
+que el banco imprima primero los apellidos.
+
+La extracción conserva `origin_account` en el JSON, sin nueva columna ni módulo.
+Prioriza Bancarización/identificador de transacción frente al concepto libre.
+La administración permite buscar por usuario o referencias COM/CLUB y consultar
+el original privado, estado/error IA, reintento, candidatos y razón del bloqueo.

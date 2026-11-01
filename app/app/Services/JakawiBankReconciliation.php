@@ -29,7 +29,7 @@ class JakawiBankReconciliation
 
     public function decision(object $m): array
     {
-        $e = ['version'=>1, 'movement_id'=>$m->id, 'import_id'=>$m->import_id, 'amount'=>$m->amount,
+        $e = ['version'=>2, 'movement_id'=>$m->id, 'import_id'=>$m->import_id, 'amount'=>$m->amount,
             'date'=>$m->paid_date, 'time'=>$m->paid_time, 'reference'=>$m->reference, 'candidates'=>[]];
         $result = fn($status, $reason, $id=null) => ['status'=>$status, 'reason'=>$reason, 'payment_id'=>$id, 'evidence'=>$e];
         $used = MembershipBankPayment::where('bank_movement_id', $m->id)->first();
@@ -63,39 +63,117 @@ class JakawiBankReconciliation
             $named = count(explode(' ', $payer)) >= 2 && strlen($payer) >= 10 && $payer === $name && $this->contains($text, $payer);
             $receipt = $p->receipt_path && in_array($p->extraction_status, ['completed','manual'], true)
                 && app(MembershipReceiptVision::class)->supportsStrongMatch($p)
-                && !empty($d['recipient']) && self::normalized($d['recipient']) === self::normalized(app(MembershipBankQr::class)->recipient());
-            $identified = $direct || ($receipt && $sameDate && ($reference || ($sameTime && $named)));
+                && !empty($d['recipient']) && app(MembershipReceiptVision::class)->recipientMatches($d['recipient']);
+            $independent = $this->independentReceiptMatch($p, $m);
+            $identified = $direct || ($receipt && $sameDate && ($reference || ($sameTime && $named) || $independent));
             // A claimed reference with contradictory evidence must block another buyer's automatic assignment too.
             if (!$identified && !$reference) { continue; }
             $originBank = self::normalized($d['origin_bank'] ?? '');
             $bankLines = array_values(array_filter(array_map(fn($line)=>self::normalized($line), explode("\n", $m->description)), fn($line)=>str_starts_with($line, 'BANCO ')));
-            $bankConflict = $originBank !== '' && $bankLines && !in_array($originBank, $bankLines, true);
-            $contradiction = $bankConflict || $m->paid_date < $p->created_at->timezone('America/La_Paz')->format('Y-m-d') || $p->status === 'rejected' || $p->amount !== $m->amount
-                || ($p->paid_date && !$sameDate) || ($p->paid_time && $m->paid_time && !$sameTime)
-                || ($p->receipt_path && !$receipt)
-                || (isset($d['amount']) && $d['amount'] !== $m->amount)
-                || (isset($d['currency']) && $d['currency'] !== 'BOB');
+            $bankConflict = $originBank !== '' && $bankLines && !$this->bankMatches($originBank, $bankLines);
+            $blockers = array_values(array_filter([
+                $bankConflict ? 'Banco de origen contradictorio.' : null,
+                $m->paid_date < $p->created_at->timezone('America/La_Paz')->format('Y-m-d') ? 'El ingreso precede a la compra.' : null,
+                $p->status === 'rejected' ? 'Compra rechazada.' : null,
+                $p->amount !== $m->amount || (isset($d['amount']) && $d['amount'] !== $m->amount) ? 'Importe contradictorio.' : null,
+                $p->paid_date && !$sameDate ? 'Fecha contradictoria.' : null,
+                $p->paid_time && $m->paid_time && !$sameTime && !$independent ? 'Hora diferente sin evidencia conjunta de banco, pagador y cuenta enmascarada dentro de 5 segundos.' : null,
+                $p->receipt_path && !$receipt ? 'Comprobante sin extracción válida de importe, moneda, confianza y destinatario completo.' : null,
+                isset($d['currency']) && $d['currency'] !== 'BOB' ? 'Moneda contradictoria.' : null,
+                !$identified ? 'Falta identificación independiente de la compra.' : null,
+            ]));
+            $contradiction = $blockers !== [];
             $e['candidates'][] = ['payment_id'=>$p->id, 'direct_purchase_reference'=>$direct, 'bank_reference'=>$reference,
-                'receipt_verified'=>(bool)$receipt, 'same_date'=>$sameDate, 'same_time'=>(bool)$sameTime, 'payer_in_statement'=>$named, 'conflict'=>$contradiction, 'bank_conflict'=>$bankConflict,
+                'receipt_verified'=>(bool)$receipt, 'same_date'=>$sameDate, 'same_time'=>(bool)$sameTime, 'payer_in_statement'=>$named, 'independent_account_bank_payer_time'=>$independent, 'conflict'=>$contradiction, 'bank_conflict'=>$bankConflict, 'blockers'=>$blockers,
                 'receipt_sha256'=>$p->receipt_sha256, 'extraction_version'=>$p->extraction_version,
                 'receipt_fields'=>array_intersect_key($d,array_flip(MembershipReceiptVision::FIELDS)), 'confidence'=>$d['confidence'] ?? null];
             if ($contradiction || !$identified) { $conflicts[]=$p->id; } else { $matches[]=$p->id; }
         }
         $result = fn($status, $reason, $id=null) => ['status'=>$status,'reason'=>$reason,'payment_id'=>$id,'evidence'=>$e];
-        if ($conflicts || count($matches)>1) { return $result('review_required', 'Compradores múltiples o evidencia contradictoria/incompleta.', count($e['candidates']) === 1 ? $e['candidates'][0]['payment_id'] : null); }
+        if ($conflicts || count($matches)>1) {
+            $single = count($e['candidates']) === 1 ? $e['candidates'][0] : null;
+            return $result('review_required', $single ? implode(' ', $single['blockers']) : 'Compradores múltiples o evidencia contradictoria/incompleta.', $single['payment_id'] ?? null);
+        }
         if (!$matches) { return $result('unidentified', 'Sin evidencia suficiente para identificar una compra; importe y proximidad horaria no bastan.'); }
         $p = MembershipBankPayment::find($matches[0]);
+        if ($p->receipt_sha256 && MembershipBankPayment::whereKeyNot($p->id)
+            ->whereIn('status',['awaiting_payment','PAYMENT_REPORTED','under_review','rejected'])
+            ->where('receipt_sha256',$p->receipt_sha256)->exists()) {
+            return $result('review_required', 'El mismo comprobante está reclamado por otra compra.', $p->id);
+        }
         // Bidirectional uniqueness: a receipt or purchase reference cannot consume two credits.
         $compatible = 0;
         foreach ($this->movements()->where('amount', '100.00')->get() as $other) {
             $t = self::normalized($other->description);
             if ($this->contains($t, $p->reference) || $this->contains($t, $p->club_reference)
                 || ($p->declared_reference && ($other->reference === $p->declared_reference || $this->contains($t, $p->declared_reference)))
+                || $this->independentReceiptMatch($p, $other)
                 || ($p->paid_date?->format('Y-m-d') === $other->paid_date && $p->paid_time && $p->paid_time === $other->paid_time
                     && $this->contains($t, $p->payer_name))) { $compatible++; }
         }
         if ($compatible !== 1) { return $result('review_required', 'La compra puede corresponder a varios créditos.'); }
         return $result('safe', 'Crédito validado e identificación única en ambos sentidos, sin contradicciones.', $p->id);
+    }
+
+    private function bankMatches(string $bank, array $lines): bool
+    {
+        $canonical = fn ($v) => match (self::normalized($v)) {
+            'BNB', 'BANCO NACIONAL DE BOLIVIA', 'BANCO NACIONAL DE BOLIVIA S.A.' => 'BNB',
+            default => self::normalized($v),
+        };
+        return in_array($canonical($bank), array_map($canonical, $lines), true);
+    }
+
+    private function independentReceiptMatch(MembershipBankPayment $p, object $m): bool
+    {
+        $d = $p->extraction_json ?? [];
+        if (!$p->receipt_path || !in_array($p->extraction_status, ['completed','manual'], true)
+            || !app(MembershipReceiptVision::class)->supportsStrongMatch($p)
+            || empty($d['recipient']) || !app(MembershipReceiptVision::class)->recipientMatches($d['recipient'])
+            || $p->paid_date?->format('Y-m-d') !== $m->paid_date || $m->amount !== '100.00'
+            || !$p->paid_time || !$m->paid_time) { return false; }
+        $seconds = function ($time) {
+            if (!preg_match('/\A([01]\d|2[0-3]):([0-5]\d):([0-5]\d)\z/', $time, $parts)) { return null; }
+            return (int)$parts[1]*3600 + (int)$parts[2]*60 + (int)$parts[3];
+        };
+        $a=$seconds($p->paid_time); $b=$seconds($m->paid_time);
+        if ($a === null || $b === null || abs($a-$b)>5) { return false; }
+        $lines = array_map(fn($line)=>self::normalized($line), explode("\n", $m->description));
+        $bankLines = array_values(array_filter($lines, fn($line)=>str_starts_with($line,'BANCO ')));
+        if (empty($d['origin_bank']) || !$this->bankMatches($d['origin_bank'], $bankLines)) { return false; }
+        // Exact printed payer line, including a bank-truncated name. The buyer may be a different person.
+        $payer=self::normalized($d['payer_name'] ?? '');
+        if (strlen($payer)<10 || count(explode(' ',$payer))<2 || !in_array($payer,$lines,true)) { return false; }
+        $account=strtoupper(preg_replace('/[\s-]+/', '', $d['origin_account'] ?? ''));
+        // At least three visible digits at each end, and a mask between. Never infer hidden digits.
+        if (!preg_match('/\A(\d{3,})[*X•]+(\d{3,})\z/u', $account, $parts)) { return false; }
+        foreach ($lines as $index=>$line) {
+            if (!$this->bankMatches($d['origin_bank'], [$line])) { continue; }
+            $digits=preg_replace('/[\s-]+/', '', $lines[$index+1] ?? '');
+            if (ctype_digit($digits) && strlen($digits)>strlen($parts[1])+strlen($parts[2])
+                && str_starts_with($digits,$parts[1]) && str_ends_with($digits,$parts[2])) { return true; }
+        }
+        return false;
+    }
+
+    public function paymentReview(MembershipBankPayment $p): array
+    {
+        $rows = $this->movements()->where('amount','100.00')
+            ->when($p->paid_date, fn($q)=>$q->where('paid_date',$p->paid_date->format('Y-m-d')))
+            ->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'))
+            ->orderBy('paid_time')->limit(100)->get();
+        $reason = match ($p->extraction_status) {
+            'unconfigured' => 'La IA no estaba configurada: reintentar extracción con el archivo recibido.',
+            'failed' => 'Extracción fallida: '.($p->extraction_error ?? 'sin código').'. Puede reintentarse.',
+            'pending','processing' => 'Esperando la extracción IA del comprobante recibido.',
+            default => 'Sin evidencia suficiente; no se aprueba por importe y hora solos.',
+        };
+        foreach ($rows as $m) {
+            $decision=$this->decision($m);
+            $m->reconciliation_reason=$decision['reason'];
+            if ($decision['payment_id']===$p->id) { $reason=$decision['reason']; }
+        }
+        return ['candidates'=>$rows->all(), 'reason'=>$reason];
     }
 
     public function run(): int

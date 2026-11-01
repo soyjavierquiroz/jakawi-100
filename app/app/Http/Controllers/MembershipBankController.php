@@ -101,16 +101,25 @@ class MembershipBankController extends Controller
 
     public function index(Request $request, MembershipBankCheckout $checkout)
     {
-        $payments = MembershipBankPayment::with(['user:id,name,email,global_subject_id', 'user.profile:user_id,whatsapp'])->orderByRaw("CASE WHEN status='under_review' THEN 0 ELSE 1 END")->latest('id')->paginate(40);
+        $data = $request->validate(['q'=>['nullable','string','max:120']]);
+        $query = trim($data['q'] ?? '');
+        $payments = MembershipBankPayment::when($query !== '', function ($builder) use ($query) {
+            $builder->where(function ($q) use ($query) {
+                foreach (['reference','club_reference','buyer_name','buyer_email'] as $field) { $q->orWhere($field,'ilike','%'.$query.'%'); }
+                $q->orWhereHas('user',fn($u)=>$u->where('name','ilike','%'.$query.'%'));
+            });
+        })->with(['user:id,name,email,global_subject_id', 'user.profile:user_id,whatsapp'])->orderByRaw("CASE WHEN status='under_review' THEN 0 ELSE 1 END")->latest('id')->paginate(40)->withQueryString();
         $matches = [];
+        $reviews = [];
         foreach ($payments as $payment) {
             if (in_array($payment->status, ['under_review', 'PAYMENT_REPORTED'], true)) {
                 $matches[$payment->id] = $checkout->match($payment);
+                $reviews[$payment->id] = app(\App\Services\JakawiBankReconciliation::class)->paymentReview($payment);
             }
         }
         $movements = DB::table('membership_bank_movements')->where('amount', '100.00')->where('debit', 0)->where('reconciliation_hold', false)->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'))->latest('id')->paginate(50, ['*'], 'movements_page');
 
-        return response()->view('membership-bank.admin', ['qrConfigured' => app(MembershipBankQr::class)->ready(), 'recipient' => app(MembershipBankQr::class)->recipient(), ...compact('payments', 'matches', 'movements')])->header('Cache-Control', 'private, no-store');
+        return response()->view('membership-bank.admin', ['qrConfigured' => app(MembershipBankQr::class)->ready(), 'recipient' => app(MembershipBankQr::class)->recipient(), ...compact('payments', 'matches', 'movements', 'reviews', 'query')])->header('Cache-Control', 'private, no-store');
     }
 
     public function import(Request $request, MembershipBankImport $import)

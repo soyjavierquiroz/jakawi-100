@@ -136,7 +136,73 @@ class JakawiAutomaticReconciliationTest extends TestCase {
   $p=$this->purchase(); $this->receipt($p,['origin_bank'=>'BANCO DIFERENTE']); $this->statement('JAKAWI');
   $this->runReconciliation(); $this->assertDatabaseHas('jakawi_bank_reconciliations',['status'=>'review_required']); $this->assertDatabaseCount('memberships',0);
  }
-    private function ganaMovilPdf(string $generated='8:18:05 PM',string $corruption=''): string
+ private function accountEvidence(array $overrides=[]): MembershipBankPayment {
+  $p=$this->purchase();
+  $this->receipt($p,['reference'=>'BANK-CODE-54321','time'=>'09:59:57','origin_bank'=>'BNB',
+   'origin_account'=>'456***987','payer_name'=>'PERSONA PAGADORA',
+   'recipient'=>implode(' ',array_reverse(explode(' ',app(MembershipBankQr::class)->recipient()))),...$overrides]);
+  $pdf=str_replace('Concepto ficticio','JAKAWI Pionero',$this->ganaMovilPdf('8:18:05 PM','',true));
+  app(MembershipBankImport::class)->uploadPdf(UploadedFile::fake()->createWithContent('synthetic-account.pdf',$pdf),$this->admin);
+  return $p;
+ }
+ public function test_masked_account_payer_bank_and_three_seconds_activate_through_existing_flow(): void {
+  $p=$this->accountEvidence();
+  $this->runReconciliation(); $this->runReconciliation();
+  $this->assertSame('approved',$p->fresh()->status);
+  $this->assertDatabaseCount('memberships',1); $this->assertDatabaseCount('commercial_outbox',1);
+  $this->assertDatabaseHas('jakawi_bank_reconciliations',['payment_id'=>$p->id,'status'=>'auto_reconciled']);
+ }
+ public static function incompleteAccountEvidence(): array {
+  return [
+   'no account'=>[['origin_account'=>null]], 'wrong account'=>[['origin_account'=>'456***988']],
+   'weak mask'=>[['origin_account'=>'4*****87']], 'wrong bank'=>[['origin_bank'=>'BANCO SOLIDARIO']],
+   'no bank'=>[['origin_bank'=>null]], 'wrong payer'=>[['payer_name'=>'OTRA PERSONA']],
+   'no payer'=>[['payer_name'=>null]], 'too late'=>[['time'=>'09:59:54']],
+   'low confidence'=>[['confidence'=>'medium']], 'wrong recipient'=>[['recipient'=>'OTRO DESTINATARIO']],
+   'missing recipient token'=>[['recipient'=>'Javier Quiroz']], 'wrong amount'=>[['amount'=>'99.00']],
+   'wrong date'=>[['date'=>'2026-09-30']],
+  ];
+ }
+ #[\PHPUnit\Framework\Attributes\DataProvider('incompleteAccountEvidence')]
+ public function test_proximity_requires_all_independent_evidence(array $overrides): void {
+  $p=$this->accountEvidence($overrides); $this->runReconciliation();
+  $this->assertSame('under_review',$p->fresh()->status); $this->assertDatabaseCount('memberships',0);
+ }
+ public function test_two_nearby_credits_block_masked_account_assignment(): void {
+  $p=$this->accountEvidence();
+  $m=(array)DB::table('membership_bank_movements')->where('credit','100.00')->first();unset($m['id']);
+  $m['fingerprint']=hash('sha256','nearby-credit');$m['reference']='700099';$m['paid_time']='09:59:59';
+  DB::table('membership_bank_movements')->insert($m);$this->runReconciliation();
+  $this->assertSame('under_review',$p->fresh()->status);$this->assertDatabaseCount('memberships',0);
+ }
+ public function test_competing_receipt_claims_block_masked_account_assignment(): void {
+  $p=$this->accountEvidence();$q=$this->purchase();
+  $q->forceFill($p->only(['receipt_path','extraction_status','extraction_json','declared_reference','paid_date','paid_time','payer_name','status']))->save();
+  $this->runReconciliation();$this->assertDatabaseCount('memberships',0);
+ }
+ public function test_same_original_receipt_on_an_unextracted_competing_purchase_blocks(): void {
+  $p=$this->accountEvidence();$p->update(['receipt_sha256'=>hash('sha256','synthetic-original')]);
+  $q=$this->purchase(['status'=>'under_review','receipt_path'=>'same-original.png','receipt_sha256'=>$p->receipt_sha256,'extraction_status'=>'pending']);
+  $this->runReconciliation();$this->assertDatabaseCount('memberships',0);
+  $this->assertDatabaseHas('jakawi_bank_reconciliations',['reason'=>'El mismo comprobante está reclamado por otra compra.']);
+ }
+ public function test_other_bank_credit_does_not_compete_with_proven_account(): void {
+  $p=$this->accountEvidence();
+  $m=(array)DB::table('membership_bank_movements')->where('credit','100.00')->first();unset($m['id']);
+  $m['fingerprint']=hash('sha256','different-bank');$m['reference']='700099';$m['paid_time']='10:00:01';
+  $m['description']="JAKAWI Pionero\nBANCO SOLIDARIO\n9991234999\nPERSONA PAGADORA";
+  DB::table('membership_bank_movements')->insert($m);$this->runReconciliation();
+  $this->assertSame('approved',$p->fresh()->status);$this->assertDatabaseCount('memberships',1);
+ }
+ public function test_admin_can_find_purchase_receipt_and_actual_reconciliation_reason(): void {
+  $p=$this->accountEvidence();$q=$this->purchase();
+  $p->update(['origin'=>'CLUB','club_reference'=>(string)\Illuminate\Support\Str::uuid(),'extraction_status'=>'unconfigured','extraction_error'=>'not_configured']);
+  $this->actingAs($this->admin)->get('/admin/conciliacion-membresias?q='.$p->club_reference)->assertOk()
+   ->assertSee($p->reference)->assertDontSee($q->reference)->assertSee('Comprobante recibido')
+   ->assertSee('Reintentar extracción')->assertSee('700001')->assertSee('La IA no estaba configurada');
+ }
+
+    private function ganaMovilPdf(string $generated='8:18:05 PM',string $corruption='', bool $account=false): string
     {
         $lines=[
             'EXTRACTO DE CUENTA',
@@ -145,9 +211,9 @@ class JakawiAutomaticReconciliationTest extends TestCase {
             'SALDO ANTERIOR: 0.00',
             'FECHA   HORA   OFICINA/CANAL   TRANSACCIÓN   DESCRIPCIÓN   DÉBITO   CRÉDITO   SALDO', '',
             '                                                   TRANSF. QR ACH Nro. 990001',
-            '                                                   BANCO DE PRUEBA',
-            '01/10/2026   10:00:00   WEB/MOV/KSC   700001          555000                    0.00   +100.00   100.00',
-            '                                                   PERSONA FICTICIA',
+            '                                                   '.($account?'BANCO NACIONAL DE BOLIVIA S.A.':'BANCO DE PRUEBA'),
+            '01/10/2026   10:00:00   WEB/MOV/KSC   700001          '.($account?'4561234987':'555000').'                    0.00   +100.00   100.00',
+            '                                                   '.($account?'PERSONA PAGADORA':'PERSONA FICTICIA'),
             '                                                   Concepto ficticio', '',
             '                                                   Transferencia a 1111111111.',
             '01/10/2026   10:01:00   WEB/MOV/KSC   700002          PERSONA FICTICIA          -25.00   0.00   '.($corruption==='balance'?'76.00':'75.00'),
