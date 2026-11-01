@@ -10,6 +10,7 @@ Route::prefix('internal/club/purchases')->middleware([AuthenticateClubPurchase::
     Route::get('{reference}', [ClubPurchaseController::class, 'show'])->whereUuid('reference');
     Route::post('{reference}/report', [ClubPurchaseController::class, 'report'])->whereUuid('reference');
     Route::post('{reference}/receipt', [ClubPurchaseController::class, 'receipt'])->whereUuid('reference');
+    Route::post('{reference}/access-ticket', [\App\Http\Controllers\ClubMemberAccessController::class, 'issue'])->whereUuid('reference');
     Route::post('{reference}/identity', [ClubPurchaseController::class, 'identity'])->whereUuid('reference');
 });
 

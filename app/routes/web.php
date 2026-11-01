@@ -383,3 +383,13 @@ Route::middleware(['auth','admin','throttle:30,1'])->prefix('admin/extractos-ban
     Route::get('/{id}', [\App\Http\Controllers\BankStatementController::class, 'show'])->whereNumber('id');
     Route::get('/{id}/original', [\App\Http\Controllers\BankStatementController::class, 'download'])->whereNumber('id');
 });
+
+// Deliberate POST continuation: GET previews never stage or consume an access ticket.
+Route::prefix('club/access')->middleware('throttle:30,1')
+    ->withoutMiddleware([\App\Http\Middleware\EnsureVisitorId::class, \App\Http\Middleware\HandleInertiaRequests::class,
+        \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class])->group(function () {
+        Route::get('/', [\App\Http\Controllers\ClubMemberAccessController::class, 'entry']);
+        Route::post('/stage', [\App\Http\Controllers\ClubMemberAccessController::class, 'stage']);
+        Route::get('/continue', [\App\Http\Controllers\ClubMemberAccessController::class, 'show']);
+        Route::post('/consume', [\App\Http\Controllers\ClubMemberAccessController::class, 'consume']);
+    });

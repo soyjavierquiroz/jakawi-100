@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Middleware\CaptureMembershipOrigin;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsurePartner;
 use App\Http\Middleware\EnsurePromoter;
 use App\Http\Middleware\EnsureVisitorId;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ProtectClubMemberAccess;
 use App\Models\Benefit;
 use App\Models\Experience;
 use App\Models\Unlock;
@@ -82,15 +84,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', env('JAKAWI_ANALYTICS_VISITOR_COOKIE', 'jakawi_visitor_id')]);
 
-        $middleware->web(append: [
+        $middleware->web(prepend: [ProtectClubMemberAccess::class], append: [
             EnsureVisitorId::class,
-            \App\Http\Middleware\CaptureMembershipOrigin::class,
+            CaptureMembershipOrigin::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::using(limit: 10),
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->dontFlash(['claim_secret', 'ticket']);
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*', 'internal/identity/*', 'internal/club/*') || $request->expectsJson(),
         );
