@@ -33,7 +33,11 @@ trait EvidenceDatabaseTruncation
                 $connection->statement("ALTER TABLE {$table} DISABLE TRIGGER {$table}_membership_evidence");
                 $connection->statement("ALTER TABLE {$table} DISABLE TRIGGER {$table}_evidence_no_truncate");
             }
+            $connection->statement('ALTER TABLE membership_bank_imports DISABLE TRIGGER preserve_bank_imports');
+            $connection->statement('ALTER TABLE bank_statement_entries DISABLE TRIGGER preserve_bank_entries');
             $this->truncateFixtureTables($connection, $name);
+            $connection->statement('ALTER TABLE membership_bank_imports ENABLE TRIGGER preserve_bank_imports');
+            $connection->statement('ALTER TABLE bank_statement_entries ENABLE TRIGGER preserve_bank_entries');
             $connection->statement('INSERT INTO membership_evidence_boundary VALUES (1, clock_timestamp()) ON CONFLICT DO NOTHING');
             foreach ($tables as $table) {
                 $connection->statement("ALTER TABLE {$table} ENABLE TRIGGER {$table}_membership_evidence");

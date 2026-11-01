@@ -74,6 +74,16 @@ class ClubPurchaseController extends Controller
         return $qr->response();
     }
 
+    public function report(Request $r, string $reference, ClubPurchaseIdentity $identity): JsonResponse
+    {
+        abort_unless(app(MembershipBankQr::class)->ready(), 422, 'PAYMENT_UNAVAILABLE');
+        return DB::transaction(function () use ($reference, $identity) {
+            $identity->lock($reference);
+            $p = app(\App\Services\MembershipBankCheckout::class)->report($this->payment($reference));
+            return response()->json($this->result($p));
+        });
+    }
+
     public function receipt(Request $r, string $reference, ClubPurchaseIdentity $identity): JsonResponse
     {
         $d = $r->validate(['content_base64' => ['required', 'string', 'max:13981016'], 'sha256' => ['required', 'regex:/\A[a-f0-9]{64}\z/']]);
@@ -90,9 +100,10 @@ class ClubPurchaseController extends Controller
                 if ($p->receipt_sha256 === $d['sha256']) {
                     return response()->json($this->result($p));
                 }
-                abort_unless(in_array($p->status, ['awaiting_payment', 'rejected'], true), 409, 'RECEIPT_LOCKED');
+                abort_unless(in_array($p->status, ['awaiting_payment', 'PAYMENT_REPORTED', 'rejected'], true), 409, 'RECEIPT_LOCKED');
                 $path = 'memberships/receipts/'.$p->reference.'/'.Str::uuid().(['image/png' => '.png', 'image/jpeg' => '.jpg', 'application/pdf' => '.pdf'][$mime]);
                 abort_unless(Storage::disk('minio-media')->put($path, $bytes, ['visibility' => 'private']) === true, 503, 'RECEIPT_STORAGE_UNAVAILABLE');
+                $p = app(\App\Services\MembershipBankCheckout::class)->report($p);
                 $version = (string) Str::uuid();
                 $p->update(['receipt_path' => $path, 'receipt_disk' => 'minio-media', 'receipt_mime' => $mime, 'receipt_sha256' => $d['sha256'],
                     'status' => 'under_review', 'submitted_at' => now(), 'review_note' => null, 'reviewed_by' => null, 'reviewed_at' => null,
@@ -134,7 +145,7 @@ class ClubPurchaseController extends Controller
         $activatedAt = $p->activated_at;
 
         return ['contract' => 'jakawi-club-purchases-v1', 'club_reference' => $p->club_reference, 'payment_reference' => $p->reference,
-            'status' => $p->status, 'amount' => '100.00', 'currency' => 'BOB', 'origin' => 'CLUB', 'identity_status' => $p->identity_status,
+            'status' => $p->status, 'reported_at' => $p->reported_at?->toRfc3339String(), 'amount' => '100.00', 'currency' => 'BOB', 'origin' => 'CLUB', 'identity_status' => $p->identity_status,
             'club_user_uuid' => $p->club_user_uuid, 'guest_purchase_id' => $p->guest_purchase_id,
             'global_subject_id' => $p->identity_status === 'linked' ? User::whereKey($p->user_id)->first()?->global_subject_id : null,
             'membership_reference' => $p->membership_id ? (string) $p->membership_id : null,

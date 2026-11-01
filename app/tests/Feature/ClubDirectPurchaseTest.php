@@ -84,6 +84,27 @@ class ClubDirectPurchaseTest extends TestCase
             'method' => 'COM_AUTHENTICATED_CONSENT', 'authorized_at' => now()]);
     }
 
+    public function test_guest_payment_report_is_idempotent_without_receipt_or_identity_and_accepts_late_receipt(): void
+    {
+        Storage::fake('minio-media');
+        $admin=User::factory()->create(['is_admin'=>true]);
+        app(\App\Services\MembershipBankQr::class)->save(UploadedFile::fake()->image('qr.png',400,400),$admin);
+        $p=$this->create($this->intent());
+        $path='/internal/club/purchases/'.$p->club_reference.'/report';
+        $this->postJson($path,[])->assertUnauthorized();
+        $this->signed('POST',$path,[])->assertOk()->assertJsonPath('status','PAYMENT_REPORTED')->assertJsonPath('receipt_received',false)->assertJsonPath('membership_reference',null);
+        $at=$p->fresh()->reported_at;
+        $this->signed('POST',$path,[])->assertOk()->assertJsonPath('payment_reference',$p->reference);
+        $this->assertEquals($at,$p->fresh()->reported_at);
+        $this->assertNull($p->fresh()->user_id);
+        $this->assertDatabaseCount('membership_bank_payments',1);
+        $this->assertDatabaseCount('commercial_outbox',0);
+        $this->assertDatabaseCount('memberships',0);
+        $this->receipt($p)->assertCreated()->assertJsonPath('status','under_review');
+        $this->assertEquals($at,$p->fresh()->reported_at);
+        $this->assertDatabaseCount('reward_transactions',0);
+    }
+
     public function test_guest_intent_is_stable_without_session_verification_or_account(): void
     {
         $d = $this->intent();

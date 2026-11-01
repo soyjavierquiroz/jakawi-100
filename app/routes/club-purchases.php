@@ -8,6 +8,7 @@ Route::prefix('internal/club/purchases')->middleware([AuthenticateClubPurchase::
     Route::post('/', [ClubPurchaseController::class, 'store']);
     Route::get('qr', [ClubPurchaseController::class, 'qr']);
     Route::get('{reference}', [ClubPurchaseController::class, 'show'])->whereUuid('reference');
+    Route::post('{reference}/report', [ClubPurchaseController::class, 'report'])->whereUuid('reference');
     Route::post('{reference}/receipt', [ClubPurchaseController::class, 'receipt'])->whereUuid('reference');
     Route::post('{reference}/identity', [ClubPurchaseController::class, 'identity'])->whereUuid('reference');
 });

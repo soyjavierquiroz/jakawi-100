@@ -51,18 +51,29 @@ class MembershipBankController extends Controller
         return $qr->response(true);
     }
 
-    public function submit(Request $request, MembershipBankCheckout $checkout)
+    public function report(Request $request, MembershipBankCheckout $checkout)
     {
         abort_unless($checkout->ready(), 422, 'Los cobros aún no están habilitados.');
+        $checkout->report($checkout->start($request->user()), $request->user());
+        return redirect('/membresia/checkout');
+    }
+
+    public function submit(Request $request, MembershipBankCheckout $checkout)
+    {
         $request->validate(['receipt' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240']]);
         $path = null;
         try {
             DB::transaction(function () use ($request, $checkout, &$path) {
                 User::lockForUpdate()->findOrFail($request->user()->id);
-                $payment = MembershipBankPayment::where('user_id', $request->user()->id)->whereIn('status', ['awaiting_payment', 'rejected'])->lockForUpdate()->first();
+                $payment = MembershipBankPayment::where('user_id', $request->user()->id)->whereIn('status', ['awaiting_payment', 'PAYMENT_REPORTED', 'under_review', 'rejected'])->lockForUpdate()->first();
                 abort_unless($payment, 422, 'No hay una solicitud que admita correcciones.');
                 $file = $request->file('receipt');
+                $hash = hash_file('sha256', $file->getRealPath());
+                if ($payment->receipt_sha256 === $hash && $payment->status === 'under_review') { return; }
+                abort_if($payment->status === 'under_review', 409, 'Comprobante en revisión.');
+                $payment = $checkout->report($payment, $request->user());
                 $path = $file->storeAs('memberships/receipts/'.$payment->reference, (string) Str::uuid().'.'.$file->extension(), ['disk' => 'minio-media', 'visibility' => 'private']);
+                abort_unless($path, 503, 'No se pudo guardar el comprobante.');
                 $version = (string) Str::uuid();
                 $payment->forceFill(['declared_reference' => null, 'paid_date' => null, 'paid_time' => null, 'origin_bank' => null, 'payer_name' => null,
                     'receipt_path' => $path, 'receipt_disk' => 'minio-media', 'receipt_sha256' => hash_file('sha256', $file->getRealPath()), 'receipt_mime' => $file->getMimeType(),
@@ -87,21 +98,18 @@ class MembershipBankController extends Controller
         $payments = MembershipBankPayment::with(['user:id,name,email,global_subject_id', 'user.profile:user_id,whatsapp'])->orderByRaw("CASE WHEN status='under_review' THEN 0 ELSE 1 END")->latest('id')->paginate(40);
         $matches = [];
         foreach ($payments as $payment) {
-            if ($payment->status === 'under_review') {
+            if (in_array($payment->status, ['under_review', 'PAYMENT_REPORTED'], true)) {
                 $matches[$payment->id] = $checkout->match($payment);
             }
         }
-        $movements = DB::table('membership_bank_movements')->where('amount', '100.00')->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'))->latest('id')->paginate(50, ['*'], 'movements_page');
+        $movements = DB::table('membership_bank_movements')->where('amount', '100.00')->where('debit', 0)->where('reconciliation_hold', false)->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'))->latest('id')->paginate(50, ['*'], 'movements_page');
 
         return response()->view('membership-bank.admin', ['qrConfigured' => app(MembershipBankQr::class)->ready(), 'recipient' => app(MembershipBankQr::class)->recipient(), ...compact('payments', 'matches', 'movements')])->header('Cache-Control', 'private, no-store');
     }
 
     public function import(Request $request, MembershipBankImport $import)
     {
-        $data = $request->validate(['statement' => ['required', 'file', 'mimes:csv,txt', 'max:10240'], 'account_key' => ['required', 'regex:/\A[A-Z0-9_-]{1,100}\z/']]);
-        $result = $import->import($request->file('statement'), $data['account_key'], $request->user());
-
-        return back()->with('status', $result['duplicate'] ? 'Extracto ya importado.' : $result['imported'].' ingresos nuevos importados.');
+        return app(BankStatementController::class)->preview($request, $import);
     }
 
     public function approve(Request $request, MembershipBankCheckout $checkout)

@@ -31,7 +31,7 @@ class MembershipBankCheckout
     {
         return DB::transaction(function () use ($user) {
             $user = User::lockForUpdate()->findOrFail($user->id);
-            $payment = MembershipBankPayment::where('user_id', $user->id)->whereIn('status', ['awaiting_payment', 'under_review', 'rejected'])->first();
+            $payment = MembershipBankPayment::where('user_id', $user->id)->whereIn('status', ['awaiting_payment', 'PAYMENT_REPORTED', 'under_review', 'rejected'])->first();
             if ($payment) {
                 return $payment;
             }
@@ -59,6 +59,18 @@ class MembershipBankCheckout
         });
     }
 
+    public function report(MembershipBankPayment $payment, User|null $actor = null): MembershipBankPayment
+    {
+        return DB::transaction(function () use ($payment, $actor) {
+            $p = MembershipBankPayment::lockForUpdate()->findOrFail($payment->id);
+            if (in_array($p->status, ['awaiting_payment', 'rejected'], true)) {
+                $p->update(['status' => 'PAYMENT_REPORTED', 'reported_at' => $p->reported_at ?? now()]);
+                if ($actor) { $this->audit($p, $actor, 'membership_payment_reported'); }
+            }
+            return $p;
+        });
+    }
+
     public function approve(int $id, int $movementId, User $admin, bool $strongOnly = false): MembershipBankPayment
     {
         abort_unless($admin->is_admin, 403);
@@ -82,9 +94,9 @@ class MembershipBankCheckout
 
                 return $payment;
             }
-            abort_unless($payment->status === 'under_review', 422, 'El pago no está en revisión.');
+            abort_unless(in_array($payment->status, ['under_review', 'PAYMENT_REPORTED'], true), 422, 'El pago no está en revisión.');
             $movement = DB::table('membership_bank_movements')->where('id', $movementId)->lockForUpdate()->first();
-            abort_unless($movement && $movement->amount === '100.00', 422, 'El ingreso debe ser exactamente Bs 100.');
+            abort_unless($movement && ! $movement->reconciliation_hold && (float) $movement->debit === 0.0 && $movement->amount === '100.00', 422, 'El ingreso debe ser exactamente Bs 100.');
             abort_if(MembershipBankPayment::where('bank_movement_id', $movementId)->exists(), 422, 'Movimiento ya utilizado.');
             if ($strongOnly) {
                 $match = $this->match($payment);
@@ -123,11 +135,11 @@ class MembershipBankCheckout
 
     public function match(MembershipBankPayment $payment): array
     {
-        $available = DB::table('membership_bank_movements')->where('amount', '100.00')
+        $available = DB::table('membership_bank_movements')->where('amount', '100.00')->where('debit', 0)->where('reconciliation_hold', false)
             ->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'));
         $exact = $payment->declared_reference ? (clone $available)->where('reference', $payment->declared_reference)->orderBy('id')->get() : collect();
         if ($exact->isNotEmpty()) {
-            $claims = MembershipBankPayment::where('status', 'under_review')->where('declared_reference', $payment->declared_reference)->count();
+            $claims = MembershipBankPayment::whereIn('status', ['under_review', 'PAYMENT_REPORTED'])->where('declared_reference', $payment->declared_reference)->count();
 
             return ['classification' => $exact->count() === 1 && $claims === 1 && app(MembershipReceiptVision::class)->supportsStrongMatch($payment) ? 'strong_unique' : 'ambiguous', 'candidates' => $exact->all()];
         }

@@ -1,88 +1,95 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\AuditLog;
 use App\Models\User;
-use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class MembershipBankImport
 {
-    public function import(UploadedFile $file, string $account, User $admin): array
+    public function preview(UploadedFile $file, string $account, User $admin, string $bank, string $start, string $end): string
     {
-        abort_unless($admin->is_admin, 403);
-        $hash = hash_file('sha256', $file->getRealPath());
-        if (DB::table('membership_bank_imports')->where('sha256', $hash)->exists()) {
-            return ['imported' => 0, 'duplicate' => true];
-        }
-        $handle = fopen($file->getRealPath(), 'r');
+        abort_unless($admin->is_admin,403);
+        $hash=hash_file('sha256',$file->getRealPath());
+        $path='statements/'.$hash.'.'.strtolower($file->getClientOriginalExtension());
+        abort_unless(Storage::disk('membership-private')->put($path,file_get_contents($file->getRealPath())),503,'No se pudo conservar el original.');
+        $incidents=[]; $rows=[]; $metadata=[];
         try {
-            $header = fgetcsv($handle, 0, ',', '"', '');
-            if ($header) {
-                $header[0] = ltrim($header[0], "\xEF\xBB\xBF");
-            }
-            if ($header !== ['date', 'time', 'reference', 'description', 'amount', 'direction']) {
-                $this->invalid('Cabecera requerida: date,time,reference,description,amount,direction');
-            }
-            $rows = [];
-            $line = 1;
-            while (($row = fgetcsv($handle, 0, ',', '"', '')) !== false) {
-                $line++;
-                if ($row === [null]) {
-                    continue;
-                }
-                if (count($row) !== 6 || $line > 10001) {
-                    $this->invalid("Fila $line inválida o límite de 10.000 movimientos excedido.");
-                }
-                [$date,$time,$ref,$description,$amount,$direction] = array_map('trim', $row);
-                if (! in_array($direction, ['credit', 'debit'], true)) {
-                    $this->invalid("Fila $line: direction debe ser credit o debit.");
-                }
-                if ($direction === 'debit') {
-                    continue;
-                }
-                if (! preg_match('/\A\d{4}-\d{2}-\d{2}\z/', $date) || ! CarbonImmutable::hasFormat($date, 'Y-m-d')
-                    || ($time !== '' && (! preg_match('/\A\d{2}:\d{2}(:\d{2})?\z/', $time) || ! CarbonImmutable::hasFormat($time, strlen($time) === 5 ? 'H:i' : 'H:i:s')))
-                    || ! preg_match('/\A\d{1,10}(\.\d{1,2})?\z/', $amount) || (float) $amount <= 0 || mb_strlen($ref) > 255 || mb_strlen($description) > 2000) {
-                    $this->invalid("Fila $line: fecha, hora o importe inválido. Use YYYY-MM-DD, HH:MM[:SS] y punto decimal.");
-                }
-                $ref = MembershipBankCheckout::reference($ref);
-                $amount = number_format((float) $amount, 2, '.', '');
-                $time = $time === '' ? null : (strlen($time) === 5 ? $time.':00' : $time);
-                // Reference/date/amount identifies the same credit across overlapping exports.
-                // Without reference retain description/time; indistinguishable rows collapse conservatively.
-                $identity = $ref !== null ? [$account, $date, $ref, $amount] : [$account, $date, $time, $description, $amount];
-                $rows[] = ['fingerprint' => hash('sha256', json_encode($identity, JSON_THROW_ON_ERROR)),
-                    'paid_date' => $date, 'paid_time' => $time, 'reference' => $ref, 'description' => $description, 'amount' => $amount];
-            }
-        } finally {
-            fclose($handle);
-        }
-        $path = 'statements/'.$hash.'.csv';
-        Storage::disk('membership-private')->put($path, file_get_contents($file->getRealPath()));
+            $document=app(BankStatementParser::class)->parseDocument($file);
+            $rows=$document['rows']; $metadata=$document['metadata'];
+            if ($metadata && stripos($bank, 'ganadero') === false) { $incidents[]='El banco declarado no coincide con Banco Ganadero en el PDF.'; }
+            if (isset($metadata['account']) && ctype_digit($account) && $account !== $metadata['account']) { $incidents[]='La cuenta declarada no coincide con la cuenta del PDF.'; }
+            foreach($rows as $row) { if($row['paid_date']<$start || $row['paid_date']>$end) { $incidents[]='Hay movimientos fuera del período declarado.'; break; } }
+        } catch(ValidationException $e) { $incidents=array_merge(...array_values($e->errors())); }
+        $id=(string)Str::uuid();
+        DB::table('bank_statement_previews')->insert(['id'=>$id,'admin_id'=>$admin->id,'sha256'=>$hash,'path'=>$path,'original_name'=>mb_substr(basename($file->getClientOriginalName()),0,255),
+            'account_key'=>$account,'bank'=>$bank,'period_start'=>$start,'period_end'=>$end,'document_metadata'=>json_encode($metadata,JSON_THROW_ON_ERROR),'rows'=>json_encode($rows,JSON_THROW_ON_ERROR),'incidents'=>json_encode($incidents,JSON_THROW_ON_ERROR),'created_at'=>now(),'updated_at'=>now()]);
+        return $id;
+    }
 
-        return DB::transaction(function () use ($rows, $hash, $account, $admin, $path) {
-            $created = DB::table('membership_bank_imports')->insertOrIgnore(['sha256' => $hash, 'account_key' => $account, 'path' => $path, 'admin_id' => $admin->id, 'created_at' => now(), 'updated_at' => now()]);
-            if (! $created) {
-                return ['imported' => 0, 'duplicate' => true];
+    public function confirm(string $id, User $admin): array
+    {
+        abort_unless($admin->is_admin,403);
+        return DB::transaction(function() use($id,$admin) {
+            $p=DB::table('bank_statement_previews')->where('id',$id)->lockForUpdate()->first();
+            abort_unless($p && $p->admin_id===$admin->id,404);
+            $rows=json_decode($p->rows,true,512,JSON_THROW_ON_ERROR); $incidents=json_decode($p->incidents,true,512,JSON_THROW_ON_ERROR);
+            if(!$rows || $incidents) { throw ValidationException::withMessages(['statement'=>'El extracto tiene incidencias. Corrija el archivo y vuelva a previsualizarlo.']); }
+            abort_unless(hash_equals($p->sha256,hash('sha256',Storage::disk('membership-private')->get($p->path))),422,'El original no coincide con el SHA-256.');
+            // Serialize overlap detection per bank account, including concurrent confirmations.
+            DB::select('SELECT pg_advisory_xact_lock(hashtextextended(?, 0))',['bank-statement:'.$p->bank.':'.$p->account_key]);
+            $prior=DB::table('membership_bank_imports')->where('sha256',$p->sha256)->first();
+            if($prior) { abort_unless($prior->account_key===$p->account_key && ($prior->bank===null || $prior->bank===$p->bank),409,'Archivo ya registrado con otra cuenta/banco.'); return ['imported'=>0,'duplicate'=>true,'id'=>$prior->id]; }
+            $importId=DB::table('membership_bank_imports')->insertGetId(['sha256'=>$p->sha256,'account_key'=>$p->account_key,'path'=>$p->path,'admin_id'=>$admin->id,'bank'=>$p->bank,'original_name'=>$p->original_name,
+                'period_start'=>$p->period_start,'period_end'=>$p->period_end,'document_metadata'=>$p->document_metadata,'processing_status'=>'processed','extracted_count'=>count($rows),'incidents'=>'[]','created_at'=>now(),'updated_at'=>now()]);
+            $count=0; $duplicates=0; $holds=0;
+            foreach($rows as $index=>$row) {
+                $fingerprint=hash('sha256',json_encode([$p->bank,$p->account_key,$row['identity'],$row['occurrence']],JSON_THROW_ON_ERROR));
+                // Weak rows are retained separately, held for review, never silently merged.
+                if($row['weak_identity']) { $fingerprint=hash('sha256',$fingerprint.$p->sha256); }
+                $existing=DB::table('membership_bank_movements')->where('fingerprint',$fingerprint)->value('id');
+                // Interoperability with the original CSV importer, whose identity omitted time/balance.
+                if(!$existing && $row['reference'] && $row['occurrence']===1) {
+                    $existing=DB::table('membership_bank_movements as m')->join('membership_bank_imports as i','i.id','=','m.import_id')->where('i.processing_status','legacy')
+                        ->where('i.account_key',$p->account_key)->where('m.paid_date',$row['paid_date'])->where('m.paid_time',$row['paid_time'])
+                        ->where('m.reference',$row['reference'])->where('m.amount',$row['amount'])->value('m.id');
+                }
+                $uncertain=false;
+                if(!$existing && $row['reference']) {
+                    $possible=DB::table('membership_bank_movements as m')->join('membership_bank_imports as i','i.id','=','m.import_id')
+                        ->where('i.account_key',$p->account_key)->where(function($q) use($p){$q->where('i.bank',$p->bank)->orWhereNull('i.bank');})
+                        ->where('m.paid_date',$row['paid_date'])->where('m.reference',$row['reference'])->where('m.amount',$row['amount'])->get(['m.paid_time','m.balance']);
+                    foreach($possible as $other) {
+                        if(($other->paid_time===null || $row['paid_time']===null || $other->paid_time===$row['paid_time'])
+                            && ($other->balance===null || $row['balance']===null || $other->balance===$row['balance'])) {$uncertain=true;break;}
+                    }
+                }
+                $disposition=$existing?'duplicate':($uncertain || $row['weak_identity'] || $row['occurrence']>1?'review_required':'new');
+                if($existing) {$movementId=$existing; $duplicates++;}
+                else {
+                    $hold=$disposition==='review_required'; if($hold){$holds++;}
+                    $data=$row; unset($data['identity'],$data['occurrence'],$data['weak_identity']);
+                    $movementId=DB::table('membership_bank_movements')->insertGetId([...$data,'account_key'=>$p->account_key,'fingerprint'=>$fingerprint,'import_id'=>$importId,'reconciliation_hold'=>$hold,'created_at'=>now(),'updated_at'=>now()]);
+                    $count++;
+                }
+                DB::table('bank_statement_entries')->insert(['import_id'=>$importId,'movement_id'=>$movementId,'line'=>$index+1,'disposition'=>$disposition,'original_row'=>$row['original_row'],'data'=>json_encode($row,JSON_THROW_ON_ERROR)]);
             }
-            $importId = DB::table('membership_bank_imports')->where('sha256', $hash)->value('id');
-            $count = 0;
-            foreach ($rows as $row) {
-                $count += DB::table('membership_bank_movements')->insertOrIgnore([...$row, 'import_id' => $importId, 'created_at' => now(), 'updated_at' => now()]);
-            }
-            AuditLog::create(['actor_user_id' => $admin->id, 'action' => 'membership_bank_imported', 'subject_type' => 'membership_bank_imports', 'subject_id' => $importId, 'metadata' => ['imported' => $count, 'duplicates' => count($rows) - $count]]);
-
-            return ['imported' => $count, 'duplicate' => false];
+            DB::table('membership_bank_imports')->where('id',$importId)->update(['duplicate_count'=>$duplicates,'incidents'=>json_encode($holds?["$holds movimientos sin identidad bancaria suficiente o repetidos dentro del archivo: retenidos para revisión."]:[],JSON_THROW_ON_ERROR)]);
+            AuditLog::create(['actor_user_id'=>$admin->id,'action'=>'membership_bank_imported','subject_type'=>'membership_bank_imports','subject_id'=>$importId,'metadata'=>['imported'=>$count,'duplicates'=>$duplicates,'held'=>$holds]]);
+            return ['imported'=>$count,'duplicate'=>false,'id'=>$importId];
         });
     }
 
-    private function invalid(string $message): never
+    /** Existing internal callers retain a validated deterministic CSV entry point. HTTP always previews. */
+    public function import(UploadedFile $file, string $account, User $admin): array
     {
-        throw ValidationException::withMessages(['statement' => $message]);
+        abort_unless($admin->is_admin,403);
+        $rows=app(BankStatementParser::class)->parse($file);
+        $dates=array_column($rows,'paid_date');
+        return $this->confirm($this->preview($file,$account,$admin,'Banco Ganadero',min($dates),max($dates)),$admin);
     }
 }

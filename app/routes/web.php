@@ -358,6 +358,7 @@ Route::middleware(['auth','throttle:30,1'])->group(function () {
     Route::get('/membresia/checkout/qr/descargar', [\App\Http\Controllers\MembershipBankController::class,'downloadQr'])->name('membership.checkout.qr.download');
     Route::get('/membresia/checkout/comprobante/{payment}', [\App\Http\Controllers\MembershipBankController::class,'receipt'])->name('membership.checkout.receipt');
     Route::get('/membresia/checkout/qr', [\App\Http\Controllers\MembershipBankController::class,'qr'])->name('membership.checkout.qr');
+    Route::post('/membresia/checkout/aviso', [\App\Http\Controllers\MembershipBankController::class,'report'])->name('membership.checkout.report');
     Route::post('/membresia/checkout/comprobante', [\App\Http\Controllers\MembershipBankController::class,'submit'])->name('membership.checkout.submit');
 });
 Route::middleware(['auth','admin','throttle:60,1'])->prefix('admin/conciliacion-membresias')->group(function () {
@@ -371,4 +372,13 @@ Route::middleware(['auth','admin','throttle:60,1'])->prefix('admin/conciliacion-
     Route::post('/lote', [\App\Http\Controllers\MembershipBankController::class,'batch'])->name('admin.membership-bank.batch');
     Route::post('/{payment}/revision', [\App\Http\Controllers\MembershipBankController::class,'review'])->name('admin.membership-bank.review');
     Route::get('/{payment}/comprobante', [\App\Http\Controllers\MembershipBankController::class,'receipt'])->name('admin.membership-bank.receipt');
+});
+
+Route::middleware(['auth','admin','throttle:30,1'])->prefix('admin/extractos-bancarios')->group(function () {
+    Route::get('/', [\App\Http\Controllers\BankStatementController::class, 'index']);
+    Route::post('/previsualizar', [\App\Http\Controllers\BankStatementController::class, 'preview']);
+    Route::get('/preview/{preview}', [\App\Http\Controllers\BankStatementController::class, 'showPreview'])->whereUuid('preview');
+    Route::post('/preview/{preview}/confirmar', [\App\Http\Controllers\BankStatementController::class, 'confirm'])->whereUuid('preview');
+    Route::get('/{id}', [\App\Http\Controllers\BankStatementController::class, 'show'])->whereNumber('id');
+    Route::get('/{id}/original', [\App\Http\Controllers\BankStatementController::class, 'download'])->whereNumber('id');
 });

@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "tests": 40,
+  "assertions": 337,
+  "real_pdf_movements": 44,
+  "debits": 28,
+  "credits": 16,
+  "internal_duplicates": 0,
+  "overlap_duplicates": 44,
+  "pdf_ai_used": false,
+  "live_fixtures_created": false,
+  "scope": "COM only; GanaMovil tested format"
+}

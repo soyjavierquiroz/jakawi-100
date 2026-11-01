@@ -10,6 +10,8 @@
 </div><section class="payment-card payment-operation" aria-live="polite">
 @if($payment->status==='approved')
 <div class="payment-state payment-state-success"><span class="payment-state-icon" aria-hidden="true">✓</span><p class="discovery-eyebrow">Pago confirmado</p><h2>{{$active?'Tu membresía está activa':'Tu pago está conciliado'}}</h2><p>{{$active?'Ya puedes disfrutar de tu membresía. Encuentra tus beneficios en Mi JAKAWI.':'Consulta el estado actual de tu membresía en Mi JAKAWI.'}}</p><a href="/mi-jakawi" class="discovery-primary-action">Ir a Mi JAKAWI →</a></div>
+@elseif($payment->status==='PAYMENT_REPORTED')
+<div class="payment-state"><h2>¡Tu aviso de pago quedó registrado!</h2><p>Registrado el {{$payment->reported_at?->timezone('America/La_Paz')->format('d/m/Y H:i')}}. La confirmación bancaria está pendiente.</p><h3>Adjunta tu comprobante de pago</h3><p>Puedes adjuntarlo ahora o volver a esta página después.</p>@include('membership-bank.receipt-form')</div>
 @elseif($payment->status==='under_review')
 <div class="payment-state"><span class="payment-state-icon" aria-hidden="true">◷</span><p class="discovery-eyebrow text-brand">Comprobante recibido</p><h2>Estamos verificando tu pago</h2><p>¡Recibimos tu comprobante! Estamos verificando tu pago. Te avisaremos cuando tu membresía esté activa.</p><p class="payment-small">Puedes volver a esta página para consultar tu estado.</p><a class="payment-text-link" href="/membresia/checkout/comprobante/{{$payment->id}}">Consultar mi comprobante privado</a>@if($payment->review_note)<p class="payment-notice">{{$payment->review_note}}</p>@endif<a href="/mi-jakawi" class="discovery-secondary-action">Volver a Mi JAKAWI</a></div>
 @else
@@ -21,12 +23,11 @@
 <figure class="payment-qr"><img src="/membresia/checkout/qr" alt="QR bancario original para pagar Bs 100 por tu membresía JAKAWI" width="340" height="340"><figcaption>Escanea el QR o descárgalo para usarlo en tu app bancaria.</figcaption></figure>
 <a href="/membresia/checkout/qr/descargar" class="discovery-secondary-action payment-download" download>↓ Descargar QR</a>
 @endif
-<details class="payment-declaration" @if($errors->any()||$payment->status==='rejected') open @endif><summary class="discovery-primary-action">{{$payment->status==='rejected'?'Corregir comprobante':'Ya pagué'}} <span aria-hidden="true">→</span></summary><div class="payment-form-content"><h2>Envía tu comprobante</h2><p class="payment-small">La membresía sigue a nombre de {{$buyer->name}}. Guardaremos el comprobante de forma privada.</p>
-<form method="post" action="/membresia/checkout/comprobante" enctype="multipart/form-data">@csrf
-<div class="payment-field"><label for="receipt">Comprobante de pago</label><input id="receipt" name="receipt" type="file" accept="image/jpeg,image/png,application/pdf" required aria-describedby="receipt-help"><p id="receipt-help" class="payment-small">JPG, PNG o PDF · Máximo 10 MB</p></div>
-<div class="payment-receipt-preview" id="receipt-preview" hidden><p class="payment-small" id="receipt-filename"></p><img id="receipt-image-preview" alt="Vista previa de tu comprobante" hidden style="max-width:100%;height:auto;border-radius:var(--radius-control)"><object id="receipt-pdf-preview" type="application/pdf" hidden style="width:100%;height:300px" aria-label="Vista previa del comprobante PDF"><p class="payment-small">Tu navegador no muestra la vista previa PDF. Puedes enviar el archivo seleccionado.</p></object></div>
-<p class="payment-small">Usaremos tu comprobante únicamente para verificar este pago. Cuando esté configurada la lectura automática, se enviará a OpenAI para extraer los datos; un administrador los contrastará con el banco. <a href="/membresia/checkout/privacidad-comprobante" class="payment-text-link">Tratamiento del comprobante</a></p>
-<button class="discovery-primary-action payment-submit">Enviar comprobante</button></form></div></details>
+@if($payment->status==='rejected')
+<h2>Corregir comprobante</h2>@include('membership-bank.receipt-form')
+@else
+<form method="post" action="/membresia/checkout/aviso">@csrf<button class="discovery-primary-action">Ya pagué →</button></form>
+@endif
 @endif @endif
 </section></div>
 <script>

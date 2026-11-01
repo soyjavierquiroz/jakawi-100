@@ -94,7 +94,7 @@ class MembershipBankCheckoutTest extends TestCase
         $this->assertDatabaseCount('memberships', 0);
         $this->assertDatabaseCount('reward_transactions', 0);
         $this->get('/membresia/checkout/qr')->assertNotFound();
-        $this->post('/membresia/checkout/comprobante')->assertStatus(422);
+        $this->post('/membresia/checkout/comprobante')->assertSessionHasErrors('receipt');
     }
 
     public function test_declaration_private_access_rejection_and_resubmission_reuse_payment(): void
@@ -183,16 +183,26 @@ class MembershipBankCheckoutTest extends TestCase
         $svc = app(MembershipBankImport::class);
         $a = $this->admin();
         $rows = "2026-10-29,14:30,ABC,Abono,100.00,credit\n2026-10-29,14:31,DEBIT,Salida,100.00,debit\n";
-        $this->assertSame(1, $svc->import($this->csv($rows), 'ACCOUNT', $a)['imported']);
+        $this->assertSame(2, $svc->import($this->csv($rows), 'ACCOUNT', $a)['imported']);
         $this->assertTrue($svc->import($this->csv($rows), 'ACCOUNT', $a)['duplicate']);
         $this->assertSame(0, $svc->import($this->csv("2026-10-29,14:30,ABC,Reexportado,100.00,credit\n"), 'ACCOUNT', $a)['imported']);
-        $this->assertDatabaseCount('membership_bank_movements', 1);
+        $this->assertDatabaseCount('membership_bank_movements', 2);
+        $this->assertDatabaseHas('membership_bank_movements', ['reference' => 'DEBIT', 'amount' => '-100.00', 'debit' => '100.00']);
     }
 
     public function test_invalid_import_is_atomic(): void
     {
         Storage::fake('membership-private');
-        $this->actingAs($this->admin())->post('/admin/conciliacion-membresias/importar', ['account_key' => 'ACCOUNT', 'statement' => $this->csv("2026-10-29,14:30,A,Good,100.00,credit\n2026-99-99,14:30,B,Bad,100.00,credit\n")])->assertSessionHasErrors('statement');
+        $response = $this->actingAs($this->admin())->post('/admin/conciliacion-membresias/importar', [
+            'account_key' => 'ACCOUNT', 'bank' => 'Banco Ganadero',
+            'period_start' => '2026-10-01', 'period_end' => '2026-10-31',
+            'statement' => $this->csv("2026-10-29,14:30,A,Good,100.00,credit\n2026-99-99,14:30,B,Bad,100.00,credit\n"),
+        ]);
+        $preview = DB::table('bank_statement_previews')->sole();
+        $response->assertRedirect('/admin/extractos-bancarios/preview/'.$preview->id);
+        $this->assertSame('[]', $preview->rows);
+        $this->assertNotSame('[]', $preview->incidents);
+        $this->post('/admin/extractos-bancarios/preview/'.$preview->id.'/confirmar', ['validated'=>1])->assertSessionHasErrors('statement');
         $this->assertDatabaseCount('membership_bank_imports', 0);
         $this->assertDatabaseCount('membership_bank_movements', 0);
     }
