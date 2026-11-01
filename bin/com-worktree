@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Create a new branch in the existing COM workspace area; never deploy.
+set -euo pipefail
+repo="${JAKAWI_REPOSITORY:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
+workspace_root="${JAKAWI_WORKSPACE_ROOT:-/srv/workspaces/jakawi/com}"
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+    echo "Usage: $0 branch [start-point; default origin/main]" >&2
+    exit 2
+fi
+branch="$1"
+git check-ref-format --branch "$branch" >/dev/null
+workspace_name="${branch//\//--}"
+mkdir -p -- "$workspace_root"
+git -C "$repo" worktree add -b "$branch" "$workspace_root/$workspace_name" "${2:-origin/main}"

@@ -1,5 +1,9 @@
 # JAKAWI
 
+Fuente canónica COM en este servidor: `/srv/repos/jakawi.com`. Desarrollar mediante
+ramas Git; worktrees temporales en `/srv/workspaces/jakawi/com`. Consultar la
+[guía de fuente canónica y despliegue](docs/operations/canonical-source.md).
+
 La app para vivir más tu ciudad. Descubrimiento de Benefits, Experiences, Unlocks y Challenges; Membership, canjes y participación convierten la oferta local en valor verificable.
 
 Laravel 13 monolítico · PHP 8.4 Docker · React 19 · TypeScript · Inertia 3 · Tailwind 4 · shadcn/ui · PostgreSQL 16.
