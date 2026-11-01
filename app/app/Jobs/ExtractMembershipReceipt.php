@@ -79,6 +79,7 @@ class ExtractMembershipReceipt implements ShouldQueue
                 return;
             }
             $p->update([...$vision->paymentFields($result), 'extraction_json' => $result, 'extraction_status' => 'completed', 'extraction_error' => null, 'extraction_claimed_at' => null, 'extraction_processed_at' => now()]);
+            ReconcileJakawiBank::dispatch();
         });
     }
 

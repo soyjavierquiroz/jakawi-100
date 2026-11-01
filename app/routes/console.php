@@ -97,3 +97,6 @@ Artisan::command('identity:prune-nonces', function () {
     $this->info("{$count} expired identity request nonces removed.");
 })->purpose('Prune expired identity transport nonces without deleting links or subjects');
 Schedule::command('identity:prune-nonces')->hourly()->withoutOverlapping();
+
+Artisan::command('bank:reconcile-jakawi', function () { $this->info(app(\App\Services\JakawiBankReconciliation::class)->run().' pagos conciliados automáticamente.'); });
+Schedule::command('bank:reconcile-jakawi')->everyMinute()->withoutOverlapping(10);

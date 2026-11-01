@@ -14,7 +14,13 @@ class BankStatementController extends Controller
     {
         $imports=DB::table('membership_bank_imports')->leftJoin('users','users.id','=','membership_bank_imports.admin_id')->select('membership_bank_imports.*','users.name as administrator')->latest('membership_bank_imports.id')->paginate(25);
         $previews=DB::table('bank_statement_previews')->select('id','original_name','created_at','incidents')->where('admin_id',request()->user()->id)->latest()->limit(20)->get();
-        return response()->view('membership-bank.statements',compact('imports','previews'))->header('Cache-Control','private, no-store');
+        $base=DB::table('jakawi_bank_reconciliations as r')->join('membership_bank_movements as m','m.id','=','r.movement_id')
+            ->leftJoin('membership_bank_payments as p','p.id','=','r.payment_id')->leftJoin('users as u','u.id','=','p.user_id');
+        $counts=DB::table('jakawi_bank_reconciliations')->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total','status');
+        $filter=request()->query('estado');
+        $jakawi=(clone $base)->when(in_array($filter,['auto_reconciled','reconciled','unidentified','review_required'],true),fn($q)=>$filter === 'review_required' ? $q->whereIn('r.status',['review_required','unidentified']) : $q->where('r.status',$filter))
+            ->select('m.*','r.status as reconciliation_status','r.reason','r.evidence','p.reference as purchase_reference','u.name as buyer','p.buyer_name')->orderByDesc('m.id')->paginate(30,['*'],'pagos_page')->withQueryString();
+        return response()->view('membership-bank.statements',compact('imports','previews','counts','jakawi'))->header('Cache-Control','private, no-store');
     }
     public function upload(Request $request, MembershipBankImport $service)
     {
@@ -42,7 +48,7 @@ class BankStatementController extends Controller
     public function confirm(Request $r,string $preview,MembershipBankImport $service)
     {
         $r->validate(['validated'=>['accepted']]); $result=$service->confirm($preview,$r->user());
-        return redirect('/admin/extractos-bancarios/'.$result['id'])->with('status',$result['duplicate']?'Archivo idéntico ya registrado.':'Extracto incorporado; no se activaron membresías.');
+        return redirect('/admin/extractos-bancarios/'.$result['id'])->with('status',$result['duplicate']?'Archivo idéntico ya registrado.':'Extracto incorporado; conciliación automática en proceso.');
     }
     public function show(int $id, MembershipBankCheckout $checkout)
     {

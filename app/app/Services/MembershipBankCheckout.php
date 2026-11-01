@@ -75,12 +75,17 @@ class MembershipBankCheckout
         });
     }
 
-    public function approve(int $id, int $movementId, User $admin, bool $strongOnly = false): MembershipBankPayment
+    public function approve(int $id, int $movementId, User $admin, bool $strongOnly = false, bool $automatic = false): MembershipBankPayment
     {
         abort_unless($admin->is_admin, 403);
 
-        return DB::transaction(function () use ($id, $movementId, $admin, $strongOnly) {
+        return DB::transaction(function () use ($id, $movementId, $admin, $strongOnly, $automatic) {
             // Serialize every decision, including across two requests by the same buyer.
+            if ($automatic) {
+                DB::statement('LOCK TABLE membership_bank_payments, membership_bank_movements IN SHARE ROW EXCLUSIVE MODE');
+                $decision = app(JakawiBankReconciliation::class)->decision(DB::table('membership_bank_movements')->find($movementId));
+                abort_unless($decision['status'] === 'safe' && $decision['payment_id'] === $id, 422, 'La evidencia dejó de ser segura.');
+            }
             $candidate = MembershipBankPayment::findOrFail($id);
             $clubOwner = null;
             if ($candidate->origin === 'CLUB') {
@@ -98,7 +103,7 @@ class MembershipBankCheckout
 
                 return $payment;
             }
-            abort_unless(in_array($payment->status, ['under_review', 'PAYMENT_REPORTED'], true), 422, 'El pago no está en revisión.');
+            abort_unless(in_array($payment->status, ($automatic ? ['awaiting_payment', 'under_review', 'PAYMENT_REPORTED'] : ['under_review', 'PAYMENT_REPORTED']), true), 422, 'El pago no está en revisión.');
             $movement = DB::table('membership_bank_movements')->where('id', $movementId)->lockForUpdate()->first();
             abort_unless($movement && ! $movement->reconciliation_hold && (float) $movement->debit === 0.0 && $movement->amount === '100.00', 422, 'El ingreso debe ser exactamente Bs 100.');
             abort_if(MembershipBankPayment::where('bank_movement_id', $movementId)->exists(), 422, 'Movimiento ya utilizado.');
@@ -131,7 +136,7 @@ class MembershipBankCheckout
             if ($payment->origin !== 'CLUB' || $payment->identity_status === 'linked') {
                 $user->notify(new MembershipBankActivated($payment->reference));
             }
-            $this->audit($payment, $admin, 'membership_bank_approved', ['movement_id' => $movementId, 'membership_id' => $membership->id]);
+            $this->audit($payment, $admin, 'membership_bank_approved', ['movement_id' => $movementId, 'membership_id' => $membership->id, 'automatic' => $automatic]);
 
             return $payment->refresh();
         });

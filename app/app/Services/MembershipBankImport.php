@@ -19,7 +19,13 @@ class MembershipBankImport
         $prior = DB::table('membership_bank_imports')->where('sha256', $hash)->first();
         if ($prior) { return ['id'=>$prior->id, 'duplicate'=>true, 'imported'=>0]; }
         abort_unless(Storage::disk('membership-private')->put('statements/'.$hash.'.pdf', file_get_contents($file->getRealPath())), 503, 'No se pudo guardar el PDF privado.');
-        $document = app(BankStatementParser::class)->parseDocument($file);
+        try {
+            $document = app(BankStatementParser::class)->parseDocument($file);
+        } catch (ValidationException $e) {
+            // Failed PDFs remain private and inspectable, never eligible for reconciliation.
+            $this->preview($file, 'UNKNOWN', $admin, 'Banco Ganadero', now()->toDateString(), now()->toDateString());
+            throw $e;
+        }
         $m = $document['metadata'];
         if (($m['format'] ?? '') !== 'banco-ganadero-ganamovil-digital-v1') {
             throw ValidationException::withMessages(['statement'=>'Seleccione un PDF digital GanaMóvil de Banco Ganadero.']);
@@ -104,6 +110,7 @@ class MembershipBankImport
             }
             DB::table('membership_bank_imports')->where('id',$importId)->update(['duplicate_count'=>$duplicates,'incidents'=>json_encode($holds?["$holds movimientos sin identidad bancaria suficiente o repetidos dentro del archivo: retenidos para revisión."]:[],JSON_THROW_ON_ERROR)]);
             AuditLog::create(['actor_user_id'=>$admin->id,'action'=>'membership_bank_imported','subject_type'=>'membership_bank_imports','subject_id'=>$importId,'metadata'=>['imported'=>$count,'duplicates'=>$duplicates,'held'=>$holds]]);
+            \App\Jobs\ReconcileJakawiBank::dispatch();
             return ['imported'=>$count,'duplicate'=>false,'id'=>$importId];
         });
     }
