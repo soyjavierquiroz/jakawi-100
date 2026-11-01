@@ -22,7 +22,8 @@ class ClubMemberAccessController extends Controller
     {
         abort_if($request->getQueryString() !== null, 400);
 
-        return view('identity.club-access', ['entry' => true]);
+        return view('identity.club-access', ['entry' => true,
+            'staged' => $request->session()->has('club_access_hash')]);
     }
 
     public function stage(Request $request, ClubMemberAccess $access)
@@ -31,15 +32,23 @@ class ClubMemberAccessController extends Controller
         $token = $request->input('ticket');
         abort_unless(is_string($token) && preg_match('/\A[a-f0-9]{64}\z/D', $token), 410, 'Vuelve a CLUB y solicita otro acceso.');
         $hash = hash('sha256', $token);
-        $access->ticket($hash);
+        $ticket = $access->inspect($hash);
         $request->session()->put('club_access_hash', $hash);
+
+        if ($request->expectsJson()) {
+            return response()->json(['different' => $request->user() && $request->user()->id !== $ticket->user_id,
+                'destination' => $request->user()?->id === $ticket->user_id ? '/beneficios' : null]);
+        }
 
         return redirect('/club/access/continue');
     }
 
     public function show(Request $request, ClubMemberAccess $access)
     {
-        $ticket = $access->ticket((string) $request->session()->get('club_access_hash'));
+        $ticket = $access->inspect((string) $request->session()->get('club_access_hash'));
+        if ($request->user()?->id === $ticket->user_id) {
+            return redirect('/beneficios');
+        }
 
         return view('identity.club-access', ['entry' => false,
             'different' => $request->user() && $request->user()->id !== $ticket->user_id]);

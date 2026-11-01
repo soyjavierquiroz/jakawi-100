@@ -128,11 +128,13 @@ class ClubMemberAccessTest extends TestCase
         $this->get('/club/access')->assertOk()->assertHeader('Referrer-Policy', 'no-referrer')->assertDontSee($token);
         $this->assertGuest();
         $this->stageTicket($token);
-        $this->get('/club/access/continue')->assertOk()->assertSee('Tu compra está autorizada');
+        $this->get('/club/access/continue')->assertOk()->assertSee('¡Tu membresía está lista!');
         $before = session()->getId();
+        $csrfBefore = session()->token();
         $this->post('/club/access/consume', ['action' => 'continue'])->assertRedirect('/beneficios');
         $this->assertAuthenticatedAs($u);
         $this->assertNotSame($before, session()->getId());
+        $this->assertNotSame($csrfBefore, session()->token());
         $this->get('/beneficios')->assertOk();
         $this->assertDatabaseCount('memberships', 1);
         $this->assertDatabaseCount('users', $users);
@@ -183,7 +185,7 @@ class ClubMemberAccessTest extends TestCase
         $token = $this->issueTicket($f)->assertOk()->json('ticket');
         $this->stageTicket($token);
         $this->travel(91)->seconds();
-        $this->post('/club/access/consume', ['action' => 'continue'])->assertStatus(410)->assertSee('Solicita otro desde CLUB');
+        $this->post('/club/access/consume', ['action' => 'continue'])->assertStatus(410)->assertSee('Tu acceso expiró. Vuelve a intentarlo.');
         $this->assertGuest();
         $this->travelBack();
         $token = $this->issueTicket($f)->assertOk()->json('ticket');
@@ -200,8 +202,8 @@ class ClubMemberAccessTest extends TestCase
         $token = $this->issueTicket($f)->assertOk()->json('ticket');
         $this->actingAs($other);
         $this->stageTicket($token);
-        $this->get('/club/access/continue')->assertSee('Hay otra cuenta COM abierta');
-        $this->post('/club/access/consume')->assertConflict()->assertSee('confirma el cambio o cancela');
+        $this->get('/club/access/continue')->assertSee('Estás usando otra cuenta JAKAWI.');
+        $this->post('/club/access/consume')->assertConflict()->assertSee('Vuelve a CLUB para intentarlo de nuevo.');
         $this->assertAuthenticatedAs($other);
         $this->assertDatabaseHas('club_access_tickets', ['token_hash' => hash('sha256', $token), 'consumed_at' => null]);
         $this->post('/club/access/consume', ['action' => 'cancel'])->assertRedirect('https://jakawi.club');
@@ -277,6 +279,64 @@ class ClubMemberAccessTest extends TestCase
         $this->assertAuthenticatedAs($u);
         $this->assertDatabaseCount('users', $count);
         $this->assertDatabaseCount('memberships', 1);
+    }
+
+    public function test_background_stage_only_inspects_and_refresh_keeps_one_confirmation(): void
+    {
+        $f = $this->accessFixture();
+        $token = $this->issueTicket($f)->assertOk()->json('ticket');
+        $this->postJson('/club/access/stage', ['ticket' => $token])->assertOk()
+            ->assertExactJson(['different' => false, 'destination' => null]);
+        $this->assertGuest();
+        $this->assertDatabaseHas('club_access_tickets', ['token_hash' => hash('sha256', $token), 'consumed_at' => null]);
+        $this->get('/club/access/continue')->assertOk()->assertSee('¡Tu membresía está lista!')
+            ->assertSee('Ya puedes disfrutar tus beneficios.')->assertSee('Entrar a mis beneficios');
+        $this->get('/club/access/continue')->assertOk();
+        $this->assertGuest();
+        $this->post('/club/access/consume')->assertRedirect('/beneficios');
+        $this->assertAuthenticatedAs($f[1]);
+        // Duplicate submits and refresh cannot replay authentication.
+        $this->post('/club/access/consume')->assertStatus(410);
+        $this->get('/club/access/continue')->assertStatus(410);
+        $this->assertAuthenticatedAs($f[1]);
+        $this->get('/beneficios')->assertOk();
+    }
+
+    public function test_same_holder_session_goes_directly_to_benefits_without_reauthentication(): void
+    {
+        $f = $this->accessFixture();
+        $token = $this->issueTicket($f)->assertOk()->json('ticket');
+        $this->actingAs($f[1]);
+        $this->get('/club/access')->assertOk();
+        $this->withSession(['club_access_test_marker' => 'preserved']);
+        $this->postJson('/club/access/stage', ['ticket' => $token])->assertOk()
+            ->assertExactJson(['different' => false, 'destination' => '/beneficios']);
+        $this->get('/club/access/continue')->assertRedirect('/beneficios');
+        $this->assertSame('preserved', session('club_access_test_marker'));
+        $this->assertAuthenticatedAs($f[1]);
+        $this->assertDatabaseHas('club_access_tickets', ['token_hash' => hash('sha256', $token), 'consumed_at' => null]);
+        $this->get('/beneficios')->assertOk();
+        $f[0]->fresh()->membership->update(['status' => 'cancelled']);
+        $this->postJson('/club/access/stage', ['ticket' => $token])->assertConflict()
+            ->assertJsonPath('message', 'No pudimos confirmar tu acceso. Vuelve a CLUB para intentarlo de nuevo.');
+        $this->get('/club/access/continue')->assertConflict();
+    }
+
+    public function test_background_stage_never_switches_accounts_and_expired_json_is_safe(): void
+    {
+        $f = $this->accessFixture();
+        $token = $this->issueTicket($f)->assertOk()->json('ticket');
+        $other = User::factory()->create();
+        $this->actingAs($other);
+        $this->postJson('/club/access/stage', ['ticket' => $token])->assertOk()
+            ->assertExactJson(['different' => true, 'destination' => null]);
+        $this->assertAuthenticatedAs($other);
+        $this->post('/club/access/consume')->assertConflict();
+        $this->assertDatabaseHas('club_access_tickets', ['token_hash' => hash('sha256', $token), 'consumed_at' => null]);
+        $this->travel(91)->seconds();
+        $this->postJson('/club/access/stage', ['ticket' => $token])->assertStatus(410)
+            ->assertExactJson(['message' => 'Tu acceso expiró. Vuelve a intentarlo.'])->assertDontSee($token);
+        $this->assertAuthenticatedAs($other);
     }
 
     public function test_browser_continuation_requires_csrf(): void

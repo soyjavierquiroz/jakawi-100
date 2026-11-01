@@ -1,0 +1,14 @@
+{
+  "dimensions": {
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 844,
+    "scrollHeight": 844
+  },
+  "branding": {
+    "font": "Montserrat, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "background": "rgb(255, 248, 242)",
+    "button": "rgba(0, 0, 0, 0)",
+    "logo": 300
+  }
+}

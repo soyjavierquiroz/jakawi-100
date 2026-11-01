@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "tests": 31,
+  "assertions": 354,
+  "isolated_database": "jakawi_test",
+  "live_fixtures_created": false,
+  "blade_cache": "PASS",
+  "route_cache": "PASS"
+}

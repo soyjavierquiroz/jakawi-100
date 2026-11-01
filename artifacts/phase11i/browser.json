@@ -1,0 +1,32 @@
+{
+  "guest": {
+    "confirmation_screens": 1,
+    "clicks": 1,
+    "refresh": true,
+    "double_click_single_post": true,
+    "navigated_to_benefits": true
+  },
+  "same_holder": {
+    "confirmation_screens": 0,
+    "clicks": 0,
+    "unconsumed_ticket": true
+  },
+  "different_account": {
+    "confirmation_screens": 1,
+    "clicks_to_switch": 1,
+    "explicit_switch": true,
+    "cancel_preserves_ticket": true,
+    "switched_to_authorized_holder": true
+  },
+  "expired_and_replay": {
+    "safe_spanish_error": true,
+    "no_consumption_on_expiry": true
+  },
+  "result": "PASS",
+  "responsive_widths": [
+    390,
+    1440
+  ],
+  "javascript_errors": [],
+  "synthetic_data_only": true
+}

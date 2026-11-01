@@ -64,6 +64,22 @@ class ClubMemberAccess
         return $ticket;
     }
 
+    // Read authorization again without consuming the ticket or changing authentication.
+    public function inspect(string $hash): object
+    {
+        return DB::transaction(function () use ($hash) {
+            $ticket = $this->ticket($hash);
+            $p = MembershipBankPayment::find($ticket->payment_id);
+            abort_unless($p, 409, self::MESSAGE);
+            app(ClubPurchaseIdentity::class)->lock($p->club_reference);
+            $p->refresh();
+            $user = $this->holder($p, $ticket->club_user_uuid);
+            abort_unless($user->id === $ticket->user_id && $user->global_subject_id === $ticket->global_subject_id, 409, self::MESSAGE);
+
+            return $this->ticket($hash);
+        });
+    }
+
     public function consume(string $hash, callable $authorize): User
     {
         return DB::transaction(function () use ($hash, $authorize) {
