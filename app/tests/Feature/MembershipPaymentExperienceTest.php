@@ -42,7 +42,7 @@ class MembershipPaymentExperienceTest extends TestCase
         $this->assertSame(1, AnalyticsEvent::where('event_name', 'initiate_checkout')->count());
         $this->actingAs($stranger)->get('/membresia/checkout?payment_id='.$p->id)->assertOk()->assertDontSee($reference)->assertSee('Otra Cuenta');
         Storage::fake('membership-private');
-        $this->post('/membresia/checkout/comprobante', ['payment_id' => $p->id])->assertStatus(422);
+        $this->post('/membresia/checkout/comprobante', ['payment_id' => $p->id])->assertSessionHasErrors('receipt');
         $this->get('/admin/conciliacion-membresias/'.$p->id.'/comprobante')->assertForbidden();
         $this->assertSame('awaiting_payment', $p->fresh()->status);
     }

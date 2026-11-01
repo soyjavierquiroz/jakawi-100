@@ -11,7 +11,7 @@
 @if($payment->status==='approved')
 <div class="payment-state payment-state-success"><span class="payment-state-icon" aria-hidden="true">✓</span><p class="discovery-eyebrow">Pago confirmado</p><h2>{{$active?'Tu membresía está activa':'Tu pago está conciliado'}}</h2><p>{{$active?'Ya puedes disfrutar de tu membresía. Encuentra tus beneficios en Mi JAKAWI.':'Consulta el estado actual de tu membresía en Mi JAKAWI.'}}</p><a href="/mi-jakawi" class="discovery-primary-action">Ir a Mi JAKAWI →</a></div>
 @elseif($payment->status==='PAYMENT_REPORTED')
-<div class="payment-state"><h2>¡Tu aviso de pago quedó registrado!</h2><p>Registrado el {{$payment->reported_at?->timezone('America/La_Paz')->format('d/m/Y H:i')}}. La confirmación bancaria está pendiente.</p><h3>Adjunta tu comprobante de pago</h3><p>Puedes adjuntarlo ahora o volver a esta página después.</p>@include('membership-bank.receipt-form')</div>
+<div class="payment-state"><h2>¡Recibimos tu aviso de pago!</h2><p>Registrado el {{$payment->reported_at?->timezone('America/La_Paz')->format('d/m/Y H:i')}}. La confirmación bancaria está pendiente.</p><h3 class="payment-next-step" id="adjuntar-comprobante">Adjunta tu comprobante</h3><p>Puedes adjuntarlo ahora o volver a esta página después.</p>@include('membership-bank.receipt-form')</div>
 @elseif($payment->status==='under_review')
 <div class="payment-state"><span class="payment-state-icon" aria-hidden="true">◷</span><p class="discovery-eyebrow text-brand">Comprobante recibido</p><h2>Estamos verificando tu pago</h2><p>¡Recibimos tu comprobante! Estamos verificando tu pago. Te avisaremos cuando tu membresía esté activa.</p><p class="payment-small">Puedes volver a esta página para consultar tu estado.</p><a class="payment-text-link" href="/membresia/checkout/comprobante/{{$payment->id}}">Consultar mi comprobante privado</a>@if($payment->review_note)<p class="payment-notice">{{$payment->review_note}}</p>@endif<a href="/mi-jakawi" class="discovery-secondary-action">Volver a Mi JAKAWI</a></div>
 @else
@@ -26,11 +26,28 @@
 @if($payment->status==='rejected')
 <h2>Corregir comprobante</h2>@include('membership-bank.receipt-form')
 @else
-<form method="post" action="/membresia/checkout/aviso">@csrf<button class="discovery-primary-action">Ya pagué →</button></form>
+<form id="payment-report" method="post" action="/membresia/checkout/aviso">@csrf
+<input type="hidden" name="payment_reference" value="{{$payment->reference}}">
+<label class="payment-confirmation" for="payment-confirmed"><input id="payment-confirmed" name="payment_confirmed" type="checkbox" value="1" required autocomplete="off"><span>Confirmo que ya realicé la transferencia de Bs 100 para activar la membresía JAKAWI de {{trim($buyer->name)}}.</span></label>
+<button id="report-payment" class="discovery-primary-action" disabled>Ya pagué · Registrar mi aviso</button></form>
 @endif
 @endif @endif
 </section></div>
 <script>
+(() => {
+    const form = document.getElementById('payment-report');
+    if (!form) return;
+    const checkbox = document.getElementById('payment-confirmed'), button = document.getElementById('report-payment');
+    let submitting = false;
+    const reset = () => { submitting = false; checkbox.checked = false; button.disabled = true; };
+    reset();
+    window.addEventListener('pageshow', reset);
+    checkbox.addEventListener('change', () => { button.disabled = submitting || !checkbox.checked; });
+    form.addEventListener('submit', (event) => {
+        if (submitting || !checkbox.checked) { event.preventDefault(); return; }
+        submitting = true; button.disabled = true;
+    });
+})();
 (() => {const button=document.getElementById('copy-reference');button.addEventListener('click',async()=>{const reference=document.getElementById('purchase-reference').textContent;const status=document.getElementById('copy-status');try{await navigator.clipboard.writeText(reference);status.textContent='Referencia copiada';}catch{const range=document.createRange();range.selectNodeContents(document.getElementById('purchase-reference'));const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Selecciona y copia la referencia';}});})();
 (() => {const input=document.getElementById('receipt');if(!input)return;const container=document.getElementById('receipt-preview'),image=document.getElementById('receipt-image-preview'),pdf=document.getElementById('receipt-pdf-preview'),filename=document.getElementById('receipt-filename');let url;input.addEventListener('change',()=>{if(url)URL.revokeObjectURL(url);image.hidden=true;pdf.hidden=true;image.removeAttribute('src');pdf.removeAttribute('data');const file=input.files[0];container.hidden=!file;if(!file)return;filename.textContent=file.name;url=URL.createObjectURL(file);if(file.type==='application/pdf'){pdf.data=url;pdf.hidden=false;}else if(['image/png','image/jpeg'].includes(file.type)){image.src=url;image.hidden=false;}});})();
 </script>

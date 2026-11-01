@@ -53,8 +53,14 @@ class MembershipBankController extends Controller
 
     public function report(Request $request, MembershipBankCheckout $checkout)
     {
+        $data = $request->validate([
+            'payment_confirmed' => ['required', 'accepted'],
+            'payment_reference' => ['required', 'uuid'],
+        ], ['payment_confirmed' => 'Confirma que ya realizaste la transferencia de Bs 100 para esta membresía.']);
         abort_unless($checkout->ready(), 422, 'Los cobros aún no están habilitados.');
-        $checkout->report($checkout->start($request->user()), $request->user());
+        // A delayed POST must never start another checkout after bank approval.
+        $payment = MembershipBankPayment::where('user_id', $request->user()->id)->where('reference', $data['payment_reference'])->firstOrFail();
+        $checkout->report($payment, $request->user(), confirmed: true);
         return redirect('/membresia/checkout');
     }
 

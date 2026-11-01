@@ -811,3 +811,9 @@
     .membership-checkout .payment-card { padding: 32px; }
     .membership-checkout .payment-intro { margin-bottom: 32px; }
 }
+
+.membership-checkout .payment-confirmation { display: flex; align-items: flex-start; gap: 12px; margin: 24px 0; padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-control); font-size: 14px; line-height: 1.7; cursor: pointer; text-align: left; }
+.membership-checkout .payment-confirmation input { flex: 0 0 22px; width: 22px; height: 22px; min-height: 22px; padding: 0; margin-top: 2px; border-radius: 4px; accent-color: var(--brand); }
+.membership-checkout #report-payment { width: 100%; white-space: normal; }
+.membership-checkout #report-payment:disabled { opacity: .45; cursor: not-allowed; }
+.membership-checkout .payment-next-step { margin: 28px 0 12px; font-size: 24px; font-weight: 800; }

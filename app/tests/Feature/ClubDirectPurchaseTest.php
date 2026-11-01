@@ -92,17 +92,46 @@ class ClubDirectPurchaseTest extends TestCase
         $p=$this->create($this->intent());
         $path='/internal/club/purchases/'.$p->club_reference.'/report';
         $this->postJson($path,[])->assertUnauthorized();
-        $this->signed('POST',$path,[])->assertOk()->assertJsonPath('status','PAYMENT_REPORTED')->assertJsonPath('receipt_received',false)->assertJsonPath('membership_reference',null);
+        $this->signed('POST',$path,[])->assertUnprocessable()->assertJsonValidationErrors('payment_confirmed');
+        $this->signed('POST',$path,['payment_confirmed'=>false])->assertUnprocessable();
+        $this->assertNull($p->fresh()->reported_at);
+        $this->signed('POST',$path,['payment_confirmed'=>true])->assertOk()->assertJsonPath('status','PAYMENT_REPORTED')->assertJsonPath('receipt_received',false)->assertJsonPath('membership_reference',null);
         $at=$p->fresh()->reported_at;
-        $this->signed('POST',$path,[])->assertOk()->assertJsonPath('payment_reference',$p->reference);
+        $confirmed=$p->fresh()->payment_confirmed_at;
+        $this->assertNotNull($confirmed);
+        $this->signed('GET','/internal/club/purchases/'.$p->club_reference)->assertOk()
+            ->assertJsonPath('beneficiary_name','Invitada CLUB')->assertJsonPath('receipt_pending',true)->assertJsonPath('payment_confirmed',true);
+        $this->signed('POST',$path,['payment_confirmed'=>true])->assertOk()->assertJsonPath('payment_reference',$p->reference);
         $this->assertEquals($at,$p->fresh()->reported_at);
+        $this->assertEquals($confirmed,$p->fresh()->payment_confirmed_at);
         $this->assertNull($p->fresh()->user_id);
         $this->assertDatabaseCount('membership_bank_payments',1);
         $this->assertDatabaseCount('commercial_outbox',0);
         $this->assertDatabaseCount('memberships',0);
-        $this->receipt($p)->assertCreated()->assertJsonPath('status','under_review');
+        $this->receipt($p)->assertCreated()->assertJsonPath('status','under_review')->assertJsonPath('receipt_pending',false)->assertJsonPath('payment_confirmed',true);
         $this->assertEquals($at,$p->fresh()->reported_at);
         $this->assertDatabaseCount('reward_transactions',0);
+    }
+
+    public function test_guest_can_be_bank_confirmed_without_receipt_and_later_reports_do_not_regress(): void
+    {
+        Storage::fake('minio-media');
+        $admin = User::factory()->create(['is_admin' => true]);
+        app(\App\Services\MembershipBankQr::class)->save(UploadedFile::fake()->image('qr.png', 400, 400), $admin);
+        $p = $this->create($this->intent());
+        $path = '/internal/club/purchases/'.$p->club_reference;
+        $this->signed('POST', $path.'/report', ['payment_confirmed' => 'true'])->assertUnprocessable();
+        $this->signed('POST', $path.'/report', ['payment_confirmed' => true])->assertOk()->assertJsonPath('receipt_pending', true);
+        $confirmed = $p->fresh()->payment_confirmed_at;
+        $this->approve($p);
+        $this->signed('GET', $path)->assertOk()->assertJsonPath('status', 'approved')
+            ->assertJsonPath('receipt_pending', false)->assertJsonPath('receipt_received', false)->assertJsonPath('identity_status', 'pending');
+        $this->signed('POST', $path.'/report', ['payment_confirmed' => true])->assertOk()->assertJsonPath('status', 'approved');
+        $this->assertEquals($confirmed, $p->fresh()->payment_confirmed_at);
+        $this->assertDatabaseCount('membership_bank_payments', 1);
+        $this->assertDatabaseCount('memberships', 1);
+        $this->assertDatabaseCount('commercial_outbox', 1);
+        $this->receipt($p)->assertConflict();
     }
 
     public function test_guest_intent_is_stable_without_session_verification_or_account(): void

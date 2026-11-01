@@ -74,7 +74,7 @@ class MembershipBankQrTest extends TestCase
         Storage::disk('minio-media')->put($value['path'], str_repeat('x', $value['size']));
         $this->assertFalse(app(MembershipBankCheckout::class)->ready());
         $this->get('/membresia/checkout/qr')->assertNotFound();
-        $this->post('/membresia/checkout/comprobante')->assertStatus(422);
+        $this->post('/membresia/checkout/comprobante')->assertSessionHasErrors('receipt');
         Storage::disk('minio-media')->delete($value['path']);
         $this->assertFalse(app(MembershipBankCheckout::class)->ready());
     }

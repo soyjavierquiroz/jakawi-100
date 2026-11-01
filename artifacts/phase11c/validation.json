@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "tests": 71,
+  "assertions": 729,
+  "types": "PASS",
+  "frontend_build": "PASS",
+  "browser": {
+    "result": "PASS",
+    "widths": [
+      390,
+      1440
+    ],
+    "horizontal_overflow": false,
+    "initially_unchecked": true,
+    "disabled_until_checked": true,
+    "refresh_resets_confirmation": true,
+    "history_resets_confirmation": true,
+    "double_submit_one_http_notice": true,
+    "abandonment_and_logout_return": true,
+    "persistent_account_pending": true,
+    "late_receipt": true,
+    "pending_cleared_after_receipt": true,
+    "js_errors": [],
+    "isolated_synthetic_data": true
+  },
+  "scope": "COM only",
+  "live_fixtures_created": false
+}

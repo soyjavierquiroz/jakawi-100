@@ -1,5 +1,8 @@
 # CLUB → COM: compras directas de membresía, v1
 
+La [Fase 11C](club-payment-confirmation-11c.md) define el aviso consciente
+`POST .../{club_reference}/report`, sus campos aditivos y el pendiente de comprobante.
+
 COM recibe compras desde el checkout nativo CLUB por HTTPS. No se necesita cookie,
 sesión COM, SSO, email verificado ni prueba de activación de email para crear,
 enviar comprobante, conciliar o activar una compra. La conciliación y la autoridad

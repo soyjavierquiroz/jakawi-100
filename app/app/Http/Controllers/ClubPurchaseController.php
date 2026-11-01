@@ -76,10 +76,11 @@ class ClubPurchaseController extends Controller
 
     public function report(Request $r, string $reference, ClubPurchaseIdentity $identity): JsonResponse
     {
+        $r->validate(['payment_confirmed' => ['required', 'boolean', 'accepted']]);
         abort_unless(app(MembershipBankQr::class)->ready(), 422, 'PAYMENT_UNAVAILABLE');
         return DB::transaction(function () use ($reference, $identity) {
             $identity->lock($reference);
-            $p = app(\App\Services\MembershipBankCheckout::class)->report($this->payment($reference));
+            $p = app(\App\Services\MembershipBankCheckout::class)->report($this->payment($reference), confirmed: true);
             return response()->json($this->result($p));
         });
     }
@@ -145,7 +146,10 @@ class ClubPurchaseController extends Controller
         $activatedAt = $p->activated_at;
 
         return ['contract' => 'jakawi-club-purchases-v1', 'club_reference' => $p->club_reference, 'payment_reference' => $p->reference,
-            'status' => $p->status, 'reported_at' => $p->reported_at?->toRfc3339String(), 'amount' => '100.00', 'currency' => 'BOB', 'origin' => 'CLUB', 'identity_status' => $p->identity_status,
+            'status' => $p->status, 'reported_at' => $p->reported_at?->toRfc3339String(),
+            'payment_confirmed' => $p->payment_confirmed_at !== null, 'payment_confirmed_at' => $p->payment_confirmed_at?->toRfc3339String(),
+            'beneficiary_name' => $p->buyer_name, 'receipt_pending' => $p->needsReceipt(),
+            'amount' => '100.00', 'currency' => 'BOB', 'origin' => 'CLUB', 'identity_status' => $p->identity_status,
             'club_user_uuid' => $p->club_user_uuid, 'guest_purchase_id' => $p->guest_purchase_id,
             'global_subject_id' => $p->identity_status === 'linked' ? User::whereKey($p->user_id)->first()?->global_subject_id : null,
             'membership_reference' => $p->membership_id ? (string) $p->membership_id : null,

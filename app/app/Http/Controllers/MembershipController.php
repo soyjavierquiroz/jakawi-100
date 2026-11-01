@@ -70,6 +70,10 @@ class MembershipController extends Controller
                     'reward'=>$p->grant ? ($p->grant->reward_type==='JP' ? '+'.$p->grant->jp_amount.' JP' : $p->grant->benefit?->title ?? $c->manual_prize_description) : null,
                     'grant_status'=>$p->grant?->status];
             }),
+            'pendingReceipts' => \App\Models\MembershipBankPayment::where('user_id', $user->id)->receiptPending()->orderBy('id')->get()->map(fn ($payment) => [
+                'reference' => $payment->reference,
+                'upload_url' => $payment->origin === 'CLUB' ? 'https://jakawi.club/activar' : '/membresia/checkout#adjuntar-comprobante',
+            ]),
             'membership' => $membership ? $this->serializeMembership($membership) : null,
             'membershipConfig' => [
                 'price_bob' => config('jakawi.membership.price_bob'),

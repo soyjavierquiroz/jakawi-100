@@ -59,13 +59,17 @@ class MembershipBankCheckout
         });
     }
 
-    public function report(MembershipBankPayment $payment, User|null $actor = null): MembershipBankPayment
+    public function report(MembershipBankPayment $payment, User|null $actor = null, bool $confirmed = false): MembershipBankPayment
     {
-        return DB::transaction(function () use ($payment, $actor) {
+        return DB::transaction(function () use ($payment, $actor, $confirmed) {
             $p = MembershipBankPayment::lockForUpdate()->findOrFail($payment->id);
+            if ($confirmed && in_array($p->status, ['awaiting_payment', 'rejected', 'PAYMENT_REPORTED'], true) && $p->payment_confirmed_at === null) {
+                $p->update(['payment_confirmed_at' => now()]);
+            }
             if (in_array($p->status, ['awaiting_payment', 'rejected'], true)) {
+                $firstReport = $p->reported_at === null;
                 $p->update(['status' => 'PAYMENT_REPORTED', 'reported_at' => $p->reported_at ?? now()]);
-                if ($actor) { $this->audit($p, $actor, 'membership_payment_reported'); }
+                if ($actor && $firstReport) { $this->audit($p, $actor, 'membership_payment_reported'); }
             }
             return $p;
         });

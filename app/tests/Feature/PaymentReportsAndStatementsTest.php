@@ -28,9 +28,9 @@ class PaymentReportsAndStatementsTest extends TestCase
         app(MembershipBankQr::class)->save(UploadedFile::fake()->image('qr.png',400,400),$this->admin());
         $buyer=User::factory()->create(); $this->actingAs($buyer)->get('/membresia/checkout')->assertOk();
         $p=MembershipBankPayment::sole();
-        $this->post('/membresia/checkout/aviso')->assertRedirect(); $at=$p->fresh()->reported_at;
-        $this->post('/membresia/checkout/aviso')->assertRedirect();
-        $this->get('/membresia/checkout')->assertSee('¡Tu aviso de pago quedó registrado!')->assertSee('Adjunta tu comprobante de pago')->assertSee('Subir comprobante')->assertDontSee('Opcional')->assertDontSee('Pago confirmado');
+        $this->post('/membresia/checkout/aviso', ['payment_confirmed' => '1', 'payment_reference' => $p->reference])->assertRedirect(); $at=$p->fresh()->reported_at;
+        $this->post('/membresia/checkout/aviso', ['payment_confirmed' => '1', 'payment_reference' => $p->reference])->assertRedirect();
+        $this->get('/membresia/checkout')->assertSee('¡Recibimos tu aviso de pago!')->assertSee('Adjunta tu comprobante')->assertSee('Subir comprobante')->assertDontSee('Opcional')->assertDontSee('Pago confirmado');
         $this->assertSame('PAYMENT_REPORTED',$p->fresh()->status); $this->assertEquals($at,$p->fresh()->reported_at);
         $this->assertDatabaseCount('membership_bank_payments',1); $this->assertDatabaseCount('memberships',0); $this->assertDatabaseCount('commercial_outbox',0);
         $other=User::factory()->create(); $this->actingAs($other)->get('/membresia/checkout/comprobante/'.$p->id)->assertForbidden();

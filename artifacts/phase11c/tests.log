@@ -1,0 +1,89 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ClubDirectPurchaseTest[39m
+  [32;1m✓[39;22m[90m [39m[90mguest payment report is idempotent without receipt or identity and[39m[90m… [39m [90m7.64s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest can be bank confirmed without receipt and later reports do no[39m[90m…[39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest intent is stable without session verification or account[39m[90m      [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthentication rejects bad signature old timestamp and query[39m[90m        [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreplayed nonce is rejected[39m[90m                                          [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguest private receipt approval and event are idempotent[39m[90m             [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail collision does not link or block payment and can link after c[39m[90m…[39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlinked club unverified com account can pay[39m[90m                          [39m [90m0.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactive identity collision retains paid membership and receipt[39m[90m       [39m [90m0.46s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwrong claim or reassignment cannot steal guest purchase[39m[90m             [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbad price and receipt integrity never create activation[39m[90m             [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame administration renders club and com and private receipt requir[39m[90m…[39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmixed club com csv batch reuses one reconciliation[39m[90m                  [39m [90m0.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrejected receipt can be replaced but reviewed receipt is locked[39m[90m     [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapproval failure rolls back custody without losing receipt and miss[39m[90m…[39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting open com checkout is preserved while club purchase activat[39m[90m…[39m [90m0.35s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConsciousPaymentTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconfirmation is required server side and bound to the existing owne[39m[90m…[39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdouble click refresh abandonment and new login keep one notice then[39m[90m…[39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbank confirmation without receipt clears pending and delayed notice[39m[90m…[39m [90m0.47s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlegacy receipt upload does not invent an explicit checkbox confirma[39m[90m…[39m [90m0.27s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MembershipBankCheckoutTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcheckout is protected stable and keeps internal initiate event with[39m[90m…[39m [90m2.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeclaration private access rejection and resubmission reuse payment[39m[90m [39m [90m2.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexact unique requires explicit approval and emits atomic outbox wit[39m[90m…[39m [90m2.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame time without reference is ambiguous and batch cannot approve[39m[90m   [39m [90m2.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate claims and duplicate bank reference are ambiguous[39m[90m         [39m [90m2.82s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing reference never strong even with one candidate[39m[90m              [39m [90m2.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconflicting reference is not time match[39m[90m                             [39m [90m2.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate statement overlapping export and debits[39m[90m                   [39m [90m2.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid import is atomic[39m[90m                                            [39m [90m2.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mused movement cannot activate second membership[39m[90m                     [39m [90m2.71s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbatch approves only selected unique payments[39m[90m                        [39m [90m2.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthorized admin actions are forbidden[39m[90m                            [39m [90m3.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno match review does not activate[39m[90m                                   [39m [90m5.64s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmeta uses existing outbox and canonical id[39m[90m                          [39m [90m3.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90munsupported club event retains body and retries[39m[90m                     [39m [90m3.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfigured meta reuses one delivery and one checkout event[39m[90m          [39m [90m3.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactivation failure leaves bank payment and outbox untouched[39m[90m         [39m [90m2.54s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactivation queues notification once in existing database queue[39m[90m      [39m [90m2.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting login returns to checkout without a second account[39m[90m         [39m [90m2.89s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MembershipBankQrTest[39m
+  [32;1m✓[39;22m[90m [39m[90madmin can upload and checkout serves identical original png[39m[90m         [39m [90m0.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreplacing qr with jpg keeps original bytes and applies without conf[39m[90m…[39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing or corrupt minio object disables payment[39m[90m                    [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90munconfigured qr and legacy env path do not enable collection[39m[90m        [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid upload preserves current qr[39m[90m                                 [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstorage failure preserves previous configuration[39m[90m                    [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupload and admin preview require admin and checkout image requires[39m[90m… [39m [90m0.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MembershipPaymentExperienceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbuyer is session identity query parameters cannot replace them and[39m[90m… [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90moriginal qr download is attachment and same bytes with no new inten[39m[90m…[39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrecipient can be saved without replacing or modifying minio qr[39m[90m      [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mother payer preserves member receipt and intent without advertising[39m[90m…[39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrejected view invites correction without asking for another payment[39m[90m…[39m [90m0.24s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PaymentReportsAndStatementsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreport is durable idempotent and late receipt survives ai failure[39m[90m   [39m [90m0.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview then confirm retains debits overlap and independent history[39m[90m [39m [90m0.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mequal values different times and ambiguous rows do not merge[39m[90m        [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpdf and xlsx are locally extracted without network[39m[90m                  [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mganamovil multiline profile metadata and overlap[39m[90m                    [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mganamovil corruption blocks all movements[39m[90m                           [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmobile admin upload detects metadata and duplicates without activat[39m[90m…[39m [90m0.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmobile upload invalid files fail without movements[39m[90m                  [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmobile candidates reuse match and require existing approval[39m[90m         [39m [90m0.43s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ReceiptExtractionTest[39m
+  [32;1m✓[39;22m[90m [39m[90msingle file submission is immediate private and queue is not execut[39m[90m…[39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexact extraction matches bank and explicit approval remains unique[39m[90m  [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreference absent and two similar bank credits stay ambiguous[39m[90m        [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblurry fields stay null without filling expected amount or recipien[39m[90m…[39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpdf is transmitted inline without public url or provider files uplo[39m[90m…[39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdifferent amount currency recipient or low confidence never becomes[39m[90m…[39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing key preserves receipt and manual correction can reconcile[39m[90m   [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mretryable failure then success preserves original and retries safel[39m[90m…[39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted retries allow manual review without requesting another up[39m[90m…[39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner only receipt access and no changes from wrong user[39m[90m            [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90minflight result cannot overwrite admin correction and stale job can[39m[90m…[39m [90m0.35s[39m  
+
+  [90mTests:[39m    [32;1m71 passed[39;22m[90m (729 assertions)[39m
+  [90mDuration:[39m [39m78.57s[39m
+
