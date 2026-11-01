@@ -1,7 +1,7 @@
 @extends('membership-bank.layout')
 @section('title','Conciliación de membresías')
 @section('content')
-<a href="/admin">← Administración COM</a><h1>Conciliación de membresías</h1><p>Ingresos de Bs 100. Cada aprobación activa la membresía y utiliza un único movimiento bancario.</p>
+<a href="/admin">← Administración COM</a><h1>Conciliación de membresías</h1><a class="button" href="/admin/extractos-bancarios">Extractos bancarios</a><p>Ingresos de Bs 100. Cada aprobación activa la membresía y utiliza un único movimiento bancario.</p>
 <section class="card" id="configuracion-qr" aria-labelledby="qr-heading">
 <h2 id="qr-heading">Configuración del QR bancario</h2>
 <p>QR bancario real para la membresía de <strong>Bs 100</strong>. Comprueba el destinatario y que el QR se pueda escanear antes de guardar.</p>

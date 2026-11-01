@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "admin_login": true,
+  "mobile_file_upload": true,
+  "same_pdf_duplicate": true,
+  "responsive_widths": [
+    390,
+    1440
+  ],
+  "horizontal_overflow": false,
+  "synthetic_data_only": true
+}

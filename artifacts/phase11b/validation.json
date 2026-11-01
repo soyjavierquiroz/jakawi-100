@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "tests": 35,
+  "assertions": 278,
+  "browser_admin_login": true,
+  "browser_upload": true,
+  "responsive_widths": [
+    390,
+    1440
+  ],
+  "horizontal_overflow": false,
+  "real_pdf_isolated_movements": 44,
+  "real_pdf_overlap_duplicates": 44,
+  "parser_rebuilt": false,
+  "live_sample_imported": false,
+  "scope": "COM only"
+}

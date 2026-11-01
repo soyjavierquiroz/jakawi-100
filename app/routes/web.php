@@ -376,6 +376,7 @@ Route::middleware(['auth','admin','throttle:60,1'])->prefix('admin/conciliacion-
 
 Route::middleware(['auth','admin','throttle:30,1'])->prefix('admin/extractos-bancarios')->group(function () {
     Route::get('/', [\App\Http\Controllers\BankStatementController::class, 'index']);
+    Route::post('/importar', [\App\Http\Controllers\BankStatementController::class, 'upload']);
     Route::post('/previsualizar', [\App\Http\Controllers\BankStatementController::class, 'preview']);
     Route::get('/preview/{preview}', [\App\Http\Controllers\BankStatementController::class, 'showPreview'])->whereUuid('preview');
     Route::post('/preview/{preview}/confirmar', [\App\Http\Controllers\BankStatementController::class, 'confirm'])->whereUuid('preview');

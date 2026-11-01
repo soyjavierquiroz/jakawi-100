@@ -1,18 +1,31 @@
 @extends('membership-bank.layout')
-@section('title','Historial de extractos bancarios')
+@section('title','Extractos bancarios')
 @section('content')
-<a href="/admin/conciliacion-membresias">← Conciliación de membresías</a><h1>Historial de extractos bancarios</h1>
-<p>Archivo permanente e independiente de la conciliación. Importar no confirma pagos ni activa membresías.</p>
-<section class="card"><h2>Previsualizar extracto</h2>
-<p>CSV UTF-8, XLSX de una hoja o PDF digital. Lectura local sin IA. Un PDF con diseño no reconocido requiere exportación tabular del banco. Los escaneados se señalan si no hay OCR local.</p>
-<details><summary>Columnas admitidas</summary><p>Fecha, Hora, Referencia (o Documento), Descripción (o Glosa), Débito, Crédito, Saldo. Fechas YYYY-MM-DD o DD/MM/YYYY. XLSX: fechas y horas como texto, sin fórmulas. También se conserva el CSV existente: date,time,reference,description,amount,direction.</p><p>Use el mismo identificador de cuenta en extractos superpuestos. Las filas sin suficiente identidad se conservan retenidas, sin conciliación automática.</p></details>
-<form method="post" action="/admin/extractos-bancarios/previsualizar" enctype="multipart/form-data">@csrf
-<label>Banco</label><select name="bank"><option>Banco Ganadero</option></select>
-<label>Identificador estable de cuenta</label><input name="account_key" value="{{old('account_key')}}" pattern="[A-Z0-9_-]{1,100}" required>
-<label>Desde</label><input type="date" name="period_start" value="{{old('period_start')}}" required><label>Hasta</label><input type="date" name="period_end" value="{{old('period_end')}}" required>
-<label>Extracto original</label><input type="file" name="statement" accept=".csv,.xlsx,.pdf" required><button>Previsualizar y validar</button></form></section>
-<div class="card table"><table><thead><tr><th>Archivo / SHA-256</th><th>Banco / cuenta / período</th><th>Importación / administrador</th><th>Estado / extraídos / duplicados</th></tr></thead><tbody>
-@foreach($imports as $i)<tr><td><a href="/admin/extractos-bancarios/{{$i->id}}">{{$i->original_name??'Extracto histórico #'.$i->id}}</a><small>{{$i->sha256}}</small></td><td>{{$i->bank??'Banco no registrado (histórico)'}} · {{$i->account_key}}<small>{{$i->period_start}} — {{$i->period_end}}</small></td><td>{{$i->created_at}} UTC<small>{{$i->administrator}}</small></td><td>{{$i->processing_status}}<small>{{$i->extracted_count}} extraídos · {{$i->duplicate_count}} duplicados</small></td></tr>@endforeach
-</tbody></table>{{$imports->links()}}</div>
-<section class="card"><h2>Mis previsualizaciones conservadas</h2>@foreach($previews as $p)<p><a href="/admin/extractos-bancarios/preview/{{$p->id}}">{{$p->original_name}} · {{$p->created_at}} UTC</a></p>@endforeach</section>
+<a href="/admin/conciliacion-membresias">← Conciliación de membresías</a><h1>Extractos bancarios</h1>
+<section class="card"><h2>Subir extracto</h2>
+<p>Selecciona el PDF digital descargado de GanaMóvil, Banco Ganadero. Leeremos la cuenta y el período automáticamente.</p>
+<form id="statement-upload" method="post" action="/admin/extractos-bancarios/importar" enctype="multipart/form-data">@csrf
+<label for="statement">Seleccionar PDF</label><input id="statement" name="statement" type="file" accept=".pdf,application/pdf" required aria-describedby="pdf-help">
+<p id="pdf-help" class="muted">Hasta 10 MB. El archivo se guarda de forma privada. Importar no aprueba pagos.</p>
+<button id="import-button" type="submit">Importar y procesar</button>
+<p id="upload-status" role="status" aria-live="polite" hidden>Subiendo y procesando PDF… Mantén esta pantalla abierta.</p>
+</form></section>
+<h2>Historial de extractos</h2>
+<div class="statement-history">
+@forelse($imports as $i)
+<article class="card"><h3><a href="/admin/extractos-bancarios/{{$i->id}}">{{$i->original_name??'Extracto histórico #'.$i->id}}</a></h3>
+<p>{{$i->bank??'Banco histórico'}} · Cuenta {{$i->account_key}}</p><p>{{$i->period_start}} — {{$i->period_end}}</p>
+<p>Importado: {{\Carbon\CarbonImmutable::parse($i->created_at,'UTC')->timezone('America/La_Paz')->format('d/m/Y H:i')}} · {{$i->administrator}}</p>
+<p>{{$i->extracted_count}} movimientos · {{$i->duplicate_count}} duplicados</p><span class="badge">{{$i->processing_status==='processed'?'Procesado':'Histórico'}}</span></article>
+@empty<p class="card">Aún no hay extractos importados.</p>@endforelse
+</div>{{$imports->links()}}
+@if($previews->isNotEmpty())<details><summary>Previsualizaciones anteriores</summary>@foreach($previews as $p)<p><a href="/admin/extractos-bancarios/preview/{{$p->id}}">{{$p->original_name}} · {{$p->created_at}} UTC</a></p>@endforeach</details>@endif
+<script>
+document.getElementById('statement-upload').addEventListener('submit',function(){
+ document.getElementById('import-button').disabled=true;
+ document.getElementById('upload-status').hidden=false;
+ this.setAttribute('aria-busy','true');
+});
+window.addEventListener('pageshow',function(){document.getElementById('import-button').disabled=false;document.getElementById('upload-status').hidden=true;document.getElementById('statement-upload').removeAttribute('aria-busy');});
+</script>
 @endsection

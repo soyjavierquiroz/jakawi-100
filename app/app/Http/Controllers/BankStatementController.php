@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\User;
+use App\Models\MembershipBankPayment;
+use App\Services\MembershipBankCheckout;
 use App\Services\MembershipBankImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +16,14 @@ class BankStatementController extends Controller
         $previews=DB::table('bank_statement_previews')->select('id','original_name','created_at','incidents')->where('admin_id',request()->user()->id)->latest()->limit(20)->get();
         return response()->view('membership-bank.statements',compact('imports','previews'))->header('Cache-Control','private, no-store');
     }
+    public function upload(Request $request, MembershipBankImport $service)
+    {
+        $request->validate(['statement'=>['required','file','mimes:pdf','mimetypes:application/pdf','extensions:pdf','max:10240']]);
+        $result = $service->uploadPdf($request->file('statement'), $request->user());
+        return redirect('/admin/extractos-bancarios/'.$result['id'])->with('status',
+            $result['duplicate'] ? 'Este PDF ya fue importado. No se duplicaron movimientos.' : 'PDF procesado correctamente. '.$result['imported'].' movimientos nuevos.');
+    }
+
     public function preview(Request $r, MembershipBankImport $service)
     {
         $d=$r->validate(['statement'=>['required','file','mimes:csv,txt,xlsx,pdf','extensions:csv,txt,xlsx,pdf','max:10240'],
@@ -34,7 +44,7 @@ class BankStatementController extends Controller
         $r->validate(['validated'=>['accepted']]); $result=$service->confirm($preview,$r->user());
         return redirect('/admin/extractos-bancarios/'.$result['id'])->with('status',$result['duplicate']?'Archivo idéntico ya registrado.':'Extracto incorporado; no se activaron membresías.');
     }
-    public function show(int $id)
+    public function show(int $id, MembershipBankCheckout $checkout)
     {
         $import=DB::table('membership_bank_imports')->where('id',$id)->first(); abort_unless($import,404);
         $administrator=User::find($import->admin_id)?->name;
@@ -46,7 +56,25 @@ class BankStatementController extends Controller
             $total=DB::table('membership_bank_movements')->where('import_id',$id)->count();
             $linked=DB::table('membership_bank_movements as m')->join('membership_bank_payments as p','p.bank_movement_id','=','m.id')->where('m.import_id',$id)->count();
         }
-        return response()->view('membership-bank.statement',compact('import','administrator','entries','linked','total','legacy'))->header('Cache-Control','private, no-store');
+        $summary = DB::table('bank_statement_entries')->where('import_id', $id)->selectRaw("COUNT(*) as movements,
+            COUNT(*) FILTER (WHERE (data->>'credit')::numeric > 0) as credits,
+            COUNT(*) FILTER (WHERE (data->>'debit')::numeric > 0) as debits,
+            COALESCE(SUM((data->>'credit')::numeric),0) as credit_total,
+            COALESCE(SUM((data->>'debit')::numeric),0) as debit_total,
+            COUNT(*) FILTER (WHERE disposition <> 'duplicate') as new_count")->first();
+        $overlaps = DB::table('membership_bank_imports')->where('id','<>',$id)->where('bank',$import->bank)
+            ->where('account_key',$import->account_key)->where('period_start','<=',$import->period_end)
+            ->where('period_end','>=',$import->period_start)->count();
+        $movementIds = DB::table('bank_statement_entries')->where('import_id',$id)->pluck('movement_id')->flip();
+        $pending = MembershipBankPayment::with('user:id,name')->whereIn('status',['under_review','PAYMENT_REPORTED'])->orderBy('id')->paginate(40, ['*'], 'purchases_page');
+        $candidates = [];
+        foreach ($pending as $payment) {
+            $match = $checkout->match($payment);
+            foreach ($match['candidates'] as $movement) {
+                if ($movementIds->has($movement->id)) { $candidates[] = ['payment'=>$payment, 'movement'=>$movement]; }
+            }
+        }
+        return response()->view('membership-bank.statement',compact('import','administrator','entries','linked','total','legacy','summary','overlaps','candidates','pending'))->header('Cache-Control','private, no-store');
     }
     public function download(int $id)
     {

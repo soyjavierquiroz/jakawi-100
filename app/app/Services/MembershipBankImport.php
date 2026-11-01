@@ -11,7 +11,31 @@ use Illuminate\Validation\ValidationException;
 
 class MembershipBankImport
 {
-    public function preview(UploadedFile $file, string $account, User $admin, string $bank, string $start, string $end): string
+    /** Mobile upload uses only metadata read by the already verified GanaMóvil parser. */
+    public function uploadPdf(UploadedFile $file, User $admin): array
+    {
+        abort_unless($admin->is_admin, 403);
+        $hash = hash_file('sha256', $file->getRealPath());
+        $prior = DB::table('membership_bank_imports')->where('sha256', $hash)->first();
+        if ($prior) { return ['id'=>$prior->id, 'duplicate'=>true, 'imported'=>0]; }
+        abort_unless(Storage::disk('membership-private')->put('statements/'.$hash.'.pdf', file_get_contents($file->getRealPath())), 503, 'No se pudo guardar el PDF privado.');
+        $document = app(BankStatementParser::class)->parseDocument($file);
+        $m = $document['metadata'];
+        if (($m['format'] ?? '') !== 'banco-ganadero-ganamovil-digital-v1') {
+            throw ValidationException::withMessages(['statement'=>'Seleccione un PDF digital GanaMóvil de Banco Ganadero.']);
+        }
+        // Reuse an existing 11A account alias when the document already identifies it.
+        $accounts = DB::table('membership_bank_imports')->where('bank', $m['bank'])
+            ->where('document_metadata->account', $m['account'])->distinct()->pluck('account_key');
+        if ($accounts->count() > 1) {
+            throw ValidationException::withMessages(['statement'=>'La cuenta tiene varios identificadores históricos. Revise sus extractos antes de importar.']);
+        }
+        $account = $accounts->first() ?? $m['account'];
+        $id = $this->preview($file, $account, $admin, $m['bank'], $m['period_start'], $m['period_end'], $document);
+        return $this->confirm($id, $admin);
+    }
+
+    public function preview(UploadedFile $file, string $account, User $admin, string $bank, string $start, string $end, ?array $document = null): string
     {
         abort_unless($admin->is_admin,403);
         $hash=hash_file('sha256',$file->getRealPath());
@@ -19,7 +43,7 @@ class MembershipBankImport
         abort_unless(Storage::disk('membership-private')->put($path,file_get_contents($file->getRealPath())),503,'No se pudo conservar el original.');
         $incidents=[]; $rows=[]; $metadata=[];
         try {
-            $document=app(BankStatementParser::class)->parseDocument($file);
+            $document ??= app(BankStatementParser::class)->parseDocument($file);
             $rows=$document['rows']; $metadata=$document['metadata'];
             if ($metadata && stripos($bank, 'ganadero') === false) { $incidents[]='El banco declarado no coincide con Banco Ganadero en el PDF.'; }
             if (isset($metadata['account']) && ctype_digit($account) && $account !== $metadata['account']) { $incidents[]='La cuenta declarada no coincide con la cuenta del PDF.'; }
@@ -84,7 +108,7 @@ class MembershipBankImport
         });
     }
 
-    /** Existing internal callers retain a validated deterministic CSV entry point. HTTP always previews. */
+    /** Existing internal callers retain the validated deterministic CSV entry point. */
     public function import(UploadedFile $file, string $account, User $admin): array
     {
         abort_unless($admin->is_admin,403);

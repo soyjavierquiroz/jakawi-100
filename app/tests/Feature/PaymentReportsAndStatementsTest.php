@@ -178,6 +178,58 @@ class PaymentReportsAndStatementsTest extends TestCase
         return $pdf."trailer << /Size 6 /Root 1 0 R >>\nstartxref\n$xref\n%%EOF\n";
     }
 
+    public function test_mobile_admin_upload_detects_metadata_and_duplicates_without_activation(): void
+    {
+        Http::preventStrayRequests(); Storage::fake('membership-private');
+        $file=UploadedFile::fake()->createWithContent('movil.pdf',$this->ganaMovilPdf());
+        $this->get('/admin/extractos-bancarios')->assertRedirect('/login');
+        $this->post('/admin/extractos-bancarios/importar',['statement'=>$file])->assertRedirect('/login');
+        $this->actingAs(User::factory()->create())->get('/admin/extractos-bancarios')->assertForbidden();
+        $this->post('/admin/extractos-bancarios/importar',['statement'=>$file])->assertForbidden();
+        $this->actingAs($this->admin());
+        $this->get('/admin/conciliacion-membresias')->assertSee('Extractos bancarios');
+        $this->get('/admin/extractos-bancarios')->assertOk()->assertSee('Importar y procesar')->assertSee('accept=".pdf,application/pdf"',false);
+        $this->post('/admin/extractos-bancarios/importar',['statement'=>$file])->assertRedirect();
+        $import=DB::table('membership_bank_imports')->sole();
+        $this->assertSame('1234567890',$import->account_key);
+        $this->assertSame('2026-10-01',$import->period_start);
+        Storage::disk('membership-private')->assertExists($import->path);
+        $this->get('/admin/extractos-bancarios/'.$import->id)->assertOk()->assertSee('movil.pdf')->assertSee('Movimientos nuevos')->assertSee('data-label="Saldo"',false)->assertSee('Conciliación de créditos de Bs 100');
+        $this->post('/admin/extractos-bancarios/importar',['statement'=>$file])->assertSessionHas('status','Este PDF ya fue importado. No se duplicaron movimientos.');
+        $this->assertDatabaseCount('membership_bank_imports',1); $this->assertDatabaseCount('membership_bank_movements',2);
+        $second=UploadedFile::fake()->createWithContent('solapado.pdf',$this->ganaMovilPdf('8:19:05 PM'));
+        $this->post('/admin/extractos-bancarios/importar',['statement'=>$second])->assertRedirect();
+        $latest=DB::table('membership_bank_imports')->orderByDesc('id')->first();
+        $this->assertSame(2,$latest->duplicate_count);
+        $this->get('/admin/extractos-bancarios/'.$latest->id)->assertSee('El período coincide con');
+        $this->assertDatabaseCount('membership_bank_payments',0); $this->assertDatabaseCount('memberships',0); $this->assertDatabaseCount('commercial_outbox',0);
+        $this->actingAs(User::factory()->create())->get('/admin/extractos-bancarios/'.$import->id.'/original')->assertForbidden();
+    }
+
+    public function test_mobile_upload_invalid_files_fail_without_movements(): void
+    {
+        Storage::fake('membership-private'); $this->actingAs($this->admin());
+        foreach ([UploadedFile::fake()->createWithContent('fake.pdf','not a pdf'), UploadedFile::fake()->createWithContent('empty.pdf',$this->pdf('','')),UploadedFile::fake()->create('large.pdf',10241,'application/pdf')] as $file) {
+            $this->post('/admin/extractos-bancarios/importar',['statement'=>$file])->assertSessionHasErrors('statement');
+        }
+        $this->assertDatabaseCount('membership_bank_imports',0); $this->assertDatabaseCount('membership_bank_movements',0);
+    }
+
+    public function test_mobile_candidates_reuse_match_and_require_existing_approval(): void
+    {
+        Http::preventStrayRequests(); Storage::fake('membership-private'); $this->actingAs($this->admin());
+        $this->post('/admin/extractos-bancarios/importar',['statement'=>UploadedFile::fake()->createWithContent('movil.pdf',$this->ganaMovilPdf())])->assertRedirect();
+        $import=DB::table('membership_bank_imports')->sole();
+        $p=app(MembershipBankCheckout::class)->start(User::factory()->create());
+        $p->forceFill(['status'=>'under_review','declared_reference'=>'700001','paid_date'=>'2026-10-01'])->save();
+        $this->get('/admin/extractos-bancarios/'.$import->id)->assertOk()->assertSee($p->reference)->assertSee('Las coincidencias son candidatas');
+        $this->assertDatabaseCount('memberships',0); $this->assertDatabaseCount('commercial_outbox',0);
+        $mid=DB::table('membership_bank_movements')->where('reference','700001')->value('id');
+        $this->post('/admin/conciliacion-membresias/aprobar',['payment_id'=>$p->id,'movement_id'=>$mid])->assertRedirect();
+        $this->assertDatabaseCount('memberships',1); $this->assertDatabaseCount('commercial_outbox',1);
+        $this->get('/admin/extractos-bancarios/'.$import->id)->assertSee('1 conciliados');
+    }
+
     private function pdf(string $header,string $line): string
     {
         $stream="BT /F1 9 Tf 30 800 Td ($header) Tj 0 -20 Td ($line) Tj ET";
