@@ -141,6 +141,25 @@ class PaymentReportsAndStatementsTest extends TestCase
         $this->assertDatabaseCount('membership_bank_imports',0); $this->assertDatabaseCount('membership_bank_movements',0);
     }
 
+    public function test_ganamovil_emission_accepts_unpadded_day_and_month_but_rejects_missing_duplicate_and_invalid_dates(): void
+    {
+        $parser=app(BankStatementParser::class);
+        foreach (['1/1/2026','01/1/2026','1/01/2026','01/01/2026'] as $date) {
+            $pdf=str_replace('Fecha y Hora: 31/10/2026', 'Fecha y Hora: '.$date, $this->ganaMovilPdf());
+            $doc=$parser->parseDocument(UploadedFile::fake()->createWithContent('date.pdf',$pdf));
+            $this->assertSame('2026-01-01 20:18:05',$doc['metadata']['generated_at']);
+        }
+        foreach (['31/2/2026','0/11/2026','1/13/2026','','1/11/2026 8:18:05 PM Fecha y Hora: 1/11/2026'] as $date) {
+            $pdf=str_replace('Fecha y Hora: 31/10/2026', 'Fecha y Hora: '.$date, $this->ganaMovilPdf());
+            try {
+                $parser->parseDocument(UploadedFile::fake()->createWithContent('bad.pdf',$pdf));
+                $this->fail('Invalid emission accepted: '.$date);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                $this->assertNotEmpty($e->errors()['statement']);
+            }
+        }
+    }
+
     /** Entirely invented data; no sample bytes or personal banking information. */
     private function ganaMovilPdf(string $generated='8:18:05 PM',string $corruption=''): string
     {

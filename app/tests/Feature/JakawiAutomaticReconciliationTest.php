@@ -152,9 +152,30 @@ class JakawiAutomaticReconciliationTest extends TestCase {
   $this->assertDatabaseCount('memberships',1); $this->assertDatabaseCount('commercial_outbox',1);
   $this->assertDatabaseHas('jakawi_bank_reconciliations',['payment_id'=>$p->id,'status'=>'auto_reconciled']);
  }
+ public function test_full_source_account_matches_for_purchase_created_later_same_day_without_changing_dates(): void {
+  $p=$this->accountEvidence(['origin_account'=>'CA: 4561234987']);
+  $p->forceFill(['created_at'=>'2026-10-01 14:17:38'])->save();
+  $this->runReconciliation(); $this->runReconciliation();
+  $this->assertSame('approved',$p->fresh()->status);
+  $this->assertSame('2026-10-01 14:17:38',$p->fresh()->created_at->format('Y-m-d H:i:s'));
+  $this->assertDatabaseCount('memberships',1); $this->assertDatabaseCount('commercial_outbox',1);
+ }
+ public function test_full_account_does_not_bypass_competing_purchases_or_credits(): void {
+  $p=$this->accountEvidence(['origin_account'=>'CA: 4561234987']);
+  $q=$this->purchase();
+  $q->forceFill($p->only(['receipt_path','extraction_status','extraction_json','declared_reference','paid_date','paid_time','payer_name','status']))->save();
+  $this->runReconciliation(); $this->assertDatabaseCount('memberships',0);
+  $q->delete();
+  $m=(array)DB::table('membership_bank_movements')->where('credit','100.00')->first(); unset($m['id']);
+  $m['fingerprint']=hash('sha256','full-account-second-credit'); $m['reference']='700099'; $m['paid_time']='10:00:01';
+  DB::table('membership_bank_movements')->insert($m);
+  $this->runReconciliation(); $this->assertDatabaseCount('memberships',0);
+ }
  public static function incompleteAccountEvidence(): array {
   return [
    'no account'=>[['origin_account'=>null]], 'wrong account'=>[['origin_account'=>'456***988']],
+   'wrong full account'=>[['origin_account'=>'CA: 4561234988']],
+   'ambiguous full account'=>[['origin_account'=>'CA: 4561234987 / 9999999']],
    'weak mask'=>[['origin_account'=>'4*****87']], 'wrong bank'=>[['origin_bank'=>'BANCO SOLIDARIO']],
    'no bank'=>[['origin_bank'=>null]], 'wrong payer'=>[['payer_name'=>'OTRA PERSONA']],
    'no payer'=>[['payer_name'=>null]], 'too late'=>[['time'=>'09:59:54']],

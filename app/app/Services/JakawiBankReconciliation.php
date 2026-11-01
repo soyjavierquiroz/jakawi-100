@@ -77,7 +77,7 @@ class JakawiBankReconciliation
                 $p->status === 'rejected' ? 'Compra rechazada.' : null,
                 $p->amount !== $m->amount || (isset($d['amount']) && $d['amount'] !== $m->amount) ? 'Importe contradictorio.' : null,
                 $p->paid_date && !$sameDate ? 'Fecha contradictoria.' : null,
-                $p->paid_time && $m->paid_time && !$sameTime && !$independent ? 'Hora diferente sin evidencia conjunta de banco, pagador y cuenta enmascarada dentro de 5 segundos.' : null,
+                $p->paid_time && $m->paid_time && !$sameTime && !$independent ? 'Hora diferente sin evidencia conjunta de banco, pagador y cuenta dentro de 5 segundos.' : null,
                 $p->receipt_path && !$receipt ? 'Comprobante sin extracción válida de importe, moneda, confianza y destinatario completo.' : null,
                 isset($d['currency']) && $d['currency'] !== 'BOB' ? 'Moneda contradictoria.' : null,
                 !$identified ? 'Falta identificación independiente de la compra.' : null,
@@ -144,13 +144,17 @@ class JakawiBankReconciliation
         // Exact printed payer line, including a bank-truncated name. The buyer may be a different person.
         $payer=self::normalized($d['payer_name'] ?? '');
         if (strlen($payer)<10 || count(explode(' ',$payer))<2 || !in_array($payer,$lines,true)) { return false; }
-        $account=strtoupper(preg_replace('/[\s-]+/', '', $d['origin_account'] ?? ''));
+        // Accept the explicit savings-account label, never strip arbitrary text into a number.
+        $account=preg_replace('/\ACA\h*:\h*/i', '', trim($d['origin_account'] ?? ''));
+        $account=strtoupper(preg_replace('/[\s-]+/', '', $account));
+        $fullAccount=preg_match('/\A\d{7,}\z/', $account) === 1;
         // At least three visible digits at each end, and a mask between. Never infer hidden digits.
-        if (!preg_match('/\A(\d{3,})[*X•]+(\d{3,})\z/u', $account, $parts)) { return false; }
+        if (!$fullAccount && !preg_match('/\A(\d{3,})[*X•]+(\d{3,})\z/u', $account, $parts)) { return false; }
         foreach ($lines as $index=>$line) {
             if (!$this->bankMatches($d['origin_bank'], [$line])) { continue; }
             $digits=preg_replace('/[\s-]+/', '', $lines[$index+1] ?? '');
-            if (ctype_digit($digits) && strlen($digits)>strlen($parts[1])+strlen($parts[2])
+            if ($fullAccount && ctype_digit($digits) && $digits === $account) { return true; }
+            if (!$fullAccount && ctype_digit($digits) && strlen($digits)>strlen($parts[1])+strlen($parts[2])
                 && str_starts_with($digits,$parts[1]) && str_ends_with($digits,$parts[2])) { return true; }
         }
         return false;

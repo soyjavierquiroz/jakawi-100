@@ -196,7 +196,7 @@ class BankStatementParser
         $required = [
             'account' => '/NRO\. DE CUENTA:\s*(\d+)/u',
             'period' => '/PERIODO DEL (\d{2}\/\d{2}\/\d{4}) AL (\d{2}\/\d{2}\/\d{4})/u',
-            'generated' => '/Fecha y Hora:\s*(\d{2}\/\d{2}\/\d{4}) (\d{1,2}:\d{2}:\d{2}) (AM|PM)/u',
+            'generated' => '/Fecha y Hora:\h*(\d{1,2}\/\d{1,2}\/\d{4})\h+(\d{1,2}:\d{2}:\d{2})\h+(AM|PM)\h*$/mu',
             'opening' => '/SALDO ANTERIOR:\s*(-?[\d,]+\.\d{2})/u',
             'closing' => '/SALDO ACTUAL\s*:\s*(-?[\d,]+\.\d{2})/u',
             'debits' => '/CANTIDAD DÉBITOS:\s*(\d+)/u',
@@ -204,7 +204,8 @@ class BankStatementParser
         ];
         $found = [];
         foreach ($required as $key => $pattern) {
-            if (preg_match_all($pattern, $text, $matches, PREG_SET_ORDER) !== 1) {
+            if (($key === 'generated' && substr_count($text, 'Fecha y Hora:') !== 1)
+                || preg_match_all($pattern, $text, $matches, PREG_SET_ORDER) !== 1) {
                 $this->invalid('GanaMóvil: metadatos ausentes o repetidos ('.$key.').');
             }
             $found[$key] = $matches[0];
@@ -219,6 +220,9 @@ class BankStatementParser
             return $date->format('Y-m-d');
         };
         $generated = $found['generated'];
+        // GanaMóvil prints the emission day/month without leading zeros. Normalize only after strict validation.
+        [$day, $month, $year] = explode('/', $generated[1]);
+        $generated[1] = sprintf('%02d/%02d/%s', (int)$day, (int)$month, $year);
         $clock = str_pad($generated[2], 8, '0', STR_PAD_LEFT).' '.$generated[3];
         if (!CarbonImmutable::hasFormat($clock, 'h:i:s A')) { $this->invalid('GanaMóvil: hora de emisión inválida.'); }
         $this->metadata = [
