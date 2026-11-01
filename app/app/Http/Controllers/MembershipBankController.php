@@ -101,25 +101,45 @@ class MembershipBankController extends Controller
 
     public function index(Request $request, MembershipBankCheckout $checkout)
     {
-        $data = $request->validate(['q'=>['nullable','string','max:120']]);
-        $query = trim($data['q'] ?? '');
-        $payments = MembershipBankPayment::when($query !== '', function ($builder) use ($query) {
-            $builder->where(function ($q) use ($query) {
-                foreach (['reference','club_reference','buyer_name','buyer_email'] as $field) { $q->orWhere($field,'ilike','%'.$query.'%'); }
-                $q->orWhereHas('user',fn($u)=>$u->where('name','ilike','%'.$query.'%'));
-            });
-        })->with(['user:id,name,email,global_subject_id', 'user.profile:user_id,whatsapp'])->orderByRaw("CASE WHEN status='under_review' THEN 0 ELSE 1 END")->latest('id')->paginate(40)->withQueryString();
-        $matches = [];
-        $reviews = [];
-        foreach ($payments as $payment) {
-            if (in_array($payment->status, ['under_review', 'PAYMENT_REPORTED'], true)) {
-                $matches[$payment->id] = $checkout->match($payment);
-                $reviews[$payment->id] = app(\App\Services\JakawiBankReconciliation::class)->paymentReview($payment);
-            }
+        $data = $request->validate(['q'=>['nullable','string','max:120'], 'estado'=>['nullable','in:confirmados,pendientes,sin-identificar,revision'], 'pago'=>['nullable','integer','min:1'], 'ingreso'=>['nullable','integer','min:1'], 'vista'=>['nullable','in:ajustes']]);
+        $statusLabels = ['approved'=>'Confirmado','awaiting_payment'=>'Pendiente de pago','PAYMENT_REPORTED'=>'Esperando confirmación','under_review'=>'En revisión','rejected'=>'Requiere corrección'];
+        if (($data['vista'] ?? '') === 'ajustes') {
+            return response()->view('membership-bank.settings', ['qrConfigured'=>app(MembershipBankQr::class)->ready(), 'recipient'=>app(MembershipBankQr::class)->recipient()])->header('Cache-Control','private, no-store');
         }
-        $movements = DB::table('membership_bank_movements')->where('amount', '100.00')->where('debit', 0)->where('reconciliation_hold', false)->whereNotIn('id', MembershipBankPayment::whereNotNull('bank_movement_id')->select('bank_movement_id'))->latest('id')->paginate(50, ['*'], 'movements_page');
-
-        return response()->view('membership-bank.admin', ['qrConfigured' => app(MembershipBankQr::class)->ready(), 'recipient' => app(MembershipBankQr::class)->recipient(), ...compact('payments', 'matches', 'movements', 'reviews', 'query')])->header('Cache-Control', 'private, no-store');
+        if (isset($data['pago'])) {
+            $p = MembershipBankPayment::with('user')->findOrFail($data['pago']);
+            $review = in_array($p->status,['under_review','PAYMENT_REPORTED'],true) ? app(\App\Services\JakawiBankReconciliation::class)->paymentReview($p) : null;
+            $linkedMovement = $p->bank_movement_id ? DB::table('membership_bank_movements')->find($p->bank_movement_id) : null;
+            $decision = $p->bank_movement_id ? DB::table('jakawi_bank_reconciliations')->where('movement_id',$p->bank_movement_id)->first() : null;
+            return response()->view('membership-bank.payment-detail',compact('p','review','linkedMovement','decision','statusLabels'))->header('Cache-Control','private, no-store');
+        }
+        $incomeQuery = DB::table('jakawi_bank_reconciliations as r')->join('membership_bank_movements as m','m.id','=','r.movement_id')->whereIn('r.status',['unidentified','review_required'])->select('m.*','r.status as reconciliation_status','r.reason','r.evidence');
+        if (isset($data['ingreso'])) {
+            $income = (clone $incomeQuery)->where('m.id',$data['ingreso'])->first();
+            abort_unless($income,404);
+            return response()->view('membership-bank.income-detail',compact('income'))->header('Cache-Control','private, no-store');
+        }
+        $filter = $data['estado'] ?? '';
+        $query = trim($data['q'] ?? '');
+        $counts = MembershipBankPayment::selectRaw('status, count(*) as total')->groupBy('status')->pluck('total','status');
+        $incomeCounts = DB::table('jakawi_bank_reconciliations')->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total','status');
+        $summary = ['confirmados'=>$counts['approved']??0, 'pendientes'=>($counts['awaiting_payment']??0)+($counts['PAYMENT_REPORTED']??0), 'sin-identificar'=>$incomeCounts['unidentified']??0, 'revision'=>($counts['under_review']??0)+($counts['rejected']??0)+($incomeCounts['review_required']??0)];
+        $payments = MembershipBankPayment::when($filter === 'confirmados',fn($q)=>$q->where('status','approved'))
+            ->when($filter === 'pendientes',fn($q)=>$q->whereIn('status',['awaiting_payment','PAYMENT_REPORTED']))
+            ->when($filter === 'revision',fn($q)=>$q->whereIn('status',['under_review','rejected']))
+            ->when($filter === 'sin-identificar',fn($q)=>$q->whereRaw('1=0'))
+            ->when($query !== '', function ($builder) use ($query) {
+                $builder->where(function ($q) use ($query) {
+                    foreach (['reference','club_reference','buyer_name','buyer_email'] as $field) { $q->orWhere($field,'ilike','%'.$query.'%'); }
+                    $q->orWhereHas('user',fn($u)=>$u->where('name','ilike','%'.$query.'%'));
+                });
+            })->with('user:id,name,email')->latest('id')->paginate(20)->withQueryString();
+        $incomes = (clone $incomeQuery)->when($filter === 'sin-identificar',fn($q)=>$q->where('r.status','unidentified'))
+            ->when($filter === 'revision',fn($q)=>$q->where('r.status','review_required'))
+            ->when(!in_array($filter,['sin-identificar','revision'],true),fn($q)=>$q->whereRaw('1=0'))
+            ->when($query !== '',fn($q)=>$q->where('m.reference','ilike','%'.$query.'%'))->orderByDesc('m.id')->paginate(20,['*'],'ingresos_page')->withQueryString();
+        $listTitle = ['confirmados'=>'Pagos confirmados','pendientes'=>'Compras pendientes','sin-identificar'=>'Ingresos sin identificar','revision'=>'Casos que requieren revisión'][$filter] ?? 'Todos los pagos';
+        return response()->view('membership-bank.admin',compact('payments','incomes','summary','filter','query','statusLabels','listTitle'))->header('Cache-Control','private, no-store');
     }
 
     public function import(Request $request, MembershipBankImport $import)

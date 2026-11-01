@@ -1,4 +1,4 @@
-@extends('membership-bank.layout')
+@extends('membership-bank.admin-layout')
 @section('title','Extracto bancario')
 @section('content')
 <a href="/admin/extractos-bancarios">← Extractos bancarios</a><h1>Extracto #{{$import->id}}</h1>
@@ -21,12 +21,12 @@
 @if($overlaps)<p class="notice">El período coincide con {{$overlaps}} extracto(s) de la misma cuenta. Los movimientos repetidos se detectan sin duplicarlos.</p>@endif
 @foreach(json_decode($import->incidents??'[]',true) as $incident)<p class="notice">{{$incident}}</p>@endforeach
 <section class="card"><h2>Conciliación de créditos de Bs 100</h2>
-<p>Las coincidencias son candidatas. Revisa la compra y el comprobante antes de aprobar. El importe por sí solo no confirma un pago.</p>
+<p>COM concilia automáticamente las coincidencias seguras. Los casos pendientes conservan sus evidencias para revisión excepcional.</p>
 @forelse($candidates as $candidate)
 <p>Movimiento #{{$candidate['movement']->id}} · {{$candidate['movement']->paid_date}} · Transacción {{$candidate['movement']->reference}}<br>Compra {{$candidate['payment']->reference}} · {{$candidate['payment']->user?->name??'Comprador pendiente'}}</p>
 @empty<p>No hay coincidencias compatibles en esta página de compras pendientes. Los créditos sin identificar se conservan.</p>@endforelse
 {{$pending->links()}}
-<a class="button" href="/admin/conciliacion-membresias">Revisar y conciliar en COM</a></section>
+<a class="button" href="/admin/conciliacion-membresias">Volver a Pagos y conciliación</a></section>
 <h2>Movimientos</h2>
 <div class="card statement-table"><table><thead><tr><th>Fecha</th><th>Descripción</th><th>Débito</th><th>Crédito</th><th>Saldo</th><th>Estado</th></tr></thead><tbody>
 @foreach($entries as $entry) @php($row=json_decode($entry->data,true))

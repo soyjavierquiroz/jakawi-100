@@ -30,14 +30,14 @@ class MembershipBankQrTest extends TestCase
     {
         $file = UploadedFile::fake()->image('bank-test.'.$type, 700, 900);
         $bytes = file_get_contents($file->getRealPath());
-        $this->post('/admin/conciliacion-membresias/qr', ['qr_image' => $file])->assertRedirect('/admin/conciliacion-membresias#configuracion-qr');
+        $this->post('/admin/conciliacion-membresias/qr', ['qr_image' => $file])->assertRedirect('/admin/conciliacion-membresias?vista=ajustes');
 
         return [$bytes, AppSetting::where('key', 'membership_bank_qr')->sole()->value];
     }
 
     public function test_admin_can_upload_and_checkout_serves_identical_original_png(): void
     {
-        $this->actingAs($this->admin())->get('/admin/conciliacion-membresias')->assertOk()->assertSee('Configuración del QR bancario')->assertSee('cobros deshabilitados');
+        $this->actingAs($this->admin())->get('/admin/conciliacion-membresias?vista=ajustes')->assertOk()->assertSee('Configuración del QR bancario')->assertSee('cobros deshabilitados');
         [$bytes, $value] = $this->upload();
         $this->assertSame($bytes, Storage::disk('minio-media')->get($value['path']));
         $this->assertSame('private', Storage::disk('minio-media')->getVisibility($value['path']));
@@ -64,7 +64,7 @@ class MembershipBankQrTest extends TestCase
         $this->assertSame('image/jpeg', $value['mime']);
         $this->assertSame($jpg, Storage::disk('minio-media')->get($value['path']));
         $this->get('/membresia/checkout/qr')->assertOk()->assertHeader('Content-Type', 'image/jpeg')->assertContent($jpg);
-        $this->get('/admin/conciliacion-membresias')->assertOk()->assertSee('Reemplazar imagen PNG/JPG')->assertSee('Pago habilitado');
+        $this->get('/admin/conciliacion-membresias?vista=ajustes')->assertOk()->assertSee('Reemplazar imagen PNG/JPG')->assertSee('Pago habilitado');
     }
 
     public function test_missing_or_corrupt_minio_object_disables_payment(): void

@@ -219,7 +219,8 @@ class JakawiAutomaticReconciliationTest extends TestCase {
   $p=$this->accountEvidence();$q=$this->purchase();
   $p->update(['origin'=>'CLUB','club_reference'=>(string)\Illuminate\Support\Str::uuid(),'extraction_status'=>'unconfigured','extraction_error'=>'not_configured']);
   $this->actingAs($this->admin)->get('/admin/conciliacion-membresias?q='.$p->club_reference)->assertOk()
-   ->assertSee($p->reference)->assertDontSee($q->reference)->assertSee('Comprobante recibido')
+   ->assertSee('pago='.$p->id, false)->assertDontSee('pago='.$q->id.'"', false)->assertDontSee('Reintentar extracción');
+  $this->get('/admin/conciliacion-membresias?pago='.$p->id)->assertOk()->assertSee($p->reference)->assertSee('Comprobante recibido')
    ->assertSee('Reintentar extracción')->assertSee('700001')->assertSee('La IA no estaba configurada');
  }
 

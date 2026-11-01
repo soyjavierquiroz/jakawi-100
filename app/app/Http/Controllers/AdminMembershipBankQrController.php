@@ -29,6 +29,6 @@ class AdminMembershipBankQrController extends Controller
             }
         });
 
-        return redirect('/admin/conciliacion-membresias#configuracion-qr')->with('status', 'Configuración bancaria guardada. Los cambios se muestran en el checkout de Bs 100.');
+        return redirect('/admin/conciliacion-membresias?vista=ajustes')->with('status', 'Configuración bancaria guardada. Los cambios se muestran en el checkout de Bs 100.');
     }
 }

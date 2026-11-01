@@ -1,60 +1,26 @@
-@extends('membership-bank.layout')
-@section('title','Conciliación de membresías')
+@extends('membership-bank.admin-layout')
+@section('title','Pagos y conciliación')
 @section('content')
-<a href="/admin">← Administración COM</a><h1>Conciliación de membresías</h1><a class="button" href="/admin/extractos-bancarios">Extractos bancarios</a><p>Ingresos de Bs 100. Cada aprobación activa la membresía y utiliza un único movimiento bancario.</p>
-<section class="card" id="configuracion-qr" aria-labelledby="qr-heading">
-<h2 id="qr-heading">Configuración del QR bancario</h2>
-<p>QR bancario real para la membresía de <strong>Bs 100</strong>. Comprueba el destinatario y que el QR se pueda escanear antes de guardar.</p>
-@if($qrConfigured)
-<p class="badge">QR configurado · Pago habilitado</p><div><img src="/admin/conciliacion-membresias/qr" alt="QR bancario configurado para la membresía de Bs 100" width="400" style="object-fit:contain"></div>
-<a href="/admin/conciliacion-membresias/qr" target="_blank" rel="noopener">Abrir imagen original</a> · <a href="/membresia/checkout">Ver checkout de Bs 100</a>
-@else
-<p class="notice">No hay un QR válido disponible. El checkout mantiene los cobros deshabilitados.</p>
-@endif
-<form method="post" action="/admin/conciliacion-membresias/qr" enctype="multipart/form-data">@csrf
-<label for="recipient_name">Destinatario bancario</label><input id="recipient_name" name="recipient_name" value="{{old('recipient_name',$recipient)}}" maxlength="255" required>
-<label for="qr_image">{{$qrConfigured ? 'Reemplazar imagen PNG/JPG' : 'Subir imagen PNG/JPG'}}</label>
-<input id="qr_image" name="qr_image" type="file" accept="image/png,image/jpeg" aria-describedby="qr-help">
-<p class="muted" id="qr-help">Se conserva el archivo original en MinIO, sin recortes ni recompresión. De 128 a 4096 píxeles por lado; máximo 10 MB. La nueva imagen se aplica al guardar. Deja el archivo vacío para cambiar solo el destinatario.</p>
-<div id="qr-local-preview" hidden><p><strong>Vista previa de la nueva imagen</strong></p><img id="qr-local-image" alt="Vista previa del QR seleccionado" width="400" style="object-fit:contain"></div>
-<button>Guardar cambios</button></form>
-<script>
-(() => {
-    const input = document.getElementById('qr_image');
-    const preview = document.getElementById('qr-local-preview');
-    const image = document.getElementById('qr-local-image');
-    let objectUrl;
-    input.addEventListener('change', () => {
-        if (objectUrl) URL.revokeObjectURL(objectUrl);
-        const file = input.files[0];
-        preview.hidden = !file || !['image/png', 'image/jpeg'].includes(file.type);
-        image.removeAttribute('src');
-        if (!preview.hidden) { objectUrl = URL.createObjectURL(file); image.src = objectUrl; }
-    });
-})();
-</script></section>
-<div class="card"><a href="/admin/extractos-bancarios">Historial de extractos bancarios e importación →</a></div>
-<form method="get"><label for="purchase-search">Buscar usuario o referencia de compra COM / CLUB</label><input id="purchase-search" name="q" maxlength="120" value="{{$query}}"><button>Buscar compra</button></form>
-<form id="batch" method="post" action="/admin/conciliacion-membresias/lote">@csrf<button>Aprobar seleccionadas fuertes y únicas</button></form>
-<p class="muted">Importar o clasificar nunca aprueba pagos. Las coincidencias por fecha, hora o importe requieren revisión manual.</p>
-<div class="card table"><table><thead><tr><th>Lote</th><th>Comprador / compra</th><th>Referencia leída / corregida</th><th>Fecha / hora declarada</th><th>Movimiento candidato / importe</th><th>Coincidencia / estado</th><th>Decisiones</th></tr></thead><tbody>
-@foreach($payments as $p) @php($m=$matches[$p->id]??null) @php($review=$reviews[$p->id]??null)
-<tr><td>@if(($m['classification']??null)==='strong_unique')<input aria-label="Seleccionar compra {{$p->reference}}" form="batch" type="checkbox" name="payments[]" value="{{$p->id}}">@endif</td><td>{{$p->buyer_name ?? $p->user?->name}}<small>{{$p->buyer_email ?? $p->user?->email}}</small><small>{{$p->reference}}</small><small>Origen: {{$p->origin}} @if($p->club_reference) · CLUB {{$p->club_reference}} @endif</small>@if($p->buyer_phone)<small>Contacto declarado: {{$p->buyer_phone}}</small>@endif @if($p->identity_status)<small>Vínculo: {{$p->identity_status}}</small>@endif<small>Inicio: {{$p->checkout_at?->format('Y-m-d H:i')}} · Bs {{$p->amount}} BOB</small><small>Identidad COM: {{$p->identity_status === 'linked' || $p->origin === 'COM' ? $p->user?->global_subject_id : 'Pendiente de vínculo'}}</small>@if($p->user?->profile?->whatsapp)<small>Contacto: {{$p->user->profile->whatsapp}}</small>@endif @if($p->payer_name)<small>Pagó por el titular: {{$p->payer_name}}</small>@endif</td><td>{{$p->declared_reference??'No declarada'}}</td><td>{{$p->paid_date?->format('Y-m-d')}} {{$p->paid_time}}<small>Bolivia</small></td><td>@forelse($review['candidates']??$m['candidates']??[] as $c)<p>#{{$c->id}} · {{$c->reference??'Sin referencia'}}<small>{{$c->paid_date}} {{$c->paid_time}}</small><small>{{$c->description}}</small><strong>Bs {{$c->amount}}</strong>@if(isset($c->reconciliation_reason))<small>{{$c->reconciliation_reason}}</small>@endif</p>@empty Sin candidato @endforelse</td><td>{{$p->status}}<small>{{['strong_unique'=>'A · Fuerte y única','probable'=>'B · Probable; revisión individual','ambiguous'=>'C · Ambigua; revisión individual','no_match'=>'D · Sin coincidencia'][$m['classification']??'']??''}}</small><small>{{$p->review_note}}</small>@if($review)<p><strong>Conciliación automática:</strong> {{$review['reason']}}</p>@endif</td><td>
-@if($p->needsReceipt())<p class="notice"><strong>Falta adjuntar comprobante</strong></p>@endif
-@if($p->receipt_path)<a href="/admin/conciliacion-membresias/{{$p->id}}/comprobante">Comprobante recibido · Consultar original privado</a>@endif
-@if($p->extraction_status)
-<p><strong>Lectura del comprobante:</strong> {{['pending'=>'En cola','processing'=>'Procesando','completed'=>'Extraído','failed'=>'Falló; revisión manual disponible','unconfigured'=>'IA sin configurar; revisión manual disponible','manual'=>'Corregido por administrador'][$p->extraction_status]??'Pendiente'}}</p>
-<small>Procesado: {{$p->extraction_processed_at?->timezone('America/La_Paz')->format('Y-m-d H:i')}} · Intentos: {{$p->extraction_attempts}}</small>@if($p->extraction_error)<small>Código: {{$p->extraction_error}}</small>@endif
-@if($p->extraction_json)<details><summary>Datos y evidencias extraídos</summary><dl>@foreach(\App\Services\MembershipReceiptVision::FIELDS as $field)<dt><strong>{{['reference'=>'Referencia','amount'=>'Importe','currency'=>'Moneda','date'=>'Fecha','time'=>'Hora','origin_bank'=>'Banco de origen','recipient'=>'Destinatario','payer_name'=>'Pagador','origin_account'=>'Cuenta de origen (con máscara)'][$field]}}</strong></dt><dd>{{$p->extraction_json[$field]??'No legible / ausente'}} @if($p->extraction_json['evidence'][$field]??null)<small>Evidencia: {{$p->extraction_json['evidence'][$field]}}</small>@endif</dd>@endforeach</dl><small>Confianza: {{$p->extraction_json['confidence']??'Sin dato'}}</small></details>@endif
-@endif
-@if($p->status==='under_review')
-<details><summary>Corregir datos del comprobante</summary><form method="post" action="/admin/conciliacion-membresias/{{$p->id}}/extraccion">@csrf
-@foreach(['reference'=>'Referencia','amount'=>'Importe leído (punto decimal)','currency'=>'Moneda (BOB, USD...)','date'=>'Fecha (YYYY-MM-DD)','time'=>'Hora (HH:MM:SS)','origin_bank'=>'Banco de origen','recipient'=>'Destinatario','payer_name'=>'Pagador','origin_account'=>'Cuenta de origen (con máscara)'] as $field=>$label)
-<label>{{$label}}</label><input name="{{$field}}" maxlength="255" value="{{$p->extraction_json[$field]??(['reference'=>$p->declared_reference,'date'=>$p->paid_date?->format('Y-m-d'),'time'=>$p->paid_time,'origin_bank'=>$p->origin_bank,'payer_name'=>$p->payer_name][$field]??'')}}">
-@endforeach<button>Guardar corrección manual</button></form></details>
-@if(in_array($p->extraction_status,['failed','unconfigured'],true))<form method="post" action="/admin/conciliacion-membresias/{{$p->id}}/extraccion/reintentar">@csrf<button>Reintentar extracción</button></form>@endif
-@endif
-@if(in_array($p->status,['under_review','PAYMENT_REPORTED'],true))<details><summary>Aprobar individualmente</summary><p>Confirma el ingreso bancario y su correspondencia inequívoca con esta compra. Puedes conciliar sin comprobante. La aprobación activa la membresía.</p><form method="post" action="/admin/conciliacion-membresias/aprobar">@csrf<input type="hidden" name="payment_id" value="{{$p->id}}"><label>Movimiento bancario (ID del listado)</label><input name="movement_id" type="number" min="1" required><button>Aprobar y activar</button></form></details><details><summary>Registrar revisión</summary><form method="post" action="/admin/conciliacion-membresias/{{$p->id}}/revision">@csrf<label>Decisión</label><select name="decision"><option value="no_match">Marcar sin coincidencia</option><option value="rejected">Rechazar y pedir corrección</option></select><label>Motivo (visible para el comprador)</label><textarea name="note" required maxlength="2000"></textarea><button>Guardar revisión</button></form></details>@endif
-</td></tr>@endforeach</tbody></table>{{$payments->links()}}</div>
-<div class="card table"><h2>Ingresos disponibles</h2><p>Para revisión individual. Los movimientos usados desaparecen de esta lista.</p><table><thead><tr><th>ID</th><th>Fecha / hora</th><th>Referencia</th><th>Descripción</th><th>Importe</th></tr></thead><tbody>@foreach($movements as $c)<tr><td>{{$c->id}}</td><td>{{$c->paid_date}} {{$c->paid_time}}</td><td>{{$c->reference}}</td><td>{{$c->description}}</td><td>Bs {{$c->amount}}</td></tr>@endforeach</tbody></table>{{$movements->links()}}</div>
+<a href="/admin">← Administración COM</a>
+<div class="toolbar"><h1>Pagos y conciliación</h1><a href="?vista=ajustes">Ajustes de pagos</a></div>
+<p class="muted">COM concilia los pagos automáticamente al recibir el extracto y las evidencias necesarias.</p>
+<div class="toolbar"><a class="button" href="/admin/extractos-bancarios#importar">Importar extracto bancario</a><a href="/admin/extractos-bancarios#historial">Historial de extractos</a></div>
+<nav class="filters" aria-label="Filtrar pagos">
+@foreach(['confirmados'=>'Pagos confirmados','pendientes'=>'Compras pendientes','sin-identificar'=>'Ingresos sin identificar','revision'=>'Casos que requieren revisión'] as $key=>$label)
+<a class="card" href="?estado={{$key}}" @if($filter===$key) aria-current="page" @endif><strong>{{$summary[$key]}}</strong>{{$label}}</a>
+@endforeach
+</nav>
+<form class="search" method="get"><input type="hidden" name="estado" value="{{$filter}}"><div><label for="purchase-search">Buscar comprador o referencia</label><input id="purchase-search" name="q" maxlength="120" value="{{$query}}" placeholder="Nombre o referencia de compra"></div><button class="secondary">Buscar</button></form>
+<div class="toolbar"><h2>{{$listTitle}}</h2><a href="/admin/conciliacion-membresias">Ver todos los pagos</a></div>
+<section class="card" aria-label="Lista de pagos">
+<div class="payment-row payment-head" aria-hidden="true"><span>Comprador</span><span>Fecha</span><span>Importe</span><span>Estado</span><span>Detalle</span></div>
+@forelse($payments as $p)
+<div class="payment-row"><h3>{{$p->buyer_name ?? $p->user?->name ?? 'Comprador sin identificar'}}</h3><p>{{$p->paid_date?->format('d/m/Y') ?? $p->checkout_at?->timezone('America/La_Paz')->format('d/m/Y') ?? 'Sin fecha'}}</p><p><strong>Bs {{number_format((float)$p->amount,2)}}</strong></p><p class="status"><span class="badge">{{$statusLabels[$p->status]??$p->status}}</span></p><a class="detail-link" href="?pago={{$p->id}}" aria-label="Ver detalle de {{$p->buyer_name ?? $p->user?->name ?? 'compra'}}">Ver detalle</a></div>
+@empty @if(!in_array($filter,['sin-identificar','revision'],true))<p>No hay pagos en esta vista.</p>@endif @endforelse
+@foreach($incomes as $income)
+<div class="payment-row"><h3>Comprador sin identificar</h3><p>{{\Carbon\CarbonImmutable::parse($income->paid_date)->format('d/m/Y')}}</p><p><strong>Bs {{number_format((float)$income->credit,2)}}</strong></p><p class="status"><span class="badge">{{$income->reconciliation_status==='unidentified'?'Sin identificar':'Requiere revisión'}}</span></p><a class="detail-link" href="?ingreso={{$income->id}}">Ver detalle</a></div>
+@endforeach
+@if(in_array($filter,['sin-identificar','revision'],true) && $payments->isEmpty() && $incomes->isEmpty())<p>No hay casos en esta vista.</p>@endif
+{{$payments->links()}}{{$incomes->links()}}
+</section>
 @endsection

@@ -1,13 +1,13 @@
-@extends('membership-bank.layout')
+@extends('membership-bank.admin-layout')
 @section('title','Extractos bancarios')
 @section('content')
-<a href="/admin/conciliacion-membresias">← Conciliación de membresías</a><h1>Extractos bancarios</h1>
-<section class="card"><h2>Subir extracto</h2>
+<a href="/admin/conciliacion-membresias">← Pagos y conciliación</a><h1>Extractos bancarios</h1>
+<section class="card" id="importar"><h2>Importar extracto bancario</h2>
 <p>Selecciona el PDF digital descargado de GanaMóvil, Banco Ganadero. Leeremos la cuenta y el período automáticamente.</p>
 <form id="statement-upload" method="post" action="/admin/extractos-bancarios/importar" enctype="multipart/form-data">@csrf
 <label for="statement">Seleccionar PDF</label><input id="statement" name="statement" type="file" accept=".pdf,application/pdf" required aria-describedby="pdf-help">
 <p id="pdf-help" class="muted">Hasta 10 MB. El archivo se guarda de forma privada. Las coincidencias bancarias seguras se concilian y activan automáticamente.</p>
-<button id="import-button" type="submit">Importar y procesar</button>
+<button id="import-button" type="submit">Importar extracto bancario</button>
 <p id="upload-status" role="status" aria-live="polite" hidden>Subiendo y procesando PDF… Mantén esta pantalla abierta.</p>
 </form></section>
 <h2>Pagos JAKAWI identificados</h2>
@@ -31,7 +31,7 @@
 @empty<p class="card">No hay pagos JAKAWI en este estado.</p>@endforelse
 {{$jakawi->links()}}
 <details><summary>Historial bancario completo — todos los movimientos y PDFs</summary>
-<h2>Historial de extractos</h2>
+<h2 id="historial">Historial de extractos</h2>
 <div class="statement-history">
 @forelse($imports as $i)
 <article class="card"><h3><a href="/admin/extractos-bancarios/{{$i->id}}">{{$i->original_name??'Extracto histórico #'.$i->id}}</a></h3>

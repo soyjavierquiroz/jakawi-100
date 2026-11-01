@@ -225,7 +225,7 @@ class MembershipBankCheckoutTest extends TestCase
         $q = $this->payment(null, 'SECOND');
         $this->movement();
         $this->movement('SECOND');
-        $this->actingAs($this->admin())->get('/admin/conciliacion-membresias')->assertOk()->assertSee('Fuerte y única');
+        $this->actingAs($this->admin())->get('/admin/conciliacion-membresias')->assertOk()->assertSee('Pagos y conciliación')->assertDontSee('Aprobar seleccionadas');
         $this->post('/admin/conciliacion-membresias/lote', ['payments' => [$p->id, $q->id]])->assertRedirect();
         $this->assertDatabaseCount('memberships', 2);
         $this->assertDatabaseCount('commercial_outbox', 2);
