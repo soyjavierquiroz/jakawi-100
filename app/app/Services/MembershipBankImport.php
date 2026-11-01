@@ -110,7 +110,7 @@ class MembershipBankImport
             }
             DB::table('membership_bank_imports')->where('id',$importId)->update(['duplicate_count'=>$duplicates,'incidents'=>json_encode($holds?["$holds movimientos sin identidad bancaria suficiente o repetidos dentro del archivo: retenidos para revisión."]:[],JSON_THROW_ON_ERROR)]);
             AuditLog::create(['actor_user_id'=>$admin->id,'action'=>'membership_bank_imported','subject_type'=>'membership_bank_imports','subject_id'=>$importId,'metadata'=>['imported'=>$count,'duplicates'=>$duplicates,'held'=>$holds]]);
-            \App\Jobs\ReconcileJakawiBank::dispatch();
+            if (app(JakawiBankReconciliation::class)->movements()->exists()) { \App\Jobs\ReconcileJakawiBank::dispatch(); }
             return ['imported'=>$count,'duplicate'=>false,'id'=>$importId];
         });
     }
