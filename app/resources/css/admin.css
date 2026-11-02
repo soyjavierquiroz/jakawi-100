@@ -1041,3 +1041,11 @@ no page-owned style block. */
 .admin-shell.admin-blade .admin-content button:not(.secondary):hover {
   background: var(--admin-action-hover);
 }
+
+/* Legacy .table is a scroll wrapper, not Tailwind's display: table utility. */
+.admin-shell .admin-content :is(div, section).table {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
