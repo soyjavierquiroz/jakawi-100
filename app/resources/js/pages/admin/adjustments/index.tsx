@@ -7,8 +7,8 @@ import { useState } from 'react';
 
 export default function Adjustments({ adjustments, filters, users, partners, idempotencyKey }: any) {
     const [unit, setUnit] = useState<'JP' | 'CASH'>('JP');
-    return <AdminLayout title="Ajustes JP y Partners">
-        <div className="mb-8 flex flex-wrap gap-2 text-sm">
+    return <AdminLayout title="Ajustes de puntos JP y registros de Partners">
+        <p className="mb-6 text-sm text-muted-foreground">Los puntos JP y los registros monetarios CASH son unidades separadas. Las comisiones de afiliados se administran en CLUB.</p><div className="mb-8 flex flex-wrap gap-2 text-sm">
             {['conversions', 'rewards', 'payouts', 'attribution'].map((type) => <Link key={type} className="rounded border px-3 py-2" href={`/admin/exports/${type}`}>CSV {type}</Link>)}
         </div>
         <Form method="get" action="/admin/adjustments" className="mb-6 flex flex-wrap gap-2"><Input name="from" type="date" defaultValue={filters.from} /><Input name="to" type="date" defaultValue={filters.to} /><select name="type" defaultValue={filters.type ?? ''} className="rounded border px-2"><option value="">Todos los tipos</option><option value="ledger_credit">Crédito</option><option value="ledger_debit">Débito</option><option value="reward_status_correction">Estado</option><option value="attribution_correction">Atribución</option></select><Button>Filtrar</Button></Form>

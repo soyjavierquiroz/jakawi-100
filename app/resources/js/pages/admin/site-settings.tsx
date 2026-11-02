@@ -3,7 +3,7 @@ import AdminLayout from './layout';
 
 export default function SiteSettings({ showDemoBanner }: { showDemoBanner: boolean }) {
     const form = useForm({ show_demo_banner: showDemoBanner });
-    return <AdminLayout title="Ajustes">
+    return <AdminLayout title="Configuración editorial">
         <form className="max-w-xl rounded-[var(--radius-card)] border border-border bg-surface p-5" onSubmit={event => { event.preventDefault(); form.put('/admin/settings', { preserveScroll: true }); }}>
             <label className="flex min-h-11 cursor-pointer items-center justify-between gap-5 font-semibold">
                 Mostrar franja superior de DEMO

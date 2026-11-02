@@ -1,0 +1,147 @@
+[
+  {
+    "label": "Miembros y pagos",
+    "links": [
+      [
+        "/admin/memberships",
+        "Membresías"
+      ],
+      [
+        "/admin/conciliacion-membresias",
+        "Pagos y conciliación"
+      ]
+    ],
+    "secondary": [
+      {
+        "label": "Ventas asistidas",
+        "description": "Herramientas disponibles · sin uso registrado actualmente.",
+        "links": [
+          [
+            "/admin/sales",
+            "Ventas en efectivo"
+          ],
+          [
+            "/admin/solicitudes-membresia",
+            "Solicitudes asistidas"
+          ],
+          [
+            "/admin/promoters",
+            "Operadores de ventas"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "label": "Partners y catálogo",
+    "links": [
+      [
+        "/admin/partners",
+        "Partners"
+      ],
+      [
+        "/admin/solicitudes-partner",
+        "Solicitudes Partner"
+      ],
+      [
+        "/admin/locations",
+        "Sucursales y lugares"
+      ],
+      [
+        "/admin/benefits",
+        "Beneficios"
+      ],
+      [
+        "/admin/experiences",
+        "Experiencias"
+      ],
+      [
+        "/admin/redemptions",
+        "Canjes"
+      ],
+      [
+        "/admin/review",
+        "Revisión editorial"
+      ]
+    ],
+    "secondary": [
+      {
+        "label": "Herramientas secundarias",
+        "description": "Retos sociales: sin operación activa actualmente.",
+        "links": [
+          [
+            "/admin/retos",
+            "Retos sociales"
+          ],
+          [
+            "/admin/desbloqueos",
+            "Desbloqueos"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "label": "Marketing y territorio",
+    "links": [
+      [
+        "/admin/landings",
+        "Marketing Landings"
+      ],
+      [
+        "/admin/attribution",
+        "Atribución comercial"
+      ]
+    ],
+    "secondary": [
+      {
+        "label": "Ciudades",
+        "links": [
+          [
+            "/admin/ciudades",
+            "Gestionar ciudades"
+          ]
+        ],
+        "secondary": [
+          {
+            "label": "Herramientas de expansión",
+            "links": [
+              [
+                "/admin/expansion",
+                "Expansión"
+              ]
+            ]
+          }
+        ],
+        "expanded": true
+      }
+    ]
+  },
+  {
+    "label": "Configuración avanzada",
+    "description": "JP son puntos, no dinero. Los registros CASH de Partners se mantienen separados; las comisiones de afiliados se administran en CLUB.",
+    "links": [
+      [
+        "/admin/reward-rules",
+        "Reglas de recompensas JP y Partners"
+      ],
+      [
+        "/admin/adjustments",
+        "Ajustes de puntos JP y registros de Partners"
+      ],
+      [
+        "/admin/campaigns",
+        "Campañas operativas"
+      ],
+      [
+        "/admin/settings",
+        "Configuración editorial"
+      ],
+      [
+        "/admin/payouts",
+        "Pagos a Partners · histórico/incompleto"
+      ]
+    ],
+    "secondary": []
+  }
+]
