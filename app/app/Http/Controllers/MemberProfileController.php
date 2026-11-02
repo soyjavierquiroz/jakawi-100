@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Concerns\ProfileValidationRules;
+use App\Models\Partner;
 use App\Models\UserProfile;
+use App\Services\Commercial\MembershipAcquisition;
 use App\Services\MediaUploadService;
+use App\Services\MediaUrl;
+use App\Services\MembershipStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,26 +18,29 @@ use Inertia\Response;
 
 class MemberProfileController extends Controller
 {
+    use ProfileValidationRules;
+
     public function show(Request $request): Response|RedirectResponse
     {
-        if ($request->user()->isPartnerOnly()) {
-            return to_route('partner.index');
-        }
-
         $profile = $request->user()->profile;
 
         return Inertia::render('member-profile', [
-            'user' => $request->user()->only('name', 'email'),
+            'user' => $request->user()->only('name', 'email', 'email_verified_at', 'marketing_opt_in'),
+            'membershipStatus' => app(MembershipStatus::class)->for($request->user()),
+            'acquisitionOrigin' => $this->origin($request),
             'profile' => $this->serialize($profile),
             'options' => config('jakawi.member_profile'),
+            'status' => $request->session()->get('status'),
         ]);
     }
 
     public function update(Request $request): RedirectResponse
     {
-        abort_if($request->user()->isPartnerOnly(), 403);
-
         $options = config('jakawi.member_profile');
+        $identity = $request->validate([
+            ...array_intersect_key($this->profileRules($request->user()->id), $request->only('name', 'email')),
+            'marketing_opt_in' => ['sometimes', 'boolean'],
+        ]);
         $data = $request->validate([
             'city' => ['nullable', 'string', Rule::in($options['cities'])],
             'interests' => ['nullable', 'array', 'max:10'],
@@ -56,13 +64,38 @@ class MemberProfileController extends Controller
         unset($data['avatar']);
         $media = app(MediaUploadService::class);
         $data['avatar_path'] = $media->fromRequest($request, 'avatar', 'avatars', $request->user()->id, 'avatar', $profile->avatar_path);
-        DB::transaction(function () use ($profile, $data): void {
+        DB::transaction(function () use ($profile, $data, $identity, $request): void {
+            $user = $request->user();
+            $user->fill($identity);
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+            if ($user->isDirty('marketing_opt_in')) {
+                $user->marketing_opt_in_at = now();
+                $user->marketing_opt_in_source = 'profile';
+            }
+            if ($user->isDirty()) {
+                $user->save();
+            }
             $profile->fill($data);
-            if ($profile->completionPercentage() === 100 && $profile->profile_completed_at === null) $profile->profile_completed_at = now();
+            if ($profile->completionPercentage() === 100 && $profile->profile_completed_at === null) {
+                $profile->profile_completed_at = now();
+            }
             $profile->save();
         });
 
-        return to_route('member.profile.show')->with('success', 'Tu perfil JAKAWI fue guardado.');
+        return to_route('consumer.profile')->with('success', 'Tu perfil JAKAWI fue guardado.');
+    }
+
+    private function origin(Request $request): ?array
+    {
+        $origin = app(MembershipAcquisition::class)->original($request->user());
+        if (($origin['kind'] ?? null) !== 'partner') {
+            return null;
+        }
+        $partner = Partner::find($origin['partner_id']);
+
+        return $partner ? ['kind' => 'partner', 'name' => $partner->name] : null;
     }
 
     /** @return array<string, mixed> */
@@ -70,7 +103,7 @@ class MemberProfileController extends Controller
     {
         return [
             'city' => $profile?->city,
-            'avatar_url' => app(\App\Services\MediaUrl::class)->url($profile?->avatar_path, 'avatar'),
+            'avatar_url' => app(MediaUrl::class)->url($profile?->avatar_path, 'avatar'),
             'interests' => $profile?->interests ?? [],
             'social_contexts' => $profile?->social_contexts ?? [],
             'preferred_days' => $profile?->preferred_days ?? [],

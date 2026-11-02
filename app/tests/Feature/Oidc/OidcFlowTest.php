@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use League\OAuth2\Server\CryptTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -129,6 +130,19 @@ class OidcFlowTest extends TestCase
         $this->assertDatabaseCount('identity_links', 0);
     }
 
+    public function test_free_unverified_com_account_can_complete_oidc_without_checkout(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $this->actingAs($user);
+        $claims = $this->claims($this->exchange($this->authorize())->assertOk()->json('id_token'));
+        $this->assertSame($user->global_subject_id, $claims['sub']);
+        $this->assertFalse($claims['email_verified']);
+        $this->assertNull($user->fresh()->email_verified_at);
+        $this->assertDatabaseCount('memberships', 0);
+        $this->assertDatabaseCount('membership_bank_payments', 0);
+        $this->assertDatabaseCount('identity_links', 0);
+    }
+
     public function test_existing_com_session_needs_no_password_and_basic_exchange_works(): void
     {
         $user = User::factory()->create();
@@ -206,7 +220,7 @@ class OidcFlowTest extends TestCase
         $this->exchange($code, ['code_verifier' => ''])->assertStatus(400);
         $crypt = new class
         {
-            use \League\OAuth2\Server\CryptTrait;
+            use CryptTrait;
 
             public function expire(string $code): string
             {

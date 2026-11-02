@@ -25,7 +25,7 @@ class ProfileUpdateTest extends TestCase
             ->actingAs($user)
             ->get(route('profile.edit'));
 
-        $response->assertOk();
+        $response->assertRedirect('/perfil');
     }
 
     public function test_profile_information_can_be_updated()
@@ -41,7 +41,7 @@ class ProfileUpdateTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('profile.edit'));
+            ->assertRedirect('/perfil');
 
         $user->refresh();
 
@@ -60,7 +60,7 @@ class ProfileUpdateTest extends TestCase
                 'email' => $user->email,
                 'is_admin' => true,
             ])
-            ->assertRedirect(route('profile.edit'));
+            ->assertRedirect('/perfil');
 
         $this->assertFalse($user->refresh()->is_admin);
     }
@@ -78,7 +78,7 @@ class ProfileUpdateTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('profile.edit'));
+            ->assertRedirect('/perfil');
 
         $this->assertNotNull($user->refresh()->email_verified_at);
     }

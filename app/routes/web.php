@@ -150,11 +150,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/membresia/solicitar', [MembershipOfferController::class, 'request'])->middleware('throttle:20,1')->name('membership.request');
     Route::post('/membresia/volver/{purchaseRequest}', [MembershipOfferController::class, 'returnToIntent'])->name('membership.return');
     Route::get('dashboard', fn () => to_route('home'))->name('dashboard');
-    Route::get('mi-jakawi', [MembershipController::class, 'show'])->name('mi-jakawi');
+    Route::get('mi-jakawi', [MembershipController::class, 'show'])->withoutMiddleware('verified')->name('mi-jakawi');
     Route::post('mi-jakawi/referral-shared', [MembershipController::class, 'shared'])->name('mi-jakawi.referral-shared');
-    Route::get('perfil', [MemberProfileController::class, 'show'])->name('consumer.profile');
-    Route::get('mi-jakawi/perfil', [MemberProfileController::class, 'show'])->name('member.profile.show');
-    Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->name('member.profile.update');
+    Route::get('perfil', [MemberProfileController::class, 'show'])->withoutMiddleware('verified')->name('consumer.profile');
+    Route::put('perfil', [MemberProfileController::class, 'update'])->withoutMiddleware('verified')->name('consumer.profile.update');
+    Route::redirect('mi-jakawi/perfil', '/perfil')->withoutMiddleware('verified')->name('member.profile.show');
+    Route::put('mi-jakawi/perfil', [MemberProfileController::class, 'update'])->withoutMiddleware('verified')->name('member.profile.update');
     Route::post('/experiencias/{experience:slug}/reservas', [ExperienceReservationController::class, 'store'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureContextualActionVerified::class)->name('experiences.reservations.store');
     Route::post('/reservas/{reservation:public_id}/cancelar', [ExperienceReservationController::class, 'cancel'])->name('experiences.reservations.cancel');
     Route::get('/beneficios/{benefit:slug}/canjear', [RedemptionController::class, 'intent'])->withoutMiddleware('verified')->middleware(\App\Http\Middleware\EnsureBenefitRedemptionVerified::class)->name('redemptions.intent');

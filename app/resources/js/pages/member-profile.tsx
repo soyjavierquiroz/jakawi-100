@@ -1,3 +1,5 @@
+import MembershipStatus, { type MembershipStatusData } from '@/components/membership-status';
+import DeleteUser from '@/components/delete-user';
 import { Head, router } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { AvatarCropDialog } from '@/components/media/avatar-crop-dialog';
@@ -82,12 +84,21 @@ export default function MemberProfile({
     user,
     profile,
     options,
+    membershipStatus,
+    acquisitionOrigin,
+    status,
 }: {
-    user: { name: string; email: string };
+    user: { name: string; email: string; email_verified_at: string | null; marketing_opt_in: boolean | null };
+    membershipStatus: MembershipStatusData;
+    acquisitionOrigin: { kind: string; name: string } | null;
+    status?: string;
     profile: Profile;
     options: Options;
 }) {
     const [form, setForm] = useState({
+        name: user.name,
+        email: user.email,
+        marketing_opt_in: user.marketing_opt_in === true,
         city: profile.city ?? 'Cochabamba',
         interests: profile.interests,
         social_contexts: profile.social_contexts,
@@ -125,7 +136,7 @@ export default function MemberProfile({
     const submit = (event: FormEvent) => {
         event.preventDefault();
         router.post(
-            '/mi-jakawi/perfil',
+            '/perfil',
             { ...form, _method: 'put' },
             {
                 forceFormData: true,
@@ -201,6 +212,8 @@ export default function MemberProfile({
                             experiencias más relevantes.
                         </p>
                     </header>
+                    <MembershipStatus status={membershipStatus} />
+                    {acquisitionOrigin && <p className="text-sm text-muted-foreground">Origen de tu registro: {acquisitionOrigin.name}</p>}
                     <section className="rounded-3xl border border-border bg-surface-elevated p-5 sm:p-6">
                         <div className="flex items-center gap-4">
                             {avatarPreview || profile.avatar_url ? (
@@ -238,6 +251,20 @@ export default function MemberProfile({
                                     </p>
                                 ) : null}
                             </div>
+                        </div>
+                        <div className="mt-5 grid gap-4">
+                            <label className="text-sm font-semibold">Nombre
+                                <input name="name" autoComplete="name" required value={form.name} onChange={e => setForm(current => ({ ...current, name: e.target.value }))} className="mt-2 block min-h-12 w-full rounded-xl border border-border bg-surface-muted px-3" />
+                                {errors.name && <span className="text-destructive">{errors.name}</span>}
+                            </label>
+                            <label className="text-sm font-semibold">Correo electrónico
+                                <input name="email" type="email" autoComplete="email" required value={form.email} onChange={e => setForm(current => ({ ...current, email: e.target.value }))} className="mt-2 block min-h-12 w-full rounded-xl border border-border bg-surface-muted px-3" />
+                                {errors.email && <span className="text-destructive">{errors.email}</span>}
+                            </label>
+                            <p className="text-sm text-muted-foreground">{user.email_verified_at ? 'Correo verificado.' : 'Correo pendiente de verificación. Algunas acciones pueden requerir verificarlo.'}</p>
+                            {!user.email_verified_at && <button type="button" onClick={() => router.post('/email/verification-notification')} className="min-h-11 text-left text-sm font-semibold text-brand underline underline-offset-4">Enviar enlace de verificación</button>}
+                            {status === 'verification-link-sent' && <p className="text-sm text-success">Enlace de verificación enviado.</p>}
+                            <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={form.marketing_opt_in} onChange={e => setForm(current => ({ ...current, marketing_opt_in: e.target.checked }))} />Quiero recibir novedades, beneficios y experiencias de JAKAWI por email.</label>
                         </div>
                         <label className="mt-6 block border-t border-border pt-5 text-sm font-semibold">
                             Ciudad
@@ -362,6 +389,10 @@ export default function MemberProfile({
                         Cerrar sesión
                     </button>
                 </form>
+                <section className="mx-auto mt-8 w-full max-w-3xl space-y-6">
+                    <a href="/settings/security" className="inline-flex min-h-11 items-center text-sm font-semibold text-brand underline underline-offset-4">Seguridad de tu cuenta</a>
+                    <DeleteUser />
+                </section>
             </main>
             <input
                 ref={galleryInput}

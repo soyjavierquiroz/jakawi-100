@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Benefit;
 use App\Models\ChallengeParticipation;
-use App\Models\Membership;
 use App\Models\Conversion;
+use App\Models\Membership;
+use App\Models\MembershipBankPayment;
 use App\Services\AnalyticsTracker;
-use App\Services\ReferralCodeService;
+use App\Services\CityCommunity;
 use App\Services\JpBalanceService;
+use App\Services\MembershipStatus;
+use App\Services\ReferralCodeService;
+use App\Support\ListingPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,12 +26,7 @@ class MembershipController extends Controller
             return to_route('partner.index');
         }
 
-        $membership = $request->user()->activeMembership()->first()
-            ?? $request->user()->memberships()
-                ->where('status', Membership::STATUS_ACTIVE)
-                ->expired()
-                ->latest('ends_at')
-                ->first();
+        $membership = app(MembershipStatus::class)->membershipFor($request->user());
         $confirmedQuery = $membership?->confirmedRedemptions();
         $confirmedCount = $confirmedQuery ? (clone $confirmedQuery)->count() : 0;
         $confirmed = $confirmedQuery?->latest('confirmed_at')->orderByDesc('id')->limit(8)->get() ?? collect();
@@ -58,22 +57,26 @@ class MembershipController extends Controller
         $isActiveMember = $user->hasActiveMembership();
         $jpBalance = app(JpBalanceService::class)->for($user);
 
-        $challengePage = \App\Support\ListingPage::make(ChallengeParticipation::where('user_id',$user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type','socialEntries:id,participation_id,likes,views,comments,validation_status','grant:id,participation_id,status,reward_type,jp_amount,benefit_id','grant.benefit:id,title'])->latest(), 50);
+        $challengePage = ListingPage::make(ChallengeParticipation::where('user_id', $user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type', 'socialEntries:id,participation_id,likes,views,comments,validation_status', 'grant:id,participation_id,status,reward_type,jp_amount,benefit_id', 'grant.benefit:id,title'])->latest(), 50);
+
         return Inertia::render('mi-jakawi', [
-            'community' => app(\App\Services\CityCommunity::class)->data($request, 'mi-jakawi'),
+            'community' => app(CityCommunity::class)->data($request, 'mi-jakawi'),
             'challengePagination' => array_diff_key($challengePage->toArray(), ['data' => true]),
             'challenges' => $challengePage->getCollection()->map(function ($p) {
-                $c=$p->challenge; $metric=$c->qualification_metric;
-                return ['title'=>$c->title,'slug'=>$c->slug,'qualification_status'=>$p->qualification_status,'selection_status'=>$p->selection_status,
-                    'progress'=>$metric ? $p->socialEntries->filter(fn ($e) => $e->validation_status==='valid')->max($metric) ?? 0 : null,
-                    'target'=>$c->qualification_target,'metric'=>$metric,
-                    'reward'=>$p->grant ? ($p->grant->reward_type==='JP' ? '+'.$p->grant->jp_amount.' JP' : $p->grant->benefit?->title ?? $c->manual_prize_description) : null,
-                    'grant_status'=>$p->grant?->status];
+                $c = $p->challenge;
+                $metric = $c->qualification_metric;
+
+                return ['title' => $c->title, 'slug' => $c->slug, 'qualification_status' => $p->qualification_status, 'selection_status' => $p->selection_status,
+                    'progress' => $metric ? $p->socialEntries->filter(fn ($e) => $e->validation_status === 'valid')->max($metric) ?? 0 : null,
+                    'target' => $c->qualification_target, 'metric' => $metric,
+                    'reward' => $p->grant ? ($p->grant->reward_type === 'JP' ? '+'.$p->grant->jp_amount.' JP' : $p->grant->benefit?->title ?? $c->manual_prize_description) : null,
+                    'grant_status' => $p->grant?->status];
             }),
-            'pendingReceipts' => \App\Models\MembershipBankPayment::where('user_id', $user->id)->receiptPending()->orderBy('id')->get()->map(fn ($payment) => [
+            'pendingReceipts' => MembershipBankPayment::where('user_id', $user->id)->receiptPending()->orderBy('id')->get()->map(fn ($payment) => [
                 'reference' => $payment->reference,
                 'upload_url' => $payment->origin === 'CLUB' ? 'https://jakawi.club/activar' : '/membresia/checkout#adjuntar-comprobante',
             ]),
+            'membershipStatus' => app(MembershipStatus::class)->for($user),
             'membership' => $membership ? $this->serializeMembership($membership) : null,
             'membershipConfig' => [
                 'price_bob' => config('jakawi.membership.price_bob'),
@@ -115,13 +118,12 @@ class MembershipController extends Controller
             'status' => $membership->status,
             'is_active' => $membership->isActive(),
             'starts_at' => $membership->starts_at?->toDateTimeString(),
-            'ends_at' => $membership->ends_at?->toDateTimeString(),
-            'days_remaining' => max(0, now()->startOfDay()->diffInDays($membership->ends_at->copy()->startOfDay(), false)),
+            'ends_at' => $membership->effectiveEndsAt()?->toISOString(),
+            'days_remaining' => ($end = $membership->effectiveEndsAt()) ? max(0, now()->diffInDays($end, false)) : null,
             'amount_paid' => $membership->amount_paid,
             'confirmed_savings' => $membership->confirmedSavings(),
             'remaining_to_payback' => $membership->remainingToPayback(),
             'has_paid_for_itself' => $membership->hasPaidForItself(),
         ];
     }
-
 }

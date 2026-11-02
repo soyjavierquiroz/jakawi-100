@@ -20,18 +20,18 @@ class MemberProfileTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)->get('/mi-jakawi/perfil')->assertOk()
+        $this->actingAs($user)->get('/perfil')->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('member-profile')->where('profile.completion_percentage', 0));
         $this->assertDatabaseMissing('user_profiles', ['user_id' => $user->id]);
     }
 
-    public function test_partner_only_user_is_kept_out_of_member_profile(): void
+    public function test_partner_also_uses_the_official_personal_profile(): void
     {
         $user = User::factory()->create();
         $user->partners()->attach(Partner::factory()->create(), ['role' => 'manager']);
 
-        $this->actingAs($user)->get('/mi-jakawi/perfil')->assertRedirect('/partner');
-        $this->actingAs($user)->put('/mi-jakawi/perfil', [])->assertForbidden();
+        $this->actingAs($user)->get('/perfil')->assertOk();
+        $this->actingAs($user)->put('/perfil', [])->assertRedirect('/perfil');
     }
 
     public function test_preferences_are_whitelisted_deduplicated_and_completed_once(): void
@@ -39,14 +39,14 @@ class MemberProfileTest extends TestCase
         $user = User::factory()->create();
         $payload = ['city' => 'Cochabamba', 'interests' => ['food', 'food', 'cafe'], 'social_contexts' => ['amigos'], 'preferred_days' => ['fin_de_semana'], 'preferred_times' => ['noche']];
 
-        $this->actingAs($user)->put('/mi-jakawi/perfil', $payload)->assertRedirect('/mi-jakawi/perfil');
+        $this->actingAs($user)->put('/perfil', $payload)->assertRedirect('/perfil');
         $profile = UserProfile::where('user_id', $user->id)->firstOrFail();
         $this->assertSame(['food', 'cafe'], $profile->interests);
         $this->assertSame(100, $profile->completionPercentage());
         $completedAt = $profile->profile_completed_at;
         $this->assertNotNull($completedAt);
 
-        $this->actingAs($user)->put('/mi-jakawi/perfil', ['interests' => [], 'social_contexts' => ['amigos'], 'preferred_days' => ['fin_de_semana'], 'preferred_times' => ['noche']])->assertRedirect();
+        $this->actingAs($user)->put('/perfil', ['interests' => [], 'social_contexts' => ['amigos'], 'preferred_days' => ['fin_de_semana'], 'preferred_times' => ['noche']])->assertRedirect();
         $profile->refresh();
         $this->assertSame(60, $profile->completionPercentage());
         $this->assertTrue($completedAt->equalTo($profile->profile_completed_at));
@@ -57,7 +57,7 @@ class MemberProfileTest extends TestCase
         $this->post('/register', ['name' => 'New User', 'email' => 'new@example.test', 'whatsapp' => '71234567'])->assertRedirect();
         $user = User::whereEmail('new@example.test')->firstOrFail();
 
-        $this->put('/mi-jakawi/perfil', ['interests' => ['food']])->assertRedirect();
+        $this->put('/perfil', ['interests' => ['food']])->assertRedirect();
 
         $this->assertSame('+59171234567', $user->profile()->firstOrFail()->whatsapp);
     }
@@ -66,15 +66,15 @@ class MemberProfileTest extends TestCase
     {
         $user = User::factory()->create();
         foreach ([['interests' => ['wellness']], ['social_contexts' => ['familia']], ['preferred_days' => ['entre_semana']], ['preferred_times' => ['tarde']]] as $payload) {
-            $this->actingAs($user)->put('/mi-jakawi/perfil', $payload)->assertRedirect();
+            $this->actingAs($user)->put('/perfil', $payload)->assertRedirect();
         }
         $this->assertSame(['wellness'], $user->profile->interests);
         $this->assertSame(['familia'], $user->profile->social_contexts);
         $this->assertSame(['entre_semana'], $user->profile->preferred_days);
         $this->assertSame(['tarde'], $user->profile->preferred_times);
 
-        $this->actingAs($user)->from('/mi-jakawi/perfil')->put('/mi-jakawi/perfil', ['interests' => ['unknown']])
-            ->assertRedirect('/mi-jakawi/perfil')->assertSessionHasErrors('interests.0');
+        $this->actingAs($user)->from('/perfil')->put('/perfil', ['interests' => ['unknown']])
+            ->assertRedirect('/perfil')->assertSessionHasErrors('interests.0');
     }
 
     public function test_user_cannot_update_another_users_profile_and_partner_pages_do_not_receive_preferences(): void
@@ -86,7 +86,7 @@ class MemberProfileTest extends TestCase
         $userA->partners()->attach($partner, ['role' => 'manager']);
         app(MembershipService::class)->activate($userA, User::factory()->create());
 
-        $this->actingAs($userA)->put('/mi-jakawi/perfil', ['interests' => ['cafe']])->assertRedirect();
+        $this->actingAs($userA)->put('/perfil', ['interests' => ['cafe']])->assertRedirect();
         $this->assertSame(['food'], $userB->fresh()->profile->interests);
         $this->actingAs($userA)->get('/partner/'.$partner->slug)->assertOk()
             ->assertInertia(fn (Assert $page) => $page->missing('profile')->missing('preferences')->missing('interests'));
@@ -100,9 +100,9 @@ class MemberProfileTest extends TestCase
         $user->profile()->create(['city' => 'Cochabamba', 'interests' => ['cafe']]);
 
         foreach (['avatar.jpg', 'avatar.png', 'avatar.webp'] as $name) {
-            $this->actingAs($user)->put('/mi-jakawi/perfil', [
+            $this->actingAs($user)->put('/perfil', [
                 'avatar' => $this->image($name), 'city' => 'Cochabamba', 'interests' => ['cafe'],
-            ])->assertRedirect('/mi-jakawi/perfil');
+            ])->assertRedirect('/perfil');
 
             $path = $user->fresh()->profile->avatar_path;
             $this->assertMatchesRegularExpression('#^avatars/'.$user->id.'/avatar/[0-9a-f-]+\\.(jpg|png|webp)$#', $path);
@@ -121,13 +121,13 @@ class MemberProfileTest extends TestCase
         Storage::disk('public')->put($old, 'old');
         $user->profile()->create(['avatar_path' => $old, 'interests' => ['food']]);
 
-        $this->actingAs($user)->from('/mi-jakawi/perfil')->put('/mi-jakawi/perfil', [
+        $this->actingAs($user)->from('/perfil')->put('/perfil', [
             'avatar' => UploadedFile::fake()->createWithContent('avatar.svg', '<svg xmlns="http://www.w3.org/2000/svg"/>'),
-        ])->assertRedirect('/mi-jakawi/perfil')->assertSessionHasErrors('avatar');
+        ])->assertRedirect('/perfil')->assertSessionHasErrors('avatar');
         $this->assertSame($old, $user->fresh()->profile->avatar_path);
         Storage::disk('public')->assertExists($old);
 
-        $this->actingAs($user)->put('/mi-jakawi/perfil', ['avatar' => $this->image('new.png')])->assertRedirect();
+        $this->actingAs($user)->put('/perfil', ['avatar' => $this->image('new.png')])->assertRedirect();
         $this->assertNotSame($old, $user->fresh()->profile->avatar_path);
         Storage::disk('public')->assertExists($old);
         Storage::disk('public')->assertExists($user->fresh()->profile->avatar_path);
@@ -137,9 +137,12 @@ class MemberProfileTest extends TestCase
     {
         $image = imagecreatetruecolor(10, 10);
         ob_start();
-        match (pathinfo($name, PATHINFO_EXTENSION)) { 'jpg' => imagejpeg($image), 'png' => imagepng($image), 'webp' => imagewebp($image) };
+        match (pathinfo($name, PATHINFO_EXTENSION)) {
+            'jpg' => imagejpeg($image), 'png' => imagepng($image), 'webp' => imagewebp($image)
+        };
         $content = ob_get_clean();
         imagedestroy($image);
+
         return UploadedFile::fake()->createWithContent($name, $content);
     }
 }
