@@ -12,7 +12,7 @@ export default function SiteSettings({ showDemoBanner }: { showDemoBanner: boole
             <p className="mt-3 text-sm text-muted-foreground">Controla la franja informativa en todo el sitio. El modo DEMO, las restricciones comerciales y la política de publicación se mantienen.</p>
             {form.errors.show_demo_banner && <p role="alert" className="mt-3 text-sm text-destructive">{form.errors.show_demo_banner}</p>}
             <button disabled={form.processing} className="mt-5 min-h-11 rounded-[var(--radius-control)] bg-brand px-5 font-semibold text-brand-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:opacity-50">Guardar ajustes</button>
-            {form.recentlySuccessful && <p role="status" className="mt-3 text-sm">Ajustes guardados.</p>}
+            {form.recentlySuccessful && <p role="status" className="admin-notice admin-status-success mt-3 text-sm">Ajustes guardados.</p>}
         </form>
     </AdminLayout>;
 }
