@@ -119,7 +119,7 @@ The dialog scope follows Radix content rendered outside the shell. */
 }
 .admin-shell .admin-nav a[aria-current="page"] {
   background: var(--brand-subtle);
-  box-shadow: inset 3px 0 var(--brand);
+  box-shadow: inset 3px 0 var(--admin-action-text);
   font-weight: 750;
 }
 .admin-shell .admin-nav .admin-nav-home {
@@ -621,7 +621,7 @@ no page-owned style block. */
     font-size: 28px;
   }
   .filters a[aria-current="page"] {
-    border: 2px solid var(--brand);
+    border: 2px solid var(--admin-action-text);
     background: var(--brand-subtle);
   }
   .search {
