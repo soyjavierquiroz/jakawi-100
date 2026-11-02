@@ -833,7 +833,7 @@ no page-owned style block. */
     background-color 0.15s,
     border-color 0.15s;
 }
-.admin-shell:not(.admin-blade) .admin-content button:not([class*="bg-"]):not([role="checkbox"]):not([role="switch"]) {
+.admin-shell:not(.admin-blade) .admin-content button:where(:not([class*="bg-"]):not([role="checkbox"]):not([role="switch"])) {
   border: 1px solid var(--border-strong);
   background: var(--surface);
 }
@@ -1048,4 +1048,12 @@ no page-owned style block. */
   width: 100%;
   min-width: 0;
   overflow-x: auto;
+}
+
+/* Preserve the existing selected/destructive button variants. */
+.admin-shell:not(.admin-blade) .admin-content button.border-brand {
+  border-color: var(--admin-action-text);
+}
+.admin-shell:not(.admin-blade) .admin-content button.border-destructive {
+  border-color: var(--danger);
 }
