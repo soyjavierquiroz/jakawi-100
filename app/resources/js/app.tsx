@@ -19,9 +19,6 @@ void createInertiaApp({
     layout: (name) => {
         const resolveLayout = () => {
         switch (true) {
-            // This specialized form retains its existing shell and back links.
-            case name === 'admin/sales/create':
-                return AppLayout;
             case name.startsWith('admin/'):
                 return null;
             case name === 'coming-soon':
