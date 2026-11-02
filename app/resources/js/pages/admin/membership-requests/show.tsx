@@ -1,4 +1,4 @@
-import { AdminStatus } from '@/pages/admin/status';
+import { AdminStatus } from '@/components/admin-status';
 import { Link } from '@inertiajs/react';
 import AdminLayout from '../layout';
 type Request = { id: number; status: string; requested_at: string; user: { id: number; name: string; email: string }; whatsapp: string | null; journey: string | null; action: string | null; resource_id: number | null; campaign_key: string | null; utm_source: string | null; utm_campaign: string | null };

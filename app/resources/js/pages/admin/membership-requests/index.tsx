@@ -1,4 +1,4 @@
-import { AdminStatus } from '@/pages/admin/status';
+import { AdminStatus } from '@/components/admin-status';
 import { ListFilters } from '@/components/list-filters';
 import { ListPagination, type ListPage } from '@/components/list-pagination';
 import { Link } from '@inertiajs/react';

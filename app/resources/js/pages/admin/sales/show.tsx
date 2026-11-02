@@ -1,4 +1,4 @@
-import { AdminStatus } from '@/pages/admin/status';
+import { AdminStatus } from '@/components/admin-status';
 import { Head, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AdminLayout from '../layout';
