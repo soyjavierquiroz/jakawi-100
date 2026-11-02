@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import SaleCreate from '../../promoter/sales/create';
+import AdminLayout from '../layout';
 
 type PurchaseRequest = { id: number; user: { id: number; name: string; email: string } };
 
@@ -12,12 +13,11 @@ export default function AdminSaleCreate(props: { purchaseRequest?: PurchaseReque
         manual_reference: '',
         idempotency_key: crypto.randomUUID(),
     });
-    if (!purchaseRequest) return <SaleCreate {...props} endpoint="/admin/sales" back="/admin/sales" />;
+    if (!purchaseRequest) return <AdminLayout title="Nueva venta"><SaleCreate {...props} endpoint="/admin/sales" back="/admin/sales" embedded /></AdminLayout>;
     const submit = (event: FormEvent) => { event.preventDefault(); post('/admin/sales'); };
-    return <main className="mx-auto min-h-screen max-w-xl bg-background p-5 text-foreground">
+    return <AdminLayout title="Registrar venta asistida"><div className="max-w-xl">
         <Head title="Registrar venta asistida" />
         <Link href={`/admin/solicitudes-membresia/${purchaseRequest.id}`} className="text-sm text-brand">← Solicitud</Link>
-        <h1 className="mt-5 text-3xl font-extrabold">Registrar venta asistida</h1>
         <p className="mt-3">{purchaseRequest.user.name} · {purchaseRequest.user.email}</p>
         <p className="mt-2 text-sm text-muted-foreground">Bs{props.membership.price_bob} · {props.membership.duration_days} días. Registra la venta solo después de confirmar el cobro por el canal asistido.</p>
         <form onSubmit={submit} className="mt-6 grid gap-4">
@@ -28,5 +28,5 @@ export default function AdminSaleCreate(props: { purchaseRequest?: PurchaseReque
             {errors.membership_purchase_request_id ? <p className="text-sm text-destructive">{errors.membership_purchase_request_id}</p> : null}
             <button disabled={processing} className="min-h-12 rounded-xl bg-brand px-4 font-bold text-brand-foreground disabled:opacity-50">Confirmar y activar</button>
         </form>
-    </main>;
+    </div></AdminLayout>;
 }
