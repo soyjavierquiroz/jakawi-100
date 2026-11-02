@@ -796,7 +796,7 @@ no page-owned style block. */
   font-family: inherit;
 }
 :is(.admin-shell, .admin-dialog)
-  :is(
+  :where(
     input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]),
     select,
     textarea
