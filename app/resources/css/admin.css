@@ -17,10 +17,11 @@ The dialog scope follows Radix content rendered outside the shell. */
   --muted-foreground: var(--text-muted);
   --border: var(--palette-light-border);
   --border-strong: #99877a;
-  --brand-foreground: var(--ink);
+  --brand-foreground: #ffffff;
   --brand-subtle: color-mix(in srgb, var(--brand) 10%, var(--surface));
   --admin-action-text: #b52e26;
-  --admin-action-hover: #ed4b40;
+  --admin-action-solid: #d34035;
+  --admin-action-hover: #b52e26;
   --admin-success-text: #126344;
   --warning: var(--reward);
   --warning-foreground: var(--admin-warning-text);
@@ -35,8 +36,8 @@ The dialog scope follows Radix content rendered outside the shell. */
   --card-foreground: var(--foreground);
   --popover: var(--surface);
   --popover-foreground: var(--foreground);
-  --primary: var(--brand);
-  --primary-foreground: var(--ink);
+  --primary: var(--admin-action-solid);
+  --primary-foreground: #ffffff;
   --secondary: var(--surface-subtle);
   --secondary-foreground: var(--ink);
   --muted: var(--surface-subtle);
@@ -478,7 +479,7 @@ no page-owned style block. */
   button,
   .button {
     display: inline-block;
-    background: var(--brand);
+    background: var(--admin-action-solid);
     color: var(--brand-foreground);
     border: 0;
     padding: 12px 20px;
@@ -839,13 +840,13 @@ no page-owned style block. */
 }
 :is(.admin-shell, .admin-dialog)
   :is(.bg-brand, .bg-primary, .discovery-primary-action, .button:not(.secondary)) {
-  background: var(--brand);
-  color: var(--ink);
+  background: var(--admin-action-solid);
+  color: var(--brand-foreground);
 }
 :is(.admin-shell, .admin-dialog)
   :is(.bg-brand, .bg-primary, .discovery-primary-action, .button:not(.secondary)):hover {
   background: var(--admin-action-hover);
-  color: var(--ink);
+  color: var(--brand-foreground);
 }
 :is(.admin-shell, .admin-dialog)
   :is(button, .button, a[class*="border"]):not(:disabled):not([aria-disabled="true"]):hover {
@@ -1035,8 +1036,8 @@ no page-owned style block. */
 
 /* Native bank forms retain the same primary action treatment as React forms. */
 .admin-shell.admin-blade .admin-content button:not(.secondary) {
-  background: var(--brand);
-  color: var(--ink);
+  background: var(--admin-action-solid);
+  color: var(--brand-foreground);
 }
 .admin-shell.admin-blade .admin-content button:not(.secondary):hover {
   background: var(--admin-action-hover);
