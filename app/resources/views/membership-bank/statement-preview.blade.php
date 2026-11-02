@@ -1,4 +1,4 @@
-@extends('membership-bank.layout')
+@extends('membership-bank.admin-layout')
 @section('title','Validar extracto bancario')
 @section('content')
 <a href="/admin/extractos-bancarios">← Historial de extractos</a><h1>Previsualizar y validar movimientos</h1>
