@@ -833,7 +833,7 @@ no page-owned style block. */
     background-color 0.15s,
     border-color 0.15s;
 }
-.admin-shell .admin-content button:not([class*="bg-"]):not([role="checkbox"]):not([role="switch"]) {
+.admin-shell:not(.admin-blade) .admin-content button:not([class*="bg-"]):not([role="checkbox"]):not([role="switch"]) {
   border: 1px solid var(--border-strong);
   background: var(--surface);
 }
