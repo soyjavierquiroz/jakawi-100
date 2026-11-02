@@ -886,7 +886,7 @@ no page-owned style block. */
   border-color: var(--danger);
   box-shadow: 0 0 0 1px var(--danger);
 }
-.admin-shell .admin-page :is(section, article, details, a, form)[class~="border"] {
+.admin-shell .admin-page :is(section, article, details, a, form)[class~="border"]:not(.bg-brand):not(.bg-primary):not(.discovery-primary-action) {
   background-color: var(--surface);
 }
 .admin-shell .admin-content table {
