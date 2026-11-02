@@ -986,7 +986,7 @@ no page-owned style block. */
 .admin-shell .admin-content :is(h1, h2, h3) {
   color: var(--ink);
 }
-.admin-shell .admin-content > :is(h1, .toolbar h1) {
+.admin-shell .admin-content h1 {
   font-size: clamp(26px, 2.5vw, 34px);
   line-height: 1.2;
   letter-spacing: -0.8px;
@@ -1032,3 +1032,12 @@ no page-owned style block. */
 }
 
 .admin-dialog [data-slot="dialog-title"] { padding-right: 44px; }
+
+/* Native bank forms retain the same primary action treatment as React forms. */
+.admin-shell.admin-blade .admin-content button:not(.secondary) {
+  background: var(--brand);
+  color: var(--ink);
+}
+.admin-shell.admin-blade .admin-content button:not(.secondary):hover {
+  background: var(--admin-action-hover);
+}
