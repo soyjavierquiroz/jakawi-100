@@ -19,7 +19,7 @@ class AdminRealMembershipsTest extends TestCase
     {
         $admin = $this->admin();
         User::factory()->create(['name' => 'Sin membresía']);
-        $partner = Partner::create(['name' => 'Local', 'slug' => 'local', 'entity_type' => 'business', 'status' => 'published']);
+        $partner = Partner::factory()->published()->create(['name' => 'Local', 'slug' => 'local']);
         $operator = User::factory()->create(['name' => 'Operador sin membresía']);
         $operator->partners()->attach($partner, ['role' => 'owner']);
         $holder = User::factory()->create(['name' => 'Titular Partner']);
@@ -41,7 +41,7 @@ class AdminRealMembershipsTest extends TestCase
     public function test_confirmed_bank_and_cash_links_and_unconfirmed_historical_amount_are_honest(): void
     {
         $admin = $this->admin(); $bank = $this->membership($admin);
-        $payment = MembershipBankPayment::create(['reference' => (string) \Illuminate\Support\Str::uuid(), 'user_id' => $bank->user_id, 'membership_id' => $bank->id, 'status' => 'approved', 'amount' => 100, 'origin' => 'COM', 'checkout_event_id' => (string) \Illuminate\Support\Str::uuid()]);
+        $payment = MembershipBankPayment::create(['reference' => (string) \Illuminate\Support\Str::uuid(), 'user_id' => $bank->user_id, 'membership_id' => $bank->id, 'status' => 'approved', 'amount' => 100, 'origin' => 'COM', 'checkout_at' => now(), 'checkout_event_id' => (string) \Illuminate\Support\Str::uuid()]);
         $sale = app(MembershipPurchaseService::class)->confirmManualCash(User::factory()->create(), $admin, null, 'REC-TEST', (string) \Illuminate\Support\Str::uuid());
         $legacy = $this->membership($admin);
         $this->actingAs($admin)->get('/admin/memberships?origin=bank')->assertInertia(fn (Assert $p) => $p->has('memberships.data', 1)->where('memberships.data.0.confirmed_amount', '100.00')->where('memberships.data.0.payments.0.href', '/admin/conciliacion-membresias?pago='.$payment->id));
@@ -50,6 +50,11 @@ class AdminRealMembershipsTest extends TestCase
         $this->get('/admin/memberships/'.$legacy->id)->assertInertia(fn (Assert $p) => $p->where('membership.confirmed_amount', null)->where('membership.recorded_amount', '100.00')->has('membership.payments', 0));
         $payment->update(['status' => 'rejected']);
         $this->get('/admin/memberships/'.$bank->id)->assertInertia(fn (Assert $p) => $p->where('membership.confirmed_amount', null));
+        $payment->update(['status' => 'approved']);
+        $this->delete('/admin/memberships/'.$bank->id, ['reason' => 'Cancelación excepcional de prueba', 'confirm' => true, 'password' => 'password'])->assertRedirect();
+        $this->assertSame('approved', $payment->fresh()->status);
+        $this->assertSame($bank->id, $payment->fresh()->membership_id);
+        $this->assertTrue($bank->starts_at->equalTo($bank->fresh()->starts_at));
         $sale->update(['status' => 'refunded']);
         $this->get('/admin/memberships/'.$sale->membership_id)->assertInertia(fn (Assert $p) => $p->where('membership.confirmed_amount', null)->has('membership.payments', 1));
     }
@@ -58,6 +63,8 @@ class AdminRealMembershipsTest extends TestCase
     {
         $admin = $this->admin(); $m = $this->membership($admin, User::factory()->create(['name' => 'Compra CLUB test', 'email' => 'custody@purchases.invalid']));
         $this->actingAs($admin)->get('/admin/memberships/'.$m->id)->assertInertia(fn (Assert $p) => $p->where('membership.holder', 'Identidad pendiente de vinculación')->where('membership.email', null));
+        $this->post('/admin/memberships', ['user_id' => $m->user_id, 'amount_paid' => 0, 'payment_method' => 'other', 'payment_reference' => 'EX-TECH', 'reason' => 'Excepción técnica no permitida', 'confirm' => true, 'password' => 'password'])->assertStatus(422);
+        $this->assertSame(0, AuditLog::count());
     }
 
     public function test_exception_requires_confirmation_reason_password_and_is_audited_without_a_purchase(): void

@@ -11,8 +11,8 @@ export const action = 'inline-flex min-h-11 items-center justify-center rounded-
 export function MembershipNav() { return <nav aria-label="Gestión de membresías" className="flex flex-wrap gap-2"><a className={action} href="/admin/conciliacion-membresias">Pagos y conciliación</a><Link className={action} href="/admin/sales">Ventas en efectivo</Link></nav>; }
 
 export default function Index({ memberships, summary }: { memberships: ListPage & { data: MembershipRow[] }; summary: Record<string, number> }) {
-    return <AdminLayout title="Membresías"><Head title="Membresías" />
-        <div><p className="text-sm font-semibold text-brand">MIEMBROS Y PAGOS</p><h1 className="mt-1 text-3xl font-semibold">Membresías</h1><p className="mt-2 text-sm text-muted-foreground">Titulares, vigencia y cobros asociados. Las nuevas membresías se activan al conciliar un pago bancario o registrar una venta en efectivo.</p></div>
+    return <AdminLayout title="Membresías"><Head title="Membresías" /><div className="grid min-w-0 gap-5">
+        <div><p className="mt-2 text-sm text-muted-foreground">Titulares, vigencia y cobros asociados. Las nuevas membresías se activan al conciliar un pago bancario o registrar una venta en efectivo.</p></div>
         <MembershipNav />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">{[['total', 'Registradas'], ['active', 'Activas'], ['expired', 'Vencidas'], ['cancelled', 'Canceladas'], ['scheduled', 'Programadas']].map(([key, label]) => <div className="rounded-2xl border border-border bg-surface p-4" key={key}><p className="text-sm text-muted-foreground">{label}</p><p className="mt-1 text-3xl font-semibold">{summary[key]}</p></div>)}</div>
         <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="font-semibold">Registro de membresías</h2><ListFilters fields={[{ name: 'status', label: 'Estado', options: Object.entries(statuses).filter(([v]) => v !== 'unknown').map(([value, label]) => ({ value, label })) }, { name: 'origin', label: 'Origen', options: [{ value: 'bank', label: 'Pago bancario · COM / CLUB' }, { value: 'cash', label: 'Venta en efectivo' }, { value: 'historical', label: 'Histórico / excepcional' }] }]} />
@@ -21,5 +21,5 @@ export default function Index({ memberships, summary }: { memberships: ListPage 
             {!memberships.data.length && <p className="py-8 text-center text-muted-foreground">No hay membresías que coincidan con los filtros.</p>}
             <ListPagination page={memberships} />
         </section>
-    </AdminLayout>;
+    </div></AdminLayout>;
 }

@@ -121,6 +121,12 @@ class AdminMembershipController extends Controller
     {
         return [
             'required' => 'Este campo es obligatorio.',
+            'max' => 'El valor supera el máximo permitido.',
+            'min' => 'El valor no alcanza el mínimo permitido.',
+            'in' => 'Selecciona una opción válida.',
+            'string' => 'Introduce un texto válido.',
+            'integer' => 'Introduce un número entero.',
+            'date' => 'Introduce una fecha válida.',
             'reason.min' => 'Describe el motivo con al menos 10 caracteres.',
             'reason.max' => 'El motivo admite hasta 2000 caracteres.',
             'confirm.accepted' => 'Debes confirmar expresamente la operación excepcional.',
