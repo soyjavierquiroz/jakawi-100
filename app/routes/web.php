@@ -302,9 +302,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('experiences/{experience}/sessions', [AdminController::class, 'sessions'])->name('admin.experiences.sessions.store');
     Route::put('experiences/{experience}/sessions/{session}', [AdminController::class, 'updateSession'])->name('admin.experiences.sessions.update');
     Route::delete('experiences/{experience}/sessions/{session}', [AdminController::class, 'deleteSession'])->name('admin.experiences.sessions.destroy');
-    Route::get('memberships', [AdminController::class, 'memberships'])->name('admin.memberships.index');
-    Route::post('memberships', [AdminController::class, 'activateMembership'])->name('admin.memberships.store');
-    Route::delete('memberships/{membership}', [AdminController::class, 'cancelMembership'])->name('admin.memberships.cancel');
+    Route::get('memberships', [\App\Http\Controllers\AdminMembershipController::class, 'index'])->name('admin.memberships.index');
+    Route::get('memberships/{membership}', [\App\Http\Controllers\AdminMembershipController::class, 'show'])->name('admin.memberships.show');
+    Route::post('memberships', [\App\Http\Controllers\AdminMembershipController::class, 'activate'])->name('admin.memberships.store');
+    Route::delete('memberships/{membership}', [\App\Http\Controllers\AdminMembershipController::class, 'cancel'])->name('admin.memberships.cancel');
     Route::get('redemptions', [AdminController::class, 'redemptions'])->name('admin.redemptions.index');
     Route::get('settings', [\App\Http\Controllers\AdminSiteSettingsController::class, 'index'])->name('admin.site-settings');
     Route::put('settings', [\App\Http\Controllers\AdminSiteSettingsController::class, 'update'])->name('admin.site-settings.update');

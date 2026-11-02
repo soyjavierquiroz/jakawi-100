@@ -52,6 +52,11 @@ class Membership extends Model
         return $this->hasMany(MembershipPurchase::class);
     }
 
+    public function bankPayments(): HasMany
+    {
+        return $this->hasMany(MembershipBankPayment::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE

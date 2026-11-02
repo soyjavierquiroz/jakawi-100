@@ -287,29 +287,6 @@ class AdminController extends Controller
         return back();
     }
 
-    public function memberships(): Response
-    {
-        $query = User::with('activeMembership')->when(request('q'), fn ($q) => $q->where(fn ($q) => $q->where('name', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')->orWhere('email', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')));
-        $page = \App\Support\ListingPage::make($query, 25)->through(fn (User $user) => $user->only('id', 'name', 'email') + ['membership' => $user->activeMembership ? $user->activeMembership->only('id', 'status', 'starts_at', 'ends_at', 'amount_paid') + ['is_active' => $user->activeMembership->isActive()] : null]);
-
-        return Inertia::render('admin/memberships/index', ['users' => $page, 'membershipConfig' => config('jakawi.membership'), 'paymentMethods' => ['cash', 'transfer', 'other']]);
-    }
-
-    public function activateMembership(Request $request, MembershipService $service)
-    {
-        $d = $request->validate(['user_id' => 'required|exists:users,id', 'starts_at' => 'nullable|date', 'amount_paid' => 'nullable|numeric', 'payment_method' => 'nullable|string', 'payment_reference' => 'nullable|string', 'notes' => 'nullable|string']);
-        $service->activate(User::findOrFail($d['user_id']), $request->user(), isset($d['starts_at']) ? now()->parse($d['starts_at']) : null, $d['payment_method'] ?? null, $d['payment_reference'] ?? null, $d['notes'] ?? null, $d['amount_paid'] ?? null);
-
-        return back();
-    }
-
-    public function cancelMembership(Membership $membership, MembershipService $service)
-    {
-        $service->cancel($membership);
-
-        return back();
-    }
-
     public function redemptions(): Response
     {
         return Inertia::render('admin/redemptions/index', ['redemptions' => \App\Support\ListingPage::make(Redemption::with('user')->when(request('q'), fn ($q) => $q->where(fn ($q) => $q->where('benefit_title', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')->orWhere('partner_name', 'ilike', '%'.addcslashes(request('q'), '\\%_').'%')))->when(request('status'), fn ($q) => $q->where('status', request('status')))->latest(), 50)]);
