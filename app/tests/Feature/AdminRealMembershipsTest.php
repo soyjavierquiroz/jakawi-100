@@ -19,7 +19,7 @@ class AdminRealMembershipsTest extends TestCase
     {
         $admin = $this->admin();
         User::factory()->create(['name' => 'Sin membresía']);
-        $partner = Partner::create(['name' => 'Local', 'slug' => 'local', 'status' => 'published']);
+        $partner = Partner::create(['name' => 'Local', 'slug' => 'local', 'entity_type' => 'business', 'status' => 'published']);
         $operator = User::factory()->create(['name' => 'Operador sin membresía']);
         $operator->partners()->attach($partner, ['role' => 'owner']);
         $holder = User::factory()->create(['name' => 'Titular Partner']);
@@ -41,7 +41,7 @@ class AdminRealMembershipsTest extends TestCase
     public function test_confirmed_bank_and_cash_links_and_unconfirmed_historical_amount_are_honest(): void
     {
         $admin = $this->admin(); $bank = $this->membership($admin);
-        $payment = MembershipBankPayment::create(['reference' => (string) \Illuminate\Support\Str::uuid(), 'user_id' => $bank->user_id, 'membership_id' => $bank->id, 'status' => 'approved', 'amount' => 100, 'origin' => 'COM']);
+        $payment = MembershipBankPayment::create(['reference' => (string) \Illuminate\Support\Str::uuid(), 'user_id' => $bank->user_id, 'membership_id' => $bank->id, 'status' => 'approved', 'amount' => 100, 'origin' => 'COM', 'checkout_event_id' => (string) \Illuminate\Support\Str::uuid()]);
         $sale = app(MembershipPurchaseService::class)->confirmManualCash(User::factory()->create(), $admin, null, 'REC-TEST', (string) \Illuminate\Support\Str::uuid());
         $legacy = $this->membership($admin);
         $this->actingAs($admin)->get('/admin/memberships?origin=bank')->assertInertia(fn (Assert $p) => $p->has('memberships.data', 1)->where('memberships.data.0.confirmed_amount', '100.00')->where('memberships.data.0.payments.0.href', '/admin/conciliacion-membresias?pago='.$payment->id));
@@ -80,6 +80,17 @@ class AdminRealMembershipsTest extends TestCase
         $this->assertSame('cancelled', $m->fresh()->status);
         $this->assertSame(2, AuditLog::count());
         $this->delete('/admin/memberships/'.$m->id, ['reason' => 'Cancelación excepcional autorizada', 'confirm' => true, 'password' => 'password'])->assertStatus(422);
+    }
+
+    public function test_pagination_keeps_filters_and_bounds(): void
+    {
+        $admin = $this->admin();
+        $holder = User::factory()->create(['name' => 'Historial completo']);
+        for ($i = 0; $i < 27; $i++) {
+            Membership::create(['user_id' => $holder->id, 'activated_by' => $admin->id, 'status' => 'cancelled', 'starts_at' => now()->subDays(400 + $i), 'ends_at' => now()->subDays(35 + $i), 'amount_paid' => 0]);
+        }
+        $this->actingAs($admin)->get('/admin/memberships?status=cancelled&q=Historial&page=2')->assertInertia(fn (Assert $p) => $p->has('memberships.data', 2)->where('memberships.total', 27)->where('memberships.current_page', 2));
+        $this->get('/admin/memberships?status=cancelled&page=999')->assertInertia(fn (Assert $p) => $p->where('memberships.current_page', 2));
     }
 
     public function test_guest_and_non_admin_cannot_read_or_operate_memberships(): void
