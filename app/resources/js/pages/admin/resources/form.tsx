@@ -356,7 +356,7 @@ function LegacyResourceForm({
                             })}
                         </div>
                         {form.errors.gallery_paths && (
-                            <p role="alert" className="text-sm text-red-600">
+                            <p role="alert" className="text-sm text-destructive">
                                 {form.errors.gallery_paths}
                             </p>
                         )}

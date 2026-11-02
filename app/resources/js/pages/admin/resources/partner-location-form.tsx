@@ -279,7 +279,7 @@ export default function PartnerLocationForm({
           </p>
         )}
         {error && (
-          <p id={`${name}-error`} role="alert" className="text-sm text-red-700">
+          <p id={`${name}-error`} role="alert" className="text-sm text-destructive">
             {error}
           </p>
         )}
@@ -432,7 +432,7 @@ export default function PartnerLocationForm({
                       {[1, 2, 3].map((slot) => media(`gallery_${slot}`, `Imagen ${slot}`))}
                     </div>
                     {form.errors.gallery_paths && (
-                      <p role="alert" className="text-sm text-red-700">
+                      <p role="alert" className="text-sm text-destructive">
                         {form.errors.gallery_paths}
                       </p>
                     )}
@@ -561,7 +561,7 @@ export default function PartnerLocationForm({
           {Object.keys(form.errors).length > 0 && (
             <div
               role="alert"
-              className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+              className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive"
             >
               <p className="font-semibold">
                 No se guardaron los cambios. Revisa los campos indicados.

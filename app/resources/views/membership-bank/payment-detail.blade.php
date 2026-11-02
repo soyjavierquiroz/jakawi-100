@@ -4,7 +4,7 @@
 <a href="/admin/conciliacion-membresias">← Pagos y conciliación</a>
 <h1>Detalle de pago</h1>
 <section class="card"><h2>{{$p->buyer_name ?? $p->user?->name ?? 'Comprador sin identificar'}}</h2>
-<p><strong>Bs {{number_format((float)$p->amount,2)}}</strong> · <span class="badge">{{$statusLabels[$p->status]??$p->status}}</span></p>
+<p><strong>Bs {{number_format((float)$p->amount,2)}}</strong> · <span class="badge {{ $p->status === 'approved' ? 'admin-status-success' : 'admin-status-warning' }}">{{$statusLabels[$p->status]??$p->status}}</span></p>
 <p>{{$p->buyer_email ?? $p->user?->email}}</p><p>Compra {{$p->reference}}</p>
 @if($p->club_reference)<p>Referencia CLUB: {{$p->club_reference}}</p>@endif
 <p>Fecha: {{$p->paid_date?->format('d/m/Y') ?? $p->checkout_at?->timezone('America/La_Paz')->format('d/m/Y')}} {{$p->paid_time}}</p>

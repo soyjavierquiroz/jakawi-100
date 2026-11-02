@@ -222,7 +222,7 @@ export default function ExperienceForm({
                 {help}
             </span>
             {form.errors[name] && (
-                <span role="alert" className="text-sm font-normal text-red-600">
+                <span role="alert" className="text-sm font-normal text-destructive">
                     {form.errors[name]}
                 </span>
             )}
@@ -314,7 +314,7 @@ export default function ExperienceForm({
                 {flash?.success && (
                     <p
                         role="status"
-                        className="rounded-xl border border-brand bg-brand-subtle p-4"
+                        className="admin-notice admin-status-success"
                     >
                         {flash.success}
                     </p>
@@ -347,7 +347,7 @@ export default function ExperienceForm({
                         {Object.keys(form.errors).length > 0 && (
                             <div
                                 role="alert"
-                                className="rounded-xl border border-red-400 p-4"
+                                className="rounded-xl border border-destructive p-4"
                             >
                                 <p className="font-bold">
                                     Revisa los campos señalados. Tus cambios
@@ -502,7 +502,7 @@ export default function ExperienceForm({
                                                 ] && (
                                                     <p
                                                         role="alert"
-                                                        className="text-sm text-red-600"
+                                                        className="text-sm text-destructive"
                                                     >
                                                         {
                                                             form.errors[
@@ -677,7 +677,7 @@ export default function ExperienceForm({
                                 {warnings.length > 0 && (
                                     <aside
                                         role="status"
-                                        className="space-y-2 rounded-xl border border-amber-500 p-4"
+                                        className="space-y-2 rounded-xl border border-warning p-4"
                                     >
                                         <h3 className="font-bold">
                                             Revisar coherencia comercial
@@ -1174,7 +1174,7 @@ function SessionEditor({
                     </p>
                 )}
                 {Object.entries(form.errors).map(([key, message]) => (
-                    <p role="alert" key={key} className="text-sm text-red-600">
+                    <p role="alert" key={key} className="text-sm text-destructive">
                         {String(message)}
                     </p>
                 ))}

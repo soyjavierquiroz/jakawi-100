@@ -90,6 +90,6 @@ export default function Catalog({ landings, pagination, filters, partnerChoices,
                 </tr>)}</tbody>
             </table>}
         <ListPagination page={pagination} />
-        <Dialog open={viewing !== null} onOpenChange={open => { if (!open) setViewing(null); }}><DialogContent className="max-h-[90dvh] overflow-y-auto"><DialogTitle className="pr-6 break-words">Video · {viewing?.name}</DialogTitle><DialogDescription>Video configurado en la Landing. El reproductor indica si la fuente no permite reproducirlo.</DialogDescription>{viewing?.video && <LandingVideo key={viewing.id} config={{ ...viewing.video, autoplay: 'off' }} />}<DialogClose className={action}>Cerrar video</DialogClose></DialogContent></Dialog>
+        <Dialog open={viewing !== null} onOpenChange={open => { if (!open) setViewing(null); }}><DialogContent className="admin-dialog max-h-[90dvh] overflow-y-auto"><DialogTitle className="pr-6 break-words">Video · {viewing?.name}</DialogTitle><DialogDescription>Video configurado en la Landing. El reproductor indica si la fuente no permite reproducirlo.</DialogDescription>{viewing?.video && <LandingVideo key={viewing.id} config={{ ...viewing.video, autoplay: 'off' }} />}<DialogClose className={action}>Cerrar video</DialogClose></DialogContent></Dialog>
     </AdminLayout>;
 }

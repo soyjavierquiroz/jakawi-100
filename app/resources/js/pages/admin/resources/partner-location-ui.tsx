@@ -12,7 +12,7 @@ export const statusLabels: Record<string, string> = {
 export function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${status === "published" ? "border-[#24b47e]/40 bg-[#24b47e]/10" : status === "draft" ? "border-[#ffc83d]/60 bg-[#ffc83d]/20" : "border-border bg-muted text-muted-foreground"}`}
+      className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${status === "published" ? "admin-status-success" : status === "draft" ? "admin-status-warning" : "border-border bg-muted text-muted-foreground"}`}
     >
       {statusLabels[status] ?? status}
     </span>

@@ -6,7 +6,7 @@
 <h2 id="qr-heading">Configuración del QR bancario</h2>
 <p>QR bancario real para la membresía de <strong>Bs 100</strong>. Comprueba el destinatario y que el QR se pueda escanear antes de guardar.</p>
 @if($qrConfigured)
-<p class="badge">QR configurado · Pago habilitado</p><div><img src="/admin/conciliacion-membresias/qr" alt="QR bancario configurado para la membresía de Bs 100" width="400" style="object-fit:contain"></div>
+<p class="badge admin-status-success">QR configurado · Pago habilitado</p><div><img src="/admin/conciliacion-membresias/qr" alt="QR bancario configurado para la membresía de Bs 100" width="400" class="admin-qr-image"></div>
 <a href="/admin/conciliacion-membresias/qr" target="_blank" rel="noopener">Abrir imagen original</a> · <a href="/membresia/checkout">Ver checkout de Bs 100</a>
 @else
 <p class="notice">No hay un QR válido disponible. El checkout mantiene los cobros deshabilitados.</p>
@@ -16,7 +16,7 @@
 <label for="qr_image">{{$qrConfigured ? 'Reemplazar imagen PNG/JPG' : 'Subir imagen PNG/JPG'}}</label>
 <input id="qr_image" name="qr_image" type="file" accept="image/png,image/jpeg" aria-describedby="qr-help">
 <p class="muted" id="qr-help">Se conserva el archivo original en MinIO, sin recortes ni recompresión. De 128 a 4096 píxeles por lado; máximo 10 MB. La nueva imagen se aplica al guardar. Deja el archivo vacío para cambiar solo el destinatario.</p>
-<div id="qr-local-preview" hidden><p><strong>Vista previa de la nueva imagen</strong></p><img id="qr-local-image" alt="Vista previa del QR seleccionado" width="400" style="object-fit:contain"></div>
+<div id="qr-local-preview" hidden><p><strong>Vista previa de la nueva imagen</strong></p><img id="qr-local-image" alt="Vista previa del QR seleccionado" width="400" class="admin-qr-image"></div>
 <button>Guardar cambios</button></form>
 <script>
 (() => {

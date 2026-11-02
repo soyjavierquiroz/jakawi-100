@@ -612,7 +612,7 @@ export default function Index({
                                             Audience: {form.default_scope}
                                         </span>
                                         <span
-                                            className={`text-xs font-bold ${dirty ? 'text-amber-800' : 'text-green-700'}`}
+                                            className={`text-xs font-bold ${dirty ? 'text-warning' : 'text-success'}`}
                                         >
                                             {dirty
                                                 ? '● CAMBIOS SIN GUARDAR'
@@ -623,7 +623,7 @@ export default function Index({
                                         {saved && !dirty && (
                                             <span
                                                 role="status"
-                                                className="text-xs text-green-700"
+                                                className="text-xs text-success"
                                             >
                                                 ✓ LANDING GUARDADA
                                             </span>

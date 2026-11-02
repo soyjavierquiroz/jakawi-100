@@ -6,7 +6,7 @@
 <p>{{$import->bank??'Banco no registrado (histórico)'}} · Cuenta {{$import->account_key}}</p>
 <p>Período: {{$import->period_start}} — {{$import->period_end}}</p>
 <p>Importado: {{\Carbon\CarbonImmutable::parse($import->created_at,'UTC')->timezone('America/La_Paz')->format('d/m/Y H:i')}} · {{$administrator}}</p>
-<p class="badge">{{$import->processing_status==='processed'?'Procesado':'Histórico'}}</p>
+<p class="badge {{ $import->processing_status === 'processed' ? 'admin-status-success' : 'admin-status-neutral' }}">{{$import->processing_status==='processed'?'Procesado':'Histórico'}}</p>
 <a class="button" href="/admin/extractos-bancarios/{{$import->id}}/original">Descargar PDF original privado</a>
 <details><summary>Datos del documento</summary>@include('membership-bank.document-metadata', ['metadata'=>json_decode($import->document_metadata??'[]',true)])<p>SHA-256: {{$import->sha256}}</p></details></section>
 <div class="statement-summary">

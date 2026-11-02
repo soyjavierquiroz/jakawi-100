@@ -76,7 +76,7 @@ export default function BenefitForm({ item, partners = [], locations = [] }: Pro
             onFinish: () => { submitting.current = false; },
         });
     };
-    const error = (name: string) => form.errors[name] && <p id={`${name}-error`} role="alert" className="text-sm text-red-700">{form.errors[name]}</p>;
+    const error = (name: string) => form.errors[name] && <p id={`${name}-error`} role="alert" className="text-sm text-destructive">{form.errors[name]}</p>;
     const field = (name: string) => {
         const choices: Record<string, string> | undefined = name === 'partner_id' ? Object.fromEntries(partners.map(p => [p.id, p.name]))
             : name === 'status' ? statusLabels : name === 'access_mode' ? accessLabels : undefined;
@@ -109,7 +109,7 @@ export default function BenefitForm({ item, partners = [], locations = [] }: Pro
             </div>
             <form id="benefit-editor" onSubmit={submit} className="space-y-6">
                 <p role="status" aria-live="polite" className="text-sm text-muted-foreground">{form.processing ? 'Esperando confirmación del servidor…' : form.isDirty ? 'Cambios pendientes de guardar.' : 'Sin cambios pendientes.'}</p>
-                {Object.keys(form.errors).length > 0 && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"><p className="font-semibold">No se guardaron los cambios. Revisa los campos indicados.</p>{Object.entries(form.errors).map(([key, value]) => <p key={key}>{labels[key] ?? key}: {String(value)}</p>)}</div>}
+                {Object.keys(form.errors).length > 0 && <div role="alert" className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive"><p className="font-semibold">No se guardaron los cambios. Revisa los campos indicados.</p>{Object.entries(form.errors).map(([key, value]) => <p key={key}>{labels[key] ?? key}: {String(value)}</p>)}</div>}
                 <fieldset disabled={form.processing} className="min-w-0 space-y-6">
                     <Section id="identidad" title="A. Identidad y propuesta">{['partner_id', 'slug', 'title', 'short_description', 'description', 'category', 'benefit_type'].map(field)}</Section>
                     <Section id="condiciones" title="B. Condiciones comerciales">{['terms', 'estimated_savings'].map(field)}</Section>

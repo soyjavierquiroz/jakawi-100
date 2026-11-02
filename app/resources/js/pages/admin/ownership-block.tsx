@@ -34,7 +34,7 @@ export default function OwnershipBlock({ targetType, targetId, ownership, candid
                 <input className="rounded border border-border bg-background p-2" value={assign.data.reason} onChange={event => assign.setData('reason', event.target.value)} maxLength={2000} required />
             </label>
             <button className="rounded bg-brand px-3 py-2 font-semibold text-brand-foreground" disabled={assign.processing}>{ownership ? 'Reasignar' : 'Asignar'}</button>
-            {assign.errors.owner_user_id && <p className="w-full text-sm text-red-600">{assign.errors.owner_user_id}</p>}
+            {assign.errors.owner_user_id && <p className="w-full text-sm text-destructive">{assign.errors.owner_user_id}</p>}
         </form>
         {ownership && <form className="mt-4 flex flex-wrap items-end gap-2" onSubmit={event => { event.preventDefault(); remove.delete(path, { onSuccess: () => remove.reset() }); }}>
             <label className="grid gap-1 text-sm">Motivo para dejar sin asignar

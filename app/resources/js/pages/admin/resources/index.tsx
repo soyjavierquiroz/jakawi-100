@@ -77,7 +77,7 @@ export default function ResourceIndex({ title, resource, items: page, partners =
       {flash?.success && (
         <p
           role="status"
-          className="mt-4 rounded-lg border border-[#24b47e]/40 bg-[#24b47e]/10 p-3 text-sm"
+          className="mt-4 rounded-lg border admin-status-success p-3 text-sm"
         >
           {flash.success}
         </p>
@@ -183,7 +183,7 @@ export default function ResourceIndex({ title, resource, items: page, partners =
           >
             <div className="flex min-w-0 items-center gap-3">
               {isPartner && (
-                <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-[#fff8f2]">
+                <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-background">
                   {item.logoUrl ? (
                     <img
                       src={item.logoUrl}

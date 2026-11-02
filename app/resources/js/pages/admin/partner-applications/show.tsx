@@ -40,7 +40,7 @@ export default function PartnerApplicationShow({ application, statuses, ownershi
             <h2 className="font-semibold">Owner autorizado del establecimiento</h2>
             <ul>{partnerOwners.map((u: any) => <li key={u.id}>#{u.id} · {u.name} · {u.email} · {u.email_verified_at ? 'Correo verificado' : 'Correo sin verificar'}</li>)}</ul>
             <p className="text-sm">Selecciona una cuenta COM existente después de comprobar su autorización para representar al negocio. El email de contacto no otorga propiedad. No se cambian contraseñas ni se marca el correo como verificado.</p>
-            {!invitationEmailAvailable && <p className="text-sm text-amber-700">Correo saliente no operativo: el transporte actual no entrega emails. No se envían invitaciones desde este flujo. La vinculación administrativa a una cuenta existente sigue disponible.</p>}
+            {!invitationEmailAvailable && <p className="text-sm text-warning">Correo saliente no operativo: el transporte actual no entrega emails. No se envían invitaciones desde este flujo. La vinculación administrativa a una cuenta existente sigue disponible.</p>}
             <form className="flex gap-2" onSubmit={e => { e.preventDefault(); search.get(base, { preserveScroll: true }); }}>
                 <input aria-label="Buscar cuenta owner" minLength={2} required placeholder="Nombre o email de cuenta COM" className="min-w-0 flex-1 rounded border p-2" value={search.data.owner_q} onChange={e => search.setData('owner_q', e.target.value)}/><button className="rounded border px-3">Buscar</button>
             </form>
@@ -54,4 +54,4 @@ export default function PartnerApplicationShow({ application, statuses, ownershi
         </section>}
     </AdminLayout>;
 }
-function Errors({ errors }: { errors: Record<string, string> }) { return <>{Object.entries(errors).map(([field, message]) => <p role="alert" className="text-sm text-red-700" key={field}>{message}</p>)}</>; }
+function Errors({ errors }: { errors: Record<string, string> }) { return <>{Object.entries(errors).map(([field, message]) => <p role="alert" className="text-sm text-destructive" key={field}>{message}</p>)}</>; }

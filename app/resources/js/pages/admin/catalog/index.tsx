@@ -71,9 +71,9 @@ function Badge({ status }: { status: string }) {
     const color = ['published', 'PUBLISHED', 'open', 'APPROVED'].includes(
         status,
     )
-        ? 'border-[#24b47e]/40 bg-[#24b47e]/10 text-foreground'
+        ? 'admin-status-success text-foreground'
         : ['draft', 'DRAFT', 'SUBMITTED'].includes(status)
-          ? 'border-[#ffc83d]/60 bg-[#ffc83d]/20 text-foreground'
+          ? 'admin-status-warning text-foreground'
           : 'border-border bg-muted text-muted-foreground';
     return (
         <span
@@ -95,7 +95,7 @@ const date = (value: string | null) =>
 function Thumbnail({ src }: { src: string | null }) {
     const [failed, setFailed] = useState(false);
     return (
-        <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-[#fff8f2] text-[#111111]/40">
+        <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background text-muted-foreground">
             {src && !failed ? (
                 <img
                     src={src}

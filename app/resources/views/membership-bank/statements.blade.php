@@ -21,7 +21,7 @@
 @forelse($jakawi as $j)
 <article class="card">
 <h3>Bs {{number_format((float)$j->credit,2)}} · {{$j->paid_date}} {{$j->paid_time}}</h3>
-<p><span class="badge">{{['auto_reconciled'=>'Conciliado automáticamente','reconciled'=>'Conciliado','unidentified'=>'Sin identificar · Requiere revisión','review_required'=>'Requiere revisión'][$j->reconciliation_status]}}</span></p>
+<p><span class="badge {{ in_array($j->reconciliation_status, ['auto_reconciled', 'reconciled'], true) ? 'admin-status-success' : 'admin-status-warning' }}">{{['auto_reconciled'=>'Conciliado automáticamente','reconciled'=>'Conciliado','unidentified'=>'Sin identificar · Requiere revisión','review_required'=>'Requiere revisión'][$j->reconciliation_status]}}</span></p>
 <p>Referencia bancaria: {{$j->reference??'Sin referencia'}} · <a href="/admin/extractos-bancarios/{{$j->import_id}}">Extracto #{{$j->import_id}}</a></p>
 <p class="movement-description">{{$j->description}}</p>
 @if($j->purchase_reference)<p>Compra: <a href="/admin/conciliacion-membresias">{{$j->purchase_reference}}</a> · Usuario: {{$j->buyer??$j->buyer_name}}</p>@endif
@@ -37,11 +37,11 @@
 <article class="card"><h3><a href="/admin/extractos-bancarios/{{$i->id}}">{{$i->original_name??'Extracto histórico #'.$i->id}}</a></h3>
 <p>{{$i->bank??'Banco histórico'}} · Cuenta {{$i->account_key}}</p><p>{{$i->period_start}} — {{$i->period_end}}</p>
 <p>Importado: {{\Carbon\CarbonImmutable::parse($i->created_at,'UTC')->timezone('America/La_Paz')->format('d/m/Y H:i')}} · {{$i->administrator}}</p>
-<p>{{$i->extracted_count}} movimientos · {{$i->duplicate_count}} duplicados</p><span class="badge">{{$i->processing_status==='processed'?'Procesado':'Histórico'}}</span></article>
+<p>{{$i->extracted_count}} movimientos · {{$i->duplicate_count}} duplicados</p><span class="badge {{ $i->processing_status === 'processed' ? 'admin-status-success' : 'admin-status-neutral' }}">{{$i->processing_status==='processed'?'Procesado':'Histórico'}}</span></article>
 @empty<p class="card">Aún no hay extractos importados.</p>@endforelse
 </div>{{$imports->links()}}
 </details>
-@if($previews->isNotEmpty())<details><summary>Previsualizaciones anteriores</summary>@foreach($previews as $p)<p><a href="/admin/extractos-bancarios/preview/{{$p->id}}">{{$p->original_name}} · {{$p->created_at}} UTC</a> @if(json_decode($p->incidents,true))<span class="badge">Requiere revisión · PDF con incidencias</span>@endif</p>@endforeach</details>@endif
+@if($previews->isNotEmpty())<details><summary>Previsualizaciones anteriores</summary>@foreach($previews as $p)<p><a href="/admin/extractos-bancarios/preview/{{$p->id}}">{{$p->original_name}} · {{$p->created_at}} UTC</a> @if(json_decode($p->incidents,true))<span class="badge admin-status-warning">Requiere revisión · PDF con incidencias</span>@endif</p>@endforeach</details>@endif
 <script>
 document.getElementById('statement-upload').addEventListener('submit',function(){
  document.getElementById('import-button').disabled=true;
