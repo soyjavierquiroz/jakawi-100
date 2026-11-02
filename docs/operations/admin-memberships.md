@@ -44,3 +44,27 @@ Para devolver una venta se debe usar la operación comercial existente.
 `AdminRealMembershipsTest` cubre estados, titulares Partner, filtros, búsqueda,
 paginación, pagos bancarios/efectivo, custodia, permisos y operaciones excepcionales.
 Ejecutar mediante `bin/jakawi-test`, exclusivamente en PostgreSQL aislado.
+
+## Plan Pionero
+
+`memberships.type` distingue `standard` (valor predeterminado para compras actuales
+y futuras) de `pioneer`. El estado sigue siendo `active`/`cancelled`. La asignación
+Pionero es explícita; no depende de la antigüedad de la cuenta.
+
+La fecha original `ends_at` se conserva para auditoría. `effectiveEndsAt()`,
+`active()`, `unexpired()`, `expired()` e `isActive()` aplican la vigencia efectiva.
+Un Pionero activo disfruta beneficios desde `starts_at`; sin lanzamiento oficial
+no vence por la fecha histórica. La cancelación y el inicio futuro siguen bloqueando
+el acceso. No se modifican pagos ni se emiten eventos comerciales al asignar el tipo.
+
+`JAKAWI_OFFICIAL_LAUNCH_DATE` se deja sin definir. Cuando exista autorización para
+establecer el lanzamiento, configurar su fecha `YYYY-MM-DD` en todos los runtimes COM
+y regenerar sus caches de configuración. El vencimiento se calcula sumando **15 meses
+calendario**, sin desbordamiento (si no existe el día, último día del mes destino),
+hasta **23:59:59.999999 America/La_Paz**, inclusive, de ese día. Se convierte a UTC
+para comparar instantes. No depende de `PRELAUNCH_MODE`. Cambiar la fecha requiere
+una operación administrativa explícita; esta entrega no establece ninguna.
+
+En listado/detalle, Pionero sin lanzamiento muestra «15 meses después del lanzamiento»;
+la fecha estándar original sólo figura en Historial del detalle. La asignación puntual
+a membresías 1 y 2 se registra en `audit_logs` sin reprocesar sus pagos originales.

@@ -25,7 +25,7 @@ class MembershipController extends Controller
         $membership = $request->user()->activeMembership()->first()
             ?? $request->user()->memberships()
                 ->where('status', Membership::STATUS_ACTIVE)
-                ->where('ends_at', '<', now())
+                ->expired()
                 ->latest('ends_at')
                 ->first();
         $confirmedQuery = $membership?->confirmedRedemptions();

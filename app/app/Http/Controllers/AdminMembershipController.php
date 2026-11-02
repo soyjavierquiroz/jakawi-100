@@ -21,9 +21,9 @@ class AdminMembershipController extends Controller
     {
         match ($state) {
             'active' => $query->active(),
-            'expired' => $query->where('status', '!=', 'cancelled')->where('ends_at', '<', now()),
+            'expired' => $query->where('status', '!=', 'cancelled')->expired(),
             'cancelled' => $query->where('status', 'cancelled'),
-            'scheduled' => $query->where('status', '!=', 'cancelled')->where('starts_at', '>', now())->where('ends_at', '>=', now()),
+            'scheduled' => $query->where('status', '!=', 'cancelled')->where('starts_at', '>', now())->unexpired(),
             default => null,
         };
     }
@@ -60,7 +60,7 @@ class AdminMembershipController extends Controller
         $membership = $this->base()->findOrFail($membership->id);
         return Inertia::render('admin/memberships/show', [
             'membership' => $this->present($membership) + ['recorded_amount' => $membership->amount_paid, 'reference' => $membership->payment_reference, 'notes' => $membership->notes, 'created_at' => $membership->created_at, 'activated_by' => $membership->activatedBy?->name],
-            'audit' => AuditLog::where('subject_type', Membership::class)->where('subject_id', $membership->id)->orderBy('id')->get()->map(fn ($a) => ['id' => $a->id, 'action' => $a->action, 'at' => $a->created_at, 'actor' => 'Administrador #'.$a->actor_user_id, 'reason' => $a->metadata['reason'] ?? null]),
+            'audit' => AuditLog::where('subject_type', Membership::class)->where('subject_id', $membership->id)->orderBy('id')->get()->map(fn ($a) => ['id' => $a->id, 'action' => $a->action, 'at' => $a->created_at, 'actor' => $a->actor_user_id ? 'Administrador #'.$a->actor_user_id : 'Operación COM autorizada', 'reason' => $a->metadata['reason'] ?? null]),
         ]);
     }
 
@@ -74,8 +74,11 @@ class AdminMembershipController extends Controller
             'id' => $m->id, 'holder' => $technical ? 'Identidad pendiente de vinculación' : ($m->user?->name ?? 'Titular no disponible'),
             'email' => $technical ? null : $m->user?->email,
             'identity' => $technical ? 'Custodia técnica CLUB; no identifica al comprador' : ($m->user?->partners->isNotEmpty() ? 'Titular con vínculo Partner' : 'Titular de membresía'),
-            'status' => $m->status === 'cancelled' ? 'cancelled' : ($m->ends_at->isPast() ? 'expired' : ($m->starts_at->isFuture() ? 'scheduled' : ($m->isActive() ? 'active' : 'unknown'))),
-            'starts_at' => $m->starts_at, 'ends_at' => $m->ends_at,
+            'status' => $m->status === 'cancelled' ? 'cancelled' : (($m->effectiveEndsAt()?->isPast() ?? false) ? 'expired' : ($m->starts_at->isFuture() ? 'scheduled' : ($m->isActive() ? 'active' : 'unknown'))),
+            'type' => $m->type, 'type_label' => $m->type === Membership::TYPE_PIONEER ? 'Pionero' : 'Estándar',
+            'starts_at' => $m->starts_at, 'ends_at' => $m->effectiveEndsAt(),
+            'expiry_pending_launch' => $m->type === Membership::TYPE_PIONEER && $m->effectiveEndsAt() === null,
+            'historical_ends_at' => $m->ends_at,
             'origin' => $payments->isEmpty() ? 'Registro histórico / excepcional' : $payments->pluck('label')->unique()->implode(' · '),
             'confirmed_amount' => $confirmed->count() === 1 ? $confirmed->first()['amount'] : null,
             'payments' => $payments,

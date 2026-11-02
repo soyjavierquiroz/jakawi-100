@@ -23,6 +23,8 @@ return [
     'membership' => [
         'price_bob' => 100,
         'duration_days' => 365,
+        // YYYY-MM-DD in Bolivia; unset until the official launch is established.
+        'official_launch_date' => env('JAKAWI_OFFICIAL_LAUNCH_DATE'),
         'currency' => 'BOB',
         'product_key' => 'jakawi_annual',
     ],

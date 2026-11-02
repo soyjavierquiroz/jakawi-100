@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'user_id',
     'status',
+    'type',
     'starts_at',
     'ends_at',
     'amount_paid',
@@ -21,6 +22,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Membership extends Model
 {
+    public const TYPE_STANDARD = 'standard';
+
+    public const TYPE_PIONEER = 'pioneer';
+
     public const STATUS_ACTIVE = 'active';
 
     public const STATUS_CANCELLED = 'cancelled';
@@ -31,7 +36,54 @@ class Membership extends Model
         $query
             ->where('status', self::STATUS_ACTIVE)
             ->where('starts_at', '<=', now())
-            ->where('ends_at', '>=', now());
+            ->unexpired();
+    }
+
+    /** Original ends_at remains historical; all entitlement checks use this policy. */
+    public static function pioneerEndsAt(): ?\Carbon\CarbonImmutable
+    {
+        $launch = config('jakawi.membership.official_launch_date');
+
+        if ($launch === null || $launch === '') {
+            return null;
+        }
+        if (! preg_match('/^\d{4}-\d{2}-\d{2}$/D', $launch)) {
+            throw new \InvalidArgumentException('Official launch date must be YYYY-MM-DD in Bolivia.');
+        }
+        $date = \Carbon\CarbonImmutable::createFromFormat('!Y-m-d', $launch, 'America/La_Paz');
+        if ($date->format('Y-m-d') !== $launch) {
+            throw new \InvalidArgumentException('Official launch date must be a valid date.');
+        }
+
+        return $date->addMonthsNoOverflow(15)->endOfDay()->utc();
+    }
+
+    public function effectiveEndsAt(): ?\Carbon\CarbonInterface
+    {
+        return $this->type === self::TYPE_PIONEER ? self::pioneerEndsAt() : $this->ends_at;
+    }
+
+    public function scopeUnexpired(Builder $query): void
+    {
+        $query->where(function (Builder $q): void {
+            $q->where(fn (Builder $standard) => $standard->where('type', self::TYPE_STANDARD)->where('ends_at', '>=', now()))
+                ->orWhere(function (Builder $pioneer): void {
+                    $pioneer->where('type', self::TYPE_PIONEER);
+                    if (($end = self::pioneerEndsAt()) && $end->lt(now())) {
+                        $pioneer->whereRaw('1 = 0');
+                    }
+                });
+        });
+    }
+
+    public function scopeExpired(Builder $query): void
+    {
+        $query->where(function (Builder $q): void {
+            $q->where(fn (Builder $standard) => $standard->where('type', self::TYPE_STANDARD)->where('ends_at', '<', now()));
+            if (($end = self::pioneerEndsAt()) && $end->lt(now())) {
+                $q->orWhere('type', self::TYPE_PIONEER);
+            }
+        });
     }
 
     /** @return BelongsTo<User, Membership> */
@@ -61,7 +113,7 @@ class Membership extends Model
     {
         return $this->status === self::STATUS_ACTIVE
             && $this->starts_at->lte(now())
-            && $this->ends_at->gte(now());
+            && (($end = $this->effectiveEndsAt()) === null || $end->gte(now()));
     }
 
     /** @return HasMany<Redemption, $this> */
