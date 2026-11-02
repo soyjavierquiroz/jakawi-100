@@ -96,10 +96,9 @@ class AdminV2Test extends TestCase
         $this->actingAs(User::factory()->create())->get('/admin')->assertForbidden();
         $admin = $this->admin();
         $user = User::factory()->create();
-        app(MembershipService::class)->activate($user, $admin);
-        $this->actingAs($admin)->get('/admin/memberships?q='.urlencode($user->email))->assertOk()->assertInertia(fn (Assert $page) => $page->has('users.data', 1)->where('users.per_page', 25)->where('users.data.0.id', $user->id)->where('users.data.0.membership.is_active', true));
-        $membership = $user->activeMembership()->firstOrFail();
-        $this->actingAs($admin)->delete('/admin/memberships/'.$membership->id)->assertRedirect();
+        $membership = app(MembershipService::class)->activate($user, $admin);
+        $this->actingAs($admin)->get('/admin/memberships?q='.urlencode($user->email))->assertOk()->assertInertia(fn (Assert $page) => $page->has('memberships.data', 1)->where('memberships.per_page', 25)->where('memberships.data.0.id', $membership->id)->where('memberships.data.0.status', 'active'));
+        $this->actingAs($admin)->delete('/admin/memberships/'.$membership->id, ['reason' => 'Cancelación excepcional de prueba', 'confirm' => true, 'password' => 'password'])->assertRedirect()->assertSessionHasNoErrors();
         $this->assertSame('cancelled', $membership->fresh()->status);
         $this->actingAs($admin)->get('/admin/redemptions')->assertOk();
     }
