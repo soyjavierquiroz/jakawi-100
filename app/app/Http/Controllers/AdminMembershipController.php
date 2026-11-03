@@ -71,7 +71,7 @@ class AdminMembershipController extends Controller
             ->concat($m->purchases->map(fn ($p) => ['id' => 'sale-'.$p->id, 'label' => in_array($p->payment_channel, ['cash', 'manual_cash'], true) ? 'Venta en efectivo' : 'Compra registrada', 'reference' => $p->reference, 'confirmed' => $p->status === 'confirmed', 'amount' => $p->status === 'confirmed' ? $p->amount : null, 'href' => '/admin/sales/'.$p->id]))->values();
         $confirmed = $payments->where('confirmed', true);
         return [
-            'id' => $m->id, 'holder' => $technical ? 'Identidad pendiente de vinculación' : ($m->user?->name ?? 'Titular no disponible'),
+            'user_id' => $m->user_id, 'id' => $m->id, 'holder' => $technical ? 'Identidad pendiente de vinculación' : ($m->user?->name ?? 'Titular no disponible'),
             'email' => $technical ? null : $m->user?->email,
             'identity' => $technical ? 'Custodia técnica CLUB; no identifica al comprador' : ($m->user?->partners->isNotEmpty() ? 'Titular con vínculo Partner' : 'Titular de membresía'),
             'status' => $m->status === 'cancelled' ? 'cancelled' : (($m->effectiveEndsAt()?->isPast() ?? false) ? 'expired' : ($m->starts_at->isFuture() ? 'scheduled' : ($m->isActive() ? 'active' : 'unknown'))),

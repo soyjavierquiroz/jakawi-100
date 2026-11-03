@@ -190,6 +190,7 @@ class User extends Authenticatable implements PasskeyUser, OAuthenticatable
             'marketing_opt_in_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_superadmin' => 'boolean',
             /* @chisel-2fa */
             'two_factor_confirmed_at' => 'datetime',
             /* @end-chisel-2fa */

@@ -42,6 +42,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'metaBrowser' => \Inertia\Inertia::always(fn () => app(\App\Services\Meta\MetaBrowserContext::class)->forRequest($request)),
             'name' => config('app.name'),
+            'canSupport' => fn () => ! $request->attributes->has('support_session') && app(\App\Services\Support\SupportAccess::class)->allows($request->user()),
+            'supportMode' => \Inertia\Inertia::always(function () use ($request) {
+                $support = $request->attributes->get('support_session');
+                return $support ? ['id' => $support->id, 'label' => $request->user()->name.($support->partner_id ? ' / '.\App\Models\Partner::find($support->partner_id)?->name : ''), 'expiresAt' => $support->expires_at->toIso8601String()] : null;
+            }),
             'partnerAccess' => fn () => $request->attributes->get('partner_access'),
             'prelaunchMode' => \Inertia\Inertia::always((bool) config('jakawi.prelaunch_mode')),
             'showDemoBanner' => \Inertia\Inertia::always(fn () => \App\Models\AppSetting::showDemoBanner()),
@@ -61,7 +66,7 @@ class HandleInertiaRequests extends Middleware
             ) ? app(\App\Services\CityCommunity::class)->data($request, 'floating') : null),
             'benefitJourney' => fn () => $this->benefitJourney($request),
             'auth' => [
-                'user' => $request->user() ? $request->user()->toArray() + ['is_partner_only' => $request->user()->isPartnerOnly()] : null,
+                'user' => $request->user() ? ($request->attributes->has('support_session') ? $request->user()->only(['id', 'name', 'email', 'is_admin', 'theme_preference', 'email_verified_at']) : $request->user()->toArray()) + ['is_partner_only' => $request->user()->isPartnerOnly()] : null,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

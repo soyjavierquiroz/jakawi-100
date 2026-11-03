@@ -89,8 +89,8 @@ class MembershipController extends Controller
             'activity' => $activity,
             'memberReferral' => [
                 'eligible' => $isActiveMember,
-                'code' => $isActiveMember ? app(ReferralCodeService::class)->ensureFor($user) : null,
-                'link' => $isActiveMember ? route('referrals.open', app(ReferralCodeService::class)->ensureFor($user)) : null,
+                'code' => $isActiveMember ? ($request->attributes->has('support_session') ? $user->referral_code : app(ReferralCodeService::class)->ensureFor($user)) : null,
+                'link' => $isActiveMember && (! $request->attributes->has('support_session') || $user->referral_code) ? route('referrals.open', $request->attributes->has('support_session') ? $user->referral_code : app(ReferralCodeService::class)->ensureFor($user)) : null,
                 // "Amigos que se unieron" means referred users with a confirmed membership purchase.
                 'joined_count' => Conversion::query()->where('type', 'membership_purchased')->where('status', 'confirmed')->whereHas('relationship', fn ($query) => $query->where('referrer_user_id', $user->id))->count(),
                 'jp_ledger' => $jpBalance['ledger_balance'],

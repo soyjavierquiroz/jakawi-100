@@ -51,6 +51,13 @@ Route::middleware(['auth', 'throttle:20,1'])->group(function (): void {
     Route::post('/identity/club/link/{handoff}/reauthenticate', [\App\Http\Controllers\Identity\ClubLinkConsentController::class, 'reauthenticate'])->whereUuid('handoff')->name('identity.club.reauthenticate');
 });
 
+Route::middleware(['auth'])->group(function (): void {
+    Route::get('/admin/soporte', [\App\Http\Controllers\SupportSessionController::class, 'index'])->middleware('throttle:60,1,support-index')->name('support.index');
+    Route::post('/admin/soporte/reautenticar', [\App\Http\Controllers\SupportSessionController::class, 'reauthenticate'])->middleware('throttle:5,1,support-reauth')->name('support.reauthenticate');
+    Route::post('/admin/soporte', [\App\Http\Controllers\SupportSessionController::class, 'store'])->middleware('throttle:10,1,support-start')->name('support.store');
+    Route::post('/soporte/salir', [\App\Http\Controllers\SupportSessionController::class, 'destroy'])->name('support.destroy');
+});
+
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/membresia', [MembershipOfferController::class, 'show'])->name('membership.show');
 Route::get('/membresia/registro', [MembershipOfferController::class, 'register'])->middleware('guest')->name('membership.register');

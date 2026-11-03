@@ -44,7 +44,7 @@ type Props = {
 };
 export default function ResourceIndex({ title, resource, items: page, partners = [], filters = {}, cities = [] }: Props) {
   const items = page.data;
-  const { url } = usePage();
+  const { url, props } = usePage();
   const isPartner = resource === "partners";
   const [q, setQ] = useState(filters.q ?? "");
   const [status, setStatus] = useState(filters.status ?? "");
@@ -280,6 +280,7 @@ export default function ResourceIndex({ title, resource, items: page, partners =
               </Link>
               {isPartner && (
                 <>
+                  {props.canSupport === true && <Link className={actionClass} href={`/admin/soporte?partner=${item.id}`}>Ver como Partner</Link>}
                   <Link className={actionClass} href={`/admin/locations?partner=${item.id}`}>
                     Gestionar sedes
                   </Link>

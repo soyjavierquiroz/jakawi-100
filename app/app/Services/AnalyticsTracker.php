@@ -192,6 +192,8 @@ class AnalyticsTracker
      */
     public function record(string $event, array $context = [], array $metadata = [], ?string $eventId = null): ?AnalyticsEvent
     {
+        if ($this->request->attributes->has('support_session')) return null;
+
         if (! config('jakawi.analytics.enabled')) {
             return null;
         }

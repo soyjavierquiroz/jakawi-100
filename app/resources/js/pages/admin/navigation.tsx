@@ -4,7 +4,8 @@ import groups from '../../../admin-navigation.json';
 type Group = { label: string; description?: string; expanded?: boolean; links: string[][]; secondary?: Group[] };
 
 export function AdminNavigation() {
-    const path = usePage().url.split('?')[0];
+    const page = usePage();
+    const path = page.url.split('?')[0];
     const current = (href: string) => path === href || path.startsWith(`${href}/`);
     const containsCurrent = (group: Group): boolean => group.links.some(([href]) => current(href)) || !!group.secondary?.some(containsCurrent);
     const links = (items: string[][]) => items.map(([href, label]) => href === '/admin/conciliacion-membresias'
@@ -17,6 +18,7 @@ export function AdminNavigation() {
     </details>;
     return <nav aria-label="Administración" className="admin-nav">
         <Link href="/admin" className="admin-nav-home" aria-current={path === '/admin' ? 'page' : undefined}>Inicio del admin</Link>
+        {page.props.canSupport === true && <Link href="/admin/soporte">Usuarios · Ver como usuario</Link>}
         {groups.map((group) => <details key={group.label} className="admin-nav-group" open={group.label !== 'Configuración avanzada' || containsCurrent(group)}>
             <summary>{group.label}</summary>
             {group.description && <p className="admin-nav-note">{group.description}</p>}

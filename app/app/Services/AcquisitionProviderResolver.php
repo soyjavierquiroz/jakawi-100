@@ -19,7 +19,8 @@ class AcquisitionProviderResolver
 
     public function suppressed(Request $request): bool
     {
-        return str_contains(strtolower($request->header('Purpose', '').$request->header('Sec-Purpose', '')), 'prefetch')
+        return $request->attributes->has('support_session')
+            || str_contains(strtolower($request->header('Purpose', '').$request->header('Sec-Purpose', '')), 'prefetch')
             || $request->is('admin', 'admin/*')
             || $request->routeIs('*.preview')
             || (bool) $request->header('X-Inertia-Partial-Component');

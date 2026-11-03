@@ -10,7 +10,7 @@ class CaptureMembershipOrigin
 {
     public function handle(Request $request, Closure $next)
     {
-        app(MembershipAcquisition::class)->capture($request);
+        if (! $request->attributes->has('support_session')) app(MembershipAcquisition::class)->capture($request);
 
         return $next($request);
     }

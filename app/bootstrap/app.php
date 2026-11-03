@@ -84,7 +84,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', env('JAKAWI_ANALYTICS_VISITOR_COOKIE', 'jakawi_visitor_id')]);
 
+        $middleware->prependToPriorityList(\Illuminate\View\Middleware\ShareErrorsFromSession::class, \App\Http\Middleware\SupportMode::class);
+
         $middleware->web(prepend: [ProtectClubMemberAccess::class], append: [
+            \App\Http\Middleware\SupportMode::class,
             EnsureVisitorId::class,
             CaptureMembershipOrigin::class,
             HandleAppearance::class,
@@ -93,7 +96,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->dontFlash(['claim_secret', 'ticket']);
+        $exceptions->dontFlash(['claim_secret', 'ticket', 'code']);
+        $exceptions->render(function (\Illuminate\Database\QueryException $exception, Request $request) {
+            if ($exception->getCode() === '25006' && $request->attributes->has('support_session')) {
+                return response()->view('support-limited', ['support' => $request->attributes->get('support_session')], 403)->header('Cache-Control', 'private, no-store');
+            }
+        });
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*', 'internal/identity/*', 'internal/club/*') || $request->expectsJson(),
         );
