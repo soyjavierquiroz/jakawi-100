@@ -1,0 +1,79 @@
+/* Personal account only; preserve the shared consumer palette elsewhere. */
+.mi-jakawi {
+    --background: #fff8f2;
+    --surface: #ffffff;
+    --surface-elevated: #ffffff;
+    --surface-muted: #faf3ed;
+    --foreground: #111111;
+    --muted-foreground: #625852;
+    --border: #eadfd7;
+    --brand: #ff5a4f;
+    --brand-foreground: #ffffff;
+    --color-background: var(--background);
+    --color-surface: var(--surface);
+    --color-surface-elevated: var(--surface-elevated);
+    --color-surface-muted: var(--surface-muted);
+    --color-foreground: var(--foreground);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-border: var(--border);
+    --color-brand: var(--brand);
+    --color-brand-foreground: var(--brand-foreground);
+    font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+}
+.dark .mi-jakawi {
+    --background: #111111;
+    --surface: #1b1b1b;
+    --surface-elevated: #222222;
+    --surface-muted: #262322;
+    --foreground: #fff8f2;
+    --muted-foreground: #c4bbb5;
+    --border: #373230;
+}
+.mi-jakawi .mi-action,
+.mi-jakawi button.bg-brand {
+    background: #d34035;
+    color: #ffffff;
+}
+.mi-jakawi .mi-action:hover {
+    background: #bb362d;
+}
+.mi-jakawi .mi-text-link {
+    color: #b7342b;
+}
+.dark .mi-jakawi .mi-text-link {
+    color: #ff8c82;
+}
+.mi-jakawi a:focus-visible,
+.mi-jakawi button:focus-visible,
+.mi-jakawi summary:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 4px;
+}
+.mi-jakawi .mi-membership::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: #ff5a4f;
+}
+.mi-jakawi .mi-community > section {
+    margin-top: 0;
+    padding: 20px;
+    background: var(--surface);
+}
+.mi-jakawi .mi-community h2 {
+    font-size: 1rem;
+}
+.mi-jakawi .mi-community button {
+    font-size: 0.75rem;
+}
+.mi-jakawi .mi-community p {
+    line-height: 1.5;
+}
+@media (max-width: 420px) {
+    .mi-jakawi .mi-profile {
+        padding-inline: 12px;
+    }
+}
+.mi-jakawi .text-success { color: #08784f; }
+.dark .mi-jakawi .text-success { color: #24b47e; }

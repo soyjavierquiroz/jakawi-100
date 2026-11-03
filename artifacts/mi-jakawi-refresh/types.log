@@ -1,0 +1,9 @@
+
+> types:check
+> php artisan wayfinder:generate --with-form --no-interaction && tsc --noEmit
+
+
+[32m [Wayfinder] Generated actions in /var/www/html/resources/js/actions[39m
+
+[32m [Wayfinder] Generated routes in /var/www/html/resources/js/routes[39m
+

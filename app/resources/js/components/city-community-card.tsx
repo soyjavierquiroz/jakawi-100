@@ -50,9 +50,11 @@ export async function interact(
 export function CityCommunityCard({
     community,
     permanent = false,
+    compact = false,
 }: {
     community?: CityCommunityData | null;
     permanent?: boolean;
+    compact?: boolean;
 }) {
     if (!community || (!permanent && !community.automatic)) return null;
     return (
@@ -60,6 +62,7 @@ export function CityCommunityCard({
             key={`${community.city_slug}-${community.source}`}
             community={community}
             permanent={permanent}
+            compact={compact}
         />
     );
 }
@@ -67,9 +70,11 @@ export function CityCommunityCard({
 function CommunityCard({
     community,
     permanent,
+    compact,
 }: {
     community: CityCommunityData;
     permanent: boolean;
+    compact: boolean;
 }) {
     const section = useRef<HTMLElement>(null);
     const started = useRef(false);
@@ -166,11 +171,14 @@ function CommunityCard({
             <p className="mt-3 text-sm font-medium">
                 Gratis · Opcional · Solo anuncios de JAKAWI
             </p>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {compact ? <details className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                <summary className="cursor-pointer">Privacidad en WhatsApp</summary>
+                <p className="mt-2">WhatsApp es una plataforma externa. Según el tipo de grupo y su configuración, otros participantes pueden ver tu información de contacto. Participar es voluntario.</p>
+            </details> : <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                 WhatsApp es una plataforma externa. Según el tipo de grupo y su
                 configuración, otros participantes pueden ver tu información de
                 contacto. Participar es voluntario.
-            </p>
+            </p>}
             <div className="mt-4 flex flex-col gap-2">
                 <button
                     type="button"

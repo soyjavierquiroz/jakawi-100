@@ -97,8 +97,21 @@ class MembershipController extends Controller
                 'jp_balance' => $jpBalance['available_balance'],
                 'jp_held' => $jpBalance['held'],
             ],
-            'featuredBenefits' => $membership ? [] : Benefit::query()->available()->with('partner:id,name')->orderByDesc('featured')->orderBy('sort_order')->limit(3)->get()
-                ->map(fn (Benefit $benefit) => ['slug' => $benefit->slug, 'title' => $benefit->title, 'partner_name' => $benefit->partner->name]),
+            'featuredBenefits' => Benefit::query()->available()->publicAccess()->with('partner:id,name')->orderByDesc('featured')->orderBy('sort_order')->limit(3)->get()
+                ->map(function (Benefit $benefit) use ($request) {
+                    // Reuse detail availability (locations, PIN and per-account limits).
+                    $props = app(PublicController::class)->benefitPublicProps($benefit, $request);
+                    return [
+                        'slug' => $benefit->slug,
+                        'title' => $benefit->title,
+                        'partner_name' => $benefit->partner->name,
+                        'image_url' => $props['benefit']['image_url'],
+                        'availability' => $props['availability'],
+                        'access_label' => $benefit->requiresMembership()
+                            ? ($props['hasActiveMembership'] ? 'Con tu membresía · Revisa las condiciones' : 'Requiere membresía activa')
+                            : 'Con tu cuenta gratuita · Revisa las condiciones',
+                    ];
+                }),
         ]);
     }
 

@@ -1,0 +1,7 @@
+{
+  "result": "PASS",
+  "synthetic_accounts_only": true,
+  "internal_network": true,
+  "published_ports": false,
+  "production_state_mounted": false
+}
