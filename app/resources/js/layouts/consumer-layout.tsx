@@ -3,11 +3,13 @@ import { Link, usePage } from '@inertiajs/react';
 import MobileBottomNav from '@/components/mobile-bottom-nav';
 import { CommunityFloatingBubble } from '@/components/community-floating-bubble';
 import type { CityCommunityData } from '@/components/city-community-card';
+import { personalLinkClass, personalSection } from '@/lib/personal-navigation';
 import ThemeToggle from '@/components/theme-toggle';
 
 /** Consumer pages never inherit staff or partner navigation. */
 export default function ConsumerLayout({ children }: { children: React.ReactNode }) {
     const { component, url, props } = usePage<{ communityBubble: CityCommunityData | null }>();
+    const activeSection = personalSection(url);
     if (component === 'redemptions/show') return <DeliveryLayout>{children}</DeliveryLayout>;
     return <div className="min-h-screen bg-background pb-[var(--pwa-install-clearance,0px)] text-foreground">
         <header className="sticky top-0 z-30 hidden border-b border-border/70 bg-background/90 backdrop-blur lg:block">
@@ -23,10 +25,10 @@ export default function ConsumerLayout({ children }: { children: React.ReactNode
                         className="h-9 w-auto"
                     />
                 </Link>
-                <nav aria-label="Navegación principal" className="flex items-center gap-6 text-sm font-semibold text-muted-foreground">
-                    <Link href="/explorar" className="transition hover:text-foreground">Explorar</Link>
-                    <Link href="/mi-jakawi" className="transition hover:text-foreground">Mi JAKAWI</Link>
-                    <Link href="/perfil" className="transition hover:text-foreground">Perfil</Link>
+                <nav aria-label="Navegación principal" className="flex items-center gap-6 text-sm">
+                    <Link href="/explorar" aria-current={activeSection === 'explore' ? 'page' : undefined} className={personalLinkClass(activeSection === 'explore')}>Explorar</Link>
+                    <Link href="/mi-jakawi" aria-current={activeSection === 'account' ? 'page' : undefined} className={personalLinkClass(activeSection === 'account')}>Mi JAKAWI</Link>
+                    <Link href="/perfil" aria-current={activeSection === 'profile' ? 'page' : undefined} className={personalLinkClass(activeSection === 'profile')}>Perfil</Link>
                     <ThemeToggle />
                 </nav>
             </div>
