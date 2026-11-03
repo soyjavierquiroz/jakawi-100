@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "environment": "testing",
+  "database": "jakawi_test",
+  "database_host": "db-test",
+  "internal_network": true,
+  "published_ports": false,
+  "production_state_mounted": false,
+  "real_users_copied": false
+}

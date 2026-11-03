@@ -1,0 +1,24 @@
+{
+  "result": "PASS",
+  "isolated": true,
+  "dossisSnapshotActivity": {
+    "partner_views": 102,
+    "benefit_views": 4,
+    "confirmed": 0
+  },
+  "checks": [
+    {
+      "width": 1440,
+      "result": "PASS",
+      "metricLinks": 9,
+      "ownerEconomicsPreserved": true,
+      "termsAndDatesSaved": true,
+      "submittedForReview": true,
+      "publishedLocked": true,
+      "partnerIsolation": true,
+      "supportOperationalOnly": true,
+      "adminRestored": true
+    }
+  ],
+  "errors": []
+}

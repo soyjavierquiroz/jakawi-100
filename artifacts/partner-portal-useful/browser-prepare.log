@@ -1,0 +1,170 @@
+ Container jakawi-test-db-test-1 Running 
+ Container jakawi-test-app-test-1 Running 
+ Container jakawi-test-db-test-1 Waiting 
+ Container jakawi-test-db-test-1 Healthy 
+
+  Dropping all tables ................................................ 1s DONE
+
+   INFO  Preparing database.  
+
+  Creating migration table ..................................... 125.78ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table ......................... 145.73ms DONE
+  0001_01_01_000001_create_cache_table ......................... 144.54ms DONE
+  0001_01_01_000002_create_jobs_table .......................... 271.71ms DONE
+  2024_01_01_000000_create_passkeys_table ...................... 136.49ms DONE
+  2025_08_14_170933_add_two_factor_columns_to_users_table ....... 16.08ms DONE
+  2026_09_21_000001_add_is_admin_to_users_table .................. 7.61ms DONE
+  2026_09_21_000004_create_memberships_table ................... 115.08ms DONE
+  2026_09_22_000001_create_partners_table ...................... 100.73ms DONE
+  2026_09_22_000002_create_locations_table ...................... 77.86ms DONE
+  2026_09_22_000003_create_benefits_table ...................... 114.99ms DONE
+  2026_09_22_000004_create_benefit_location_table ............... 78.58ms DONE
+  2026_09_22_000005_create_redemptions_table ................... 142.99ms DONE
+  2026_09_22_000006_create_experiences_table .................... 49.48ms DONE
+  2026_09_22_000007_create_experience_partner_table ............. 43.55ms DONE
+  2026_09_22_000008_create_experience_sessions_table ........... 128.79ms DONE
+  2026_09_22_000009_create_analytics_events_table .............. 246.90ms DONE
+  2026_09_23_000001_create_partner_user_table ................... 39.44ms DONE
+  2026_09_23_000002_add_internal_experience_reservations ........ 84.39ms DONE
+  2026_09_23_000003_add_party_size_to_experience_reservations .... 5.50ms DONE
+  2026_09_23_000004_add_check_in_to_experience_reservations ..... 31.18ms DONE
+  2026_09_24_000001_add_content_review_metadata ................. 63.02ms DONE
+  2026_09_24_000005_create_user_profiles_table .................. 38.33ms DONE
+  2026_09_25_000001_add_theme_preference_to_users_table .......... 8.04ms DONE
+  2026_09_26_000001_add_referral_code_to_users_table ............ 13.60ms DONE
+  2026_09_26_000002_create_attribution_foundation_tables ....... 317.10ms DONE
+  2026_09_26_000003_create_manual_membership_sales_tables ...... 367.08ms DONE
+  2026_09_26_000004_create_reward_payouts_tables ............... 123.36ms DONE
+  2026_09_26_000008_add_partner_acquisition_attribution ......... 58.05ms DONE
+  2026_09_26_000009_add_generic_reward_beneficiaries ............ 49.16ms DONE
+  2026_09_26_000010_create_campaigns ........................... 143.60ms DONE
+  2026_09_26_000011_create_operational_adjustments_table ....... 126.13ms DONE
+  2026_09_27_000012_add_requested_by_to_reward_payouts .......... 24.65ms DONE
+  2026_09_27_000013_create_unlocks_tables ...................... 412.99ms DONE
+  2026_09_27_000014_add_unlock_to_analytics_events .............. 34.87ms DONE
+  2026_09_27_000015_create_jp_holds_table ....................... 95.47ms DONE
+  2026_09_27_000016_add_unlock_fulfillment_lifecycle ............ 86.31ms DONE
+  2026_09_27_000017_add_unlock_growth_context ................... 69.79ms DONE
+  2026_09_30_000001_create_cities_table ......................... 88.76ms DONE
+  2026_10_01_000001_add_city_id_to_locations_and_seed_canonical_cities  82.62ms DONE
+  2026_10_02_000001_create_city_interests_table ................ 102.31ms DONE
+  2026_10_03_000001_create_partner_applications_table .......... 116.77ms DONE
+  2026_10_05_000001_add_whatsapp_to_user_profiles ............... 10.23ms DONE
+  2026_10_05_000001_create_program_applications_table ........... 98.63ms DONE
+  2026_10_06_000001_create_ownership_assignments_table .......... 94.76ms DONE
+  2026_10_06_000002_add_public_journey_attribution_to_touches ... 25.67ms DONE
+  2026_10_07_000001_create_membership_purchase_requests ........ 137.76ms DONE
+  2026_10_07_000002_create_social_challenges ................... 427.47ms DONE
+  2026_10_07_000003_add_jp_ledger_references ................... 286.00ms DONE
+  2026_10_07_000004_add_social_challenge_jp_rewards ............ 109.84ms DONE
+  2026_10_07_000005_generalize_challenges ...................... 320.45ms DONE
+  2026_10_07_000006_challenge_product_experience ................ 45.40ms DONE
+  2026_10_08_000001_create_landing_presentations ................ 69.51ms DONE
+  2026_10_08_000002_add_challenge_marketing_editorial ........... 15.87ms DONE
+  2026_10_08_000003_add_landing_default_scope ................... 34.34ms DONE
+  2026_10_09_000001_extend_analytics_events_for_growth ......... 131.57ms DONE
+  2026_10_09_000002_add_acquisition_provider .................... 36.99ms DONE
+  2026_10_09_000003_create_growth_provider_deliveries .......... 113.27ms DONE
+  2026_10_09_180000_create_crm_foundation ...................... 167.09ms DONE
+  2026_10_11_000001_add_vsl_to_landing_presentations ............ 11.15ms DONE
+  2026_10_12_000001_add_offer_presentation_settings ............ 108.74ms DONE
+  2026_10_12_000002_add_offer_layout_controls .................... 9.83ms DONE
+  2026_10_12_000003_add_acquisition_copy_to_landing_presentations  8.87ms DONE
+  2026_10_14_000001_add_gallery_paths_to_partners ................ 6.15ms DONE
+  2026_10_14_000002_add_experience_catalog_controls ............. 11.53ms DONE
+  2026_10_15_000001_add_city_communities ........................ 61.54ms DONE
+  2026_10_29_230000_create_global_identity_authority ........... 340.27ms DONE
+  2026_10_30_010000_create_oauth_auth_codes_table ............... 51.73ms DONE
+  2026_10_30_010001_create_oauth_access_tokens_table ............ 45.17ms DONE
+  2026_10_30_010002_create_oauth_refresh_tokens_table ........... 24.41ms DONE
+  2026_10_30_010003_create_oauth_clients_table .................. 58.19ms DONE
+  2026_10_30_010004_create_oauth_device_codes_table ............. 75.10ms DONE
+  2026_10_30_040000_create_commercial_outbox ................... 115.63ms DONE
+  2026_10_30_120000_retire_com_affiliate_applications ........... 62.48ms DONE
+  2026_10_31_000001_add_landing_social_metadata ................. 20.42ms DONE
+  2026_10_31_100000_create_membership_bank_checkout ............ 520.38ms DONE
+  2026_10_31_150000_add_payer_name_to_membership_bank_payments .. 24.05ms DONE
+  2026_10_31_180000_add_receipt_extraction_to_membership_bank_payments  120.11ms DONE
+  2026_10_31_200000_add_club_direct_purchases .................. 282.49ms DONE
+  2026_10_31_210000_link_partner_applications_to_partners ...... 103.85ms DONE
+  2026_10_31_220000_create_membership_acquisition_origins ...... 200.19ms DONE
+  2026_10_31_230000_add_economic_access_to_partner_user ......... 19.51ms DONE
+  2026_11_01_000000_create_membership_evidence_journal ......... 357.41ms DONE
+  2026_11_02_000000_payment_reports_and_statement_history ...... 334.98ms DONE
+  2026_11_02_000001_add_bank_document_metadata .................. 61.34ms DONE
+  2026_11_02_120000_add_membership_type ......................... 66.77ms DONE
+  2026_11_03_000000_add_explicit_payment_confirmation ........... 44.20ms DONE
+  2026_11_03_000001_create_support_sessions .................... 253.45ms DONE
+  2026_11_03_000002_add_support_management_mode ................. 14.12ms DONE
+  2026_11_04_000000_jakawi_bank_reconciliation ................. 101.50ms DONE
+  2026_11_05_000000_create_club_access_tickets .................. 76.45ms DONE
+
+ Image nginx:1.27-alpine Pulling 
+ 39c2ddfd6010 Pulling fs layer 0B
+ f18232174bc9 Pulling fs layer 0B
+ 61ca4f733c80 Pulling fs layer 0B
+ b464cfdf2a63 Pulling fs layer 0B
+ d7e507024086 Pulling fs layer 0B
+ 81bd8ed7ec67 Pulling fs layer 0B
+ 197eb75867ef Pulling fs layer 0B
+ 34a64644b756 Pulling fs layer 0B
+ 34a64644b756 Downloading 1.397kB
+ 34a64644b756 Downloading 1.397kB
+ 34a64644b756 Downloading 1.397kB
+ 39c2ddfd6010 Downloading 1.049MB
+ 34a64644b756 Download complete 0B
+ 39c2ddfd6010 Downloading 1.049MB
+ 61ca4f733c80 Downloading 1.049MB
+ b464cfdf2a63 Download complete 0B
+ d7e507024086 Downloading 955B
+ 81bd8ed7ec67 Download complete 0B
+ 197eb75867ef Downloading 1.209kB
+ 39c2ddfd6010 Downloading 1.049MB
+ 197eb75867ef Download complete 0B
+ 39c2ddfd6010 Downloading 5.243MB
+ f18232174bc9 Downloading 3.174MB
+ 61ca4f733c80 Download complete 0B
+ 2a84448aca9c Download complete 0B
+ d7e507024086 Download complete 0B
+ 39c2ddfd6010 Downloading 11.53MB
+ f18232174bc9 Download complete 0B
+ 9261b9aff737 Download complete 0B
+ f18232174bc9 Extracting 1B
+ 39c2ddfd6010 Download complete 0B
+ 61ca4f733c80 Extracting 1B
+ f18232174bc9 Pull complete 0B
+ 61ca4f733c80 Extracting 1B
+ 61ca4f733c80 Pull complete 0B
+ d7e507024086 Extracting 1B
+ b464cfdf2a63 Pull complete 0B
+ 81bd8ed7ec67 Pull complete 0B
+ 197eb75867ef Pull complete 0B
+ d7e507024086 Pull complete 0B
+ 34a64644b756 Pull complete 0B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 1B
+ 39c2ddfd6010 Extracting 2B
+ 39c2ddfd6010 Extracting 2B
+ 39c2ddfd6010 Extracting 2B
+ 39c2ddfd6010 Pull complete 0B
+ Image nginx:1.27-alpine Pulled 
+ Container jakawi-test-web-test-1 Creating 
+ Container jakawi-test-web-test-1 Created 
+ Container jakawi-test-web-test-1 Starting 
+ Container jakawi-test-web-test-1 Started 
+ Container jakawi-test-web-test-1 Recreate 
+ Container jakawi-test-web-test-1 Recreated 
+ Container jakawi-test-web-test-1 Starting 
+ Container jakawi-test-web-test-1 Started 

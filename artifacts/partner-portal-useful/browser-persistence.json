@@ -1,0 +1,27 @@
+{
+  "result": "PASS",
+  "database": "jakawi_test",
+  "submitted_promotions": [
+    {
+      "title": "Promoci\u00f3n editorial QA 390-1793721440362",
+      "review_status": "submitted",
+      "starts_at": "2026-11-04T16:00:00",
+      "ends_at": "2026-12-04T16:00:00",
+      "terms": "S\u00f3lo martes. Consumo m\u00ednimo Bs 60."
+    },
+    {
+      "title": "Promoci\u00f3n editorial QA 1440-1793721560551",
+      "review_status": "submitted",
+      "starts_at": "2026-11-04T16:00:00",
+      "ends_at": "2026-12-04T16:00:00",
+      "terms": "S\u00f3lo martes. Consumo m\u00ednimo Bs 60."
+    },
+    {
+      "title": "Promoci\u00f3n editorial QA 390-1793721639021",
+      "review_status": "submitted",
+      "starts_at": "2026-11-04T16:00:00",
+      "ends_at": "2026-12-04T16:00:00",
+      "terms": "S\u00f3lo martes. Consumo m\u00ednimo Bs 60."
+    }
+  ]
+}

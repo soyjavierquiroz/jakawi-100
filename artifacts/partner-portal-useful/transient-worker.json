@@ -1,0 +1,7 @@
+{
+  "name": "/jakawi-club-crm-worker",
+  "id": "8f01498b2b9be77772b5887a0c6bbf8dbc679bc172e34a2764bc4d63d4d0618d",
+  "auto_remove": true,
+  "observed_before_release": true,
+  "release_command_targets_this_container": false
+}

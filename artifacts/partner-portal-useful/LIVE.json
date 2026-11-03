@@ -1,0 +1,11 @@
+{
+  "revision": "0dfa23845fe4c3f0124ca94a1a219a8a78abdfad",
+  "health": 200,
+  "protected_containers_unchanged": 39,
+  "temporary_auto_remove_worker_excluded": "/jakawi-club-crm-worker",
+  "original_memberships_and_economic_data_preserved": true,
+  "existing_superadmin_ids": [
+    1
+  ],
+  "live_support_tests": false
+}

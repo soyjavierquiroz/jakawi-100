@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "protected_commercial_tables": [
+    "partners",
+    "benefits",
+    "benefit_location",
+    "locations",
+    "experiences",
+    "experience_partner",
+    "experience_sessions",
+    "experience_reservations"
+  ],
+  "memberships_economics_identity_preserved": true,
+  "all_snapshots_equal": true,
+  "no_schema_changes": true,
+  "other_permanent_containers_unchanged": 39
+}

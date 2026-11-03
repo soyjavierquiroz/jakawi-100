@@ -1,0 +1,14 @@
+ Container jakawi-test-app-test-1 Running 
+ Container jakawi-test-db-test-1 Running 
+ Container jakawi-test-db-test-1 Waiting 
+ Container jakawi-test-db-test-1 Healthy 
+PHPUnit 12.5.36 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+.........................................                         41 / 41 (100%)
+
+Time: 04:37.015, Memory: 93.00 MB
+
+[30;42mOK (41 tests, 767 assertions)[0m

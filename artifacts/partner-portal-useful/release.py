@@ -113,14 +113,18 @@ def deploy():
  verify();print('COM app/web/worker/scheduler deployed; health and preservation verified.')
 
 def verify():
- m=json.loads((W/'release.json').read_text());now={x['Name']:x for x in containers()};protected=0
- for old in json.loads((W/'containers-before.private.json').read_text()):
-  if old['Name'].lstrip('/') in NAMES or 'jakawi-test' in old['Name']:continue
+ m=json.loads((W/'release.json').read_text())
+ before=json.loads((W/'containers-before.private.json').read_text())
+ transient=json.loads((W/'transient.json').read_text())
+ assert transient['auto_remove'] and transient['name']=='/jakawi-club-crm-worker'
+ stable=[old for old in before if old['Name'].lstrip('/') not in NAMES and 'jakawi-test' not in old['Name'] and old['Id']!=transient['id']]
+ now={x['Name']:x for x in inspect([old['Name'] for old in stable]+NAMES)};protected=0
+ for old in stable:
   item=now[old['Name']];assert all(item[k]==old[k] for k in ['Id','Image']);assert item['State']['StartedAt']==old['State']['StartedAt'];protected+=1
  for i in inspect(NAMES):assert i['State']['Running'] and i['Config']['Labels']['org.opencontainers.image.revision']==m['revision']
  after=data_snapshot();(W/'data-after.private.json').write_text(json.dumps(after,indent=2));assert after==json.loads((W/'data-before.private.json').read_text())
  assert run(['docker','exec','-i','jakawi-db-1','psql','-U','jakawi','-d','jakawi_final','-XAt'],b'SELECT json_agg(id ORDER BY id) FROM users WHERE is_superadmin;').decode().strip()=='[1]'
- health();(W/'LIVE.json').write_text(json.dumps({'revision':m['revision'],'health':200,'protected_containers_unchanged':protected,'original_memberships_and_economic_data_preserved':True,'existing_superadmin_ids':[1],'live_support_tests':False},indent=2))
+ health();(W/'LIVE.json').write_text(json.dumps({'revision':m['revision'],'health':200,'protected_containers_unchanged':protected,'temporary_auto_remove_worker_excluded':transient['name'],'original_memberships_and_economic_data_preserved':True,'existing_superadmin_ids':[1],'live_support_tests':False},indent=2))
 def rollback():
  m=json.loads((W/'release.json').read_text());backup=pathlib.Path(m['backup'])
  run(['docker','stop','--timeout','30',*NAMES])

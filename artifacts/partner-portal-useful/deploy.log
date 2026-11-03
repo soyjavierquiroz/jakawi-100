@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/opt/sites/jakawi.com/artifacts/partner-portal-useful/release.py", line 133, in <module>
+    if __name__=='__main__':globals()[sys.argv[1]]()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/sites/jakawi.com/artifacts/partner-portal-useful/release.py", line 113, in deploy
+    verify();print('COM app/web/worker/scheduler deployed; health and preservation verified.')
+    ^^^^^^^^
+  File "/opt/sites/jakawi.com/artifacts/partner-portal-useful/release.py", line 116, in verify
+    m=json.loads((W/'release.json').read_text());now={x['Name']:x for x in containers()};protected=0
+                                                                           ^^^^^^^^^^^^
+  File "/opt/sites/jakawi.com/artifacts/partner-portal-useful/release.py", line 11, in containers
+    def containers():return [{k:x[k] for k in ['Id','Name','Image','State']} for x in inspect(run(['docker','ps','-q']).decode().split())]
+                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/sites/jakawi.com/artifacts/partner-portal-useful/release.py", line 10, in inspect
+    def inspect(names):return json.loads(run(['docker','inspect',*names]))
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/sites/jakawi.com/artifacts/partner-portal-useful/release.py", line 8, in run
+    if p.returncode:raise RuntimeError('Command failed; inspect operations.private.log: '+' '.join(args[:3]))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Command failed; inspect operations.private.log: docker inspect f452891d9a11

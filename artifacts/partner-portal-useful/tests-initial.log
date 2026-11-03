@@ -1,0 +1,36 @@
+ Container jakawi-test-app-test-1 Running 
+ Container jakawi-test-db-test-1 Running 
+ Container jakawi-test-db-test-1 Waiting 
+ Container jakawi-test-db-test-1 Healthy 
+PHPUnit 12.5.36 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+...................[41;37mF[0m.......[41;37mF[0m.............                         41 / 41 (100%)
+
+Time: 05:13.443, Memory: 93.00 MB
+
+There were 2 failures:
+
+1) Tests\Feature\PartnerManagementTest::test_management_performance_excludes_economic_values_and_preserves_access_flags
+Expected response status code [403] but received 405.
+Failed asserting that 405 is identical to 403.
+
+/var/www/html/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:46
+/var/www/html/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:183
+/var/www/html/vendor/laravel/framework/src/Illuminate/Testing/Concerns/AssertsStatusCodes.php:141
+/var/www/html/tests/Feature/PartnerManagementTest.php:79
+
+2) Tests\Feature\PartnerUsefulPortalTest::test_commercial_terms_and_dates_follow_review_and_published_rows_stay_unchanged
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+-'2026-11-04 16:00:00'
++'2026-11-04 12:00:00'
+
+/var/www/html/tests/Feature/PartnerUsefulPortalTest.php:52
+
+[37;41mFAILURES![0m
+[37;41mTests: 41[0m[37;41m, Assertions: 759[0m[37;41m, Failures: 2[0m[37;41m.[0m

@@ -10,7 +10,12 @@ $owner=App\Models\User::factory()->create(['name'=>'Owner de pruebas','email'=>'
 $admin=App\Models\User::factory()->create(['name'=>'Admin de pruebas','email'=>'portal-admin@example.test','password'=>'Portal-test-only-2026!','is_admin'=>true,'is_superadmin'=>true]);
 $p=App\Models\Partner::factory()->create($snapshot['partner']);
 $p->users()->attach($owner,['role'=>'owner','economic_access'=>false]);
-foreach($snapshot['benefits'] as $b) App\Models\Benefit::create($b+['partner_id'=>$p->id]);
+foreach($snapshot['benefits'] as $b) {
+    $names=$b['location_names'];unset($b['location_names']);
+    $benefit=App\Models\Benefit::create($b+['partner_id'=>$p->id]);
+    $ids=[];foreach($names as $name) $ids[]=App\Models\Location::factory()->withPartner($p)->create(['name'=>$name,'status'=>'published'])->id;
+    if (!$benefit->applies_to_all_locations) $benefit->syncLocations($ids);
+}
 foreach(['partner_views'=>'partner_view','benefit_views'=>'benefit_view'] as $key=>$event) for($i=0;$i<$snapshot['activity'][$key];$i++) App\Models\AnalyticsEvent::create(['partner_id'=>$p->id,'event_name'=>$event,'occurred_at'=>now()]);
 $qa=App\Models\Partner::factory()->published()->create(['name'=>'Partner de pruebas editoriales','slug'=>'portal-editorial-qa']);
 $qa->users()->attach($owner,['role'=>'owner','economic_access'=>false]);
