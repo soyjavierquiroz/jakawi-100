@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,12 +12,35 @@ class ValidateOidcAuthorization
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $q = $request->query();
+        if ($error = $this->queryError($request->query())) {
+            return $this->error($error);
+        }
+
+        // Fortify's React forms may resume this URL through an Inertia XHR.
+        // Switch to a full browser visit before Passport redirects across origins.
+        if ($request->header('X-Inertia')) {
+            return Inertia::location($request->fullUrl());
+        }
+
+        try {
+            $response = $next($request);
+        } catch (OAuthServerException $e) {
+            $response = $e->getResponse();
+        }
+        $response->headers->set('Cache-Control', 'no-store');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Referrer-Policy', 'no-referrer');
+
+        return $response;
+    }
+
+    public function queryError(array $q): ?string
+    {
         $allowed = ['client_id', 'redirect_uri', 'response_type', 'scope', 'state', 'nonce',
             'code_challenge', 'code_challenge_method', 'response_mode', 'prompt'];
         foreach ($q as $key => $value) {
             if (! in_array($key, $allowed, true) || ! is_string($value)) {
-                return $this->error();
+                return 'invalid_request';
             }
         }
 
@@ -30,32 +54,17 @@ class ValidateOidcAuthorization
             || ! preg_match('/^[A-Za-z0-9._~-]{32,512}$/D', $q['nonce'] ?? '')
             || ! in_array($q['response_mode'] ?? 'query', ['query'], true)
             || ! in_array($q['prompt'] ?? '', ['', 'none', 'login'], true)) {
-            return $this->error();
+            return 'invalid_request';
         }
 
         $scopes = explode(' ', $q['scope'] ?? '');
         if (! in_array('openid', $scopes, true)
             || array_diff($scopes, ['openid', 'profile', 'email']) !== []
             || count(array_unique($scopes)) !== count($scopes)) {
-            return $this->error('invalid_scope');
+            return 'invalid_scope';
         }
 
-        // Fortify's React forms may resume this URL through an Inertia XHR.
-        // Switch to a full browser visit before Passport redirects across origins.
-        if ($request->header('X-Inertia')) {
-            return \Inertia\Inertia::location($request->fullUrl());
-        }
-
-        try {
-            $response = $next($request);
-        } catch (OAuthServerException $e) {
-            $response = $e->getResponse();
-        }
-        $response->headers->set('Cache-Control', 'no-store');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Referrer-Policy', 'no-referrer');
-
-        return $response;
+        return null;
     }
 
     private function error(string $error = 'invalid_request'): Response

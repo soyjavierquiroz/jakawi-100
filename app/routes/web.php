@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function (): void {
     Route::get('/admin/soporte', [\App\Http\Controllers\SupportSessionController::class, 'index'])->middleware('throttle:60,1,support-index')->name('support.index');
     Route::post('/admin/soporte/reautenticar', [\App\Http\Controllers\SupportSessionController::class, 'reauthenticate'])->middleware('throttle:5,1,support-reauth')->name('support.reauthenticate');
     Route::post('/admin/soporte', [\App\Http\Controllers\SupportSessionController::class, 'store'])->middleware('throttle:10,1,support-start')->name('support.store');
+    Route::post('/soporte/club', [\App\Http\Controllers\SupportSessionController::class, 'club'])->name('support.club');
+    Route::post('/soporte/continuar-club', [\App\Http\Controllers\SupportSessionController::class, 'continueClub'])->name('support.continue-club');
     Route::post('/soporte/salir', [\App\Http\Controllers\SupportSessionController::class, 'destroy'])->name('support.destroy');
 });
 

@@ -11,6 +11,8 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
 class SupportMode
@@ -39,7 +41,7 @@ class SupportMode
             if ($bound && $support->expires_at->isFuture() && $support->end_reason === 'expired') {
                 $support->update(['ended_at' => now(), 'end_reason' => 'revoked']);
             }
-            $request->session()->forget('support_session_id');
+            $request->session()->forget(['support_session_id', 'support.oidc_continuations']);
             $request->session()->regenerate(true);
             $request->session()->regenerateToken();
 
@@ -47,14 +49,29 @@ class SupportMode
         }
         $request->attributes->set('support_session', $support);
         $support->displayLabel = (User::find($support->target_user_id)?->name ?? 'Cuenta #'.$support->target_user_id).($support->partner_id ? ' / '.(Partner::find($support->partner_id)?->name ?? 'Partner #'.$support->partner_id) : '');
-        if ($request->routeIs('support.destroy') && $request->isMethod('POST')) {
+        if ($request->routeIs('support.destroy', 'support.club', 'support.continue-club') && $request->isMethod('POST')) {
             return $next($request);
+        }
+        if ($request->isMethod('GET') && $request->routeIs('passport.authorizations.authorize')) {
+            if ($request->header('X-Inertia')) {
+                return Inertia::location('/oauth/authorize?'.http_build_query($request->query(), '', '&', PHP_QUERY_RFC3986));
+            }
+            $continuation = null;
+            if (app(ValidateOidcAuthorization::class)->queryError($request->query()) === null) {
+                $continuation = (string) Str::uuid();
+                $pending = $request->session()->get('support.oidc_continuations', []);
+                $pending[$continuation] = ['support_id' => $support->id, 'actor_id' => $actor->id, 'expires_at' => $support->expires_at->timestamp, 'query' => $request->query()];
+                $request->session()->put('support.oidc_continuations', array_slice($pending, -5, null, true));
+            }
+
+            return response()->view('support-limited', ['support' => $support, 'continuation' => $continuation], 403)
+                ->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer');
         }
         if (! in_array($request->method(), ['GET', 'HEAD'], true) || ! $request->routeIs(...self::SCREENS)) {
             return $this->limited($support);
         }
         $target = User::find($support->target_user_id);
-        if (! $target || $target->is_admin || $target->is_superadmin) {
+        if (! $target || (($target->is_admin || $target->is_superadmin) && $target->id !== $actor->id)) {
             return $this->limited($support);
         }
         $partner = $support->partner_id ? Partner::find($support->partner_id) : null;

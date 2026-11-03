@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\ValidateOidcAuthorization;
 use App\Models\Partner;
 use App\Models\SupportSession;
 use App\Models\User;
@@ -19,14 +20,17 @@ class SupportSessionController extends Controller
     public function index(Request $request, SupportAccess $access)
     {
         abort_unless($access->allows($request->user()), 403);
-        $data = $request->validate(['q' => 'nullable|string|max:200', 'user' => 'nullable|integer', 'partner' => 'nullable|integer']);
-        $query = User::query()->where('is_admin', false)->where('email', 'not like', '%@purchases.invalid');
+        $data = $request->validate(['q' => 'nullable|string|max:200', 'user' => 'nullable|integer', 'partner' => 'nullable|integer', 'subject' => 'nullable|uuid']);
+        $query = User::query()->where(fn ($q) => $q->where('is_admin', false)->orWhereKey($request->user()->id))->where('email', 'not like', '%@purchases.invalid');
         if (! empty($data['partner'])) {
             $partner = Partner::findOrFail($data['partner']);
             $query->whereHas('partners', fn ($q) => $q->whereKey($partner->id)->whereIn('partner_user.role', ['owner', 'manager', 'staff']));
         }
         if (! empty($data['user'])) {
             $query->whereKey($data['user']);
+        }
+        if (! empty($data['subject'])) {
+            $query->where('global_subject_id', $data['subject']);
         }
         if ($q = trim($data['q'] ?? '')) {
             $query->where(fn ($query) => $query->where('name', 'ilike', '%'.addcslashes($q, '\\%_').'%')->orWhere('email', 'ilike', '%'.addcslashes($q, '\\%_').'%'));
@@ -66,7 +70,7 @@ class SupportSessionController extends Controller
         abort_if($request->session()->has('support_session_id'), 409);
         $data = $request->validate(['user_id' => 'required|integer', 'partner_id' => 'nullable|integer', 'reason' => 'required|string|min:10|max:1000']);
         $target = User::findOrFail($data['user_id']);
-        abort_if($target->is_admin || $target->is_superadmin || str_ends_with(strtolower($target->email), '@purchases.invalid'), 403);
+        abort_if((($target->is_admin || $target->is_superadmin) && $target->id !== $request->user()->id) || str_ends_with(strtolower($target->email), '@purchases.invalid'), 403);
         $partner = ! empty($data['partner_id']) ? Partner::findOrFail($data['partner_id']) : null;
         if ($partner) {
             abort_unless($target->partners()->whereKey($partner->id)->whereIn('partner_user.role', ['owner', 'manager', 'staff'])->exists(), 403);
@@ -79,6 +83,7 @@ class SupportSessionController extends Controller
             'reason' => $data['reason'], 'session_hash' => hash('sha256', $request->session()->getId()),
             'started_at' => now(), 'expires_at' => now()->addMinutes(15), 'ended_at' => now()->addMinutes(15), 'end_reason' => 'expired']);
         $support->save();
+        $request->session()->forget('support.oidc_continuations');
         $request->session()->put('support_session_id', $support->id);
         $request->session()->forget(['support.reauthenticated_at', 'support.reauthenticated_user_id']);
 
@@ -87,14 +92,47 @@ class SupportSessionController extends Controller
 
     public function destroy(Request $request)
     {
-        // Middleware verifies the real actor and session binding before allowing this route.
-        $support = $request->attributes->get('support_session');
-        abort_unless($support, 409);
-        $support->update(['ended_at' => now(), 'end_reason' => 'exit']);
-        $request->session()->forget('support_session_id');
-        $request->session()->regenerate(true);
-        $request->session()->regenerateToken();
+        $this->end($request, 'exit');
 
         return to_route('admin.index');
+    }
+
+    public function club(Request $request)
+    {
+        abort_unless(app(SupportAccess::class)->allows($request->user()), 403);
+        $support = $request->attributes->get('support_session');
+        abort_unless($support, 409);
+        $subject = User::findOrFail($support->target_user_id)->global_subject_id;
+        abort_unless(Str::isUuid($subject), 409);
+        $this->end($request, 'club');
+        $url = 'https://jakawi.club/admin/soporte?'.http_build_query(['subject' => $subject], '', '&', PHP_QUERY_RFC3986);
+
+        return $request->header('X-Inertia') ? Inertia::location($url) : redirect()->away($url, 303);
+    }
+
+    public function continueClub(Request $request)
+    {
+        abort_unless(app(SupportAccess::class)->allows($request->user()), 403);
+        $data = $request->validate(['continuation_id' => 'required|uuid']);
+        $pending = $request->session()->get('support.oidc_continuations.'.$data['continuation_id']);
+        $support = $request->attributes->get('support_session');
+        abort_unless($support && is_array($pending) && $pending['support_id'] === $support->id
+            && $pending['actor_id'] === $request->user()->id && $pending['expires_at'] >= now()->timestamp, 409);
+        abort_if(app(ValidateOidcAuthorization::class)->queryError($pending['query']) !== null, 400);
+        $url = '/oauth/authorize?'.http_build_query($pending['query'], '', '&', PHP_QUERY_RFC3986);
+        $this->end($request, 'oidc_resume');
+
+        return redirect($url, 303);
+    }
+
+    private function end(Request $request, string $reason): void
+    {
+        // SupportMode verifies the real actor, deadline and session binding before these POSTs.
+        $support = $request->attributes->get('support_session');
+        abort_unless($support, 409);
+        $support->update(['ended_at' => now(), 'end_reason' => $reason]);
+        $request->session()->forget(['support_session_id', 'support.oidc_continuations']);
+        $request->session()->regenerate(true);
+        $request->session()->regenerateToken();
     }
 }
