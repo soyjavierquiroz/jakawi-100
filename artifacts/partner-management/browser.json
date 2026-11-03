@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "isolated": true,
+  "checks": [
+    {
+      "width": 390,
+      "result": "PASS",
+      "profileSaved": true,
+      "promotionDraftSaved": true,
+      "partnerIsolation": true,
+      "adminRestored": true
+    },
+    {
+      "width": 1440,
+      "result": "PASS",
+      "profileSaved": true,
+      "promotionDraftSaved": true,
+      "partnerIsolation": true,
+      "adminRestored": true
+    }
+  ],
+  "errors": []
+}

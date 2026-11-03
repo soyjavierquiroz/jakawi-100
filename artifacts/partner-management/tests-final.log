@@ -1,0 +1,33 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PartnerManagementTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmanagement saves profile promotion experience and session as real[39m[90m… [39m [90m22.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanagement rejects other partners sensitive operations and invalid[39m[90m…[39m [90m12.80s[39m  
+  [32;1m✓[39;22m[90m [39m[90mview stays read only and unauthorized admin cannot manage[39m[90m           [39m [90m8.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90msucursal save preserves partner pin and publication[39m[90m                 [39m [90m7.27s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SupportClubHandoffTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdrex exit uses fixed club url and keeps actor identity without crea[39m[90m…[39m [90m8.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclub return selects subject without starting support and still req[39m[90m…[39m [90m15.00s[39m  
+  [32;1m✓[39;22m[90m [39m[90mjavier can observe only himself among admins and exit to club[39m[90m      [39m [90m15.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired club session oidc is paused then authorizes only the real[39m[90m… [39m [90m10.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid oidc no dead end resume and no arbitrary redirect or replay[39m[90m [39m [90m7.59s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormal admin rejected and csrf required for exit[39m[90m                    [39m [90m7.44s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SupportModeTest[39m
+  [32;1m✓[39;22m[90m [39m[90mrequires explicit superadmin and recent reauthentication[39m[90m           [39m [90m10.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword mfa and reason are required[39m[90m                               [39m [90m14.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfree user sees real profile without persisting login or secrets[39m[90m     [39m [90m9.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpioneer view does not create referral or change commercial data[39m[90m     [39m [90m8.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting partner representative preserves economic access and isol[39m[90m…[39m [90m10.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexisting partner representative preserves economic access and isola[39m[90m…[39m [90m9.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartner without existing authorization is rejected[39m[90m                 [39m [90m10.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmutations sensitive gets and chaining fail closed[39m[90m                  [39m [90m14.48s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdatabase blocks implicit get writes[39m[90m                                 [39m [90m9.47s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexit expiry and revocation restore admin[39m[90m                            [39m [90m8.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpiry is enforced without browser timer[39m[90m                            [39m [90m8.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpermission revocation ends support without exposing target[39m[90m          [39m [90m8.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90msession binding rejects another browser[39m[90m                            [39m [90m13.78s[39m  
+
+  [90mTests:[39m    [32;1m23 passed[39;22m[90m (321 assertions)[39m
+  [90mDuration:[39m [39m251.07s[39m
+

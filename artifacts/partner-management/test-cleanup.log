@@ -1,0 +1,14 @@
+time="2026-11-03T13:10:12Z" level=warning msg="The \"IMGPROXY_KEY\" variable is not set. Defaulting to a blank string."
+time="2026-11-03T13:10:12Z" level=warning msg="The \"IMGPROXY_AWS_ACCESS_KEY_ID\" variable is not set. Defaulting to a blank string."
+time="2026-11-03T13:10:12Z" level=warning msg="The \"IMGPROXY_AWS_SECRET_ACCESS_KEY\" variable is not set. Defaulting to a blank string."
+time="2026-11-03T13:10:12Z" level=warning msg="The \"IMGPROXY_SALT\" variable is not set. Defaulting to a blank string."
+ Container jakawi-test-app-test-1 Stopping 
+ Container jakawi-test-app-test-1 Stopped 
+ Container jakawi-test-app-test-1 Removing 
+ Container jakawi-test-app-test-1 Removed 
+ Container jakawi-test-db-test-1 Stopping 
+ Container jakawi-test-db-test-1 Stopped 
+ Container jakawi-test-db-test-1 Removing 
+ Container jakawi-test-db-test-1 Removed 
+ Network jakawi-test_jakawi Removing 
+ Network jakawi-test_jakawi Removed 

@@ -1,0 +1,7 @@
+__pycache__/
+browser-server.log
+browser.log
+frontend.log
+tests.log
+push.log
+schema.log
