@@ -1,0 +1,127 @@
+{
+  "result": "PASS",
+  "isolated": true,
+  "checks": [
+    {
+      "type": "free",
+      "width": 390,
+      "theme": "light",
+      "background": "rgb(255, 248, 242)",
+      "card": "rgb(255, 255, 255)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "free",
+      "width": 390,
+      "theme": "dark",
+      "background": "rgb(17, 17, 17)",
+      "card": "rgb(27, 27, 27)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "free",
+      "width": 1440,
+      "theme": "light",
+      "background": "rgb(255, 248, 242)",
+      "card": "rgb(255, 255, 255)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "free",
+      "width": 1440,
+      "theme": "dark",
+      "background": "rgb(17, 17, 17)",
+      "card": "rgb(27, 27, 27)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "pioneer",
+      "width": 390,
+      "theme": "light",
+      "background": "rgb(255, 248, 242)",
+      "card": "rgb(255, 255, 255)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "pioneer",
+      "width": 390,
+      "theme": "dark",
+      "background": "rgb(17, 17, 17)",
+      "card": "rgb(27, 27, 27)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "pioneer",
+      "width": 1440,
+      "theme": "light",
+      "background": "rgb(255, 248, 242)",
+      "card": "rgb(255, 255, 255)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "pioneer",
+      "width": 1440,
+      "theme": "dark",
+      "background": "rgb(17, 17, 17)",
+      "card": "rgb(27, 27, 27)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "standard",
+      "width": 390,
+      "theme": "light",
+      "background": "rgb(255, 248, 242)",
+      "card": "rgb(255, 255, 255)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "standard",
+      "width": 390,
+      "theme": "dark",
+      "background": "rgb(17, 17, 17)",
+      "card": "rgb(27, 27, 27)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "standard",
+      "width": 1440,
+      "theme": "light",
+      "background": "rgb(255, 248, 242)",
+      "card": "rgb(255, 255, 255)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    },
+    {
+      "type": "standard",
+      "width": 1440,
+      "theme": "dark",
+      "background": "rgb(17, 17, 17)",
+      "card": "rgb(27, 27, 27)",
+      "overflow": false,
+      "images": true,
+      "result": "PASS"
+    }
+  ],
+  "errors": []
+}

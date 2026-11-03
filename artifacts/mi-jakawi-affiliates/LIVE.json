@@ -1,0 +1,7 @@
+{
+  "revision": "7a90f30b34040cd96850f8c7058500689c55c3ca",
+  "health": 200,
+  "protected_containers_unchanged": 39,
+  "presentation_only_no_migrations": true,
+  "live_support_tests": false
+}

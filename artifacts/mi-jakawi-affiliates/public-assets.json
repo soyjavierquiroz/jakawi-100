@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "public_assets": [
+    {
+      "asset": "assets/mi-jakawi-CMNMK-da.js",
+      "http": 200,
+      "sha256": "3487dd4e11f05920965e0e1d10f7b3c8b60490a20a4afec89a8044df4c8debd5"
+    },
+    {
+      "asset": "assets/mi-jakawi-xABkAXFM.css",
+      "http": 200,
+      "sha256": "347d1ec70df574746d65382910327db1924908e1eaa96a4216e9ebc191051fa8"
+    },
+    {
+      "asset": "assets/member-profile-DAD83ZLg.js",
+      "http": 200,
+      "sha256": "8599d6cce478269ae4158198c01f72ef4eafc3ad4bce8cbffd59bd041947a8bc"
+    }
+  ],
+  "anonymous_mi_jakawi_requires_login": true
+}

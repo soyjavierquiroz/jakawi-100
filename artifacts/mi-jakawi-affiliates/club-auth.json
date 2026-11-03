@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "affiliate_url": "https://jakawi.club/afiliados",
+  "anonymous_status": 302,
+  "club_controls_authentication": true,
+  "existing_oidc_callback": true,
+  "pkce_s256": true,
+  "club_session_cookie_host_only": true,
+  "authenticated_user_session_used": false
+}
