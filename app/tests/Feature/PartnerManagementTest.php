@@ -67,6 +67,18 @@ class PartnerManagementTest extends TestCase
         $this->assertAuthenticatedAs($this->admin);
     }
 
+    public function test_management_performance_excludes_economic_values_and_preserves_access_flags(): void
+    {
+        Benefit::factory()->forPartner($this->partner)->create(['status' => 'published', 'review_status' => 'approved']);
+        $this->start();
+        $this->get('/partner/dossis-qa/rendimiento')->assertOk()->assertInertia(fn (Assert $p) => $p
+            ->where('operationalOnly', true)->where('partnerAccess.can_view_economics', false)
+            ->where('auth.user.id', $this->admin->id)->missing('kpis.benefits.savings')
+            ->missing('kpis.benefits.average_savings')->missing('kpis.topBenefits.0.savings'));
+        $this->assertFalse((bool) $this->partner->users()->first()->pivot->economic_access);
+        $this->post('/partner/dossis-qa/rendimiento')->assertStatus(405);
+    }
+
     public function test_management_rejects_other_partners_sensitive_operations_and_invalid_inputs(): void
     {
         $other = Partner::factory()->published()->create();

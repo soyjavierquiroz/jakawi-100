@@ -19,7 +19,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                             <nav className="mt-6 flex flex-wrap gap-3 md:flex-col">
                                 <Link href={`/partner/${partner.slug}`}>Inicio</Link>
                                 {partnerAccess?.can_manage && <Link href={`/partner/${partner.slug}/perfil`}>Perfil y sedes</Link>}
-                                {partnerAccess?.can_manage && supportMode?.mode !== 'manage' && <Link href={`/partner/${partner.slug}/rendimiento`}>Rendimiento</Link>}
+                                {partnerAccess?.can_manage && <Link href={`/partner/${partner.slug}/rendimiento`}>Rendimiento</Link>}
                                 <Link href={`/partner/${partner.slug}/promociones`}>Promociones</Link>
                                 <Link href={`/partner/${partner.slug}/experiencias`}>Experiencias</Link>
                                 <Link href={`/partner/${partner.slug}/retos`}>Retos</Link>
@@ -38,7 +38,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                         </nav>
                     )}
                 </aside>
-                <div className="min-w-0 flex-1">{flash?.success && <p role="status" className="mb-4 rounded border border-green-600 p-3">{flash.success}</p>}{flash?.error && <p role="alert" className="mb-4 rounded border border-red-600 p-3">{flash.error}</p>}{errors && Object.keys(errors).length > 0 && <div role="alert" className="mb-4 rounded border border-red-600 p-3">{Object.values(errors).map((error, i) => <p key={i}>{error}</p>)}</div>}{children}</div>
+                <div className="min-w-0 flex-1">{supportMode?.mode === 'manage' && <p className="mb-5 rounded-lg border border-border bg-surface p-4 text-sm">Gestión editorial y rendimiento operativo. Las cifras económicas, referidos y comisiones se consultan desde soporte CLUB con sus propias autorizaciones.</p>}{flash?.success && <p role="status" className="mb-4 rounded border border-green-600 p-3">{flash.success}</p>}{flash?.error && <p role="alert" className="mb-4 rounded border border-red-600 p-3">{flash.error}</p>}{errors && Object.keys(errors).length > 0 && <div role="alert" className="mb-4 rounded border border-red-600 p-3">{Object.values(errors).map((error, i) => <p key={i}>{error}</p>)}</div>}{children}</div>
             </div>
         </main>
     );

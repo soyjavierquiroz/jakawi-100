@@ -27,7 +27,7 @@ class SupportMode
     ];
 
     private const EDITORIAL = [
-        'GET' => ['partner.profile.edit', 'partner.profile.logo', 'partner.locations.create', 'partner.locations.edit',
+        'GET' => ['partner.performance', 'partner.profile.edit', 'partner.profile.logo', 'partner.locations.create', 'partner.locations.edit',
             'partner.benefits.create', 'partner.benefits.edit', 'partner.experiences.create', 'partner.experiences.edit',
             'partner.challenges.create', 'partner.challenges.edit', 'partner.challenges.preview',
             'partner.unlocks.create', 'partner.unlocks.edit'],

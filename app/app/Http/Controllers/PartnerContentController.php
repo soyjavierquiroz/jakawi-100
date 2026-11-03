@@ -15,9 +15,15 @@ use Inertia\Response;
 
 class PartnerContentController extends Controller
 {
-    public function benefits(Partner $partner): Response
+    public function benefits(Request $request, Partner $partner): Response
     {
-        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'benefit', 'items' => \App\Support\ListingPage::make(Benefit::where('partner_id', $partner->id)->latest())]);
+        $state = $request->validate(['estado' => 'nullable|in:vigentes,draft,submitted,changes_requested,expired'])['estado'] ?? null;
+        $query = Benefit::where('partner_id', $partner->id)->with('locations:id,name');
+        if ($state === 'vigentes') $query->available();
+        elseif ($state === 'expired') $query->where('ends_at', '<', now());
+        elseif ($state) $query->where('review_status', $state);
+
+        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'benefit', 'state' => $state, 'items' => \App\Support\ListingPage::make($query->latest())]);
     }
 
     public function benefitForm(Partner $partner, ?Benefit $benefit = null): Response
@@ -33,6 +39,9 @@ class PartnerContentController extends Controller
             $this->ownedBenefit($partner, $benefit);
             $this->editable($benefit);
             $data = $request->validate($this->benefitRules());
+            foreach (['starts_at', 'ends_at'] as $field) {
+                if (! empty($data[$field])) $data[$field] = \Carbon\CarbonImmutable::parse($data[$field])->utc()->format('Y-m-d H:i:s');
+            }
             $ids = $data['location_ids'] ?? [];
             abort_unless(Location::where('partner_id', $partner->id)->whereIn('id', $ids)->count() === count(array_unique($ids)), 422);
             $benefit ??= new Benefit(['partner_id' => $partner->id, 'status' => 'draft', 'review_status' => 'draft', 'created_by_user_id' => $request->user()->id]);
@@ -50,7 +59,7 @@ class PartnerContentController extends Controller
     public function submitBenefit(Request $request, Partner $partner, Benefit $benefit)
     {
         $this->ownedBenefit($partner, $benefit);
-        abort_unless(in_array($benefit->review_status, ['draft', 'changes_requested', 'rejected'], true), 403);
+        $this->editable($benefit);
         $benefit->update(['review_status' => 'submitted', 'submitted_at' => now(), 'submitted_by_user_id' => $request->user()->id, 'review_notes' => null]);
 
         return back();
@@ -140,6 +149,7 @@ class PartnerContentController extends Controller
     private function editable(?object $content): void
     {
         if ($content) {
+            abort_if($content instanceof Benefit && $content->status === 'published', 403);
             abort_unless(in_array($content->review_status, ['draft', 'changes_requested', 'rejected'], true), 403);
         }
     }

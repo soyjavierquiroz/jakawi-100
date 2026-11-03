@@ -1,0 +1,21 @@
+<?php
+require '/var/www/html/vendor/autoload.php';
+$app = require '/var/www/html/bootstrap/app.php';
+$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+if (! app()->environment('testing') || config('database.connections.pgsql.host') !== 'db-test' || config('database.connections.pgsql.database') !== 'jakawi_test') throw new RuntimeException('Isolated tests only');
+$snapshot = json_decode(file_get_contents('/tmp/dossis-snapshot.json'), true, flags: JSON_THROW_ON_ERROR);
+if ($snapshot['pending'] || $snapshot['activity']['confirmed'] || $snapshot['experienceDrafts'] || $snapshot['experienceSubmitted']) throw new RuntimeException('Snapshot needs additional synthetic operational records');
+App\Models\City::updateOrCreate(['slug'=>'cochabamba'], ['name'=>'Cochabamba','country_code'=>'BO','status'=>App\Models\City::ACTIVE]);
+$owner=App\Models\User::factory()->create(['name'=>'Owner de pruebas','email'=>'portal-owner@example.test','password'=>'Portal-test-only-2026!']);
+$admin=App\Models\User::factory()->create(['name'=>'Admin de pruebas','email'=>'portal-admin@example.test','password'=>'Portal-test-only-2026!','is_admin'=>true,'is_superadmin'=>true]);
+$p=App\Models\Partner::factory()->create($snapshot['partner']);
+$p->users()->attach($owner,['role'=>'owner','economic_access'=>false]);
+foreach($snapshot['benefits'] as $b) App\Models\Benefit::create($b+['partner_id'=>$p->id]);
+foreach(['partner_views'=>'partner_view','benefit_views'=>'benefit_view'] as $key=>$event) for($i=0;$i<$snapshot['activity'][$key];$i++) App\Models\AnalyticsEvent::create(['partner_id'=>$p->id,'event_name'=>$event,'occurred_at'=>now()]);
+$qa=App\Models\Partner::factory()->published()->create(['name'=>'Partner de pruebas editoriales','slug'=>'portal-editorial-qa']);
+$qa->users()->attach($owner,['role'=>'owner','economic_access'=>false]);
+foreach(['draft'=>'Borrador QA','submitted'=>'En revisión QA','changes_requested'=>'Cambios solicitados QA'] as $state=>$title) App\Models\Benefit::factory()->forPartner($qa)->create(['title'=>$title,'status'=>'draft','review_status'=>$state,'terms'=>'Sólo lunes. Consumo mínimo Bs 50.','starts_at'=>now()->subDay(),'ends_at'=>now()->addMonth()]);
+App\Models\Benefit::factory()->forPartner($qa)->create(['title'=>'Publicada QA','status'=>'published','review_status'=>'approved','terms'=>'Sólo lunes. Consumo mínimo Bs 50.','starts_at'=>now()->subDay(),'ends_at'=>now()->addMonth()]);
+App\Models\Benefit::factory()->forPartner($qa)->create(['title'=>'Vencida QA','status'=>'published','review_status'=>'approved','terms'=>'Finalizada.','ends_at'=>now()->subDay()]);
+$other=App\Models\Partner::factory()->published()->create(['slug'=>'portal-foreign-qa']);
+echo json_encode(['partner'=>$p->id,'slug'=>$p->slug,'qa'=>$qa->slug,'other'=>$other->slug,'snapshotActivity'=>$snapshot['activity']]);
