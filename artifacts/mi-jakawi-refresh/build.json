@@ -1,0 +1,12 @@
+{
+  "revision": "2979211d4d789b83ee432760d9342c7dacdb2238",
+  "images": {
+    "app": "sha256:c4215254c4557d30041f933ee4cd35813ee6eea505b525532eee3697bce97561",
+    "web": "sha256:5e72a9f813dd5956630a4805a14be19ab43f099501618fb7e4088abf1f725d02"
+  },
+  "base_images": {
+    "app": "sha256:429dbc2bef4542644a1a269edd364c29fc3305dbe2e517397e52b1a3f3fd763d",
+    "web": "sha256:4df655226f6f55cec4dfa4c0372294a04972d9f1be448ceed68b8c0cbf5c16a3"
+  },
+  "base_revision": "0dfa23845fe4c3f0124ca94a1a219a8a78abdfad"
+}

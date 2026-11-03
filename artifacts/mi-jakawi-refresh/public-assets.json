@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "guest_redirect_to_login": true,
+  "assets": [
+    {
+      "asset": "assets/mi-jakawi-CBaIcoWh.js",
+      "status": 200,
+      "sha256": "1e205cb69aba37f287be2f7dbb397fdec3e8e111a5ea2537893ba454200faace",
+      "matches_build": true
+    },
+    {
+      "asset": "assets/mi-jakawi-xABkAXFM.css",
+      "status": 200,
+      "sha256": "347d1ec70df574746d65382910327db1924908e1eaa96a4216e9ebc191051fa8",
+      "matches_build": true
+    }
+  ]
+}

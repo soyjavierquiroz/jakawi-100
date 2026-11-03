@@ -1,0 +1,10 @@
+{
+  "revision": "2979211d4d789b83ee432760d9342c7dacdb2238",
+  "health": 200,
+  "protected_containers_unchanged": 39,
+  "original_memberships_and_economic_data_preserved": true,
+  "existing_superadmin_ids": [
+    1
+  ],
+  "live_support_tests": false
+}
