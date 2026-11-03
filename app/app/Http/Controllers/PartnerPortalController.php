@@ -17,7 +17,7 @@ class PartnerPortalController extends Controller
 {
     public function index(Request $request): Response|RedirectResponse
     {
-        $partners = $request->user()->partners()
+        $partners = app(\App\Services\Support\SupportAccess::class)->partnerUser($request)->partners()
             ->orderBy('name')
             ->get(['partners.id', 'partners.name', 'partners.slug']);
 
@@ -38,7 +38,7 @@ class PartnerPortalController extends Controller
 
     public function show(Request $request, Partner $partner): Response
     {
-        $relation = $request->user()->partners()->whereKey($partner->id)->firstOrFail();
+        $relation = app(\App\Services\Support\SupportAccess::class)->partnerUser($request)->partners()->whereKey($partner->id)->firstOrFail();
 
         return Inertia::render('partner/dashboard', [
             'community' => app(CityCommunity::class)->data($request, 'mi-jakawi'),
@@ -53,7 +53,7 @@ class PartnerPortalController extends Controller
 
     public function performance(Request $request, Partner $partner, PartnerKpiService $kpis): Response
     {
-        $relation = $request->user()->partners()->whereKey($partner->id)->first();
+        $relation = app(\App\Services\Support\SupportAccess::class)->partnerUser($request)->partners()->whereKey($partner->id)->first();
         abort_unless($relation && in_array($relation->pivot->role, ['owner', 'manager'], true), 403);
         $days = (int) $request->integer('period', 30);
         abort_unless(in_array($days, [7, 30, 90], true), 404);
@@ -66,7 +66,7 @@ class PartnerPortalController extends Controller
 
     public function redirectToSinglePartner(Request $request, string $destination): RedirectResponse
     {
-        $partners = $request->user()->partners()->orderBy('name')->get(['partners.id', 'partners.slug']);
+        $partners = app(\App\Services\Support\SupportAccess::class)->partnerUser($request)->partners()->orderBy('name')->get(['partners.id', 'partners.slug']);
         abort_unless($partners->count() === 1, 403);
 
         return to_route($destination, $partners->first());

@@ -14,6 +14,12 @@ class SupportAccess
         return $actor && Gate::forUser($actor)->allows('create', SupportSession::class);
     }
 
+    public function partnerUser(Request $request): ?User
+    {
+        $support = $request->attributes->get('support_session');
+        return $support?->mode === 'manage' ? User::find($support->target_user_id) : $request->user();
+    }
+
     public function fresh(Request $request): bool
     {
         $stamp = $request->session()->get('support.reauthenticated_at');

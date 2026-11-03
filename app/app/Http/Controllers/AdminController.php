@@ -73,7 +73,8 @@ class AdminController extends Controller
 
     public function partnerForm(?Partner $partner = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? $partner->toArray() + ['galleryUrls' => array_map(fn ($key) => app(MediaUrl::class)->url($key, 'partner_editorial'), $partner->gallery_paths ?? []), 'logoCropUrl' => $partner->logo_path ? route('admin.partners.logo-source', $partner->id, false) : null, 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'coverUrl' => app(MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner?->isPublished() ? route('partners.public', $partner) : null, 'locations' => $partner ? $partner->locations()->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'status', 'address', 'city']) : []]);
+        if (request()->attributes->has('partner_editor')) $partner?->makeHidden(['internal_notes', 'referral_code', 'referral_code_normalized']);
+        return Inertia::render(request()->attributes->has('partner_editor') ? 'partner/business' : 'admin/resources/form', ['partner' => request()->attributes->get('partner_editor')?->only('id', 'name', 'slug'), 'title' => $partner ? 'Editar Partner' : 'Nuevo Partner', 'resource' => 'partners', 'item' => $partner ? ($partner->toArray()) + ['galleryUrls' => array_map(fn ($key) => app(MediaUrl::class)->url($key, 'partner_editorial'), $partner->gallery_paths ?? []), 'logoCropUrl' => $partner->logo_path ? (request()->attributes->has('partner_editor') ? route('partner.profile.logo', $partner, false) : route('admin.partners.logo-source', $partner->id, false)) : null, 'logoUrl' => app(MediaUrl::class)->url($partner->logo_path, 'partner_logo'), 'coverUrl' => app(MediaUrl::class)->url($partner->cover_path, 'thumbnail')] : null, 'publicUrl' => $partner?->isPublished() ? route('partners.public', $partner) : null, 'locations' => $partner ? $partner->locations()->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'status', 'address', 'city']) : []]);
     }
 
     public function partnerLogoSource(Partner $partner)
@@ -89,7 +90,11 @@ class AdminController extends Controller
     public function savePartner(Request $request, ?Partner $partner = null)
     {
         return DB::transaction(function () use ($request, $partner) {
-            $data = $request->validate($this->partnerRules($partner));
+            $rules = $this->partnerRules($partner);
+            if ($request->attributes->has('partner_editor')) {
+                $rules = \Illuminate\Support\Arr::only($rules, array_merge(PartnerBusinessController::PARTNER_FIELDS, ['logo', 'cover', 'gallery_paths', 'gallery_4', 'gallery_4_upload', 'gallery_4_remove', 'gallery_1', 'gallery_2', 'gallery_3', 'gallery_1_upload', 'gallery_2_upload', 'gallery_3_upload', 'gallery_1_remove', 'gallery_2_remove', 'gallery_3_remove']));
+            }
+            $data = $request->validate($rules);
             $partner ??= new Partner;
             $partner->fill($data);
             $partner->save();
@@ -102,6 +107,7 @@ class AdminController extends Controller
             $partner->gallery_paths = array_values(array_filter($paths, fn ($key) => $key !== null)) ?: null;
             $partner->save();
 
+            if ($request->attributes->has('partner_editor')) return to_route('partner.profile.edit', $partner)->with('success', 'Partner guardado correctamente.');
             return to_route('admin.partners.index', \Illuminate\Support\Arr::only($request->query(), ['q', 'status', 'city', 'sort', 'page']))->with('success', 'Partner guardado correctamente.');
         });
     }
@@ -122,13 +128,18 @@ class AdminController extends Controller
 
     public function locationForm(Request $request, ?Location $location = null): Response
     {
-        return Inertia::render('admin/resources/form', ['title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin(), 'imageUrl' => app(MediaUrl::class)->url($location->image_path, 'thumbnail')] : null, 'partners' => Partner::orderBy('name')->get(['id', 'name']), 'cities' => City::orderByDesc('priority')->orderBy('name')->get(['id', 'name']), 'initialPartnerId' => ! $location && $request->filled('partner') ? Partner::whereKey($request->integer('partner'))->value('id') : null]);
+        return Inertia::render($request->attributes->has('partner_editor') ? 'partner/business' : 'admin/resources/form', ['partner' => $request->attributes->get('partner_editor')?->only('id', 'name', 'slug'), 'title' => $location ? 'Editar Location' : 'Nueva Location', 'resource' => 'locations', 'item' => $location ? $location->only(array_merge($location->getFillable(), ['id'])) + ['has_redemption_pin' => $location->hasRedemptionPin(), 'imageUrl' => app(MediaUrl::class)->url($location->image_path, 'thumbnail')] : null, 'partners' => Partner::when($request->attributes->has('partner_editor'), fn ($q) => $q->whereKey($request->attributes->get('partner_editor')->id))->orderBy('name')->get(['id', 'name']), 'cities' => City::orderByDesc('priority')->orderBy('name')->get(['id', 'name']), 'initialPartnerId' => $request->attributes->get('partner_editor')?->id ?? (! $location && $request->filled('partner') ? Partner::whereKey($request->integer('partner'))->value('id') : null)]);
     }
 
     public function saveLocation(Request $request, ?Location $location = null)
     {
         return DB::transaction(function () use ($request, $location) {
-            $data = $request->validate($this->locationRules($location));
+            $rules = $this->locationRules($location);
+            $editor = $request->attributes->get('partner_editor');
+            if ($editor) $rules = \Illuminate\Support\Arr::only($rules, array_merge(PartnerBusinessController::LOCATION_FIELDS, ['image']));
+            $data = $request->validate($rules);
+            if ($editor) $data['partner_id'] = $editor->id;
+            if ($editor && ! $location) $data['status'] = 'draft';
             $city = isset($data['city_id']) ? City::find($data['city_id']) : null;
             $data['city'] = $city?->name;
             $location ??= new Location;
@@ -138,6 +149,7 @@ class AdminController extends Controller
             } $location->save();
             $this->upload($request, $location, 'image', 'image_path', 'locations');
 
+            if ($editor) return to_route('partner.profile.edit', $editor)->with('success', 'Sede guardada correctamente.');
             return to_route('admin.locations.index', \Illuminate\Support\Arr::only($request->query(), ['q', 'status', 'partner', 'sort', 'page']))->with('success', 'Location guardada correctamente.');
         });
     }

@@ -118,6 +118,13 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner', [PartnerPortalController::class, 'index'])->name('partner.index');
     Route::get('/partner/reservas', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'partner.reservations.index'));
     Route::get('/validar', fn (Request $request) => app(PartnerPortalController::class)->redirectToSinglePartner($request, 'redemptions.validate'));
+    Route::get('/partner/{partner:slug}/perfil', [\App\Http\Controllers\PartnerBusinessController::class, 'profile'])->name('partner.profile.edit');
+    Route::get('/partner/{partner:slug}/perfil/logo', [\App\Http\Controllers\PartnerBusinessController::class, 'logo'])->name('partner.profile.logo');
+    Route::put('/partner/{partner:slug}/perfil', [\App\Http\Controllers\PartnerBusinessController::class, 'saveProfile'])->name('partner.profile.update');
+    Route::get('/partner/{partner:slug}/sedes/crear', [\App\Http\Controllers\PartnerBusinessController::class, 'location'])->name('partner.locations.create');
+    Route::post('/partner/{partner:slug}/sedes', [\App\Http\Controllers\PartnerBusinessController::class, 'saveLocation'])->name('partner.locations.store');
+    Route::get('/partner/{partner:slug}/sedes/{location:id}/editar', [\App\Http\Controllers\PartnerBusinessController::class, 'location'])->name('partner.locations.edit');
+    Route::put('/partner/{partner:slug}/sedes/{location:id}', [\App\Http\Controllers\PartnerBusinessController::class, 'saveLocation'])->name('partner.locations.update');
     Route::get('/partner/{partner:slug}', [PartnerPortalController::class, 'show'])->name('partner.portal.show');
     Route::get('/partner/{partner:slug}/desbloqueos', [PartnerUnlockController::class, 'index'])->name('partner.unlocks.index');
     Route::get('/partner/{partner:slug}/desbloqueos/crear', [PartnerUnlockController::class, 'form'])->name('partner.unlocks.create');

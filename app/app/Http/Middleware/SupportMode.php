@@ -26,6 +26,18 @@ class SupportMode
         'partner.reservations.index', 'partner.unlocks.index', 'partner.challenges.index',
     ];
 
+    private const EDITORIAL = [
+        'GET' => ['partner.profile.edit', 'partner.profile.logo', 'partner.locations.create', 'partner.locations.edit',
+            'partner.benefits.create', 'partner.benefits.edit', 'partner.experiences.create', 'partner.experiences.edit',
+            'partner.challenges.create', 'partner.challenges.edit', 'partner.challenges.preview',
+            'partner.unlocks.create', 'partner.unlocks.edit'],
+        'POST' => ['media.uploads', 'partner.locations.store', 'partner.benefits.store', 'partner.benefits.submit',
+            'partner.experiences.store', 'partner.experiences.submit', 'partner.experiences.sessions.store',
+            'partner.challenges.store', 'partner.challenges.submit', 'partner.challenges.image', 'partner.unlocks.store', 'partner.unlocks.submit'],
+        'PUT' => ['partner.profile.update', 'partner.locations.update', 'partner.benefits.update', 'partner.experiences.update',
+            'partner.experiences.sessions.update', 'partner.challenges.update', 'partner.unlocks.update'],
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
         $id = $request->session()->get('support_session_id');
@@ -67,7 +79,9 @@ class SupportMode
             return response()->view('support-limited', ['support' => $support, 'continuation' => $continuation], 403)
                 ->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer');
         }
-        if (! in_array($request->method(), ['GET', 'HEAD'], true) || ! $request->routeIs(...self::SCREENS)) {
+        $managing = $support->mode === 'manage' && $support->partner_id;
+        $editorial = $managing && $request->routeIs(...(self::EDITORIAL[$request->method()] ?? []));
+        if (! $editorial && (! in_array($request->method(), ['GET', 'HEAD'], true) || ! $request->routeIs(...self::SCREENS))) {
             return $this->limited($support);
         }
         $target = User::find($support->target_user_id);
@@ -82,6 +96,17 @@ class SupportMode
         $routePartnerId = $routePartner instanceof Partner ? $routePartner->id : Partner::where('slug', $routePartner)->value('id');
         if ($request->routeIs('partner.*') && $support->partner_id && $routePartner && $routePartnerId !== $support->partner_id) {
             return $this->limited($support);
+        }
+        if ($managing) {
+            abort_unless($partner && $target->partners()->whereKey($partner->id)->whereIn('partner_user.role', ['owner', 'manager'])->exists(), 403);
+            // No user/guard substitution in management: the real admin remains the actor.
+            if ($request->routeIs('partner.index')) {
+                return to_route('partner.portal.show', $partner);
+            }
+            if (! $request->routeIs('partner.*', 'media.uploads')) {
+                return $this->limited($support);
+            }
+            return $this->manage($request, $next, $support, $actor, $editorial && ! $request->isMethodSafe());
         }
         // Never log in as the target: the persistent guard session continues to identify the actor.
         $sessionSnapshot = $request->session()->all();
@@ -112,6 +137,37 @@ class SupportMode
             $request->session()->replace($sessionSnapshot);
             Auth::guard('web')->setUser($actor);
             $request->setUserResolver(fn () => $actor);
+        }
+    }
+
+    private function manage(Request $request, Closure $next, SupportSession $support, User $actor, bool $write): Response
+    {
+        $connection = DB::connection();
+        $level = $connection->transactionLevel();
+        try {
+            $connection->beginTransaction();
+            if (! $write) {
+                $connection->statement('SET TRANSACTION READ ONLY');
+            }
+            $request->attributes->set('support_editorial_write', $write);
+            $response = $next($request);
+            if ($write && $response->getStatusCode() < 400 && ! ($response->exception ?? null)) {
+                \App\Models\AuditLog::create(['actor_user_id' => $actor->id, 'action' => 'support_partner_action',
+                    'subject_type' => Partner::class, 'subject_id' => $support->partner_id,
+                    'metadata' => ['support_session_id' => $support->id, 'partner_id' => $support->partner_id,
+                        'route' => $request->route()->getName(), 'location_ids' => $request->input('location_ids'), 'records' => collect($request->route()->parameters())->map(fn ($value) => $value instanceof \Illuminate\Database\Eloquent\Model ? ['type' => $value::class, 'id' => $value->getKey()] : $value)->all()]]);
+                $connection->commit();
+                if ($response->isRedirection() && ! $request->session()->has('success')) $request->session()->flash('success', 'Cambios guardados correctamente.');
+            }
+            $response->headers->set('Cache-Control', 'private, no-store, max-age=0');
+            $response->headers->set('Referrer-Policy', 'no-referrer');
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+            return $response;
+        } finally {
+            if ($connection->transactionLevel() > $level) {
+                $connection->rollBack($level);
+            }
+            $request->attributes->remove('support_editorial_write');
         }
     }
 

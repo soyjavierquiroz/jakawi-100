@@ -130,6 +130,9 @@ class PartnerContentController extends Controller
     private function ownedExperience(Partner $partner, ?Experience $experience): void
     {
         if ($experience) {
+            if (request()->attributes->get('support_session')?->mode === 'manage') {
+                abort_if($experience->partners()->where('partners.id', '!=', $partner->id)->exists(), 403);
+            }
             abort_unless($experience->partners()->whereKey($partner->id)->exists(), 404);
         }
     }

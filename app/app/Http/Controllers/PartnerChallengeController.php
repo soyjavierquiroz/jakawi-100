@@ -12,7 +12,7 @@ use Inertia\Inertia;
 
 class PartnerChallengeController extends Controller {
     private function authorizePartner(Request $request, Partner $partner): void {
-        $role = $request->user()->partners()->whereKey($partner->id)->firstOrFail()->pivot->role;
+        $role = app(\App\Services\Support\SupportAccess::class)->partnerUser($request)->partners()->whereKey($partner->id)->firstOrFail()->pivot->role;
         abort_unless(in_array($role, ['owner','manager'], true), 403);
     }
     private function own(Partner $partner, Challenge $challenge): void { abort_unless($challenge->partner_id === $partner->id, 404); }

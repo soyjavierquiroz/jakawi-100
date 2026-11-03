@@ -14,7 +14,7 @@ class EnsurePartner
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
+        $user = app(\App\Services\Support\SupportAccess::class)->partnerUser($request);
         abort_unless($user?->partners()->exists(), 403);
 
         $partner = $request->route('partner');
@@ -24,11 +24,11 @@ class EnsurePartner
             $canManage = in_array($relation->pivot->role, ['owner', 'manager'], true);
             $request->attributes->set('partner_access', [
                 'can_manage' => $canManage,
-                'can_view_economics' => app(\App\Services\PartnerEconomicAccess::class)->allows(
+                'can_view_economics' => ($request->attributes->get('support_session')?->mode !== 'manage') && app(\App\Services\PartnerEconomicAccess::class)->allows(
                     $relation->status, $relation->pivot->role, (bool) $relation->pivot->economic_access,
                 ),
                 'can_edit_content' => $canManage && in_array($partner->status, ['draft', 'published'], true),
-                'can_operate' => $partner->isPublished(),
+                'can_operate' => ($request->attributes->get('support_session')?->mode !== 'manage') && $partner->isPublished(),
             ]);
             $operational = $request->routeIs(
                 'redemptions.validate', 'redemptions.confirm', 'partner.redemptions.scan.confirm',

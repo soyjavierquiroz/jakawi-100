@@ -280,7 +280,7 @@ export default function ResourceIndex({ title, resource, items: page, partners =
               </Link>
               {isPartner && (
                 <>
-                  {props.canSupport === true && <Link className={actionClass} href={`/admin/soporte?partner=${item.id}`}>Ver como Partner</Link>}
+                  {props.canSupport === true && <Link className={actionClass} href={`/admin/soporte?partner=${item.id}`}>Ver como / Gestionar Partner</Link>}
                   <Link className={actionClass} href={`/admin/locations?partner=${item.id}`}>
                     Gestionar sedes
                   </Link>

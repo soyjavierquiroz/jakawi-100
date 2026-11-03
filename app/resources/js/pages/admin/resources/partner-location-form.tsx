@@ -1,6 +1,7 @@
 import { ImageUpload } from "@/components/media/image-upload";
 import { usePage, Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
+import PortalHeading from '../../partner/layout';
 import AdminLayout from "../layout";
 import {
   actionClass,
@@ -11,6 +12,7 @@ import {
 } from "./partner-location-ui";
 
 type Props = {
+  portalPartner?: { id: number; name: string; slug: string };
   resource: "partners" | "locations";
   item?: any;
   partners?: { id: number; name: string }[];
@@ -137,8 +139,11 @@ export default function PartnerLocationForm({
   locations = [],
   publicUrl,
   initialPartnerId,
+  portalPartner,
 }: Props) {
-  const { url } = usePage();
+  const { url, props } = usePage();
+  const Layout = portalPartner ? PortalHeading : AdminLayout;
+  const portalBase = `/partner/${portalPartner?.slug}`;
   const listingQuery = url.includes('?') ? `?${url.split('?')[1]}` : '';
   const isPartner = resource === "partners";
   const title = `${item ? "Editar" : "Crear"} ${isPartner ? "Partner" : "Location"}`;
@@ -183,11 +188,12 @@ export default function PartnerLocationForm({
       ...(!isPartner ? { opening_hours: hours } : {}),
       ...(item ? { _method: "put" } : {}),
     }));
-    form.post(`/admin/${resource}${item ? `/${item.id}` : ""}${listingQuery}`, {
+    form.post(portalPartner ? (isPartner ? `${portalBase}/perfil` : `${portalBase}/sedes${item ? `/${item.id}` : ""}`) : `/admin/${resource}${item ? `/${item.id}` : ""}${listingQuery}`, {
       onError: () => document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(),
     });
   };
   const field = (name: string) => {
+    if (portalPartner && ['status', 'featured', 'sort_order', 'published_at', 'internal_notes', 'redemption_pin', 'partner_id', ...(isPartner ? ['slug'] : [])].includes(name)) return null;
     const error = form.errors[name];
     const common = {
       id: name,
@@ -320,11 +326,12 @@ export default function PartnerLocationForm({
     </button>
   );
   return (
-    <AdminLayout title={title}>
+    <Layout title={title} partner={portalPartner!}>
       <div className="mx-auto max-w-5xl space-y-6">
-        <Link href={`/admin/${resource}${listingQuery}`} className={`${actionClass} border-transparent px-0`}>
+        <Link href={portalPartner ? `${portalBase}/perfil` : `/admin/${resource}${listingQuery}`} className={`${actionClass} border-transparent px-0`}>
           ← Volver a {isPartner ? "Partners" : "Locations"}
         </Link>
+        {!portalPartner && isPartner && item && props.canSupport === true && <Link className={primaryClass} href={`/admin/soporte?partner=${item.id}`}>Gestionar Partner</Link>}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
@@ -507,7 +514,7 @@ export default function PartnerLocationForm({
                     "redemption_pin",
                   ]
               ).map(field)}
-              {!isPartner && item && (
+              {!portalPartner && !isPartner && item && (
                 <p className="text-sm text-muted-foreground sm:col-span-2">
                   PIN configurado: {item.has_redemption_pin ? "Sí" : "No"}
                 </p>
@@ -540,7 +547,7 @@ export default function PartnerLocationForm({
                           "Sin dirección configurada"}
                       </p>
                     </div>
-                    <Link className={actionClass} href={`/admin/locations/${location.id}/edit`}>
+                    <Link className={actionClass} href={portalPartner ? `${portalBase}/sedes/${location.id}/editar` : `/admin/locations/${location.id}/edit`}>
                       Editar sede
                     </Link>
                   </div>
@@ -552,7 +559,7 @@ export default function PartnerLocationForm({
                 )}
               </div>
               <div className="sm:col-span-2">
-                <Link className={actionClass} href={`/admin/locations/create?partner=${item.id}`}>
+                <Link className={actionClass} href={portalPartner ? `${portalBase}/sedes/crear` : `/admin/locations/create?partner=${item.id}`}>
                   Crear Location asociada
                 </Link>
               </div>
@@ -574,7 +581,7 @@ export default function PartnerLocationForm({
             </div>
           )}
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
-            <Link className={actionClass} href={`/admin/${resource}${listingQuery}`}>
+            <Link className={actionClass} href={portalPartner ? `${portalBase}/perfil` : `/admin/${resource}${listingQuery}`}>
               Volver al listado
             </Link>
             {save}
@@ -588,6 +595,6 @@ export default function PartnerLocationForm({
           </p>
         </form>
       </div>
-    </AdminLayout>
+    </Layout>
   );
 }

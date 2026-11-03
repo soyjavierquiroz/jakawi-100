@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
             'canSupport' => fn () => ! $request->attributes->has('support_session') && app(\App\Services\Support\SupportAccess::class)->allows($request->user()),
             'supportMode' => \Inertia\Inertia::always(function () use ($request) {
                 $support = $request->attributes->get('support_session');
-                return $support ? ['id' => $support->id, 'label' => $request->user()->name.($support->partner_id ? ' / '.\App\Models\Partner::find($support->partner_id)?->name : ''), 'expiresAt' => $support->expires_at->toIso8601String()] : null;
+                return $support ? ['id' => $support->id, 'label' => $request->user()->name.($support->partner_id ? ' / '.\App\Models\Partner::find($support->partner_id)?->name : ''), 'expiresAt' => $support->expires_at->toIso8601String(), 'mode' => $support->mode, 'actor' => \App\Models\User::find($support->actor_user_id)?->name, 'partner' => \App\Models\Partner::find($support->partner_id)?->name] : null;
             }),
             'partnerAccess' => fn () => $request->attributes->get('partner_access'),
             'prelaunchMode' => \Inertia\Inertia::always((bool) config('jakawi.prelaunch_mode')),

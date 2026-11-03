@@ -68,19 +68,22 @@ class SupportSessionController extends Controller
     {
         abort_unless($access->allows($request->user()) && $access->fresh($request), 403, 'Reautentica tu cuenta administrativa para iniciar soporte.');
         abort_if($request->session()->has('support_session_id'), 409);
-        $data = $request->validate(['user_id' => 'required|integer', 'partner_id' => 'nullable|integer', 'reason' => 'required|string|min:10|max:1000']);
+        $data = $request->validate(['user_id' => 'required|integer', 'partner_id' => 'nullable|integer', 'reason' => 'required|string|min:10|max:1000', 'mode' => 'sometimes|in:view,manage']);
         $target = User::findOrFail($data['user_id']);
         abort_if((($target->is_admin || $target->is_superadmin) && $target->id !== $request->user()->id) || str_ends_with(strtolower($target->email), '@purchases.invalid'), 403);
         $partner = ! empty($data['partner_id']) ? Partner::findOrFail($data['partner_id']) : null;
         if ($partner) {
             abort_unless($target->partners()->whereKey($partner->id)->whereIn('partner_user.role', ['owner', 'manager', 'staff'])->exists(), 403);
         }
+        if (($data['mode'] ?? 'view') === 'manage') {
+            abort_unless($partner && $target->partners()->whereKey($partner->id)->whereIn('partner_user.role', ['owner', 'manager'])->exists(), 403);
+        }
         $request->session()->regenerate(true);
         $request->session()->regenerateToken();
         $support = new SupportSession;
         $support->id = (string) Str::uuid();
         $support->fill(['actor_user_id' => $request->user()->id, 'target_user_id' => $target->id, 'partner_id' => $partner?->id,
-            'reason' => $data['reason'], 'session_hash' => hash('sha256', $request->session()->getId()),
+            'mode' => $data['mode'] ?? 'view', 'reason' => $data['reason'], 'session_hash' => hash('sha256', $request->session()->getId()),
             'started_at' => now(), 'expires_at' => now()->addMinutes(15), 'ended_at' => now()->addMinutes(15), 'end_reason' => 'expired']);
         $support->save();
         $request->session()->forget('support.oidc_continuations');
