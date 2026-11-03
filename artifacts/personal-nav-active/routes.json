@@ -1,0 +1,105 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "url": "/beneficios",
+      "section": "explore"
+    },
+    {
+      "url": "/beneficios/oferta",
+      "section": "explore"
+    },
+    {
+      "url": "/beneficios/oferta/canjear",
+      "section": "explore"
+    },
+    {
+      "url": "/explorar?q=x",
+      "section": "explore"
+    },
+    {
+      "url": "/experiencias",
+      "section": "explore"
+    },
+    {
+      "url": "/experiencias/evento",
+      "section": "explore"
+    },
+    {
+      "url": "/lugares/sede",
+      "section": "explore"
+    },
+    {
+      "url": "/p/lugar",
+      "section": "explore"
+    },
+    {
+      "url": "/mi-jakawi",
+      "section": "account"
+    },
+    {
+      "url": "/mi-jakawi/?page=2",
+      "section": "account"
+    },
+    {
+      "url": "/mi-jakawi/actividad",
+      "section": "account"
+    },
+    {
+      "url": "/perfil",
+      "section": "profile"
+    },
+    {
+      "url": "/perfil/",
+      "section": "profile"
+    },
+    {
+      "url": "/mi-jakawi/perfil",
+      "section": "profile"
+    },
+    {
+      "url": "/settings/profile?tab=1",
+      "section": "profile"
+    },
+    {
+      "url": "/",
+      "section": "home"
+    },
+    {
+      "url": "/?city=1",
+      "section": "home"
+    },
+    {
+      "url": "/beneficios-extra",
+      "section": null
+    },
+    {
+      "url": "/mi-jakawi-extra",
+      "section": null
+    },
+    {
+      "url": "/perfil-ajeno",
+      "section": null
+    },
+    {
+      "url": "/admin/beneficios",
+      "section": null
+    },
+    {
+      "url": "/partner/negocio/perfil",
+      "section": null
+    },
+    {
+      "url": "/settings/security",
+      "section": null
+    },
+    {
+      "url": "/p/lugar/club/carta",
+      "section": null
+    },
+    {
+      "url": "/explorar-ajeno",
+      "section": null
+    }
+  ]
+}

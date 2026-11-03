@@ -1,0 +1,13 @@
+{
+  "revision": "ab29f7ce173e30037476cf6d63f0a79dc3377dcf",
+  "images": {
+    "app": "sha256:eda6b75d6e8abfc06dc4fd6738586558e144efe02c4c7541e0aaf5cbd99a6213",
+    "web": "sha256:f92b28b245ddce4dc6132763c8ff402220c469676559a51cd2ccc76e8955bd65"
+  },
+  "base_images": {
+    "app": "sha256:cb0009948d5696e2ec42311a4e016e7036c4666473b05eb0efca19614a9d94ae",
+    "web": "sha256:c19814bb14f0281552182a097a4b75864d32a94555345d41a2900c39b0065336"
+  },
+  "base_revision": "7a90f30b34040cd96850f8c7058500689c55c3ca",
+  "candidate_sources_and_manifest_verified": true
+}

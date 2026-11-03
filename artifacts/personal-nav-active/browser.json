@@ -1,0 +1,213 @@
+{
+  "result": "PASS",
+  "isolated": true,
+  "checks": [
+    {
+      "path": "/beneficios",
+      "label": "Explorar",
+      "width": 390,
+      "theme": "light",
+      "style": {
+        "color": "rgb(17, 17, 17)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/mi-jakawi",
+      "label": "Mi JAKAWI",
+      "width": 390,
+      "theme": "light",
+      "style": {
+        "color": "rgb(17, 17, 17)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/perfil",
+      "label": "Perfil",
+      "width": 390,
+      "theme": "light",
+      "style": {
+        "color": "rgb(17, 17, 17)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/beneficios",
+      "label": "Explorar",
+      "width": 390,
+      "theme": "dark",
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/mi-jakawi",
+      "label": "Mi JAKAWI",
+      "width": 390,
+      "theme": "dark",
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/perfil",
+      "label": "Perfil",
+      "width": 390,
+      "theme": "dark",
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/beneficios",
+      "label": "Explorar",
+      "width": 1440,
+      "theme": "light",
+      "style": {
+        "color": "rgb(17, 17, 17)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/mi-jakawi",
+      "label": "Mi JAKAWI",
+      "width": 1440,
+      "theme": "light",
+      "style": {
+        "color": "rgb(17, 17, 17)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/perfil",
+      "label": "Perfil",
+      "width": 1440,
+      "theme": "light",
+      "style": {
+        "color": "rgb(17, 17, 17)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/beneficios",
+      "label": "Explorar",
+      "width": 1440,
+      "theme": "dark",
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/mi-jakawi",
+      "label": "Mi JAKAWI",
+      "width": 1440,
+      "theme": "dark",
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    },
+    {
+      "path": "/perfil",
+      "label": "Perfil",
+      "width": 1440,
+      "theme": "dark",
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "weight": "600",
+        "line": "underline",
+        "thickness": "2px",
+        "offset": "8px",
+        "coral": "rgb(255, 90, 79)"
+      },
+      "inertia": true,
+      "refresh": true,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "history": true,
+  "direct_link": true
+}
