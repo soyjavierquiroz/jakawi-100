@@ -212,6 +212,10 @@ export default function MemberProfile({
                             experiencias más relevantes.
                         </p>
                     </header>
+                    <nav aria-label="Navegación personal" className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-bold">
+                        <a href="/mi-jakawi" className="inline-flex min-h-11 items-center underline underline-offset-4">Mi JAKAWI</a>
+                        <a href="https://jakawi.club/afiliados" className="inline-flex min-h-11 items-center underline underline-offset-4">Ganar con JAKAWI</a>
+                    </nav>
                     <MembershipStatus status={membershipStatus} />
                     {acquisitionOrigin && <p className="text-sm text-muted-foreground">Origen de tu registro: {acquisitionOrigin.name}</p>}
                     <section className="rounded-3xl border border-border bg-surface-elevated p-5 sm:p-6">

@@ -202,6 +202,7 @@ export default function MiJakawi({
                     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
                         <div className="min-w-0">
                             <PersonalMembership status={membershipStatus} />
+                            <ClubAffiliatesCard />
                             <BenefitCards benefits={featuredBenefits} />
                             {membership && (
                                 <>
@@ -302,6 +303,38 @@ export default function MiJakawi({
                 </div>
             </main>
         </>
+    );
+}
+
+function ClubAffiliatesCard() {
+    return (
+        <section
+            aria-labelledby="club-affiliates-title"
+            className="mi-affiliates mt-5 rounded-3xl border border-border bg-surface p-5"
+        >
+            <p className="flex items-center gap-2 text-xs font-extrabold tracking-[0.12em] uppercase">
+                <span aria-hidden className="size-2 rounded-full bg-[#ffd166]" />
+                Gana con JAKAWI
+            </p>
+            <h2 id="club-affiliates-title" className="mt-2 text-xl font-extrabold">
+                Invita amigos. Gana comisiones.
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Recomienda JAKAWI y recibe comisiones por primeras membresías de
+                pago elegibles y verificadas. Puedes participar con tu cuenta
+                gratuita, Estándar o Pionero, sin comprar una membresía.
+            </p>
+            <a
+                href="https://jakawi.club/afiliados"
+                className="mi-action mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-extrabold"
+            >
+                Mis referidos y ganancias <ArrowUpRight aria-hidden className="size-4 shrink-0" />
+            </a>
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                JAKAWI.CLUB gestiona el acceso de afiliado, la elegibilidad, tus
+                enlaces y referidos, las comisiones, tarifas y liquidaciones.
+            </p>
+        </section>
     );
 }
 
