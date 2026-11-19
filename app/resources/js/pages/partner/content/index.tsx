@@ -1,33 +1,220 @@
 import { ListPagination } from '@/components/list-pagination';
-import { Head, Link, usePage } from '@inertiajs/react';
+import {
+    actionClass,
+    primaryClass,
+    editorialFilters,
+    ReviewStatus,
+    ReviewNote,
+    canEditItem,
+    type PartnerAccess,
+} from '@/components/partner/editorial';
+import { Link, usePage } from '@inertiajs/react';
 import PartnerLayout from '../layout';
 
-const reviewLabels: Record<string, string> = { draft: 'Borrador', submitted: 'En revisión', changes_requested: 'Cambios solicitados', rejected: 'Rechazada', approved: 'Aprobada' };
-const date = (value: string) => new Intl.DateTimeFormat('es-BO', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/La_Paz' }).format(new Date(value));
-function status(item: any) {
-    if (item.status === 'published') return item.ends_at && new Date(item.ends_at) < new Date() ? 'Vencida' : 'Publicada';
-    return reviewLabels[item.review_status] ?? ({ paused: 'Pausada', archived: 'Archivada' }[item.status as string] ?? 'Sin publicar');
-}
+const date = (value: string) =>
+    new Intl.DateTimeFormat('es-BO', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone: 'America/La_Paz',
+    }).format(new Date(value));
 export default function ContentIndex({ partner, kind, items, state }: any) {
-    const isBenefit = kind === 'benefit'; const label = isBenefit ? 'Promociones' : 'Experiencias';
-    const base = `/partner/${partner.slug}/${isBenefit ? 'promociones' : 'experiencias'}`;
-    const { partnerAccess } = usePage<{ partnerAccess: { can_edit_content: boolean } }>().props;
-    return <PartnerLayout title={label} partner={partner}><Head title={label}/>
-        <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{isBenefit ? 'Tus beneficios comerciales y su revisión editorial.' : 'Tus experiencias y sesiones.'}</p>{partnerAccess?.can_edit_content && <Link className="min-h-11 rounded-lg bg-primary px-4 py-3 font-semibold text-primary-foreground" href={`${base}/crear`}>Crear {isBenefit ? 'promoción' : 'experiencia'}</Link>}</div>
-        {isBenefit && <nav aria-label="Filtrar promociones" className="mt-5 flex flex-wrap gap-2">{[['', 'Todas'], ['vigentes', 'Publicadas y vigentes'], ['draft', 'Borradores'], ['submitted', 'En revisión'], ['changes_requested', 'Cambios solicitados'], ['expired', 'Vencidas']].map(([value, text]) => <Link key={value} href={value ? `${base}?estado=${value}` : base} aria-current={(state ?? '') === value ? 'page' : undefined} className={`rounded-lg border px-3 py-2 text-sm ${(state ?? '') === value ? 'bg-primary text-primary-foreground' : 'border-border'}`}>{text}</Link>)}</nav>}
-        <div className="mt-5 space-y-4">{items.data.map((item: any) => <article className="rounded-xl border border-border bg-surface p-5" key={item.id}>
-            <p className="mb-2 text-sm font-semibold">{status(item)}</p>
-            {partnerAccess?.can_edit_content ? <Link className="text-lg font-semibold underline" href={`${base}/${item.slug}/editar`}>{item.title}</Link> : <h2 className="text-lg font-semibold">{item.title}</h2>}
-            {isBenefit && <div className="mt-3 space-y-2 text-sm">
-                <p><strong>Vigencia:</strong> {item.starts_at ? date(item.starts_at) : 'Sin fecha de inicio'} → {item.ends_at ? date(item.ends_at) : 'Sin fecha de fin'} (hora Bolivia)</p>
-                {item.status === 'published' && item.starts_at && new Date(item.starts_at) > new Date() && <p>Vigencia por iniciar.</p>}
-                {item.ends_at && new Date(item.ends_at) < new Date() && item.status !== 'published' && <p>Vencida por fecha de vigencia.</p>}
-                <p className="whitespace-pre-wrap"><strong>Condiciones comerciales:</strong> {item.terms || 'Sin condiciones registradas.'}</p>
-                <p><strong>Sedes:</strong> {item.applies_to_all_locations ? 'Todas las sedes' : item.locations?.map((l: any) => l.name).join(', ') || 'Sin sedes seleccionadas'}</p>
-                <p><strong>Límite por miembro:</strong> {item.redemption_limit_per_member ?? 'Sin límite registrado'}</p>
-                {item.status === 'published' && <p className="text-muted-foreground">La versión pública está protegida. Proponer cambios sobre publicaciones está pendiente del flujo de revisiones.</p>}
-            </div>}
-            {item.review_notes && <p className="mt-3 text-sm">{item.review_status === 'changes_requested' ? 'JAKAWI solicitó cambios' : 'Nota de revisión'}: {item.review_notes}</p>}
-            {!isBenefit && <p className="text-sm text-muted-foreground">{item.sessions_count} sesiones</p>}
-        </article>)}{!items.data.length && <p className="text-muted-foreground">No hay contenido en esta vista.</p>}</div><ListPagination page={items} /></PartnerLayout>;
+    const benefit = kind === 'benefit';
+    const label = benefit ? 'Promociones' : 'Experiencias';
+    const base = `/partner/${partner.slug}/${benefit ? 'promociones' : 'experiencias'}`;
+    const { partnerAccess: access } = usePage<{
+        partnerAccess: PartnerAccess;
+    }>().props;
+    const filters = benefit
+        ? [
+              ...editorialFilters,
+              ['vigentes', 'Publicadas y vigentes'],
+              ['expired', 'Vencidas por fecha'],
+          ]
+        : editorialFilters;
+    return (
+        <PartnerLayout title={label} partner={partner}>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+                <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                    Prepara borradores, envía propuestas y consulta la revisión
+                    de JAKAWI. La aprobación, publicación y activación comercial
+                    son controles independientes.
+                </p>
+                {access?.can_edit_content && (
+                    <Link className={primaryClass} href={`${base}/crear`}>
+                        Crear {benefit ? 'promoción' : 'experiencia'}
+                    </Link>
+                )}
+            </div>
+            <nav
+                aria-label={`Filtrar ${label.toLowerCase()}`}
+                className="mt-5 flex flex-wrap gap-2"
+            >
+                {filters.map(([value, text]) => (
+                    <Link
+                        key={value}
+                        href={value ? `${base}?estado=${value}` : base}
+                        aria-current={
+                            (state ?? '') === value ? 'page' : undefined
+                        }
+                        className={`${actionClass} ${(state ?? '') === value ? 'border-brand bg-brand-subtle' : ''}`}
+                    >
+                        {text}
+                    </Link>
+                ))}
+            </nav>
+            <p className="mt-4 text-sm text-muted-foreground">
+                {items.total}{' '}
+                {items.total === 1
+                    ? 'propuesta en esta vista'
+                    : 'propuestas en esta vista'}
+            </p>
+            <div className="mt-4 space-y-4">
+                {items.data.map((item: any) => (
+                    <article
+                        className="space-y-4 rounded-2xl border border-border bg-surface p-5"
+                        key={item.id}
+                    >
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="min-w-0">
+                                <ReviewStatus item={item} />
+                                <h2 className="mt-3 text-xl font-semibold break-words">
+                                    {item.title}
+                                </h2>
+                                {item.short_description && (
+                                    <p className="mt-2 text-sm break-words text-muted-foreground">
+                                        {item.short_description}
+                                    </p>
+                                )}
+                            </div>
+                            {access?.can_edit_content && (
+                                <Link
+                                    className={actionClass}
+                                    href={`${base}/${item.slug}/editar`}
+                                >
+                                    {canEditItem(item)
+                                        ? item.review_status ===
+                                          'changes_requested'
+                                            ? 'Revisar y corregir'
+                                            : 'Editar borrador'
+                                        : 'Ver propuesta'}
+                                </Link>
+                            )}
+                        </div>
+                        <ReviewNote item={item} />
+                        {benefit ? (
+                            <dl className="grid gap-4 text-sm sm:grid-cols-2">
+                                <div>
+                                    <dt className="font-semibold">
+                                        Vigencia · hora Bolivia
+                                    </dt>
+                                    <dd className="mt-1 text-muted-foreground">
+                                        {item.starts_at
+                                            ? date(item.starts_at)
+                                            : 'Sin fecha de inicio'}{' '}
+                                        →{' '}
+                                        {item.ends_at
+                                            ? date(item.ends_at)
+                                            : 'Sin fecha de fin'}
+                                        {item.ends_at &&
+                                            new Date(item.ends_at) <
+                                                new Date() && (
+                                                <span className="block">
+                                                    Vencida por fecha de
+                                                    vigencia.
+                                                </span>
+                                            )}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="font-semibold">Sedes</dt>
+                                    <dd className="mt-1 text-muted-foreground">
+                                        {item.applies_to_all_locations
+                                            ? 'Todas las sedes'
+                                            : item.locations
+                                                  ?.map((l: any) => l.name)
+                                                  .join(', ') ||
+                                              'Sin sedes seleccionadas'}
+                                    </dd>
+                                </div>
+                                <div className="sm:col-span-2">
+                                    <dt className="font-semibold">
+                                        Condiciones comerciales
+                                    </dt>
+                                    <dd className="mt-1 break-words whitespace-pre-wrap text-muted-foreground">
+                                        {item.terms ||
+                                            'Sin condiciones registradas.'}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="font-semibold">
+                                        Límite por miembro
+                                    </dt>
+                                    <dd className="mt-1 text-muted-foreground">
+                                        {item.redemption_limit_per_member ??
+                                            'Sin límite registrado'}
+                                    </dd>
+                                </div>
+                            </dl>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">
+                                {item.sessions_count} sesiones registradas.
+                                Preparar sesiones no habilita reservas.
+                            </p>
+                        )}
+                        {item.status === 'published' ? (
+                            <p className="border-t border-border pt-4 text-sm text-muted-foreground">
+                                Contenido publicado: su edición está protegida
+                                en este portal. Solicita a JAKAWI cualquier
+                                cambio sobre la versión pública. Publicado no
+                                significa habilitado para operar.
+                            </p>
+                        ) : item.review_status === 'submitted' ? (
+                            <p className="text-sm text-muted-foreground">
+                                Propuesta enviada a revisión de JAKAWI. La
+                                edición queda cerrada mientras se revisa.
+                            </p>
+                        ) : item.review_status === 'approved' ? (
+                            <p className="text-sm text-muted-foreground">
+                                Revisión aprobada. La publicación corresponde a
+                                JAKAWI y no habilita operaciones por sí sola.
+                            </p>
+                        ) : null}
+                    </article>
+                ))}
+                {!items.data.length && (
+                    <section className="rounded-2xl border border-dashed border-border bg-surface p-6">
+                        <h2 className="text-lg font-semibold">
+                            {state
+                                ? 'No hay propuestas en este estado'
+                                : `Prepara tu primera ${benefit ? 'promoción' : 'experiencia'}`}
+                        </h2>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            {state
+                                ? 'Prueba otra vista para encontrar tu contenido.'
+                                : access?.can_edit_content
+                                  ? 'Guarda un borrador con los datos principales. Después podrás enviarlo a JAKAWI para revisión.'
+                                  : 'Cuando el propietario o manager prepare contenido, podrás consultarlo aquí.'}
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-3">
+                            {state && (
+                                <Link href={base} className={actionClass}>
+                                    Ver todo el contenido
+                                </Link>
+                            )}
+                            {access?.can_edit_content && (
+                                <Link
+                                    href={`${base}/crear`}
+                                    className={primaryClass}
+                                >
+                                    Crear{' '}
+                                    {benefit ? 'promoción' : 'experiencia'}
+                                </Link>
+                            )}
+                        </div>
+                    </section>
+                )}
+            </div>
+            <ListPagination page={items} />
+        </PartnerLayout>
+    );
 }

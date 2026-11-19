@@ -17,11 +17,12 @@ class PartnerContentController extends Controller
 {
     public function benefits(Request $request, Partner $partner): Response
     {
-        $state = $request->validate(['estado' => 'nullable|in:vigentes,draft,submitted,changes_requested,expired'])['estado'] ?? null;
+        $state = $request->validate(['estado' => 'nullable|in:vigentes,published,draft,submitted,changes_requested,rejected,approved,expired'])['estado'] ?? null;
         $query = Benefit::where('partner_id', $partner->id)->with('locations:id,name');
         if ($state === 'vigentes') $query->available();
         elseif ($state === 'expired') $query->where('ends_at', '<', now());
-        elseif ($state) $query->where('review_status', $state);
+        elseif ($state === 'published') $query->where('status', 'published');
+        elseif ($state) $query->where('status', 'draft')->where('review_status', $state);
 
         return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'benefit', 'state' => $state, 'items' => \App\Support\ListingPage::make($query->latest())]);
     }
@@ -65,9 +66,14 @@ class PartnerContentController extends Controller
         return back();
     }
 
-    public function experiences(Partner $partner): Response
+    public function experiences(Request $request, Partner $partner): Response
     {
-        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'experience', 'items' => \App\Support\ListingPage::make(Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->withCount('sessions')->latest())]);
+        $state = $request->validate(['estado' => 'nullable|in:published,draft,submitted,changes_requested,rejected,approved'])['estado'] ?? null;
+        $query = Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->withCount('sessions');
+        if ($state === 'published') $query->where('status', 'published');
+        elseif ($state) $query->where('status', 'draft')->where('review_status', $state);
+
+        return Inertia::render('partner/content/index', ['partner' => $partner->only('name', 'slug'), 'kind' => 'experience', 'state' => $state, 'items' => \App\Support\ListingPage::make($query->latest())]);
     }
 
     public function experienceForm(Partner $partner, ?Experience $experience = null): Response

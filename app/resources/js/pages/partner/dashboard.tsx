@@ -1,38 +1,195 @@
 import { CityCommunityCard } from '@/components/city-community-card';
+import {
+    actionClass,
+    primaryClass,
+    type PartnerAccess,
+} from '@/components/partner/editorial';
 import { Link, usePage } from '@inertiajs/react';
 import PartnerLayout from './layout';
 
-export default function PartnerDashboard({ community, partner, pendingReservations, benefitPublished, benefitDrafts, benefitSubmitted, experienceDrafts, experienceSubmitted, activity }: any) {
+export default function PartnerDashboard({
+    community,
+    partner,
+    editorialSummary,
+    activity,
+}: any) {
     const base = `/partner/${partner.slug}`;
-    const { partnerAccess } = usePage<{ partnerAccess: { can_edit_content: boolean } }>().props;
-    return <PartnerLayout title="Inicio" partner={partner}>
-        <p className="mb-5 text-sm text-muted-foreground">Administra tus promociones y sigue la actividad de tu negocio.</p>
-        <div className="mb-8 flex flex-wrap gap-3">
-            {partnerAccess?.can_edit_content && <Link href={`${base}/promociones/crear`} className="min-h-11 rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground">Crear promoción</Link>}
-            <Link href={`${base}/promociones`} className="min-h-11 rounded-lg border border-border px-5 py-3 font-semibold">Gestionar mis promociones</Link>
-            {partner.can_manage && <Link href={`${base}/rendimiento`} className="min-h-11 rounded-lg border border-border px-5 py-3 font-semibold">Ver rendimiento</Link>}
-        </div>
-        <section className="mb-8"><h2 className="mb-3 text-lg font-semibold">Por gestionar</h2><div className="grid gap-3 sm:grid-cols-2">
-            <Metric label="Promociones publicadas y vigentes" value={benefitPublished} href={`${base}/promociones?estado=vigentes`}/>
-            <Metric label="Promociones · borradores" value={benefitDrafts} href={`${base}/promociones?estado=draft`}/>
-            <Metric label="Promociones · en revisión" value={benefitSubmitted} href={`${base}/promociones?estado=submitted`}/>
-            <Metric label="Reservas pendientes" value={pendingReservations} href={`${base}/reservas?status=pending`}/>
-        </div></section>
-        {activity && <section className="mb-8"><h2 className="mb-1 text-lg font-semibold">Actividad · últimos 30 días</h2><p className="mb-3 text-sm text-muted-foreground">Las vistas son eventos registrados, no personas únicas, ventas ni ingresos.</p><div className="grid gap-3 sm:grid-cols-2">
-            <Metric label="Vistas del perfil" value={activity.partner_views} href={`${base}/rendimiento#descubrimiento`}/>
-            <Metric label="Vistas de beneficios" value={activity.benefit_views} href={`${base}/rendimiento#descubrimiento`}/>
-            <Metric label="Canjes confirmados" value={activity.confirmed} href={`${base}/rendimiento#beneficios`}/>
-        </div></section>}
-        <section className="mb-8"><h2 className="mb-3 text-lg font-semibold">Experiencias</h2><div className="grid gap-3 sm:grid-cols-2"><Metric label="Experiencias · borradores" value={experienceDrafts} href={`${base}/experiencias`}/><Metric label="Experiencias · en revisión" value={experienceSubmitted} href={`${base}/experiencias`}/></div></section>
-        {partner.public_url && <section className="mb-8 rounded-xl border border-border bg-surface p-5">
-            <h2 className="font-bold">Perfil público</h2>
-            <a className="mt-2 block break-all text-sm text-brand underline" href={partner.public_url}>{partner.public_url}</a>
-            <button className="mt-3 min-h-11 rounded border border-border px-4 font-bold" onClick={() => navigator.clipboard?.writeText(partner.public_url)}>Copiar enlace</button>
-        </section>}
-        {partner.status === 'draft' && <p className="mb-4">Puedes preparar contenido. La operación estará disponible cuando JAKAWI publique el establecimiento.</p>}
-        {['paused', 'archived'].includes(partner.status) && <p className="mb-4">Establecimiento sin operación comercial. Puedes consultar su información e históricos.</p>}
-        {partner.can_manage && ['draft', 'published'].includes(partner.status) && <Link href={`${base}/retos`} className="mb-6 block text-sm text-brand underline">Proponer y seguir retos →</Link>}
-        <CityCommunityCard community={community} permanent />
-    </PartnerLayout>;
+    const { partnerAccess: access } = usePage<{
+        partnerAccess: PartnerAccess;
+    }>().props;
+    return (
+        <PartnerLayout title="Inicio" partner={partner}>
+            <div className="space-y-8">
+                {access?.can_edit_content && (
+                    <section
+                        aria-label="Gestionar establecimiento"
+                        className="flex flex-wrap gap-3"
+                    >
+                        <Link href={`${base}/perfil`} className={actionClass}>
+                            Editar perfil
+                        </Link>
+                        <Link
+                            href={`${base}/perfil#sedes`}
+                            className={actionClass}
+                        >
+                            Gestionar sedes
+                        </Link>
+                    </section>
+                )}
+                {['paused', 'archived'].includes(partner.status) && (
+                    <p className="rounded-xl border border-border p-4 text-sm">
+                        El establecimiento está{' '}
+                        {partner.status === 'paused' ? 'pausado' : 'archivado'}.
+                        Puedes consultar información e históricos. JAKAWI
+                        administra su estado.
+                    </p>
+                )}
+                <section aria-labelledby="editorial-heading">
+                    <h2
+                        id="editorial-heading"
+                        className="text-xl font-semibold"
+                    >
+                        Tu contenido editorial
+                    </h2>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Prepara tus propuestas y sigue su revisión. JAKAWI
+                        administra la aprobación y publicación.
+                    </p>
+                    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                        {[
+                            ['benefits', 'Promociones', 'promociones'],
+                            ['experiences', 'Experiencias', 'experiencias'],
+                        ].map(([key, label, path]) => (
+                            <div
+                                className="rounded-2xl border border-border bg-surface p-5"
+                                key={key}
+                            >
+                                <h3 className="font-semibold">{label}</h3>
+                                <ul className="mt-3 divide-y divide-border">
+                                    {[
+                                        ['draft', 'Borradores'],
+                                        ['submitted', 'En revisión'],
+                                        [
+                                            'changes_requested',
+                                            'Cambios solicitados',
+                                        ],
+                                        ['published', 'Publicados'],
+                                        ['approved', 'Aprobados sin publicar'],
+                                        ['rejected', 'Rechazados'],
+                                    ].map(([state, text]) => (
+                                        <li key={state} className="py-1">
+                                            <Link
+                                                href={`${base}/${path}?estado=${state}`}
+                                                className="flex min-h-11 items-center justify-between gap-3 rounded-lg px-2 text-sm hover:bg-muted focus-visible:outline-2 focus-visible:outline-brand"
+                                            >
+                                                <span>{text}</span>
+                                                <strong
+                                                    className={`text-lg font-semibold ${state === 'changes_requested' && editorialSummary[key][state] > 0 ? 'text-brand' : ''}`}
+                                                >
+                                                    {
+                                                        editorialSummary[key][
+                                                            state
+                                                        ]
+                                                    }
+                                                </strong>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                    <p className="mt-3 text-xs text-muted-foreground">
+                        Los publicados se cuentan por su estado editorial, sin
+                        asegurar vigencia ni habilitación comercial. Los demás
+                        grupos corresponden a contenido sin publicar en estado
+                        borrador.
+                    </p>
+                </section>
+                {access?.can_edit_content && (
+                    <section className="rounded-2xl border border-border bg-surface p-5">
+                        <h2 className="text-lg font-semibold">
+                            Continúa preparando tu contenido
+                        </h2>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            Si JAKAWI pidió cambios, revisa sus notas, guarda la
+                            corrección y vuelve a enviar la propuesta.
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-3">
+                            <Link
+                                href={`${base}/promociones/crear`}
+                                className={primaryClass}
+                            >
+                                Crear promoción
+                            </Link>
+                            <Link
+                                href={`${base}/experiencias/crear`}
+                                className={actionClass}
+                            >
+                                Crear experiencia
+                            </Link>
+                        </div>
+                    </section>
+                )}
+                {activity && (
+                    <section>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="text-xl font-semibold">
+                                Actividad registrada · últimos 30 días
+                            </h2>
+                            <Link
+                                href={`${base}/rendimiento`}
+                                className={actionClass}
+                            >
+                                Ver rendimiento
+                            </Link>
+                        </div>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            Las vistas son eventos registrados, no personas
+                            únicas. Los canjes son históricos; estas cifras no
+                            representan ventas ni ingresos.
+                        </p>
+                        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                            {[
+                                ['Vistas del perfil', activity.partner_views],
+                                [
+                                    'Vistas de promociones',
+                                    activity.benefit_views,
+                                ],
+                                ['Canjes confirmados', activity.confirmed],
+                            ].map(([label, value]) => (
+                                <div
+                                    key={label}
+                                    className="rounded-2xl border border-border bg-surface p-5"
+                                >
+                                    <p className="text-sm text-muted-foreground">
+                                        {label}
+                                    </p>
+                                    <p className="mt-2 text-2xl font-semibold">
+                                        {value}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+                {partner.public_url && (
+                    <section className="rounded-2xl border border-border p-5">
+                        <h2 className="font-semibold">Perfil público</h2>
+                        <a
+                            className="mt-2 block text-sm break-all underline"
+                            href={partner.public_url}
+                        >
+                            Ver perfil de {partner.name} ↗
+                        </a>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            El perfil, las sedes y cada propuesta conservan
+                            estados independientes.
+                        </p>
+                    </section>
+                )}
+                <CityCommunityCard community={community} permanent />
+            </div>
+        </PartnerLayout>
+    );
 }
-function Metric({label,value,href}:{label:string;value:number;href:string}) { return <Link href={href} className="block rounded-lg border border-border bg-surface p-5 hover:border-primary focus-visible:outline-2 focus-visible:outline-primary"><p className="text-sm text-muted-foreground">{label} →</p><p className="mt-1 text-2xl font-semibold">{value}</p></Link>; }

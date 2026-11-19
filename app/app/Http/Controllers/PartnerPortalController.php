@@ -43,6 +43,10 @@ class PartnerPortalController extends Controller
         return Inertia::render('partner/dashboard', [
             'community' => app(CityCommunity::class)->data($request, 'mi-jakawi'),
             'partner' => $partner->only(['name', 'slug', 'status']) + ['public_url' => $partner->isPublished() ? route('partners.public', $partner) : null, 'can_manage' => in_array($relation->pivot->role, ['owner', 'manager'], true)],
+            'editorialSummary' => [
+                'benefits' => $this->editorialSummary(Benefit::where('partner_id', $partner->id)),
+                'experiences' => $this->editorialSummary(Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))),
+            ],
             'activity' => in_array($relation->pivot->role, ['owner', 'manager'], true) ? $this->activity($kpis, $partner) : null,
             'benefitPublished' => Benefit::where('partner_id', $partner->id)->available()->count(),
             'pendingReservations' => ExperienceReservation::where('partner_id', $partner->id)->where('status', 'pending')->count(),
@@ -51,6 +55,17 @@ class PartnerPortalController extends Controller
             'experienceDrafts' => Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->where('review_status', 'draft')->count(),
             'experienceSubmitted' => Experience::whereHas('partners', fn ($q) => $q->whereKey($partner->id))->where('review_status', 'submitted')->count(),
         ]);
+    }
+
+    private function editorialSummary(\Illuminate\Database\Eloquent\Builder $query): array
+    {
+        // Publication and review are independent. Published content never counts as a draft.
+        $summary = ['published' => (clone $query)->where('status', 'published')->count()];
+        foreach (['draft', 'submitted', 'changes_requested', 'rejected', 'approved'] as $review) {
+            $summary[$review] = (clone $query)->where('status', 'draft')->where('review_status', $review)->count();
+        }
+
+        return $summary;
     }
 
     public function performance(Request $request, Partner $partner, PartnerKpiService $kpis): Response

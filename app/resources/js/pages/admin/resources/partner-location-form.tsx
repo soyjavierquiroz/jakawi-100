@@ -1,3 +1,4 @@
+import BusinessGuide from '@/components/partner/business-guide';
 import { ImageUpload } from "@/components/media/image-upload";
 import { usePage, Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
@@ -146,7 +147,7 @@ export default function PartnerLocationForm({
   const portalBase = `/partner/${portalPartner?.slug}`;
   const listingQuery = url.includes('?') ? `?${url.split('?')[1]}` : '';
   const isPartner = resource === "partners";
-  const title = `${item ? "Editar" : "Crear"} ${isPartner ? "Partner" : "Location"}`;
+  const title = portalPartner ? (isPartner ? "Perfil y sedes" : `${item ? "Editar" : "Crear"} sede`) : `${item ? "Editar" : "Crear"} ${isPartner ? "Partner" : "Location"}`;
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState("");
   // Keep relationships and stored media outside the save payload. ImageUpload owns tokens/removals.
@@ -328,8 +329,8 @@ export default function PartnerLocationForm({
   return (
     <Layout title={title} partner={portalPartner!}>
       <div className="mx-auto max-w-5xl space-y-6">
-        <Link href={portalPartner ? `${portalBase}/perfil` : `/admin/${resource}${listingQuery}`} className={`${actionClass} border-transparent px-0`}>
-          ← Volver a {isPartner ? "Partners" : "Locations"}
+        <Link href={portalPartner ? (isPartner ? portalBase : `${portalBase}/perfil#sedes`) : `/admin/${resource}${listingQuery}`} className={`${actionClass} border-transparent px-0`}>
+          ← {portalPartner ? (isPartner ? "Inicio del establecimiento" : "Perfil y sedes") : `Volver a ${isPartner ? "Partners" : "Locations"}`}
         </Link>
         {!portalPartner && isPartner && item && props.canSupport === true && <Link className={primaryClass} href={`/admin/soporte?partner=${item.id}`}>Gestionar Partner</Link>}
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -340,7 +341,7 @@ export default function PartnerLocationForm({
             </div>
             {!isPartner && (
               <p className="mt-2 text-sm text-muted-foreground">
-                Partner propietario:{" "}
+                {portalPartner ? "Establecimiento" : "Partner propietario"}:{" "}
                 {partners.find((partner) => String(partner.id) === String(form.data.partner_id))
                   ?.name || "Independiente"}
               </p>
@@ -377,6 +378,7 @@ export default function PartnerLocationForm({
           </div>
           {save}
         </div>
+        {portalPartner && <BusinessGuide item={item} isPartner={isPartner}/>}
         <form id="partner-location-editor" onSubmit={submit} className="space-y-6">
           <fieldset disabled={form.processing} className="min-w-0 space-y-6">
             {isPartner ? (
@@ -490,7 +492,7 @@ export default function PartnerLocationForm({
             <Section
               id="publicacion"
               title={
-                isPartner ? "4. Publicación y control editorial" : "5. Publicación y configuración"
+                portalPartner ? (isPartner ? "4. Estado administrado por JAKAWI" : "5. Horarios y configuración de sede") : isPartner ? "4. Publicación y control editorial" : "5. Publicación y configuración"
               }
               description={
                 form.data.status === "draft"
@@ -502,6 +504,7 @@ export default function PartnerLocationForm({
                     : "Este registro conserva su estado editorial actual."
               }
             >
+              {portalPartner && <p className="text-sm text-muted-foreground sm:col-span-2">Estado actual: {statusLabels[form.data.status] ?? form.data.status}. Solo JAKAWI puede cambiar la publicación. Publicado no significa habilitado para operar.</p>}
               {(isPartner
                 ? ["status", "featured", "sort_order", "published_at", "internal_notes"]
                 : [
@@ -560,7 +563,7 @@ export default function PartnerLocationForm({
               </div>
               <div className="sm:col-span-2">
                 <Link className={actionClass} href={portalPartner ? `${portalBase}/sedes/crear` : `/admin/locations/create?partner=${item.id}`}>
-                  Crear Location asociada
+                  {portalPartner ? "Crear sede" : "Crear Location asociada"}
                 </Link>
               </div>
             </Section>
@@ -582,7 +585,7 @@ export default function PartnerLocationForm({
           )}
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <Link className={actionClass} href={portalPartner ? `${portalBase}/perfil` : `/admin/${resource}${listingQuery}`}>
-              Volver al listado
+              {portalPartner ? "Volver a perfil y sedes" : "Volver al listado"}
             </Link>
             {save}
           </div>
