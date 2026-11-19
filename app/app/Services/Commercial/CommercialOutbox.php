@@ -15,6 +15,8 @@ final class CommercialOutbox
 {
     public function capture(Redemption $redemption): void
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         $pilot = LandingPresentation::where('slug', config('commercial.pilot_landing'))->first();
         $benefit = $redemption->benefit;
         if (! $pilot || $pilot->subject_type !== $benefit?->getMorphClass()
@@ -66,6 +68,8 @@ final class CommercialOutbox
 
     public function collect(int $limit = 100): int
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         // Other connections see this only after the domain transaction commits. Recovery
         // after crashes needs neither a transient queue message nor the operator's session.
         $rows = DB::table('commercial_conversion_origins as o')

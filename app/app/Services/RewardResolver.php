@@ -13,6 +13,8 @@ class RewardResolver
 {
     public function createFor(Conversion $conversion, User|Partner $beneficiary, string $participantType): ?RewardTransaction
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         if ($beneficiary instanceof Partner && $conversion->type === 'membership_purchased') {
             return null;
         }

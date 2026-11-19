@@ -21,6 +21,8 @@ class RewardPayoutService
 
     public function requestPartner(Partner $partner, User $actor): RewardPayout
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         return DB::transaction(function () use ($partner, $actor): RewardPayout {
             Partner::query()->lockForUpdate()->findOrFail($partner->id);
             $rewards = RewardTransaction::query()
@@ -52,6 +54,8 @@ class RewardPayoutService
 
     public function pay(RewardPayout $payout, User $admin, string $paymentReference, ?string $notes = null): RewardPayout
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         return DB::transaction(function () use ($payout, $admin, $paymentReference, $notes): RewardPayout {
             $payout = RewardPayout::query()->lockForUpdate()->findOrFail($payout->id);
             abort_unless($payout->beneficiary_type === RewardRule::BENEFICIARY_PARTNER, 404);
@@ -76,6 +80,8 @@ class RewardPayoutService
 
     public function reject(RewardPayout $payout, User $admin, string $reason): RewardPayout
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         return DB::transaction(function () use ($payout, $admin, $reason): RewardPayout {
             $payout = RewardPayout::query()->lockForUpdate()->findOrFail($payout->id);
             abort_unless($payout->beneficiary_type === RewardRule::BENEFICIARY_PARTNER, 404);

@@ -182,6 +182,8 @@ class JakawiBankReconciliation
 
     public function run(): int
     {
+        if (\App\Support\PrelaunchOperations::blocked()) { return 0; }
+
         $count=0;
         $this->movements()->orderBy('id')->chunkById(100, function($rows) use (&$count) {
             foreach ($rows as $row) {

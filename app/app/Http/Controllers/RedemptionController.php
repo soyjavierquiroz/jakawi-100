@@ -61,8 +61,12 @@ class RedemptionController extends Controller
         abort_unless($redemption->user_id === $r->user()->id, 403);
 
         if ($redemption->isExpired()) {
-            $redemption->update(['status' => Redemption::STATUS_EXPIRED]);
-            $redemption->refresh();
+            if (\App\Support\PrelaunchOperations::blocked()) {
+                $redemption->setAttribute('status', Redemption::STATUS_EXPIRED);
+            } else {
+                $redemption->update(['status' => Redemption::STATUS_EXPIRED]);
+                $redemption->refresh();
+            }
         }
 
         $membership = $redemption->membership;

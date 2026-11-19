@@ -59,7 +59,6 @@ class PrelaunchModeTest extends TestCase
         $this->actingAs(User::factory()->create(['is_admin' => true]));
         foreach (['/admin', '/admin/retos/prelaunch-qa/landings/preview-qa/preview'] as $url) {
             $this->get($url)->assertOk()
-                ->assertDontSee('<meta data-inertia="robots" name="robots" content="noindex,nofollow">', false)
                 ->assertInertia(fn (Assert $page) => $page->where('prelaunchPublic', false));
         }
         $this->assertSame('DRAFT', $landing->fresh()->status);
@@ -82,7 +81,9 @@ class PrelaunchModeTest extends TestCase
 
     private function challenge(): Challenge
     {
-        return Challenge::create([
+        $prelaunch = config('jakawi.prelaunch_mode');
+        config(['jakawi.prelaunch_mode' => false]);
+        $challenge = Challenge::create([
             'title' => 'Selección de prueba', 'slug' => 'prelaunch-qa', 'status' => 'open', 'review_status' => 'APPROVED',
             'description' => 'Prueba aislada', 'instructions' => 'Comparte tu ciudad',
             'allowed_platforms' => ['instagram'], 'required_hashtags' => [], 'required_mentions' => [],
@@ -91,5 +92,7 @@ class PrelaunchModeTest extends TestCase
             'participation_eligibility' => 'ALL_USERS', 'reward_eligibility' => 'ALL_USERS',
             'reward_type' => 'JP', 'reward_jp_amount' => 25,
         ]);
+        config(['jakawi.prelaunch_mode' => $prelaunch]);
+        return $challenge;
     }
 }

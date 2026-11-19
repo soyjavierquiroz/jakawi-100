@@ -160,6 +160,8 @@ class MembershipAcquisition
 
     public function purchase(MembershipBankPayment $payment, array $origin, ?User $buyer = null): void
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         $payment->update(['acquisition_origin_id' => $origin['attribution_id']]);
         if ($origin['kind'] === 'none') {
             return;
@@ -173,6 +175,7 @@ class MembershipAcquisition
 
     public function identityLinked(MembershipBankPayment $payment, User $user): void
     {
+
         if (! $payment->acquisition_origin_id) {
             return;
         }

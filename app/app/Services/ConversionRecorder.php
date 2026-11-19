@@ -12,6 +12,8 @@ class ConversionRecorder
 {
     public function record(User $user, array $data, ?AttributionTouch $explicitTouch = null, bool $useExplicitTouch = false): Conversion
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         $key = $data['idempotency_key'];
         $existing = Conversion::where('idempotency_key', $key)->first();
         if ($existing) {

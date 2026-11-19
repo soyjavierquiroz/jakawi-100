@@ -11,6 +11,8 @@ use Illuminate\Validation\ValidationException;
 
 final class ChallengeService {
     public function join(Challenge $challenge, \App\Models\User $user): ChallengeParticipation {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         abort_unless($challenge->acceptsParticipation(), 404);
         if ($challenge->participation_eligibility === 'ACTIVE_MEMBERS' && !$user->hasActiveMembership()) throw ValidationException::withMessages(['participation'=>'Este reto requiere membresía activa para participar.']);
         $participation = ChallengeParticipation::firstOrCreate(['challenge_id'=>$challenge->id,'user_id'=>$user->id]);
@@ -20,6 +22,8 @@ final class ChallengeService {
     }
 
     public function evaluate(ChallengeParticipation $participation, bool $final = false): ChallengeParticipation {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         return DB::transaction(function () use ($participation, $final) {
             $c = Challenge::query()->lockForUpdate()->findOrFail($participation->challenge_id);
             $p = ChallengeParticipation::query()->lockForUpdate()->findOrFail($participation->id);
@@ -61,6 +65,8 @@ final class ChallengeService {
     }
 
     public function selectAndMaybeGrant(ChallengeParticipation $participation, ?int $adminId = null): ?ChallengeRewardGrant {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         return DB::transaction(function () use ($participation, $adminId) {
             $c = Challenge::query()->lockForUpdate()->findOrFail($participation->challenge_id);
             $p = ChallengeParticipation::query()->lockForUpdate()->findOrFail($participation->id);
@@ -79,6 +85,8 @@ final class ChallengeService {
     }
 
     public function finalize(Challenge $challenge): void {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         DB::transaction(function () use ($challenge) {
             $c = Challenge::query()->lockForUpdate()->findOrFail($challenge->id);
             if ($c->status !== 'closed') return;
@@ -112,6 +120,8 @@ final class ChallengeService {
     }
 
     public function confirm(ChallengeParticipation $participation, int $adminId): ChallengeRewardGrant {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         return DB::transaction(function () use ($participation, $adminId) {
             $c = Challenge::query()->lockForUpdate()->findOrFail($participation->challenge_id);
             $p = ChallengeParticipation::query()->lockForUpdate()->findOrFail($participation->id);
@@ -122,6 +132,8 @@ final class ChallengeService {
     }
 
     public function reconcileAfterReview(Challenge $challenge): void {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         $c = Challenge::findOrFail($challenge->id);
         if ($c->selection_type === 'TOP_N' && $c->status === 'closed') { $this->finalize($c); return; }
         if ($c->selection_type === 'FIRST_N') {

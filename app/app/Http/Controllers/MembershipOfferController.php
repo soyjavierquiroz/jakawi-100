@@ -137,7 +137,9 @@ class MembershipOfferController extends Controller
             abort_unless($intent && in_array($intent['journey'].'/'.$intent['action'], ['EXPERIENCE/RESERVE', 'BENEFIT/REDEEM', 'UNLOCK/COMMIT'], true), 404);
             $destination = $continuation->destination($intent);
             abort_unless($destination, 404);
-            $item->update(['returned_at' => now()]);
+            if (! \App\Support\PrelaunchOperations::blocked()) {
+                $item->update(['returned_at' => now()]);
+            }
             return $destination;
         });
         $analytics->record('membership_returned_to_intent', ['user_id' => $request->user()->id], $this->metadata($purchaseRequest));

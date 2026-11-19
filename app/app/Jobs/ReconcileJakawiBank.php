@@ -8,5 +8,7 @@ class ReconcileJakawiBank implements ShouldQueue {
  public int $tries=3;
  public int $timeout=60;
  public function __construct() { $this->onConnection('database')->onQueue('membership-receipts')->afterCommit(); }
- public function handle(): void { app(\App\Services\JakawiBankReconciliation::class)->run(); }
+ public function handle(): void {
+        if (\App\Support\PrelaunchOperations::blocked()) { return; }
+ app(\App\Services\JakawiBankReconciliation::class)->run(); }
 }

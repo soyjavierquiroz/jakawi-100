@@ -60,6 +60,40 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        // Defense in depth for direct Eloquent writes outside HTTP/services.
+        foreach ([
+            \App\Models\ExperienceReservation::class,
+            \App\Models\Redemption::class,
+            \App\Models\UnlockParticipation::class,
+            \App\Models\ChallengeParticipation::class,
+            \App\Models\ChallengeSocialEntry::class,
+            \App\Models\ChallengeRewardGrant::class,
+            \App\Models\JpHold::class,
+            \App\Models\Membership::class,
+            \App\Models\MembershipPurchase::class,
+            \App\Models\MembershipBankPayment::class,
+            \App\Models\MembershipPurchaseRequest::class,
+            \App\Models\Conversion::class,
+            \App\Models\RewardTransaction::class,
+            \App\Models\RewardPayout::class,
+            \App\Models\OperationalAdjustment::class,
+        ] as $operationalModel) {
+            $operationalModel::saving([\App\Support\PrelaunchOperations::class, 'protectModel']);
+            $operationalModel::deleting([\App\Support\PrelaunchOperations::class, 'protectModel']);
+        }
+        \App\Models\Challenge::saving(function ($challenge) {
+            if ($challenge->isDirty('status') && (in_array($challenge->status, ['open', 'closed', 'cancelled'], true) || in_array($challenge->getOriginal('status'), ['open', 'closed', 'cancelled'], true))) {
+                \App\Support\PrelaunchOperations::assertAllowed();
+            }
+        });
+
+        \App\Models\Unlock::saving(function ($unlock) {
+            $editorial = ['DRAFT', 'PENDING_REVIEW', 'APPROVED', 'REJECTED'];
+            if ($unlock->isDirty('status') && (! in_array($unlock->status, $editorial, true) || ($unlock->exists && ! in_array($unlock->getOriginal('status'), $editorial, true)))) {
+                \App\Support\PrelaunchOperations::assertAllowed();
+            }
+        });
+
         foreach ([\App\Models\Partner::class, \App\Models\Location::class, \App\Models\Benefit::class,
             \App\Models\Experience::class, \App\Models\ExperienceSession::class, \App\Models\Challenge::class, \App\Models\Unlock::class] as $editorialModel) {
             $editorialModel::saved(function ($model) {

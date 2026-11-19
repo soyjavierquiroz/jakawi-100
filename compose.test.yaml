@@ -21,7 +21,7 @@ services:
     image: jakawi-app-test
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: ${JAKAWI_TEST_DOCKERFILE:-docker/Dockerfile}
       target: test
     restart: "no"
     environment:
@@ -58,7 +58,7 @@ services:
     image: jakawi-web-test
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: ${JAKAWI_TEST_DOCKERFILE:-docker/Dockerfile}
       target: web
     restart: "no"
     depends_on:
@@ -73,6 +73,10 @@ services:
 networks:
   jakawi:
     driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: ${JAKAWI_TEST_SUBNET:-10.245.96.0/28}
 
 volumes:
   # With --project-name jakawi-test this is named jakawi-test_jakawi_test_pgdata.

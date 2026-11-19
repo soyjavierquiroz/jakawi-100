@@ -25,6 +25,8 @@ final class FakeQrPaymentGateway implements QrPaymentGateway
 
     public function createPayment(QrPaymentRequest $request): QrPaymentCreationResult
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         $providerReference = 'fake-'.Str::uuid();
         $this->statuses[$providerReference] = QrPaymentStatus::PENDING;
 

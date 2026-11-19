@@ -17,6 +17,8 @@ class MembershipReceiptVision
 
     public function extract(string $bytes, string $mime): array
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         if (! $this->ready()) {
             throw new ReceiptExtractionException('not_configured');
         }

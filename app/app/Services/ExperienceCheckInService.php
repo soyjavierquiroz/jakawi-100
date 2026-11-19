@@ -25,6 +25,8 @@ class ExperienceCheckInService
 
     public function checkIn(User $actor, ExperienceReservation $reservation): ExperienceReservation
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
+
         return DB::transaction(function () use ($actor, $reservation): ExperienceReservation {
             $reservation = ExperienceReservation::query()->with('session')->lockForUpdate()->findOrFail($reservation->id);
             if (! $actor->managesPartner($reservation->partner_id)) {

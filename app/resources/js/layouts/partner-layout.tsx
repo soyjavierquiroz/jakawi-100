@@ -5,7 +5,7 @@ type Partner = { name: string; slug: string };
 
 /** The root shell for every partner-facing Inertia page. */
 export default function PartnerLayout({ children }: PropsWithChildren) {
-    const { partner, partnerAccess, supportMode, flash, errors } = usePage<{ flash?: { success?: string; error?: string }; errors?: Record<string, string>; supportMode?: { mode: string }; partner?: Partner; partnerAccess?: { can_manage: boolean; can_operate: boolean; can_view_economics: boolean } }>().props;
+    const { partner, partnerAccess, supportMode, flash, errors, prelaunchMode } = usePage<{ prelaunchMode?: boolean; flash?: { success?: string; error?: string }; errors?: Record<string, string>; supportMode?: { mode: string }; partner?: Partner; partnerAccess?: { can_manage: boolean; can_operate: boolean; can_view_economics: boolean } }>().props;
 
     return (
         <main className="min-h-screen bg-background p-5 text-foreground">
@@ -38,7 +38,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                         </nav>
                     )}
                 </aside>
-                <div className="min-w-0 flex-1">{supportMode?.mode === 'manage' && <p className="mb-5 rounded-lg border border-border bg-surface p-4 text-sm">Gestión editorial y rendimiento operativo. Las cifras económicas, referidos y comisiones se consultan desde soporte CLUB con sus propias autorizaciones.</p>}{flash?.success && <p role="status" className="mb-4 rounded border border-green-600 p-3">{flash.success}</p>}{flash?.error && <p role="alert" className="mb-4 rounded border border-red-600 p-3">{flash.error}</p>}{errors && Object.keys(errors).length > 0 && <div role="alert" className="mb-4 rounded border border-red-600 p-3">{Object.values(errors).map((error, i) => <p key={i}>{error}</p>)}</div>}{children}</div>
+                <div className="min-w-0 flex-1">{prelaunchMode && <p role="status" className="mb-5 rounded-lg border border-border p-4 text-sm">Prelanzamiento: puedes consultar información y preparar contenido. Reservas, asistencias, canjes, participaciones, premios y pagos están deshabilitados.</p>}{supportMode?.mode === 'manage' && <p className="mb-5 rounded-lg border border-border bg-surface p-4 text-sm">Gestión editorial y rendimiento operativo. Las cifras económicas, referidos y comisiones se consultan desde soporte CLUB con sus propias autorizaciones.</p>}{flash?.success && <p role="status" className="mb-4 rounded border border-green-600 p-3">{flash.success}</p>}{flash?.error && <p role="alert" className="mb-4 rounded border border-red-600 p-3">{flash.error}</p>}{errors && Object.keys(errors).length > 0 && <div role="alert" className="mb-4 rounded border border-red-600 p-3">{Object.values(errors).map((error, i) => <p key={i}>{error}</p>)}</div>}{children}</div>
             </div>
         </main>
     );

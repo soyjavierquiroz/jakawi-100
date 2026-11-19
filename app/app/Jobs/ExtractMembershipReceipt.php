@@ -33,6 +33,8 @@ class ExtractMembershipReceipt implements ShouldQueue
 
     public function handle(MembershipReceiptVision $vision): void
     {
+        if (\App\Support\PrelaunchOperations::blocked()) { return; }
+
         $p = DB::transaction(function () use ($vision) {
             $p = MembershipBankPayment::lockForUpdate()->find($this->paymentId);
             if (! $p || $p->extraction_version !== $this->version || $p->status !== 'under_review' || in_array($p->extraction_status, ['completed', 'manual'], true)) {
@@ -85,6 +87,8 @@ class ExtractMembershipReceipt implements ShouldQueue
 
     public function failed(?\Throwable $e): void
     {
+        if (\App\Support\PrelaunchOperations::blocked()) { return; }
+
         MembershipBankPayment::whereKey($this->paymentId)->where('extraction_version', $this->version)->whereIn('extraction_status', ['pending', 'processing'])->update(['extraction_status' => 'failed', 'extraction_error' => 'retry_exhausted', 'extraction_claimed_at' => null, 'extraction_processed_at' => now()]);
     }
 }

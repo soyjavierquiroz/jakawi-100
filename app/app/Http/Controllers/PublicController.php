@@ -270,6 +270,7 @@ class PublicController extends Controller
 
     public function reserve(Request $request, Experience $experience, AnalyticsTracker $analytics): RedirectResponse
     {
+        \App\Support\PrelaunchOperations::assertAllowed();
         abort_unless(app(ExperiencePublication::class)->canOperate($experience), 404);
         $method = $request->query('method', $experience->reservation_method);
         abort_unless($experience->catalog_visibility === 'legacy' || $method === $experience->reservation_method, 404);

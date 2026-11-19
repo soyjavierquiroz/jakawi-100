@@ -14,6 +14,11 @@ class ExpireUnlocksCommand extends Command
 
     public function handle(UnlockStatusService $service, UnlockParticipationService $participations): int
     {
+        if (\App\Support\PrelaunchOperations::blocked()) {
+            $this->info('Operación suspendida durante PRELAUNCH.');
+            return self::SUCCESS;
+        }
+
         $this->info((string) $service->activateDueScheduled());
         $this->info((string) $service->expireMissedGoals());
         $this->line(json_encode($participations->processDeadlines()));
