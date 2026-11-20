@@ -44,9 +44,6 @@ class ExperiencePublication
             if (! $experience->upcomingSessions()->whereHas('reservationPartner', fn ($q) => $q->published()->whereHas('experiences', fn ($e) => $e->whereKey($experience->id)))->exists()) {
                 $reasons[] = 'Asigna a una sesión futura un Partner de reservas publicado y asociado.';
             }
-            if ($this->mode($experience) !== 'legacy' && $experience->upcomingSessions()->whereNotNull('capacity')->exists()) {
-                $reasons[] = 'El flujo interno aún no limita cupos automáticamente. Resuelve el control de capacidad antes de activar.';
-            }
         } elseif (! $this->validChannel($experience)) {
             $reasons[] = 'Completa un destino válido para el método de reserva seleccionado; WhatsApp y teléfono requieren número internacional.';
         }

@@ -79,18 +79,23 @@ class RedemptionController extends Controller
         return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug'])]);
     }
 
-    public function confirm(Request $r, Partner $partner, RedemptionService $service): Response
+    public function confirm(Request $r, Partner $partner, RedemptionService $service): Response|\Symfony\Component\HttpFoundation\Response
     {
         $data = $r->validate(['code' => ['required', 'string', 'size:6'], 'pin' => ['required', 'digits:6']]);
         $redemption = Redemption::query()->where('code', strtoupper($data['code']))->where('partner_id', $partner->id)->first();
-        abort_unless($redemption !== null, 403);
+        if ($redemption === null) {
+            return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug']), 'error' => 'Código inválido. Comprueba el código y el establecimiento.'])->toResponse($r)->setStatusCode(403);
+        }
 
         try {
-            $x = $service->confirm(strtoupper($data['code']), $data['pin']);
-
-            return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug']), 'result' => $x->only(['benefit_title', 'partner_name', 'location_name', 'status'])]);
+            $outcome = $service->confirmWithOutcome(strtoupper($data['code']), $data['pin']);
+            return Inertia::render('redemptions/validate', [
+                'partner' => $partner->only(['name', 'slug']),
+                'result' => $outcome->redemption->only(['benefit_title', 'partner_name', 'location_name', 'status']),
+                'message' => $outcome->replayed ? 'Canje previamente utilizado. Ya estaba confirmado; no se registró otro canje.' : 'Canje confirmado correctamente.',
+            ]);
         } catch (DomainException $e) {
-            return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug']), 'error' => 'No fue posible validar este canje.']);
+            return Inertia::render('redemptions/validate', ['partner' => $partner->only(['name', 'slug']), 'error' => $this->validationMessage($e)]);
         }
     }
 
@@ -102,7 +107,7 @@ class RedemptionController extends Controller
         }
         abort_unless($request->user()->managesPartner($partner->id) && $redemption->partner_id === $partner->id, 403);
 
-        return Inertia::render('redemptions/scan', ['partner' => $partner->only(['name', 'slug']), 'redemption' => $redemption->only(['public_id', 'code', 'benefit_title', 'location_name', 'savings_amount', 'status', 'expires_at', 'confirmed_at']) + ['member_name' => $redemption->user->name]]);
+        return Inertia::render('redemptions/scan', ['partner' => $partner->only(['name', 'slug']), 'redemption' => $redemption->only(['public_id', 'code', 'benefit_title', 'location_name', 'savings_amount', 'status', 'expires_at', 'confirmed_at'])]);
     }
 
     public function scanConfirm(Request $request, Partner $partner, string $redemption_public_id, RedemptionService $service): Response
@@ -110,12 +115,33 @@ class RedemptionController extends Controller
         $redemption = Redemption::where('public_id', $redemption_public_id)->firstOrFail();
         abort_unless($request->user()?->managesPartner($partner->id) && $redemption->partner_id === $partner->id, 403);
         $data = $request->validate(['pin' => ['required', 'digits:6']]);
+        $error = null;
+        $message = null;
         try {
-            $result = $service->confirm($redemption->code, $data['pin']);
-        } catch (DomainException) {
+            $outcome = $service->confirmWithOutcome($redemption->code, $data['pin']);
+            $result = $outcome->redemption;
+            $message = $outcome->replayed ? 'Canje previamente utilizado. No se registró otro canje.' : 'Canje confirmado correctamente.';
+        } catch (DomainException $e) {
             $result = $redemption->fresh();
+            $error = $this->validationMessage($e);
         }
 
-        return Inertia::render('redemptions/scan', ['partner' => $partner->only(['name', 'slug']), 'redemption' => $result->only(['public_id', 'code', 'benefit_title', 'location_name', 'savings_amount', 'status', 'expires_at', 'confirmed_at']) + ['member_name' => $result->user->name, 'error' => $result->isConfirmed() ? null : 'No fue posible confirmar este canje.']]);
+        return Inertia::render('redemptions/scan', ['partner' => $partner->only(['name', 'slug']), 'message' => $message, 'error' => $error, 'redemption' => $result->only(['public_id', 'code', 'benefit_title', 'location_name', 'savings_amount', 'status', 'expires_at', 'confirmed_at'])]);
     }
+    private function validationMessage(DomainException $error): string
+    {
+        return match ($error->getMessage()) {
+            'Redemption code not found.' => 'Código inválido. Comprueba el código y el establecimiento.',
+            'This redemption code has expired.' => 'Código expirado. El miembro debe generar un nuevo código.',
+            'The location redemption PIN is invalid.' => 'PIN incorrecto. Utiliza el PIN de la sede indicada.',
+            'The membership is no longer active.', 'An active membership is required.' => 'La membresía requerida no está activa. No se confirmó el canje.',
+            'This benefit is not available at this location.' => 'Este beneficio no está disponible en esta sede o según sus condiciones vigentes.',
+            'This location does not have a redemption PIN.' => 'Esta sede no tiene un PIN de canje configurado. Contacta a JAKAWI.',
+            'The redemption limit for this benefit has been reached.' => 'Se alcanzó el límite de canjes permitido para este beneficio.',
+            'A challenge grant is required.', 'A valid challenge grant is required.' => 'La autorización de recompensa no está vigente para este canje.',
+            'This redemption cannot be confirmed.' => 'Este canje ya no está pendiente y no puede confirmarse.',
+            default => 'No fue posible validar este canje. Revisa sus condiciones o contacta a JAKAWI.',
+        };
+    }
+
 }

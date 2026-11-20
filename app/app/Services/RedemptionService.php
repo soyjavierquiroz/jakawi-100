@@ -68,6 +68,11 @@ class RedemptionService
 
     public function confirm(string $code, string $pin): Redemption
     {
+        return $this->confirmWithOutcome($code, $pin)->redemption;
+    }
+
+    public function confirmWithOutcome(string $code, string $pin): RedemptionConfirmation
+    {
         \App\Support\PrelaunchOperations::assertAllowed();
 
         $result = DB::transaction(function () use ($code, $pin): ?array {
@@ -77,6 +82,9 @@ class RedemptionService
             }
             if ($redemption->isConfirmed()) {
                 return [$redemption, false];
+            }
+            if ($redemption->status === Redemption::STATUS_EXPIRED) {
+                throw new DomainException('This redemption code has expired.');
             }
             if (! $redemption->isPending()) {
                 throw new DomainException('This redemption cannot be confirmed.');
@@ -120,7 +128,7 @@ class RedemptionService
             if ($redemption->social_challenge_reward_grant_id === null) app(UnlockParticipationService::class)->fulfillForRedemption($redemption->id, $redemption->user_id, $redemption->benefit_id);
         }
 
-        return $redemption;
+        return new RedemptionConfirmation($redemption, ! $confirmed);
     }
 
     private function assertRedeemable(?Benefit $benefit, ?Location $location): void

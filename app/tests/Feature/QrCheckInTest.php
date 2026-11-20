@@ -52,7 +52,7 @@ class QrCheckInTest extends TestCase
         $partner = Partner::factory()->published()->create();
         $experience = Experience::factory()->published()->create(['reservation_method' => 'jakawi']);
         $experience->syncPartnersWithRoles([['partner_id' => $partner->id, 'role' => 'host']]);
-        $session = ExperienceSession::factory()->for($experience)->upcoming()->create(['reservation_partner_id' => $partner->id]);
+        $session = ExperienceSession::factory()->for($experience)->upcoming()->create(['reservation_partner_id' => $partner->id, 'starts_at' => now()->subMinutes(5), 'ends_at' => now()->addHour()]);
         $member = User::factory()->create(['name' => $memberName]);
         $reservation = ExperienceReservation::create(['user_id' => $member->id, 'experience_id' => $experience->id, 'experience_session_id' => $session->id, 'partner_id' => $partner->id, 'status' => 'confirmed', 'party_size' => 2, 'check_in_code' => 'ABCDEF']);
         $manager = User::factory()->create();

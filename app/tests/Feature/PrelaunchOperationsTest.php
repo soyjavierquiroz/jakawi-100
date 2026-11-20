@@ -175,8 +175,14 @@ class PrelaunchOperationsTest extends TestCase
         $this->assertFalse(app(\App\Services\ExperiencePublication::class)->canOperate($this->experience));
         $this->actingAs($this->member)->post('/experiencias/'.$this->experience->slug.'/reservas', ['experience_session_id' => $this->session->id])->assertSessionHasErrors('session');
         $this->experience->update(['catalog_visibility' => 'active', 'operations_confirmed' => true]);
-        $this->assertFalse(app(\App\Services\ExperiencePublication::class)->canOperate($this->experience));
-        $this->assertTrue(collect(app(\App\Services\ExperiencePublication::class)->operationalBlockers($this->experience))->contains(fn ($reason) => str_contains($reason, 'limita cupos')));
+        $this->session->update(['venue_label' => 'Punto de encuentro verificado']);
+        $this->assertTrue(app(\App\Services\ExperiencePublication::class)->canOperate($this->experience));
+        $owner = $this->actor('owner');
+        app(ExperienceReservationService::class)->respond($owner, $this->reservation, 'confirmed');
+        $another = User::factory()->create();
+        app(MembershipService::class)->activate($another, $this->admin);
+        $this->actingAs($another)->post('/experiencias/'.$this->experience->slug.'/reservas', ['experience_session_id' => $this->session->id])->assertSessionHasErrors('reservation');
+        $this->assertSame(1, $this->session->confirmedAttendees());
         $location = $this->redemption->location;
         $location->update(['status' => 'paused']);
         $owner = $this->actor('owner');

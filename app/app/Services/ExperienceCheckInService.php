@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ExperienceReservation;
+use App\Models\ExperienceSession;
 use App\Models\User;
 use DomainException;
 use Illuminate\Support\Facades\DB;
@@ -28,16 +29,46 @@ class ExperienceCheckInService
         \App\Support\PrelaunchOperations::assertAllowed();
 
         return DB::transaction(function () use ($actor, $reservation): ExperienceReservation {
-            $reservation = ExperienceReservation::query()->with('session')->lockForUpdate()->findOrFail($reservation->id);
+            ExperienceSession::query()->lockForUpdate()->findOrFail($reservation->experience_session_id);
+            $reservation = ExperienceReservation::query()->with('session.experience')->lockForUpdate()->findOrFail($reservation->id);
             if (! $actor->managesPartner($reservation->partner_id)) {
                 abort(403);
             } if ($reservation->checked_in_at) {
                 return $reservation;
-            } if ($reservation->status !== ExperienceReservation::STATUS_CONFIRMED || ! $reservation->session || $reservation->session->starts_at->isPast()) {
-                throw new DomainException('This reservation cannot be checked in.');
-            } $reservation->update(['checked_in_at' => now(), 'checked_in_by_user_id' => $actor->id]);
+            }
+            if ($reason = $this->blocker($reservation)) {
+                throw new DomainException($reason);
+            }
+            $reservation->update(['checked_in_at' => now(), 'checked_in_by_user_id' => $actor->id]);
 
             return $reservation->refresh();
         });
+    }
+
+    /** Read-only eligibility, shared by service and review screen. All dates are instants. */
+    public function blocker(ExperienceReservation $reservation): ?string
+    {
+        if ($reservation->checked_in_at) {
+            return null;
+        }
+        $session = $reservation->session;
+        if ($reservation->status !== ExperienceReservation::STATUS_CONFIRMED) {
+            return 'La reserva debe estar confirmada para registrar asistencia.';
+        }
+        if (! $session || ! $session->isScheduled() || $session->reservation_partner_id !== $reservation->partner_id) {
+            return 'La sesión no está disponible para registrar asistencia.';
+        }
+        if (now()->lt($session->starts_at)) {
+            return 'Aún no comienza la sesión. Registra la asistencia durante su horario.';
+        }
+        $end = $session->operationalEnd();
+        if (! $end || $end->lte($session->starts_at)) {
+            return 'La sesión no tiene una hora de fin o duración válida. Contacta a JAKAWI.';
+        }
+        if (now()->gt($end)) {
+            return 'El horario de asistencia venció al finalizar la sesión.';
+        }
+
+        return null;
     }
 }
