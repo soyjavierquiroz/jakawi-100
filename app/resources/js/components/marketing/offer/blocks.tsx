@@ -388,13 +388,13 @@ export function MarketingFinalCTA({
             aria-label="CTA final"
             className={
                 compact
-                    ? 'bg-[var(--ink)] py-8 text-[var(--cream)] sm:py-10'
-                    : 'bg-[var(--ink)] py-14 text-[var(--cream)] sm:py-20'
+                    ? 'bg-surface-muted py-8 text-foreground sm:py-10'
+                    : 'bg-surface-muted py-14 text-foreground sm:py-20'
             }
         >
             <div className={offerContainer(compact)}>
                 {finalCta.eyebrow && (
-                    <p className="discovery-eyebrow text-[var(--cream)]/70">
+                    <p className="discovery-eyebrow text-muted-foreground">
                         {finalCta.eyebrow}
                     </p>
                 )}
@@ -411,7 +411,7 @@ export function MarketingFinalCTA({
                     <p
                         className={
                             compact
-                                ? 'mt-5 max-w-2xl text-[var(--cream)]/75'
+                                ? 'mt-5 max-w-2xl text-foreground/75'
                                 : 'mt-5 max-w-xl text-base leading-7 text-[var(--marketing-text-secondary)]'
                         }
                     >

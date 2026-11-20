@@ -14,9 +14,9 @@ export function personalSection(url: string): PersonalSection | null {
 
 export function personalLinkClass(active: boolean): string {
     return [
-        'transition-colors hover:text-[#111111] dark:hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5a4f]',
+        'transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         active
-            ? 'font-semibold text-[#111111] dark:text-white underline decoration-[#ff5a4f] decoration-2 underline-offset-8'
+            ? 'font-semibold text-foreground underline decoration-brand decoration-2 underline-offset-8'
             : 'font-medium text-muted-foreground',
     ].join(' ');
 }

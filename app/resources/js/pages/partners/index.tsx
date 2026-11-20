@@ -41,7 +41,7 @@ export default function PartnersIndex({ city, canonical }: Props) {
                     { question: `¿La solicitud corresponde a ${city.name}?`, answer: `Sí. Usamos la ciudad seleccionada en JAKAWI para dirigir tu solicitud al flujo de ${city.name}. Si tu negocio está en otra ciudad, usa el selector para visitar su página y encontrar la solicitud correspondiente.` },
                 ]} />
             </div>
-            <section className="bg-foreground py-14 text-background sm:py-20"><div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"><p className="text-xs font-extrabold tracking-[0.18em] text-brand uppercase">TU SIGUIENTE PASO</p><h2 className="mt-3 max-w-3xl text-3xl leading-tight font-extrabold tracking-[-0.04em] uppercase sm:text-5xl">Cuéntanos qué hace especial a tu negocio.</h2><p className="mt-4 max-w-xl leading-7 text-background/80">Tu solicitud se enviará para {city.name}. Completa el formulario y nuestro equipo revisará tu propuesta.</p><div className="mt-7"><MarketingCTA action={action} /></div></div></section>
+            <section className="bg-surface-muted py-14 text-foreground sm:py-20"><div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"><p className="text-xs font-extrabold tracking-[0.18em] text-brand uppercase">TU SIGUIENTE PASO</p><h2 className="mt-3 max-w-3xl text-3xl leading-tight font-extrabold tracking-[-0.04em] uppercase sm:text-5xl">Cuéntanos qué hace especial a tu negocio.</h2><p className="mt-4 max-w-xl leading-7 text-muted-foreground">Tu solicitud se enviará para {city.name}. Completa el formulario y nuestro equipo revisará tu propuesta.</p><div className="mt-7"><MarketingCTA action={action} /></div></div></section>
         </main>
     </>;
 }
