@@ -6,7 +6,7 @@
     --palette-light-text-secondary: #514a45;
     --palette-light-text-muted: #706761;
     --palette-light-border: #e9ddd4;
-    --palette-light-border-strong: #d7c7bc;
+    --palette-light-border-strong: #99877a;
     --palette-light-warning: oklch(0.72 0.16 75);
     --palette-light-danger: oklch(0.58 0.22 28);
     --palette-light-info: oklch(0.58 0.15 235);
@@ -17,7 +17,7 @@
     --palette-dark-text-secondary: #eee5de;
     --palette-dark-text-muted: #beb2aa;
     --palette-dark-border: #332f2b;
-    --palette-dark-border-strong: #48413c;
+    --palette-dark-border-strong: #81766e;
     --palette-dark-warning: oklch(0.78 0.16 75);
     --palette-dark-danger: oklch(0.68 0.2 28);
     --palette-dark-info: oklch(0.72 0.13 235);
@@ -25,6 +25,13 @@
 
     /* Brand and semantic colors are defined here only. Components consume tokens, never palette literals. */
     /* Discovery V2 semantic foundation. Legacy shadcn names below remain aliases. */
+    --action-solid: #d34035;
+    --action-hover: #b52e26;
+    --action-text: #b52e26;
+    --success-text: #126344;
+    --warning-text: #765400;
+    --warning-surface: color-mix(in srgb, var(--reward) 18%, var(--surface));
+    --danger-surface: color-mix(in srgb, var(--danger) 12%, var(--surface));
     --ink: #111111;
     --cream: #fff8f2;
     --background: var(--cream);
@@ -36,7 +43,7 @@
     --text-muted: var(--palette-light-text-muted);
     --border: var(--palette-light-border);
     --brand: #ff5a4f;
-    --marketing-sticky-surface: var(--cream);
+    --marketing-sticky-surface: var(--background);
     --marketing-video-gutter: 1rem;
     --marketing-hero-max-width: 74rem;
     --marketing-hero-gap: clamp(3rem, 4.5vw, 4rem);
@@ -45,7 +52,7 @@
     --marketing-hero-subtitle-size: clamp(1.125rem, 1.5vw, 1.3125rem);
     --marketing-hero-purchase-gap: 1.75rem;
     --marketing-hero-action-width: 27.5rem;
-    --marketing-sticky-text: var(--ink);
+    --marketing-sticky-text: var(--foreground);
     --marketing-sticky-action: color-mix(in srgb, var(--brand) 80%, var(--ink));
     --marketing-sticky-action-text: var(--palette-light-surface-raised);
     --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
@@ -94,16 +101,16 @@
     --card-foreground: var(--surface-foreground);
     --popover: var(--surface);
     --popover-foreground: var(--surface-foreground);
-    --primary: var(--brand);
-    --primary-foreground: var(--brand-foreground);
+    --primary: var(--action-solid);
+    --primary-foreground: var(--palette-light-surface-raised);
     --secondary: var(--muted);
     --secondary-foreground: var(--foreground);
     --accent: var(--energy);
     --accent-foreground: var(--energy-foreground);
     --destructive: var(--danger);
     --destructive-foreground: var(--danger-foreground);
-    --input: var(--border);
-    --ring: var(--brand);
+    --input: var(--border-strong);
+    --ring: var(--action-text);
 
     --chart-1: var(--brand);
     --chart-2: var(--energy);
@@ -129,10 +136,13 @@
     --sidebar-accent: var(--muted);
     --sidebar-accent-foreground: var(--foreground);
     --sidebar-border: var(--border);
-    --sidebar-ring: var(--brand);
+    --sidebar-ring: var(--ring);
 }
 
 .dark {
+    --action-text: #ff8c82;
+    --success-text: #65d6a8;
+    --warning-text: var(--reward);
     --background: var(--ink);
     --surface: var(--palette-dark-surface);
     --surface-raised: var(--palette-dark-surface-raised);
@@ -171,170 +181,24 @@
     --info-foreground: var(--palette-dark-info-foreground);
 }
 
-/* Marketing contexts rebind every component alias locally. Product appearance remains global.
-   A nested surface is a complete context, not a background-only override. */
-[data-marketing-theme], [data-marketing-surface] {
-    --marketing-bg-dark: var(--ink);
-    --marketing-bg-light: var(--cream);
-    --marketing-text-on-dark: var(--cream);
-    --marketing-text-on-light: var(--ink);
-    --marketing-action: var(--brand);
-    --marketing-action-text: #fff;
-    --marketing-emphasis: var(--brand);
+/* Legacy marketing names resolve the same global semantic palette. */
+:root {
+    --marketing-action: var(--primary);
+    --marketing-action-text: var(--primary-foreground);
+    --marketing-emphasis: var(--action-text);
     --marketing-value: var(--success);
-    --marketing-value-text: var(--ink);
     --marketing-reward: var(--reward);
-    --marketing-reward-text: var(--ink);
-    --background: var(--marketing-background);
-    --surface: var(--marketing-surface);
-    --surface-raised: var(--marketing-surface-raised);
-    --surface-subtle: var(--marketing-surface-muted);
-    --surface-elevated: var(--surface-raised);
-    --surface-muted: var(--surface-subtle);
-    --text-primary: var(--marketing-text);
-    --text-secondary: var(--marketing-text-secondary);
-    --text-muted: var(--marketing-text-muted);
-    --foreground: var(--text-primary);
-    --foreground-soft: var(--text-secondary);
-    --surface-foreground: var(--foreground);
-    --muted: var(--surface-muted);
-    --muted-foreground: var(--text-muted);
-    --border: var(--marketing-border);
-    --border-strong: var(--marketing-border-strong);
-    --brand-foreground: var(--marketing-action-text);
-    --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
-    --action: var(--marketing-action);
-    --action-foreground: var(--marketing-action-text);
-    --energy: var(--marketing-reward);
-    --energy-foreground: var(--marketing-reward-text);
-    --success-foreground: var(--marketing-value-text);
-    --success-surface: var(--marketing-value-surface);
-    --card: var(--surface);
-    --card-foreground: var(--foreground);
-    --popover: var(--surface);
-    --popover-foreground: var(--foreground);
-    --primary: var(--marketing-action);
-    --primary-foreground: var(--marketing-action-text);
-    --secondary: var(--muted);
-    --secondary-foreground: var(--foreground);
-    --accent: var(--energy);
-    --accent-foreground: var(--energy-foreground);
-    --destructive: var(--danger);
-    --destructive-foreground: var(--danger-foreground);
-    /* Functional control boundaries need more contrast than decorative dividers. */
-    --input: var(--foreground);
-    --ring: var(--brand);
-    --overlay-scrim: var(--scrim);
-    /* Tailwind @theme aliases otherwise arrive resolved from the document root. */
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-text-primary: var(--text-primary);
-    --color-text-secondary: var(--text-secondary);
-    --color-text-muted: var(--text-muted);
-    --color-surface: var(--surface);
-    --color-surface-raised: var(--surface-raised);
-    --color-surface-subtle: var(--surface-subtle);
-    --color-surface-elevated: var(--surface-elevated);
-    --color-surface-muted: var(--surface-muted);
-    --color-surface-foreground: var(--surface-foreground);
-    --color-brand: var(--brand);
-    --color-brand-foreground: var(--brand-foreground);
-    --color-brand-subtle: var(--brand-subtle);
-    --color-action: var(--action);
-    --color-action-foreground: var(--action-foreground);
-    --color-energy: var(--energy);
-    --color-energy-foreground: var(--energy-foreground);
-    --color-success: var(--success);
-    --color-success-foreground: var(--success-foreground);
-    --color-success-surface: var(--success-surface);
-    --color-warning: var(--warning);
-    --color-warning-foreground: var(--warning-foreground);
-    --color-danger: var(--danger);
-    --color-danger-foreground: var(--danger-foreground);
-    --color-info: var(--info);
-    --color-info-foreground: var(--info-foreground);
-    --color-reward: var(--reward);
-    --color-card: var(--card);
-    --color-card-foreground: var(--card-foreground);
-    --color-popover: var(--popover);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-accent: var(--accent);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-destructive: var(--destructive);
-    --color-destructive-foreground: var(--destructive-foreground);
-    --color-border: var(--border);
-    --color-overlay: var(--overlay);
-    --color-overlay-scrim: var(--overlay-scrim);
-    --color-scrim: var(--scrim);
-    --color-input: var(--input);
-    --color-ring: var(--ring);
-    --color-chart-1: var(--chart-1);
-    --color-chart-2: var(--chart-2);
-    --color-chart-3: var(--chart-3);
-    --color-chart-4: var(--chart-4);
-    --color-chart-5: var(--chart-5);
-    --color-sidebar: var(--sidebar);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-ring: var(--sidebar-ring);
-    --shadow-editorial: var(--shadow);
-    color: var(--foreground);
-    background-color: var(--background);
-}
-
-[data-marketing-theme="light-conversion"], [data-marketing-surface="light"] {
-    color-scheme: light;
-    --marketing-background: var(--cream);
-    --marketing-text: var(--ink);
-    --marketing-surface: var(--palette-light-surface);
-    --marketing-surface-raised: var(--palette-light-surface-raised);
-    --marketing-surface-muted: var(--palette-light-surface-subtle);
-    --marketing-text-secondary: var(--palette-light-text-secondary);
-    --marketing-text-muted: var(--palette-light-text-muted);
-    --marketing-border: var(--palette-light-border);
-    --marketing-border-strong: var(--palette-light-border-strong);
-    --warning: var(--palette-light-warning);
-    --danger: var(--palette-light-danger);
-    --info: var(--palette-light-info);
-    --info-foreground: var(--palette-light-info-foreground);
-    --marketing-value-surface: color-mix(in srgb, var(--success) 16%, var(--background));
-    --scrim: color-mix(in srgb, var(--ink) 82%, transparent);
-    --overlay: color-mix(in srgb, var(--ink) 42%, transparent);
-    --shadow: 0 8px 24px color-mix(in srgb, var(--ink) 6%, transparent);
-    --shadow-featured: 0 14px 30px color-mix(in srgb, var(--ink) 10%, transparent);
-}
-
-[data-marketing-theme="dark-conversion"], [data-marketing-surface="dark"] {
-    color-scheme: dark;
-    --marketing-background: var(--ink);
-    --marketing-text: var(--cream);
-    --marketing-surface: var(--palette-dark-surface);
-    --marketing-surface-raised: var(--palette-dark-surface-raised);
-    --marketing-surface-muted: var(--palette-dark-surface-subtle);
-    --marketing-text-secondary: var(--palette-dark-text-secondary);
-    --marketing-text-muted: var(--palette-dark-text-muted);
-    --marketing-border: var(--palette-dark-border);
-    --marketing-border-strong: var(--palette-dark-border-strong);
-    --warning: var(--palette-dark-warning);
-    --danger: var(--palette-dark-danger);
-    --info: var(--palette-dark-info);
-    --info-foreground: var(--palette-dark-info-foreground);
-    --marketing-value-surface: color-mix(in srgb, var(--success) 18%, var(--surface));
-    --brand-subtle: color-mix(in srgb, var(--brand) 18%, var(--surface));
-    --scrim: color-mix(in srgb, var(--ink) 86%, transparent);
-    --overlay: color-mix(in srgb, var(--ink) 48%, transparent);
-    --shadow: 0 10px 28px color-mix(in srgb, var(--ink) 28%, transparent);
-    --shadow-featured: 0 16px 36px color-mix(in srgb, var(--ink) 38%, transparent);
+    --marketing-text-secondary: var(--text-secondary);
+    --table: var(--surface);
+    --table-header: var(--surface-subtle);
+    --alert: var(--surface-subtle);
+    --admin-action-text: var(--action-text);
+    --admin-action-solid: var(--action-solid);
+    --admin-action-hover: var(--action-hover);
+    --admin-success-text: var(--success-text);
+    --admin-warning-text: var(--warning-text);
+    --admin-warning-surface: var(--warning-surface);
+    --admin-danger-surface: var(--danger-surface);
 }
 
 /* Shared external community action, including keyboard and motion preferences. */

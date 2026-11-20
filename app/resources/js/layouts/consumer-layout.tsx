@@ -33,7 +33,7 @@ export default function ConsumerLayout({ children }: { children: React.ReactNode
                 </nav>
             </div>
         </header>
-        <header className="sticky top-0 z-30 flex h-14 items-center border-b border-border/70 bg-background/90 px-4 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border/70 bg-background/90 px-4 backdrop-blur lg:hidden">
             <Link
                 href="/"
                 aria-label="Ir al inicio de JAKAWI"
@@ -45,6 +45,7 @@ export default function ConsumerLayout({ children }: { children: React.ReactNode
                     className="size-8"
                 />
             </Link>
+            <ThemeToggle />
         </header>
         {children}
         <MobileBottomNav />

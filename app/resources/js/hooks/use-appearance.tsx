@@ -1,141 +1,86 @@
 import { useSyncExternalStore } from 'react';
+import { toast } from 'sonner';
 
 export type ResolvedAppearance = 'light' | 'dark';
 export type Appearance = ResolvedAppearance | 'system';
-
 export type UseAppearanceReturn = {
     readonly appearance: Appearance;
     readonly resolvedAppearance: ResolvedAppearance;
     readonly updateAppearance: (mode: Appearance) => void;
 };
-
 const listeners = new Set<() => void>();
 let currentAppearance: Appearance = 'system';
-
-const prefersDark = (): boolean => {
-    if (typeof window === 'undefined') {
-        return false;
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+let initialized = false;
+let persistence = Promise.resolve();
+const valid = (value: unknown): value is Appearance => ['light', 'dark', 'system'].includes(value as string);
+const prefersDark = () => typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const resolved = (): ResolvedAppearance => currentAppearance === 'dark' || (currentAppearance === 'system' && prefersDark()) ? 'dark' : 'light';
+const storageKey = () => document.documentElement.dataset.appearanceUser ? `appearance:${document.documentElement.dataset.appearanceUser}` : 'appearance';
+const notify = () => listeners.forEach((listener) => listener());
+const subscribe = (callback: () => void) => { listeners.add(callback); return () => { listeners.delete(callback); }; };
+const apply = () => {
+    const root = document.documentElement;
+    root.classList.toggle('dark', resolved() === 'dark');
+    root.style.colorScheme = resolved();
+    root.dataset.appearance = currentAppearance;
+    notify();
+    document.dispatchEvent(new Event('appearancechange'));
 };
-
-const setCookie = (name: string, value: string, days = 365): void => {
-    if (typeof document === 'undefined') {
-        return;
-    }
-
-    const maxAge = days * 24 * 60 * 60;
-    document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
+const remember = () => {
+    try { window.localStorage.setItem(storageKey(), currentAppearance); } catch { /* Cookie remains available when browser storage is restricted. */ }
+    // Host-only cookie: COM never sets a Domain attribute or shares with CLUB.
+    document.cookie = `appearance=${currentAppearance};path=/;max-age=31536000;SameSite=Lax${location.protocol === 'https:' ? ';Secure' : ''}`;
 };
-
-const getStoredAppearance = (): Appearance => {
-    if (typeof window === 'undefined') {
-        return 'system';
-    }
-
-    try {
-        const appearance = window.localStorage.getItem('appearance');
-
-        return appearance === 'light' || appearance === 'dark' || appearance === 'system'
-            ? appearance
-            : 'system';
-    } catch {
-        return 'system';
-    }
-};
-
-const isDarkMode = (appearance: Appearance): boolean => {
-    return appearance === 'dark' || (appearance === 'system' && prefersDark());
-};
-
-const applyTheme = (appearance: Appearance): void => {
-    if (typeof document === 'undefined') {
-        return;
-    }
-
-    const isDark = isDarkMode(appearance);
-
-    document.documentElement.classList.toggle('dark', isDark);
-    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-    document.documentElement.dataset.appearance = appearance;
-};
-
-const subscribe = (callback: () => void) => {
-    listeners.add(callback);
-
-    return () => listeners.delete(callback);
-};
-
-const notify = (): void => listeners.forEach((listener) => listener());
-
-const mediaQuery = (): MediaQueryList | null => {
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)');
-};
-
-const handleSystemThemeChange = (): void => applyTheme(currentAppearance);
 
 export function initializeTheme(): void {
-    if (typeof window === 'undefined') {
-        return;
-    }
+    if (typeof window === 'undefined' || initialized) return;
+    initialized = true;
+    const bootstrap = document.documentElement.dataset.appearance;
+    currentAppearance = valid(bootstrap) ? bootstrap : 'system';
+    apply();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
+    window.addEventListener('storage', (event) => {
+        if (event.key !== storageKey()) return;
+        currentAppearance = valid(event.newValue) ? event.newValue : 'system';
+        document.cookie = `appearance=${currentAppearance};path=/;max-age=31536000;SameSite=Lax${location.protocol === 'https:' ? ';Secure' : ''}`;
+        apply();
+    });
+}
 
-    const serverAppearance = document.documentElement.dataset.appearance;
-    const authenticated = document.documentElement.dataset.appearanceAuthenticated === 'true';
-    currentAppearance = authenticated && (serverAppearance === 'light' || serverAppearance === 'dark' || serverAppearance === 'system')
-        ? serverAppearance
-        : getStoredAppearance();
-    applyTheme(currentAppearance);
-
-    // Set up system theme change listener
-    mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+// Inertia login/logout does not reload the document. Account state must follow it.
+export function synchronizeAppearanceAccount(user: { id: number; theme_preference?: string } | null): void {
+    const root = document.documentElement;
+    const id = user ? String(user.id) : '';
+    if ((root.dataset.appearanceUser ?? '') === id) return;
+    root.dataset.appearanceUser = id;
+    root.dataset.appearanceAuthenticated = user ? 'true' : 'false';
+    let stored: unknown;
+    try { stored = window.localStorage.getItem('appearance'); } catch { /* Use system fallback. */ }
+    currentAppearance = user && valid(user.theme_preference) ? user.theme_preference : valid(stored) ? stored : 'system';
+    apply();
 }
 
 export function useAppearance(persistForAuthenticatedUser = false): UseAppearanceReturn {
-    const appearance: Appearance = useSyncExternalStore(
-        subscribe,
-        () => currentAppearance,
-        () => 'system',
-    );
+    const appearance = useSyncExternalStore(subscribe, () => currentAppearance, () => 'system' as Appearance);
+    const resolvedAppearance = useSyncExternalStore(subscribe, resolved, () => 'light' as ResolvedAppearance);
+    return { appearance, resolvedAppearance, updateAppearance: (mode) => updateAppearance(mode, persistForAuthenticatedUser) };
+}
 
-    const resolvedAppearance: ResolvedAppearance = isDarkMode(appearance)
-        ? 'dark'
-        : 'light';
-
-    const updateAppearance = (mode: Appearance): void => {
+export const updateAppearance = (mode: Appearance, persistForAuthenticatedUser = false): void => {
+        if (!valid(mode)) return;
         currentAppearance = mode;
-
-        // Store in localStorage for client-side persistence...
-        try {
-            window.localStorage.setItem('appearance', mode);
-        } catch {
-            // Storage can be unavailable in private or embedded browsers.
-        }
-
-        // Store in cookie for SSR...
-        setCookie('appearance', mode);
-
-        applyTheme(mode);
-        notify();
-
-        if (persistForAuthenticatedUser && typeof document !== 'undefined') {
-            const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content;
-
-            // The endpoint returns 204. Persist without an Inertia visit so the
-            // current page is never replaced or unmounted.
-            void fetch('/settings/appearance', {
-                method: 'PATCH', credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}) },
-                body: JSON.stringify({ theme_preference: mode }),
-            }).catch(() => {
-                // Local theme application remains usable if persistence fails.
-            });
+        remember();
+        apply();
+        if (persistForAuthenticatedUser) {
+            // Serialize quick changes so the final account preference matches the UI.
+            persistence = persistence.then(async () => {
+                const token = document.cookie.split('; ').find((cookie) => cookie.startsWith('XSRF-TOKEN='))?.slice('XSRF-TOKEN='.length);
+                const response = await fetch('/settings/appearance', {
+                    method: 'PATCH', credentials: 'same-origin',
+                    headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...(token ? { 'X-XSRF-TOKEN': decodeURIComponent(token) } : {}) },
+                    body: JSON.stringify({ theme_preference: mode }),
+                });
+                if (!response.ok) throw new Error('Appearance persistence failed');
+            }).catch(() => { const message = 'La apariencia se aplicó en este navegador. No se pudo guardar en tu cuenta.'; toast.error(message); document.querySelectorAll('[data-appearance-status]').forEach((node) => { node.textContent = message; }); });
         }
     };
-
-    return { appearance, resolvedAppearance, updateAppearance } as const;
-}

@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/theme-toggle';
 import { Link } from '@inertiajs/react';
 
 export function PublicFooter() {
@@ -20,6 +21,7 @@ export function PublicFooter() {
                         La app para vivir más tu ciudad.
                     </p>
                 </div>
+                <ThemeToggle />
                 <nav
                     aria-label="Enlaces de JAKAWI"
                     className="flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold text-muted-foreground"

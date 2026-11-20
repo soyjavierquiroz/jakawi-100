@@ -313,7 +313,7 @@ function ClubAffiliatesCard() {
             className="mi-affiliates mt-5 rounded-3xl border border-border bg-surface p-5"
         >
             <p className="flex items-center gap-2 text-xs font-extrabold tracking-[0.12em] uppercase">
-                <span aria-hidden className="size-2 rounded-full bg-[#ffd166]" />
+                <span aria-hidden className="size-2 rounded-full bg-reward" />
                 Gana con JAKAWI
             </p>
             <h2 id="club-affiliates-title" className="mt-2 text-xl font-extrabold">

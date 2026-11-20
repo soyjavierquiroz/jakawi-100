@@ -1,10 +1,11 @@
+import ThemeToggle from '@/components/theme-toggle';
 import { AcquisitionProvider } from '@/components/marketing/acquisition-context';
 import { MetaBrowserEvents } from '@/components/meta-browser-events';
 import { Link, usePage } from '@inertiajs/react';
 import { PublicFooter } from '@/components/public-footer';
 export type MarketingTheme = 'dark-conversion' | 'light-conversion';
 
-// Explicit marketing theme, independent from Product UI preference.
+// Legacy composition metadata only; colors always follow the global appearance.
 export function marketingThemeForPage(component: string): MarketingTheme {
     if (component === 'landing-presentations/experience')
         return 'light-conversion';
@@ -71,6 +72,7 @@ export default function MarketingLayout({
                             </>
                             {!acquisition && (
                                 <div className="flex items-center gap-3 sm:gap-6">
+                                    <ThemeToggle />
                                     <Link
                                         href="/explorar"
                                         className="text-sm font-semibold text-muted-foreground hover:text-foreground"

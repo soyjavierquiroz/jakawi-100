@@ -7,8 +7,8 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-/* Product dark utilities never override an explicit marketing composition. */
-@custom-variant dark (&:is(.dark *):not(:where([data-marketing-theme], [data-marketing-theme] *)));
+/* One document appearance applies to every module and portalled control. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @utility benefit-primary-action {
     @apply inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-extrabold text-brand-foreground uppercase transition hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand;
@@ -47,7 +47,7 @@
     width: 42px;
     height: 42px;
     overflow: hidden;
-    border: 2px solid #fff8f2;
+    border: 2px solid var(--background);
     border-radius: 50%;
     background: var(--surface-raised);
     color: var(--foreground);
@@ -64,7 +64,7 @@
     height: 4px;
     margin-right: 6px;
     border-radius: 50%;
-    background: #24b47e;
+    background: var(--success);
     vertical-align: middle;
 }
 @media (min-width: 640px) {
@@ -126,6 +126,10 @@
     --color-info-foreground: var(--info-foreground);
     --color-reward: var(--reward);
 
+    --color-table: var(--table);
+    --color-table-header: var(--table-header);
+    --color-alert: var(--alert);
+    --color-danger-surface: var(--danger-surface);
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
 
@@ -519,11 +523,11 @@
 
 /* Funnel actions retain coral with sufficient contrast for white labels. */
 .funnel-primary-action {
-    color: #fff;
-    background-color: color-mix(in srgb, var(--brand) 80%, #000);
+    color: var(--primary-foreground);
+    background-color: var(--action-solid);
 }
 .funnel-primary-action:hover {
-    background-color: color-mix(in srgb, var(--brand) 76%, #000);
+    background-color: var(--action-hover);
 }
 
 /* Conversion controls: explicit selection, keyboard focus and touch feedback. */
@@ -751,7 +755,7 @@
 .partner-profile section[id] { scroll-margin-top: 9rem; }
 
 /* Membership payment uses the same Discovery typography, controls and tokens. */
-.membership-checkout { color-scheme: light; }
+.membership-checkout { color-scheme: inherit; }
 .membership-checkout .payment-header { border-bottom: 1px solid var(--border); background: var(--background); }
 .membership-checkout .payment-header nav { max-width: 1120px; margin: auto; min-height: 88px; padding: 16px var(--space-gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .membership-checkout .payment-header img { width: 122px; height: auto; }
@@ -818,3 +822,11 @@
 .membership-checkout #report-payment { width: 100%; white-space: normal; }
 .membership-checkout #report-payment:disabled { opacity: .45; cursor: not-allowed; }
 .membership-checkout .payment-next-step { margin: 28px 0 12px; font-size: 24px; font-weight: 800; }
+
+.dark img:is([src="/jakawi-logo.svg"], [src="/jakawi-wordmark.svg"]) { filter: brightness(0) invert(1); }
+
+/* Text requires a stronger shade than the decorative coral/green palette. */
+@utility text-brand { color: var(--action-text); }
+@utility text-success { color: var(--success-text); }
+
+@utility outline-brand { outline-color: var(--ring); }

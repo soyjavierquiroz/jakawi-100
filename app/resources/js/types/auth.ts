@@ -1,4 +1,5 @@
 export type User = {
+    theme_preference?: 'light' | 'dark' | 'system';
     id: number;
     name: string;
     email: string;

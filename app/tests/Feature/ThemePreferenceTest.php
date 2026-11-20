@@ -47,4 +47,32 @@ class ThemePreferenceTest extends TestCase
         $this->actingAs($user)->get('/perfil')->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('member-profile'));
     }
+    public function test_guest_cannot_save_an_account_preference(): void
+    {
+        $this->patchJson(route('appearance.update'), ['theme_preference' => 'dark'])->assertUnauthorized();
+    }
+
+    public function test_account_preference_wins_over_browser_cookie_in_bootstrap(): void
+    {
+        $user = User::factory()->create(['theme_preference' => 'dark']);
+        $this->actingAs($user)->withUnencryptedCookie('appearance', 'light')->get('/perfil')
+            ->assertOk()->assertSee('data-appearance="dark"', false)
+            ->assertSee('data-appearance-user="'.$user->id.'"', false);
+    }
+
+    public function test_invalid_guest_cookie_falls_back_to_system(): void
+    {
+        $this->withUnencryptedCookie('appearance', 'invalid')->get('/login')
+            ->assertOk()->assertSee('data-appearance="system"', false);
+    }
+
+    public function test_partner_can_save_preference_without_changing_role(): void
+    {
+        $user = User::factory()->create();
+        $partner = \App\Models\Partner::factory()->create();
+        $user->partners()->attach($partner, ['role' => 'staff']);
+        $this->actingAs($user)->patchJson(route('appearance.update'), ['theme_preference' => 'dark'])->assertNoContent();
+        $this->assertSame('staff', $user->partners()->first()->pivot->role);
+        $this->assertSame('dark', $user->fresh()->theme_preference);
+    }
 }

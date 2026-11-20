@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/theme-toggle';
 import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
 import type { AuthLayoutProps } from '@/types';
@@ -33,6 +34,7 @@ export default function AuthSimpleLayout({
                         </div>
                     </div>
                     {children}
+                    <div className="flex justify-center"><ThemeToggle /></div>
                 </div>
             </div>
         </div>

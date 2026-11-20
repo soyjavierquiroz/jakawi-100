@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/theme-toggle';
 import { Link, usePage } from '@inertiajs/react';
 
 export function AccountAccessMessage() {
@@ -83,7 +84,7 @@ export function DeliveryLayout({
             className="min-h-screen bg-background font-discovery text-foreground"
             data-marketing-theme="light-conversion"
         >
-            <header className="border-b border-border px-5 py-4">
+            <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
                 <Link
                     href="/"
                     aria-label="Ir al inicio de JAKAWI"
@@ -91,6 +92,7 @@ export function DeliveryLayout({
                 >
                     <img src="/jakawi-logo.svg" alt="" className="h-8 w-auto" />
                 </Link>
+                <ThemeToggle />
             </header>
             <main className="mx-auto max-w-3xl px-5 pt-6 pb-12 sm:px-8 sm:pt-10">
                 {children}

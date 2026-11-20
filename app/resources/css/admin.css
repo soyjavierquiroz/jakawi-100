@@ -2,51 +2,6 @@
 The dialog scope follows Radix content rendered outside the shell. */
 .admin-shell,
 .admin-dialog {
-  --background: var(--cream);
-  --surface: var(--palette-light-surface-raised);
-  --surface-raised: var(--surface);
-  --surface-elevated: var(--surface);
-  --surface-muted: var(--palette-light-surface-subtle);
-  --surface-foreground: var(--ink);
-  --foreground-soft: var(--palette-light-text-secondary);
-  --surface-subtle: var(--palette-light-surface-subtle);
-  --foreground: var(--ink);
-  --text-primary: var(--ink);
-  --text-secondary: var(--palette-light-text-secondary);
-  --text-muted: #625951;
-  --muted-foreground: var(--text-muted);
-  --border: var(--palette-light-border);
-  --border-strong: #99877a;
-  --brand-foreground: #ffffff;
-  --brand-subtle: color-mix(in srgb, var(--brand) 10%, var(--surface));
-  --admin-action-text: #b52e26;
-  --admin-action-solid: #d34035;
-  --admin-action-hover: #b52e26;
-  --admin-success-text: #126344;
-  --warning: var(--reward);
-  --warning-foreground: var(--admin-warning-text);
-  --success-foreground: var(--admin-success-text);
-  --success-surface: color-mix(in srgb, var(--success) 12%, var(--surface));
-  --admin-warning-text: #765400;
-  --admin-warning-surface: color-mix(in srgb, var(--reward) 20%, var(--surface));
-  --danger: #b42318;
-  --danger-foreground: var(--surface);
-  --admin-danger-surface: #fff0ee;
-  --card: var(--surface);
-  --card-foreground: var(--foreground);
-  --popover: var(--surface);
-  --popover-foreground: var(--foreground);
-  --primary: var(--admin-action-solid);
-  --primary-foreground: #ffffff;
-  --secondary: var(--surface-subtle);
-  --secondary-foreground: var(--ink);
-  --muted: var(--surface-subtle);
-  --accent: var(--brand-subtle);
-  --accent-foreground: var(--ink);
-  --destructive: var(--danger);
-  --destructive-foreground: var(--surface);
-  --input: var(--border-strong);
-  --ring: var(--admin-action-text);
   --font-sans: var(--font-discovery);
   /* Resolve existing Tailwind aliases inside admin rather than inheriting
      the public theme values already computed at :root. */
@@ -98,7 +53,7 @@ The dialog scope follows Radix content rendered outside the shell. */
   --color-scrim: var(--scrim);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  color-scheme: light;
+  color-scheme: inherit;
   font-family: var(--font-discovery);
   background: var(--background);
   color: var(--foreground);
@@ -403,7 +358,7 @@ The dialog scope follows Radix content rendered outside the shell. */
 no page-owned style block. */
 :where(.admin-shell.admin-blade .admin-content) {
   & {
-    color-scheme: light;
+    color-scheme: inherit;
     font-family: Montserrat, sans-serif;
     color: var(--foreground);
     background: var(--background);

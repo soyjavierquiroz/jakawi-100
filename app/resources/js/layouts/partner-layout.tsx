@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/theme-toggle';
 import {
     PublicationStatus,
     type PartnerAccess,
@@ -65,6 +66,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                     <p className="text-lg font-bold tracking-tight">
                         JAKAWI <span className="text-brand">Partners</span>
                     </p>
+                    <div className="mt-3"><ThemeToggle /></div>
                     {partner && (
                         <button
                             type="button"
