@@ -132,6 +132,7 @@ Route::middleware(['auth', 'verified', 'partner'])->group(function () {
     Route::get('/partner/{partner:slug}/desbloqueos/{unlock:slug}/editar', [PartnerUnlockController::class, 'form'])->name('partner.unlocks.edit');
     Route::put('/partner/{partner:slug}/desbloqueos/{unlock:slug}', [PartnerUnlockController::class, 'save'])->name('partner.unlocks.update');
     Route::post('/partner/{partner:slug}/desbloqueos/{unlock:slug}/enviar', [PartnerUnlockController::class, 'submit'])->name('partner.unlocks.submit');
+    Route::get('/partner/{partner:slug}/desbloqueos/{unlock:slug}/participaciones', [PartnerUnlockController::class, 'participations'])->name('partner.unlocks.participations');
     Route::post('/partner/{partner:slug}/desbloqueos/{unlock:slug}/participaciones/{participation}/cumplir', [PartnerUnlockController::class, 'fulfill'])->name('partner.unlocks.fulfill');
     Route::get('/partner/{partner:slug}/rendimiento', [PartnerPortalController::class, 'performance'])->name('partner.performance');
     Route::get('/partner/{partner:slug}/reservas', [PartnerReservationController::class, 'index'])->name('partner.reservations.index');
