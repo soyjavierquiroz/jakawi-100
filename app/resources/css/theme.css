@@ -28,6 +28,7 @@
     --action-solid: #d34035;
     --action-hover: #b52e26;
     --action-text: #b52e26;
+    --danger-text: #b42318;
     --success-text: #126344;
     --warning-text: #765400;
     --warning-surface: color-mix(in srgb, var(--reward) 18%, var(--surface));
@@ -140,6 +141,7 @@
 }
 
 .dark {
+    --danger-text: var(--palette-dark-danger);
     --action-text: #ff8c82;
     --success-text: #65d6a8;
     --warning-text: var(--reward);
@@ -176,7 +178,7 @@
     --warning: var(--palette-dark-warning);
     --warning-foreground: oklch(0.18 0.02 85);
     --danger: var(--palette-dark-danger);
-    --danger-foreground: oklch(0.985 0 0);
+    --danger-foreground: var(--ink);
     --info: var(--palette-dark-info);
     --info-foreground: var(--palette-dark-info-foreground);
 }

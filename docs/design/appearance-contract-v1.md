@@ -44,7 +44,7 @@ consumen esos tokens, incluyendo contenido Radix montado en el body.
 | primary / primary-foreground | Acción coral oscurecida con texto blanco |
 | secondary / secondary-foreground | Acción secundaria sobre superficie neutra |
 | brand / reward / success | Coral, amarillo y verde de identidad para fondos y decoración |
-| action-text / success-text / warning-text | Variantes legibles para texto de acción y estado |
+| action-text / success-text / warning-text / danger-text | Variantes legibles para texto de acción y estado |
 | success-surface / warning-surface / danger-surface | Fondos de estado; acompañar con texto/icono |
 | danger / destructive / info | Error destructivo e información |
 | chart-1…chart-5 | Series coral, amarillo, verde, aviso e información |
