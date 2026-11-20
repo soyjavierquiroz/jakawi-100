@@ -53,7 +53,7 @@
     --marketing-hero-purchase-gap: 1.75rem;
     --marketing-hero-action-width: 27.5rem;
     --marketing-sticky-text: var(--foreground);
-    --marketing-sticky-action: color-mix(in srgb, var(--brand) 80%, var(--ink));
+    --marketing-sticky-action: var(--action-solid);
     --marketing-sticky-action-text: var(--palette-light-surface-raised);
     --brand-subtle: color-mix(in srgb, var(--brand) 14%, var(--background));
     --success: #24b47e;
