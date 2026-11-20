@@ -57,8 +57,19 @@ class PartnerUnlockChallengeV3bTest extends TestCase
         $foreign = Location::factory()->withPartner(Partner::factory()->create())->create();
         $this->actingAs($user)->put('/partner/'.$partner->slug.'/desbloqueos/'.$unlock->slug, $this->unlockData(['location_ids' => [$foreign->id]]))->assertSessionHasErrors('location_ids.0');
         $this->assertSame('Propuesta propia', $unlock->fresh()->title); $this->assertSame([$location->id], $unlock->locations()->pluck('locations.id')->all());
-        $this->post('/partner/'.$partner->slug.'/desbloqueos', $this->unlockData(['maximum_capacity' => 1]))->assertSessionHasErrors('maximum_capacity');
+        $this->post('/partner/'.$partner->slug.'/desbloqueos', $this->unlockData(['maximum_capacity' => 1]))->assertSessionHasErrors(['maximum_capacity' => 'El valor debe ser igual o mayor que 3.']);
         $this->assertSame(1, Unlock::count());
+    }
+
+    public function test_partner_challenge_validation_is_spanish_without_changing_admin_messages(): void
+    {
+        [$partner, $owner] = $this->business(); config(['jakawi.prelaunch_mode' => true]);
+        $this->actingAs($owner)->post('/partner/'.$partner->slug.'/retos', $this->challengeData(['title' => '']))->assertSessionHasErrors(['title' => 'Completa este campo.']);
+        $this->post('/partner/'.$partner->slug.'/retos', $this->challengeData(['reward_type' => 'JP', 'reward_jp_amount' => 0]))->assertSessionHasErrors(['reward_jp_amount' => 'El mínimo permitido es 1.']);
+        $admin = User::factory()->create(['is_admin' => true]);
+        $this->actingAs($admin)->post('/admin/retos', $this->challengeData(['title' => '', 'status' => 'draft', 'slug' => 'invalid-admin']))->assertSessionHasErrors('title');
+        $this->assertNotSame('Completa este campo.', session('errors')->get('title')[0]);
+        $this->assertSame(0, Challenge::count());
     }
 
     public function test_unlock_review_and_operational_states_cannot_be_edited_or_resubmitted(): void

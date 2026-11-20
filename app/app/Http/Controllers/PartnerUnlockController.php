@@ -84,7 +84,7 @@ class PartnerUnlockController extends Controller
                 'maximum_capacity' => 'nullable|integer|min:1|gte:minimum_commitments', 'commitment_deadline' => 'nullable|date',
                 'free_user_offer' => 'nullable|string', 'member_offer' => 'nullable|string', 'location_ids' => 'sometimes|array',
                 'location_ids.*' => ['integer', Rule::exists('locations', 'id')->where('partner_id', $partner->id)],
-            ], ['location_ids.*.exists' => 'Selecciona únicamente sedes de este establecimiento.'], [
+            ], \App\Support\PartnerEditorialValidation::messages() + ['location_ids.*.exists' => 'Selecciona únicamente sedes de este establecimiento.'], [
                 'title' => 'título', 'type' => 'tipo de propuesta', 'minimum_commitments' => 'mínimo de compromisos',
                 'maximum_capacity' => 'capacidad máxima', 'commitment_deadline' => 'plazo para comprometerse', 'location_ids' => 'sedes',
             ]);

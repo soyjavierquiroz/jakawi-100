@@ -41,7 +41,7 @@ class AdminChallengeController extends Controller {
             'marketing_reward_copy'=>['nullable','string','max:180','regex:/^[^0-9]*$/u'],
             'hero_alt'=>['nullable','string','max:255'],
             'ranking_refresh_interval_minutes'=>['nullable','integer','min:15'],
-        ]);
+        ], $request->attributes->get('partner_challenge') ? \App\Support\PartnerEditorialValidation::messages() : []);
         if ($data['qualification_type']==='METRIC_THRESHOLD' && (empty($data['qualification_metric']) || empty($data['qualification_target']) || $data['evidence_type']!=='SOCIAL_POST')) throw ValidationException::withMessages(['qualification_metric'=>'El umbral requiere publicación, métrica y objetivo.']);
         if ($data['evidence_type']==='MANUAL' && $data['qualification_type']!=='MANUAL') throw ValidationException::withMessages(['qualification_type'=>'La evidencia manual requiere revisión de calificación.']);
         if ($data['selection_type']==='TOP_N' && ($data['evidence_type']!=='SOCIAL_POST' || $data['evaluation_mode']!=='AT_CLOSE' || empty($data['selection_metric']) || empty($data['winner_limit']))) throw ValidationException::withMessages(['selection_type'=>'Top N requiere publicación, cierre, métrica y cantidad de ganadores.']);
