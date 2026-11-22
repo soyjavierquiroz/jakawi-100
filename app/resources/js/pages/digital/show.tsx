@@ -40,7 +40,7 @@ export default function DigitalShow({
                     ) : null}
                     <section>
                         <p className="discovery-eyebrow text-brand">
-                            Digital · disponible online
+                            {p.coming_soon ? 'Digital · Próximamente' : 'Digital · disponible online'}
                         </p>
                         <h1 className="mt-3 text-[2rem] leading-tight font-extrabold tracking-[-0.05em] sm:text-5xl">
                             {p.name}
@@ -50,7 +50,7 @@ export default function DigitalShow({
                         </p>
                         <p className="mt-5 text-lg">{p.short_description}</p>
                         <p className="mt-6 text-2xl font-extrabold">
-                            {digitalMoney(p.public_price, p.currency)}
+                            {p.coming_soon ? 'Disponible próximamente' : digitalMoney(p.public_price, p.currency)}
                         </p>
                         {p.member_price ? (
                             <p className="mt-2">
@@ -58,7 +58,7 @@ export default function DigitalShow({
                                 {digitalMoney(p.member_price, p.currency)}
                             </p>
                         ) : null}
-                        {!preview && !prelaunch && canCollect && p.public_price ? (
+                        {!p.coming_soon && !preview && !prelaunch && canCollect && p.public_price ? (
                             <div className="mt-6">
                                 {authenticated ? (
                                     <button
@@ -97,7 +97,7 @@ export default function DigitalShow({
                             </p>
                         ))}
                         <p className="mt-6 rounded-xl border border-border bg-surface p-4">
-                            {prelaunch
+                            {p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.' : prelaunch
                                 ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.'
                                 : canCollect
                                   ? 'Pago por QR con verificación bancaria.'

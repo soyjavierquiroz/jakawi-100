@@ -26,7 +26,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
 
-        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
+        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['coming_soon' => $product->isComingSoon(), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
     }
 
     public function save(Request $request, DigitalCatalog $catalog, DigitalFiles $files, ?DigitalProduct $product = null)
@@ -46,7 +46,7 @@ class AdminDigitalProductController extends Controller
             'gallery_clear' => 'sometimes|boolean', 'gallery_keep' => 'nullable|array|max:8', 'gallery_keep.*' => ['string', Rule::in($product?->gallery_paths ?? [])],
             'partner_id' => 'prohibited', 'delivery_type' => 'prohibited',
         ]);
-        if ($data['status'] === 'published') {
+        if ($data['status'] === 'published' && ! $product?->isComingSoon()) {
             Validator::make($data, ['public_price' => 'required', 'description' => 'required', 'support_information' => 'required', 'access_terms' => 'required'])->validate();
             abort_unless($request->hasFile('cover') || $product?->cover_path, 422, 'Sube la portada antes de publicar.');
             abort_unless($request->hasFile('pdf') || $product?->file_path, 422, 'Sube el PDF privado antes de publicar.');

@@ -27,6 +27,13 @@ class DigitalProduct extends Model
         return $this->morphMany(LandingPresentation::class, 'subject');
     }
 
+    /** Editorial availability is separate from catalog publication and prices. */
+    public function isComingSoon(): bool
+    {
+        return $this->landingPresentations()->where('status', 'PUBLISHED')
+            ->whereJsonContains('editorial_blocks', [['type' => 'hero', 'availability' => 'COMING_SOON']])->exists();
+    }
+
     public function partner(): BelongsTo
     {
         return $this->belongsTo(Partner::class);

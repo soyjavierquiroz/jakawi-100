@@ -18,6 +18,7 @@ export type DigitalProductData = {
     url: string;
     gallery_urls?: string[];
     category?: string | null;
+    coming_soon?: boolean;
 };
 export const digitalMoney = (amount: string | null, currency: string) =>
     amount === null
@@ -64,7 +65,7 @@ export function DigitalCard({ product: p }: { product: DigitalProductData }) {
                     {p.partner.name}
                 </p>
                 <p className="mt-3 text-base font-extrabold">
-                    {digitalMoney(p.public_price, p.currency)}
+                    {p.coming_soon ? 'Disponible próximamente' : digitalMoney(p.public_price, p.currency)}
                 </p>
                 {p.member_price ? (
                     <p className="mt-1 text-xs font-semibold text-muted-foreground">

@@ -16,8 +16,9 @@ class LandingEditorialBlocks
     {
         $data = Validator::make(['blocks' => $blocks], [
             'blocks' => 'array|max:11',
-            'blocks.*' => 'array:type,enabled,title,subtitle,primary_label,secondary_label,note,source,verified,items',
+            'blocks.*' => 'array:type,enabled,title,subtitle,primary_label,secondary_label,note,source,verified,items,availability',
             'blocks.*.type' => ['required', 'distinct', Rule::in(self::TYPES)],
+            'blocks.*.availability' => ['sometimes', Rule::in(['COMING_SOON'])],
             'blocks.*.enabled' => 'required|boolean', 'blocks.*.verified' => 'sometimes|boolean',
             'blocks.*.title' => 'nullable|string|max:240', 'blocks.*.subtitle' => 'nullable|string|max:3000',
             'blocks.*.primary_label' => 'nullable|string|max:100', 'blocks.*.secondary_label' => 'nullable|string|max:100',
@@ -53,9 +54,9 @@ class LandingEditorialBlocks
         return $data;
     }
 
-    public function present(array $blocks, bool $preview): array
+    public function present(array $blocks, bool $preview, bool $editorialReview = false): array
     {
-        return collect($blocks)->filter(fn ($b) => ($b['enabled'] ?? false) && ($preview || ! in_array($b['type'], ['trust', 'testimonials', 'guarantee'], true) || (($b['verified'] ?? false) && filled($b['source'] ?? null))))
+        return collect($blocks)->filter(fn ($b) => ($b['enabled'] ?? false) && ($preview || $editorialReview || ! in_array($b['type'], ['trust', 'testimonials', 'guarantee'], true) || (($b['verified'] ?? false) && filled($b['source'] ?? null))))
             ->map(function ($block) use ($preview) {
                 if (! $preview) unset($block['source']);
                 $block['items'] = array_map(function ($item) {

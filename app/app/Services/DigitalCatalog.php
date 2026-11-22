@@ -36,6 +36,7 @@ class DigitalCatalog
             'partner' => $p->partner->only(['id', 'name', 'slug']), 'cover_url' => app(MediaUrl::class)->url($p->cover_path, 'hero'),
             'gallery_urls' => array_map(fn ($path) => app(MediaUrl::class)->url($path, 'hero'), $p->gallery_paths ?? []),
             'category' => $p->category,
+            'coming_soon' => $p->isComingSoon(),
             'url' => app(ProductLandingResolver::class)->navigationUrl($p, request()->user() !== null),
         ];
     }

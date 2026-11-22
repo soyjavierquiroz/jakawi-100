@@ -14,6 +14,7 @@ type Product = {
     support_information: string | null;
     access_terms: string | null;
     has_file: boolean;
+    coming_soon?: boolean;
     category?: string;
     gallery_paths?: string[];
     gallery_urls?: string[];
@@ -70,6 +71,7 @@ export default function ProductForm({
                 {partner.name} · PDF privado · administrado por JAKAWI
             </p>
             {p && <nav aria-label="Edición y vistas previas" className="mb-6 flex flex-wrap gap-3"><Link className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/landings`}>Editar Landings</Link><a className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/preview`} target="_blank" rel="noreferrer">Preview de ficha</a></nav>}
+            {p?.coming_soon && <p className="mb-5 rounded border border-border p-4">Disponible próximamente · visible al público, sin compras. Puedes guardar cambios editoriales sin precio ni PDF.</p>}
             <form onSubmit={submit} className="grid max-w-3xl gap-5">
                 {fields.map(([key, label]) => (
                     <label key={key} className="grid gap-2 font-semibold">

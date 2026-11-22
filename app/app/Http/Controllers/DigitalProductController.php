@@ -30,6 +30,6 @@ class DigitalProductController extends Controller
         abort_unless(DigitalProduct::published()->whereKey($product->id)->exists(), 404);
         app(DigitalMeasurement::class)->record('digital_product_view', $product, once: false, userId: $request->user()?->id);
 
-        return Inertia::render('digital/show', ['product' => $catalog->present($product), 'prelaunch' => (bool) config('jakawi.prelaunch_mode'), 'canCollect' => app(DigitalCollection::class)->readyFor($product->currency), 'authenticated' => $request->user() !== null, 'memberActive' => $request->user()?->hasActiveMembership() ?? false]);
+        return Inertia::render('digital/show', ['product' => $catalog->present($product), 'prelaunch' => (bool) config('jakawi.prelaunch_mode'), 'canCollect' => ! $product->isComingSoon() && app(DigitalCollection::class)->readyFor($product->currency), 'authenticated' => $request->user() !== null, 'memberActive' => $request->user()?->hasActiveMembership() ?? false]);
     }
 }

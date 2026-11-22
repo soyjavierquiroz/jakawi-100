@@ -50,6 +50,7 @@ class DigitalCheckout
             $user = User::lockForUpdate()->findOrFail($user->id);
             $product = DigitalProduct::published()->lockForUpdate()->findOrFail($product->id);
             app(DigitalCatalog::class)->assertInternal($product);
+            abort_if($product->isComingSoon(), 423, 'Disponible próximamente. Las compras de este producto están desactivadas.');
             \App\Models\AppSetting::where('key', DigitalCollection::KEY)->lockForUpdate()->first();
             abort_unless(app(DigitalCollection::class)->readyFor($product->currency), 422, 'Cobro pendiente de configurar');
             $existing = DigitalOrder::where('user_id', $user->id)->where('digital_product_id', $product->id)->where('status', 'pending')->lockForUpdate()->first();
