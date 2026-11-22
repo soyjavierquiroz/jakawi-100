@@ -20,11 +20,11 @@ class DigitalProduct extends Model
 
     protected $guarded = ['id'];
 
-    protected $hidden = ['file_path', 'file_sha256'];
+    protected $hidden = ['file_path', 'file_sha256', 'gift_pdf_sha256'];
 
     protected function casts(): array
     {
-        return ['public_price' => 'decimal:2', 'member_price' => 'decimal:2', 'gallery_paths' => 'array'];
+        return ['welcome_gift_enabled' => 'boolean', 'promotional_gift_enabled' => 'boolean', 'public_price' => 'decimal:2', 'member_price' => 'decimal:2', 'gallery_paths' => 'array'];
     }
 
     public function getRouteKeyName(): string

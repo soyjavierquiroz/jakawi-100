@@ -1,3 +1,4 @@
+import { useDigitalGiftAction, type GiftAction } from '@/components/digital-gift-action';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     digitalMoney,
@@ -10,6 +11,7 @@ export default function DigitalShow({
     authenticated,
     memberActive,
     preview = false,
+    giftAction,
 }: {
     product: DigitalProductData;
     prelaunch: boolean;
@@ -17,10 +19,13 @@ export default function DigitalShow({
     authenticated: boolean;
     memberActive: boolean;
     preview?: boolean;
+    giftAction?: GiftAction;
 }) {
+    const gift = useDigitalGiftAction(giftAction);
     const { errors } = usePage().props;
     return (
         <>
+            {gift.confirmation}
             <Head title={p.name}>{preview && <meta name="robots" content="noindex,nofollow" />}</Head>
             <main className="mx-auto w-full max-w-6xl px-[var(--space-gutter)] pt-8 pb-28 font-discovery text-foreground sm:px-6 lg:px-8 lg:pt-10">
                 {preview && <p role="status" className="mb-5 rounded-xl border border-border bg-surface p-4">Vista previa de ficha · Borrador · Compras desactivadas</p>}
@@ -58,7 +63,7 @@ export default function DigitalShow({
                                 {digitalMoney(memberActive ? p.public_price : p.member_price, p.currency)}
                             </p>
                         ) : null}
-                        {!p.coming_soon && !preview && canCollect && p.public_price ? (
+                        {!preview && giftAction?.kind ? <button onClick={gift.click} className="mt-6 min-h-12 rounded-xl bg-brand px-6 font-bold text-brand-foreground">{gift.label}</button> : !p.coming_soon && !preview && canCollect && p.public_price ? (
                             <div className="mt-6">
                                 {authenticated ? (
                                     <button
@@ -97,7 +102,7 @@ export default function DigitalShow({
                             </p>
                         ))}
                         <p className="mt-6 rounded-xl border border-border bg-surface p-4">
-                            {p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.' : prelaunch && !canCollect
+                            {giftAction?.kind === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : giftAction?.kind ? 'Confirma tu regalo para guardarlo en Mis productos digitales.' : p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.' : prelaunch && !canCollect
                                 ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.'
                                 : canCollect
                                   ? 'Pago por QR con verificación bancaria.'

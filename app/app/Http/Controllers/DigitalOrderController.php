@@ -55,12 +55,19 @@ class DigitalOrderController extends Controller
         $orders = DigitalOrder::where('user_id', $request->user()->id)->with('access')->latest('id')->paginate(25);
         $orders->getCollection()->each(fn ($order) => $order->setAttribute('digital_allowed', PrelaunchOperations::digitalAllowed($order)));
 
-        return Inertia::render('digital/library', ['orders' => $orders]);
+        return Inertia::render('digital/library', ['orders' => $orders, 'giftAccess' => DigitalAccessGrant::where('user_id', $request->user()->id)->where('source', 'gift')->latest('id')->paginate(25, ['id','gift_product_name','status','delivery_status'], 'gifts_page')]);
     }
 
     public function download(Request $request, DigitalAccessGrant $access, DigitalFiles $files)
     {
         PrelaunchOperations::assertDigitalAllowed($access);
+
+        if ($access->source === 'gift') {
+            abort_unless($access->user_id === $request->user()->id && $access->status === 'active' && $access->delivery_status === 'ready', 403);
+            $bytes = Storage::disk('digital-private')->get($access->gift_file_path);
+            abort_unless(is_string($bytes) && hash_equals($access->gift_file_sha256, hash('sha256', $bytes)), 503, 'El PDF no está disponible. Contacta con soporte.');
+            return response($bytes, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="'.$access->gift_product_slug.'.pdf"', 'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff', 'Content-Security-Policy' => "default-src 'none'; sandbox"]);
+        }
 
         return DB::transaction(function () use ($request, $access) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($access->digital_order_id);

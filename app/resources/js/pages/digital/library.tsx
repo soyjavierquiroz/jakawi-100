@@ -13,7 +13,9 @@ type Order = {
 };
 export default function Library({
     orders,
+    giftAccess = {data: [], next_page_url: null, prev_page_url: null},
 }: {
+    giftAccess?: {data: {id: number; gift_product_name: string; status: string; delivery_status: string}[]; next_page_url: string | null; prev_page_url: string | null};
     orders: {
         data: Order[];
         next_page_url: string | null;
@@ -35,6 +37,7 @@ export default function Library({
                     Tus pedidos y PDF adquiridos, siempre en tu cuenta.
                 </p>
                 <div className="mt-7 space-y-4">
+                    {giftAccess.data.map(access => <article key={`gift-${access.id}`} className="rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-bold">{access.gift_product_name}</h2><p className="mt-2">Regalo · {digitalState(access.status)}</p>{access.status === 'active' && access.delivery_status === 'ready' && !prelaunchMode && <a className="mt-3 inline-flex min-h-12 items-center font-bold text-brand underline" href={`/mi-jakawi/productos-digitales/accesos/${access.id}/pdf`}>Descargar PDF</a>}</article>)}
                     {orders.data.map((o) => (
                         <article
                             key={o.id}
@@ -74,7 +77,7 @@ export default function Library({
                         </article>
                     ))}
                 </div>
-                {!orders.data.length ? (
+                {!orders.data.length && !giftAccess.data.length ? (
                     <p className="mt-8 rounded-xl border border-border p-5">
                         Aún no tienes productos digitales.{' '}
                         <Link
@@ -85,6 +88,7 @@ export default function Library({
                         </Link>
                     </p>
                 ) : null}
+                <nav aria-label="Regalos digitales" className="mt-6 flex gap-5">{giftAccess.prev_page_url && <Link href={giftAccess.prev_page_url}>Regalos anteriores</Link>}{giftAccess.next_page_url && <Link href={giftAccess.next_page_url}>Más regalos</Link>}</nav>
                 <nav className="mt-6 flex gap-5">
                     {orders.prev_page_url ? (
                         <Link href={orders.prev_page_url}>Anterior</Link>

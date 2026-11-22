@@ -147,6 +147,7 @@ function money(value: string | number) {
 
 export default function MiJakawi({
     pendingReceipts = [],
+    hasWelcomeGift = false,
     community,
     membership,
     membershipStatus,
@@ -158,6 +159,7 @@ export default function MiJakawi({
     challengePagination,
 }: {
     pendingReceipts?: PendingReceipt[];
+    hasWelcomeGift?: boolean;
     community?: CityCommunityData | null;
     challengePagination: ListPage;
     challenges?: MyChallenge[];
@@ -281,6 +283,7 @@ export default function MiJakawi({
                                     <ActivityList activity={activity} />
                                 </>
                             )}
+                            {hasWelcomeGift && <section className="mt-8 rounded-2xl border border-brand bg-surface p-5"><h2 className="text-xl font-extrabold">¡Tienes un regalo disponible!</h2><p className="mt-2">Elige un producto digital por activar tu membresía.</p><Link className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-brand px-5 font-bold text-brand-foreground" href="/explorar?type=digital&gifts=1">EXPLORAR MI REGALO</Link></section>}
                             <section className="mt-8 rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-extrabold">Mis productos digitales</h2><p className="mt-2 text-sm text-muted-foreground">Consulta tus pedidos y recupera tus PDF adquiridos.</p><Link className="mt-3 inline-flex min-h-11 items-center font-bold text-brand underline" href="/mi-jakawi/productos-digitales">Abrir mi biblioteca digital</Link></section><MyChallenges challenges={challenges} />
                             {challengePagination.total > 0 && (
                                 <ListPagination page={challengePagination} />

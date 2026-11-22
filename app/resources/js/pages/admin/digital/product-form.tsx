@@ -14,6 +14,9 @@ type Product = {
     support_information: string | null;
     access_terms: string | null;
     has_file: boolean;
+    welcome_gift_enabled?: boolean;
+    promotional_gift_enabled?: boolean;
+    gift_pdf_final?: boolean;
     qrs?: Record<'public'|'member', {has_file:boolean; verified:boolean; amount:string|null; currency:string}>;
     sale?: {eligible:boolean; enabled:boolean; available:boolean; pdf_verified:boolean; pdf_final:boolean; missing:string[]};
     coming_soon?: boolean;
@@ -30,6 +33,9 @@ export default function ProductForm({
 }) {
     const form = useForm({
         ...(p?.sale?.eligible ? {pdf_final: p.sale.pdf_final, sale_enabled: p.sale.enabled} : {}),
+        welcome_gift_enabled: p?.welcome_gift_enabled ?? false,
+        promotional_gift_enabled: p?.promotional_gift_enabled ?? false,
+        gift_pdf_final: p?.gift_pdf_final ?? false,
         public_qr: null as File | null,
         member_qr: null as File | null,
         public_qr_confirmed: p?.qrs?.public.verified ?? false,
@@ -79,6 +85,7 @@ export default function ProductForm({
             </p>
             {p && <nav aria-label="Edición y vistas previas" className="mb-6 flex flex-wrap gap-3"><Link className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/landings`}>Editar Landings</Link><a className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/preview`} target="_blank" rel="noreferrer">Preview de ficha</a></nav>}
             {p?.coming_soon && <p className="mb-5 rounded border border-border p-4">Disponible próximamente · visible al público, sin compras. Puedes guardar cambios editoriales sin precio ni PDF.</p>}
+            {p && <Link className="mb-5 inline-flex min-h-12 items-center rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/regalar`}>ENVIAR COMO REGALO</Link>}
             <form onSubmit={submit} className="grid max-w-3xl gap-5">
                 {p?.sale?.eligible && <section className="grid gap-4 rounded-xl border border-border p-5">
                     <p role="status" className="font-bold">Disponibilidad comercial: {p.sale.available ? 'Disponible' : 'Venta desactivada'}</p>
@@ -88,6 +95,7 @@ export default function ProductForm({
                     <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>Confirmo que el PDF es definitivo y está preparado para entrega a compradores.</label>
                     <label className="flex gap-3"><input type="checkbox" checked={form.data.sale_enabled ?? false} onChange={e=>form.setData('sale_enabled',e.target.checked)}/>Autorizar venta real exclusivamente de Glúteo Perfecto. Requiere completar ambos precios y QR confirmados, publicación, PDF definitivo y cuenta autorizada.</label>
                 </section>}
+                <section className="grid gap-4 rounded-xl border border-border p-5"><h2 className="text-xl font-bold">Regalos digitales</h2><label className="flex gap-3"><input type="checkbox" checked={form.data.welcome_gift_enabled} onChange={e => form.setData('welcome_gift_enabled', e.target.checked)}/>Disponible como regalo de bienvenida</label><label className="flex gap-3"><input type="checkbox" checked={form.data.promotional_gift_enabled} onChange={e => form.setData('promotional_gift_enabled', e.target.checked)}/>Disponible para regalo promocional</label><label className="flex gap-3"><input type="checkbox" checked={form.data.gift_pdf_final} onChange={e => form.setData('gift_pdf_final', e.target.checked)}/>Confirmo que el PDF privado actual es definitivo para regalos.</label></section>
                 {fields.map(([key, label]) => (
                     <label key={key} className="grid gap-2 font-semibold">
                         {label}
@@ -175,7 +183,7 @@ export default function ProductForm({
                         type="file"
                         accept="application/pdf"
                         onChange={(e) =>
-                            { form.setData('pdf', e.target.files?.[0] ?? null); if (p?.sale?.eligible) { form.setData('pdf_final', false); form.setData('sale_enabled', false); } }
+                            { form.setData('pdf', e.target.files?.[0] ?? null); form.setData('gift_pdf_final', false); form.setData('welcome_gift_enabled', false); form.setData('promotional_gift_enabled', false); if (p?.sale?.eligible) { form.setData('pdf_final', false); form.setData('sale_enabled', false); } }
                         }
                     />
                     {p?.has_file ? (

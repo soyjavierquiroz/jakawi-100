@@ -122,6 +122,8 @@ export default function Explore({
     places = [],
     sort = 'featured',
     digitalProducts = [],
+    hasWelcomeGift = false,
+    giftFilter = false,
     pagination,
 }: {
     query?: string;
@@ -132,6 +134,8 @@ export default function Explore({
     places?: Partner[];
     sort?: string;
     digitalProducts?: DigitalProductData[];
+    hasWelcomeGift?: boolean;
+    giftFilter?: boolean;
     pagination: {
         next_page_url: string | null;
         total: number;
@@ -156,6 +160,7 @@ export default function Explore({
                 only: [
                     'opportunities',
                     'places',
+                    'hasWelcomeGift', 'giftFilter',
                     'digitalProducts',
                     'pagination',
                 ],
@@ -194,6 +199,7 @@ export default function Explore({
                 category: category ?? '',
                 type: type ?? '',
                 sort,
+                gifts: giftFilter ? '1' : '',
                 ...next,
             },
             {
@@ -208,6 +214,7 @@ export default function Explore({
                     'categories',
                     'type',
                     'sort',
+                    'hasWelcomeGift', 'giftFilter',
                     'digitalProducts',
                 ],
             },
@@ -350,6 +357,7 @@ export default function Explore({
                             LUGARES
                         </button>
                     </nav>
+                    {isDigital && hasWelcomeGift && <button aria-pressed={giftFilter} className={`mt-4 min-h-11 rounded-full border px-4 text-sm font-bold ${giftFilter ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface'}`} onClick={() => visit({gifts: giftFilter ? '' : '1'})}>MIS REGALOS DISPONIBLES</button>}
                     {!isDigital && categories.length > 0 ? (
                         <div
                             className="mt-3 flex [scrollbar-width:none] gap-2 overflow-x-auto pb-2"

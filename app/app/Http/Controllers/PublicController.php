@@ -125,12 +125,18 @@ class PublicController extends Controller
     {
         $request->validate(['page' => 'nullable|integer|min:1', 'per_page' => 'nullable|integer|min:1|max:18', 'q' => 'nullable|string|max:200', 'sort' => 'nullable|in:featured,newest,name']);
         $sort = $request->query('sort') ?: 'featured';
+        $gifts = app(\App\Services\DigitalGifts::class);
+        $hasWelcomeGift = $gifts->pending($request->user()) !== null;
+        $giftFilter = $hasWelcomeGift && $request->boolean('gifts');
         if ($request->query('type') === 'digital') {
             $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
             $catalog = app(\App\Services\DigitalCatalog::class);
-            $page = $catalog->query($term, $sort)->paginate(18)->withQueryString();
+            $digitalQuery = $catalog->query($term, $sort);
+            if ($giftFilter) $gifts->catalogQuery($digitalQuery);
+            $page = $digitalQuery->paginate(18)->withQueryString();
 
             return Inertia::render('explore', [
+                'hasWelcomeGift' => $hasWelcomeGift, 'giftFilter' => $giftFilter,
                 'query' => $term, 'category' => null, 'type' => 'digital', 'categories' => [], 'sort' => $sort,
                 'pagination' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'next_page_url' => $page->nextPageUrl()],
                 'opportunities' => Inertia::merge([])->matchOn('identity'),
@@ -166,6 +172,7 @@ class PublicController extends Controller
             : $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, max(1, $request->integer('page', 1)));
 
         return Inertia::render('explore', [
+            'hasWelcomeGift' => $hasWelcomeGift, 'giftFilter' => false,
             'query' => $term,
             'category' => $category,
             'type' => $type,

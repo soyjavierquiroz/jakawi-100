@@ -60,6 +60,7 @@ class MembershipController extends Controller
         $challengePage = ListingPage::make(ChallengeParticipation::where('user_id', $user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type', 'socialEntries:id,participation_id,likes,views,comments,validation_status', 'grant:id,participation_id,status,reward_type,jp_amount,benefit_id', 'grant.benefit:id,title'])->latest(), 50);
 
         return Inertia::render('mi-jakawi', [
+            'hasWelcomeGift' => app(\App\Services\DigitalGifts::class)->pending($user) !== null,
             'community' => app(CityCommunity::class)->data($request, 'mi-jakawi'),
             'challengePagination' => array_diff_key($challengePage->toArray(), ['data' => true]),
             'challenges' => $challengePage->getCollection()->map(function ($p) {

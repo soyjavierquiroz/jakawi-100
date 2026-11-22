@@ -9,7 +9,7 @@ class DigitalAccessGrant extends Model
 {
     protected $guarded = ['id'];
 
-    protected $hidden = [];
+    protected $hidden = ['gift_file_path', 'gift_file_sha256'];
 
     protected function casts(): array
     {

@@ -7,9 +7,13 @@ use App\Http\Controllers\DigitalProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
+    Route::get('/regalos-digitales/invitacion/{token}', [\App\Http\Controllers\DigitalGiftController::class, 'invitation'])->middleware('throttle:20,1');
+    Route::get('/regalos-digitales/continuar', [\App\Http\Controllers\DigitalGiftController::class, 'continue'])->middleware('auth');
     Route::get('/productos-digitales', [DigitalProductController::class, 'index'])->name('digital.index');
     Route::get('/productos-digitales/{product:slug}', [DigitalProductController::class, 'show'])->name('digital.show');
     Route::middleware(['auth', 'throttle:30,1'])->group(function () {
+        Route::post('/productos-digitales/{product:slug}/regalo-bienvenida', [\App\Http\Controllers\DigitalGiftController::class, 'welcome']);
+        Route::post('/productos-digitales/{product:slug}/regalo-promocional', [\App\Http\Controllers\DigitalGiftController::class, 'promotional']);
         Route::get('/productos-digitales/{product:slug}/comprar', [DigitalProductController::class, 'show'])->name('digital.buy');
         Route::post('/productos-digitales/{product:slug}/comprar', [DigitalOrderController::class, 'start'])->name('digital.orders.start');
         Route::get('/mi-jakawi/productos-digitales', [DigitalOrderController::class, 'library'])->name('digital.library');
@@ -45,6 +49,8 @@ Route::middleware('web')->group(function () {
         Route::post('/{digitalProduct}/landings/{presentation:slug}/duplicate', [\App\Http\Controllers\AdminLandingPresentationController::class, 'duplicate'])->name('admin.digital-landing-presentations.duplicate');
         Route::post('/{digitalProduct}/landings/{presentation:slug}/unpublish', [\App\Http\Controllers\AdminLandingPresentationController::class, 'unpublish'])->name('admin.digital-landing-presentations.unpublish');
         Route::post('/{digitalProduct}/landings/default-product', [\App\Http\Controllers\AdminLandingPresentationController::class, 'productDefault'])->name('admin.digital-landing-presentations.default-product');
+        Route::get('/{product:slug}/regalar', [\App\Http\Controllers\DigitalGiftController::class, 'admin']);
+        Route::post('/{product:slug}/regalar', [\App\Http\Controllers\DigitalGiftController::class, 'issue'])->middleware('throttle:20,1');
         Route::get('/{product:slug}/editar', [AdminDigitalProductController::class, 'edit'])->name('admin.digital.edit');
         Route::post('/{product:slug}', [AdminDigitalProductController::class, 'save'])->name('admin.digital.update');
         Route::get('/{product:slug}/qr/{tier}', [AdminDigitalProductController::class, 'qr'])->whereIn('tier', ['public','member'])->name('admin.digital.product.qr');

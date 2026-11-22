@@ -91,6 +91,10 @@ class LoginResponse implements LoginResponseContract
             return $slug === $path || $slug === '' || ! Str::contains($slug, '/') || $user->partners()->where('slug', Str::before($slug, '/'))->exists();
         }
 
+        if ($path === '/regalos-digitales/continuar'
+            && (! parse_url($intended, PHP_URL_HOST) || parse_url($intended, PHP_URL_HOST) === $request->getHost())
+            && app(\App\Services\DigitalGifts::class)->invitation($request)) return true;
+
         if ($path === '/productos-digitales/gluteo-perfecto/comprar'
             && (! parse_url($intended, PHP_URL_HOST) || parse_url($intended, PHP_URL_HOST) === $request->getHost())) {
             return true;

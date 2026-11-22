@@ -1,0 +1,15 @@
+FROM sha256:75558be19e39e79a6075924502976f80bdc02a9984d693e27cb92fdb119e6cb5 AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/ /var/www/html/app/
+COPY --chown=www-data:www-data app/config/ /var/www/html/config/
+COPY --chown=www-data:www-data app/routes/ /var/www/html/routes/
+COPY --chown=www-data:www-data app/database/migrations/2026_11_22_230000_create_digital_gifts.php /var/www/html/database/migrations/
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+RUN composer dump-autoload --no-dev --no-scripts --no-plugins --optimize && sh scripts/check-production-artifact.sh public
+FROM sha256:5ae3ad78b7bc9ee076e621f4a81a1617a6c76d688bb8290580ac4d1900c75713 AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

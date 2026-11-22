@@ -26,7 +26,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
 
-        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['coming_soon' => $product->isComingSoon(), 'qrs' => app(\App\Services\DigitalProductQr::class)->adminState($product), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
+        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['gift_pdf_final' => filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256, 'coming_soon' => $product->isComingSoon(), 'qrs' => app(\App\Services\DigitalProductQr::class)->adminState($product), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
     }
 
     public function save(Request $request, DigitalCatalog $catalog, DigitalFiles $files, ?DigitalProduct $product = null)
@@ -37,6 +37,7 @@ class AdminDigitalProductController extends Controller
         $data = $request->validate([
             'public_qr' => 'nullable|image|mimes:png,jpg,jpeg|max:10240', 'member_qr' => 'nullable|image|mimes:png,jpg,jpeg|max:10240',
             'public_qr_confirmed' => 'sometimes|boolean', 'member_qr_confirmed' => 'sometimes|boolean',
+            'welcome_gift_enabled' => 'sometimes|boolean', 'promotional_gift_enabled' => 'sometimes|boolean', 'gift_pdf_final' => 'sometimes|boolean',
             'pdf_final' => 'sometimes|boolean', 'sale_enabled' => 'sometimes|boolean',
             'name' => 'required|string|max:255', 'slug' => ['required', 'string', 'max:180', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('digital_products', 'slug')->ignore($product?->id)],
             'short_description' => 'nullable|string|max:1000', 'description' => 'nullable|string|max:30000', 'commercial_content' => 'nullable|string|max:30000',
@@ -57,6 +58,7 @@ class AdminDigitalProductController extends Controller
         $stored = $request->hasFile('pdf') ? $files->store($request->file('pdf'), 'products') : null;
         $keep = $request->boolean('gallery_clear') ? [] : ($data['gallery_keep'] ?? ($product?->gallery_paths ?? []));
         abort_if(count($keep) + count($request->file('gallery', [])) > 8, 422, 'La galería admite hasta 8 imágenes.');
+        unset($data['welcome_gift_enabled'], $data['promotional_gift_enabled'], $data['gift_pdf_final']);
         unset($data['public_qr'], $data['member_qr'], $data['public_qr_confirmed'], $data['member_qr_confirmed'], $data['pdf_final'], $data['sale_enabled'], $data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
         DB::transaction(function () use ($request, $data, $stored, $catalog, $keep, &$product) {
             $product ??= new DigitalProduct;
@@ -83,6 +85,9 @@ class AdminDigitalProductController extends Controller
             }
             if ($request->has('sale_enabled') || $request->has('pdf_final')) {
                 app(\App\Services\DigitalSaleAvailability::class)->configure($product, $request->boolean('pdf_final'), $request->boolean('sale_enabled'), $request->user()->id);
+            }
+            if ($request->has('gift_pdf_final')) {
+                app(\App\Services\DigitalGifts::class)->configure($product, $request->boolean('welcome_gift_enabled'), $request->boolean('promotional_gift_enabled'), $request->boolean('gift_pdf_final'));
             }
             AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => 'digital_product_saved', 'subject_type' => DigitalProduct::class, 'subject_id' => $product->id, 'metadata' => ['status' => $product->status, 'file_sha256' => $product->file_sha256]]);
         });

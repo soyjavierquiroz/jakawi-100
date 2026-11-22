@@ -24,7 +24,7 @@ class MembershipService
 
             $startsAt ??= now();
 
-            return Membership::create([
+            $membership = Membership::create([
                 'user_id' => $lockedUser->id,
                 'status' => Membership::STATUS_ACTIVE,
                 'starts_at' => $startsAt,
@@ -35,6 +35,8 @@ class MembershipService
                 'activated_by' => $activatedBy->id,
                 'notes' => $notes,
             ]);
+            app(DigitalGifts::class)->firstActivation($membership);
+            return $membership;
         });
         ChallengeParticipation::query()->where('user_id', $user->id)->where('qualification_status', 'qualified')
             ->whereDoesntHave('grant')->whereHas('challenge', fn ($q) => $q->where('reward_eligibility', 'ACTIVE_MEMBERS'))
