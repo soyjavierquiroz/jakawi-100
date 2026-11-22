@@ -15,7 +15,7 @@ type Landing = {
 };
 const control = 'mt-1 min-h-11 w-full min-w-0 rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-brand';
 const action = 'inline-flex min-h-11 items-center rounded-[var(--radius-control)] px-2 text-sm font-bold text-brand underline focus-visible:outline-2 focus-visible:outline-brand';
-const types: Record<string, string> = { EXPERIENCE: 'Experience', BENEFIT: 'Benefit', CHALLENGE: 'Reto', UNLOCK: 'Desbloqueo' };
+const types: Record<string, string> = { DIGITAL: 'Producto digital', EXPERIENCE: 'Experience', BENEFIT: 'Benefit', CHALLENGE: 'Reto', UNLOCK: 'Desbloqueo' };
 
 export default function Catalog({ landings, pagination, filters, partnerChoices, selectedPartner }: {
     landings: Landing[]; pagination: ListPage; filters: Filters; partnerChoices: Partner[]; selectedPartner: Partner | null;
@@ -66,7 +66,7 @@ export default function Catalog({ landings, pagination, filters, partnerChoices,
                 <label className="mt-2 block text-sm font-bold">Partner<select className={control} value={form.partner ?? ''} onChange={e => change('partner', e.target.value)}><option value="">Todos los Partners</option>{choices.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
                 <p id="partner-lookup-status" role="status" className="mt-1 text-xs text-muted-foreground">{partnerState || 'Busca y selecciona un Partner real.'}</p>
             </div>
-            {filterSelect('type', 'Tipo de producto', [['', 'Todos los tipos'], ['EXPERIENCE', 'Experience'], ['BENEFIT', 'Benefit'], ['CHALLENGE', 'Reto'], ['UNLOCK', 'Desbloqueo']])}
+            {filterSelect('type', 'Tipo de producto', [['', 'Todos los tipos'], ['DIGITAL', 'Producto digital'], ['EXPERIENCE', 'Experience'], ['BENEFIT', 'Benefit'], ['CHALLENGE', 'Reto'], ['UNLOCK', 'Desbloqueo']])}
             {filterSelect('status', 'Estado', [['', 'Todos los estados'], ['DRAFT', 'DRAFT · Borrador'], ['PUBLISHED', 'PUBLISHED · Publicada'], ['ARCHIVED', 'ARCHIVED · Archivada']])}
             {filterSelect('video', 'Video', [['', 'Todos'], ['yes', 'Con video'], ['no', 'Sin video']])}
             <div className="flex flex-wrap items-center gap-3 sm:col-span-2 xl:col-span-4">

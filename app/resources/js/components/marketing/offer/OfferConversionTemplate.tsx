@@ -25,6 +25,7 @@ import {
 type Props = {
     presentation: OfferPresentationV1;
     action: MarketingAction;
+    finalAction?: MarketingAction;
     treatment: OfferTreatment;
     hero?: 'OFFER_FIRST' | 'MEDIA_LED';
     density?: 'STANDARD' | 'COMPACT';
@@ -42,11 +43,13 @@ type Props = {
     heroActionRef?: Ref<HTMLDivElement>;
     finalActionRef?: Ref<HTMLElement>;
     detailsHref?: string;
+    renderEditorialContent?: () => ReactNode;
 };
 
 export function OfferConversionTemplate({
     presentation: p,
     action,
+    finalAction,
     treatment: legacyTreatment,
     hero: heroLayout,
     density,
@@ -64,6 +67,7 @@ export function OfferConversionTemplate({
     heroActionRef,
     finalActionRef,
     detailsHref = '#landing-details',
+    renderEditorialContent,
 }: Props) {
     const videoFirst = p.media?.type === 'vsl';
     const videoAction = useVideoLandingAction(action, detailsHref);
@@ -213,6 +217,7 @@ export function OfferConversionTemplate({
                     {videoFirst && renderHeroSupport?.()}
                     {videoFirst && <div className="pb-8">{offerDetails}</div>}
                 </section>}
+                {renderEditorialContent?.()}
                 {stepsPlacement === 'content' && (
                     <MarketingSteps steps={p.steps} compact={compact} />
                 )}
@@ -221,7 +226,7 @@ export function OfferConversionTemplate({
             </div>
             <MarketingFinalCTA
                 finalCta={p.finalCta}
-                action={effectiveAction}
+                action={finalAction ?? effectiveAction}
                 treatment={treatment}
                 sectionRef={finalActionRef}
             />

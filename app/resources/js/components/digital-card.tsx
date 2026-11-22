@@ -16,6 +16,8 @@ export type DigitalProductData = {
     support_information: string | null;
     access_terms: string | null;
     url: string;
+    gallery_urls?: string[];
+    category?: string | null;
 };
 export const digitalMoney = (amount: string | null, currency: string) =>
     amount === null

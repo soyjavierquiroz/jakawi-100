@@ -20,6 +20,11 @@ class DigitalProductController extends Controller
         return app(PublicController::class)->explore($request, app(DiscoveryService::class), app(SelectedCity::class));
     }
 
+    public function preview(Request $request, DigitalProduct $product, DigitalCatalog $catalog)
+    {
+        return Inertia::render('digital/show', ['product' => $catalog->present($product), 'preview' => true, 'prelaunch' => (bool) config('jakawi.prelaunch_mode'), 'canCollect' => false, 'authenticated' => true, 'memberActive' => false]);
+    }
+
     public function show(Request $request, DigitalProduct $product, DigitalCatalog $catalog)
     {
         abort_unless(DigitalProduct::published()->whereKey($product->id)->exists(), 404);

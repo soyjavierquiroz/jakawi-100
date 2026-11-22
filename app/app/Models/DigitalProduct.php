@@ -14,12 +14,17 @@ class DigitalProduct extends Model
 
     protected function casts(): array
     {
-        return ['public_price' => 'decimal:2', 'member_price' => 'decimal:2'];
+        return ['public_price' => 'decimal:2', 'member_price' => 'decimal:2', 'gallery_paths' => 'array'];
     }
 
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function landingPresentations(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(LandingPresentation::class, 'subject');
     }
 
     public function partner(): BelongsTo

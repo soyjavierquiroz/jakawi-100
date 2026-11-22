@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\LandingMediaMode;
 use App\Enums\LandingTemplate;
 use App\Enums\MarketingTheme;
+use App\Models\DigitalProduct;
 use App\Models\Benefit;
 use App\Models\Challenge;
 use App\Models\Experience;
@@ -33,7 +34,7 @@ class AdminLandingPresentationController extends Controller
 {
     public function index(Request $request, string $subjectSlug = '')
     {
-        $subject = $request->route()->hasParameter('unlock') || $request->route()->hasParameter('experience') || $request->route()->hasParameter('benefit') || $request->route()->hasParameter('challenge') ? $this->subject($request) : ($request->filled('subject_type') && $request->filled('subject_id') ? app(LandingPresentationEditor::class)->selected($request->string('subject_type')->toString(), $request->integer('subject_id')) : null);
+        $subject = $request->route()->hasParameter('digitalProduct') || $request->route()->hasParameter('unlock') || $request->route()->hasParameter('experience') || $request->route()->hasParameter('benefit') || $request->route()->hasParameter('challenge') ? $this->subject($request) : ($request->filled('subject_type') && $request->filled('subject_id') ? app(LandingPresentationEditor::class)->selected($request->string('subject_type')->toString(), $request->integer('subject_id')) : null);
         if (! $subject) {
             return Inertia::render('admin/landing-presentations/catalog', app(AdminLandingCatalog::class)->page($request));
         }
@@ -72,12 +73,12 @@ class AdminLandingPresentationController extends Controller
             'subject' => $subject ? $editor->context($subject, $request) : null,
             'subjectChoices' => $editor->choices(),
             'autoCreate' => $request->boolean('create'),
-            'autoEdit' => $editing ? [...$editing->toArray(), 'editorSocialUrl' => app(MediaUrl::class)->url($editing->social_image_path, 'social'), 'editorHeroUrl' => app(MediaUrl::class)->url($editing->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')] : null,
+            'autoEdit' => $editing ? [...$editing->toArray(), 'editorSocialUrl' => app(MediaUrl::class)->url($editing->social_image_path, 'social'), 'editorHeroUrl' => app(MediaUrl::class)->url($editing->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : ($subject->hero_path ?? $subject->cover_path))), 'thumbnail')] : null,
             'baseUrl' => $subject ? $this->baseUrl($subject) : '/admin/landings',
-            'productUrl' => ! $subject ? '/admin' : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug))),
+            'productUrl' => ! $subject ? '/admin' : ($subject instanceof DigitalProduct ? route('admin.digital.edit', $subject) : ($subject instanceof Unlock ? route('admin.unlocks.edit', $subject) : ($subject instanceof Experience ? route('admin.experiences.edit', $subject) : ($subject instanceof Benefit ? route('admin.benefits.edit', $subject) : '/admin/retos/'.$subject->slug)))),
             'defaultPresentation' => $subject?->landingPresentations()->where('status', 'PUBLISHED')->whereIn('default_scope', ['ALL', 'GUESTS'])->orderBy('id')->first(),
             'pagination' => $page ? array_diff_key($page->toArray(), ['data' => true]) : null,
-            'presentations' => $subject ? $page->getCollection()->map(fn ($item) => [...$item->toArray(), 'editorSocialUrl' => app(MediaUrl::class)->url($item->social_image_path, 'social'), 'editorHeroUrl' => app(MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : $subject->hero_path)), 'thumbnail')]) : [],
+            'presentations' => $subject ? $page->getCollection()->map(fn ($item) => [...$item->toArray(), 'editorSocialUrl' => app(MediaUrl::class)->url($item->social_image_path, 'social'), 'editorHeroUrl' => app(MediaUrl::class)->url($item->hero_path ?: ($subject instanceof Experience ? ($subject->cover_path ?: $subject->image_path) : ($subject instanceof Benefit ? $subject->image_path : ($subject->hero_path ?? $subject->cover_path))), 'thumbnail')]) : [],
         ]);
     }
 
@@ -109,6 +110,7 @@ class AdminLandingPresentationController extends Controller
             }
         };
         $rules = [
+            'editorial_blocks' => $target instanceof DigitalProduct ? ['nullable', 'array'] : ['prohibited'],
             ...LandingVideoConfiguration::rules(),
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'alpha_dash', 'max:255', Rule::unique('landing_presentations', 'slug')->ignore($presentation?->id)],
@@ -179,6 +181,9 @@ class AdminLandingPresentationController extends Controller
             'marketing_theme' => 'Theme', 'media_mode' => 'Media', 'default_scope' => 'Audiencia al publicar',
             'subject_type' => 'Tipo de producto', 'subject_id' => 'Producto', 'vsl' => 'Video', 'vsl.*' => 'Configuración de video',
         ]);
+        if (array_key_exists('editorial_blocks', $data)) {
+            $data['editorial_blocks'] = app(\App\Services\LandingEditorialBlocks::class)->validate($data['editorial_blocks'] ?? [], $presentation?->editorial_blocks ?? [], $request, $presentation?->id);
+        }
         $request->validate(['hero' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:10240'], 'social_image' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:10240']]);
         if ($offer && ($data['media_mode'] ?? $presentation?->media_mode?->value ?? 'IMAGE') === 'IMAGE' && $request->boolean('hero_remove') && ! $request->filled('hero_upload') && ! $request->hasFile('hero')) {
             $data['media_mode'] = 'NONE';
@@ -188,6 +193,7 @@ class AdminLandingPresentationController extends Controller
         $candidate->fill($data + ['editorial_version' => 1]);
         $candidate->editorial_version = 1;
         $copy = match (true) {
+            $target instanceof DigitalProduct => app(\App\Services\DigitalProductLandingPresenter::class)->present($target, $candidate, $request)['copy'],
             $target instanceof Benefit => app(BenefitMarketingLandingPresenter::class)->present($target, $candidate, $request, app(PublicController::class)->benefitPublicProps($target, $request, true)),
             $target instanceof Experience => app(ExperienceMarketingLandingPresenter::class)->present($target, $candidate, $request),
             $target instanceof Challenge => app(ChallengeMarketingLandingPresenter::class)->present($target, $candidate),
@@ -328,6 +334,10 @@ class AdminLandingPresentationController extends Controller
 
     private function assertPublishable(Model $subject): void
     {
+        if ($subject instanceof DigitalProduct) {
+            app(\App\Services\DigitalProductLandingPresenter::class)->assertPublishable($subject);
+            return;
+        }
         if (! ($subject instanceof Unlock ? in_array($subject->status, [Unlock::ACTIVE, Unlock::GOAL_REACHED, Unlock::UNLOCKED], true) : ($subject instanceof Experience ? $subject->isPublished() && app(ExperiencePublication::class)->isPublic($subject) : ($subject instanceof Benefit ? $subject->isPublished() && $subject->partner?->isPublished() : $subject->isPublic())))) {
             throw ValidationException::withMessages(['presentation' => 'Prepara el producto y su Partner. Para Experiences, autoriza visibilidad Próximamente o disponible antes de publicar la presentación.']);
         }
@@ -335,12 +345,13 @@ class AdminLandingPresentationController extends Controller
 
     private function subject(Request $request): Model
     {
+        if ($request->route()->hasParameter('digitalProduct')) return DigitalProduct::where('slug', $request->route('digitalProduct'))->firstOrFail();
         return $request->route()->hasParameter('unlock') ? Unlock::where('slug', $request->route('unlock'))->firstOrFail() : ($request->route()->hasParameter('experience') ? Experience::where('slug', $request->route('experience'))->firstOrFail() : ($request->route()->hasParameter('benefit') ? Benefit::where('slug', $request->route('benefit'))->firstOrFail() : Challenge::where('slug', $request->route('challenge'))->firstOrFail()));
     }
 
     private function baseUrl(Model $subject): string
     {
-        return '/admin/'.($subject instanceof Unlock ? 'desbloqueos' : ($subject instanceof Experience ? 'experiencias' : ($subject instanceof Benefit ? 'beneficios' : 'retos'))).'/'.$subject->slug.'/landings';
+        return '/admin/'.($subject instanceof DigitalProduct ? 'productos-digitales' : ($subject instanceof Unlock ? 'desbloqueos' : ($subject instanceof Experience ? 'experiencias' : ($subject instanceof Benefit ? 'beneficios' : 'retos')))).'/'.$subject->slug.'/landings';
     }
 
     private function belongsTo(Model $subject, LandingPresentation $presentation): void

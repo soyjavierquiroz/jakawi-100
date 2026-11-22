@@ -51,6 +51,7 @@ void createInertiaApp({
                 'redemptions/show',
             ].includes(name):
                 return ConsumerLayout;
+            case name === 'landing-presentations/digital':
             case name.startsWith('digital/'):
                 return ConsumerLayout;
             case name.startsWith('auth/'):

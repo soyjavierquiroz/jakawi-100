@@ -12,7 +12,7 @@ class LandingPresentation extends Model
 {
     protected $guarded = [];
 
-    protected $casts = ['vsl' => 'array', 'template_key' => LandingTemplate::class, 'marketing_theme' => MarketingTheme::class, 'media_mode' => LandingMediaMode::class, 'editorial_version' => 'integer'];
+    protected $casts = ['editorial_blocks' => 'array', 'vsl' => 'array', 'template_key' => LandingTemplate::class, 'marketing_theme' => MarketingTheme::class, 'media_mode' => LandingMediaMode::class, 'editorial_version' => 'integer'];
 
     public const SCOPES = ['NONE', 'GUESTS', 'ALL'];
 

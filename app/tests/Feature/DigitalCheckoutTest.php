@@ -280,7 +280,7 @@ class DigitalCheckoutTest extends TestCase
         $this->actingAs($this->admin)->post('/admin/productos-digitales', [
             'name'=>'Nuevo PDF QA','slug'=>'nuevo-pdf-qa','status'=>'published','currency'=>'BOB',
             'public_price'=>'15.00','member_price'=>'10.00','description'=>'Solo QA',
-            'support_information'=>'QA','access_terms'=>'Solo pruebas','pdf'=>$this->pdf('new-product'),
+            'support_information'=>'QA','access_terms'=>'Solo pruebas','pdf'=>$this->pdf('new-product'),'cover'=>UploadedFile::fake()->image('cover.jpg'),
         ])->assertRedirect('/admin/productos-digitales');
         $p=DigitalProduct::where('slug','nuevo-pdf-qa')->firstOrFail();
         Storage::disk('digital-private')->assertExists($p->file_path);

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Controllers\PublicController;
+use App\Models\DigitalProduct;
 use App\Models\Benefit;
 use App\Models\Challenge;
 use App\Models\Experience;
@@ -15,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 /** Admin projections only: no copied economics, eligibility or operational configuration. */
 class LandingPresentationEditor
 {
-    public const SUBJECTS = ['BENEFIT' => Benefit::class, 'EXPERIENCE' => Experience::class, 'CHALLENGE' => Challenge::class];
+    public const SUBJECTS = ['DIGITAL' => DigitalProduct::class, 'BENEFIT' => Benefit::class, 'EXPERIENCE' => Experience::class, 'CHALLENGE' => Challenge::class];
 
     public const EDITORIAL = ['eyebrow', 'headline', 'headline_emphasis', 'subheadline', 'reward_display_override', 'final_cta_headline', 'final_cta_description'];
 
@@ -36,21 +37,24 @@ class LandingPresentationEditor
 
     public function choices(): array
     {
-        return collect(self::SUBJECTS)->map(fn ($class) => $class::query()->orderBy('title')->get(['id', 'title', 'slug']))->all();
+        return collect(self::SUBJECTS)->map(fn ($class) => $class::query()->orderBy($class === DigitalProduct::class ? 'name' : 'title')->get(['id', $class === DigitalProduct::class ? 'name as title' : 'title', 'slug']))->all();
     }
 
     public function context(Model $subject, Request $request): array
     {
         $type = $this->type($subject);
+        $title = $subject instanceof DigitalProduct ? $subject->name : $subject->title;
         $draft = new LandingPresentation;
         $draft->setRelation('subject', $subject);
         $copy = match ($type) {
+            'DIGITAL' => app(DigitalProductLandingPresenter::class)->present($subject, $draft, $request)['copy'],
             'BENEFIT' => app(BenefitMarketingLandingPresenter::class)->present($subject, $draft, $request, app(PublicController::class)->benefitPublicProps($subject, $request, true)),
             'EXPERIENCE' => app(ExperienceMarketingLandingPresenter::class)->present($subject, $draft, $request),
             'CHALLENGE' => app(ChallengeMarketingLandingPresenter::class)->present($subject, $draft),
             default => [],
         };
         $truth = match ($type) {
+            'DIGITAL' => [['label' => 'Producto', 'value' => $subject->name], ['label' => 'Partner', 'value' => $subject->partner->name], ['label' => 'Entrega', 'value' => 'PDF privado'], ['label' => 'Precio', 'value' => $subject->public_price ?? 'Pendiente de aprobación']],
             'BENEFIT' => [['label' => 'Beneficio', 'value' => $copy['value']], ['label' => 'Partner', 'value' => $copy['partner']], ['label' => 'Membresía / acceso', 'value' => $copy['membership']], ['label' => 'Vigencia', 'value' => $copy['deadline'] ?? 'Consulta las condiciones'], ['label' => 'Requisitos', 'value' => implode(' · ', $copy['rules'])]],
             'EXPERIENCE' => [['label' => 'Fecha / hora', 'value' => $copy['next'] ? $copy['next']['date'].' · '.$copy['next']['time'].(! empty($copy['next']['endTime']) ? '–'.$copy['next']['endTime'] : '') : 'Sin próximas fechas'], ['label' => 'Lugar', 'value' => implode(' · ', array_filter([$copy['next']['place'] ?? null, $copy['next']['city'] ?? null])) ?: 'Consulta la ficha'], ...array_map(fn ($price) => ['label' => $price['label'], 'value' => $price['value']], $copy['prices']), ['label' => 'Reserva', 'value' => $copy['membership']]],
             'CHALLENGE' => [['label' => 'Premio', 'value' => $copy['reward']], ['label' => 'Cierre', 'value' => $copy['deadline'] ?? 'Consulta las reglas'], ['label' => 'Calificación', 'value' => $copy['qualification']], ['label' => 'Selección', 'value' => $copy['selection']], ['label' => 'Membresía', 'value' => $copy['membership']]],
@@ -59,10 +63,11 @@ class LandingPresentationEditor
         };
 
         return [
-            'id' => $subject->id, 'type' => $type, 'title' => $subject->title, 'slug' => $subject->slug,
-            'defaults' => [...app(LandingAcquisition::class)->defaults($type, $subject->title), 'eyebrow' => $copy['eyebrow'] ?? '', 'headline' => $subject->title, 'subheadline' => $subject->short_description ?? '', 'hero_path' => $type === 'UNLOCK' ? '' : ($subject->hero_path ?? $subject->cover_path ?? $subject->image_path ?? ''), 'hero_alt' => $subject->title, 'marketing_theme' => $type === 'CHALLENGE' ? 'DARK_CONVERSION' : 'LIGHT_CONVERSION'],
+            'id' => $subject->id, 'type' => $type, 'title' => $title, 'slug' => $subject->slug,
+            'defaults' => [...app(LandingAcquisition::class)->defaults($type, $title), 'eyebrow' => $copy['eyebrow'] ?? '', 'headline' => $title, 'subheadline' => $subject->short_description ?? '', 'hero_path' => $type === 'UNLOCK' ? '' : ($subject->hero_path ?? $subject->cover_path ?? $subject->image_path ?? ''), 'hero_alt' => $title, 'marketing_theme' => $type === 'CHALLENGE' ? 'DARK_CONVERSION' : 'LIGHT_CONVERSION'],
             'heroUrl' => $type === 'UNLOCK' ? null : app(MediaUrl::class)->url($subject->hero_path ?? $subject->cover_path ?? $subject->image_path, 'thumbnail'),
             'truth' => $truth,
+            'editorialReference' => $subject instanceof DigitalProduct && $subject->slug === 'gluteo-perfecto' ? file_get_contents(resource_path('content/gluteo-perfecto-brief.md')) : null,
             'aiBrief' => app(LandingAiBriefBuilder::class)->build($subject, $copy),
         ];
     }

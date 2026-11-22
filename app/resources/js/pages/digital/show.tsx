@@ -9,18 +9,21 @@ export default function DigitalShow({
     canCollect,
     authenticated,
     memberActive,
+    preview = false,
 }: {
     product: DigitalProductData;
     prelaunch: boolean;
     canCollect: boolean;
     authenticated: boolean;
     memberActive: boolean;
+    preview?: boolean;
 }) {
     const { errors } = usePage().props;
     return (
         <>
-            <Head title={p.name} />
+            <Head title={p.name}>{preview && <meta name="robots" content="noindex,nofollow" />}</Head>
             <main className="mx-auto w-full max-w-6xl px-[var(--space-gutter)] pt-8 pb-28 font-discovery text-foreground sm:px-6 lg:px-8 lg:pt-10">
+                {preview && <p role="status" className="mb-5 rounded-xl border border-border bg-surface p-4">Vista previa de ficha · Borrador · Compras desactivadas</p>}
                 <Link
                     href="/productos-digitales"
                     className="text-sm font-semibold text-brand underline underline-offset-4"
@@ -55,7 +58,7 @@ export default function DigitalShow({
                                 {digitalMoney(p.member_price, p.currency)}
                             </p>
                         ) : null}
-                        {!prelaunch && canCollect ? (
+                        {!preview && !prelaunch && canCollect && p.public_price ? (
                             <div className="mt-6">
                                 {authenticated ? (
                                     <button
@@ -102,6 +105,7 @@ export default function DigitalShow({
                         </p>
                     </section>
                 </div>
+                {!!p.gallery_urls?.length && <div className="mt-8 grid gap-4 sm:grid-cols-3">{p.gallery_urls.map((url,i)=><img key={i} src={url} alt={`${p.name} · Imagen ${i+1}`} loading="lazy" className="w-full rounded-xl" />)}</div>}
                 <section className="mt-10 space-y-6">
                     <div className="leading-7 whitespace-pre-wrap">
                         {p.description}

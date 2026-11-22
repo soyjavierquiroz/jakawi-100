@@ -34,6 +34,17 @@ Route::middleware('web')->group(function () {
         Route::get('/', [AdminDigitalProductController::class, 'index'])->name('admin.digital.index');
         Route::get('/crear', [AdminDigitalProductController::class, 'edit'])->name('admin.digital.create');
         Route::post('/', [AdminDigitalProductController::class, 'save'])->name('admin.digital.store');
+        Route::get('/{product:slug}/preview', [DigitalProductController::class, 'preview'])->name('admin.digital.preview');
+        Route::get('/{digitalProduct}/landings', [\App\Http\Controllers\AdminLandingPresentationController::class, 'index'])->name('admin.digital-landing-presentations.index');
+        Route::post('/{digitalProduct}/landings', [\App\Http\Controllers\AdminLandingPresentationController::class, 'save'])->name('admin.digital-landing-presentations.store');
+        Route::put('/{digitalProduct}/landings/{presentation:slug}', [\App\Http\Controllers\AdminLandingPresentationController::class, 'save'])->name('admin.digital-landing-presentations.update');
+        Route::get('/{digitalProduct}/landings/{presentation:slug}/preview', [\App\Http\Controllers\LandingPresentationController::class, 'preview'])->name('admin.digital-landing-presentations.preview');
+        Route::post('/{digitalProduct}/landings/{presentation:slug}/publish', [\App\Http\Controllers\AdminLandingPresentationController::class, 'publish'])->name('admin.digital-landing-presentations.publish');
+        Route::post('/{digitalProduct}/landings/{presentation:slug}/archive', [\App\Http\Controllers\AdminLandingPresentationController::class, 'archive'])->name('admin.digital-landing-presentations.archive');
+        Route::post('/{digitalProduct}/landings/{presentation:slug}/default', [\App\Http\Controllers\AdminLandingPresentationController::class, 'useDefault'])->name('admin.digital-landing-presentations.default');
+        Route::post('/{digitalProduct}/landings/{presentation:slug}/duplicate', [\App\Http\Controllers\AdminLandingPresentationController::class, 'duplicate'])->name('admin.digital-landing-presentations.duplicate');
+        Route::post('/{digitalProduct}/landings/{presentation:slug}/unpublish', [\App\Http\Controllers\AdminLandingPresentationController::class, 'unpublish'])->name('admin.digital-landing-presentations.unpublish');
+        Route::post('/{digitalProduct}/landings/default-product', [\App\Http\Controllers\AdminLandingPresentationController::class, 'productDefault'])->name('admin.digital-landing-presentations.default-product');
         Route::get('/{product:slug}/editar', [AdminDigitalProductController::class, 'edit'])->name('admin.digital.edit');
         Route::post('/{product:slug}', [AdminDigitalProductController::class, 'save'])->name('admin.digital.update');
         Route::get('/{product:slug}/pdf', [AdminDigitalProductController::class, 'pdf'])->name('admin.digital.pdf');

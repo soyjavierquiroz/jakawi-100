@@ -1,0 +1,208 @@
+[
+  {
+    "type": "hero",
+    "enabled": true,
+    "title": "Glúteo Perfecto",
+    "subtitle": "Construye una rutina de fuerza con intención, técnica y constancia.",
+    "items": [],
+    "primary_label": "TU VIAJE COMIENZA AHORA",
+    "secondary_label": "Ver Detalles",
+    "note": "Etiqueta del brief pendiente de respaldo: GLÚTEOS ESCULPIDOS COMPROBADO."
+  },
+  {
+    "type": "trust",
+    "enabled": true,
+    "title": "Una propuesta para acompañar tu entrenamiento",
+    "subtitle": "",
+    "items": [
+      {
+        "value": "+50k",
+        "label": "Alumnos"
+      },
+      {
+        "value": "4.9★",
+        "label": "Evaluación"
+      },
+      {
+        "value": "21 días",
+        "label": "Primeros resultados"
+      },
+      {
+        "value": "Garantía",
+        "label": "Condición pendiente"
+      }
+    ],
+    "verified": false,
+    "source": "",
+    "note": "Indicadores del material original. Pendientes de fuente y aprobación; no son métricas medidas por JAKAWI ni plazos garantizados."
+  },
+  {
+    "type": "problem",
+    "enabled": true,
+    "title": "Tu entrenamiento merece un plan",
+    "subtitle": "La falta de estímulo, una técnica inadecuada y hábitos poco sostenibles pueden dificultar el progreso. Empieza por conocer tu punto de partida.",
+    "items": [
+      {
+        "title": "Fuerza y constancia",
+        "description": "El entrenamiento progresivo puede ayudarte a fortalecer los glúteos. Los cambios de volumen y firmeza varían entre personas."
+      },
+      {
+        "title": "La técnica importa",
+        "description": "Aprende a ejecutar los movimientos y a ajustar la carga a tu capacidad. La sentadilla también involucra otros músculos."
+      },
+      {
+        "title": "Nutrición que acompaña",
+        "description": "La alimentación y la recuperación forman parte del proceso. Las necesidades individuales requieren orientación adecuada."
+      }
+    ]
+  },
+  {
+    "type": "benefits",
+    "enabled": true,
+    "title": "Todo lo que necesitas para empezar",
+    "subtitle": "Una guía práctica para organizar tu entrenamiento en casa, a tu ritmo.",
+    "items": [
+      {
+        "title": "Fortalecimiento progresivo",
+        "description": "Trabaja la fuerza y observa tus propios avances, sin prometer centímetros ni fechas universales."
+      },
+      {
+        "title": "Entrena en casa",
+        "description": "Organiza un espacio seguro y adapta los ejercicios y la carga a tu experiencia."
+      },
+      {
+        "title": "Tiempo para ti",
+        "description": "Planifica sesiones que puedas sostener según tu disponibilidad y condición física."
+      },
+      {
+        "title": "Técnicas con intención",
+        "description": "Conoce movimientos como hip thrust, sentadillas y ejercicios de activación, con progresión adecuada."
+      },
+      {
+        "title": "Hábitos y nutrición",
+        "description": "Acompaña tu rutina con descanso y alimentación apropiada. Confirma el contenido final del PDF antes de comprar."
+      }
+    ]
+  },
+  {
+    "type": "steps",
+    "enabled": true,
+    "title": "Cómo funciona en 3 pasos",
+    "subtitle": "Una entrega sencilla por PDF privado.",
+    "items": [
+      {
+        "title": "Compra y acceso",
+        "description": "Cuando se habilite la venta, realiza la compra por el checkout digital de JAKAWI. El PDF aparecerá en tu biblioteca después de verificar el pago."
+      },
+      {
+        "title": "Aplica a tu ritmo",
+        "description": "Consulta la guía y adapta la rutina a tu experiencia. No se incluye acceso a una app, videos o comunidad mientras no estén configurados."
+      },
+      {
+        "title": "Consulta tu progreso",
+        "description": "Registra tu constancia y cómo te sientes. Los resultados dependen de tu punto de partida, práctica y condiciones individuales."
+      }
+    ]
+  },
+  {
+    "type": "testimonials",
+    "enabled": true,
+    "title": "Mira lo que otros están diciendo",
+    "subtitle": "Testimonios aportados por el propietario del material original.",
+    "items": [
+      {
+        "name": "Larissa Quevedo Ferraz, 24 años",
+        "city": "Rosario",
+        "result": "+4 cm de cadera · hipertrofia natural",
+        "description": "Glúteos planos toda la vida — 1,68 m, 54 kg. Decían que era 'genética'. En 90 días de hip thrust progresivo + sentadilla + proteína calculada, gané 4 cm de cadera.",
+        "image_path": null
+      },
+      {
+        "name": "Vanessa Brito Carvajal, 36 años",
+        "city": "Mérida",
+        "result": "Levantamiento tras 2 partos",
+        "description": "Tras dos embarazos, glúteos caídos y flácidos. Me daba vergüenza el bikini. En 60 días de levantamiento + activación correcta, volví a usar shorts. Mi esposo lo notó antes de que yo dijera nada.",
+        "image_path": null
+      },
+      {
+        "name": "Stéfany Donatti Galván, 28 años",
+        "city": "Maracaibo",
+        "result": "Activación corregida · destaque visible",
+        "description": "Entrené glúteos durante 2 años sin verlos crecer — solo ganaba muslo. Aprendí la activación correcta y la progresión de carga. En 90 días los glúteos se volvieron el destaque del cuerpo, por fin separados del muslo.",
+        "image_path": null
+      }
+    ],
+    "verified": false,
+    "source": "",
+    "note": "Experiencias individuales del brief, pendientes de verificación editorial y autorización de uso. No representan resultados típicos ni garantizados."
+  },
+  {
+    "type": "offer",
+    "enabled": true,
+    "title": "Asegura tu acceso a Glúteo Perfecto",
+    "subtitle": "Guía digital de entrenamiento. Contenido definitivo pendiente de revisión del PDF.",
+    "items": [
+      {
+        "title": "Guía en PDF privado",
+        "description": "Descarga desde tu biblioteca tras la confirmación del pago, cuando la venta esté habilitada."
+      }
+    ],
+    "primary_label": "TU VIAJE COMIENZA AHORA",
+    "note": "Entrega inicial prevista: PDF. No incluye componentes todavía no configurados."
+  },
+  {
+    "type": "guarantee",
+    "enabled": true,
+    "title": "Condiciones de garantía",
+    "subtitle": "La condición final está pendiente de aprobación comercial. Consulta los términos del producto antes de comprar.",
+    "items": [],
+    "verified": false,
+    "source": "",
+    "note": "El brief menciona 7 y 30 días. Ninguno constituye una garantía vigente. Definir una única condición antes de publicar."
+  },
+  {
+    "type": "faq",
+    "enabled": true,
+    "title": "Resolviendo tus últimas dudas",
+    "subtitle": "Información para decidir con contexto.",
+    "items": [
+      {
+        "question": "¿Es adecuado para una persona delgada?",
+        "answer": "El entrenamiento de fuerza puede adaptarse a distintos puntos de partida. El progreso varía según alimentación, constancia, experiencia y salud; no se garantizan cambios de centímetros."
+      },
+      {
+        "question": "¿Puedo progresar con distintas condiciones iniciales?",
+        "answer": "La técnica, la carga y la recuperación influyen en el proceso. Adapta los ejercicios a tu capacidad y consulta orientación profesional si tienes lesiones o dudas."
+      },
+      {
+        "question": "¿Cuánto tiempo debo entrenar?",
+        "answer": "La duración y frecuencia se ajustan a tu condición y al plan definitivo de la guía. Prioriza una rutina sostenible y descansos adecuados. No hay un plazo universal para cambios visibles."
+      },
+      {
+        "question": "¿Qué equipo necesito para entrenar en casa?",
+        "answer": "Prepara un espacio seguro. El equipo y las cargas necesarios deben confirmarse en el PDF final; el entrenamiento puede requerir adaptaciones según tu nivel."
+      },
+      {
+        "question": "¿Puedo usarlo durante la recuperación posparto?",
+        "answer": "La recuperación es individual. Consulta a tu equipo de salud antes de retomar ejercicios y adapta la actividad a su evaluación. No se promete recuperación ni un resultado corporal en un plazo fijo."
+      }
+    ]
+  },
+  {
+    "type": "final",
+    "enabled": true,
+    "title": "Tienes 2 caminos ahora",
+    "subtitle": "Puedes seguir explorando o dar un primer paso informado: conocer la guía, revisar sus condiciones y decidir a tu ritmo.",
+    "items": [],
+    "primary_label": "TU VIAJE COMIENZA AHORA",
+    "note": "Los resultados varían entre personas."
+  },
+  {
+    "type": "footer",
+    "enabled": true,
+    "title": "Glúteo Perfecto",
+    "subtitle": "Comercializado por JAKAWI Digital.",
+    "items": [],
+    "note": "Este producto no garantiza resultados. El progreso depende de tu dedicación, punto de partida y condiciones individuales. No sustituye una evaluación profesional."
+  }
+]

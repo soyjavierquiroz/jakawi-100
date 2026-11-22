@@ -1,3 +1,4 @@
+import { EditorialBlocksEditor } from '@/components/marketing/EditorialBlocksEditor';
 import { ListPagination, type ListPage } from '@/components/list-pagination';
 import { ImageUpload } from '@/components/media/image-upload';
 import { LandingPreviewPane } from '@/components/marketing/LandingPreviewPane';
@@ -9,7 +10,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import AdminLayout from '../layout';
 
-type SubjectType = 'BENEFIT' | 'EXPERIENCE' | 'CHALLENGE';
+type SubjectType = 'DIGITAL' | 'BENEFIT' | 'EXPERIENCE' | 'CHALLENGE';
 type Subject = {
     id: number;
     type: SubjectType | 'UNLOCK';
@@ -19,6 +20,7 @@ type Subject = {
     truth: { label: string; value: string }[];
     aiBrief: Record<string, unknown> | null;
     heroUrl?: string | null;
+    editorialReference?: string | null;
 };
 type Presentation = {
     id: number;
@@ -33,6 +35,7 @@ type Presentation = {
     [key: string]: unknown;
 };
 const empty = {
+    editorial_blocks: '[]',
     name: '',
     slug: '',
     campaign_key: '',
@@ -164,7 +167,7 @@ export default function Index({
             ? Object.fromEntries(
                   Object.keys(empty).map((key) => [
                       key,
-                      String(
+                      key === 'editorial_blocks' ? JSON.stringify(item.editorial_blocks ?? []) : String(
                           key === 'default_scope'
                               ? (item.publish_scope ?? item.default_scope)
                               : (item[key] ?? empty[key as keyof typeof empty]),
@@ -259,7 +262,7 @@ export default function Index({
                                 setSelected('');
                             }}
                         >
-                            <option value="BENEFIT">Benefit</option>
+                            <option value="DIGITAL">Producto digital</option><option value="BENEFIT">Benefit</option>
                             <option value="EXPERIENCE">Experience</option>
                             <option value="CHALLENGE">Challenge</option>
                         </select>
@@ -491,6 +494,10 @@ export default function Index({
                                     vsl: video,
                                 };
                                 delete payload.hero_path;
+                                delete payload.editorial_blocks;
+                                if (formSubject?.type === 'DIGITAL') {
+                                    payload.editorial_blocks = JSON.parse(form.editorial_blocks || '[]');
+                                }
                                 if (offer && formSubject) {
                                     payload.subject_type = formSubject.type;
                                     payload.subject_id = formSubject.id;
@@ -703,6 +710,8 @@ export default function Index({
                                             PUBLICAR
                                         </span>
                                     </p>
+                                    {formSubject?.editorialReference && <details className="my-6 rounded border border-border p-4"><summary className="min-h-11 cursor-pointer font-bold">Brief original del propietario · Solo referencia editorial</summary><pre className="mt-4 font-sans text-sm leading-6 whitespace-pre-wrap break-words">{formSubject.editorialReference}</pre></details>}
+                                    {formSubject?.type === 'DIGITAL' && <EditorialBlocksEditor value={form.editorial_blocks} onChange={value=>setForm(f=>({...f,editorial_blocks:value}))} errors={errors} />}
                                     {offer && formSubject && (
                                         <LandingJsonControls
                                             key={`${editing?.id ?? 'new'}:${formSubject.type}:${formSubject.id}`}
@@ -1048,7 +1057,7 @@ export default function Index({
                                                                 setSelected('');
                                                             }}
                                                         >
-                                                            <option value="BENEFIT">
+                                                            <option value="DIGITAL">Producto digital</option><option value="BENEFIT">
                                                                 Benefit
                                                             </option>
                                                             <option value="EXPERIENCE">

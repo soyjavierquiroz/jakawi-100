@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\DigitalProduct;
 use App\Models\Benefit;
 use App\Models\Challenge;
 use App\Models\Experience;
@@ -16,7 +17,7 @@ use Illuminate\Validation\Rule;
 
 class AdminLandingCatalog
 {
-    private const TYPES = ['BENEFIT' => Benefit::class, 'EXPERIENCE' => Experience::class, 'CHALLENGE' => Challenge::class, 'UNLOCK' => Unlock::class];
+    private const TYPES = ['DIGITAL' => DigitalProduct::class, 'BENEFIT' => Benefit::class, 'EXPERIENCE' => Experience::class, 'CHALLENGE' => Challenge::class, 'UNLOCK' => Unlock::class];
 
     public function page(Request $request): array
     {
@@ -28,7 +29,7 @@ class AdminLandingCatalog
             'video' => ['nullable', Rule::in(['yes', 'no'])],
         ]);
         $query = LandingPresentation::query()->with(['subject' => fn (MorphTo $morph) => $morph->morphWith([
-            Benefit::class => ['partner'], Experience::class => ['partners'], Challenge::class => ['partner'], Unlock::class => ['partner'],
+            DigitalProduct::class => ['partner'], Benefit::class => ['partner'], Experience::class => ['partners'], Challenge::class => ['partner'], Unlock::class => ['partner'],
         ])]);
         if ($filters['type'] ?? null) {
             $query->where('subject_type', (new (self::TYPES[$filters['type']]))->getMorphClass());
@@ -47,7 +48,7 @@ class AdminLandingCatalog
             $query->where(function (Builder $search) use ($like) {
                 $search->where('name', 'ilike', $like)->orWhere('headline', 'ilike', $like)
                     ->orWhereHasMorph('subject', array_values(self::TYPES), function (Builder $product, string $type) use ($like) {
-                        $product->where(fn (Builder $match) => $match->where('title', 'ilike', $like)
+                        $product->where(fn (Builder $match) => $match->where($type === DigitalProduct::class ? 'name' : 'title', 'ilike', $like)
                             ->orWhereHas($type === Experience::class ? 'partners' : 'partner', fn (Builder $partner) => $partner->where('name', 'ilike', $like)));
                     });
             });
@@ -62,7 +63,7 @@ class AdminLandingCatalog
             $subject = $landing->subject;
             $type = $subject ? (array_search($subject::class, self::TYPES, true) ?: null) : null;
             $partners = $subject instanceof Experience ? $subject->partners->unique('id')->values() : collect($subject?->partner ? [$subject->partner] : []);
-            $segment = ['BENEFIT' => 'beneficios', 'EXPERIENCE' => 'experiencias', 'CHALLENGE' => 'retos', 'UNLOCK' => 'desbloqueos'][$type] ?? null;
+            $segment = ['DIGITAL' => 'productos-digitales', 'BENEFIT' => 'beneficios', 'EXPERIENCE' => 'experiencias', 'CHALLENGE' => 'retos', 'UNLOCK' => 'desbloqueos'][$type] ?? null;
             $hasVideo = (bool) $landing->has_video;
             $config = $hasVideo ? app(LandingVideoConfiguration::class)->forPresentation($landing) : null;
 
@@ -70,7 +71,7 @@ class AdminLandingCatalog
                 'id' => $landing->id, 'name' => $landing->name, 'headline' => $landing->headline, 'status' => $landing->status,
                 'updated_at' => $landing->updated_at?->toIso8601String(),
                 'partners' => $partners->map(fn (Partner $p) => $p->only('id', 'name'))->all(),
-                'product' => $subject ? ['title' => $subject->title, 'type' => $type] : null,
+                'product' => $subject ? ['title' => $subject instanceof DigitalProduct ? $subject->name : $subject->title, 'type' => $type] : null,
                 'has_video' => $hasVideo,
                 'video_note' => $hasVideo ? ($config ? 'Configurado' : 'Acceso restringido') : (! $landing->vsl ? 'Sin video' : (in_array($landing->media_mode?->value, ['IMAGE', 'NONE'], true) && ! ($subject instanceof Unlock) ? 'Fuera de composición' : (blank($landing->vsl['source']['url'] ?? null) ? 'Falta enlace' : 'Enlace inválido'))),
                 'video' => $config,

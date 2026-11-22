@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\DigitalProduct;
 use App\Models\Benefit;
 use App\Models\Challenge;
 use App\Models\Experience;
@@ -36,6 +37,7 @@ class ProductLandingResolver
     public function nativeUrl(Model $subject): string
     {
         return match (true) {
+            $subject instanceof DigitalProduct => route('digital.show', $subject),
             $subject instanceof Benefit => route('benefits.show', $subject),
             $subject instanceof Experience => route('experiences.show', $subject),
             $subject instanceof Unlock => route('unlocks.show', $subject),

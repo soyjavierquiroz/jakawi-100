@@ -14,6 +14,9 @@ type Product = {
     support_information: string | null;
     access_terms: string | null;
     has_file: boolean;
+    category?: string;
+    gallery_paths?: string[];
+    gallery_urls?: string[];
 };
 export default function ProductForm({
     product: p,
@@ -23,6 +26,10 @@ export default function ProductForm({
     partner: { name: string };
 }) {
     const form = useForm({
+        category: p?.category ?? 'fitness',
+        gallery: [] as File[],
+        gallery_keep: p?.gallery_paths ?? [],
+        gallery_clear: false,
         name: p?.name ?? '',
         slug: p?.slug ?? '',
         short_description: p?.short_description ?? '',
@@ -62,6 +69,7 @@ export default function ProductForm({
             <p className="mb-5 text-muted-foreground">
                 {partner.name} · PDF privado · administrado por JAKAWI
             </p>
+            {p && <nav aria-label="Edición y vistas previas" className="mb-6 flex flex-wrap gap-3"><Link className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/landings`}>Editar Landings</Link><a className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/preview`} target="_blank" rel="noreferrer">Preview de ficha</a></nav>}
             <form onSubmit={submit} className="grid max-w-3xl gap-5">
                 {fields.map(([key, label]) => (
                     <label key={key} className="grid gap-2 font-semibold">
@@ -96,6 +104,9 @@ export default function ProductForm({
                         )}
                     </label>
                 ))}
+                <label className="grid gap-2">Categoría<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.category} onChange={e=>form.setData('category',e.target.value)}>{['food','cafe','fitness','wellness','beauty','entertainment','nightlife','shopping','services','experiences'].map(c=><option key={c} value={c}>{c}</option>)}</select></label>
+                <label className="grid gap-2">Galería (hasta 8 imágenes)<input type="file" multiple accept="image/png,image/jpeg,image/webp" onChange={e=>form.setData('gallery',Array.from(e.target.files||[]))}/></label>
+                {!!p?.gallery_paths?.length && <div className="grid grid-cols-2 gap-3">{p.gallery_paths.map((path,i)=><label key={path} className="text-sm"><img src={p.gallery_urls?.[i]} alt="Imagen de galería" className="mb-2 w-full rounded-xl"/><input type="checkbox" checked={form.data.gallery_keep.includes(path)} onChange={e=>{const keep=e.target.checked?[...form.data.gallery_keep,path]:form.data.gallery_keep.filter(k=>k!==path);form.setData('gallery_keep',keep);form.setData('gallery_clear',keep.length===0);}}/> Conservar</label>)}</div>}
                 <label className="grid gap-2">
                     Moneda
                     <select

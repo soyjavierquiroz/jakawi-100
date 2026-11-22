@@ -34,7 +34,9 @@ class DigitalCatalog
     {
         return $p->only(['id', 'name', 'slug', 'short_description', 'description', 'commercial_content', 'public_price', 'member_price', 'currency', 'delivery_type', 'support_information', 'access_terms']) + [
             'partner' => $p->partner->only(['id', 'name', 'slug']), 'cover_url' => app(MediaUrl::class)->url($p->cover_path, 'hero'),
-            'url' => '/productos-digitales/'.$p->slug,
+            'gallery_urls' => array_map(fn ($path) => app(MediaUrl::class)->url($path, 'hero'), $p->gallery_paths ?? []),
+            'category' => $p->category,
+            'url' => app(ProductLandingResolver::class)->navigationUrl($p, request()->user() !== null),
         ];
     }
 

@@ -26,7 +26,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
 
-        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['has_file' => filled($product->file_path)] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
+        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
     }
 
     public function save(Request $request, DigitalCatalog $catalog, DigitalFiles $files, ?DigitalProduct $product = null)
@@ -41,15 +41,21 @@ class AdminDigitalProductController extends Controller
             'member_price' => 'nullable|decimal:0,2|gt:0|lte:public_price', 'currency' => 'required|in:BOB,USD',
             'support_information' => 'nullable|string|max:3000', 'access_terms' => 'nullable|string|max:10000',
             'pdf' => 'nullable|file|mimes:pdf|max:25600', 'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+            'category' => ['nullable', Rule::in(config('jakawi.categories'))],
+            'gallery' => 'nullable|array|max:8', 'gallery.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
+            'gallery_clear' => 'sometimes|boolean', 'gallery_keep' => 'nullable|array|max:8', 'gallery_keep.*' => ['string', Rule::in($product?->gallery_paths ?? [])],
             'partner_id' => 'prohibited', 'delivery_type' => 'prohibited',
         ]);
         if ($data['status'] === 'published') {
             Validator::make($data, ['public_price' => 'required', 'description' => 'required', 'support_information' => 'required', 'access_terms' => 'required'])->validate();
+            abort_unless($request->hasFile('cover') || $product?->cover_path, 422, 'Sube la portada antes de publicar.');
             abort_unless($request->hasFile('pdf') || $product?->file_path, 422, 'Sube el PDF privado antes de publicar.');
         }
         $stored = $request->hasFile('pdf') ? $files->store($request->file('pdf'), 'products') : null;
-        unset($data['pdf'],$data['cover']);
-        DB::transaction(function () use ($request, $data, $stored, $catalog, &$product) {
+        $keep = $request->boolean('gallery_clear') ? [] : ($data['gallery_keep'] ?? ($product?->gallery_paths ?? []));
+        abort_if(count($keep) + count($request->file('gallery', [])) > 8, 422, 'La galería admite hasta 8 imágenes.');
+        unset($data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
+        DB::transaction(function () use ($request, $data, $stored, $catalog, $keep, &$product) {
             $product ??= new DigitalProduct;
             $product->fill($data);
             $product->partner_id = $catalog->internalPartner()->id;
@@ -61,6 +67,12 @@ class AdminDigitalProductController extends Controller
                 $product->cover_path = app(MediaUploadService::class)->store($request->file('cover'), 'digital-products', $product->id, 'cover');
                 $product->save();
             }
+            $gallery = $keep;
+            foreach ($request->file('gallery', []) as $image) {
+                $gallery[] = app(MediaUploadService::class)->store($image, 'digital-products', $product->id, 'image');
+            }
+            $product->gallery_paths = $gallery;
+            $product->save();
             AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => 'digital_product_saved', 'subject_type' => DigitalProduct::class, 'subject_id' => $product->id, 'metadata' => ['status' => $product->status, 'file_sha256' => $product->file_sha256]]);
         });
 
