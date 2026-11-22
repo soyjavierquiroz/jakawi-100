@@ -1,22 +1,35 @@
 import ThemeToggle from '@/components/theme-toggle';
-import { useEffect, useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import { AdminNavigation } from './navigation';
 
 export default function AdminLayout({ title, children }: { title: string; children: React.ReactNode }) {
-    const [menuOpen, setMenuOpen] = useState(() => typeof window === 'undefined' || window.matchMedia('(min-width: 1024px)').matches);
+    const [desktop, setDesktop] = useState(() => typeof window === 'undefined' || window.matchMedia('(min-width: 1024px)').matches);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const dialog = useRef<HTMLDialogElement>(null);
+    const { url } = usePage();
     useEffect(() => {
-        const desktop = window.matchMedia('(min-width: 1024px)');
-        const update = () => setMenuOpen(desktop.matches);
-        desktop.addEventListener('change', update);
-        return () => desktop.removeEventListener('change', update);
+        const media = window.matchMedia('(min-width: 1024px)');
+        const update = () => { setDesktop(media.matches); setMenuOpen(false); };
+        media.addEventListener('change', update);
+        return () => media.removeEventListener('change', update);
     }, []);
+    useEffect(() => { setMenuOpen(false); }, [url]);
+    useEffect(() => {
+        if (menuOpen) dialog.current?.showModal(); else dialog.current?.close();
+    }, [menuOpen]);
     return <div className="admin-shell">
         <Head title={title} />
         <a href="#admin-content" className="admin-skip">Ir al contenido</a>
         <header className="admin-header"><a href="/admin" aria-label="JAKAWI · Administración"><img src="/jakawi-logo.svg" alt="JAKAWI" width="122" height="40" /></a><div className="admin-header-tools"><span>Administración COM</span><ThemeToggle /><a href="/mi-jakawi">Mi JAKAWI ↗</a></div></header>
         <div className="admin-workspace">
-            <aside className="admin-sidebar"><details className="admin-menu" open={menuOpen} onToggle={(event) => setMenuOpen(event.currentTarget.open)}><summary>Menú de administración</summary><AdminNavigation /></details></aside>
+            <aside className="admin-sidebar">{desktop ? <AdminNavigation /> : <>
+                <button type="button" className="admin-menu-trigger" aria-expanded={menuOpen} aria-controls="admin-drawer" onClick={() => setMenuOpen(true)}>Menú de administración</button>
+                <dialog ref={dialog} id="admin-drawer" className="admin-drawer" aria-labelledby="admin-drawer-title" onClose={() => setMenuOpen(false)} onClick={event => { if (event.target === event.currentTarget) setMenuOpen(false); }}>
+                    <div className="admin-drawer-heading"><h2 id="admin-drawer-title">Administración</h2><button type="button" onClick={() => setMenuOpen(false)} aria-label="Cerrar menú">Cerrar</button></div>
+                    <AdminNavigation onNavigate={() => setMenuOpen(false)} />
+                </dialog>
+            </>}</aside>
             <main id="admin-content" className="admin-content"><h1>{title}</h1><div className="admin-page">{children}</div></main>
         </div>
     </div>;

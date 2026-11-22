@@ -23,6 +23,18 @@ class AdminNavigationTest extends TestCase
         return ['/admin', ...$collect(json_decode(file_get_contents(resource_path('admin-navigation.json')), true))];
     }
 
+    public function test_sidebar_is_flat_and_preserves_all_existing_destinations(): void
+    {
+        $groups = json_decode(file_get_contents(resource_path('admin-navigation.json')), true);
+        $this->assertCount(4, $groups);
+        foreach ($groups as $group) {
+            $this->assertArrayNotHasKey('secondary', $group);
+        }
+        $expected = ['/admin', '/admin/memberships', '/admin/conciliacion-membresias', '/admin/sales', '/admin/solicitudes-membresia', '/admin/promoters', '/admin/partners', '/admin/solicitudes-partner', '/admin/locations', '/admin/benefits', '/admin/experiences', '/admin/redemptions', '/admin/review', '/admin/retos', '/admin/desbloqueos', '/admin/productos-digitales', '/admin/digital/pedidos', '/admin/digital/cobro', '/admin/landings', '/admin/attribution', '/admin/ciudades', '/admin/expansion', '/admin/reward-rules', '/admin/adjustments', '/admin/campaigns', '/admin/settings', '/admin/payouts'];
+        $this->assertEqualsCanonicalizing($expected, $this->destinations());
+        $this->assertCount(count($expected), array_unique($this->destinations()));
+    }
+
     public function test_all_navigation_destinations_keep_guest_and_non_admin_authorization(): void
     {
         foreach ($this->destinations() as $path) {
@@ -56,7 +68,7 @@ class AdminNavigationTest extends TestCase
             ->assertOk()
             ->assertSee('https://jakawi.club/admin/comisiones', false)
             ->assertSee('rel="noopener noreferrer"', false)
-            ->assertSee('Ventas asistidas')
+            ->assertSee('Operación JAKAWI')
             ->assertSee('Configuración editorial')
             ->assertSee('Pagos a Partners · histórico/incompleto');
     }

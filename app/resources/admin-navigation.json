@@ -1,39 +1,7 @@
 [
   {
-    "label": "Miembros y pagos",
-    "links": [
-      [
-        "/admin/memberships",
-        "Membresías"
-      ],
-      [
-        "/admin/conciliacion-membresias",
-        "Pagos y conciliación"
-      ]
-    ],
-    "secondary": [
-      {
-        "label": "Ventas asistidas",
-        "description": "Herramientas disponibles · sin uso registrado actualmente.",
-        "links": [
-          [
-            "/admin/sales",
-            "Ventas en efectivo"
-          ],
-          [
-            "/admin/solicitudes-membresia",
-            "Solicitudes asistidas"
-          ],
-          [
-            "/admin/promoters",
-            "Operadores de ventas"
-          ]
-        ]
-      }
-    ]
-  },
-  {
-    "label": "Partners y catálogo",
+    "id": "operation",
+    "label": "Operación JAKAWI",
     "links": [
       [
         "/admin/partners",
@@ -62,26 +30,39 @@
       [
         "/admin/review",
         "Revisión editorial"
+      ],
+      [
+        "/admin/retos",
+        "Retos sociales"
+      ],
+      [
+        "/admin/desbloqueos",
+        "Desbloqueos"
+      ],
+      [
+        "/admin/memberships",
+        "Membresías"
+      ],
+      [
+        "/admin/conciliacion-membresias",
+        "Pagos y conciliación"
+      ],
+      [
+        "/admin/sales",
+        "Ventas en efectivo"
+      ],
+      [
+        "/admin/solicitudes-membresia",
+        "Solicitudes asistidas"
+      ],
+      [
+        "/admin/promoters",
+        "Operadores de ventas"
       ]
-    ],
-    "secondary": [
-      {
-        "label": "Herramientas secundarias",
-        "description": "Retos sociales: sin operación activa actualmente.",
-        "links": [
-          [
-            "/admin/retos",
-            "Retos sociales"
-          ],
-          [
-            "/admin/desbloqueos",
-            "Desbloqueos"
-          ]
-        ]
-      }
     ]
   },
   {
+    "id": "digital",
     "label": "JAKAWI Digital",
     "links": [
       [
@@ -96,11 +77,11 @@
         "/admin/digital/cobro",
         "QR y cuenta digital"
       ]
-    ],
-    "secondary": []
+    ]
   },
   {
-    "label": "Marketing y territorio",
+    "id": "growth",
+    "label": "Marketing y crecimiento",
     "links": [
       [
         "/admin/landings",
@@ -109,35 +90,20 @@
       [
         "/admin/attribution",
         "Atribución comercial"
+      ],
+      [
+        "/admin/ciudades",
+        "Gestionar ciudades"
+      ],
+      [
+        "/admin/expansion",
+        "Expansión"
       ]
-    ],
-    "secondary": [
-      {
-        "label": "Ciudades",
-        "links": [
-          [
-            "/admin/ciudades",
-            "Gestionar ciudades"
-          ]
-        ],
-        "secondary": [
-          {
-            "label": "Herramientas de expansión",
-            "links": [
-              [
-                "/admin/expansion",
-                "Expansión"
-              ]
-            ]
-          }
-        ],
-        "expanded": true
-      }
     ]
   },
   {
-    "label": "Configuración avanzada",
-    "description": "JP son puntos, no dinero. Los registros CASH de Partners se mantienen separados; las comisiones de afiliados se administran en CLUB.",
+    "id": "settings",
+    "label": "Configuración y herramientas",
     "links": [
       [
         "/admin/reward-rules",
@@ -159,7 +125,6 @@
         "/admin/payouts",
         "Pagos a Partners · histórico/incompleto"
       ]
-    ],
-    "secondary": []
+    ]
   }
 ]
