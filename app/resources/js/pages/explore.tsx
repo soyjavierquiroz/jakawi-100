@@ -1,4 +1,7 @@
-import { DigitalCard, type DigitalProductData } from '@/components/digital-card';
+import {
+    DigitalCard,
+    type DigitalProductData,
+} from '@/components/digital-card';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { MapPin, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -8,46 +11,533 @@ import { JakawiImage } from '@/components/jakawi-image';
 import { EmptyState } from '@/components/state-panel';
 import type { DiscoveryOpportunity } from '@/types/discovery';
 
-type Partner = { id: number; slug: string; name: string; category?: string | null; description?: string | null; logo_url?: string | null; cover_url?: string | null; cover_srcset?: Array<{ src: string; width: number }> };
-type ExploreType = 'benefits' | 'experiences' | 'challenges' | 'unlocks' | 'places';
-const labels: Record<string, string> = { food: 'Comer', cafe: 'Café', fitness: 'Entrenar', wellness: 'Bienestar', beauty: 'Belleza', entertainment: 'Entretenimiento', nightlife: 'Salir', shopping: 'Comprar', services: 'Servicios', experiences: 'Experiencias' };
+type Partner = {
+    id: number;
+    slug: string;
+    name: string;
+    category?: string | null;
+    description?: string | null;
+    logo_url?: string | null;
+    cover_url?: string | null;
+    cover_srcset?: Array<{ src: string; width: number }>;
+};
+type ExploreType =
+    | 'benefits'
+    | 'experiences'
+    | 'challenges'
+    | 'unlocks'
+    | 'places'
+    | 'digital';
+const labels: Record<string, string> = {
+    food: 'Comer',
+    cafe: 'Café',
+    fitness: 'Entrenar',
+    wellness: 'Bienestar',
+    beauty: 'Belleza',
+    entertainment: 'Entretenimiento',
+    nightlife: 'Salir',
+    shopping: 'Comprar',
+    services: 'Servicios',
+    experiences: 'Experiencias',
+};
 
-function PartnerResult({ partner, priority = false }: { partner: Partner; priority?: boolean }) {
-    return <Link href={`/partners/${partner.slug}`} className="explorer-card group grid min-h-40 grid-cols-[42%_1fr] overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-[0_8px_24px_color-mix(in_srgb,var(--foreground)_6%,transparent)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_color-mix(in_srgb,var(--foreground)_10%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] sm:block"><div className="overflow-hidden bg-surface-muted sm:aspect-[5/4]"><JakawiImage src={partner.cover_url} srcset={partner.cover_srcset} sizes="(min-width: 1024px) 29vw, (min-width: 640px) 44vw, 42vw" alt={partner.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading={priority ? 'eager' : 'lazy'} priority={priority} /></div><div className={`explorer-card-copy min-w-0 p-4 sm:p-[var(--space-card)] ${partner.name.trim() ? 'explorer-card-copy-with-avatar' : ''}`}><ExplorerPartnerAvatar name={partner.name} src={partner.logo_url} /><p className="explorer-card-type discovery-eyebrow text-muted-foreground">Lugar</p><h2 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">{partner.name}</h2>{partner.description ? <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{partner.description}</p> : null}<p className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-foreground-soft"><MapPin className="size-4 shrink-0 text-brand" aria-hidden="true" />{partner.category ? labels[partner.category] ?? partner.category : 'Ver ubicación'}</p><span className="mt-3 inline-flex min-h-7 items-center text-xs font-extrabold tracking-[0.08em] text-brand underline decoration-brand/60 decoration-2 underline-offset-4">VER LUGAR</span></div></Link>;
+function PartnerResult({
+    partner,
+    priority = false,
+}: {
+    partner: Partner;
+    priority?: boolean;
+}) {
+    return (
+        <Link
+            href={`/partners/${partner.slug}`}
+            className="explorer-card group grid min-h-40 grid-cols-[42%_1fr] overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-[0_8px_24px_color-mix(in_srgb,var(--foreground)_6%,transparent)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_color-mix(in_srgb,var(--foreground)_10%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] sm:block"
+        >
+            <div className="overflow-hidden bg-surface-muted sm:aspect-[5/4]">
+                <JakawiImage
+                    src={partner.cover_url}
+                    srcset={partner.cover_srcset}
+                    sizes="(min-width: 1024px) 29vw, (min-width: 640px) 44vw, 42vw"
+                    alt={partner.name}
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    loading={priority ? 'eager' : 'lazy'}
+                    priority={priority}
+                />
+            </div>
+            <div
+                className={`explorer-card-copy min-w-0 p-4 sm:p-[var(--space-card)] ${partner.name.trim() ? 'explorer-card-copy-with-avatar' : ''}`}
+            >
+                <ExplorerPartnerAvatar
+                    name={partner.name}
+                    src={partner.logo_url}
+                />
+                <p className="explorer-card-type discovery-eyebrow text-muted-foreground">
+                    Lugar
+                </p>
+                <h2 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">
+                    {partner.name}
+                </h2>
+                {partner.description ? (
+                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                        {partner.description}
+                    </p>
+                ) : null}
+                <p className="text-foreground-soft mt-3 flex items-center gap-1.5 text-sm font-semibold">
+                    <MapPin
+                        className="size-4 shrink-0 text-brand"
+                        aria-hidden="true"
+                    />
+                    {partner.category
+                        ? (labels[partner.category] ?? partner.category)
+                        : 'Ver ubicación'}
+                </p>
+                <span className="mt-3 inline-flex min-h-7 items-center text-xs font-extrabold tracking-[0.08em] text-brand underline decoration-brand/60 decoration-2 underline-offset-4">
+                    VER LUGAR
+                </span>
+            </div>
+        </Link>
+    );
 }
 
 function emptyCopy(type?: string | null) {
-    if (type === 'benefits') return 'No encontramos beneficios para esto ahora.';
-    if (type === 'experiences') return 'No encontramos experiencias para esto ahora.';
+    if (type === 'digital')
+        return 'Estamos preparando el catálogo. Cuando publiquemos productos digitales, podrás descubrirlos aquí, desde cualquier ciudad.';
+    if (type === 'benefits')
+        return 'No encontramos beneficios para esto ahora.';
+    if (type === 'experiences')
+        return 'No encontramos experiencias para esto ahora.';
     if (type === 'challenges') return 'No encontramos retos para esto ahora.';
-    if (type === 'unlocks') return 'No encontramos desbloqueos para esto ahora.';
+    if (type === 'unlocks')
+        return 'No encontramos desbloqueos para esto ahora.';
     if (type === 'places') return 'No encontramos lugares para esto ahora.';
     return 'Prueba otra búsqueda o cambia los filtros.';
 }
 
-export default function Explore({ query = '', category, type, categories = [], opportunities = [], places = [], sort = 'featured', digitalProducts = [], pagination }: { query?: string; category?: string | null; type?: ExploreType | null; categories?: string[]; opportunities?: DiscoveryOpportunity[]; places?: Partner[]; sort?: string; digitalProducts?: DigitalProductData[]; pagination: { next_page_url: string | null; total: number; current_page: number } }) {
-    const { selectedCity } = usePage<{ selectedCity: { name: string } }>().props;
+export default function Explore({
+    query = '',
+    category,
+    type,
+    categories = [],
+    opportunities = [],
+    places = [],
+    sort = 'featured',
+    digitalProducts = [],
+    pagination,
+}: {
+    query?: string;
+    category?: string | null;
+    type?: ExploreType | null;
+    categories?: string[];
+    opportunities?: DiscoveryOpportunity[];
+    places?: Partner[];
+    sort?: string;
+    digitalProducts?: DigitalProductData[];
+    pagination: {
+        next_page_url: string | null;
+        total: number;
+        current_page: number;
+    };
+}) {
+    const page = usePage<{ selectedCity: { name: string } }>();
+    const { selectedCity } = page.props;
+    const isDigital = type === 'digital';
+    const directDigital = page.url.split('?')[0] === '/productos-digitales';
     const [value, setValue] = useState(query);
     const [loading, setLoading] = useState(false);
     const loadingRef = useRef(false);
     const loadMore = () => {
         if (loadingRef.current || !pagination.next_page_url) return;
-        loadingRef.current = true; setLoading(true);
-        router.get(pagination.next_page_url, {}, { only: ['opportunities', 'places', 'pagination'], preserveState: true, preserveScroll: true, onFinish: () => { loadingRef.current = false; setLoading(false); } });
+        loadingRef.current = true;
+        setLoading(true);
+        router.get(
+            pagination.next_page_url,
+            {},
+            {
+                only: [
+                    'opportunities',
+                    'places',
+                    'digitalProducts',
+                    'pagination',
+                ],
+                preserveState: true,
+                preserveScroll: true,
+                onFinish: () => {
+                    loadingRef.current = false;
+                    setLoading(false);
+                },
+            },
+        );
     };
     useEffect(() => {
-        const start = router.on('start', () => { loadingRef.current = true; setLoading(true); });
-        const finish = router.on('finish', () => { loadingRef.current = false; setLoading(false); });
-        return () => { start(); finish(); };
+        const start = router.on('start', () => {
+            loadingRef.current = true;
+            setLoading(true);
+        });
+        const finish = router.on('finish', () => {
+            loadingRef.current = false;
+            setLoading(false);
+        });
+        return () => {
+            start();
+            finish();
+        };
     }, []);
     const activeTypeRef = useRef<HTMLButtonElement>(null);
-    const visit = (next: Record<string, string>) => router.get('/explorar', { q: value, category: category ?? '', type: type ?? '', sort, ...next }, { preserveState: true, reset: ['opportunities', 'places'], only: ['opportunities', 'places', 'pagination', 'query', 'category', 'type', 'sort', 'digitalProducts'] });
-    const hasFilters = value !== '' || category !== null || type;
+    const visit = (next: Record<string, string>) =>
+        router.get(
+            directDigital &&
+                (next.type === undefined || next.type === 'digital')
+                ? '/productos-digitales'
+                : '/explorar',
+            {
+                q: value,
+                category: category ?? '',
+                type: type ?? '',
+                sort,
+                ...next,
+            },
+            {
+                preserveState: true,
+                reset: ['opportunities', 'places', 'digitalProducts'],
+                only: [
+                    'opportunities',
+                    'places',
+                    'pagination',
+                    'query',
+                    'category',
+                    'categories',
+                    'type',
+                    'sort',
+                    'digitalProducts',
+                ],
+            },
+        );
+    const hasFilters = value !== '' || Boolean(category) || type;
     const isPlaces = type === 'places';
-    const results = isPlaces ? places : opportunities;
+    const results = isDigital
+        ? digitalProducts
+        : isPlaces
+          ? places
+          : opportunities;
     const opportunitySurface = query.trim() === '' ? 'EXPLORE' : 'SEARCH';
-    useEffect(() => { setValue(query); }, [query]);
-    useEffect(() => { if (type) activeTypeRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }, [type]);
+    useEffect(() => {
+        setValue(query);
+    }, [query]);
+    useEffect(() => {
+        if (!isDigital || value === query) return;
+        const timer = window.setTimeout(() => visit({ q: value }), 300);
+        return () => window.clearTimeout(timer);
+    }, [value, query, isDigital, sort]);
+    useEffect(() => {
+        if (type === 'places')
+            activeTypeRef.current?.scrollIntoView({
+                block: 'nearest',
+                inline: 'nearest',
+            });
+    }, [type]);
 
-    return <><Head title="Explorar" /><main className="min-h-screen overflow-x-hidden bg-background pb-28 font-discovery text-foreground"><section className="mx-auto w-full max-w-6xl px-[var(--space-gutter)] pt-[max(2rem,env(safe-area-inset-top))] sm:px-6 lg:px-8 lg:pt-10"><header className="max-w-2xl"><p className="discovery-eyebrow text-brand">{selectedCity.name}</p><h1 className="mt-2 text-[2rem] leading-none font-extrabold tracking-[-0.05em] sm:text-5xl">EXPLORAR</h1><p className="mt-3 text-base font-medium text-muted-foreground">Encuentra algo que valga la pena hacer, probar o descubrir.</p></header><form onSubmit={event => { event.preventDefault(); visit({}); }} className="relative mt-7 max-w-3xl"><Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" /><input value={value} onChange={event => setValue(event.target.value)} placeholder="Buscar café, planes, lugares..." className="min-h-13 w-full rounded-[var(--radius-control)] bg-surface-elevated py-3 pr-12 pl-12 text-base font-medium shadow-[0_5px_18px_color-mix(in_srgb,var(--foreground)_6%,transparent)] outline-none transition focus-visible:ring-2 focus-visible:ring-brand" />{value ? <button type="button" onClick={() => { setValue(''); router.get('/explorar', { category: category ?? '', type: type ?? '', sort }, { preserveState: true, reset: ['opportunities', 'places'], only: ['opportunities', 'places', 'pagination', 'query', 'category', 'type', 'sort', 'digitalProducts'] }); }} className="absolute right-3 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-brand" aria-label="Limpiar búsqueda"><X className="size-4" /></button> : null}</form><nav aria-label="Tipo de descubrimiento" className="mt-6 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none]"><button type="button" onClick={() => visit({ type: '' })} className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type ? 'border-border bg-surface text-muted-foreground hover:bg-surface-muted' : 'border-brand bg-brand text-brand-foreground'}`}>TODO</button><Link href="/productos-digitales" className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--radius-chip)] border border-border bg-surface px-4 text-sm font-extrabold">PRODUCTOS DIGITALES</Link><button type="button" onClick={() => visit({ type: 'benefits' })} className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'benefits' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}>BENEFICIOS</button><button type="button" onClick={() => visit({ type: 'experiences' })} className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'experiences' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}>EXPERIENCIAS</button><button type="button" onClick={() => visit({ type: 'challenges' })} className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'challenges' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}>RETOS</button><button type="button" onClick={() => visit({ type: 'unlocks' })} className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'unlocks' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}>DESBLOQUEOS</button><button ref={activeTypeRef} type="button" onClick={() => visit({ type: 'places' })} className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'places' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}>LUGARES</button></nav><div className="mt-3 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none]" aria-label="Categorías"><button type="button" onClick={() => visit({ category: '' })} className={`min-h-9 shrink-0 rounded-[var(--radius-chip)] px-3 text-sm font-semibold transition ${category === null ? 'bg-brand-subtle text-foreground' : 'text-muted-foreground hover:bg-surface-muted'}`}>Todo</button>{categories.map(key => <button type="button" key={key} onClick={() => visit({ category: key })} className={`min-h-9 shrink-0 rounded-[var(--radius-chip)] px-3 text-sm font-semibold transition ${category === key ? 'bg-brand-subtle text-foreground' : 'text-muted-foreground hover:bg-surface-muted'}`}>{labels[key] ?? key}</button>)}</div><label className="mt-4 flex items-center gap-3 text-sm font-semibold">Ordenar<select aria-label="Ordenar oportunidades" className="min-h-11 rounded-[var(--radius-control)] border border-border bg-surface px-3" value={sort} onChange={event => visit({ sort: event.target.value })}><option value="featured">DESTACADOS</option><option value="newest">MÁS RECIENTES</option><option value="name">NOMBRE A–Z</option></select></label>{(type === 'unlocks' || type === 'challenges') && category ? <p className="mt-3 text-sm text-muted-foreground">Los retos y desbloqueos no tienen categoría todavía.</p> : null}{digitalProducts.length > 0 ? <section className="mt-8" aria-label="Productos digitales"><div className="flex items-center justify-between gap-3"><h2 className="text-xl font-extrabold">Productos digitales</h2><Link className="text-sm font-semibold text-brand underline" href="/productos-digitales">Ver todos</Link></div><p className="mt-2 text-sm text-muted-foreground">Digital · disponible online</p><div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{digitalProducts.map(product => <DigitalCard key={product.id} product={product} />)}</div></section> : null}{results.length ? <section className="mt-8"><div className="flex min-h-5 items-center"><p className="text-sm font-semibold text-muted-foreground">{pagination.total} {pagination.total === 1 ? 'resultado' : 'resultados'} {query.trim() ? <>para “{query.trim()}”</> : 'para descubrir'}</p></div><div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">{isPlaces ? places.map((place, index) => <PartnerResult key={place.id} partner={place} priority={index < 3} />) : opportunities.map((opportunity, position) => <OpportunityCard key={`${opportunity.type}-${opportunity.source_id}`} opportunity={opportunity} surface={opportunitySurface} section="RESULTS" position={position} variant="explore-grid" />)}</div>{pagination.next_page_url ? <div className="mt-8 flex justify-center"><button type="button" onClick={loadMore} disabled={loading} className="discovery-primary-action disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">{loading ? 'CARGANDO…' : 'CARGAR MÁS'}</button></div> : null}<span role="status" className="sr-only">{loading ? 'Cargando resultados' : `${results.length} resultados cargados`}</span></section> : digitalProducts.length ? null : <EmptyState className="mt-12" title="NO ENCONTRAMOS ESO" description={emptyCopy(type)} action={hasFilters ? <button type="button" onClick={() => { setValue(''); router.get('/explorar'); }} className="discovery-primary-action">{type ? 'VER TODO' : 'LIMPIAR FILTROS'}</button> : undefined} />}</section></main></>;
+    return (
+        <>
+            <Head
+                title={
+                    isDigital ? 'Productos digitales · Explorar' : 'Explorar'
+                }
+            />
+            <main className="min-h-screen overflow-x-hidden bg-background pb-28 font-discovery text-foreground">
+                <section className="mx-auto w-full max-w-6xl px-[var(--space-gutter)] pt-[max(2rem,env(safe-area-inset-top))] sm:px-6 lg:px-8 lg:pt-10">
+                    <header className="max-w-2xl">
+                        <p className="discovery-eyebrow text-brand">
+                            {isDigital
+                                ? 'Digital · disponible online'
+                                : selectedCity.name}
+                        </p>
+                        <h1 className="mt-2 text-[2rem] leading-none font-extrabold tracking-[-0.05em] sm:text-5xl">
+                            EXPLORAR
+                        </h1>
+                        <p className="mt-3 text-base font-medium text-muted-foreground">
+                            Encuentra algo que valga la pena hacer, probar o
+                            descubrir.
+                        </p>
+                    </header>
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            visit({});
+                        }}
+                        className="relative mt-7 max-w-3xl"
+                    >
+                        <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            value={value}
+                            onChange={(event) => setValue(event.target.value)}
+                            aria-label="Buscar en Explorar"
+                            placeholder={
+                                isDigital
+                                    ? 'Buscar productos digitales...'
+                                    : 'Buscar café, planes, lugares...'
+                            }
+                            className="min-h-13 w-full rounded-[var(--radius-control)] bg-surface-elevated py-3 pr-12 pl-12 text-base font-medium shadow-[0_5px_18px_color-mix(in_srgb,var(--foreground)_6%,transparent)] transition outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                        />
+                        {value ? (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setValue('');
+                                    visit({ q: '' });
+                                }}
+                                className="absolute top-1/2 right-3 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-brand"
+                                aria-label="Limpiar búsqueda"
+                            >
+                                <X className="size-4" />
+                            </button>
+                        ) : null}
+                    </form>
+                    <nav
+                        aria-label="Tipo de descubrimiento"
+                        className="mt-6 flex [scrollbar-width:none] gap-2 overflow-x-auto pb-2"
+                    >
+                        <button
+                            type="button"
+                            onClick={() => visit({ type: '' })}
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type ? 'border-border bg-surface text-muted-foreground hover:bg-surface-muted' : 'border-brand bg-brand text-brand-foreground'}`}
+                        >
+                            TODO
+                        </button>
+                        <button
+                            type="button"
+                            aria-pressed={isDigital}
+                            onClick={() =>
+                                visit({ type: 'digital', category: '' })
+                            }
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${isDigital ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
+                        >
+                            PRODUCTOS DIGITALES
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => visit({ type: 'benefits' })}
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'benefits' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
+                        >
+                            BENEFICIOS
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => visit({ type: 'experiences' })}
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'experiences' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
+                        >
+                            EXPERIENCIAS
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => visit({ type: 'challenges' })}
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'challenges' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
+                        >
+                            RETOS
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => visit({ type: 'unlocks' })}
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'unlocks' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
+                        >
+                            DESBLOQUEOS
+                        </button>
+                        <button
+                            ref={activeTypeRef}
+                            type="button"
+                            onClick={() => visit({ type: 'places' })}
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'places' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
+                        >
+                            LUGARES
+                        </button>
+                    </nav>
+                    {!isDigital && categories.length > 0 ? (
+                        <div
+                            className="mt-3 flex [scrollbar-width:none] gap-2 overflow-x-auto pb-2"
+                            aria-label="Categorías"
+                        >
+                            <button
+                                type="button"
+                                onClick={() => visit({ category: '' })}
+                                className={`min-h-9 shrink-0 rounded-[var(--radius-chip)] px-3 text-sm font-semibold transition ${category === null ? 'bg-brand-subtle text-foreground' : 'text-muted-foreground hover:bg-surface-muted'}`}
+                            >
+                                Todo
+                            </button>
+                            {categories.map((key) => (
+                                <button
+                                    type="button"
+                                    key={key}
+                                    onClick={() => visit({ category: key })}
+                                    className={`min-h-9 shrink-0 rounded-[var(--radius-chip)] px-3 text-sm font-semibold transition ${category === key ? 'bg-brand-subtle text-foreground' : 'text-muted-foreground hover:bg-surface-muted'}`}
+                                >
+                                    {labels[key] ?? key}
+                                </button>
+                            ))}
+                        </div>
+                    ) : null}
+                    <label className="mt-4 flex items-center gap-3 text-sm font-semibold">
+                        Ordenar
+                        <select
+                            aria-label="Ordenar oportunidades"
+                            className="min-h-11 rounded-[var(--radius-control)] border border-border bg-surface px-3"
+                            value={sort}
+                            onChange={(event) =>
+                                visit({ sort: event.target.value })
+                            }
+                        >
+                            <option value="featured">DESTACADOS</option>
+                            <option value="newest">MÁS RECIENTES</option>
+                            <option value="name">NOMBRE A–Z</option>
+                        </select>
+                    </label>
+                    {(type === 'unlocks' || type === 'challenges') &&
+                    category ? (
+                        <p className="mt-3 text-sm text-muted-foreground">
+                            Los retos y desbloqueos no tienen categoría todavía.
+                        </p>
+                    ) : null}
+                    {!isDigital && digitalProducts.length > 0 ? (
+                        <section
+                            className="mt-8"
+                            aria-label="Productos digitales"
+                        >
+                            <div className="flex items-center justify-between gap-3">
+                                <h2 className="text-xl font-extrabold">
+                                    Productos digitales
+                                </h2>
+                                <Link
+                                    className="text-sm font-semibold text-brand underline"
+                                    href="/productos-digitales"
+                                >
+                                    Ver todos
+                                </Link>
+                            </div>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Digital · disponible online
+                            </p>
+                            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {digitalProducts.map((product) => (
+                                    <DigitalCard
+                                        key={product.id}
+                                        product={product}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    ) : null}
+                    {isDigital || results.length ? (
+                        <section className="mt-8">
+                            <div className="flex min-h-5 items-center">
+                                <p className="text-sm font-semibold text-muted-foreground">
+                                    {pagination.total}{' '}
+                                    {pagination.total === 1
+                                        ? 'resultado'
+                                        : 'resultados'}{' '}
+                                    {query.trim() ? (
+                                        <>para “{query.trim()}”</>
+                                    ) : (
+                                        'para descubrir'
+                                    )}
+                                </p>
+                            </div>
+                            {isDigital && !digitalProducts.length ? (
+                                <EmptyState
+                                    className="mt-6"
+                                    title={
+                                        query.trim()
+                                            ? 'NO ENCONTRAMOS ESO'
+                                            : 'PRODUCTOS DIGITALES, PRÓXIMAMENTE'
+                                    }
+                                    description={
+                                        query.trim()
+                                            ? 'Prueba otra búsqueda para encontrar productos digitales.'
+                                            : emptyCopy(type)
+                                    }
+                                    action={
+                                        query.trim() ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setValue('');
+                                                    visit({ q: '' });
+                                                }}
+                                                className="discovery-primary-action"
+                                            >
+                                                LIMPIAR BÚSQUEDA
+                                            </button>
+                                        ) : undefined
+                                    }
+                                />
+                            ) : null}
+                            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+                                {isDigital
+                                    ? digitalProducts.map((product) => (
+                                          <DigitalCard
+                                              key={product.id}
+                                              product={product}
+                                          />
+                                      ))
+                                    : isPlaces
+                                      ? places.map((place, index) => (
+                                            <PartnerResult
+                                                key={place.id}
+                                                partner={place}
+                                                priority={index < 3}
+                                            />
+                                        ))
+                                      : opportunities.map(
+                                            (opportunity, position) => (
+                                                <OpportunityCard
+                                                    key={`${opportunity.type}-${opportunity.source_id}`}
+                                                    opportunity={opportunity}
+                                                    surface={opportunitySurface}
+                                                    section="RESULTS"
+                                                    position={position}
+                                                    variant="explore-grid"
+                                                />
+                                            ),
+                                        )}
+                            </div>
+                            {pagination.next_page_url ? (
+                                <div className="mt-8 flex justify-center">
+                                    <button
+                                        type="button"
+                                        onClick={loadMore}
+                                        disabled={loading}
+                                        className="discovery-primary-action focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
+                                    >
+                                        {loading ? 'CARGANDO…' : 'CARGAR MÁS'}
+                                    </button>
+                                </div>
+                            ) : null}
+                            <span role="status" className="sr-only">
+                                {loading
+                                    ? 'Cargando resultados'
+                                    : `${results.length} resultados cargados`}
+                            </span>
+                        </section>
+                    ) : digitalProducts.length ? null : (
+                        <EmptyState
+                            className="mt-12"
+                            title="NO ENCONTRAMOS ESO"
+                            description={emptyCopy(type)}
+                            action={
+                                hasFilters ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setValue('');
+                                            router.get('/explorar');
+                                        }}
+                                        className="discovery-primary-action"
+                                    >
+                                        {type ? 'VER TODO' : 'LIMPIAR FILTROS'}
+                                    </button>
+                                ) : undefined
+                            }
+                        />
+                    )}
+                </section>
+            </main>
+        </>
+    );
 }

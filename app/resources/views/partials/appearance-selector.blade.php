@@ -1,1 +1,1 @@
-<select data-appearance-selector aria-label="Apariencia" class="min-h-11 rounded-xl border border-input bg-surface px-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-ring"><option value="light">Claro</option><option value="dark">Oscuro</option><option value="system">Sistema</option></select><span data-appearance-status role="status" class="text-sm text-danger"></span>
+<div data-appearance-menu class="inline-flex shrink-0"></div><span data-appearance-status role="status" class="text-sm text-danger"></span>

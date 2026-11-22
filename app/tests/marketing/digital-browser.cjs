@@ -12,9 +12,13 @@ async function login(p, role) {
  await p.locator('input[name=password]').fill('DigitalQa!123456');
  await p.locator('[data-test=login-button]').click(); await p.waitForURL(url=>!url.pathname.includes('/login')); await ready(p);
 }
+async function chooseTheme(p, mode) {
+ await p.getByRole('button',{name:/^Apariencia:/}).filter({visible:true}).first().click();
+ await p.getByRole('menuitemradio',{name:{light:'Claro',dark:'Oscuro',system:'Sistema'}[mode],exact:true}).click();
+}
 async function shot(p, label, width, mode) {
  await p.setViewportSize({width,height:width===390?844:1000});
- const theme=p.locator('select[aria-label="Apariencia"]:visible').first();await theme.selectOption(mode);
+ await chooseTheme(p,mode);
  await p.waitForFunction(m=>document.documentElement.dataset.appearance===m,mode);await p.waitForTimeout(200);
  assert.equal(await p.evaluate(()=>document.documentElement.classList.contains('dark')),mode==='dark');
  assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),label+' overflow');
@@ -29,11 +33,11 @@ async function shot(p, label, width, mode) {
  for(const width of [390,1440])for(const mode of ['light','dark'])await shot(page,'explore',width,mode);
  await page.goto(origin+'/productos-digitales');await ready(page);
  assert.equal(await page.getByRole('heading',{level:3}).count(),3);
- await page.getByLabel('Buscar productos digitales').fill('creatividad');await page.getByRole('button',{name:'Buscar',exact:true}).click();await ready(page);
+ await page.getByLabel('Buscar en Explorar').fill('creatividad');await page.waitForURL(/q=creatividad/);await ready(page);
  checks.push('global_catalog_search');
  await page.goto(origin+'/productos-digitales/guia-digital-qa-1');await ready(page);
  for(const width of [390,1440])for(const mode of ['light','dark'])await shot(page,'product',width,mode);
- await page.emulateMedia({colorScheme:'dark'});await page.locator('select[aria-label="Apariencia"]:visible').first().selectOption('system');await page.waitForFunction(()=>document.documentElement.classList.contains('dark'));checks.push('system_theme');
+ await page.emulateMedia({colorScheme:'dark'});await chooseTheme(page,'system');await page.waitForFunction(()=>document.documentElement.classList.contains('dark'));checks.push('system_theme');
  await page.getByRole('link',{name:'Iniciar sesión para comprar'}).click();await page.waitForURL(/login/);
  await page.locator('input[name=email]').fill('digital-buyer@qa.invalid');await page.locator('input[name=password]').fill('DigitalQa!123456');await page.locator('[data-test=login-button]').click();await page.waitForURL(url=>!url.pathname.includes('/login'));await ready(page);
  if(!page.url().includes('/productos-digitales/')){await page.goto(origin+'/productos-digitales/guia-digital-qa-1');await ready(page);}

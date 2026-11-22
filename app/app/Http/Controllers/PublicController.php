@@ -125,6 +125,19 @@ class PublicController extends Controller
     {
         $request->validate(['page' => 'nullable|integer|min:1', 'per_page' => 'nullable|integer|min:1|max:18', 'q' => 'nullable|string|max:200', 'sort' => 'nullable|in:featured,newest,name']);
         $sort = $request->query('sort') ?: 'featured';
+        if ($request->query('type') === 'digital') {
+            $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
+            $catalog = app(\App\Services\DigitalCatalog::class);
+            $page = $catalog->query($term, $sort)->paginate(18)->withQueryString();
+
+            return Inertia::render('explore', [
+                'query' => $term, 'category' => null, 'type' => 'digital', 'categories' => [], 'sort' => $sort,
+                'pagination' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'next_page_url' => $page->nextPageUrl()],
+                'opportunities' => Inertia::merge([])->matchOn('identity'),
+                'places' => Inertia::merge([])->matchOn('id'),
+                'digitalProducts' => Inertia::merge($page->getCollection()->map(fn ($product) => $catalog->present($product))->all())->matchOn('id'),
+            ]);
+        }
         $city = $selectedCity->resolve($request);
         $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
         $category = $request->query('category');
@@ -151,6 +164,7 @@ class PublicController extends Controller
             ? \App\Support\ListingPage::make($partners->when($sort === 'featured', fn ($q) => $q->orderByDesc('featured')->orderBy('sort_order'))
                 ->when($sort === 'newest', fn ($q) => $q->orderByRaw('published_at DESC NULLS LAST')->orderByDesc('id'), fn ($q) => $q->orderByRaw('lower(name)')->orderBy('id')), 18)
             : $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, max(1, $request->integer('page', 1)));
+
         return Inertia::render('explore', [
             'query' => $term,
             'category' => $category,

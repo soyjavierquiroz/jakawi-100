@@ -20,10 +20,10 @@ export default function DigitalShow({
     return (
         <>
             <Head title={p.name} />
-            <main className="mx-auto max-w-5xl px-5 pt-8 pb-28">
+            <main className="mx-auto w-full max-w-6xl px-[var(--space-gutter)] pt-8 pb-28 font-discovery text-foreground sm:px-6 lg:px-8 lg:pt-10">
                 <Link
                     href="/productos-digitales"
-                    className="text-brand underline"
+                    className="text-sm font-semibold text-brand underline underline-offset-4"
                 >
                     Productos digitales
                 </Link>
@@ -32,14 +32,14 @@ export default function DigitalShow({
                         <img
                             src={p.cover_url}
                             alt={p.name}
-                            className="w-full rounded-2xl"
+                            className="aspect-[5/4] w-full rounded-[var(--radius-card)] object-cover"
                         />
                     ) : null}
                     <section>
-                        <p className="text-sm font-bold text-brand">
+                        <p className="discovery-eyebrow text-brand">
                             Digital · disponible online
                         </p>
-                        <h1 className="mt-3 text-3xl font-extrabold sm:text-4xl">
+                        <h1 className="mt-3 text-[2rem] leading-tight font-extrabold tracking-[-0.05em] sm:text-5xl">
                             {p.name}
                         </h1>
                         <p className="mt-2 text-muted-foreground">

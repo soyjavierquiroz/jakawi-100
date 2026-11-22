@@ -1,3 +1,4 @@
+import { ExplorerCard } from '@/components/discovery/explorer-card';
 import { Link } from '@inertiajs/react';
 import { ExplorerPartnerAvatar } from '@/components/discovery/explorer-partner-avatar';
 import { JakawiImage } from '@/components/jakawi-image';
@@ -224,21 +225,13 @@ export function OpportunityCard({
     });
     if (variant === 'explore-grid') {
         return (
-            <Link
-                ref={elementRef}
-                href={opportunity.destination_url}
-                onClick={onOpen}
-                className="explorer-card group grid min-h-40 grid-cols-[42%_1fr] overflow-hidden rounded-[var(--radius-card)] bg-surface-elevated shadow-editorial transition duration-200 hover:-translate-y-0.5 hover:shadow-featured focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[.99] sm:block"
-            >
-                <div className="overflow-hidden bg-surface-muted sm:aspect-[5/4]">
-                    <JakawiImage
+            <ExplorerCard cardRef={elementRef} href={opportunity.destination_url} onOpen={onOpen} image={<JakawiImage
                         src={opportunity.image}
                         sizes="(min-width: 1024px) 29vw, (min-width: 640px) 44vw, 42vw"
                         alt={opportunity.title}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                         fallbackContent={false}
-                    />
-                </div>
+                    />}>
                 <div className={`explorer-card-copy min-w-0 p-4 sm:p-[var(--space-card)] ${opportunity.partner?.name?.trim() ? 'explorer-card-copy-with-avatar' : ''}`}>
                     <ExplorerPartnerAvatar name={opportunity.partner?.name} src={opportunity.partner?.logo_url} srcset={opportunity.partner?.logo_srcset} />
                     <p className="explorer-card-type discovery-eyebrow text-muted-foreground">
@@ -252,7 +245,7 @@ export function OpportunityCard({
                         DESCUBRIR ↗
                     </span>
                 </div>
-            </Link>
+            </ExplorerCard>
         );
     }
     const width = compact ? 'w-[72vw] sm:w-auto' : 'w-[80vw] sm:w-auto';

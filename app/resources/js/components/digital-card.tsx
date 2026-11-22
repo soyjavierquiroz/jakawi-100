@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { ExplorerCard } from '@/components/discovery/explorer-card';
+import { JakawiImage } from '@/components/jakawi-image';
 import { FileText } from 'lucide-react';
 export type DigitalProductData = {
     id: number;
@@ -25,47 +26,54 @@ export const digitalMoney = (amount: string | null, currency: string) =>
           }).format(Number(amount));
 export function DigitalCard({ product: p }: { product: DigitalProductData }) {
     return (
-        <Link
+        <ExplorerCard
             href={p.url}
-            className="block overflow-hidden rounded-2xl border border-border bg-surface shadow-sm transition hover:border-brand focus-visible:outline-2 focus-visible:outline-brand"
-        >
-            <div className="flex aspect-[16/9] items-center justify-center bg-surface-muted">
-                {p.cover_url ? (
-                    <img
+            image={
+                p.cover_url ? (
+                    <JakawiImage
                         src={p.cover_url}
-                        alt=""
-                        loading="lazy"
-                        className="h-full w-full object-cover"
+                        alt={p.name}
+                        sizes="(min-width: 1024px) 29vw, (min-width: 640px) 44vw, 42vw"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                 ) : (
-                    <FileText
-                        className="size-12 text-brand"
-                        aria-hidden="true"
-                    />
-                )}
-            </div>
-            <div className="p-5">
-                <p className="text-xs font-bold text-brand">
+                    <div className="flex h-full min-h-40 items-center justify-center">
+                        <FileText
+                            className="size-10 text-brand"
+                            aria-hidden="true"
+                        />
+                    </div>
+                )
+            }
+        >
+            <div className="explorer-card-copy min-w-0 p-4 sm:p-[var(--space-card)]">
+                <p className="explorer-card-type discovery-eyebrow text-muted-foreground">
                     Digital · disponible online
                 </p>
-                <h3 className="mt-2 text-xl font-extrabold">{p.name}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">
+                    {p.name}
+                </h3>
+                {p.short_description ? (
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed font-medium text-muted-foreground">
+                        {p.short_description}
+                    </p>
+                ) : null}
+                <p className="mt-2 text-sm font-medium text-muted-foreground">
                     {p.partner.name}
                 </p>
-                <p className="mt-3 text-sm">{p.short_description}</p>
-                <p className="mt-4 font-bold">
+                <p className="mt-3 text-base font-extrabold">
                     {digitalMoney(p.public_price, p.currency)}
                 </p>
                 {p.member_price ? (
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-xs font-semibold text-muted-foreground">
                         Con membresía activa:{' '}
                         {digitalMoney(p.member_price, p.currency)}
                     </p>
                 ) : null}
-                <span className="mt-4 inline-flex min-h-11 items-center font-semibold text-brand underline">
-                    Ver producto
+                <span className="mt-3 block text-xs font-extrabold tracking-[0.08em] text-brand">
+                    VER PRODUCTO ↗
                 </span>
             </div>
-        </Link>
+        </ExplorerCard>
     );
 }

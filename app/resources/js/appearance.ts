@@ -1,7 +1,17 @@
-import { initializeTheme, updateAppearance, type Appearance } from '@/hooks/use-appearance';
+import { createElement } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AppearanceMenu } from '@/components/appearance-menu';
+import { initializeTheme } from '@/hooks/use-appearance';
+
 initializeTheme();
-const selectors = document.querySelectorAll<HTMLSelectElement>('[data-appearance-selector]');
-const refresh = () => selectors.forEach((select) => { select.value = document.documentElement.dataset.appearance ?? 'system'; });
-refresh();
-document.addEventListener('appearancechange', refresh);
-selectors.forEach((select) => select.addEventListener('change', () => updateAppearance(select.value as Appearance, Boolean(document.documentElement.dataset.appearanceUser))));
+document
+    .querySelectorAll<HTMLElement>('[data-appearance-menu]')
+    .forEach((node) => {
+        createRoot(node).render(
+            createElement(AppearanceMenu, {
+                authenticated: Boolean(
+                    document.documentElement.dataset.appearanceUser,
+                ),
+            }),
+        );
+    });
