@@ -29,9 +29,10 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
         {page.props.canSupport === true && <Link href="/admin/soporte" onClick={onNavigate} aria-current={path === '/admin/soporte' || path.startsWith('/admin/soporte/') ? 'page' : undefined}>Usuarios · Ver como usuario</Link>}
         {groups.map((group, index) => {
             const Icon = icons[index];
-            const open = !closed.includes(group.id);
+            const isActive = group.links.some(([href]) => href === active);
+            const open = isActive || !closed.includes(group.id);
             return <section key={group.id} className="admin-nav-group">
-                <h2><button type="button" aria-expanded={open} aria-controls={`admin-group-${group.id}`} onClick={() => toggle(group.id)}><Icon aria-hidden="true" size={17} /><span>{group.label}</span><ChevronDown aria-hidden="true" size={16} className="admin-nav-chevron" /></button></h2>
+                <h2><button type="button" aria-expanded={open} aria-disabled={isActive || undefined} title={isActive ? 'La sección de la página actual permanece abierta' : undefined} aria-controls={`admin-group-${group.id}`} onClick={() => { if (!isActive) toggle(group.id); }}><Icon aria-hidden="true" size={17} /><span>{group.label}</span><ChevronDown aria-hidden="true" size={16} className="admin-nav-chevron" /></button></h2>
                 <div id={`admin-group-${group.id}`} hidden={!open}>
                     {group.links.map(([href, label]) => href === '/admin/conciliacion-membresias'
                         ? <a key={href} href={href} aria-current={active === href ? 'page' : undefined}>{label}</a>

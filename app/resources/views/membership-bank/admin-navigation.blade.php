@@ -21,7 +21,7 @@ $icons = ['operation' => 'M3 10h18M5 10v11h14V10M3 10l2-7h14l2 7M9 21v-7h6v7', '
    const content = document.getElementById(button.getAttribute('aria-controls')), id = content.id.replace('admin-group-', '');
    const update = open => { button.setAttribute('aria-expanded', String(open)); content.hidden = !open; };
    update(!closed.includes(id) || !!content.querySelector('[aria-current="page"]'));
-   button.addEventListener('click', () => { const open = button.getAttribute('aria-expanded') !== 'true'; update(open); closed = closed.filter(value => value !== id); if (!open) closed.push(id); try { sessionStorage.setItem(key, JSON.stringify(closed)); } catch {} });
+   button.addEventListener('click', () => { if (content.querySelector('[aria-current="page"]')) return; const open = button.getAttribute('aria-expanded') !== 'true'; update(open); closed = closed.filter(value => value !== id); if (!open) closed.push(id); try { sessionStorage.setItem(key, JSON.stringify(closed)); } catch {} });
  });
  const update = () => { dialog.close(); trigger.setAttribute('aria-expanded', 'false'); trigger.hidden = media.matches; (media.matches ? desktopNav : dialog).append(nav); };
  trigger.addEventListener('click', () => { dialog.showModal(); trigger.setAttribute('aria-expanded', 'true'); });
