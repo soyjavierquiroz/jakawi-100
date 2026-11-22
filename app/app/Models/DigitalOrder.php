@@ -15,7 +15,7 @@ class DigitalOrder extends Model
     protected static function booted(): void
     {
         static::updating(function (self $order): void {
-            PrelaunchOperations::assertAllowed();
+            PrelaunchOperations::assertDigitalAllowed($order);
             $mutable = ['status', 'confirmed_at', 'refunded_at', 'updated_at'];
             if (array_diff(array_keys($order->getDirty()), $mutable)) {
                 throw new \DomainException('El precio, producto, comprador y condiciones aceptados son inmutables.');

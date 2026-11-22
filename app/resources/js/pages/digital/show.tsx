@@ -40,7 +40,7 @@ export default function DigitalShow({
                     ) : null}
                     <section>
                         <p className="discovery-eyebrow text-brand">
-                            {p.coming_soon ? 'Digital · Próximamente' : 'Digital · disponible online'}
+                            {p.coming_soon ? 'Digital · Próximamente' : (canCollect ? 'Disponible' : 'Digital')}
                         </p>
                         <h1 className="mt-3 text-[2rem] leading-tight font-extrabold tracking-[-0.05em] sm:text-5xl">
                             {p.name}
@@ -58,7 +58,7 @@ export default function DigitalShow({
                                 {digitalMoney(p.member_price, p.currency)}
                             </p>
                         ) : null}
-                        {!p.coming_soon && !preview && !prelaunch && canCollect && p.public_price ? (
+                        {!p.coming_soon && !preview && canCollect && p.public_price ? (
                             <div className="mt-6">
                                 {authenticated ? (
                                     <button
@@ -69,7 +69,7 @@ export default function DigitalShow({
                                         }
                                         className="min-h-12 rounded-xl bg-brand px-6 font-bold text-brand-foreground"
                                     >
-                                        Comprar ·{' '}
+                                        COMPRAR AHORA ·{' '}
                                         {digitalMoney(
                                             memberActive && p.member_price
                                                 ? p.member_price
@@ -82,7 +82,7 @@ export default function DigitalShow({
                                         className="inline-flex min-h-12 items-center rounded-xl bg-brand px-6 font-bold text-brand-foreground"
                                         href={`/productos-digitales/${p.slug}/comprar`}
                                     >
-                                        Iniciar sesión para comprar
+                                        COMPRAR AHORA
                                     </Link>
                                 )}
                                 <p className="mt-3 text-sm text-muted-foreground">
@@ -97,7 +97,7 @@ export default function DigitalShow({
                             </p>
                         ))}
                         <p className="mt-6 rounded-xl border border-border bg-surface p-4">
-                            {p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.' : prelaunch
+                            {p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.' : prelaunch && !canCollect
                                 ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.'
                                 : canCollect
                                   ? 'Pago por QR con verificación bancaria.'

@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\{AppSetting, DigitalProduct};
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+
+/** Explicit, fail-closed exception for the first authorized digital product only. */
+class DigitalSaleAvailability
+{
+    public const KEY = 'gluteo_perfecto_sale_v1';
+
+    public function eligible(DigitalProduct $product): bool
+    {
+        return $product->slug === 'gluteo-perfecto' && $product->partner?->slug === 'jakawi-digital';
+    }
+
+    public function settings(DigitalProduct $product): array
+    {
+        $value = AppSetting::where('key', self::KEY)->first()?->value ?? [];
+        return ($value['product_id'] ?? null) === $product->id ? $value : [];
+    }
+
+    public function pdfVerified(DigitalProduct $product): bool
+    {
+        try {
+            $disk = Storage::disk('digital-private');
+            return filled($product->file_path) && filled($product->file_sha256)
+                && str_starts_with($product->file_path, 'products/')
+                && $disk->exists($product->file_path)
+                && hash_equals($product->file_sha256, hash('sha256', $disk->get($product->file_path)));
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    public function missing(DigitalProduct $product, ?array $settings = null): array
+    {
+        $settings ??= $this->settings($product);
+        $missing = [];
+        if (! $this->eligible($product)) $missing[] = 'Solo Glúteo Perfecto de JAKAWI Digital está autorizado para esta excepción.';
+        if (! DigitalProduct::published()->whereKey($product->id)->exists()) $missing[] = 'Publicar el producto y su Partner.';
+        if (! is_numeric($product->public_price) || DigitalCheckout::cents((string) $product->public_price) <= 0) $missing[] = 'Configurar el precio público definitivo.';
+        if (! $this->pdfVerified($product)) $missing[] = 'Subir y verificar el PDF privado.';
+        if (empty($settings['pdf_sha256']) || $settings['pdf_sha256'] !== $product->file_sha256) $missing[] = 'Confirmar que el PDF actual es el definitivo para compradores.';
+        if (! app(DigitalCollection::class)->readyFor($product->currency)) $missing[] = 'Configurar y autorizar cuenta exclusiva y QR en QR y cuenta digital.';
+        return $missing;
+    }
+
+    public function exceptionAllowed(DigitalProduct $product): bool
+    {
+        $settings = $this->settings($product);
+        return ($settings['enabled'] ?? false) === true && $this->missing($product, $settings) === [];
+    }
+
+    public function canSell(DigitalProduct $product): bool
+    {
+        if (config('jakawi.prelaunch_mode')) return $this->exceptionAllowed($product);
+        return ! $product->isComingSoon() && DigitalProduct::published()->whereKey($product->id)->exists()
+            && (float) $product->public_price > 0 && $this->pdfVerified($product)
+            && app(DigitalCollection::class)->readyFor($product->currency);
+    }
+
+    public function configure(DigitalProduct $product, bool $final, bool $enabled, int $adminId): void
+    {
+        abort_unless($this->eligible($product), 422, 'Excepción exclusiva de Glúteo Perfecto.');
+        $settings = ['product_id' => $product->id, 'pdf_sha256' => $final && $this->pdfVerified($product) ? $product->file_sha256 : null,
+            'enabled' => $enabled, 'authorized_by' => $adminId, 'authorized_at' => now()->toIso8601String()];
+        if ($enabled && ($missing = $this->missing($product, $settings))) {
+            throw ValidationException::withMessages(['sale_enabled' => implode(' ', $missing)]);
+        }
+        AppSetting::updateOrCreate(['key' => self::KEY], ['value' => $settings]);
+    }
+
+    public function adminState(DigitalProduct $product): array
+    {
+        $settings = $this->settings($product);
+        return ['eligible' => $this->eligible($product), 'enabled' => $settings['enabled'] ?? false,
+            'available' => $this->exceptionAllowed($product), 'pdf_verified' => $this->pdfVerified($product),
+            'pdf_final' => filled($settings['pdf_sha256'] ?? null) && $settings['pdf_sha256'] === $product->file_sha256,
+            'missing' => $this->missing($product)];
+    }
+}

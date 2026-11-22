@@ -4,6 +4,7 @@ import { digitalState } from '@/components/digital-state';
 type Order = {
     id: number;
     reference: string;
+    digital_allowed: boolean;
     product_name: string;
     amount: string;
     currency: string;
@@ -61,7 +62,7 @@ export default function Library({
                                 </Link>
                                 {o.access?.status === 'active' &&
                                 o.access.delivery_status === 'ready' &&
-                                !prelaunchMode ? (
+                                (!prelaunchMode || o.digital_allowed) ? (
                                     <a
                                         className="inline-flex min-h-11 items-center font-bold text-brand underline"
                                         href={`/mi-jakawi/productos-digitales/accesos/${o.access.id}/pdf`}

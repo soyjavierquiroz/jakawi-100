@@ -19,6 +19,7 @@ Route::middleware('web')->group(function () {
         Route::get('/mi-jakawi/productos-digitales/accesos/{access}/pdf', [DigitalOrderController::class, 'download'])->name('digital.download');
     });
     Route::middleware(['auth', 'admin', 'throttle:60,1'])->prefix('admin/digital')->group(function () {
+        Route::get('/cobro/qr', [AdminDigitalSalesController::class, 'collectionQr'])->name('admin.digital.collection.qr');
         Route::get('/cobro', [AdminDigitalSalesController::class, 'settings'])->name('admin.digital.collection');
         Route::post('/cobro', [AdminDigitalSalesController::class, 'saveSettings'])->name('admin.digital.collection.save');
         Route::get('/pedidos', [AdminDigitalSalesController::class, 'index'])->name('admin.digital.orders');

@@ -12,9 +12,11 @@ type Settings = {
 export default function Settings({
     settings: s,
     ready,
+    hasQr,
 }: {
     settings: Settings | null;
     ready: boolean;
+    hasQr: boolean;
 }) {
     const form = useForm({
         bank: s?.bank ?? '',
@@ -34,13 +36,12 @@ export default function Settings({
                 className="mb-5 rounded-xl border border-border p-4 font-semibold"
             >
                 {ready
-                    ? 'Cobro configurado · sujeto a PRELAUNCH'
+                    ? 'Cuenta y QR autorizados para cobro digital'
                     : 'Cobro pendiente de configurar'}
             </p>
             <p className="mb-5 text-muted-foreground">
                 La cuenta debe ser exclusiva de JAKAWI Digital. Esta
-                configuración no cambia membresías ni habilita ventas durante
-                PRELAUNCH.
+                configuración permite autorizar la venta de Glúteo Perfecto desde su editor. PRELAUNCH permanece activo para el resto de COM.
             </p>
             <form
                 className="grid max-w-2xl gap-5"
@@ -79,6 +80,7 @@ export default function Settings({
                         <option>USD</option>
                     </select>
                 </label>
+                {hasQr && <a className="text-brand underline" href="/admin/digital/cobro/qr" target="_blank" rel="noreferrer">Revisar QR digital actual</a>}
                 <label className="grid gap-2">
                     QR propio (PNG/JPG, máximo 10 MB)
                     <input
@@ -102,7 +104,7 @@ export default function Settings({
                         ],
                         [
                             'enabled',
-                            'Guardar el cobro como configurado (PRELAUNCH sigue bloqueando ventas).',
+                            'Autorizar esta cuenta y QR para cobros de JAKAWI Digital.',
                         ],
                     ] as const
                 ).map(([key, label]) => (

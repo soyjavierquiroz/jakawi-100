@@ -91,6 +91,11 @@ class LoginResponse implements LoginResponseContract
             return $slug === $path || $slug === '' || ! Str::contains($slug, '/') || $user->partners()->where('slug', Str::before($slug, '/'))->exists();
         }
 
+        if ($path === '/productos-digitales/gluteo-perfecto/comprar'
+            && (! parse_url($intended, PHP_URL_HOST) || parse_url($intended, PHP_URL_HOST) === $request->getHost())) {
+            return true;
+        }
+
         if ($path === '/admin' || Str::startsWith($path, '/admin/')) {
             return (bool) $user?->is_admin;
         }

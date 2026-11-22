@@ -25,7 +25,14 @@ class AdminDigitalSalesController extends Controller
             unset($v['qr_path'],$v['qr_sha256']);
         }
 
-        return Inertia::render('admin/digital/settings', ['settings' => $v, 'ready' => $collection->current() !== null]);
+        return Inertia::render('admin/digital/settings', ['settings' => $v, 'hasQr' => filled($collection->settings()['qr_path'] ?? null), 'ready' => $collection->current() !== null]);
+    }
+
+    public function collectionQr(DigitalCollection $collection, DigitalFiles $files)
+    {
+        $path = $collection->settings()['qr_path'] ?? null;
+        abort_unless($path, 404);
+        return $files->response($path, 'qr-jakawi-digital.'.pathinfo($path, PATHINFO_EXTENSION), false);
     }
 
     public function saveSettings(Request $request, DigitalCollection $collection, DigitalFiles $files)
@@ -67,7 +74,7 @@ class AdminDigitalSalesController extends Controller
 
     public function show(DigitalOrder $order)
     {
-        return Inertia::render('admin/digital/order', ['order' => $order->toArray() + ['collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency', 'account_key'])), 'buyer' => $order->user->only('name', 'email'), 'payments' => $order->payments()->orderByDesc('id')->get(), 'access' => $order->access], 'audit' => AuditLog::where('subject_type', DigitalOrder::class)->where('subject_id', $order->id)->latest('id')->get(['id', 'action', 'metadata', 'created_at']), 'prelaunch' => PrelaunchOperations::blocked()]);
+        return Inertia::render('admin/digital/order', ['order' => $order->toArray() + ['collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency', 'account_key'])), 'buyer' => $order->user->only('name', 'email'), 'payments' => $order->payments()->orderByDesc('id')->get(), 'access' => $order->access], 'audit' => AuditLog::where('subject_type', DigitalOrder::class)->where('subject_id', $order->id)->latest('id')->get(['id', 'action', 'metadata', 'created_at']), 'prelaunch' => ! PrelaunchOperations::digitalAllowed($order), 'refundBlocked' => PrelaunchOperations::blocked()]);
     }
 
     public function file(DigitalPayment $payment, string $kind, DigitalFiles $files)
@@ -81,7 +88,7 @@ class AdminDigitalSalesController extends Controller
 
     public function confirm(Request $request, DigitalPayment $payment, DigitalCheckout $checkout)
     {
-        PrelaunchOperations::assertAllowed();
+        PrelaunchOperations::assertDigitalAllowed($payment);
         $data = $request->validate(['bank_reference' => 'required|string|max:150|regex:/^[A-Za-z0-9][A-Za-z0-9._-]{3,149}$/', 'bank_date' => 'required|date_format:Y-m-d|before_or_equal:today', 'received_amount' => 'required|decimal:0,2|gt:0', 'currency' => 'required|in:BOB,USD', 'account_key' => 'required|string|size:64', 'bank_verified' => 'accepted', 'statement' => 'required|file|mimes:pdf|max:25600']);
         $data['statement'] = $request->file('statement');
         $checkout->confirm($payment, $request->user(), $data);
@@ -91,7 +98,7 @@ class AdminDigitalSalesController extends Controller
 
     public function reject(Request $request, DigitalPayment $payment, DigitalCheckout $checkout)
     {
-        PrelaunchOperations::assertAllowed();
+        PrelaunchOperations::assertDigitalAllowed($payment);
         $data = $request->validate(['reason' => 'required|string|max:3000']);
         $checkout->reject($payment, $request->user(), $data['reason']);
 

@@ -221,6 +221,7 @@ export default function Order({
     order: o,
     audit,
     prelaunch,
+    refundBlocked,
 }: {
     order: Order;
     audit: {
@@ -230,6 +231,7 @@ export default function Order({
         metadata: Record<string, unknown>;
     }[];
     prelaunch: boolean;
+    refundBlocked: boolean;
 }) {
     const refund = useForm({
         reference: '',
@@ -335,7 +337,7 @@ export default function Order({
                         descargas.
                     </label>
                     <button
-                        disabled={prelaunch || refund.processing}
+                        disabled={refundBlocked || refund.processing}
                         className="min-h-12 rounded-xl border border-border"
                     >
                         Registrar y revocar acceso

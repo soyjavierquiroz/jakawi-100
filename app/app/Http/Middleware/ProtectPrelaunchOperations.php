@@ -40,7 +40,13 @@ final class ProtectPrelaunchOperations
     {
         [$controller, $method] = array_pad(explode('@', $request->route()?->getActionName() ?? ''), 2, '');
         if (in_array($method, self::ACTIONS[class_basename($controller)] ?? [], true)) {
-            PrelaunchOperations::assertAllowed();
+            $subject = match (class_basename($controller)) {
+                'DigitalOrderController' => $request->route('product') ?? $request->route('order') ?? $request->route('access'),
+                'AdminDigitalSalesController' => $method === 'refund' ? null : ($request->route('payment') ?? $request->route('access')),
+                default => null,
+            };
+            if ($subject instanceof \Illuminate\Database\Eloquent\Model) PrelaunchOperations::assertDigitalAllowed($subject);
+            else PrelaunchOperations::assertAllowed();
         }
 
         return $next($request);

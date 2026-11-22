@@ -44,7 +44,7 @@ class DigitalCheckout
 
     public function start(User $user, DigitalProduct $product): DigitalOrder
     {
-        PrelaunchOperations::assertAllowed();
+        PrelaunchOperations::assertDigitalAllowed($product);
 
         return $this->transaction(function () use ($user, $product) {
             $user = User::lockForUpdate()->findOrFail($user->id);
@@ -74,7 +74,7 @@ class DigitalCheckout
 
     public function report(DigitalOrder $order, User $user, UploadedFile $receipt): DigitalPayment
     {
-        PrelaunchOperations::assertAllowed();
+        PrelaunchOperations::assertDigitalAllowed($order);
 
         return $this->transaction(function () use ($order, $user, $receipt) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($order->id);
@@ -100,7 +100,7 @@ class DigitalCheckout
 
     public function confirm(DigitalPayment $payment, User $admin, array $evidence): DigitalOrder
     {
-        PrelaunchOperations::assertAllowed();
+        PrelaunchOperations::assertDigitalAllowed($payment);
         abort_unless($admin->is_admin, 403);
 
         return $this->transaction(function () use ($payment, $admin, $evidence) {
@@ -131,7 +131,7 @@ class DigitalCheckout
 
     public function deliver(DigitalAccessGrant $grant, User $admin): void
     {
-        PrelaunchOperations::assertAllowed();
+        PrelaunchOperations::assertDigitalAllowed($grant);
         abort_unless($admin->is_admin, 403);
         $this->transaction(function () use ($grant, $admin) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($grant->digital_order_id);
@@ -156,7 +156,7 @@ class DigitalCheckout
 
     public function reject(DigitalPayment $payment, User $admin, string $reason): void
     {
-        PrelaunchOperations::assertAllowed();
+        PrelaunchOperations::assertDigitalAllowed($payment);
         abort_unless($admin->is_admin, 403);
         $this->transaction(function () use ($payment, $admin, $reason) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($payment->digital_order_id);

@@ -26,7 +26,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
 
-        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['coming_soon' => $product->isComingSoon(), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
+        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['coming_soon' => $product->isComingSoon(), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
     }
 
     public function save(Request $request, DigitalCatalog $catalog, DigitalFiles $files, ?DigitalProduct $product = null)
@@ -35,6 +35,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
         $data = $request->validate([
+            'pdf_final' => 'sometimes|boolean', 'sale_enabled' => 'sometimes|boolean',
             'name' => 'required|string|max:255', 'slug' => ['required', 'string', 'max:180', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('digital_products', 'slug')->ignore($product?->id)],
             'short_description' => 'nullable|string|max:1000', 'description' => 'nullable|string|max:30000', 'commercial_content' => 'nullable|string|max:30000',
             'status' => 'required|in:draft,published', 'public_price' => 'nullable|decimal:0,2|gt:0|max:99999999.99',
@@ -54,7 +55,7 @@ class AdminDigitalProductController extends Controller
         $stored = $request->hasFile('pdf') ? $files->store($request->file('pdf'), 'products') : null;
         $keep = $request->boolean('gallery_clear') ? [] : ($data['gallery_keep'] ?? ($product?->gallery_paths ?? []));
         abort_if(count($keep) + count($request->file('gallery', [])) > 8, 422, 'La galería admite hasta 8 imágenes.');
-        unset($data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
+        unset($data['pdf_final'], $data['sale_enabled'], $data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
         DB::transaction(function () use ($request, $data, $stored, $catalog, $keep, &$product) {
             $product ??= new DigitalProduct;
             $product->fill($data);
@@ -73,6 +74,9 @@ class AdminDigitalProductController extends Controller
             }
             $product->gallery_paths = $gallery;
             $product->save();
+            if ($request->has('sale_enabled') || $request->has('pdf_final')) {
+                app(\App\Services\DigitalSaleAvailability::class)->configure($product, $request->boolean('pdf_final'), $request->boolean('sale_enabled'), $request->user()->id);
+            }
             AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => 'digital_product_saved', 'subject_type' => DigitalProduct::class, 'subject_id' => $product->id, 'metadata' => ['status' => $product->status, 'file_sha256' => $product->file_sha256]]);
         });
 

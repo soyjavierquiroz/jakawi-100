@@ -22,19 +22,19 @@ class DigitalProductLandingPresenter
     {
         $comingSoon = $product->isComingSoon();
         $prelaunch = (bool) config('jakawi.prelaunch_mode');
-        $canBuy = ! $comingSoon && ! $preview && ! $prelaunch && DigitalProduct::published()->whereKey($product->id)->exists() && $product->public_price && $product->file_path && app(DigitalCollection::class)->readyFor($product->currency);
+        $canBuy = ! $preview && app(DigitalSaleAvailability::class)->canSell($product);
         return [
             'product' => app(DigitalCatalog::class)->present($product),
             'presentation' => $presentation->only(['id', 'name', 'slug', 'status', 'hero_alt', 'hero_layout', 'density', 'marketing_theme', 'media_mode']),
-            'copy' => ['eyebrow' => $comingSoon ? 'Disponible próximamente' : ($presentation->eyebrow ?: 'Producto digital'), 'headline' => $presentation->headline ?: $product->name, 'subheadline' => $presentation->subheadline ?: $product->short_description, 'finalHeadline' => $presentation->final_cta_headline ?: 'Da el primer paso'],
-            'blocks' => app(LandingEditorialBlocks::class)->present($presentation->editorial_blocks ?? [], $preview, $comingSoon),
+            'copy' => ['eyebrow' => $comingSoon ? 'Disponible próximamente' : ($canBuy ? 'Disponible' : ($presentation->eyebrow ?: 'Producto digital')), 'headline' => $presentation->headline ?: $product->name, 'subheadline' => $presentation->subheadline ?: $product->short_description, 'finalHeadline' => $presentation->final_cta_headline ?: 'Da el primer paso'],
+            'blocks' => app(LandingEditorialBlocks::class)->present($presentation->editorial_blocks ?? [], $preview, $product->landingPresentations()->where('status', 'PUBLISHED')->whereJsonContains('editorial_blocks', [['type' => 'hero', 'availability' => 'COMING_SOON']])->exists()),
             'heroUrl' => app(MediaUrl::class)->url($presentation->hero_path ?: $product->cover_path, 'hero'),
             'vsl' => app(LandingVideoConfiguration::class)->forPresentation($presentation),
             'preview' => $preview, 'noindex' => $preview || $prelaunch, 'prelaunch' => $prelaunch,
             'authenticated' => $request->user() !== null, 'canBuy' => (bool) $canBuy,
             'memberActive' => $request->user()?->hasActiveMembership() ?? false,
             'checkoutUrl' => route('digital.orders.start', $product, false),
-            'notice' => $comingSoon ? 'Disponible próximamente. Presentación editorial en revisión; las compras y la entrega todavía no están habilitadas.' : ($preview ? 'Vista previa editorial. Las compras están desactivadas.' : ($prelaunch ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.' : ($canBuy ? 'Pago por QR de JAKAWI Digital, con verificación bancaria. Descarga privada después de confirmar el pago.' : 'La compra todavía no está disponible.'))),
+            'notice' => $comingSoon ? 'Disponible próximamente. Presentación editorial en revisión; las compras y la entrega todavía no están habilitadas.' : ($preview ? 'Vista previa editorial. Las compras están desactivadas.' : ($prelaunch && ! $canBuy ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.' : ($canBuy ? 'Pago por QR de JAKAWI Digital, con verificación bancaria. Descarga privada después de confirmar el pago.' : 'La compra todavía no está disponible.'))),
         ];
     }
 }
