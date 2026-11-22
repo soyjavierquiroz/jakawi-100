@@ -27,6 +27,12 @@ $icons = ['operation' => 'M3 10h18M5 10v11h14V10M3 10l2-7h14l2 7M9 21v-7h6v7', '
  const update = () => { dialog.close(); trigger.setAttribute('aria-expanded', 'false'); trigger.hidden = media.matches; (media.matches ? desktopNav : dialog).append(nav); };
  trigger.addEventListener('click', () => { dialog.showModal(); trigger.setAttribute('aria-expanded', 'true'); });
  dialog.querySelector('button').addEventListener('click', () => dialog.close());
+ dialog.addEventListener('keydown', event => {
+   if (event.key !== 'Tab') return;
+   const items = Array.from(dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')).filter(item => item.getClientRects().length), first = items[0], last = items[items.length - 1];
+   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+ });
  dialog.addEventListener('close', () => trigger.setAttribute('aria-expanded', 'false'));
  dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
  media.addEventListener('change', update); update();

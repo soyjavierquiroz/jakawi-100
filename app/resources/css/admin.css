@@ -999,3 +999,6 @@ no page-owned style block. */
 .admin-shell:not(.admin-blade) .admin-content button.border-destructive {
   border-color: var(--danger);
 }
+
+/* The current section stays open and keeps the same readable heading style. */
+.admin-shell .admin-nav [aria-disabled="true"] { opacity: 1; cursor: default; }
