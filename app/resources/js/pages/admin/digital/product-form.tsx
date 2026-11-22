@@ -14,6 +14,7 @@ type Product = {
     support_information: string | null;
     access_terms: string | null;
     has_file: boolean;
+    qrs?: Record<'public'|'member', {has_file:boolean; verified:boolean; amount:string|null; currency:string}>;
     sale?: {eligible:boolean; enabled:boolean; available:boolean; pdf_verified:boolean; pdf_final:boolean; missing:string[]};
     coming_soon?: boolean;
     category?: string;
@@ -29,6 +30,10 @@ export default function ProductForm({
 }) {
     const form = useForm({
         ...(p?.sale?.eligible ? {pdf_final: p.sale.pdf_final, sale_enabled: p.sale.enabled} : {}),
+        public_qr: null as File | null,
+        member_qr: null as File | null,
+        public_qr_confirmed: p?.qrs?.public.verified ?? false,
+        member_qr_confirmed: p?.qrs?.member.verified ?? false,
         category: p?.category ?? 'fitness',
         gallery: [] as File[],
         gallery_keep: p?.gallery_paths ?? [],
@@ -54,7 +59,7 @@ export default function ProductForm({
         ['description', 'Descripción completa'],
         ['commercial_content', 'Contenido comercial'],
         ['public_price', 'Precio público'],
-        ['member_price', 'Precio miembro opcional'],
+        ['member_price', 'Precio miembro'],
         ['support_information', 'Información de soporte'],
         ['access_terms', 'Condiciones de acceso'],
     ] as const;
@@ -81,7 +86,7 @@ export default function ProductForm({
                     {p.sale.missing.map(item => <p key={item}>{item}</p>)}
                     <a className="text-brand underline" href="/admin/digital/cobro">Configurar QR y cuenta digital</a>
                     <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>Confirmo que el PDF es definitivo y está preparado para entrega a compradores.</label>
-                    <label className="flex gap-3"><input type="checkbox" checked={form.data.sale_enabled ?? false} onChange={e=>form.setData('sale_enabled',e.target.checked)}/>Autorizar venta real exclusivamente de Glúteo Perfecto. Requiere completar precio, publicación, PDF definitivo y cobro.</label>
+                    <label className="flex gap-3"><input type="checkbox" checked={form.data.sale_enabled ?? false} onChange={e=>form.setData('sale_enabled',e.target.checked)}/>Autorizar venta real exclusivamente de Glúteo Perfecto. Requiere completar ambos precios y QR confirmados, publicación, PDF definitivo y cuenta autorizada.</label>
                 </section>}
                 {fields.map(([key, label]) => (
                     <label key={key} className="grid gap-2 font-semibold">
@@ -95,9 +100,11 @@ export default function ProductForm({
                             <textarea
                                 className="min-h-28 rounded-xl border border-border bg-surface p-3"
                                 value={form.data[key]}
-                                onChange={(e) =>
-                                    form.setData(key, e.target.value)
-                                }
+                                onChange={(e) => {
+                                    form.setData(key, e.target.value);
+                                    if (key === 'public_price') form.setData('public_qr_confirmed', false);
+                                    if (key === 'member_price') form.setData('member_qr_confirmed', false);
+                                }}
                             />
                         ) : (
                             <input
@@ -124,7 +131,7 @@ export default function ProductForm({
                     <select
                         value={form.data.currency}
                         onChange={(e) =>
-                            form.setData('currency', e.target.value)
+                            { form.setData('currency', e.target.value); form.setData('public_qr_confirmed', false); form.setData('member_qr_confirmed', false); }
                         }
                         className="min-h-12 rounded-xl border border-border bg-surface px-3"
                     >
@@ -132,6 +139,15 @@ export default function ProductForm({
                         <option>USD</option>
                     </select>
                 </label>
+                {(['public','member'] as const).map(tier => <section key={tier} className="grid gap-4 rounded-xl border border-border p-5">
+                    <label className="grid gap-2 font-semibold">{tier === 'public' ? 'QR público' : 'QR miembro'} (PNG/JPG, máximo 10 MB)
+                        <input type="file" accept="image/png,image/jpeg" onChange={e=>{form.setData(`${tier}_qr`, e.target.files?.[0] ?? null); form.setData(`${tier}_qr_confirmed`, false);}}/>
+                    </label>
+                    <p role="status">{p?.qrs?.[tier].verified ? 'Verificado para el precio, moneda y cuenta actuales' : 'Pendiente de cargar o volver a confirmar'}</p>
+                    <p>Importe fijo: {tier === 'public' ? form.data.public_price || 'Pendiente' : form.data.member_price || 'Pendiente'} {form.data.currency}. Cuenta compartida: <a className="text-brand underline" href="/admin/digital/cobro">Cobro digital</a>.</p>
+                    {p?.qrs?.[tier].has_file && <a className="text-brand underline" href={`/admin/productos-digitales/${p.slug}/qr/${tier}`} target="_blank" rel="noreferrer">Revisar QR {tier === 'public' ? 'público' : 'miembro'} actual</a>}
+                    <label className="flex items-start gap-3"><input type="checkbox" checked={form.data[`${tier}_qr_confirmed`]} onChange={e=>form.setData(`${tier}_qr_confirmed`,e.target.checked)}/>Confirmo que el QR {tier === 'public' ? 'público' : 'miembro'} pertenece a la cuenta exclusiva de JAKAWI Digital, es reutilizable y cobra el importe fijo y la moneda indicados.</label>
+                </section>)}
                 <label className="grid gap-2">
                     Estado
                     <select

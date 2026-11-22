@@ -7,16 +7,13 @@ type Settings = {
     currency: string;
     enabled: boolean;
     exclusive_account: boolean;
-    variable_amount_qr: boolean;
 };
 export default function Settings({
     settings: s,
     ready,
-    hasQr,
 }: {
     settings: Settings | null;
     ready: boolean;
-    hasQr: boolean;
 }) {
     const form = useForm({
         bank: s?.bank ?? '',
@@ -25,8 +22,6 @@ export default function Settings({
         currency: s?.currency ?? 'BOB',
         enabled: s?.enabled ?? false,
         exclusive_account: s?.exclusive_account ?? false,
-        variable_amount_qr: s?.variable_amount_qr ?? false,
-        qr: null as File | null,
     });
     return (
         <AdminLayout title="QR y cuenta de JAKAWI Digital">
@@ -36,11 +31,11 @@ export default function Settings({
                 className="mb-5 rounded-xl border border-border p-4 font-semibold"
             >
                 {ready
-                    ? 'Cuenta y QR autorizados para cobro digital'
+                    ? 'Cuenta autorizada para cobro digital'
                     : 'Cobro pendiente de configurar'}
             </p>
             <p className="mb-5 text-muted-foreground">
-                La cuenta debe ser exclusiva de JAKAWI Digital. Esta
+                La cuenta debe ser exclusiva de JAKAWI Digital. Cada producto tiene sus QR público y miembro de importe fijo en su editor. Esta
                 configuración permite autorizar la venta de Glúteo Perfecto desde su editor. PRELAUNCH permanece activo para el resto de COM.
             </p>
             <form
@@ -80,18 +75,6 @@ export default function Settings({
                         <option>USD</option>
                     </select>
                 </label>
-                {hasQr && <a className="text-brand underline" href="/admin/digital/cobro/qr" target="_blank" rel="noreferrer">Revisar QR digital actual</a>}
-                <label className="grid gap-2">
-                    QR propio (PNG/JPG, máximo 10 MB)
-                    <input
-                        type="file"
-                        accept="image/png,image/jpeg"
-                        onChange={(e) =>
-                            form.setData('qr', e.target.files?.[0] ?? null)
-                        }
-                        required={!s}
-                    />
-                </label>
                 {(
                     [
                         [
@@ -99,12 +82,8 @@ export default function Settings({
                             'Confirmo que esta cuenta es exclusiva de JAKAWI Digital y no recibe pagos de membresías.',
                         ],
                         [
-                            'variable_amount_qr',
-                            'He verificado que el QR permite pagar el importe y la moneda de cada pedido.',
-                        ],
-                        [
                             'enabled',
-                            'Autorizar esta cuenta y QR para cobros de JAKAWI Digital.',
+                            'Autorizar esta cuenta para cobros de JAKAWI Digital.',
                         ],
                     ] as const
                 ).map(([key, label]) => (

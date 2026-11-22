@@ -50,12 +50,12 @@ export default function DigitalShow({
                         </p>
                         <p className="mt-5 text-lg">{p.short_description}</p>
                         <p className="mt-6 text-2xl font-extrabold">
-                            {p.coming_soon ? 'Disponible próximamente' : digitalMoney(p.public_price, p.currency)}
+                            {p.public_price ? digitalMoney(memberActive && p.member_price ? p.member_price : p.public_price, p.currency) : (p.coming_soon ? 'Disponible próximamente' : 'Precio por configurar')}
                         </p>
                         {p.member_price ? (
                             <p className="mt-2">
-                                Precio con membresía activa:{' '}
-                                {digitalMoney(p.member_price, p.currency)}
+                                {memberActive ? 'Precio normal:' : 'Precio con membresía activa:'}{' '}
+                                {digitalMoney(memberActive ? p.public_price : p.member_price, p.currency)}
                             </p>
                         ) : null}
                         {!p.coming_soon && !preview && canCollect && p.public_price ? (

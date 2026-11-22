@@ -35,6 +35,7 @@ class DigitalSaleActivationTest extends TestCase
         $p->update(['public_price'=>'20.00', 'member_price'=>'12.50', 'file_path'=>$pdf['path'], 'file_sha256'=>$pdf['sha256']]);
         Storage::disk('digital-private')->put('qr/qa.png', 'QA ONLY');
         AppSetting::updateOrCreate(['key'=>DigitalCollection::KEY], ['value'=>['enabled'=>true,'exclusive_account'=>true,'variable_amount_qr'=>true,'bank'=>'QA BANK SIMULATED','holder'=>'QA ONLY','account'=>'QA-NOT-REAL','currency'=>'BOB','version'=>'qa-1','account_key'=>hash('sha256','qa-only'),'qr_path'=>'qr/qa.png','qr_sha256'=>hash('sha256','QA ONLY')]]);
+        foreach (['public','member'] as $tier) app(\App\Services\DigitalProductQr::class)->save($p, $tier, UploadedFile::fake()->image('QA-ONLY-'.$tier.'.png'), true, $admin->id);
         app(DigitalSaleAvailability::class)->configure($p, true, true, $admin->id);
     }
 
@@ -52,13 +53,14 @@ class DigitalSaleActivationTest extends TestCase
             $buyer=User::factory()->create();
             if ($member) {
                 config(['jakawi.prelaunch_mode'=>false]);
-                Membership::create(['user_id'=>$buyer->id,'status'=>'active','type'=>'standard','starts_at'=>now()->subDay(),'ends_at'=>now()->addDay(),'amount_paid'=>'100.00']);
+                Membership::create(['user_id'=>$buyer->id,'status'=>'active','type'=>'standard','starts_at'=>now()->subDay(),'ends_at'=>now()->addMinute(),'amount_paid'=>'100.00']);
                 config(['jakawi.prelaunch_mode'=>true]);
             }
             $this->actingAs($buyer)->get('/productos-digitales/gluteo-perfecto/comprar')->assertOk()->assertInertia(fn(Assert $a)=>$a->where('canCollect',true)->where('memberActive',$member));
             $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect();
             $o=DigitalOrder::where('user_id',$buyer->id)->sole(); $base='/mi-jakawi/productos-digitales/pedidos/'.$o->reference;
             $this->assertSame($member?'12.50':'20.00',$o->amount);
+            if ($member) { $this->travel(2)->minutes(); $this->assertFalse($buyer->hasActiveMembership()); $this->assertSame('12.50',$o->fresh()->amount); }
             $this->get($base)->assertInertia(fn(Assert $a)=>$a->where('prelaunch',false));
             $this->get($base.'/qr')->assertOk();
             $this->post($base.'/comprobante',['receipt'=>$this->pdf('receipt-'.$buyer->id)])->assertRedirect();
@@ -77,6 +79,7 @@ class DigitalSaleActivationTest extends TestCase
             $url='/mi-jakawi/productos-digitales/accesos/'.$grant->id.'/pdf';
             foreach ([1,2] as $_) $this->get($url)->assertOk()->assertHeader('Content-Type','application/pdf')->assertSee('QA ONLY - NOT FOR SALE',false);
             $this->actingAs(User::factory()->create())->get($url)->assertForbidden();
+            $this->travelBack();
         }
         $this->assertDatabaseCount('digital_access_grants',2);
         $this->assertEquals($blocks,LandingPresentation::where('slug','gluteo-perfecto')->value('editorial_blocks'));

@@ -62,8 +62,10 @@ class DigitalCheckout
             }
             abort_if(DigitalAccessGrant::where('user_id', $user->id)->where('digital_product_id', $product->id)->where('status', 'active')->exists(), 422, 'Ya tienes este producto en tu biblioteca.');
             abort_unless($product->public_price && $product->file_path && Storage::disk('digital-private')->exists($product->file_path), 422, 'Producto pendiente de preparar.');
+            \App\Models\AppSetting::where('key', app(DigitalProductQr::class)->key($product))->lockForUpdate()->first();
+            abort_unless(app(DigitalProductQr::class)->missing($product) === [], 422, 'Completa ambos precios y QR del producto.');
             $membership = $user->activeMembership()->lockForUpdate()->first();
-            $order = DigitalOrder::create(['reference' => (string) Str::uuid(), 'user_id' => $user->id, 'digital_product_id' => $product->id, 'partner_id' => $product->partner_id, 'product_name' => $product->name, 'product_slug' => $product->slug, 'public_price' => $product->public_price, 'amount' => $membership && $product->member_price !== null ? $product->member_price : $product->public_price, 'currency' => $product->currency, 'member_at_purchase' => $membership !== null, 'membership_id' => $membership?->id, 'file_path' => $product->file_path, 'file_sha256' => $product->file_sha256, 'access_terms' => $product->access_terms, 'support_information' => $product->support_information, 'collection_snapshot' => app(DigitalCollection::class)->current(), 'status' => 'pending', 'expires_at' => now()->addHours(24)]);
+            $order = DigitalOrder::create(['reference' => (string) Str::uuid(), 'user_id' => $user->id, 'digital_product_id' => $product->id, 'partner_id' => $product->partner_id, 'product_name' => $product->name, 'product_slug' => $product->slug, 'public_price' => $product->public_price, 'amount' => $membership && $product->member_price !== null ? $product->member_price : $product->public_price, 'currency' => $product->currency, 'member_at_purchase' => $membership !== null, 'membership_id' => $membership?->id, 'file_path' => $product->file_path, 'file_sha256' => $product->file_sha256, 'access_terms' => $product->access_terms, 'support_information' => $product->support_information, 'collection_snapshot' => app(DigitalProductQr::class)->snapshot($product, $membership !== null), 'status' => 'pending', 'expires_at' => now()->addHours(24)]);
             $this->audit($user, 'digital_order_started', $order);
             app(DigitalMeasurement::class)->record('digital_checkout_started', $order, $order);
             app(DigitalMeasurement::class)->record('digital_order_pending', $order, $order);
@@ -81,7 +83,7 @@ class DigitalCheckout
             abort_unless($order->user_id === $user->id, 403);
             abort_unless($order->status === 'pending' && $order->expires_at->isFuture(), 422, 'Pedido vencido o ya procesado.');
             \App\Models\AppSetting::where('key', DigitalCollection::KEY)->lockForUpdate()->first();
-            abort_unless(app(DigitalCollection::class)->readyFor($order->currency) && app(DigitalCollection::class)->current()['version'] === $order->collection_snapshot['version'], 422, 'La configuración de cobro cambió. Contacta con soporte.');
+            abort_unless(app(DigitalProductQr::class)->orderReady($order), 422, 'La configuración de cobro cambió. Contacta con soporte.');
             $hash = hash_file('sha256', $receipt->getRealPath());
             $existing = DigitalPayment::where('receipt_sha256', $hash)->first();
             if ($existing) {

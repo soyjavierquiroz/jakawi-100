@@ -69,8 +69,7 @@ export default function Order({
                             Cuenta: {o.collection.account}
                         </p>
                         <p className="mt-3 text-sm">
-                            Introduce el importe exacto y la referencia del
-                            pedido. Comprueba el destinatario en tu banco antes
+                            Este QR cobra el importe fijo del pedido. Incluye la referencia del pedido si tu banco lo permite. Comprueba el destinatario en tu banco antes
                             de pagar.
                         </p>
                         <p className="mt-2 text-sm text-muted-foreground">

@@ -19,7 +19,7 @@ class DigitalOrderController extends Controller
 {
     public function start(Request $request, DigitalProduct $product, DigitalCheckout $checkout)
     {
-        $request->validate(['amount' => 'prohibited', 'price' => 'prohibited', 'currency' => 'prohibited', 'member_price' => 'prohibited']);
+        $request->validate(['amount' => 'prohibited', 'price' => 'prohibited', 'currency' => 'prohibited', 'member_price' => 'prohibited', 'member_at_purchase' => 'prohibited', 'membership_id' => 'prohibited', 'qr_tier' => 'prohibited', 'qr_path' => 'prohibited']);
         $order = $checkout->start($request->user(), $product);
 
         return redirect('/mi-jakawi/productos-digitales/pedidos/'.$order->reference);
@@ -29,14 +29,14 @@ class DigitalOrderController extends Controller
     {
         abort_unless($order->user_id === $request->user()->id, 404);
 
-        return Inertia::render('digital/order', ['order' => $order->toArray() + ['collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency'])), 'payments' => $order->payments()->orderByDesc('id')->get(['id', 'status', 'review_note', 'created_at']), 'access' => $order->access?->only(['id', 'status', 'delivery_status'])], 'prelaunch' => ! PrelaunchOperations::digitalAllowed($order), 'canCollect' => app(DigitalCollection::class)->readyFor($order->currency) && app(DigitalCollection::class)->current()['version'] === $order->collection_snapshot['version']]);
+        return Inertia::render('digital/order', ['order' => $order->toArray() + ['collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency'])), 'payments' => $order->payments()->orderByDesc('id')->get(['id', 'status', 'review_note', 'created_at']), 'access' => $order->access?->only(['id', 'status', 'delivery_status'])], 'prelaunch' => ! PrelaunchOperations::digitalAllowed($order), 'canCollect' => app(\App\Services\DigitalProductQr::class)->orderReady($order)]);
     }
 
     public function qr(Request $request, DigitalOrder $order, DigitalFiles $files)
     {
         PrelaunchOperations::assertDigitalAllowed($order);
         abort_unless($order->user_id === $request->user()->id, 404);
-        abort_unless($order->status === 'pending' && $order->expires_at->isFuture() && app(DigitalCollection::class)->readyFor($order->currency) && app(DigitalCollection::class)->current()['version'] === $order->collection_snapshot['version'], 422);
+        abort_unless($order->status === 'pending' && $order->expires_at->isFuture() && app(\App\Services\DigitalProductQr::class)->orderReady($order), 422);
 
         return $files->response($order->collection_snapshot['qr_path'], 'qr-digital.'.pathinfo($order->collection_snapshot['qr_path'], PATHINFO_EXTENSION), false);
     }

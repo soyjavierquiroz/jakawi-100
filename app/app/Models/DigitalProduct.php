@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DigitalProduct extends Model
 {
+    protected static function booted(): void
+    {
+        static::updated(function (self $product): void {
+            $tiers = [];
+            if ($product->wasChanged(['public_price','currency'])) $tiers[] = 'public';
+            if ($product->wasChanged(['member_price','currency'])) $tiers[] = 'member';
+            if ($tiers) app(\App\Services\DigitalProductQr::class)->invalidate($product, $tiers);
+        });
+    }
+
     protected $guarded = ['id'];
 
     protected $hidden = ['file_path', 'file_sha256'];

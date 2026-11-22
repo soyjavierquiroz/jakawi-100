@@ -42,10 +42,11 @@ class DigitalSaleAvailability
         if (! $this->eligible($product)) $missing[] = 'Solo Glúteo Perfecto de JAKAWI Digital está autorizado para esta excepción.';
         if (! DigitalProduct::published()->whereKey($product->id)->exists()) $missing[] = 'Publicar el producto y su Partner.';
         if (! is_numeric($product->public_price) || DigitalCheckout::cents((string) $product->public_price) <= 0) $missing[] = 'Configurar el precio público definitivo.';
+        if (! is_numeric($product->member_price) || (float) $product->member_price <= 0 || (float) $product->member_price > (float) $product->public_price) $missing[] = 'Configurar el precio miembro definitivo, menor o igual al público.';
         if (! $this->pdfVerified($product)) $missing[] = 'Subir y verificar el PDF privado.';
         if (empty($settings['pdf_sha256']) || $settings['pdf_sha256'] !== $product->file_sha256) $missing[] = 'Confirmar que el PDF actual es el definitivo para compradores.';
-        if (! app(DigitalCollection::class)->readyFor($product->currency)) $missing[] = 'Configurar y autorizar cuenta exclusiva y QR en QR y cuenta digital.';
-        return $missing;
+        if (! app(DigitalCollection::class)->readyFor($product->currency)) $missing[] = 'Configurar y autorizar la cuenta exclusiva en Cobro digital.';
+        return array_merge($missing, app(DigitalProductQr::class)->missing($product));
     }
 
     public function exceptionAllowed(DigitalProduct $product): bool
@@ -59,7 +60,7 @@ class DigitalSaleAvailability
         if (config('jakawi.prelaunch_mode')) return $this->exceptionAllowed($product);
         return ! $product->isComingSoon() && DigitalProduct::published()->whereKey($product->id)->exists()
             && (float) $product->public_price > 0 && $this->pdfVerified($product)
-            && app(DigitalCollection::class)->readyFor($product->currency);
+            && app(DigitalCollection::class)->readyFor($product->currency) && app(DigitalProductQr::class)->missing($product) === [];
     }
 
     public function configure(DigitalProduct $product, bool $final, bool $enabled, int $adminId): void

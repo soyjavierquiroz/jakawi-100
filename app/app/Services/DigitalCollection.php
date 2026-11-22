@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\AppSetting;
-use Illuminate\Support\Facades\Storage;
 
 class DigitalCollection
 {
@@ -12,22 +11,15 @@ class DigitalCollection
     public function current(): ?array
     {
         $v = AppSetting::where('key', self::KEY)->first()?->value;
-        if (! is_array($v) || ! ($v['enabled'] ?? false) || ! ($v['exclusive_account'] ?? false) || ! ($v['variable_amount_qr'] ?? false)) {
+        if (! is_array($v) || ! ($v['enabled'] ?? false) || ! ($v['exclusive_account'] ?? false)) {
             return null;
         }
-        foreach (['bank', 'account', 'holder', 'currency', 'qr_path', 'qr_sha256', 'version', 'account_key'] as $key) {
+        foreach (['bank', 'account', 'holder', 'currency', 'version', 'account_key'] as $key) {
             if (empty($v[$key])) {
                 return null;
             }
         }
-        try {
-            $disk = Storage::disk('digital-private');
-            if (! $disk->exists($v['qr_path']) || ! hash_equals($v['qr_sha256'], hash('sha256', $disk->get($v['qr_path'])))) {
-                return null;
-            }
-        } catch (\Throwable) {
-            return null;
-        }
+        unset($v['qr_path'], $v['qr_sha256'], $v['variable_amount_qr']);
 
         return $v;
     }

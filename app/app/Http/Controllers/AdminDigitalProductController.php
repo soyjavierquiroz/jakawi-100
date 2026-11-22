@@ -26,7 +26,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
 
-        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['coming_soon' => $product->isComingSoon(), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
+        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['coming_soon' => $product->isComingSoon(), 'qrs' => app(\App\Services\DigitalProductQr::class)->adminState($product), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
     }
 
     public function save(Request $request, DigitalCatalog $catalog, DigitalFiles $files, ?DigitalProduct $product = null)
@@ -35,6 +35,8 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
         $data = $request->validate([
+            'public_qr' => 'nullable|image|mimes:png,jpg,jpeg|max:10240', 'member_qr' => 'nullable|image|mimes:png,jpg,jpeg|max:10240',
+            'public_qr_confirmed' => 'sometimes|boolean', 'member_qr_confirmed' => 'sometimes|boolean',
             'pdf_final' => 'sometimes|boolean', 'sale_enabled' => 'sometimes|boolean',
             'name' => 'required|string|max:255', 'slug' => ['required', 'string', 'max:180', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('digital_products', 'slug')->ignore($product?->id)],
             'short_description' => 'nullable|string|max:1000', 'description' => 'nullable|string|max:30000', 'commercial_content' => 'nullable|string|max:30000',
@@ -55,7 +57,7 @@ class AdminDigitalProductController extends Controller
         $stored = $request->hasFile('pdf') ? $files->store($request->file('pdf'), 'products') : null;
         $keep = $request->boolean('gallery_clear') ? [] : ($data['gallery_keep'] ?? ($product?->gallery_paths ?? []));
         abort_if(count($keep) + count($request->file('gallery', [])) > 8, 422, 'La galería admite hasta 8 imágenes.');
-        unset($data['pdf_final'], $data['sale_enabled'], $data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
+        unset($data['public_qr'], $data['member_qr'], $data['public_qr_confirmed'], $data['member_qr_confirmed'], $data['pdf_final'], $data['sale_enabled'], $data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
         DB::transaction(function () use ($request, $data, $stored, $catalog, $keep, &$product) {
             $product ??= new DigitalProduct;
             $product->fill($data);
@@ -74,6 +76,11 @@ class AdminDigitalProductController extends Controller
             }
             $product->gallery_paths = $gallery;
             $product->save();
+            foreach (['public','member'] as $tier) {
+                if ($request->hasFile($tier.'_qr') || $request->has($tier.'_qr_confirmed')) {
+                    app(\App\Services\DigitalProductQr::class)->save($product, $tier, $request->file($tier.'_qr'), $request->boolean($tier.'_qr_confirmed'), $request->user()->id);
+                }
+            }
             if ($request->has('sale_enabled') || $request->has('pdf_final')) {
                 app(\App\Services\DigitalSaleAvailability::class)->configure($product, $request->boolean('pdf_final'), $request->boolean('sale_enabled'), $request->user()->id);
             }
@@ -81,6 +88,14 @@ class AdminDigitalProductController extends Controller
         });
 
         return redirect('/admin/productos-digitales')->with('success', 'Producto guardado.');
+    }
+
+    public function qr(DigitalProduct $product, string $tier, DigitalCatalog $catalog, DigitalFiles $files)
+    {
+        $catalog->assertInternal($product);
+        $path = app(\App\Services\DigitalProductQr::class)->settings($product)[$tier]['qr_path'] ?? null;
+        abort_unless($path, 404);
+        return $files->response($path, 'qr-'.$tier.'.'.pathinfo($path, PATHINFO_EXTENSION), false);
     }
 
     public function pdf(DigitalProduct $product, DigitalCatalog $catalog, DigitalFiles $files)
