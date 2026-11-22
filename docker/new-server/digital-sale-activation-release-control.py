@@ -194,6 +194,8 @@ def verify():
  assert remote_ref(m['candidate_ref'])==m['revision']
  assert remote_ref('refs/heads/main') in [m['expected_main'],m['revision']]
  changed=call(['git','-C',str(R),'diff','--name-only',m['base'],m['revision'],'--','app/'],'Read changed application paths').decode().splitlines()
+ # Test sources are validated in isolated QA and are not production runtime files.
+ changed = [name for name in changed if not name.startswith('app/tests/')]
  for name in changed:
   if not (R/name).is_file():
    call(['docker','exec','jakawi-app-1','test','!','-e','/var/www/html/'+name[4:]],'Verify removed application source')
