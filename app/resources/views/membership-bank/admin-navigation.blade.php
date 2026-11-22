@@ -16,7 +16,8 @@ $icons = ['operation' => 'M3 10h18M5 10v11h14V10M3 10l2-7h14l2 7M9 21v-7h6v7', '
 <script>
 {
  const root = document.querySelector('.admin-sidebar'), nav = root.querySelector('nav'), desktopNav = root.querySelector('#admin-desktop-nav'), dialog = root.querySelector('dialog'), trigger = root.querySelector('.admin-menu-trigger'), media = matchMedia('(min-width: 1024px)'), key = 'jakawi-admin-groups-v1';
- let closed = []; try { closed = JSON.parse(sessionStorage.getItem(key) || '[]'); } catch {}
+ let closed = Array.from(nav.querySelectorAll('[aria-controls]'), button => button.getAttribute('aria-controls').replace('admin-group-', ''));
+ try { const stored = JSON.parse(sessionStorage.getItem(key) || 'null'); if (Array.isArray(stored)) closed = stored; } catch {}
  nav.querySelectorAll('[aria-controls]').forEach(button => {
    const content = document.getElementById(button.getAttribute('aria-controls')), id = content.id.replace('admin-group-', '');
    const update = open => { button.setAttribute('aria-expanded', String(open)); content.hidden = !open; };

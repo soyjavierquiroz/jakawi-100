@@ -12,7 +12,11 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
     const active = groups.flatMap(group => group.links).map(([href]) => href)
         .filter(href => path === href || path.startsWith(`${href}/`)).sort((a, b) => b.length - a.length)[0];
     const [closed, setClosed] = useState<string[]>(() => {
-        try { return JSON.parse(sessionStorage.getItem(stateKey) || '[]'); } catch { return []; }
+        try {
+            const stored = JSON.parse(sessionStorage.getItem(stateKey) || 'null');
+            if (Array.isArray(stored)) return stored.filter((id): id is string => typeof id === 'string');
+        } catch { /* Use the compact initial menu when storage is unavailable. */ }
+        return groups.map(group => group.id);
     });
     // A navigation always reveals its destination, including after a full Blade visit.
     useEffect(() => {
