@@ -15,7 +15,7 @@ class MediaReferences
 {
     // Include drafts, archived records and shared references, not just public content.
     public const FIELDS = [
-        \App\Models\DigitalProduct::class => ['cover_path'],
+        \App\Models\DigitalProduct::class => ['cover_path', 'gallery_paths'],
         Partner::class => ['logo_path', 'cover_path', 'gallery_paths'],
         Location::class => ['image_path'],
         Benefit::class => ['image_path'],
@@ -43,6 +43,12 @@ class MediaReferences
             });
         }
 
+        LandingPresentation::query()->select(['id', 'editorial_blocks'])->chunkById(500, function ($rows) use (&$keys) {
+            foreach ($rows as $row) {
+                foreach ($this->editorialImages($row->editorial_blocks ?? []) as $key) $keys[$key] = true;
+            }
+        });
+
         return $keys;
     }
 
@@ -63,6 +69,19 @@ class MediaReferences
             }
         }
 
+        foreach (LandingPresentation::query()->select(['id', 'editorial_blocks'])->lazyById(500) as $row) {
+            if (in_array($key, $this->editorialImages($row->editorial_blocks ?? []), true)) return true;
+        }
+
         return false;
+    }
+    private function editorialImages(array $blocks): array
+    {
+        $keys = [];
+        array_walk_recursive($blocks, function ($value, $field) use (&$keys) {
+            if ($field === 'image_path' && is_string($value) && $value !== '') $keys[] = $value;
+        });
+
+        return $keys;
     }
 }

@@ -25,9 +25,9 @@ class DigitalFiles
         };
         $path = $kind.'/'.Str::uuid().'.'.$extension;
         $disk = Storage::disk('digital-private');
-        $disk->put($path, $bytes);
+        $disk->put($path, $bytes, ['visibility' => 'private', 'ContentType' => $file->getMimeType(), 'CacheControl' => 'private, no-store']);
         $hash = hash('sha256', $bytes);
-        if (! hash_equals($hash, hash('sha256', $disk->get($path)))) {
+        if ($disk->size($path) !== strlen($bytes) || ! hash_equals($hash, hash('sha256', $disk->get($path)))) {
             throw new \RuntimeException('No se pudo verificar el archivo privado.');
         }
 

@@ -30,8 +30,17 @@ return [
 
     'disks' => [
         'digital-private' => [
-            'driver'=>'local', 'root'=>storage_path('app/digital-private'),
-            'visibility'=>'private', 'serve'=>false, 'throw'=>true,
+            // Immutable digital files share the existing bucket, outside public media prefixes.
+            'driver' => 's3',
+            'key' => env('MEDIA_AWS_ACCESS_KEY_ID'),
+            'secret' => env('MEDIA_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('MEDIA_AWS_DEFAULT_REGION', 'us-east-1'),
+            'bucket' => env('MEDIA_AWS_BUCKET', 'jakawi-media'),
+            'endpoint' => env('MEDIA_AWS_ENDPOINT', env('MEDIA_AWS_URL')),
+            'use_path_style_endpoint' => env('MEDIA_AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'root' => 'digital-private',
+            'visibility' => 'private', 'serve' => false, 'throw' => true,
+            'http' => ['connect_timeout' => 5, 'timeout' => 30],
         ],
         'membership-private' => [
             'driver' => 'local', 'root' => storage_path('app/membership-private'),
