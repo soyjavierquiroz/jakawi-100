@@ -602,7 +602,7 @@ export default function Index({
                         >
                             <header
                                 data-workspace-toolbar
-                                className="top-0 z-20 mb-4 rounded border border-border bg-surface p-3 shadow-sm lg:sticky"
+                                className="mb-4 rounded border border-border bg-surface p-3 shadow-sm"
                             >
                                 <div className="flex flex-wrap items-center justify-between gap-3">
                                     <div
@@ -702,6 +702,8 @@ export default function Index({
                                         </details>
                                     </div>
                                 </div>
+                            </header>
+                            <section className="mb-5 min-w-0 rounded border border-border bg-surface p-4">
                                 <div className="mt-3 border-t border-border pt-3">
                                     <p className="mb-2 text-xs font-extrabold">
                                         1 · CREAR CON IA{' '}
@@ -749,7 +751,7 @@ export default function Index({
                                         {publishWarning}
                                     </p>
                                 )}
-                            </header>
+                            </section>
                             <div
                                 data-workspace-columns
                                 className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)]"
