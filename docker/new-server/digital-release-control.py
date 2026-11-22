@@ -167,6 +167,11 @@ def verify():
  fingerprint('domain-after.json')
  assert json.loads((W/'domain-before.json').read_text())==json.loads((W/'domain-after.json').read_text()), 'Domain rows changed during release'
  assert configuration()['jakawi']['prelaunch_mode'] is True
+ transport=json.loads(call(['docker','exec','jakawi-app-1','php','-r','echo json_encode([ini_get("upload_max_filesize"),ini_get("post_max_size")]);'],'Verify PDF transport limits'))
+ assert transport==['32M','40M']
+ for container,source,target in [('jakawi-app-1','docker/new-server/php.ini','/usr/local/etc/php/conf.d/zz-jakawi.ini'),('jakawi-web-1','docker/new-server/nginx.conf','/etc/nginx/conf.d/default.conf')]:
+  actual=call(['docker','exec',container,'sha256sum',target],'Verify COM transport configuration').decode().split()[0]
+  assert actual==hashlib.sha256((R/source).read_bytes()).hexdigest()
  digital=call(['docker','exec','jakawi-db-1','psql','-U','jakawi','-d','jakawi_final','-XAtc',"SELECT json_build_object('products',(SELECT count(*) FROM digital_products),'orders',(SELECT count(*) FROM digital_orders),'payments',(SELECT count(*) FROM digital_payments),'grants',(SELECT count(*) FROM digital_access_grants),'partners',(SELECT count(*) FROM partners WHERE slug='jakawi-digital' AND name='JAKAWI Digital'),'locations',(SELECT count(*) FROM locations l JOIN partners p ON p.id=l.partner_id WHERE p.slug='jakawi-digital'))"],'Verify empty commercial digital state and internal Partner')
  counts=json.loads(digital);assert counts=={'products':0,'orders':0,'payments':0,'grants':0,'partners':1,'locations':0}
  (W/'digital-live-state.json').write_text(json.dumps(counts,indent=2))
