@@ -62,6 +62,9 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         // Defense in depth for direct Eloquent writes outside HTTP/services.
         foreach ([
+            \App\Models\DigitalOrder::class,
+            \App\Models\DigitalPayment::class,
+            \App\Models\DigitalAccessGrant::class,
             \App\Models\ExperienceReservation::class,
             \App\Models\Redemption::class,
             \App\Models\UnlockParticipation::class,

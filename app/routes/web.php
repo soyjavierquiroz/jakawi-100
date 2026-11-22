@@ -363,6 +363,8 @@ app(PublicJourneyConfig::class)->registerRoutes();
 
 Route::post('/analytics/landing-presentations/{presentation:slug}/cta', [\App\Http\Controllers\GrowthLandingCtaController::class, 'store'])->middleware('throttle:120,1')->name('analytics.landing-presentations.cta');
 
+require __DIR__.'/digital.php';
+
 // Explicit routes precede the vanity resolver; reserved slugs are also enforced on writes/resolution.
 Route::get('/p/{partner:slug}/auth/{method}', [\App\Http\Controllers\PartnerPublicController::class, 'authenticate'])->whereIn('method', ['register', 'login'])->middleware('guest')->name('partners.public.auth');
 Route::get('/p/{partner:slug}', [\App\Http\Controllers\PartnerPublicController::class, 'redirect'])->name('partners.public.resolver');

@@ -1,0 +1,41 @@
+<?php
+
+use App\Http\Controllers\AdminDigitalProductController;
+use App\Http\Controllers\AdminDigitalSalesController;
+use App\Http\Controllers\DigitalOrderController;
+use App\Http\Controllers\DigitalProductController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('web')->group(function () {
+    Route::get('/productos-digitales', [DigitalProductController::class, 'index'])->name('digital.index');
+    Route::get('/productos-digitales/{product:slug}', [DigitalProductController::class, 'show'])->name('digital.show');
+    Route::middleware(['auth', 'throttle:30,1'])->group(function () {
+        Route::get('/productos-digitales/{product:slug}/comprar', [DigitalProductController::class, 'show'])->name('digital.buy');
+        Route::post('/productos-digitales/{product:slug}/comprar', [DigitalOrderController::class, 'start'])->name('digital.orders.start');
+        Route::get('/mi-jakawi/productos-digitales', [DigitalOrderController::class, 'library'])->name('digital.library');
+        Route::get('/mi-jakawi/productos-digitales/pedidos/{order:reference}', [DigitalOrderController::class, 'show'])->name('digital.orders.show');
+        Route::get('/mi-jakawi/productos-digitales/pedidos/{order:reference}/qr', [DigitalOrderController::class, 'qr'])->name('digital.orders.qr');
+        Route::post('/mi-jakawi/productos-digitales/pedidos/{order:reference}/comprobante', [DigitalOrderController::class, 'report'])->name('digital.orders.report');
+        Route::get('/mi-jakawi/productos-digitales/accesos/{access}/pdf', [DigitalOrderController::class, 'download'])->name('digital.download');
+    });
+    Route::middleware(['auth', 'admin', 'throttle:60,1'])->prefix('admin/digital')->group(function () {
+        Route::get('/cobro', [AdminDigitalSalesController::class, 'settings'])->name('admin.digital.collection');
+        Route::post('/cobro', [AdminDigitalSalesController::class, 'saveSettings'])->name('admin.digital.collection.save');
+        Route::get('/pedidos', [AdminDigitalSalesController::class, 'index'])->name('admin.digital.orders');
+        Route::get('/pedidos/{order:reference}', [AdminDigitalSalesController::class, 'show'])->name('admin.digital.orders.show');
+        Route::post('/pedidos/{order:reference}/devolucion', [AdminDigitalSalesController::class, 'refund'])->name('admin.digital.refund');
+        Route::post('/pedidos/{order:reference}/incidencia', [AdminDigitalSalesController::class, 'incident'])->name('admin.digital.incident');
+        Route::get('/pagos/{payment}/{kind}', [AdminDigitalSalesController::class, 'file'])->whereIn('kind', ['receipt', 'statement'])->name('admin.digital.file');
+        Route::post('/pagos/{payment}/confirmar', [AdminDigitalSalesController::class, 'confirm'])->name('admin.digital.confirm');
+        Route::post('/pagos/{payment}/rechazar', [AdminDigitalSalesController::class, 'reject'])->name('admin.digital.reject');
+        Route::post('/accesos/{access}/reintentar', [AdminDigitalSalesController::class, 'retry'])->name('admin.digital.retry');
+    });
+    Route::middleware(['auth', 'admin'])->prefix('admin/productos-digitales')->group(function () {
+        Route::get('/', [AdminDigitalProductController::class, 'index'])->name('admin.digital.index');
+        Route::get('/crear', [AdminDigitalProductController::class, 'edit'])->name('admin.digital.create');
+        Route::post('/', [AdminDigitalProductController::class, 'save'])->name('admin.digital.store');
+        Route::get('/{product:slug}/editar', [AdminDigitalProductController::class, 'edit'])->name('admin.digital.edit');
+        Route::post('/{product:slug}', [AdminDigitalProductController::class, 'save'])->name('admin.digital.update');
+        Route::get('/{product:slug}/pdf', [AdminDigitalProductController::class, 'pdf'])->name('admin.digital.pdf');
+    });
+});

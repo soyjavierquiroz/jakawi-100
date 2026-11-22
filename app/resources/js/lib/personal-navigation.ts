@@ -8,7 +8,7 @@ export function personalSection(url: string): PersonalSection | null {
     // The old personal editor lives below /mi-jakawi and redirects to /perfil.
     if (within('/perfil') || within('/mi-jakawi/perfil') || path === '/settings/profile') return 'profile';
     if (within('/mi-jakawi')) return 'account';
-    if (path === '/explorar' || ['/beneficios', '/experiencias', '/lugares'].some(within) || /^\/p\/[^/]+$/.test(path)) return 'explore';
+    if (path === '/explorar' || ['/beneficios', '/experiencias', '/lugares', '/productos-digitales'].some(within) || /^\/p\/[^/]+$/.test(path)) return 'explore';
     return path === '/' ? 'home' : null;
 }
 

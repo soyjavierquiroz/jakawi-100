@@ -11,6 +11,8 @@ final class ProtectPrelaunchOperations
 {
     // Guard before controllers can write analytics, files, accounts or queue jobs.
     private const ACTIONS = [
+        'DigitalOrderController' => ['start','report','qr','download'],
+        'AdminDigitalSalesController' => ['confirm','reject','retry','refund'],
         'PublicController' => ['reserve'],
         'PartnerPublicController' => ['checkout'],
         'ExperienceReservationController' => ['store', 'cancel'],

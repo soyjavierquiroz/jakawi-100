@@ -29,6 +29,10 @@ return [
     */
 
     'disks' => [
+        'digital-private' => [
+            'driver'=>'local', 'root'=>storage_path('app/digital-private'),
+            'visibility'=>'private', 'serve'=>false, 'throw'=>true,
+        ],
         'membership-private' => [
             'driver' => 'local', 'root' => storage_path('app/membership-private'),
             'visibility' => 'private', 'serve' => false, 'throw' => true,

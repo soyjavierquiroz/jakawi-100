@@ -82,6 +82,24 @@
     ]
   },
   {
+    "label": "JAKAWI Digital",
+    "links": [
+      [
+        "/admin/productos-digitales",
+        "Productos digitales"
+      ],
+      [
+        "/admin/digital/pedidos",
+        "Pedidos digitales"
+      ],
+      [
+        "/admin/digital/cobro",
+        "QR y cuenta digital"
+      ]
+    ],
+    "secondary": []
+  },
+  {
     "label": "Marketing y territorio",
     "links": [
       [

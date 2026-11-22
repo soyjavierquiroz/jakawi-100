@@ -53,6 +53,11 @@ class Partner extends Model
     }
 
     /** @return HasMany<Benefit, $this> */
+    public function digitalProducts(): HasMany
+    {
+        return $this->hasMany(DigitalProduct::class);
+    }
+
     public function benefits(): HasMany
     {
         return $this->hasMany(Benefit::class);

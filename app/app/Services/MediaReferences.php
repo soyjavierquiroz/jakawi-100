@@ -15,6 +15,7 @@ class MediaReferences
 {
     // Include drafts, archived records and shared references, not just public content.
     public const FIELDS = [
+        \App\Models\DigitalProduct::class => ['cover_path'],
         Partner::class => ['logo_path', 'cover_path', 'gallery_paths'],
         Location::class => ['image_path'],
         Benefit::class => ['image_path'],

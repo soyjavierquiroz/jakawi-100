@@ -281,7 +281,7 @@ export default function MiJakawi({
                                     <ActivityList activity={activity} />
                                 </>
                             )}
-                            <MyChallenges challenges={challenges} />
+                            <section className="mt-8 rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-extrabold">Mis productos digitales</h2><p className="mt-2 text-sm text-muted-foreground">Consulta tus pedidos y recupera tus PDF adquiridos.</p><Link className="mt-3 inline-flex min-h-11 items-center font-bold text-brand underline" href="/mi-jakawi/productos-digitales">Abrir mi biblioteca digital</Link></section><MyChallenges challenges={challenges} />
                             {challengePagination.total > 0 && (
                                 <ListPagination page={challengePagination} />
                             )}

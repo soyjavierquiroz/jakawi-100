@@ -159,6 +159,7 @@ class PublicController extends Controller
             'sort' => $sort,
             'pagination' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'next_page_url' => $page->nextPageUrl()],
             'opportunities' => Inertia::merge($type === 'places' ? [] : array_map(fn ($item) => $item->toArray() + ['identity' => $item->type->value.':'.$item->sourceId], $page->items()))->matchOn('identity'),
+            'digitalProducts' => app(\App\Services\DigitalCatalog::class)->explore($request),
             'places' => Inertia::merge($type === 'places' ? $page->getCollection()->map(fn ($partner) => $this->partner($partner))->all() : [])->matchOn('id'),
         ]);
     }

@@ -19,7 +19,7 @@ class MediaGcCommand extends Command
         $disk = Storage::disk(config('media.disk'));
         try {
             $referenceSet = $references->all();
-            foreach (['partners', 'locations', 'benefits', 'experiences', 'challenges', 'landings', 'avatars', 'unlocks', 'tmp'] as $prefix) {
+            foreach (['digital-products', 'partners', 'locations', 'benefits', 'experiences', 'challenges', 'landings', 'avatars', 'unlocks', 'tmp'] as $prefix) {
                 foreach ($disk->allFiles($prefix) as $key) {
                     if (! $media->isMediaKey($key) && ! $media->isTemporaryKey($key)) {
                         continue;
