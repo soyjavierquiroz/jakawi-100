@@ -81,7 +81,7 @@ def prepare():
  assert call(['docker','exec','jakawi-db-1','psql','-U','jakawi','-d','jakawi_final','-XAtc',"SELECT value->>'enabled' FROM app_settings WHERE key='show_demo_banner'"],'Require DEMO OFF').decode().strip()=='false'
  fingerprint('domain-before.json')
  (W/'state-before.private.json').write_text(json.dumps(state));(W/'config-before.private.json').write_text(json.dumps(configuration()))
- schema=call(['docker','exec','jakawi-db-1','pg_dump','-U','jakawi','-d','jakawi_final','--schema-only','--no-owner','--no-acl'],'Fingerprint existing schema')
+ schema=call(['docker','exec','jakawi-db-1','pg_dump','-U','jakawi','-d','jakawi_final','--schema-only','--no-owner','--no-acl','--exclude-table=digital_*'],'Fingerprint existing schema')
  (W/'schema-before.private.sql').write_bytes(schema)
  backup=pathlib.Path('/var/backups/jakawi.com')/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+TAG);backup.mkdir(mode=0o700)
  for name in ['compose.yaml','release.env','release-control.py']:shutil.copyfile(P/name,backup/name)
@@ -129,6 +129,8 @@ def deploy():
  current_config=configuration();old_config=json.loads((W/'config-before.private.json').read_text())
  digital_disk=current_config['filesystems']['disks'].pop('digital-private')
  assert digital_disk['visibility']=='private' and digital_disk['serve'] is False
+ old_digital_disk=old_config['filesystems']['disks'].pop('digital-private',None)
+ assert old_digital_disk is None or old_digital_disk==digital_disk
  assert current_config==old_config,'Unexpected application configuration change'
  for migration in ['2026_11_22_000001_create_digital_products.php','2026_11_22_000002_create_digital_sales.php']:
   call(['docker','exec','--user','82:82','jakawi-app-1','php','artisan','migrate','--force','--no-interaction','--path=database/migrations/'+migration],'Apply reviewed additive digital migration '+migration)

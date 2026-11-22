@@ -37,6 +37,10 @@ quotes expire after 24 hours; an already submitted review is retained.
 Account/QR changes invalidate receipt submission against the old version;
 support must review already-paid cases using the historical recipient snapshot.
 
+Transport accepts 32 MiB per upload / 40 MiB per request (PHP and COM Nginx),
+so a 25 MiB PDF and 10 MiB cover can share the product form. Existing domain
+validators still enforce their previous individual limits.
+
 ## Access and support
 
 Products, receipts, QR and bank statements use `digital-private`, under the
