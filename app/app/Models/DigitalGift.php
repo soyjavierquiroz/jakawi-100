@@ -11,7 +11,7 @@ class DigitalGift extends Model
 
     protected static function booted(): void
     {
-        static::saving(fn () => app(\App\Services\DigitalGifts::class)->assertEnabled());
+        static::saving(fn (self $gift) => app(\App\Services\DigitalGifts::class)->assertKindEnabled($gift->kind));
     }
 
     protected function casts(): array

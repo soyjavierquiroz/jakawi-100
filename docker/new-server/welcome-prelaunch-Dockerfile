@@ -1,0 +1,8 @@
+FROM sha256:4a34de6a450d1999898b109b98f506ad488fc0e42aff8a9e6344105a2c6f68b2 AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/ /var/www/html/app/
+COPY --chown=www-data:www-data app/config/ /var/www/html/config/
+FROM sha256:040b35ec5ad62fe02db762b02fcbbee3ee2599f5d72a23944562683302c22da8 AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION

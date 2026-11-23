@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\{AuditLog, DigitalAccessGrant, DigitalGift, DigitalProduct, Membership, User};
+use App\Models\{AuditLog, AppSetting, DigitalAccessGrant, DigitalGift, DigitalProduct, Membership, User};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -14,6 +14,60 @@ class DigitalGifts
         return config('digital_gifts.enabled') && ! config('jakawi.prelaunch_mode');
     }
 
+    public const COURTESY_KEY = 'digital_welcome_courtesy_v1';
+
+    public function welcomeEnabled(): bool
+    {
+        return $this->enabled() || (config('jakawi.prelaunch_mode') && config('digital_gifts.welcome_prelaunch_enabled'));
+    }
+
+    public function assertKindEnabled(string $kind): void
+    {
+        abort_unless($kind === 'welcome' ? $this->welcomeEnabled() : ($kind === 'promotional' && $this->enabled()), 403, 'Los regalos digitales todavía no están habilitados.');
+    }
+
+    // Courtesy approval is independent from the final commercial PDF approval.
+    public function courtesy(): array
+    {
+        return AppSetting::where('key', self::COURTESY_KEY)->first()?->value ?? [];
+    }
+
+    public function courtesyApproved(DigitalProduct $product): bool
+    {
+        $approval = $this->courtesy();
+        return ($approval['enabled'] ?? false) === true
+            && ($approval['product_id'] ?? null) === $product->id
+            && filled($approval['pdf_sha256'] ?? null)
+            && $approval['pdf_sha256'] === $product->file_sha256;
+    }
+
+    public function backfillWelcome(User $user): ?DigitalGift
+    {
+        $this->assertKindEnabled('welcome');
+        return DB::transaction(function () use ($user) {
+            User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+            $membership = $user->memberships()->active()->where(fn ($q) => $q->where('type', Membership::TYPE_PIONEER)->orWhere('amount_paid', '>', 0))->orderBy('id')->first();
+            if (! $membership) return null;
+            return DigitalGift::firstOrCreate(['kind' => 'welcome', 'user_id' => $user->id], [
+                'membership_id' => $membership->id, 'granted_at' => now(),
+            ]);
+        });
+    }
+
+    public function welcomeAccessAllowed(DigitalAccessGrant $access): bool
+    {
+        if (! $this->welcomeEnabled() || $access->source !== 'gift' || $access->digital_order_id !== null) return false;
+        if ($access->exists) {
+            return DigitalGift::where('kind', 'welcome')->where('status', 'claimed')->where('user_id', $access->user_id)
+                ->where('digital_product_id', $access->digital_product_id)->where('digital_access_grant_id', $access->id)->exists();
+        }
+        $product = DigitalProduct::find($access->digital_product_id);
+        return $product && $this->eligible($product, 'welcome')
+            && $access->gift_file_path === $product->file_path && $access->gift_file_sha256 === $product->file_sha256
+            && User::find($access->user_id)?->hasActiveMembership()
+            && DigitalGift::where('kind', 'welcome')->where('status', 'pending')->where('user_id', $access->user_id)->exists();
+    }
+
     public function assertEnabled(): void
     {
         abort_unless($this->enabled(), 403, 'Los regalos digitales todavía no están habilitados.');
@@ -22,7 +76,7 @@ class DigitalGifts
     // Called inside the existing activation transaction, including when model events are suppressed.
     public function firstActivation(Membership $membership): void
     {
-        if (! $this->enabled() || $membership->status !== Membership::STATUS_ACTIVE) return;
+        if (! $this->welcomeEnabled() || $membership->status !== Membership::STATUS_ACTIVE) return;
         if (Membership::where('user_id', $membership->user_id)->where('id', '<>', $membership->id)->exists()) return;
         DigitalGift::firstOrCreate(['kind' => 'welcome', 'user_id' => $membership->user_id], [
             'membership_id' => $membership->id, 'granted_at' => now(),
@@ -31,15 +85,20 @@ class DigitalGifts
 
     public function pending(?User $user): ?DigitalGift
     {
-        return $user && $this->enabled()
+        return $user && $user->hasActiveMembership() && $this->welcomeEnabled()
             ? DigitalGift::where('user_id', $user->id)->where('kind', 'welcome')->where('status', 'pending')->first() : null;
     }
 
     public function catalogQuery($query)
     {
         // Final hash is captured separately from commercial sale authorization.
-        return $query->where('welcome_gift_enabled', true)->whereNotNull('gift_pdf_sha256')
-            ->whereColumn('gift_pdf_sha256', 'file_sha256')->whereNotNull('file_path');
+        $approval = $this->courtesy();
+        return $query->where('welcome_gift_enabled', true)->whereNotNull('file_path')->where(function ($q) use ($approval) {
+            $q->where(fn ($final) => $final->whereNotNull('gift_pdf_sha256')->whereColumn('gift_pdf_sha256', 'file_sha256'));
+            if (($approval['enabled'] ?? false) === true && filled($approval['pdf_sha256'] ?? null)) {
+                $q->orWhere(fn ($courtesy) => $courtesy->where('digital_products.id', $approval['product_id'] ?? 0)->where('file_sha256', $approval['pdf_sha256']));
+            }
+        });
     }
 
     public function eligible(DigitalProduct $product, string $kind): bool
@@ -47,7 +106,8 @@ class DigitalGifts
         return (bool) $product->getAttribute($kind === 'welcome' ? 'welcome_gift_enabled' : 'promotional_gift_enabled')
             && $product->partner?->slug === 'jakawi-digital'
             && DigitalProduct::published()->whereKey($product->id)->exists()
-            && filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256
+            && (($kind === 'welcome' && $this->courtesyApproved($product))
+                || (filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256))
             && app(DigitalSaleAvailability::class)->pdfVerified($product);
     }
 
@@ -107,7 +167,7 @@ class DigitalGifts
 
     public function claim(User $user, DigitalProduct $product, ?string $tokenHash = null): DigitalAccessGrant
     {
-        $this->assertEnabled();
+        $this->assertKindEnabled($tokenHash === null ? 'welcome' : 'promotional');
         return DB::transaction(function () use ($user, $product, $tokenHash) {
             $user = User::lockForUpdate()->findOrFail($user->id);
             $q = DigitalGift::query();

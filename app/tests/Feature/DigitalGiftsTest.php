@@ -183,4 +183,76 @@ class DigitalGiftsTest extends TestCase
             foreach ($disk->allFiles() as $key) $disk->delete($key);
         }
     }
+    private function preparePrelaunchCourtesy(): void
+    {
+        config(['digital_gifts.enabled' => false]);
+        $this->activate(); // Existing member, without an automatic gift.
+        config(['jakawi.prelaunch_mode' => true, 'digital_gifts.welcome_prelaunch_enabled' => true]);
+        $this->product->update(['gift_pdf_sha256' => null, 'promotional_gift_enabled' => false]);
+        \App\Models\AppSetting::create(['key' => DigitalGifts::COURTESY_KEY, 'value' => [
+            'enabled' => true, 'product_id' => $this->product->id, 'pdf_sha256' => $this->product->file_sha256,
+        ]]);
+    }
+
+    public function test_prelaunch_backfill_only_active_paid_members_and_pioneers_is_idempotent(): void
+    {
+        $this->preparePrelaunchCourtesy();
+        $free = User::factory()->create();
+        $pioneer = User::factory()->create();
+        $unpaid = User::factory()->create();
+        $expired = User::factory()->create();
+        foreach ([[$pioneer, 'pioneer', 'active', 0], [$unpaid, 'standard', 'active', 0], [$expired, 'standard', 'cancelled', 100]] as [$user, $type, $status, $paid]) {
+            Membership::withoutEvents(fn () => Membership::create(['user_id' => $user->id, 'type' => $type, 'status' => $status,
+                'starts_at' => now()->subDay(), 'ends_at' => now()->addYear(), 'amount_paid' => $paid]));
+        }
+        $this->artisan('digital-gifts:backfill-welcome --execute')->assertSuccessful();
+        $this->artisan('digital-gifts:backfill-welcome --execute')->assertSuccessful();
+        $this->assertDatabaseCount('digital_gifts', 2);
+        foreach ([$this->member, $pioneer] as $user) {
+            $this->assertDatabaseHas('digital_gifts', ['user_id' => $user->id, 'kind' => 'welcome', 'status' => 'pending', 'digital_product_id' => null]);
+        }
+        foreach ([$free, $unpaid, $expired] as $user) $this->assertDatabaseMissing('digital_gifts', ['user_id' => $user->id]);
+        $this->assertDatabaseCount('digital_access_grants', 0);
+    }
+
+    public function test_prelaunch_courtesy_full_claim_and_download_without_sales_or_promotional_gifts(): void
+    {
+        $this->preparePrelaunchCourtesy();
+        app(DigitalGifts::class)->backfillWelcome($this->member);
+        $this->actingAs($this->member)->get('/mi-jakawi')->assertInertia(fn (Assert $p) => $p
+            ->where('membershipStatus.is_active', true)->where('membership.is_active', true)->where('hasWelcomeGift', true)->etc());
+        $this->get('/explorar?type=digital&gifts=1')->assertInertia(fn (Assert $p) => $p->where('giftFilter', true)->where('pagination.total', 1)->etc());
+        $this->get('/productos-digitales/regalo-qa')->assertInertia(fn (Assert $p) => $p->where('giftAction.kind', 'welcome')->where('canCollect', false)->etc());
+        $this->postJson('/productos-digitales/regalo-qa/comprar')->assertStatus(423);
+        $this->post('/productos-digitales/regalo-qa/regalo-promocional', ['confirm' => true])->assertForbidden();
+        $this->actingAs($this->admin)->post('/admin/productos-digitales/regalo-qa/regalar', ['issuance_key' => (string) Str::uuid()])->assertForbidden();
+        $this->actingAs($this->member)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertRedirect('/mi-jakawi/productos-digitales');
+        $access = DigitalAccessGrant::sole();
+        $this->get('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/pdf')->assertOk()->assertContent($this->pdf);
+        $this->get('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/pdf')->assertOk();
+        $this->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertStatus(409);
+        $this->actingAs($this->admin)->get('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/pdf')->assertForbidden();
+        $this->artisan('digital-gifts:backfill-welcome --execute')->assertSuccessful();
+        $this->assertDatabaseCount('digital_gifts', 1);
+        $this->assertDatabaseCount('digital_access_grants', 1);
+        $this->assertDatabaseCount('digital_orders', 0);
+        $this->assertDatabaseCount('digital_payments', 0);
+        $this->assertNull($this->product->fresh()->gift_pdf_sha256);
+        $this->assertFalse(app(\App\Services\DigitalSaleAvailability::class)->settings($this->product)['enabled'] ?? false);
+    }
+
+    public function test_prelaunch_welcome_exception_fails_closed_without_right_approval_or_switch(): void
+    {
+        $this->preparePrelaunchCourtesy();
+        $free = User::factory()->create();
+        $this->actingAs($free)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertStatus(409);
+        app(DigitalGifts::class)->backfillWelcome($this->member);
+        $this->product->update(['file_sha256' => hash('sha256', 'changed')]);
+        $this->actingAs($this->member)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertStatus(422);
+        config(['digital_gifts.welcome_prelaunch_enabled' => false]);
+        $this->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertForbidden();
+        $this->assertDatabaseCount('digital_access_grants', 0);
+        $this->assertDatabaseHas('digital_gifts', ['user_id' => $this->member->id, 'status' => 'pending']);
+    }
+
 }

@@ -25,6 +25,7 @@ final class PrelaunchOperations
     public static function digitalAllowed(Model $subject): bool
     {
         if (! self::blocked()) return true;
+        if ($subject instanceof \App\Models\DigitalAccessGrant && app(\App\Services\DigitalGifts::class)->welcomeAccessAllowed($subject)) return true;
         $product = match (true) {
             $subject instanceof \App\Models\DigitalProduct => $subject,
             $subject instanceof \App\Models\DigitalOrder => $subject->product,
