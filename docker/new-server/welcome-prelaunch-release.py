@@ -33,14 +33,18 @@ def build():
   images[target]=run(['docker','image','inspect',tag,'--format','{{.Id}}']).decode().strip()
  save('images.json',images);print('Build PASS')
 def prepare():
- guard_source();state=inspect();assert all(c['Config']['Labels']['org.opencontainers.image.revision']==BASE for c in state)
- backup=pathlib.Path('/var/backups/jakawi.com')/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-welcome-prelaunch')
- backup.mkdir(mode=0o700)
- for name in ['compose.yaml','release.env']:shutil.copyfile(P/name,backup/name);os.chmod(backup/name,0o600)
- with (backup/'database.dump').open('wb') as f:
-  subprocess.run(['docker','exec','jakawi-db-1','pg_dump','-U','jakawi','-d','jakawi_final','--format=custom','--no-owner','--no-acl'],stdout=f,check=True)
- run(['docker','exec','-i','jakawi-db-1','pg_restore','--list'],(backup/'database.dump').read_bytes())
- save('runtime-before.private.json',state)
+ guard_source();state=inspect();assert all(c['Config']['Labels']['org.opencontainers.image.revision']==(read('release-metadata.json')['revision'] if (W/'release-metadata.json').exists() else BASE) for c in state)
+ if (W/'release-metadata.json').exists():
+  backup=pathlib.Path(read('release-metadata.json')['backup'])
+ else:
+  backup=pathlib.Path('/var/backups/jakawi.com')/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-welcome-prelaunch')
+  backup.mkdir(mode=0o700)
+  for name in ['compose.yaml','release.env']:shutil.copyfile(P/name,backup/name);os.chmod(backup/name,0o600)
+  with (backup/'database.dump').open('wb') as f:
+   subprocess.run(['docker','exec','jakawi-db-1','pg_dump','-U','jakawi','-d','jakawi_final','--format=custom','--no-owner','--no-acl'],stdout=f,check=True)
+  run(['docker','exec','-i','jakawi-db-1','pg_restore','--list'],(backup/'database.dump').read_bytes())
+  save('runtime-before.private.json',state)
+ save('expected-runtime.private.json',state)
  candidate=json.loads((P/'compose.yaml').read_text());images=read('images.json')
  for s in SERVICES:
   candidate['services'][s]['image']=images['web' if s=='web' else 'app']
@@ -63,8 +67,8 @@ def rollback_plan():
 def install(src,dst):
  tmp=dst.with_suffix('.welcome-tmp');shutil.copyfile(src,tmp);os.chmod(tmp,0o600);os.replace(tmp,dst)
 def deploy():
- guard_source();assert read('rollback-plan.json')['result']=='PASS';assert not (W/'deploy.json').exists()
- assert [c['Id'] for c in inspect()]==[c['Id'] for c in read('runtime-before.private.json')]
+ guard_source();assert read('rollback-plan.json')['result']=='PASS'
+ assert [c['Id'] for c in inspect()]==[c['Id'] for c in read('expected-runtime.private.json')]
  install(W/'compose.candidate.private.json',P/'compose.yaml');install(W/'release.env',P/'release.env')
  run(compose()+['up','-d','--no-deps','--no-build','--pull','never',*SERVICES])
  save('deploy.json',{'revision':read('release-metadata.json')['revision']});print('Deploy PASS')

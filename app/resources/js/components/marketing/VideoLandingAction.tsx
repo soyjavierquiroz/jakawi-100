@@ -17,7 +17,7 @@ export function VideoLandingAction({ action, informational }: { action: Marketin
     const bar = useRef<HTMLDivElement>(null);
     useEffect(() => {
         const element = bar.current;
-        const page = element?.closest<HTMLElement>('[data-video-marketing]');
+        const page = element?.closest<HTMLElement>('[data-video-marketing], [data-video-first]');
         if (!element || !page) return;
         const resize = new ResizeObserver(sync);
         const observed = new Set<Element>();

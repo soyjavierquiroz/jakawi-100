@@ -3,6 +3,8 @@ ARG SOURCE_REVISION
 LABEL org.opencontainers.image.revision=$SOURCE_REVISION
 COPY --chown=www-data:www-data app/app/ /var/www/html/app/
 COPY --chown=www-data:www-data app/config/ /var/www/html/config/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
 FROM sha256:040b35ec5ad62fe02db762b02fcbbee3ee2599f5d72a23944562683302c22da8 AS web
 ARG SOURCE_REVISION
 LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
