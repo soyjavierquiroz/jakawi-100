@@ -203,7 +203,30 @@ export default function MiJakawi({
                     <PendingReceipts receipts={pendingReceipts} />
                     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
                         <div className="min-w-0">
-                            <PersonalMembership status={membershipStatus} />
+                            <PersonalMembership status={membershipStatus} giftPending={hasWelcomeGift} />
+                            {hasWelcomeGift && (
+                                <section aria-label="Regalo de bienvenida" className="relative mt-5 overflow-hidden rounded-[24px] border border-brand/30 bg-surface p-5 sm:p-7">
+                                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand/10 via-transparent to-transparent" />
+                                    <div className="relative grid grid-cols-[1fr_76px] items-center gap-x-3 sm:grid-cols-[1fr_160px] sm:gap-x-6">
+                                        <p className="text-sm font-extrabold tracking-[0.1em] text-brand">REGALO DE BIENVENIDA</p>
+                                        <svg aria-hidden="true" viewBox="0 0 200 200" fill="none" className="col-start-2 row-span-3 row-start-1 w-full text-brand">
+                                            <circle cx="100" cy="104" r="83" fill="currentColor" opacity=".07" />
+                                            <ellipse cx="103" cy="170" rx="57" ry="9" fill="currentColor" opacity=".12" />
+                                            <path d="M48 91h105v66a10 10 0 0 1-10 10H58a10 10 0 0 1-10-10V91Z" fill="var(--color-surface)" stroke="currentColor" strokeWidth="3" />
+                                            <path d="M104 94h49v63a10 10 0 0 1-10 10h-39V94Z" fill="currentColor" opacity=".14" />
+                                            <rect x="41" y="76" width="119" height="26" rx="6" fill="var(--color-surface)" stroke="currentColor" strokeWidth="3" />
+                                            <path d="M91 77h19v90H91z" fill="currentColor" />
+                                            <path d="M100 75C65 78 56 58 69 49c13-9 25 10 31 26Zm1 0c35 3 44-17 31-26-13-9-25 10-31 26Z" fill="currentColor" fillOpacity=".14" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+                                            <path d="m162 36 3 10 10 3-10 3-3 10-3-10-10-3 10-3 3-10ZM37 48l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Zm133 73 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" fill="currentColor" />
+                                            <circle cx="52" cy="29" r="3" fill="currentColor" opacity=".5" />
+                                        </svg>
+                                        <h2 className="mt-2 text-2xl leading-tight font-extrabold tracking-tight sm:text-3xl">¡Tienes un regalo digital por activar!</h2>
+                                        <p className="col-span-2 mt-3 max-w-lg leading-relaxed text-muted-foreground sm:col-span-1">Elige 1 producto digital incluido con tu membresía y agrégalo a tu biblioteca sin costo adicional.</p>
+                                        <Link className="col-span-2 mt-5 inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-5 font-bold text-brand-foreground transition hover:brightness-95 sm:col-span-1 sm:justify-self-start" href="/explorar?type=digital&gifts=1">ELEGIR MI REGALO</Link>
+                                        <p className="col-span-2 mt-3 text-sm leading-relaxed text-muted-foreground">1 regalo disponible · Activación inmediata · Acceso desde Mi JAKAWI</p>
+                                    </div>
+                                </section>
+                            )}
                             <ClubAffiliatesCard />
                             <BenefitCards benefits={featuredBenefits} />
                             {membership && (
@@ -283,7 +306,7 @@ export default function MiJakawi({
                                     <ActivityList activity={activity} />
                                 </>
                             )}
-                            {hasWelcomeGift && <section className="mt-8 rounded-2xl border border-brand bg-surface p-5"><h2 className="text-xl font-extrabold">¡Tienes un regalo disponible!</h2><p className="mt-2">Elige un producto digital por activar tu membresía.</p><Link className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-brand px-5 font-bold text-brand-foreground" href="/explorar?type=digital&gifts=1">EXPLORAR MI REGALO</Link></section>}
+
                             <section className="mt-8 rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-extrabold">Mis productos digitales</h2><p className="mt-2 text-sm text-muted-foreground">Consulta tus pedidos y recupera tus PDF adquiridos.</p><Link className="mt-3 inline-flex min-h-11 items-center font-bold text-brand underline" href="/mi-jakawi/productos-digitales">Abrir mi biblioteca digital</Link></section><MyChallenges challenges={challenges} />
                             {challengePagination.total > 0 && (
                                 <ListPagination page={challengePagination} />
@@ -439,7 +462,7 @@ function InviteAndEarn({ referral }: { referral: MemberReferral }) {
     );
 }
 
-function PersonalMembership({ status }: { status: MembershipStatusData }) {
+function PersonalMembership({ status, giftPending = false }: { status: MembershipStatusData; giftPending?: boolean }) {
     const labels = {
         free: 'Cuenta gratuita',
         pioneer: 'Pionero',
@@ -488,7 +511,7 @@ function PersonalMembership({ status }: { status: MembershipStatusData }) {
                     {membershipExpiry(status)}
                 </p>
             )}
-            <div className="mt-5 rounded-2xl bg-surface-muted p-4 text-sm leading-6">
+            <div className={`${giftPending ? 'hidden sm:block ' : ''}mt-5 rounded-2xl bg-surface-muted p-4 text-sm leading-6`}>
                 <p className="font-bold">Con tu cuenta</p>
                 <p className="mt-1 text-muted-foreground">
                     {status.benefits.public_catalog &&
@@ -505,7 +528,7 @@ function PersonalMembership({ status }: { status: MembershipStatusData }) {
                     </p>
                 )}
             </div>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <div className={`${giftPending ? 'hidden sm:flex' : 'flex'} mt-5 flex-col gap-3 sm:flex-row`}>
                 {!status.is_active && status.type !== 'pioneer' && (
                     <a
                         href="https://jakawi.club/membresia"

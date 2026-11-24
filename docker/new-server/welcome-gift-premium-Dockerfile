@@ -1,0 +1,10 @@
+FROM sha256:0f43d4fb69073d2dc4f7416eb67f953488e863dbd3dad50178c62efdb1160bfe AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+FROM sha256:c3885f3bf0765c6e876891c5c633848f7bab043e1fc0d95d95eebca7dcddc118 AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

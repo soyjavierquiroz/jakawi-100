@@ -357,7 +357,8 @@ export default function Explore({
                             LUGARES
                         </button>
                     </nav>
-                    {isDigital && hasWelcomeGift && <button aria-pressed={giftFilter} className={`mt-4 min-h-11 rounded-full border px-4 text-sm font-bold ${giftFilter ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface'}`} onClick={() => visit({gifts: giftFilter ? '' : '1'})}>MIS REGALOS DISPONIBLES</button>}
+                    {isDigital && hasWelcomeGift && <button aria-pressed={giftFilter} className={`mt-4 min-h-11 rounded-full border px-4 text-sm font-bold ${giftFilter ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface'}`} onClick={() => visit({gifts: giftFilter ? '' : '1'})}>ELEGIR MI REGALO</button>}
+                    {isDigital && hasWelcomeGift && giftFilter && <section aria-label="Elige tu regalo digital" className="mt-5 rounded-2xl border border-brand/25 bg-brand-subtle p-5 sm:p-6"><p className="text-sm font-bold text-brand">1 regalo por activar</p><h2 className="mt-2 text-2xl font-extrabold">Elige tu regalo digital</h2><p className="mt-2 max-w-2xl leading-relaxed text-muted-foreground">Selecciona 1 producto digital incluido con tu membresía. Cuando lo actives, aparecerá en Mis productos digitales.</p></section>}
                     {!isDigital && categories.length > 0 ? (
                         <div
                             className="mt-3 flex [scrollbar-width:none] gap-2 overflow-x-auto pb-2"
@@ -427,6 +428,7 @@ export default function Explore({
                                     <DigitalCard
                                         key={product.id}
                                         product={product}
+                                        giftContext={isDigital && hasWelcomeGift && giftFilter}
                                     />
                                 ))}
                             </div>
@@ -482,6 +484,7 @@ export default function Explore({
                                           <DigitalCard
                                               key={product.id}
                                               product={product}
+                                        giftContext={isDigital && hasWelcomeGift && giftFilter}
                                           />
                                       ))
                                     : isPlaces

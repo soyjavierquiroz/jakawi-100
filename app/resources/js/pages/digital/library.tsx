@@ -22,7 +22,7 @@ export default function Library({
         prev_page_url: string | null;
     };
 }) {
-    const { prelaunchMode } = usePage<{ prelaunchMode: boolean }>().props;
+    const { prelaunchMode, flash } = usePage<{ prelaunchMode: boolean; flash?: { success?: string } }>().props;
     return (
         <>
             <Head title="Mis productos digitales" />
@@ -36,7 +36,8 @@ export default function Library({
                 <p className="mt-3 text-muted-foreground">
                     Tus pedidos y PDF adquiridos, siempre en tu cuenta.
                 </p>
-                <div className="mt-7 space-y-4">
+                {flash?.success === '¡Tu regalo está listo!' && <section role="status" className="mt-6 rounded-2xl border border-brand/30 bg-brand-subtle p-5"><h2 className="text-2xl font-extrabold">¡Tu regalo está listo!</h2><p className="mt-2 text-muted-foreground">Ya puedes disfrutarlo desde Mis productos digitales.</p><a href="#mis-productos" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-brand px-5 font-bold text-brand-foreground">ABRIR MI BIBLIOTECA</a></section>}
+                <div id="mis-productos" className="mt-7 scroll-mt-24 space-y-4">
                     {giftAccess.data.map(access => <article key={`gift-${access.id}`} className="rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-bold">{access.gift_product_name}</h2><p className="mt-2">Regalo · {digitalState(access.status)}</p>{access.status === 'active' && access.delivery_status === 'ready' && !prelaunchMode && <a className="mt-3 inline-flex min-h-12 items-center font-bold text-brand underline" href={`/mi-jakawi/productos-digitales/accesos/${access.id}/pdf`}>Descargar PDF</a>}</article>)}
                     {orders.data.map((o) => (
                         <article

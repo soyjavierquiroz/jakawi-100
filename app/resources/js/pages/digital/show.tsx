@@ -45,7 +45,7 @@ export default function DigitalShow({
                     ) : null}
                     <section>
                         <p className="discovery-eyebrow text-brand">
-                            {p.coming_soon ? 'Digital · Próximamente' : (canCollect ? 'Disponible' : 'Digital')}
+                            {giftAction?.kind === 'welcome' ? 'INCLUIDO CON TU MEMBRESÍA' : p.coming_soon ? 'Digital · Próximamente' : (canCollect ? 'Disponible' : 'Digital')}
                         </p>
                         <h1 className="mt-3 text-[2rem] leading-tight font-extrabold tracking-[-0.05em] sm:text-5xl">
                             {p.name}
@@ -63,6 +63,7 @@ export default function DigitalShow({
                                 {digitalMoney(memberActive ? p.public_price : p.member_price, p.currency)}
                             </p>
                         ) : null}
+                        {!preview && giftAction?.kind === 'welcome' && <section className="mt-6 rounded-2xl border border-brand/30 bg-brand-subtle p-5"><h2 className="text-xl font-extrabold">Tu membresía incluye este regalo</h2><p className="mt-2 leading-relaxed text-muted-foreground">Puedes activar este producto sin costo adicional y guardarlo en tu biblioteca digital.</p></section>}
                         {!preview && giftAction?.kind ? <button onClick={gift.click} className="mt-6 min-h-12 rounded-xl bg-brand px-6 font-bold text-brand-foreground">{gift.label}</button> : !p.coming_soon && !preview && canCollect && p.public_price ? (
                             <div className="mt-6">
                                 {authenticated ? (
@@ -101,13 +102,13 @@ export default function DigitalShow({
                                 {String(e)}
                             </p>
                         ))}
-                        <p className="mt-6 rounded-xl border border-border bg-surface p-4">
+                        {giftAction?.kind !== 'welcome' && <p className="mt-6 rounded-xl border border-border bg-surface p-4">
                             {giftAction?.kind === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : giftAction?.kind ? 'Confirma tu regalo para guardarlo en Mis productos digitales.' : p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.' : prelaunch && !canCollect
                                 ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.'
                                 : canCollect
                                   ? 'Pago por QR con verificación bancaria.'
                                   : 'Cobro pendiente de configurar'}
-                        </p>
+                        </p>}
                     </section>
                 </div>
                 {!!p.gallery_urls?.length && <div className="mt-8 grid gap-4 sm:grid-cols-3">{p.gallery_urls.map((url,i)=><img key={i} src={url} alt={`${p.name} · Imagen ${i+1}`} loading="lazy" className="w-full rounded-xl" />)}</div>}

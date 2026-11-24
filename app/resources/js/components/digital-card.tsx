@@ -27,7 +27,7 @@ export const digitalMoney = (amount: string | null, currency: string) =>
               style: 'currency',
               currency,
           }).format(Number(amount));
-export function DigitalCard({ product: p }: { product: DigitalProductData }) {
+export function DigitalCard({ product: p, giftContext = false }: { product: DigitalProductData; giftContext?: boolean }) {
     return (
         <ExplorerCard
             href={p.url}
@@ -51,7 +51,7 @@ export function DigitalCard({ product: p }: { product: DigitalProductData }) {
         >
             <div className="explorer-card-copy min-w-0 p-4 sm:p-[var(--space-card)]">
                 <p className="explorer-card-type discovery-eyebrow text-muted-foreground">
-                    Digital · disponible online
+                    {giftContext ? 'INCLUIDO CON TU MEMBRESÍA' : 'Digital · disponible online'}
                 </p>
                 <h3 className="mt-2 text-lg leading-tight font-extrabold tracking-tight">
                     {p.name}
@@ -65,16 +65,16 @@ export function DigitalCard({ product: p }: { product: DigitalProductData }) {
                     {p.partner.name}
                 </p>
                 <p className="mt-3 text-base font-extrabold">
-                    {p.coming_soon ? 'Disponible próximamente' : digitalMoney(p.public_price, p.currency)}
+                    {giftContext ? 'Sin costo adicional' : p.coming_soon ? 'Disponible próximamente' : digitalMoney(p.public_price, p.currency)}
                 </p>
-                {p.member_price ? (
+                {!giftContext && p.member_price ? (
                     <p className="mt-1 text-xs font-semibold text-muted-foreground">
                         Con membresía activa:{' '}
                         {digitalMoney(p.member_price, p.currency)}
                     </p>
                 ) : null}
                 <span className="mt-3 block text-xs font-extrabold tracking-[0.08em] text-brand">
-                    VER PRODUCTO ↗
+                    {giftContext ? 'VER REGALO' : 'VER PRODUCTO ↗'}
                 </span>
             </div>
         </ExplorerCard>

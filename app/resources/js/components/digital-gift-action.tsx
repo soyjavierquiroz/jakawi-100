@@ -16,15 +16,15 @@ export function useDigitalGiftAction(action?: GiftAction) {
         setOpen(true);
     };
     const confirmation = <Dialog open={open} onOpenChange={(value) => { if (!busy) setOpen(value); }}><DialogContent>
-        <DialogHeader><DialogTitle>{label}</DialogTitle><DialogDescription>{action?.kind === 'welcome'
-            ? 'Vas a elegir este producto como tu regalo de bienvenida. Solo puedes elegir uno.'
+        <DialogHeader><DialogTitle>{action?.kind === 'welcome' ? '¿Activar este regalo?' : label}</DialogTitle><DialogDescription>{action?.kind === 'welcome'
+            ? 'Este producto se añadirá a tu biblioteca digital. Puedes elegir un solo regalo de bienvenida y no podrás cambiarlo después.'
             : 'Vas a reclamar este producto para tu biblioteca. La invitación solo se puede utilizar una vez.'}</DialogDescription></DialogHeader>
         {Object.values(errors ?? {}).map((error, i) => <p role="alert" key={i}>{String(error)}</p>)}
-        <DialogFooter><button className="min-h-12 rounded-xl border border-border px-5" disabled={busy} onClick={() => setOpen(false)}>Cancelar</button><button className="min-h-12 rounded-xl bg-brand px-5 font-bold text-brand-foreground" disabled={busy} onClick={() => {
+        <DialogFooter><button className="min-h-12 rounded-xl border border-border px-5" disabled={busy} onClick={() => setOpen(false)}>{action?.kind === 'welcome' ? 'SEGUIR EXPLORANDO' : 'Cancelar'}</button><button className="min-h-12 rounded-xl bg-brand px-5 font-bold text-brand-foreground" disabled={busy} onClick={() => {
             if (busy || !action?.url) return;
             setBusy(true);
             router.post(action.url, {confirm: true}, {onFinish: () => setBusy(false)});
-        }}>{busy ? 'Activando…' : 'CONFIRMAR REGALO'}</button></DialogFooter>
+        }}>{busy ? 'Activando…' : action?.kind === 'welcome' ? 'SÍ, ACTIVAR MI REGALO' : 'CONFIRMAR REGALO'}</button></DialogFooter>
     </DialogContent></Dialog>;
     return { label, click, confirmation };
 }
