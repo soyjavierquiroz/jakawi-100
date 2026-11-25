@@ -79,7 +79,7 @@ class DigitalGifts
         // Final hash is captured separately from commercial sale authorization.
         $approval = $this->courtesy();
         return $query->where('welcome_gift_enabled', true)->where(function ($all) use ($approval) {
-            $all->where(fn ($app) => $app->where('delivery_type', 'hosted_app')->whereIn('app_key', array_keys(config('hosted_apps.apps', []))));
+            $all->where(fn ($app) => $app->where('delivery_type', 'hosted_app')->whereIn('app_key', array_keys(app(\App\Services\HostedApps::class)->registry())));
             $all->orWhere(fn ($pdf) => $pdf->whereNotNull('file_path')->where(function ($q) use ($approval) {
             $q->where(fn ($final) => $final->whereNotNull('gift_pdf_sha256')->whereColumn('gift_pdf_sha256', 'file_sha256'));
             if (($approval['enabled'] ?? false) === true && filled($approval['pdf_sha256'] ?? null)) {

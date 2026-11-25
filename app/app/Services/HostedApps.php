@@ -6,10 +6,23 @@ use Illuminate\Support\Facades\{Cache, Http};
 
 class HostedApps
 {
+    // Only operator-imported slugs; URLs are always derived from our STORE origin.
+    public function registry(): array
+    {
+        $apps = config('hosted_apps.apps', []);
+        $slugs = \App\Models\AppSetting::where('key', 'hosted_app_catalog')->first()?->value['slugs'] ?? [];
+        foreach ($slugs as $slug) {
+            if (is_string($slug) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug)) {
+                $apps[$slug] = ['entry' => "https://jakawi.store/$slug/_entry", 'health' => "https://jakawi.store/$slug/_health"];
+            }
+        }
+        return $apps;
+    }
+
     public function registered(DigitalProduct $product): bool
     {
         return $product->delivery_type === 'hosted_app' && filled(config('hosted_apps.secret'))
-            && filled(config('hosted_apps.apps.'.$product->app_key.'.entry'));
+            && isset($this->registry()[$product->app_key]);
     }
 
     public function ready(DigitalProduct $product): bool
@@ -17,7 +30,7 @@ class HostedApps
         if (! $this->registered($product)) return false;
         return Cache::store('database')->remember('hosted-app-health:'.$product->app_key, 30, function () use ($product) {
             try {
-                $r = Http::withToken(config('hosted_apps.secret'))->timeout(20)->get(config('hosted_apps.apps.'.$product->app_key.'.health'));
+                $r = Http::withToken(config('hosted_apps.secret'))->timeout(20)->get($this->registry()[$product->app_key]['health']);
                 return $r->ok() && $r->json('protected') === true && $r->json('functional') === true;
             } catch (\Throwable) { return false; }
         });

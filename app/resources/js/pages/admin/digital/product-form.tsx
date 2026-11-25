@@ -29,9 +29,11 @@ type Product = {
 export default function ProductForm({
     product: p,
     partner,
+    hostedApps = ['gluteos'],
 }: {
     product: Product | null;
     partner: { name: string };
+    hostedApps?: string[];
 }) {
     const form = useForm({
         delivery_type: p?.delivery_type ?? 'pdf',
@@ -110,7 +112,7 @@ export default function ProductForm({
                 </section>}
                 <section className="grid gap-3 rounded-xl border border-border p-5">
                     <label>Método de entrega<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.delivery_type} onChange={e => {form.setData('delivery_type', e.target.value as 'pdf' | 'hosted_app'); form.setData('pdf_final', false); form.setData('sale_enabled', false);}}><option value="pdf">PDF privado</option><option value="hosted_app">APP alojada en JAKAWI.STORE</option></select></label>
-                    {form.data.delivery_type === 'hosted_app' && <label>Aplicación autorizada<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.app_key} onChange={e => {form.setData('app_key', e.target.value); form.setData('pdf_final', false); form.setData('sale_enabled', false);}}><option value="">Elegir aplicación</option><option value="gluteos">Glúteos · jakawi.store/gluteos/</option></select><p>Requiere APP funcional y protegida, cuenta bancaria, precios, QR y autorización comercial individual. El PDF anterior se conserva como archivo privado.</p></label>}
+                    {form.data.delivery_type === 'hosted_app' && <label>Aplicación autorizada<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.app_key} onChange={e => {form.setData('app_key', e.target.value); form.setData('pdf_final', false); form.setData('sale_enabled', false);}}><option value="">Elegir aplicación</option>{hostedApps.map(slug => <option key={slug} value={slug}>{slug} · jakawi.store/{slug}/</option>)}</select><p>Requiere APP funcional y protegida, cuenta bancaria, precios, QR y autorización comercial individual. El PDF anterior se conserva como archivo privado.</p></label>}
                     {error('delivery_type')}{error('app_key')}
                 </section>
                 <section className="grid gap-4 rounded-xl border border-border p-5"><h2 className="text-xl font-bold">Regalos digitales</h2><label className="flex gap-3"><input type="checkbox" checked={form.data.welcome_gift_enabled} onChange={e => form.setData('welcome_gift_enabled', e.target.checked)}/>Disponible como regalo de bienvenida</label><label className="flex gap-3"><input type="checkbox" checked={form.data.promotional_gift_enabled} onChange={e => form.setData('promotional_gift_enabled', e.target.checked)}/>Disponible para regalo promocional</label><label className="flex gap-3"><input type="checkbox" checked={form.data.gift_pdf_final} onChange={e => form.setData('gift_pdf_final', e.target.checked)}/>{form.data.delivery_type === 'hosted_app' ? 'Autorizo la APP protegida para regalos.' : 'Confirmo que el PDF privado actual es definitivo para regalos.'}</label></section>

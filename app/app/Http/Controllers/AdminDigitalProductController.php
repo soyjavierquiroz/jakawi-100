@@ -18,7 +18,7 @@ class AdminDigitalProductController extends Controller
 {
     public function index(DigitalCatalog $catalog)
     {
-        return Inertia::render('admin/digital/products', ['products' => DigitalProduct::where('partner_id', $catalog->internalPartner()->id)->latest('id')->paginate(25), 'partner' => $catalog->internalPartner()->only('id', 'name')]);
+        return Inertia::render('admin/digital/products', ['products' => DigitalProduct::where('partner_id', $catalog->internalPartner()->id)->latest('id')->paginate(25), 'partner' => $catalog->internalPartner()->only('id', 'name'), 'hostedApps' => array_keys(app(\App\Services\HostedApps::class)->registry())]);
     }
 
     public function edit(DigitalCatalog $catalog, ?DigitalProduct $product = null)
@@ -27,7 +27,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
 
-        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['gift_pdf_final' => filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256, 'coming_soon' => $product->isComingSoon(), 'qrs' => app(\App\Services\DigitalProductQr::class)->adminState($product), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name')]);
+        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['gift_pdf_final' => filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256, 'coming_soon' => $product->isComingSoon(), 'qrs' => app(\App\Services\DigitalProductQr::class)->adminState($product), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name'), 'hostedApps' => array_keys(app(\App\Services\HostedApps::class)->registry())]);
     }
 
     public function save(Request $request, DigitalCatalog $catalog, DigitalFiles $files, ?DigitalProduct $product = null)
@@ -50,7 +50,7 @@ class AdminDigitalProductController extends Controller
             'category' => ['nullable', Rule::in(config('jakawi.categories'))],
             'gallery' => 'nullable|array|max:8', 'gallery.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
             'gallery_clear' => 'sometimes|boolean', 'gallery_keep' => 'nullable|array|max:8', 'gallery_keep.*' => ['string', Rule::in($product?->gallery_paths ?? [])],
-            'partner_id' => 'prohibited', 'delivery_type' => 'sometimes|in:pdf,hosted_app', 'app_key' => ['nullable', Rule::in(array_keys(config('hosted_apps.apps', [])))],
+            'partner_id' => 'prohibited', 'delivery_type' => 'sometimes|in:pdf,hosted_app', 'app_key' => ['nullable', Rule::in(array_keys(app(\App\Services\HostedApps::class)->registry()))],
         ]);
         $hosted = ($data['delivery_type'] ?? $product?->delivery_type) === 'hosted_app';
         if ($hosted && empty($data['app_key'] ?? $product?->app_key)) throw ValidationException::withMessages(['app_key' => 'Elige una APP registrada.']);
@@ -69,7 +69,7 @@ class AdminDigitalProductController extends Controller
             $deliveryChanged = $product->exists && (($data['delivery_type'] ?? $product->delivery_type) !== $product->delivery_type || ($data['app_key'] ?? $product->app_key) !== $product->app_key);
             $product->fill($data);
             $hosted = $product->delivery_type === 'hosted_app';
-            if ($hosted && ! app(\App\Services\HostedApps::class)->ready($product)) throw ValidationException::withMessages(['app_key' => 'La APP debe estar registrada, funcional y protegida.']);
+            if ($hosted && $product->status === 'published' && ! app(\App\Services\HostedApps::class)->ready($product)) throw ValidationException::withMessages(['app_key' => 'La APP debe estar registrada, funcional y protegida.']);
             $product->partner_id = $catalog->internalPartner()->id;
             if ($request->input('operation') === 'authorize_sale' && ($request->hasFile('pdf') || $request->hasFile('cover') || $request->hasFile('gallery') || $request->hasFile('public_qr') || $request->hasFile('member_qr'))) throw ValidationException::withMessages(['sale_enabled' => 'Primero guarda los archivos con Guardar producto. Después habilita la venta con las referencias ya guardadas.']);
             // Validate administrative intent before writing any object to MinIO.
