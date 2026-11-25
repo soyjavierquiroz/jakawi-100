@@ -1,0 +1,13 @@
+FROM sha256:3148727e6c63ee6099cfba9f140ea1992a63f52218ebd5fce8673547f353c926 AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/Http/Controllers/AdminDigitalProductController.php /var/www/html/app/Http/Controllers/AdminDigitalProductController.php
+COPY --chown=www-data:www-data app/app/Services/DigitalProductQr.php /var/www/html/app/Services/DigitalProductQr.php
+COPY --chown=www-data:www-data app/app/Services/DigitalGifts.php /var/www/html/app/Services/DigitalGifts.php
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+FROM sha256:ddaeb154a4515c5d52c4b8eed216de7344779bb5236cd49290b5c7648a2a0c2f AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

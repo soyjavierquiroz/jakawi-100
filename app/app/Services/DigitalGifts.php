@@ -113,8 +113,8 @@ class DigitalGifts
 
     public function configure(DigitalProduct $product, bool $welcome, bool $promotional, bool $final): void
     {
-        if ($final) abort_unless(app(DigitalSaleAvailability::class)->pdfVerified($product), 422, 'Sube y verifica el PDF privado definitivo antes de autorizar regalos.');
-        abort_if(($welcome || $promotional) && ! $final, 422, 'Confirma el PDF definitivo para habilitar regalos.');
+        if ($final && ! app(DigitalSaleAvailability::class)->pdfVerified($product)) throw \Illuminate\Validation\ValidationException::withMessages(['gift_pdf_final' => 'Sube y verifica el PDF privado definitivo antes de autorizar regalos.']);
+        if (($welcome || $promotional) && ! $final) throw \Illuminate\Validation\ValidationException::withMessages(['gift_pdf_final' => 'Confirma el PDF definitivo para habilitar nuevos regalos. La cortesía de bienvenida existente no necesita esta confirmación si no cambias su autorización.']);
         $product->update(['welcome_gift_enabled' => $welcome, 'promotional_gift_enabled' => $promotional,
             'gift_pdf_sha256' => $final ? $product->file_sha256 : null]);
     }

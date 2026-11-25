@@ -69,12 +69,17 @@ export default function ProductForm({
         ['support_information', 'Información de soporte'],
         ['access_terms', 'Condiciones de acceso'],
     ] as const;
-    const submit = (e: FormEvent) => {
-        e.preventDefault();
+    const error = (field: string) => Object.entries(form.errors).filter(([key]) => key === field || key.startsWith(field + '.')).map(([key, message]) => <span key={key} data-field-error role="alert" className="block text-sm font-normal text-destructive">{message}</span>);
+    const save = (operation: 'save' | 'authorize_sale') => {
+        form.transform(data => ({...data, operation, sale_enabled: operation === 'authorize_sale' ? true : data.sale_enabled}));
         form.post('/admin/productos-digitales' + (p ? `/${p.slug}` : ''), {
             forceFormData: true,
+            preserveScroll: true,
+            preserveState: true,
+            onError: () => requestAnimationFrame(() => document.querySelector('[data-field-error]')?.scrollIntoView({block: 'center', behavior: 'smooth'})),
         });
     };
+    const submit = (e: FormEvent) => { e.preventDefault(); save('save'); };
     return (
         <AdminLayout
             title={p ? 'Editar producto digital' : 'Crear producto digital'}
@@ -93,9 +98,15 @@ export default function ProductForm({
                     {p.sale.missing.map(item => <p key={item}>{item}</p>)}
                     <a className="text-brand underline" href="/admin/digital/cobro">Configurar QR y cuenta digital</a>
                     <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>Confirmo que el PDF es definitivo y está preparado para entrega a compradores.</label>
-                    <label className="flex gap-3"><input type="checkbox" checked={form.data.sale_enabled ?? false} onChange={e=>form.setData('sale_enabled',e.target.checked)}/>Autorizar venta real exclusivamente de Glúteo Perfecto. Requiere completar ambos precios y QR confirmados, publicación, PDF definitivo y cuenta autorizada.</label>
+                    {error('pdf_final')}
+                    <p>Guardar producto conserva los datos y archivos sin habilitar ventas. Habilitar venta requiere cuenta autorizada, ambos QR confirmados y PDF comercial definitivo.</p>
+                    <button type="button" onClick={() => save('authorize_sale')} disabled={form.processing || !!(form.data.pdf || form.data.cover || form.data.public_qr || form.data.member_qr || form.data.gallery.length)} className="min-h-12 rounded-xl border border-border px-4 font-bold disabled:opacity-50">Habilitar venta</button>
+                    <p className="text-sm text-muted-foreground">Si seleccionaste archivos, utiliza primero Guardar producto y después vuelve al editor para habilitar la venta.</p>
+                    {error('sale_enabled')}
                 </section>}
                 <section className="grid gap-4 rounded-xl border border-border p-5"><h2 className="text-xl font-bold">Regalos digitales</h2><label className="flex gap-3"><input type="checkbox" checked={form.data.welcome_gift_enabled} onChange={e => form.setData('welcome_gift_enabled', e.target.checked)}/>Disponible como regalo de bienvenida</label><label className="flex gap-3"><input type="checkbox" checked={form.data.promotional_gift_enabled} onChange={e => form.setData('promotional_gift_enabled', e.target.checked)}/>Disponible para regalo promocional</label><label className="flex gap-3"><input type="checkbox" checked={form.data.gift_pdf_final} onChange={e => form.setData('gift_pdf_final', e.target.checked)}/>Confirmo que el PDF privado actual es definitivo para regalos.</label></section>
+                {error('gift_pdf_final')}{error('welcome_gift_enabled')}{error('promotional_gift_enabled')}
+                {Object.keys(form.errors).length > 0 && <p role="status" className="rounded-xl border border-destructive p-4">No se guardaron los cambios. Corrige los campos indicados. Los datos escritos se conservan; si recargas el editor, vuelve a seleccionar los archivos.</p>}
                 {fields.map(([key, label]) => (
                     <label key={key} className="grid gap-2 font-semibold">
                         {label}
@@ -118,9 +129,11 @@ export default function ProductForm({
                             <input
                                 className="min-h-12 rounded-xl border border-border bg-surface px-3"
                                 value={form.data[key]}
-                                onChange={(e) =>
-                                    form.setData(key, e.target.value)
-                                }
+                                onChange={(e) => {
+                                    form.setData(key, e.target.value);
+                                    if (key === 'public_price') form.setData('public_qr_confirmed', false);
+                                    if (key === 'member_price') form.setData('member_qr_confirmed', false);
+                                }}
                                 type={key.includes('price') ? 'number' : 'text'}
                                 step={
                                     key.includes('price') ? '0.01' : undefined
@@ -129,10 +142,11 @@ export default function ProductForm({
                                 required={key === 'name' || key === 'slug'}
                             />
                         )}
+                        {error(key)}
                     </label>
                 ))}
-                <label className="grid gap-2">Categoría<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.category} onChange={e=>form.setData('category',e.target.value)}>{['food','cafe','fitness','wellness','beauty','entertainment','nightlife','shopping','services','experiences'].map(c=><option key={c} value={c}>{c}</option>)}</select></label>
-                <label className="grid gap-2">Galería (hasta 8 imágenes)<input type="file" multiple accept="image/png,image/jpeg,image/webp" onChange={e=>form.setData('gallery',Array.from(e.target.files||[]))}/></label>
+                <label className="grid gap-2">Categoría<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.category} onChange={e=>form.setData('category',e.target.value)}>{['food','cafe','fitness','wellness','beauty','entertainment','nightlife','shopping','services','experiences'].map(c=><option key={c} value={c}>{c}</option>)}</select>{error('category')}</label>
+                <label className="grid gap-2">Galería (hasta 8 imágenes)<input type="file" multiple accept="image/png,image/jpeg,image/webp" onChange={e=>form.setData('gallery',Array.from(e.target.files||[]))}/>{error('gallery')}{error('gallery_keep')}</label>
                 {!!p?.gallery_paths?.length && <div className="grid grid-cols-2 gap-3">{p.gallery_paths.map((path,i)=><label key={path} className="text-sm"><img src={p.gallery_urls?.[i]} alt="Imagen de galería" className="mb-2 w-full rounded-xl"/><input type="checkbox" checked={form.data.gallery_keep.includes(path)} onChange={e=>{const keep=e.target.checked?[...form.data.gallery_keep,path]:form.data.gallery_keep.filter(k=>k!==path);form.setData('gallery_keep',keep);form.setData('gallery_clear',keep.length===0);}}/> Conservar</label>)}</div>}
                 <label className="grid gap-2">
                     Moneda
@@ -146,15 +160,18 @@ export default function ProductForm({
                         <option>BOB</option>
                         <option>USD</option>
                     </select>
+                    {error('currency')}
                 </label>
                 {(['public','member'] as const).map(tier => <section key={tier} className="grid gap-4 rounded-xl border border-border p-5">
                     <label className="grid gap-2 font-semibold">{tier === 'public' ? 'QR público' : 'QR miembro'} (PNG/JPG, máximo 10 MB)
                         <input type="file" accept="image/png,image/jpeg" onChange={e=>{form.setData(`${tier}_qr`, e.target.files?.[0] ?? null); form.setData(`${tier}_qr_confirmed`, false);}}/>
+                        {error(`${tier}_qr`)}
                     </label>
                     <p role="status">{p?.qrs?.[tier].verified ? 'Verificado para el precio, moneda y cuenta actuales' : 'Pendiente de cargar o volver a confirmar'}</p>
                     <p>Importe fijo: {tier === 'public' ? form.data.public_price || 'Pendiente' : form.data.member_price || 'Pendiente'} {form.data.currency}. Cuenta compartida: <a className="text-brand underline" href="/admin/digital/cobro">Cobro digital</a>.</p>
                     {p?.qrs?.[tier].has_file && <a className="text-brand underline" href={`/admin/productos-digitales/${p.slug}/qr/${tier}`} target="_blank" rel="noreferrer">Revisar QR {tier === 'public' ? 'público' : 'miembro'} actual</a>}
                     <label className="flex items-start gap-3"><input type="checkbox" checked={form.data[`${tier}_qr_confirmed`]} onChange={e=>form.setData(`${tier}_qr_confirmed`,e.target.checked)}/>Confirmo que el QR {tier === 'public' ? 'público' : 'miembro'} pertenece a la cuenta exclusiva de JAKAWI Digital, es reutilizable y cobra el importe fijo y la moneda indicados.</label>
+                    {error(`${tier}_qr_confirmed`)}
                 </section>)}
                 <label className="grid gap-2">
                     Estado
@@ -166,6 +183,7 @@ export default function ProductForm({
                         <option value="draft">Borrador</option>
                         <option value="published">Publicado</option>
                     </select>
+                    {error('status')}
                 </label>
                 <label className="grid gap-2">
                     Portada
@@ -176,6 +194,7 @@ export default function ProductForm({
                             form.setData('cover', e.target.files?.[0] ?? null)
                         }
                     />
+                    {error('cover')}
                 </label>
                 <label className="grid gap-2">
                     PDF privado (máximo 25 MB)
@@ -186,6 +205,7 @@ export default function ProductForm({
                             { form.setData('pdf', e.target.files?.[0] ?? null); form.setData('gift_pdf_final', false); form.setData('welcome_gift_enabled', false); form.setData('promotional_gift_enabled', false); if (p?.sale?.eligible) { form.setData('pdf_final', false); form.setData('sale_enabled', false); } }
                         }
                     />
+                    {error('pdf')}{error('file')}
                     {p?.has_file ? (
                         <a
                             className="text-brand underline"
@@ -209,7 +229,7 @@ export default function ProductForm({
                         disabled={form.processing}
                         className="min-h-12 rounded-xl bg-brand px-6 font-bold text-brand-foreground"
                     >
-                        Guardar
+                        Guardar producto
                     </button>
                     <Link
                         className="inline-flex min-h-12 items-center"

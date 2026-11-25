@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\{AppSetting, DigitalOrder, DigitalProduct};
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\{DB, Storage};
+use Illuminate\Validation\ValidationException;
 
 /** Bank-issued, reusable fixed-amount images. Never generates payment QR codes. */
 class DigitalProductQr
@@ -58,6 +59,28 @@ class DigitalProductQr
         return $missing;
     }
 
+    public function validateSave(DigitalProduct $product, string $tier, ?UploadedFile $file, bool $confirm): void
+    {
+        if ($file && ! in_array($file->getMimeType(), ['image/png','image/jpeg'], true)) {
+            throw ValidationException::withMessages([$tier.'_qr' => 'Sube una imagen PNG o JPG emitida por el banco.']);
+        }
+        if (! $confirm) return;
+        $account = app(DigitalCollection::class)->current();
+        if (! $account) {
+            throw ValidationException::withMessages([$tier.'_qr_confirmed' => 'Primero configura y autoriza la cuenta exclusiva en Cobro digital. Puedes guardar el QR sin marcar esta confirmación.']);
+        }
+        if ($account['currency'] !== $product->currency) {
+            throw ValidationException::withMessages([$tier.'_qr_confirmed' => 'La moneda del producto no coincide con la cuenta autorizada. Corrige la moneda o la cuenta antes de confirmar el QR.']);
+        }
+        $price = $this->price($product, $tier);
+        if (! is_numeric($price) || DigitalCheckout::cents($price) <= 0) {
+            throw ValidationException::withMessages([$tier.'_price' => 'Indica el importe fijo del QR antes de confirmarlo.']);
+        }
+        if (! $file && ! $this->intact($this->settings($product)[$tier] ?? [])) {
+            throw ValidationException::withMessages([$tier.'_qr' => 'Carga una imagen QR válida antes de confirmar. El archivo actual no está disponible o no supera la verificación de integridad.']);
+        }
+    }
+
     public function save(DigitalProduct $product, string $tier, ?UploadedFile $file, bool $confirm, int $adminId): void
     {
         abort_unless(in_array($tier, ['public', 'member'], true), 422);
@@ -67,16 +90,16 @@ class DigitalProductQr
         $setting = AppSetting::where('key', $this->key($product))->lockForUpdate()->first();
         $settings = $setting?->value ?? [];
         $qr = $settings[$tier] ?? [];
+        $this->validateSave($product, $tier, $file, $confirm);
         if (! $file && ! $confirm && $qr === []) return;
         if ($file) {
-            abort_unless(in_array($file->getMimeType(), ['image/png','image/jpeg'], true), 422, 'Sube una imagen PNG o JPG emitida por el banco.');
             $stored = app(DigitalFiles::class)->store($file, 'qr');
             $qr = ['qr_path'=>$stored['path'], 'qr_sha256'=>$stored['sha256']];
         }
         if ($confirm) {
             $account = app(DigitalCollection::class)->current();
             $price = $this->price($product, $tier);
-            abort_unless($account && $account['currency'] === $product->currency && is_numeric($price) && DigitalCheckout::cents($price) > 0 && $this->intact($qr), 422, 'Configura cuenta, precio e imagen QR antes de confirmar.');
+            if (! $this->intact($qr)) throw ValidationException::withMessages([$tier.'_qr' => 'No se pudo verificar la imagen QR guardada. Selecciónala de nuevo.']);
             $qr = array_merge($qr, ['amount'=>$price, 'currency'=>$product->currency,
                 'account_key'=>$account['account_key'], 'version'=>$account['version'],
                 'verified_by'=>$adminId, 'verified_at'=>now()->toIso8601String()]);
