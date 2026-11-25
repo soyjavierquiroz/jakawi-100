@@ -88,7 +88,7 @@ def verify():
  with urllib.request.urlopen('https://jakawi.com/up',timeout=20) as r:assert r.status==200
  before=read('protected-before.private.json');after=snapshot()
  products_before=before.pop('products');products_after=after.pop('products')
- allowed={'app/tests/Feature/SharedDigitalAccountTest.php', 'app/tests/Feature/PlrCategoriesTest.php', row['product_id']:row['category'] for row in read('enrichment.json') if row['result']=='filled'}
+ allowed={row['product_id']:row['category'] for row in read('enrichment.json') if row['result']=='filled'}
  for product in products_before:
   if product['id'] in allowed:
    assert product['category'] is None or product['category'].strip()=='', 'Owner category must be preserved'
