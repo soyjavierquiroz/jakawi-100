@@ -228,6 +228,7 @@ class DigitalGiftsTest extends TestCase
         $this->actingAs($this->admin)->post('/admin/productos-digitales/regalo-qa/regalar', ['issuance_key' => (string) Str::uuid()])->assertForbidden();
         $this->actingAs($this->member)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertRedirect('/mi-jakawi/productos-digitales');
         $access = DigitalAccessGrant::sole();
+        $this->get('/mi-jakawi/productos-digitales')->assertInertia(fn (Assert $p) => $p->where('giftAccess.data.0.digital_allowed', true)->where('giftAccess.data.0.id', $access->id)->etc());
         $this->get('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/pdf')->assertOk()->assertContent($this->pdf);
         $this->get('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/pdf')->assertOk();
         $this->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertStatus(409);

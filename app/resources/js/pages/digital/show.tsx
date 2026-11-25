@@ -97,6 +97,10 @@ export default function DigitalShow({
                                 </p>
                             </div>
                         ) : null}
+                        {!preview && giftAction?.kind === 'welcome' && canCollect && !p.coming_soon && <div className="mt-4">
+                            <button onClick={() => router.post(`/productos-digitales/${p.slug}/comprar`)} className="min-h-12 rounded-xl border border-brand px-6 font-bold text-brand">COMPRAR · {digitalMoney(memberActive && p.member_price ? p.member_price : p.public_price, p.currency)}</button>
+                            <p className="mt-2 text-sm text-muted-foreground">Comprar conserva tu regalo pendiente para otro producto.</p>
+                        </div>}
                         {Object.values(errors ?? {}).map((e, i) => (
                             <p key={i} className="mt-3 text-destructive">
                                 {String(e)}

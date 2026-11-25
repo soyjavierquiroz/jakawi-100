@@ -370,4 +370,46 @@ class DigitalCheckoutTest extends TestCase
         $this->actingAs($this->admin)->post('/admin/digital/cobro',$data+['qr'=>UploadedFile::fake()->image('LEGACY-NOT-ALLOWED.png')])->assertSessionHasErrors('qr');
     }
 
+    public function test_checkout_ux_summary_receipt_approval_and_pending_gift_are_preserved(): void
+    {
+        config(['digital_gifts.enabled' => true]);
+        $this->product->update(['public_price'=>'49.00','member_price'=>'29.00','welcome_gift_enabled'=>true,'gift_pdf_sha256'=>$this->product->file_sha256]);
+        $this->collection();
+        $free = $this->order();
+        $this->assertSame('49.00', $free->amount);
+        $this->assertSame('public', $free->collection_snapshot['qr_tier']);
+        $free->update(['status'=>'expired']);
+        Membership::create(['user_id'=>$this->buyer->id,'status'=>'active','type'=>'pioneer','starts_at'=>now()->subDay(),'ends_at'=>now()->subHour(),'amount_paid'=>'100.00']);
+        config(['jakawi.membership.official_launch_date'=>null]);
+        $gift = app(\App\Services\DigitalGifts::class)->backfillWelcome($this->buyer);
+        $this->actingAs($this->buyer)->get('/productos-digitales/pdf-qa')->assertInertia(fn ($p) => $p->where('giftAction.kind','welcome')->where('canCollect',true)->etc());
+        $order = $this->order();
+        $this->assertSame('29.00',$order->amount);
+        $this->assertSame('member',$order->collection_snapshot['qr_tier']);
+        $this->assertSame('pending',$gift->fresh()->status);
+        $this->get('/mi-jakawi/productos-digitales/pedidos/'.$order->reference)->assertInertia(fn ($p) => $p->where('order.public_price','49.00')->where('order.amount','29.00')->has('order.cover_url')->etc());
+        $payment = $this->payment($order);
+        $this->get('/mi-jakawi/productos-digitales/pedidos/'.$order->reference)->assertInertia(fn ($p) => $p->where('order.status','pending')->where('order.payments.0.status','under_review')->where('order.access',null)->etc());
+        $evidence = $this->evidence(); $evidence['received_amount']='29.00';
+        app(DigitalCheckout::class)->confirm($payment,$this->admin,$evidence);
+        $this->get('/mi-jakawi/productos-digitales/pedidos/'.$order->reference)->assertInertia(fn ($p) => $p->where('order.status','confirmed')->where('order.access.delivery_status','ready')->etc());
+        $this->get('/mi-jakawi/productos-digitales')->assertInertia(fn ($p) => $p->where('orders.data.0.status','confirmed')->etc());
+        $this->get('/mi-jakawi/productos-digitales/accesos/'.$order->access()->value('id').'/pdf')->assertOk();
+        $this->assertSame('pending',$gift->fresh()->status);
+    }
+
+    public function test_guest_login_and_registration_return_to_gluteo_purchase(): void
+    {
+        $this->product->update(['slug'=>'gluteo-perfecto']);
+        $url='/productos-digitales/gluteo-perfecto/comprar';
+        $this->get($url)->assertRedirect('/login');
+        $this->post('/login',['email'=>$this->buyer->email,'password'=>'password'])->assertRedirect(url($url));
+        $this->get($url)->assertOk();
+        $this->post('/logout');
+        $this->get($url)->assertRedirect('/login');
+        $this->post('/register',['name'=>'Compra QA','email'=>'checkout-register@qa.invalid','whatsapp'=>'71234567'])->assertRedirect(url($url));
+        $this->get($url)->assertOk();
+        $this->assertDatabaseCount('digital_orders',0);
+    }
+
 }

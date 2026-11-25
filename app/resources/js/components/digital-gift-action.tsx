@@ -8,7 +8,7 @@ export function useDigitalGiftAction(action?: GiftAction) {
     const [open, setOpen] = useState(false);
     const [busy, setBusy] = useState(false);
     const { errors } = usePage().props;
-    const label = action?.kind === 'owned' ? 'ABRIR / DESCARGAR' : action?.kind === 'welcome' ? 'ACTIVAR MI REGALO' : 'RECLAMAR MI REGALO';
+    const label = action?.kind === 'owned' ? 'ABRIR MI PRODUCTO' : action?.kind === 'welcome' ? 'ACTIVAR MI REGALO' : 'RECLAMAR MI REGALO';
     const click = () => {
         if (!action?.url) return;
         if (action.kind === 'owned') { window.location.assign(action.url); return; }
