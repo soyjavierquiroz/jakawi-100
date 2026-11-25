@@ -124,8 +124,9 @@ class PublicController extends Controller
         $city = $selectedCity->resolve($request);
         $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
         $category = $request->query('category');
-        $category = in_array($category, config('jakawi.categories'), true) ? $category : null;
         $type = in_array($request->query('type'), ['benefits', 'experiences', 'challenges', 'unlocks', 'places', 'digital'], true) ? $request->query('type') : null;
+        $categories = config($type === null || $type === 'digital' ? 'jakawi.digital_categories' : 'jakawi.categories');
+        $category = in_array($category, $categories, true) ? $category : null;
         $opportunityType = match ($type) {
             'benefits' => OpportunityType::BENEFIT,
             'experiences' => OpportunityType::EXPERIENCE,
@@ -135,7 +136,6 @@ class PublicController extends Controller
             'places' => 'PLACE',
             default => null,
         };
-        if ($type === 'digital') $category = null;
         $giftFilter = $type === 'digital' && $giftFilter;
         $page = $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, max(1, $request->integer('page', 1)), catalog: true, giftFilter: $giftFilter);
 
@@ -144,7 +144,8 @@ class PublicController extends Controller
             'query' => $term,
             'category' => $category,
             'type' => $type,
-            'categories' => $type === 'digital' ? [] : config('jakawi.categories'),
+            'categories' => $categories,
+            'categoryLabels' => $type === null || $type === 'digital' ? config('jakawi.category_labels') : [],
             'sort' => $sort,
             'pagination' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'next_page_url' => $page->nextPageUrl()],
             'results' => Inertia::merge(array_map(function ($item) {

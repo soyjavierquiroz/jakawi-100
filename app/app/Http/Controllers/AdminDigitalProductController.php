@@ -18,7 +18,7 @@ class AdminDigitalProductController extends Controller
 {
     public function index(DigitalCatalog $catalog)
     {
-        return Inertia::render('admin/digital/products', ['products' => DigitalProduct::where('partner_id', $catalog->internalPartner()->id)->latest('id')->paginate(25), 'partner' => $catalog->internalPartner()->only('id', 'name'), 'hostedApps' => array_keys(app(\App\Services\HostedApps::class)->registry())]);
+        return Inertia::render('admin/digital/products', ['products' => DigitalProduct::where('partner_id', $catalog->internalPartner()->id)->latest('id')->paginate(25), 'partner' => $catalog->internalPartner()->only('id', 'name'), 'categoryLabels' => config('jakawi.category_labels'), 'hostedApps' => array_keys(app(\App\Services\HostedApps::class)->registry())]);
     }
 
     public function edit(DigitalCatalog $catalog, ?DigitalProduct $product = null)
@@ -27,7 +27,7 @@ class AdminDigitalProductController extends Controller
             $catalog->assertInternal($product);
         }
 
-        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['gift_pdf_final' => filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256, 'coming_soon' => $product->isComingSoon(), 'qrs' => app(\App\Services\DigitalProductQr::class)->adminState($product), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name'), 'hostedApps' => array_keys(app(\App\Services\HostedApps::class)->registry())]);
+        return Inertia::render('admin/digital/product-form', ['product' => $product ? $product->toArray() + ['gift_pdf_final' => filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256, 'coming_soon' => $product->isComingSoon(), 'qrs' => app(\App\Services\DigitalProductQr::class)->adminState($product), 'sale' => app(\App\Services\DigitalSaleAvailability::class)->adminState($product), 'has_file' => filled($product->file_path), 'gallery_urls' => array_map(fn ($path) => app(\App\Services\MediaUrl::class)->url($path, 'thumbnail'), $product->gallery_paths ?? [])] : null, 'partner' => $catalog->internalPartner()->only('id', 'name'), 'categoryLabels' => config('jakawi.category_labels'), 'hostedApps' => array_keys(app(\App\Services\HostedApps::class)->registry())]);
     }
 
     public function save(Request $request, DigitalCatalog $catalog, DigitalFiles $files, ?DigitalProduct $product = null)
@@ -51,7 +51,7 @@ class AdminDigitalProductController extends Controller
             'member_price' => 'nullable|decimal:0,2|gt:0|lte:public_price', 'currency' => 'required|in:BOB,USD',
             'support_information' => 'nullable|string|max:3000', 'access_terms' => 'nullable|string|max:10000',
             'pdf' => 'nullable|file|mimes:pdf|max:25600', 'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
-            'category' => ['nullable', Rule::in(config('jakawi.categories'))],
+            'category' => ['nullable', Rule::in(config('jakawi.digital_categories'))],
             'gallery' => 'nullable|array|max:8', 'gallery.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
             'gallery_clear' => 'sometimes|boolean', 'gallery_keep' => 'nullable|array|max:8', 'gallery_keep.*' => ['string', Rule::in($product?->gallery_paths ?? [])],
             'partner_id' => 'prohibited', 'delivery_type' => 'sometimes|in:pdf,hosted_app', 'app_key' => ['nullable', Rule::in(array_keys(app(\App\Services\HostedApps::class)->registry()))],

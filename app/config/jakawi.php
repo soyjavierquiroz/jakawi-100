@@ -1,5 +1,15 @@
 <?php
 
+$categories = ['food', 'cafe', 'fitness', 'wellness', 'beauty', 'entertainment', 'nightlife', 'shopping', 'services', 'experiences'];
+$categoryLabels = [
+    'food'=>'Comida', 'cafe'=>'Café', 'fitness'=>'Fitness', 'wellness'=>'Bienestar',
+    'beauty'=>'Belleza', 'entertainment'=>'Entretenimiento', 'nightlife'=>'Salir',
+    'shopping'=>'Comprar', 'services'=>'Servicios', 'experiences'=>'Experiencias',
+    'cocina-recetas'=>'Cocina y recetas', 'nutricion-habitos'=>'Nutrición y hábitos',
+    'negocios-marketing'=>'Negocios y marketing', 'desarrollo-personal'=>'Desarrollo personal',
+    'espiritualidad-fe'=>'Espiritualidad y fe', 'astrologia'=>'Astrología',
+];
+
 return [
     'partner_entity_types' => ['organization', 'individual'],
     'partner_types' => ['business', 'professional', 'creator', 'organizer', 'brand', 'other'],
@@ -11,7 +21,9 @@ return [
     'experience_session_statuses' => ['scheduled', 'cancelled'],
     'experience_partner_roles' => ['organizer', 'host', 'venue', 'sponsor', 'participant', 'creator', 'provider', 'other'],
     'publication_statuses' => ['draft', 'published', 'paused', 'archived'],
-    'categories' => ['food', 'cafe', 'fitness', 'wellness', 'beauty', 'entertainment', 'nightlife', 'shopping', 'services', 'experiences'],
+    'categories' => $categories,
+    'digital_categories' => array_keys($categoryLabels),
+    'category_labels' => $categoryLabels,
     'member_profile' => [
         'interests' => ['food', 'cafe', 'fitness', 'wellness', 'beauty', 'entertainment', 'nightlife', 'shopping', 'services', 'experiences'],
         'social_contexts' => ['solo', 'pareja', 'amigos', 'familia'],

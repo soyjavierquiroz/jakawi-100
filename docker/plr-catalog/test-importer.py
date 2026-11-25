@@ -23,6 +23,34 @@ class ImportTest(unittest.TestCase):
         for f in ('icon.png','app.js','sw.js'):
             (app/f).write_bytes(b'QA')
         return app
+    def test_all_36_editorial_titles_and_verified_ids(self):
+        self.assertEqual(sum(map(len,m.PLR_CATEGORIES.values())),36)
+        for category,names in m.PLR_CATEGORIES.items():
+            for name in names:
+                self.assertEqual(m.category_from_metadata(name, vendor_id='unverified_es'),category,name)
+        for vendor,title in m.PLR_VENDOR_TITLES.items():
+            self.assertEqual(m.category_from_metadata(title, vendor_id=vendor),m.category_from_metadata(title))
+        self.assertEqual(m.category_from_metadata('Acero ABS',vendor_id='barriga_de_aco_es'),'fitness')
+        self.assertEqual(m.category_from_metadata('Antiestrés',vendor_id='antiestresse_app_es'),'wellness')
+        self.assertIsNone(m.category_from_metadata('Pilates en casa',vendor_id='astrologia_es'))
+        self.assertIsNone(m.category_from_metadata('Aplicación desconocida','fitness yoga recetas'))
+        self.assertEqual(m.category_from_metadata('Meal Prep Fitness'),'cocina-recetas')
+        self.assertEqual(m.category_from_metadata('Jugo Detox'),'cocina-recetas')
+        self.assertEqual(m.category_from_metadata('Té Detox'),'nutricion-habitos')
+
+    def test_inspect_uses_real_package_name_and_preserves_manual_metadata_category(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);app=self.fixture(root)
+            (app/'config-override.json').write_text(json.dumps({'app':{'name':'Pastel Gourmet','lang':'es'}}))
+            _,_,data=m.inspect(root)
+            self.assertEqual(data['category'],'cocina-recetas')
+            override=root/'metadata.json';override.write_text(json.dumps({'name':'Nombre propio','category':'wellness'}))
+            _,_,data=m.inspect(root,override)
+            self.assertEqual(data['category'],'wellness')
+            override.write_text(json.dumps({'name':'Nombre propio'}))
+            _,_,data=m.inspect(root,override)
+            self.assertEqual(data['category'],'cocina-recetas')
+
     def test_detection_manifest_and_protected_routes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)

@@ -129,3 +129,22 @@ existentes y excluye Glúteos. El CLI STORE permanece sin cambios.
 
 Explorar consulta la autorización comercial individual `canSell()` para el
 aviso editorial de cada app; no usa la antigua excepción exclusiva de Glúteos.
+
+## Categorías PLR
+
+El catálogo existente de `config/jakawi.php` define nombres y slugs. La lista
+digital amplía las opciones existentes sin alterar categorías ni intereses de
+negocios físicos. Admin y Explorar reciben las etiquetas del mismo catálogo.
+Las categorías editoriales nuevas filtran únicamente productos digitales.
+
+El importador contiene el mapa editorial de 36 títulos. Prioriza identificadores
+comprobados contra paquetes originales y exige un título real compatible; los
+identificadores aún no comprobados solo se asocian por un nombre español exacto
+del paquete. No infiere categorías por palabras de la descripción. Los títulos
+dudosos o en conflicto quedan sin categoría. El registro existente vincula
+identificador y huella del paquete; los metadatos manuales tienen prioridad.
+
+La release completa únicamente categorías vacías de importados registrados y
+con huella instalada válida. Conserva categorías seleccionadas y todos los demás
+campos, incluyendo precios, permisos, publicación y QR. No crea productos para
+paquetes ausentes. Glúteos adoptado se excluye del completado.

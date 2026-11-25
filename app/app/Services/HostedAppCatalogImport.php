@@ -15,7 +15,7 @@ class HostedAppCatalogImport
             'slug' => ['required','max:180','regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/D','not_in:gluteos,gluteo-perfecto'],
             'name' => 'required|string|max:255', 'language' => ['required','regex:/^es(?:[-_][A-Za-z0-9]+)*$/D'],
             'vendor_id' => 'required|string|max:180|not_in:gluteo_perfeito_es', 'package_sha256' => 'required|regex:/^[a-f0-9]{64}$/D',
-            'fill_missing' => 'sometimes|boolean', 'short_description' => 'nullable|string|max:1000', 'description' => 'nullable|string|max:30000', 'category' => ['nullable',Rule::in(config('jakawi.categories'))],
+            'fill_missing' => 'sometimes|boolean', 'short_description' => 'nullable|string|max:1000', 'description' => 'nullable|string|max:30000', 'category' => ['nullable',Rule::in(config('jakawi.digital_categories'))],
             'cover_base64' => 'nullable|string|max:14000000',
         ])->validate();
         AppSetting::firstOrCreate(['key'=>'hosted_app_catalog'], ['value'=>['slugs'=>[]]]);

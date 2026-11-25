@@ -122,6 +122,7 @@ export default function Explore({
     category,
     type,
     categories = [],
+    categoryLabels = {},
     results = [],
     sort = 'featured',
     hasWelcomeGift = false,
@@ -132,6 +133,7 @@ export default function Explore({
     category?: string | null;
     type?: ExploreType | null;
     categories?: string[];
+    categoryLabels?: Record<string, string>;
     results?: ExplorerResult[];
     sort?: string;
     hasWelcomeGift?: boolean;
@@ -210,6 +212,7 @@ export default function Explore({
                     'query',
                     'category',
                     'categories',
+                    'categoryLabels',
                     'type',
                     'sort',
                     'hasWelcomeGift', 'giftFilter',
@@ -351,7 +354,7 @@ export default function Explore({
                     </nav>
                     {isDigital && hasWelcomeGift && <button aria-pressed={giftFilter} className={`mt-4 min-h-11 rounded-full border px-4 text-sm font-bold ${giftFilter ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface'}`} onClick={() => visit({gifts: giftFilter ? '' : '1'})}>ELEGIR MI REGALO</button>}
                     {isDigital && hasWelcomeGift && giftFilter && <section aria-label="Elige tu regalo digital" className="mt-5 rounded-2xl border border-brand/25 bg-brand-subtle p-5 sm:p-6"><p className="text-sm font-bold text-brand">1 regalo por activar</p><h2 className="mt-2 text-2xl font-extrabold">Elige tu regalo digital</h2><p className="mt-2 max-w-2xl leading-relaxed text-muted-foreground">Selecciona 1 producto digital incluido con tu membresía. Cuando lo actives, aparecerá en Mis productos digitales.</p></section>}
-                    {!isDigital && categories.length > 0 ? (
+                    {categories.length > 0 ? (
                         <div
                             className="mt-3 flex [scrollbar-width:none] gap-2 overflow-x-auto pb-2"
                             aria-label="Categorías"
@@ -370,7 +373,7 @@ export default function Explore({
                                     onClick={() => visit({ category: key })}
                                     className={`min-h-9 shrink-0 rounded-[var(--radius-chip)] px-3 text-sm font-semibold transition ${category === key ? 'bg-brand-subtle text-foreground' : 'text-muted-foreground hover:bg-surface-muted'}`}
                                 >
-                                    {labels[key] ?? key}
+                                    {categoryLabels[key] ?? labels[key] ?? key}
                                 </button>
                             ))}
                         </div>

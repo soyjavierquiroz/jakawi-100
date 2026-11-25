@@ -30,10 +30,12 @@ export default function ProductForm({
     product: p,
     partner,
     hostedApps = ['gluteos'],
+    categoryLabels,
 }: {
     product: Product | null;
     partner: { name: string };
     hostedApps?: string[];
+    categoryLabels: Record<string, string>;
 }) {
     const form = useForm({
         delivery_type: p?.delivery_type ?? 'pdf',
@@ -162,7 +164,7 @@ export default function ProductForm({
                         {error(key)}
                     </label>
                 ))}
-                <label className="grid gap-2">Categoría<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.category} onChange={e=>form.setData('category',e.target.value)}><option value="">Sin categoría</option>{['food','cafe','fitness','wellness','beauty','entertainment','nightlife','shopping','services','experiences'].map(c=><option key={c} value={c}>{c}</option>)}</select>{error('category')}</label>
+                <label className="grid gap-2">Categoría<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.category} onChange={e=>form.setData('category',e.target.value)}><option value="">Sin categoría</option>{Object.entries(categoryLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select>{error('category')}</label>
                 <label className="grid gap-2">Galería (hasta 8 imágenes)<input type="file" multiple accept="image/png,image/jpeg,image/webp" onChange={e=>form.setData('gallery',Array.from(e.target.files||[]))}/>{error('gallery')}{error('gallery_keep')}</label>
                 {!!p?.gallery_paths?.length && <div className="grid grid-cols-2 gap-3">{p.gallery_paths.map((path,i)=><label key={path} className="text-sm"><img src={p.gallery_urls?.[i]} alt="Imagen de galería" className="mb-2 w-full rounded-xl"/><input type="checkbox" checked={form.data.gallery_keep.includes(path)} onChange={e=>{const keep=e.target.checked?[...form.data.gallery_keep,path]:form.data.gallery_keep.filter(k=>k!==path);form.setData('gallery_keep',keep);form.setData('gallery_clear',keep.length===0);}}/> Conservar</label>)}</div>}
                 <label className="grid gap-2">

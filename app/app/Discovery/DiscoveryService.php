@@ -129,6 +129,8 @@ final readonly class DiscoveryService
             if (($kindFilter && $kindFilter !== $kind) || ($category && in_array($kind, ['UNLOCK', 'CHALLENGE']))) {
                 continue;
             }
+            // Editorial categories added for digital apps never filter physical businesses.
+            if ($category && !in_array($category, config('jakawi.categories'), true) && $kind !== 'DIGITAL') continue;
             if ($category) {
                 $query->where('category', $category);
             }

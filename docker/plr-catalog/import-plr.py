@@ -98,13 +98,46 @@ def original_cover(url):
         return data
 
 
-def category_from_metadata(name, description):
-    text=unicodedata.normalize('NFKD',name+' '+(description or '')).encode('ascii','ignore').decode().lower()
-    if re.search(r'\b(pilates|yoga|fitness|cardio|gluteos|entrenamiento|ejercicios)\b',text):
-        return 'fitness'
-    if re.search(r'\b(meditacion|mindfulness|relajacion)\b',text):
-        return 'wellness'
-    return None
+# Editorial titles are exact matches, never keywords from descriptions.
+# Only IDs checked against original uploaded packages are pinned here.
+PLR_CATEGORIES = {
+    'fitness': ['Abdomen de Acero', 'Cardio en Casa', 'Glúteos Perfectos', 'Pilates en Casa', 'Calistenia Sexy', 'Yoga Esencial'],
+    'wellness': ['Anti-Ansiedad', 'Anti-Estrés', 'Anti-Insomnio', 'Reiki'],
+    'cocina-recetas': ['Pastel Gourmet', 'Brigadeiros Gourmet', 'Dulces sin Azúcar', 'Helados Gourmet', 'Yogur Gourmet', 'Meal Prep Fitness', 'Recetas para Diabéticos', 'Sopa Termogénica', 'Jugo Detox'],
+    'nutricion-habitos': ['Dieta Cetogénica', 'Ayuno Intermitente', 'Té Detox'],
+    'negocios-marketing': ['Copywriter Pro', 'Experto en Tráfico Pago', 'Freelancer Digital', 'Ganancias con IA', 'Marketing Digital para Principiantes', 'Ventas en WhatsApp'],
+    'desarrollo-personal': ['Inteligencia Emocional', 'Venciendo la Procrastinación', 'Rutina Productiva'],
+    'espiritualidad-fe': ['App Cristiano', 'Espiritualidad en Acción', 'Lectura Diaria de la Biblia', 'El Poder de la Oración'],
+    'astrologia': ['Astrología'],
+}
+# Real package names that differ from the editorial titles above.
+PLR_NAME_ALIASES = {'Acero ABS':'Abdomen de Acero', 'Vientre de acero':'Abdomen de Acero', 'Antiestrés':'Anti-Estrés'}
+PLR_VENDOR_TITLES = {
+    'gluteo_perfeito_es':'Glúteos Perfectos', 'pilates_app_es':'Pilates en Casa',
+    'anti_ansiedade_es':'Anti-Ansiedad', 'antiestresse_app_es':'Anti-Estrés',
+    'anti_insonia_es':'Anti-Insomnio', 'astrologia_es':'Astrología',
+    'bolo_gourmet_es':'Pastel Gourmet', 'barriga_de_aco_es':'Abdomen de Acero',
+}
+
+
+def editorial_name(name):
+    text=unicodedata.normalize('NFKD',name).encode('ascii','ignore').decode().lower()
+    return re.sub(r'[^a-z0-9]+',' ',text).strip()
+
+
+def category_from_metadata(name, description=None, vendor_id=None):
+    titles={editorial_name(title):(title,category) for category,names in PLR_CATEGORIES.items() for title in names}
+    aliases={editorial_name(alias):editorial_name(title) for alias,title in PLR_NAME_ALIASES.items()}
+    normalized=editorial_name(name)
+    match=titles.get(aliases.get(normalized,normalized))
+    if match is None:
+        return None
+    # A pinned identifier with a conflicting real title needs editorial review.
+    if vendor_id in PLR_VENDOR_TITLES and PLR_VENDOR_TITLES[vendor_id] != match[0]:
+        return None
+    # Unknown IDs are associated only by an exact real Spanish package title.
+    # The existing import registry binds vendor_id + package hash to that product.
+    return match[1]
 
 
 def inspect(root, override=None):
@@ -179,7 +212,7 @@ def inspect(root, override=None):
     h.update(json.dumps(extra,sort_keys=True).encode())
     data = dict(slug=slug, name=name, language=language, vendor_id=vendor, package_sha256=h.hexdigest(),
                 description=description, short_description=short,
-                category=extra.get('category') or category_from_metadata(name,description), cover_source=cover_source,
+                category=extra.get('category') or category_from_metadata(meta.get('name') or manifest.get('name') or '', vendor_id=vendor), cover_source=cover_source,
                 cover_base64=base64.b64encode(cover_bytes).decode())
     return app, manifest, data
 
