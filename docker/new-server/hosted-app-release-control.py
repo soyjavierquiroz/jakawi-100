@@ -51,7 +51,7 @@ def prepare():
   shutil.copyfile(W/'release-control.previous.py',backup/'release-control.py')
   save('runtime-before.private.json',state)
  save('expected-runtime.private.json',state)
- save('landing-before.private.json',snapshot())
+ if not (W/'landing-before.private.json').exists():save('landing-before.private.json',snapshot())
  candidate=json.loads((P/'compose.yaml').read_text());images=read('images.json')
  for s in SERVICES:
   candidate['services'][s]['image']=images['web' if s=='web' else 'app']

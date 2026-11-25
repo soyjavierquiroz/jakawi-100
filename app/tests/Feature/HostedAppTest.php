@@ -153,7 +153,7 @@ class HostedAppTest extends TestCase
         $this->postJson('/internal/hosted-app/exchange',['action'=>'check','app'=>'gluteos','credential'=>'bad'])->assertUnauthorized();
         $this->withToken(config('hosted_apps.secret'))->postJson('/internal/hosted-app/exchange',['action'=>'check','app'=>'gluteos','credential'=>'bad'])->assertOk()->assertJson(['authorized'=>false]);
         $this->hosted();
-        \Illuminate\Support\Facades\Cache::forget('hosted-app-health:gluteos');
+        \Illuminate\Support\Facades\Cache::store('database')->forget('hosted-app-health:gluteos');
         \Illuminate\Support\Facades\Http::swap(new \Illuminate\Http\Client\Factory);
         \Illuminate\Support\Facades\Http::fake(['jakawi.store/*'=>\Illuminate\Support\Facades\Http::response(['protected'=>false,'functional'=>true])]);
         $this->assertFalse(app(\App\Services\DigitalSaleAvailability::class)->canSell($this->product));

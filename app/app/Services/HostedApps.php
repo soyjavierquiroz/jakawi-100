@@ -15,7 +15,7 @@ class HostedApps
     public function ready(DigitalProduct $product): bool
     {
         if (! $this->registered($product)) return false;
-        return Cache::remember('hosted-app-health:'.$product->app_key, 30, function () use ($product) {
+        return Cache::store('database')->remember('hosted-app-health:'.$product->app_key, 30, function () use ($product) {
             try {
                 $r = Http::withToken(config('hosted_apps.secret'))->timeout(20)->get(config('hosted_apps.apps.'.$product->app_key.'.health'));
                 return $r->ok() && $r->json('protected') === true && $r->json('functional') === true;
