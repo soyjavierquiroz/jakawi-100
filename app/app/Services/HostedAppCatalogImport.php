@@ -53,6 +53,7 @@ class HostedAppCatalogImport
             'short_description'=>$data['short_description'] ?? (filled($data['description'] ?? null) ? \Illuminate\Support\Str::limit(strip_tags($data['description']), 997) : null),
             'description'=>$data['description'] ?? null, 'category'=>$data['category'] ?? null,
             'currency'=>'BOB', 'public_price'=>'49.00', 'member_price'=>'29.00',
+            ...config('jakawi-digital.plr_defaults'),
         ];
     }
 

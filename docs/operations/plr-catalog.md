@@ -117,3 +117,15 @@ python3 /opt/sites/jakawi.com/release-control.py rollback
 ```
 
 Restaura imágenes y configuración COM anteriores y el importador anterior. Conserva datos editoriales, precios, derechos y compras actuales; no restaura DB. El dump validado se conserva para recuperación manual. Para la infraestructura inicial STORE permanece disponible el rollback protegido documentado en el backup de la release anterior; no se necesita ejecutarlo en esta corrección.
+
+## Predeterminados editoriales de JAKAWI Digital
+
+`app/config/jakawi-digital.php` contiene una única definición en texto plano de
+soporte y condiciones PLR. `HostedAppCatalogImport` la consulta al crear y con
+`--fill-missing`; este último solo completa campos vacíos. La reimportación
+normal conserva todos los valores del propietario. Admin permite editar ambos
+campos por producto. No cambia permisos, QR, publicación ni valores comerciales
+existentes y excluye Glúteos. El CLI STORE permanece sin cambios.
+
+Explorar consulta la autorización comercial individual `canSell()` para el
+aviso editorial de cada app; no usa la antigua excepción exclusiva de Glúteos.

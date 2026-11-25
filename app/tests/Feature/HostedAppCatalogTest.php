@@ -28,6 +28,12 @@ class HostedAppCatalogTest extends TestCase
         $this->assertSame('hosted_app',$p->delivery_type);
         $this->assertSame('49.00',$p->public_price);
         $this->assertSame('29.00',$p->member_price);
+        foreach (config('jakawi-digital.plr_defaults') as $field=>$text) {
+            $this->assertSame($text,$p->$field);
+            $this->assertSame(strip_tags($text),$text);
+            $this->assertStringNotContainsString('**',$text);
+            $this->assertStringNotContainsString('mailto:',$text);
+        }
         $this->assertFalse($p->welcome_gift_enabled);
         $this->assertSame('https://jakawi.store/segunda-qa-es/_entry',app(HostedApps::class)->registry()['segunda-qa-es']['entry']);
         $this->assertArrayHasKey('gluteos',app(HostedApps::class)->registry());
@@ -58,13 +64,19 @@ class HostedAppCatalogTest extends TestCase
         $data=$this->data()+['description'=>'Descripción real','short_description'=>'Resumen real','category'=>'fitness'];
         $id=app(HostedAppCatalogImport::class)->run($data)['product_id'];
         $p=DigitalProduct::find($id);
-        $p->update(['public_price'=>'59.00','short_description'=>'Editado por propietario','category'=>null,'member_price'=>null]);
+        $p->update(['public_price'=>'59.00','short_description'=>'Editado por propietario','category'=>null,'member_price'=>null,'support_information'=>'Soporte propio','access_terms'=>null]);
         app(HostedAppCatalogImport::class)->run($data+['fill_missing'=>true]);
         $p->refresh();
         $this->assertSame('59.00',$p->public_price);
         $this->assertSame('29.00',$p->member_price);
         $this->assertSame('Editado por propietario',$p->short_description);
         $this->assertSame('fitness',$p->category);
+        $this->assertSame('Soporte propio',$p->support_information);
+        $this->assertSame(config('jakawi-digital.plr_defaults.access_terms'),$p->access_terms);
+        $p->update(['access_terms'=>'Condiciones propias']);
+        app(HostedAppCatalogImport::class)->run($data+['fill_missing'=>true]);
+        $this->assertSame('Condiciones propias',$p->fresh()->access_terms);
+        $this->assertSame('Soporte propio',$p->fresh()->support_information);
         $this->assertFalse(app(\App\Services\DigitalSaleAvailability::class)->canSell($p));
         $this->assertSame($before,DigitalProduct::where('app_key','gluteos')->sole()->getAttributes());
         $p->update(['member_price'=>'35.00']);
@@ -77,9 +89,11 @@ class HostedAppCatalogTest extends TestCase
         $id=app(HostedAppCatalogImport::class)->run($data)['product_id'];
         $admin=\App\Models\User::factory()->create(['is_admin'=>true]);
         $url='/admin/productos-digitales/pilates-app-es';
-        $payload=['name'=>'Pilates en casa','slug'=>'pilates-app-es','delivery_type'=>'hosted_app','app_key'=>'pilates-app-es','status'=>'draft','currency'=>'BOB','public_price'=>'49.00','member_price'=>'29.00','sale_enabled'=>'','pdf_final'=>'0','public_qr_confirmed'=>'0','member_qr_confirmed'=>'0','operation'=>'save'];
+        $payload=['name'=>'Pilates en casa','slug'=>'pilates-app-es','delivery_type'=>'hosted_app','app_key'=>'pilates-app-es','status'=>'draft','currency'=>'BOB','public_price'=>'49.00','member_price'=>'29.00','sale_enabled'=>'','pdf_final'=>'0','public_qr_confirmed'=>'0','member_qr_confirmed'=>'0','operation'=>'save','support_information'=>'Soporte guardado desde Admin','access_terms'=>'Condiciones guardadas desde Admin'];
         $this->actingAs($admin)->post($url,$payload)->assertSessionHasNoErrors()->assertRedirect('/admin/productos-digitales');
         $p=DigitalProduct::find($id);
+        $this->assertSame($payload['support_information'],$p->support_information);
+        $this->assertSame($payload['access_terms'],$p->access_terms);
         $this->assertSame('49.00',$p->public_price);
         $this->assertSame('draft',$p->status);
         $this->assertFalse(app(\App\Services\DigitalSaleAvailability::class)->canSell($p));

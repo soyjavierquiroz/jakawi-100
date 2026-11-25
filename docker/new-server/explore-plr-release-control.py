@@ -4,9 +4,9 @@ import datetime,fcntl,hashlib,json,os,pathlib,shutil,subprocess,sys,urllib.reque
 os.umask(0o077)
 R=pathlib.Path(os.environ.get('JAKAWI_REPOSITORY','/srv/workspaces/jakawi/com/explore-plr-defaults'))
 P=pathlib.Path('/opt/sites/jakawi.com')
-W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/explore-hotfix-evidence'))
-BASE=os.environ.get('JAKAWI_RUNTIME_BASE','4244630038a97b4a6db2a91bfca372de87c88730')
-SOURCE_BASE=os.environ.get('JAKAWI_SOURCE_BASE','0739c6e897a6f7ad8bbd5128009534669a91ba3b')
+W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/explore-plr-defaults-evidence'))
+BASE=os.environ.get('JAKAWI_RUNTIME_BASE','a02d42da3ce0fea18dee13d91cb0a74622ce35a8')
+SOURCE_BASE=os.environ.get('JAKAWI_SOURCE_BASE','a02d42da3ce0fea18dee13d91cb0a74622ce35a8')
 SERVICES=['app','web','worker','scheduler']
 IMPORTER=pathlib.Path('/opt/sites/jakawi.store/catalog-tools/import-plr.py')
 def run(args,data=None):
@@ -73,7 +73,7 @@ def deploy():
 def enrich():
  guard_source()
  # Existing STORE procedure: update only CLI source; no Nginx/PHP/bridge restart.
- shutil.copyfile(R/'docker/plr-catalog/import-plr.py',IMPORTER);os.chmod(IMPORTER,0o755)
+ assert IMPORTER.read_bytes() == (R/'docker/plr-catalog/import-plr.py').read_bytes(), 'STORE CLI must remain unchanged'
  packages=sorted(pathlib.Path('/srv/sites/jakawi.store/incoming').glob('*.zip'))
  assert packages, 'No original packages for enrichment'
  output=run(['python3',str(IMPORTER),'--fill-missing',*[str(p) for p in packages]])
