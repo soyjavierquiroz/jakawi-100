@@ -10,6 +10,10 @@ DB::transaction(function (): void {
     if ($landing->subject->slug !== 'gluteo-perfecto' || $landing->status !== 'PUBLISHED' || count($landing->editorial_blocks) !== 11) throw new RuntimeException('Unexpected landing');
     $presets = json_decode(file_get_contents(resource_path('content/gluteo-perfecto-visual.json')), true, 512, JSON_THROW_ON_ERROR);
     $before = $landing->editorial_blocks;
+    foreach ($before as $block) {
+        $emphasis = $presets[$block['type']]['title_emphasis'] ?? '';
+        if ($emphasis && !str_contains($block['title'] ?? '', $emphasis)) unset($presets[$block['type']]['title_emphasis']);
+    }
     $after = array_map(fn (array $block): array => [...$block, ...$presets[$block['type']]], $before);
     $landing->update(['editorial_blocks' => $after]);
     echo json_encode(['before' => $before, 'after' => $after], JSON_THROW_ON_ERROR);

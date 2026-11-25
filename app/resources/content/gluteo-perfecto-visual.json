@@ -1,13 +1,64 @@
 {
-  "hero": {"background": "soft"},
-  "trust": {"background": "light", "variant": "minimal"},
-  "problem": {"background": "dark", "variant": "minimal", "image_position": "left"},
-  "benefits": {"background": "light", "variant": "cards", "image_position": "right"},
-  "steps": {"background": "soft", "variant": "minimal"},
-  "testimonials": {"background": "light", "variant": "cards"},
-  "offer": {"background": "dark", "variant": "minimal", "image_position": "left"},
-  "guarantee": {"background": "soft"},
-  "faq": {"background": "light"},
-  "final": {"background": "dark"},
-  "footer": {"background": "soft"}
+  "hero": {
+    "background": "light",
+    "layout": "spotlight",
+    "variant": "minimal",
+    "title_emphasis": "Perfecto"
+  },
+  "trust": {
+    "background": "light",
+    "variant": "minimal",
+    "layout": "proof"
+  },
+  "problem": {
+    "background": "light",
+    "variant": "minimal",
+    "image_position": "left",
+    "layout": "flow",
+    "title_emphasis": "un plan"
+  },
+  "benefits": {
+    "background": "light",
+    "variant": "minimal",
+    "image_position": "right",
+    "layout": "flow",
+    "title_emphasis": "empezar"
+  },
+  "steps": {
+    "background": "light",
+    "variant": "minimal",
+    "layout": "flow"
+  },
+  "testimonials": {
+    "background": "soft",
+    "variant": "cards",
+    "layout": "proof"
+  },
+  "offer": {
+    "background": "dark",
+    "variant": "minimal",
+    "image_position": "left",
+    "layout": "spotlight",
+    "title_emphasis": "Glúteo Perfecto"
+  },
+  "guarantee": {
+    "background": "soft",
+    "layout": "flow",
+    "variant": "minimal"
+  },
+  "faq": {
+    "background": "light",
+    "layout": "flow",
+    "variant": "minimal"
+  },
+  "final": {
+    "background": "dark",
+    "layout": "spotlight",
+    "variant": "minimal"
+  },
+  "footer": {
+    "background": "light",
+    "layout": "flow",
+    "variant": "minimal"
+  }
 }

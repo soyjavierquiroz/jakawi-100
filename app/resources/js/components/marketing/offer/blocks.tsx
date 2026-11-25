@@ -1,3 +1,4 @@
+import { EditorialHeading } from './editorial-blocks';
 import { LandingVideo } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { JakawiImage } from '@/components/jakawi-image';
 import {
@@ -374,18 +375,20 @@ export function MarketingFinalCTA({
     treatment,
     sectionRef,
     preset,
+    editorialLayout,
 }: {
     finalCta: OfferPresentationV1['finalCta'];
     action: MarketingAction;
     treatment: OfferTreatment;
     sectionRef?: Ref<HTMLElement>;
     preset?: 'light'|'soft'|'dark';
+    editorialLayout?: import('./editorial-blocks').EditorialLayout;
 }) {
     const compact = treatment === 'compact';
     return (
         <section
             data-marketing-surface={preset === 'light' || preset === 'soft' ? 'light' : 'dark'}
-            data-section-preset={preset}
+            data-section-preset={preset} data-editorial-layout={editorialLayout}
             ref={sectionRef}
             data-offer-chapter="final"
             aria-label="CTA final"
@@ -408,7 +411,7 @@ export function MarketingFinalCTA({
                             : `max-w-4xl text-4xl ${treatment === 'editorial' ? 'leading-[1.02]' : 'leading-tight'} font-extrabold tracking-tight uppercase sm:text-6xl`
                     }
                 >
-                    {finalCta.headline}
+                    <EditorialHeading text={finalCta.headline} emphasis={finalCta.emphasis}/>
                 </h2>
                 {finalCta.description && (
                     <p

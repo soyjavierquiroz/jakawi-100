@@ -1,3 +1,4 @@
+import type { EditorialLayout } from './editorial-blocks';
 import { MarketingVideoHero } from '../MarketingVideoHero';
 import { useGrowthLandingClicks } from '@/lib/growth-landing-analytics';
 import {
@@ -43,7 +44,7 @@ type Props = {
     heroActionRef?: Ref<HTMLDivElement>;
     finalActionRef?: Ref<HTMLElement>;
     detailsHref?: string;
-    sectionPresets?: {hero?: 'light'|'soft'|'dark'; final?: 'light'|'soft'|'dark'};
+    sectionPresets?: {heroLayout?: EditorialLayout; finalLayout?: EditorialLayout; hero?: 'light'|'soft'|'dark'; final?: 'light'|'soft'|'dark'};
     renderEditorialContent?: () => ReactNode;
 };
 
@@ -212,7 +213,7 @@ export function OfferConversionTemplate({
             }
         >
             <div className={offerContainer(compact)}>
-                {sectionPresets?.hero ? <div className="editorial-hero-preset" data-section-preset={sectionPresets.hero}>{hero}</div> : hero}
+                {sectionPresets?.hero || sectionPresets?.heroLayout ? <div data-editorial-layout={sectionPresets.heroLayout} className="editorial-hero-preset" data-section-preset={sectionPresets.hero || 'light'}>{hero}</div> : hero}
                 {!videoFirst && <section id="landing-details" tabIndex={-1} aria-label="Estado y detalles de la propuesta" className="scroll-mt-6">
                     {renderNotice?.()}
                     {videoFirst && renderHeroAnnotation?.()}
@@ -227,6 +228,7 @@ export function OfferConversionTemplate({
                 {faq}
             </div>
             <MarketingFinalCTA
+                editorialLayout={sectionPresets?.finalLayout}
                 preset={sectionPresets?.final}
                 finalCta={p.finalCta}
                 action={finalAction ?? effectiveAction}

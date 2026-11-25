@@ -1,10 +1,10 @@
-FROM sha256:d67b7d60770424d4aa07e856b3fe74c873b92b40d50751f1e845e301f9e80d45 AS app
+FROM sha256:a956c075fdeb7d0a6157a0fa5d94828b558d99800c6704307830ae8cd79d6c93 AS app
 ARG SOURCE_REVISION
 LABEL org.opencontainers.image.revision=$SOURCE_REVISION
 COPY --chown=www-data:www-data app/app/Services/LandingEditorialBlocks.php /var/www/html/app/Services/LandingEditorialBlocks.php
 COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
 COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
-FROM sha256:33f3212f932ed79d399a9797ff529c866f0308c19f7f4ba14f51dd94078f467a AS web
+FROM sha256:234e62b22a7c53a48ff73591c03299c7a89272898571176ee4727a4dc4dcfe45 AS web
 ARG SOURCE_REVISION
 LABEL org.opencontainers.image.revision=$SOURCE_REVISION
 COPY app/public/build/ /var/www/html/public/build/

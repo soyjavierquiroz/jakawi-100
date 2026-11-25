@@ -16,7 +16,9 @@ class LandingEditorialBlocks
     {
         $data = Validator::make(['blocks' => $blocks], [
             'blocks' => 'array|max:11',
-            'blocks.*' => 'array:type,enabled,title,subtitle,primary_label,secondary_label,note,source,verified,items,availability,background,variant,image_path,image_upload,image_remove,image_alt,image_position',
+            'blocks.*' => 'array:type,enabled,title,subtitle,primary_label,secondary_label,note,source,verified,items,availability,background,variant,image_path,image_upload,image_remove,image_alt,image_position,layout,title_emphasis',
+            'blocks.*.layout' => ['sometimes', Rule::in(['flow', 'split', 'spotlight', 'proof'])],
+            'blocks.*.title_emphasis' => 'nullable|string|max:240',
             'blocks.*.background' => ['sometimes', Rule::in(['light', 'soft', 'dark'])],
             'blocks.*.variant' => ['sometimes', Rule::in(['cards', 'minimal'])],
             'blocks.*.image_position' => ['sometimes', Rule::in(['left', 'right'])],
@@ -41,6 +43,7 @@ class LandingEditorialBlocks
             'blocks.*.items.*.question' => 'nullable|string|max:500', 'blocks.*.items.*.answer' => 'nullable|string|max:3000',
         ])->validate()['blocks'];
         foreach ($data as $i => &$block) {
+            if (filled($block['title_emphasis'] ?? null) && !str_contains($block['title'] ?? '', $block['title_emphasis'])) throw ValidationException::withMessages(["editorial_blocks.$i.title_emphasis" => 'El énfasis debe ser parte del título.']);
             $old = collect($previous)->firstWhere('type', $block['type']);
             $path = $block['image_path'] ?? null;
             if ($path && $path !== ($old['image_path'] ?? null)) {

@@ -36,7 +36,7 @@ export type OfferPresentationV1 = {
         items: Array<{ title: string; description: string }>;
     };
     faq: Array<{ question: string; answer: string }>;
-    finalCta: { eyebrow?: string; headline: string; description?: string };
+    finalCta: { emphasis?: string; eyebrow?: string; headline: string; description?: string };
 };
 
 /** Validated editorial projection; separate from authoritative offer/action data. */

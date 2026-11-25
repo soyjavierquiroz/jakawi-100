@@ -2,10 +2,10 @@
 """Focused landing visual release; preserve commercial state, media and editorial copy."""
 import datetime,fcntl,json,os,pathlib,shutil,subprocess,sys,urllib.request
 os.umask(0o077)
-R=pathlib.Path(os.environ.get('JAKAWI_REPOSITORY','/srv/workspaces/jakawi/com/landing-visual-parity'))
+R=pathlib.Path(os.environ.get('JAKAWI_REPOSITORY','/srv/workspaces/jakawi/com/editorial-flow-v1'))
 P=pathlib.Path('/opt/sites/jakawi.com')
-W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/landing-visual-parity-evidence'))
-BASE='3eb558ce97312ec65d5a5d1c338d1dfe4cb68d56'
+W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/editorial-flow-v1-evidence'))
+BASE='18e5f6acb99899c238812c4c6e06968346525d3b'
 SERVICES=['app','web','worker','scheduler']
 def run(args,data=None):
  p=subprocess.run(args,input=data,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -26,15 +26,15 @@ def guard_source():
  assert read('validation.json')['revision']==git('rev-parse','HEAD')
  assert read('browser.json')['result']=='PASS'
  assert read('browser.json')['manifest_sha256']==read('validation.json')['manifest_sha256']
- allowed={'app/tests/marketing/landing-visual.cjs', 'docker/new-server/landing-visual-Dockerfile', 'app/tests/Feature/DigitalLandingTest.php', 'app/resources/js/components/marketing/offer/editorial-blocks.tsx', 'app/resources/css/app.css', 'app/app/Services/LandingEditorialBlocks.php', 'app/resources/js/components/marketing/offer/blocks.tsx', 'app/resources/js/components/marketing/offer/OfferConversionTemplate.tsx', 'app/resources/js/pages/landing-presentations/adapters/digital-offer-adapter.tsx', 'docker/new-server/landing-visual-release-control.py', 'docker/new-server/landing-visual-apply.php', 'app/resources/js/components/marketing/EditorialBlocksEditor.tsx', 'app/resources/content/gluteo-perfecto-visual.json'}
+ allowed={'app/tests/marketing/editorial-flow.cjs', 'app/tests/marketing/landing-visual.cjs', 'docker/new-server/landing-visual-Dockerfile', 'app/tests/Feature/DigitalLandingTest.php', 'app/resources/js/components/marketing/offer/editorial-blocks.tsx', 'app/resources/css/app.css', 'app/app/Services/LandingEditorialBlocks.php', 'app/resources/js/components/marketing/offer/blocks.tsx', 'app/resources/js/components/marketing/offer/OfferConversionTemplate.tsx', 'app/resources/js/pages/landing-presentations/adapters/digital-offer-adapter.tsx', 'docker/new-server/landing-visual-release-control.py', 'docker/new-server/landing-visual-apply.php', 'app/resources/js/components/marketing/EditorialBlocksEditor.tsx', 'app/resources/content/gluteo-perfecto-visual.json', 'app/resources/js/components/marketing/offer/presentation.ts'}
  assert set(git('diff','--name-only',BASE,'HEAD').splitlines())<=allowed
  assert read('validation.json')['manifest_sha256']==__import__('hashlib').sha256((R/'app/public/build/manifest.json').read_bytes()).hexdigest()
 def build():
  guard_source();assert shutil.disk_usage('/srv').free>5*1024**3
  revision=git('rev-parse','HEAD');images={}
  for target in ['app','web']:
-  tag='jakawi-'+target+':landing-visual'
-  run(['docker','build','--network','none','--memory','768m','--build-arg','SOURCE_REVISION='+revision,'--target',target,'-f',str(R/'docker/new-server/landing-visual-Dockerfile'),'-t',tag,str(R)])
+  tag='jakawi-'+target+':editorial-flow-v1'
+  run(['env','DOCKER_BUILDKIT=0','docker','build','--network','none','--memory','768m','--build-arg','SOURCE_REVISION='+revision,'--target',target,'-f',str(R/'docker/new-server/landing-visual-Dockerfile'),'-t',tag,str(R)])
   images[target]=run(['docker','image','inspect',tag,'--format','{{.Id}}']).decode().strip()
  save('images.json',images);print('Build PASS')
 def prepare():
@@ -42,7 +42,7 @@ def prepare():
  if (W/'release-metadata.json').exists():
   backup=pathlib.Path(read('release-metadata.json')['backup'])
  else:
-  backup=pathlib.Path('/var/backups/jakawi.com')/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-landing-visual')
+  backup=pathlib.Path('/var/backups/jakawi.com')/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-editorial-flow-v1')
   backup.mkdir(mode=0o700)
   for name in ['compose.yaml','release.env','release-control.py']:shutil.copyfile(P/name,backup/name);os.chmod(backup/name,0o600)
   with (backup/'database.dump').open('wb') as f:
@@ -65,7 +65,7 @@ def rollback_plan():
  assert (b/'database.dump').stat().st_size>0
  run(compose(b/'compose.yaml')+['config','--quiet'])
  for c in read('runtime-before.private.json'):run(['docker','image','inspect',c['Image']])
- save('rollback-plan.json',{'result':'PASS','backup':str(b),'command':'JAKAWI_RELEASE_EVIDENCE='+str(W)+' python3 '+str(pathlib.Path(__file__).resolve())+' rollback','policy':'Restore retained COM images/config only. No database restore or schema changes; preserve current user data.'})
+ save('rollback-plan.json',{'result':'PASS','backup':str(b),'command':'JAKAWI_RELEASE_EVIDENCE='+str(W)+' python3 '+str(pathlib.Path(__file__).resolve())+' rollback','policy':'Restore retained COM images/config and only the visual metadata changed by this release. No database restore; preserve current user data.'})
 def install(src,dst):
  tmp=dst.with_suffix('.welcome-tmp');shutil.copyfile(src,tmp);os.chmod(tmp,0o600);os.replace(tmp,dst)
 def snapshot():
@@ -89,7 +89,7 @@ def verify():
   state['landing'].pop('editorial_blocks');state['landing'].pop('updated_at')
  assert before==after and after['prelaunch'] is True
  visual=read('landing-visual.private.json');assert len(visual['after'])==11
- strip=lambda blocks:[{k:v for k,v in b.items() if k not in ['background','variant','image_position']} for b in blocks]
+ strip=lambda blocks:[{k:v for k,v in b.items() if k not in ['background','variant','image_position','layout','title_emphasis']} for b in blocks]
  assert strip(visual['before'])==strip(visual['after'])
  save('LIVE.json',{'result':'PASS','revision':m['revision'],'rollback':BASE,'backup':m['backup']})
  print('Runtime, assets and health PASS')
