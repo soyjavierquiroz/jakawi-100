@@ -234,12 +234,8 @@ final readonly class DiscoveryService
             $products = \App\Models\DigitalProduct::published()->whereKey($ids('DIGITAL'))
                 ->with(['partner:id,name,slug', 'landingPresentations'])
                 ->withExists(['landingPresentations as editorial_coming_soon' => fn ($q) => $q->where('status', 'PUBLISHED')->whereJsonContains('editorial_blocks', [['type' => 'hero', 'availability' => 'COMING_SOON']])])->get();
-            // Evaluate the existing sale exception at most once, never once per card.
-            $sale = $products->isEmpty() ? [] : (\App\Models\AppSetting::where('key', \App\Services\DigitalSaleAvailability::KEY)->first()?->value ?? []);
-            $exception = $products->firstWhere('id', $sale['product_id'] ?? 0);
-            $allowedId = ($sale['enabled'] ?? false) && $exception && app(\App\Services\DigitalSaleAvailability::class)->exceptionAllowed($exception) ? $exception->id : null;
             foreach ($products as $product) {
-                $adapted->put('DIGITAL:'.$product->id, ['kind' => 'DIGITAL', 'product' => app(\App\Services\DigitalCatalog::class)->present($product, (bool) $product->editorial_coming_soon && $product->id !== $allowedId)]);
+                $adapted->put('DIGITAL:'.$product->id, ['kind' => 'DIGITAL', 'product' => app(\App\Services\DigitalCatalog::class)->present($product, (bool) $product->editorial_coming_soon && ! app(\App\Services\DigitalSaleAvailability::class)->canSell($product))]);
             }
             foreach (\App\Models\Partner::whereKey($ids('PLACE'))->get() as $partner) {
                 $adapted->put('PLACE:'.$partner->id, ['kind' => 'PLACE', 'place' => $partner]);

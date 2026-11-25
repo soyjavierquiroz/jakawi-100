@@ -17,6 +17,19 @@ class ExploreDiscoveryTest extends TestCase
         return DigitalProduct::create($attributes + ['partner_id' => Partner::where('slug', 'jakawi-digital')->value('id'), 'name' => 'Entrenamiento digital', 'slug' => 'entrenamiento-digital', 'status' => 'published', 'currency' => 'BOB', 'public_price' => 49, 'member_price' => 29]);
     }
 
+    public function test_enabled_sale_and_incomplete_hosted_draft_do_not_break_guest_or_authenticated_explore(): void
+    {
+        $published = $this->digital(['slug'=>'gluteo-perfecto', 'delivery_type'=>'hosted_app', 'app_key'=>'gluteos']);
+        $draft = $this->digital(['slug'=>'pilates-app-es', 'name'=>'Pilates en casa', 'status'=>'draft', 'delivery_type'=>'hosted_app', 'app_key'=>'pilates-app-es', 'description'=>null, 'cover_path'=>null]);
+        \App\Models\AppSetting::updateOrCreate(['key'=>\App\Services\DigitalSaleAvailability::KEY], ['value'=>['enabled'=>true, 'product_id'=>$published->id]]);
+        LandingPresentation::create(['subject_type'=>DigitalProduct::class, 'subject_id'=>$published->id, 'name'=>'App', 'slug'=>'app-coming', 'status'=>'PUBLISHED', 'default_scope'=>'ALL', 'editorial_blocks'=>[['type'=>'hero', 'availability'=>'COMING_SOON']]]);
+        $assert = fn (Assert $p) => $p->component('explore')->has('results', 1)->where('results.0.product.id', $published->id)->where('results.0.product.coming_soon', true);
+        $this->get('/explorar?type=digital')->assertOk()->assertInertia($assert);
+        $this->actingAs(User::factory()->create())->get('/explorar?type=digital&sort=name&page=1')->assertOk()->assertInertia($assert);
+        $draft->update(['status'=>'published']);
+        $this->get('/explorar?type=digital&q=Pilates')->assertOk()->assertInertia(fn (Assert $p) => $p->has('results', 1)->where('results.0.product.id', $draft->id));
+    }
+
     public function test_one_search_and_each_type_preserve_eligibility_and_city(): void
     {
         $city = City::where('slug', 'cochabamba')->sole();
