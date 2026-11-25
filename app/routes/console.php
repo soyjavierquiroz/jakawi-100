@@ -100,3 +100,10 @@ Schedule::command('identity:prune-nonces')->hourly()->withoutOverlapping();
 
 Artisan::command('bank:reconcile-jakawi', function () { $this->info(app(\App\Services\JakawiBankReconciliation::class)->run().' pagos conciliados automáticamente.'); });
 Schedule::command('bank:reconcile-jakawi')->everyMinute()->withoutOverlapping(10);
+
+// Preview by default; never visits receipts, archived PDFs or unrelated namespaces.
+Illuminate\Support\Facades\Artisan::command('digital:cleanup-assets {--apply}', function () {
+    $this->line(json_encode(app(App\Services\DigitalAssetCleanup::class)->sweep((bool)$this->option('apply')), JSON_PRETTY_PRINT));
+})->purpose('Review or reclaim unreferenced module QR and editorial images older than 24 hours');
+
+Illuminate\Support\Facades\Schedule::command('digital:cleanup-assets --apply')->dailyAt('03:20')->timezone('America/La_Paz')->withoutOverlapping();

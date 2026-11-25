@@ -27,6 +27,9 @@ Route::middleware('web')->group(function () {
     });
     Route::middleware(['auth', 'admin', 'throttle:60,1'])->prefix('admin/digital')->group(function () {
         Route::get('/cobro', [AdminDigitalSalesController::class, 'settings'])->name('admin.digital.collection');
+        Route::post('/cobro/qr-compartido', [AdminDigitalSalesController::class, 'saveSharedQr']);
+        Route::get('/cobro/qr-compartido/{setting}/{kind}', [AdminDigitalSalesController::class, 'sharedQrFile'])->whereIn('kind', ['qr','evidence']);
+        Route::post('/cobro/qr-compartido/{setting}/desactivar', [AdminDigitalSalesController::class, 'disableSharedQr']);
         Route::post('/cobro', [AdminDigitalSalesController::class, 'saveSettings'])->name('admin.digital.collection.save');
         Route::get('/pedidos', [AdminDigitalSalesController::class, 'index'])->name('admin.digital.orders');
         Route::get('/pedidos/{order:reference}', [AdminDigitalSalesController::class, 'show'])->name('admin.digital.orders.show');

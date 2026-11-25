@@ -8,6 +8,10 @@ $categoryLabels = [
     'cocina-recetas'=>'Cocina y recetas', 'nutricion-habitos'=>'Nutrición y hábitos',
     'negocios-marketing'=>'Negocios y marketing', 'desarrollo-personal'=>'Desarrollo personal',
     'espiritualidad-fe'=>'Espiritualidad y fe', 'astrologia'=>'Astrología',
+    'mascotas-animales'=>'Mascotas y animales', 'familia-crianza'=>'Familia y crianza',
+    'salud-autocuidado'=>'Salud y autocuidado', 'relaciones-pareja'=>'Relaciones y pareja',
+    'finanzas-personales'=>'Finanzas personales', 'comunicacion-habilidades'=>'Comunicación y habilidades',
+    'manualidades-creatividad'=>'Manualidades y creatividad', 'fiestas-celebraciones'=>'Fiestas y celebraciones',
 ];
 
 return [

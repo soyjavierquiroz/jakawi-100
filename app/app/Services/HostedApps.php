@@ -25,13 +25,21 @@ class HostedApps
             && isset($this->registry()[$product->app_key]);
     }
 
-    public function ready(DigitalProduct $product): bool
+    public function ready(DigitalProduct $product, bool $fresh = false): bool
     {
         if (! $this->registered($product)) return false;
+        if ($fresh) Cache::store('database')->forget('hosted-app-health:'.$product->app_key);
         return Cache::store('database')->remember('hosted-app-health:'.$product->app_key, 30, function () use ($product) {
             try {
                 $r = Http::withToken(config('hosted_apps.secret'))->timeout(20)->get($this->registry()[$product->app_key]['health']);
-                return $r->ok() && $r->json('protected') === true && $r->json('functional') === true;
+                if (! $r->ok() || $r->json('protected') !== true || $r->json('functional') !== true) return false;
+                // Probe without credentials or redirects: health alone cannot prove route protection.
+                $base = 'https://jakawi.store/'.$product->app_key.'/';
+                foreach (['', 'index.php', 'app.js'] as $path) {
+                    $direct = Http::withoutRedirecting()->timeout(8)->get($base.$path);
+                    if (! in_array($direct->status(), [401,403], true)) return false;
+                }
+                return true;
             } catch (\Throwable) { return false; }
         });
     }

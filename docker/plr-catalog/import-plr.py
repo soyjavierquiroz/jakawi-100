@@ -109,13 +109,23 @@ PLR_CATEGORIES = {
     'desarrollo-personal': ['Inteligencia Emocional', 'Venciendo la Procrastinación', 'Rutina Productiva'],
     'espiritualidad-fe': ['App Cristiano', 'Espiritualidad en Acción', 'Lectura Diaria de la Biblia', 'El Poder de la Oración'],
     'astrologia': ['Astrología'],
+    'mascotas-animales': ['Adiestramiento de perros', 'Adiestramiento de gatos', 'Alimentación de mascotas'],
+    'familia-crianza': ['Padres primerizos', 'Sueño del bebé', 'Hijos sin traumas'],
+    'salud-autocuidado': ['Dejar de fumar', 'Dejar de roncar', 'Dolor de espalda', 'Mundo TDAH', 'Autismo'],
+    'relaciones-pareja': ['Arte de la conquista', 'Superando la ruptura'],
+    'finanzas-personales': ['Organización financiera', 'Crédito alto'],
+    'comunicacion-habilidades': ['Oratoria avanzada', 'Lenguaje corporal', 'Voz grave', 'PNL'],
+    'manualidades-creatividad': ['Croché', 'Artesanía'],
+    'fiestas-celebraciones': ['Navidad'],
 }
 # Real package names that differ from the editorial titles above.
-PLR_NAME_ALIASES = {'Acero ABS':'Abdomen de Acero', 'Vientre de acero':'Abdomen de Acero', 'Antiestrés':'Anti-Estrés'}
+PLR_NAME_ALIASES = {'Redactor publicitario PRO':'Copywriter Pro', 'Acero ABS':'Abdomen de Acero', 'Vientre de acero':'Abdomen de Acero', 'Antiestrés':'Anti-Estrés'}
 PLR_VENDOR_TITLES = {
     'gluteo_perfeito_es':'Glúteos Perfectos', 'pilates_app_es':'Pilates en Casa',
     'anti_ansiedade_es':'Anti-Ansiedad', 'antiestresse_app_es':'Anti-Estrés',
     'anti_insonia_es':'Anti-Insomnio', 'astrologia_es':'Astrología',
+    'copywriter_pro_es':'Copywriter Pro', 'brigadeiros_gourmet_es':'Brigadeiros Gourmet',
+    'cardio_em_casa_es':'Cardio en Casa', 'dieta_cetogenica_es':'Dieta Cetogénica',
     'bolo_gourmet_es':'Pastel Gourmet', 'barriga_de_aco_es':'Abdomen de Acero',
 }
 

@@ -24,7 +24,7 @@ class ImportTest(unittest.TestCase):
             (app/f).write_bytes(b'QA')
         return app
     def test_all_36_editorial_titles_and_verified_ids(self):
-        self.assertEqual(sum(map(len,m.PLR_CATEGORIES.values())),36)
+        self.assertEqual(sum(map(len,m.PLR_CATEGORIES.values())),58)
         for category,names in m.PLR_CATEGORIES.items():
             for name in names:
                 self.assertEqual(m.category_from_metadata(name, vendor_id='unverified_es'),category,name)

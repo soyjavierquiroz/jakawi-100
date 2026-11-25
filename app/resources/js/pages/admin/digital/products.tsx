@@ -8,13 +8,19 @@ type Product = {
     status: string;
     public_price: string | null;
     currency: string;
+    member_price: string | null;
+    delivery_type: string;
+    category: string | null;
+    sale: {available:boolean; publish_missing:string[]};
 };
 export default function Products({
     products,
     partner,
+    categoryLabels,
 }: {
-    products: { data: Product[] };
+    products: { data: Product[]; prev_page_url?:string|null; next_page_url?:string|null };
     partner: { name: string };
+    categoryLabels: Record<string,string>;
 }) {
     return (
         <AdminLayout title="Productos digitales">
@@ -48,11 +54,15 @@ export default function Products({
                             {p.status === 'published'
                                 ? 'Publicado'
                                 : 'Borrador'}{' '}
-                            · {digitalMoney(p.public_price, p.currency)}
+                            · {p.delivery_type === 'hosted_app' ? 'APP' : 'PDF'} · {categoryLabels[p.category ?? ''] ?? 'Categoría pendiente'}
+                            {' · Público: '}{digitalMoney(p.public_price, p.currency)}{' / Miembro: '}{digitalMoney(p.member_price, p.currency)}
                         </p>
+                        <p className="mt-2 font-semibold">{p.sale.available ? 'Venta activa' : p.sale.publish_missing.length === 0 ? 'Listo para publicar y activar venta' : 'Venta pendiente'}</p>
+                        {!!p.sale.publish_missing.length && <p className="mt-2 text-sm text-muted-foreground">{p.sale.publish_missing.join(' ')}</p>}
                     </Link>
                 ))}
             </div>
+            <nav aria-label="Páginas de productos" className="my-5 flex gap-5">{products.prev_page_url && <Link href={products.prev_page_url}>Anterior</Link>}{products.next_page_url && <Link href={products.next_page_url}>Siguiente</Link>}</nav>
             {!products.data.length ? (
                 <p>
                     No hay productos creados. Los precios y materiales se

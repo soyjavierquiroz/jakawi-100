@@ -19,8 +19,9 @@ type Product = {
     welcome_gift_enabled?: boolean;
     promotional_gift_enabled?: boolean;
     gift_pdf_final?: boolean;
-    qrs?: Record<'public'|'member', {has_file:boolean; verified:boolean; amount:string|null; currency:string}>;
-    sale?: {eligible:boolean; enabled:boolean; available:boolean; pdf_verified:boolean; pdf_final:boolean; missing:string[]};
+    use_shared_qr?: boolean;
+    qrs?: Record<'public'|'member', {has_file:boolean; shared?:boolean; verified:boolean; amount:string|null; currency:string}>;
+    sale?: {eligible:boolean; enabled:boolean; available:boolean; pdf_verified:boolean; pdf_final:boolean; app_ready:boolean; publish_missing:string[]; missing:string[]};
     coming_soon?: boolean;
     category?: string;
     gallery_paths?: string[];
@@ -44,6 +45,7 @@ export default function ProductForm({
         welcome_gift_enabled: p?.welcome_gift_enabled ?? false,
         promotional_gift_enabled: p?.promotional_gift_enabled ?? false,
         gift_pdf_final: p?.gift_pdf_final ?? false,
+        use_shared_qr: p?.use_shared_qr ?? true,
         public_qr: null as File | null,
         member_qr: null as File | null,
         public_qr_confirmed: p?.qrs?.public.verified ?? false,
@@ -78,9 +80,10 @@ export default function ProductForm({
         ['access_terms', 'Condiciones de acceso'],
     ] as const;
     const error = (field: string) => Object.entries(form.errors).filter(([key]) => key === field || key.startsWith(field + '.')).map(([key, message]) => <span key={key} data-field-error role="alert" className="block text-sm font-normal text-destructive">{message}</span>);
-    const save = (operation: 'save' | 'authorize_sale') => {
+    const save = (operation: 'save' | 'authorize_sale' | 'publish_sale' | 'draft') => {
         form.transform(data => Object.fromEntries(Object.entries({
-            ...data, operation,
+            ...data, operation: operation === 'draft' ? 'save' : operation,
+            status: operation === 'draft' ? 'draft' : data.status,
             // Optional fields must be omitted, never serialized as empty multipart values.
             sale_enabled: operation === 'authorize_sale' ? true : undefined,
         }).filter(([, value]) => value !== undefined).map(([key, value]) =>
@@ -109,13 +112,13 @@ export default function ProductForm({
                 {p?.sale?.eligible && <section className="grid gap-4 rounded-xl border border-border p-5">
                     <p role="status" className="font-bold">Disponibilidad comercial: {p.sale.available ? 'Disponible' : 'Venta desactivada'}</p>
                     {form.data.delivery_type !== 'hosted_app' && <p>PDF: {p.sale.pdf_verified ? 'Archivo privado verificado' : 'Pendiente de subir o verificar'}</p>}
-                    {p.sale.missing.map(item => <p key={item}>{item}</p>)}
-                    <a className="text-brand underline" href="/admin/digital/cobro">Configurar QR y cuenta digital</a>
-                    <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>{form.data.delivery_type === 'hosted_app' ? 'Autorizo esta APP protegida como entrega definitiva a compradores.' : 'Confirmo que el PDF es definitivo y está preparado para entrega a compradores.'}</label>
+                    {form.data.delivery_type === 'hosted_app' && <p role="status">{p.sale.app_ready ? 'APP preparada para entregar' : 'APP pendiente de verificación técnica'}</p>}
+                    {p.sale.publish_missing.map(item => <p key={item}>{item}</p>)}
+                    <a className="text-brand underline" href="/admin/digital/cobro">Configurar cuenta y QR compartidos</a>
+                    {form.data.delivery_type !== 'hosted_app' && <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>Confirmo el PDF definitivo para compradores.</label>}
                     {error('pdf_final')}
-                    <p>Guardar producto conserva los datos y archivos sin habilitar ventas. Habilitar venta requiere cuenta autorizada, ambos QR confirmados y entrega definitiva autorizada.</p>
-                    <button type="button" onClick={() => save('authorize_sale')} disabled={form.processing || !!(form.data.pdf || form.data.cover || form.data.public_qr || form.data.member_qr || form.data.gallery.length)} className="min-h-12 rounded-xl border border-border px-4 font-bold disabled:opacity-50">Habilitar venta</button>
-                    <p className="text-sm text-muted-foreground">Si seleccionaste archivos, utiliza primero Guardar producto y después vuelve al editor para habilitar la venta.</p>
+                    <p>Esta acción guarda los cambios, publica y autoriza expresamente la venta si todos los requisitos están completos. Los regalos se configuran por separado.</p>
+                    <button type="button" onClick={() => save('publish_sale')} disabled={form.processing} className="min-h-12 rounded-xl bg-brand px-4 font-bold text-brand-foreground disabled:opacity-50">PUBLICAR Y ACTIVAR VENTA</button>
                     {error('sale_enabled')}
                 </section>}
                 <section className="grid gap-3 rounded-xl border border-border p-5">
@@ -125,7 +128,7 @@ export default function ProductForm({
                 </section>
                 <section className="grid gap-4 rounded-xl border border-border p-5"><h2 className="text-xl font-bold">Regalos digitales</h2><label className="flex gap-3"><input type="checkbox" checked={form.data.welcome_gift_enabled} onChange={e => form.setData('welcome_gift_enabled', e.target.checked)}/>Disponible como regalo de bienvenida</label><label className="flex gap-3"><input type="checkbox" checked={form.data.promotional_gift_enabled} onChange={e => form.setData('promotional_gift_enabled', e.target.checked)}/>Disponible para regalo promocional</label><label className="flex gap-3"><input type="checkbox" checked={form.data.gift_pdf_final} onChange={e => form.setData('gift_pdf_final', e.target.checked)}/>{form.data.delivery_type === 'hosted_app' ? 'Autorizo la APP protegida para regalos.' : 'Confirmo que el PDF privado actual es definitivo para regalos.'}</label></section>
                 {error('gift_pdf_final')}{error('welcome_gift_enabled')}{error('promotional_gift_enabled')}
-                {Object.keys(form.errors).length > 0 && <p role="status" className="rounded-xl border border-destructive p-4">No se guardaron los cambios. Corrige los campos indicados. Los datos escritos se conservan; si recargas el editor, vuelve a seleccionar los archivos.</p>}
+                {Object.keys(form.errors).length > 0 && <p role="status" className="rounded-xl border border-destructive p-4">Revisa los requisitos indicados. Si falta un requisito comercial, los datos válidos se guardan y la venta permanece pendiente. Los datos escritos se conservan; si recargas el editor, vuelve a seleccionar los archivos.</p>}
                 {fields.map(([key, label]) => (
                     <label key={key} className="grid gap-2 font-semibold">
                         {label}
@@ -181,7 +184,9 @@ export default function ProductForm({
                     </select>
                     {error('currency')}
                 </label>
-                {(['public','member'] as const).map(tier => <section key={tier} className="grid gap-4 rounded-xl border border-border p-5">
+                <label className="grid gap-2">QR para cobrar<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.use_shared_qr ? 'shared' : 'specific'} onChange={e => {form.setData('use_shared_qr', e.target.value === 'shared'); form.setData('public_qr_confirmed',false); form.setData('member_qr_confirmed',false);}}><option value="shared">QR compartidos (predeterminado)</option><option value="specific">QR específicos del producto</option></select></label>
+                {form.data.use_shared_qr && <p role="status">{p?.qrs?.public.shared && p.qrs.public.verified && p?.qrs?.member.shared && p.qrs.member.verified ? 'QR compartidos disponibles' : 'El backend buscará QR compartidos verificados para cada importe, moneda y cuenta al guardar.'} <a className="text-brand underline" href="/admin/digital/cobro">Subir o revisar QR compartidos</a>. Al guardar este modo se retiran las asociaciones a QR específicos; se conservan los archivos que necesiten las órdenes existentes.</p>}
+                {!form.data.use_shared_qr && (['public','member'] as const).map(tier => <section key={tier} className="grid gap-4 rounded-xl border border-border p-5">
                     <label className="grid gap-2 font-semibold">{tier === 'public' ? 'QR público' : 'QR miembro'} (PNG/JPG, máximo 10 MB)
                         <input type="file" accept="image/png,image/jpeg" onChange={e=>{form.setData(`${tier}_qr`, e.target.files?.[0] ?? null); form.setData(`${tier}_qr_confirmed`, false);}}/>
                         {error(`${tier}_qr`)}
@@ -243,12 +248,13 @@ export default function ProductForm({
                         {error}
                     </p>
                 ))}
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
+                    {form.data.status !== 'draft' && <button type="button" disabled={form.processing} onClick={() => save('draft')} className="min-h-12 rounded-xl border border-border px-4">Guardar borrador</button>}
                     <button
                         disabled={form.processing}
                         className="min-h-12 rounded-xl bg-brand px-6 font-bold text-brand-foreground"
                     >
-                        Guardar producto
+                        {form.data.status === 'draft' ? 'Guardar borrador' : 'Guardar cambios'}
                     </button>
                     <Link
                         className="inline-flex min-h-12 items-center"

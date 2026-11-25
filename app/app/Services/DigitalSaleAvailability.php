@@ -40,28 +40,40 @@ class DigitalSaleAvailability
         }
     }
 
-    public function missing(DigitalProduct $product, ?array $settings = null): array
+    public function missing(DigitalProduct $product, ?array $settings = null, bool $publishing = false): array
     {
         $settings ??= $this->settings($product);
         $missing = [];
         if (! $this->eligible($product)) $missing[] = 'La autorización comercial requiere un producto compatible de JAKAWI Digital.';
-        if (! DigitalProduct::published()->whereKey($product->id)->exists()) $missing[] = 'Publicar el producto y su Partner.';
+        if (! ($publishing ? $product->partner()->published()->exists() : DigitalProduct::published()->whereKey($product->id)->exists())) $missing[] = 'Publicar el producto y su Partner.';
         if (! is_numeric($product->public_price) || DigitalCheckout::cents((string) $product->public_price) <= 0) $missing[] = 'Configurar el precio público definitivo.';
         if (! is_numeric($product->member_price) || (float) $product->member_price <= 0 || (float) $product->member_price > (float) $product->public_price) $missing[] = 'Configurar el precio miembro definitivo, menor o igual al público.';
         if ($product->delivery_type === 'hosted_app') {
             if (! app(HostedApps::class)->ready($product)) $missing[] = 'Registrar y verificar la APP protegida en JAKAWI.STORE.';
-            if (($settings['app_key'] ?? null) !== $product->app_key) $missing[] = 'Autorizar individualmente esta APP para compradores.';
+            if (! $publishing && ($settings['app_key'] ?? null) !== $product->app_key) $missing[] = 'Autorizar individualmente esta APP para compradores.';
         } else {
             if (! $this->pdfVerified($product)) $missing[] = 'Subir y verificar el PDF privado.';
             if (empty($settings['pdf_sha256']) || $settings['pdf_sha256'] !== $product->file_sha256) $missing[] = 'Confirmar que el PDF actual es el definitivo para compradores.';
         }
         if (! app(DigitalCollection::class)->readyFor($product->currency)) $missing[] = 'Configurar y autorizar la cuenta en Cobro digital.';
         if ($product->delivery_type === 'hosted_app' && $product->app_key !== 'gluteos') {
-            foreach (['description'=>'Completar la descripción.', 'support_information'=>'Completar el soporte.', 'access_terms'=>'Completar las condiciones de acceso.', 'cover_path'=>'Subir la portada.'] as $field=>$message) {
+            foreach (['name'=>'Completar el nombre.', 'short_description'=>'Completar la descripción corta.', 'category'=>'Seleccionar la categoría principal.', 'description'=>'Completar la descripción.', 'support_information'=>'Completar el soporte.', 'access_terms'=>'Completar las condiciones de acceso.', 'cover_path'=>'Subir la portada.'] as $field=>$message) {
                 if (blank($product->$field)) $missing[]=$message;
             }
         }
         return array_merge($missing, app(DigitalProductQr::class)->missing($product));
+    }
+
+    public function publishAndSell(DigitalProduct $product, int $adminId, bool $pdfFinal = false): array
+    {
+        if ($product->delivery_type === 'hosted_app') app(HostedApps::class)->ready($product, true);
+        $prospective = $this->settings($product);
+        if ($pdfFinal && $this->pdfVerified($product)) $prospective['pdf_sha256'] = $product->file_sha256;
+        $missing = $this->missing($product, $prospective, true);
+        if ($missing) return $missing;
+        $product->update(['status'=>'published']);
+        $this->configure($product, true, true, $adminId);
+        return [];
     }
 
     public function canSell(DigitalProduct $product): bool
@@ -88,6 +100,7 @@ class DigitalSaleAvailability
         return ['eligible' => $this->eligible($product), 'enabled' => $settings['enabled'] ?? false,
             'available' => $this->canSell($product), 'pdf_verified' => $this->pdfVerified($product),
             'pdf_final' => $product->delivery_type === 'hosted_app' ? (($settings['app_key'] ?? null) === $product->app_key) : (filled($settings['pdf_sha256'] ?? null) && $settings['pdf_sha256'] === $product->file_sha256),
-            'missing' => $this->missing($product)];
+            'app_ready' => $product->delivery_type === 'hosted_app' && app(HostedApps::class)->ready($product),
+            'publish_missing' => $this->missing($product, null, true), 'missing' => $this->missing($product)];
     }
 }

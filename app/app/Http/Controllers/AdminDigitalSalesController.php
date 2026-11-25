@@ -23,7 +23,7 @@ class AdminDigitalSalesController extends Controller
             unset($v['qr_path'],$v['qr_sha256']);
         }
 
-        return Inertia::render('admin/digital/settings', ['settings' => $v, 'ready' => $collection->current() !== null]);
+        return Inertia::render('admin/digital/settings', ['settings' => $v, 'ready' => $collection->current() !== null, 'sharedQrs'=>app(\App\Services\DigitalProductQr::class)->sharedAdminState()]);
     }
 
     public function saveSettings(Request $request, DigitalCollection $collection, DigitalFiles $files)
@@ -41,6 +41,42 @@ class AdminDigitalSalesController extends Controller
         });
 
         return back()->with('success', 'Configuración digital guardada.');
+    }
+
+    public function saveSharedQr(Request $request)
+    {
+        if ($request->filled('valid_until')) {
+            try { $request->merge(['valid_until'=>\Carbon\Carbon::parse($request->input('valid_until'), 'America/La_Paz')->toIso8601String()]); } catch (\Throwable) {}
+        }
+        $data = $request->validate([
+            'amount'=>'required|decimal:0,2|gt:0|max:99999999.99', 'currency'=>'required|in:BOB,USD',
+            'shared_qr'=>'required|image|mimes:png,jpg,jpeg|max:10240',
+            'bank_document'=>'required|file|mimes:pdf|max:25600', 'bank_evidence'=>'required|string|min:20|max:3000',
+            'bank_reuse_confirmed'=>'accepted', 'no_expiry'=>'sometimes|boolean',
+            'valid_until'=>'nullable|required_unless:no_expiry,1|date|after:now',
+        ]);
+        app(\App\Services\DigitalProductQr::class)->saveShared($data, $request->file('shared_qr'), $request->file('bank_document'), $request->user()->id);
+        return back()->with('success', 'QR compartido verificado para la cuenta, moneda e importe indicados.');
+    }
+
+    public function sharedQrFile(\App\Models\AppSetting $setting, string $kind, DigitalFiles $files)
+    {
+        abort_unless(str_starts_with($setting->key, \App\Services\DigitalProductQr::SHARED_PREFIX), 404);
+        $path = $setting->value[$kind === 'qr' ? 'qr_path' : 'evidence_path'] ?? null;
+        abort_unless($path, 404);
+        return $files->response($path, basename($path), false);
+    }
+
+    public function disableSharedQr(Request $request, \App\Models\AppSetting $setting)
+    {
+        abort_unless(str_starts_with($setting->key, \App\Services\DigitalProductQr::SHARED_PREFIX), 404);
+        DB::transaction(function () use ($setting, $request) {
+            AppSetting::where('key', DigitalCollection::KEY)->lockForUpdate()->first();
+            $setting = AppSetting::whereKey($setting->id)->lockForUpdate()->firstOrFail();
+            $value=$setting->value; $value['enabled']=false; $setting->update(['value'=>$value]);
+            AuditLog::create(['actor_user_id'=>$request->user()->id,'action'=>'digital_shared_qr_disabled','subject_type'=>AppSetting::class,'subject_id'=>$setting->id,'metadata'=>[]]);
+        });
+        return back()->with('success', 'QR compartido desactivado. Órdenes y evidencias conservadas.');
     }
 
     public function index(Request $request)

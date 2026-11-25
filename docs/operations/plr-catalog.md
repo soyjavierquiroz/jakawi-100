@@ -148,3 +148,35 @@ La release completa únicamente categorías vacías de importados registrados y
 con huella instalada válida. Conserva categorías seleccionadas y todos los demás
 campos, incluyendo precios, permisos, publicación y QR. No crea productos para
 paquetes ausentes. Glúteos adoptado se excluye del completado.
+
+## Publicación simplificada y QR compartidos por importe
+
+El baseline de esta ampliación es COM LIVE/main `64d21884e1078dcfc5fcae15f739a3ac46489b8d`.
+Hay 13 apps instaladas en este servidor; disponer de 112 licencias no equivale a disponer de los 112 paquetes aquí. El importador existente aplica un diccionario de títulos editoriales exactos (58), con IDs reales fijados cuando el paquete está disponible. Un ID fijado con título contradictorio queda pendiente. No clasifica por fragmentos ni descripciones; los títulos desconocidos quedan sin categoría para revisión. `Té Quemagrasas` sigue pendiente. Las ocho categorías adicionales tienen slugs estables en `config/jakawi.php`. El completado de categorías modifica solo celdas vacías de importaciones cuyo ID y huella coinciden; no modifica campos configurados de Glúteos #1 o Pilates #2.
+
+El prellenado existente conserva nombre/slug reales, descripciones originales disponibles, categoría fiable, portada MinIO, partner JAKAWI Digital, hosted_app/STORE, BOB 49/29, soporte y condiciones globales. Cuando el paquete no aporta descripción no se inventa. Importar sigue creando únicamente borradores con regalos y venta desactivados; `--fill-missing` conserva ediciones y precios personalizados.
+
+En **Administración → Cobro digital → QR compartidos por importe** (`/admin/digital/cobro`):
+
+1. Autorizar la cuenta bancaria real.
+2. Subir QR BOB 49 y constancia PDF del banco, registrar referencia/condiciones, vigencia y confirmar permiso real para reutilización entre clientes/productos.
+3. Repetir para BOB 29. No usar la misma imagen para distintos importes.
+
+La aplicación no establece si Banco Ganadero admite un QR concreto: el propietario debe obtener y verificar esa constancia. Sin ella no se habilita el recurso compartido. El archivo se guarda una vez en MinIO privado, con importe, moneda, cuenta/versionado, hash, verificador y vigencia. Puede desactivarse desde la misma sección. Cambiar cuenta, moneda, importe, vigencia o reemplazar/desactivar el recurso invalida su disponibilidad; cada nueva orden conserva su instantánea y referencia propia. No cambia la validación de ingresos, comprobantes ni protección cruzada de referencias de pago.
+
+En el producto seleccionar **QR compartidos (predeterminado)** o **QR específicos del producto**. Las configuraciones específicas existentes se conservan hasta que el propietario elija cambiar. Al guardar modo compartido se retiran las asociaciones específicas; no se copian imágenes por producto. Un precio distinto exige su propio recurso verificado o QR específico. No se confirman QR compartidos nuevamente por producto.
+
+**PUBLICAR Y ACTIVAR VENTA** guarda los archivos y campos editados, comprueba protección/funcionamiento STORE, contenido obligatorio, partner publicado, precios/cuenta y ambos QR. El clic es la autorización comercial expresa, registrada con actor y fecha. Para APP no requiere confirmar manualmente entrega técnica. Si falta un requisito comercial, guarda los datos válidos y conserva el estado de publicación/autorización previo; no concede una autorización nueva. Muestra requisitos concretos. **Guardar borrador** sigue siendo independiente. El listado muestra entrega, categoría, ambos precios, estado de venta y requisitos.
+
+Los reemplazos de QR, portada y galería registran primero el objeto nuevo y confirman BD. Después eliminan el anterior solo si no aparece en ninguna fila persistida, incluyendo órdenes de cualquier estado, regalos, configuraciones, landings y auditoría. Los PDFs, comprobantes y constancias bancarias nunca se eliminan mediante esta limpieza. Solo admite rutas UUID gestionadas en `digital-private/qr/` e imágenes `digital-products/{id}/{cover|image}/`; ante fallo o ruta dudosa conserva y registra el resultado.
+
+Revisión de cargas antiguas fallidas, idempotente y limitada a esos prefijos:
+
+```bash
+php artisan digital:cleanup-assets          # solo informe
+php artisan digital:cleanup-assets --apply  # elimina únicamente sin referencias y con más de 24h
+```
+
+El scheduler existente ejecuta esa limpieza diaria a las 03:20 de Bolivia. No añade servicios ni almacenes. Las rutas recientes o desconocidas se conservan y cuentan en el informe.
+
+Release: `/opt/sites/jakawi.com/release-control.py` parametrizado para esta fase. COM: build/prepare/deploy/enrich/verify/promote; STORE, independiente: store-prepare/store-deploy/store-verify. Evidencias en `/srv/workspaces/jakawi/com/plr-simple-publish-evidence/`, con `LIVE.json`, `STORE-LIVE.json` y los informes de limpieza. `rollback` restaura COM; `store-rollback` restaura solo importador/documentación STORE. Ambos conservan compras, permisos y ediciones actuales; no restauran automáticamente DB. No se activan productos reales durante la release.

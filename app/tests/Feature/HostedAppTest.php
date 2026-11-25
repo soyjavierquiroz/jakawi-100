@@ -71,7 +71,7 @@ class HostedAppTest extends TestCase
 
     private function hosted(): void
     {
-        \Illuminate\Support\Facades\Http::fake(['jakawi.store/*' => \Illuminate\Support\Facades\Http::response(['protected'=>true,'functional'=>true])]);
+        \Illuminate\Support\Facades\Http::fake(['jakawi.store/*/_health' => \Illuminate\Support\Facades\Http::response(['protected'=>true,'functional'=>true]), 'jakawi.store/*' => \Illuminate\Support\Facades\Http::response('',403)]);
         $this->product->update(['delivery_type'=>'hosted_app','app_key'=>'gluteos','file_path'=>null,'file_sha256'=>null,'public_price'=>'49.00','member_price'=>'29.00']);
         $this->collection();
         app(\App\Services\DigitalSaleAvailability::class)->configure($this->product,true,true,$this->admin->id);
