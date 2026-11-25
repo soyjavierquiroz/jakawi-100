@@ -1,0 +1,18 @@
+FROM sha256:41122ec8ae14f589a189a797521ebc608e6e554e291cf4a0d031639622136196 AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/Http/Controllers/AdminDigitalProductController.php /var/www/html/app/Http/Controllers/AdminDigitalProductController.php
+COPY --chown=www-data:www-data app/app/Http/Controllers/AdminDigitalSalesController.php /var/www/html/app/Http/Controllers/AdminDigitalSalesController.php
+COPY --chown=www-data:www-data app/app/Services/BankPaymentReference.php /var/www/html/app/Services/BankPaymentReference.php
+COPY --chown=www-data:www-data app/app/Services/DigitalCheckout.php /var/www/html/app/Services/DigitalCheckout.php
+COPY --chown=www-data:www-data app/app/Services/DigitalCollection.php /var/www/html/app/Services/DigitalCollection.php
+COPY --chown=www-data:www-data app/app/Services/DigitalProductQr.php /var/www/html/app/Services/DigitalProductQr.php
+COPY --chown=www-data:www-data app/app/Services/DigitalSaleAvailability.php /var/www/html/app/Services/DigitalSaleAvailability.php
+COPY --chown=www-data:www-data app/app/Services/MembershipBankCheckout.php /var/www/html/app/Services/MembershipBankCheckout.php
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+FROM sha256:0ba9505564d692acf09fedb259683a244bc5352f940c98dfd7144bcdeed2e676 AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

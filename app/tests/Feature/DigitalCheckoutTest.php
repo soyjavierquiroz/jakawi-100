@@ -291,13 +291,13 @@ class DigitalCheckoutTest extends TestCase
         Storage::disk('digital-private')->assertExists($p->file_path);
         $this->get('/admin/productos-digitales/nuevo-pdf-qa/pdf')->assertOk();
     }
-    public function test_admin_qr_configuration_requires_exclusive_account_and_preserves_membership_settings(): void
+    public function test_admin_qr_configuration_accepts_shared_account_and_preserves_membership_settings(): void
     {
         $before=DB::table('app_settings')->where('key','!=',DigitalCollection::KEY)->get()->toJson();
         $this->actingAs($this->admin)->post('/admin/digital/cobro',[
             'bank'=>'Banco QA','account'=>'QA-ONLY','holder'=>'QA','currency'=>'BOB','enabled'=>true,
             'exclusive_account'=>false,
-        ])->assertSessionHasErrors('exclusive_account');
+        ])->assertRedirect()->assertSessionHasNoErrors();
         $this->post('/admin/digital/cobro',[
             'bank'=>'Banco QA','account'=>'QA-ONLY','holder'=>'QA','currency'=>'BOB','enabled'=>true,
             'exclusive_account'=>true,

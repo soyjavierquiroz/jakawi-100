@@ -60,7 +60,7 @@ class DigitalAdminProductSaveTest extends TestCase
         $before=$this->product->fresh()->getAttributes();$files=Storage::disk('digital-private')->allFiles();
         $this->from($this->url.'/editar')->post($this->url,$this->data(['name'=>'Sin guardar','cover'=>UploadedFile::fake()->image('cover.png'),'public_qr'=>UploadedFile::fake()->image('public.png'),'member_qr'=>UploadedFile::fake()->image('member.png'),'public_qr_confirmed'=>true,'member_qr_confirmed'=>true]))->assertRedirect($this->url.'/editar')->assertSessionHasErrors(['public_qr_confirmed']);
         $this->assertSame($before,$this->product->fresh()->getAttributes());$this->assertSame($files,Storage::disk('digital-private')->allFiles());$this->assertSame([],Storage::disk('minio-media')->allFiles());
-        $this->assertStringContainsString('cuenta exclusiva',session('errors')->first('public_qr_confirmed'));
+        $this->assertStringContainsString('cuenta en Cobro digital',session('errors')->first('public_qr_confirmed'));
     }
     public function test_confirmation_keeps_amount_and_currency_checks_and_does_not_enable_sales(): void
     {

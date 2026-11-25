@@ -11,7 +11,7 @@ class DigitalCollection
     public function current(): ?array
     {
         $v = AppSetting::where('key', self::KEY)->first()?->value;
-        if (! is_array($v) || ! ($v['enabled'] ?? false) || ! ($v['exclusive_account'] ?? false)) {
+        if (! is_array($v) || ! ($v['enabled'] ?? false)) {
             return null;
         }
         foreach (['bank', 'account', 'holder', 'currency', 'version', 'account_key'] as $key) {
@@ -19,7 +19,7 @@ class DigitalCollection
                 return null;
             }
         }
-        unset($v['qr_path'], $v['qr_sha256'], $v['variable_amount_qr']);
+        unset($v['exclusive_account'], $v['qr_path'], $v['qr_sha256'], $v['variable_amount_qr']);
 
         return $v;
     }

@@ -45,7 +45,7 @@ class DigitalSaleAvailability
         if (! is_numeric($product->member_price) || (float) $product->member_price <= 0 || (float) $product->member_price > (float) $product->public_price) $missing[] = 'Configurar el precio miembro definitivo, menor o igual al público.';
         if (! $this->pdfVerified($product)) $missing[] = 'Subir y verificar el PDF privado.';
         if (empty($settings['pdf_sha256']) || $settings['pdf_sha256'] !== $product->file_sha256) $missing[] = 'Confirmar que el PDF actual es el definitivo para compradores.';
-        if (! app(DigitalCollection::class)->readyFor($product->currency)) $missing[] = 'Configurar y autorizar la cuenta exclusiva en Cobro digital.';
+        if (! app(DigitalCollection::class)->readyFor($product->currency)) $missing[] = 'Configurar y autorizar la cuenta en Cobro digital.';
         return array_merge($missing, app(DigitalProductQr::class)->missing($product));
     }
 

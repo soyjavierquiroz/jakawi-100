@@ -30,19 +30,16 @@ class AdminDigitalSalesController extends Controller
 
     public function saveSettings(Request $request, DigitalCollection $collection, DigitalFiles $files)
     {
-        $data = $request->validate(['bank' => 'required|string|max:150', 'account' => 'required|string|max:100', 'holder' => 'required|string|max:200', 'currency' => 'required|in:BOB,USD', 'enabled' => 'required|boolean', 'exclusive_account' => 'accepted', 'variable_amount_qr' => 'prohibited', 'qr' => 'prohibited']);
+        $data = $request->validate(['bank' => 'required|string|max:150', 'account' => 'required|string|max:100', 'holder' => 'required|string|max:200', 'currency' => 'required|in:BOB,USD', 'enabled' => 'required|boolean', 'variable_amount_qr' => 'prohibited', 'qr' => 'prohibited']);
         DB::transaction(function () use ($request, $data) {
             DB::select('SELECT pg_advisory_xact_lock(hashtextextended(?,0))', [DigitalCollection::KEY]);
             $setting = AppSetting::where('key', DigitalCollection::KEY)->lockForUpdate()->first();
             $old = $setting?->value ?? [];
-            $normalized = preg_replace('/[\s-]+/', '', mb_strtoupper($data['account']));
-            $usedForMembership = DB::table('membership_bank_imports')->whereRaw("regexp_replace(upper(account_key), '[[:space:]-]+', '', 'g') = ?", [$normalized])->orWhereRaw("regexp_replace(upper(document_metadata->>'account'), '[[:space:]-]+', '', 'g') = ?", [$normalized])->exists();
-            abort_if($usedForMembership, 422, 'Esta cuenta figura en los extractos de membresías. Usa una cuenta exclusiva de JAKAWI Digital.');
             $key = hash('sha256', mb_strtoupper(trim($data['bank'])).'|'.preg_replace('/[\s-]+/', '', mb_strtoupper($data['account'])));
             $sameAccount = collect(['bank','account','holder','currency'])->every(fn ($field) => ($old[$field] ?? null) === $data[$field]);
-            $v = $data + ['exclusive_account' => true, 'version' => $sameAccount && ($old['account_key'] ?? null) === $key && filled($old['version'] ?? null) ? $old['version'] : (string) Str::uuid(), 'account_key' => $key];
+            $v = $data + ['version' => $sameAccount && ($old['account_key'] ?? null) === $key && filled($old['version'] ?? null) ? $old['version'] : (string) Str::uuid(), 'account_key' => $key];
             AppSetting::updateOrCreate(['key' => DigitalCollection::KEY], ['value' => $v]);
-            AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => 'digital_collection_configured', 'subject_type' => AppSetting::class, 'subject_id' => AppSetting::where('key', DigitalCollection::KEY)->value('id'), 'metadata' => ['version' => $v['version'], 'enabled' => $v['enabled'], 'exclusive_account' => true]]);
+            AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => 'digital_collection_configured', 'subject_type' => AppSetting::class, 'subject_id' => AppSetting::where('key', DigitalCollection::KEY)->value('id'), 'metadata' => ['version' => $v['version'], 'enabled' => $v['enabled']]]);
         });
 
         return back()->with('success', 'Configuración digital guardada. PRELAUNCH sigue aplicándose.');

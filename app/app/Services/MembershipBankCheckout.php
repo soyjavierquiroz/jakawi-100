@@ -112,6 +112,7 @@ class MembershipBankCheckout
             abort_unless(in_array($payment->status, ($automatic ? ['awaiting_payment', 'under_review', 'PAYMENT_REPORTED'] : ['under_review', 'PAYMENT_REPORTED']), true), 422, 'El pago no está en revisión.');
             $movement = DB::table('membership_bank_movements')->where('id', $movementId)->lockForUpdate()->first();
             abort_unless($movement && ! $movement->reconciliation_hold && (float) $movement->debit === 0.0 && $movement->amount === '100.00', 422, 'El ingreso debe ser exactamente Bs 100.');
+            app(BankPaymentReference::class)->forMembership($movement);
             abort_if(MembershipBankPayment::where('bank_movement_id', $movementId)->exists(), 422, 'Movimiento ya utilizado.');
             if ($strongOnly) {
                 $match = $this->match($payment);

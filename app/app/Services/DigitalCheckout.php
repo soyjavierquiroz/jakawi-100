@@ -118,6 +118,7 @@ class DigitalCheckout
             abort_unless(($evidence['bank_verified'] ?? false) && $reference !== '' && ! empty($evidence['bank_date']) && ! empty($evidence['statement']) && ($evidence['account_key'] ?? null) === $order->collection_snapshot['account_key'], 422, 'Verifica el abono real y adjunta evidencia bancaria.');
             abort_unless(($evidence['currency'] ?? null) === $order->currency && self::cents((string) ($evidence['received_amount'] ?? '0')) === self::cents($order->amount), 422, 'Importe o moneda no coinciden con el pedido.');
             abort_if(($evidence['bank_date'] ?? '') < $order->created_at->timezone('America/La_Paz')->toDateString(), 422, 'El ingreso precede al pedido.');
+            app(BankPaymentReference::class)->forDigital($order->collection_snapshot, $reference);
             abort_if(DigitalPayment::where('bank_account_key', $order->collection_snapshot['account_key'])->where('bank_reference', $reference)->exists(), 422, 'Ingreso bancario ya utilizado.');
             $file = app(DigitalFiles::class)->store($evidence['statement'], 'statements');
             $payment->update(['status' => 'confirmed', 'bank_account_key' => $order->collection_snapshot['account_key'], 'bank_reference' => $reference, 'bank_date' => $evidence['bank_date'], 'received_amount' => $order->amount, 'currency' => $order->currency, 'statement_path' => $file['path'], 'statement_sha256' => $file['sha256'], 'reviewed_by' => $admin->id, 'reviewed_at' => now()]);

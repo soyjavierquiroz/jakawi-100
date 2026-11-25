@@ -67,7 +67,7 @@ class DigitalProductQr
         if (! $confirm) return;
         $account = app(DigitalCollection::class)->current();
         if (! $account) {
-            throw ValidationException::withMessages([$tier.'_qr_confirmed' => 'Primero configura y autoriza la cuenta exclusiva en Cobro digital. Puedes guardar el QR sin marcar esta confirmación.']);
+            throw ValidationException::withMessages([$tier.'_qr_confirmed' => 'Primero configura y autoriza la cuenta en Cobro digital. Puedes guardar el QR sin marcar esta confirmación.']);
         }
         if ($account['currency'] !== $product->currency) {
             throw ValidationException::withMessages([$tier.'_qr_confirmed' => 'La moneda del producto no coincide con la cuenta autorizada. Corrige la moneda o la cuenta antes de confirmar el QR.']);

@@ -97,7 +97,7 @@ class AdminDigitalProductController extends Controller
             }
             if ($request->boolean('sale_enabled')) {
                 if (! $request->boolean('pdf_final')) throw ValidationException::withMessages(['pdf_final' => 'Confirma el PDF comercial definitivo antes de habilitar la venta.']);
-                if (! app(\App\Services\DigitalCollection::class)->readyFor($product->currency)) throw ValidationException::withMessages(['sale_enabled' => 'Configura y autoriza la cuenta exclusiva para la moneda del producto antes de habilitar la venta.']);
+                if (! app(\App\Services\DigitalCollection::class)->readyFor($product->currency)) throw ValidationException::withMessages(['sale_enabled' => 'Configura y autoriza la cuenta para la moneda del producto antes de habilitar la venta.']);
                 foreach (['public','member'] as $tier) {
                     if (! $request->boolean($tier.'_qr_confirmed') && ! app(\App\Services\DigitalProductQr::class)->verified($product, $tier)) throw ValidationException::withMessages([$tier.'_qr_confirmed' => 'Confirma este QR para su precio, moneda y cuenta autorizada antes de habilitar la venta.']);
                 }

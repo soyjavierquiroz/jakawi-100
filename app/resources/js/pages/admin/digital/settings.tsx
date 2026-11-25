@@ -6,7 +6,6 @@ type Settings = {
     holder: string;
     currency: string;
     enabled: boolean;
-    exclusive_account: boolean;
 };
 export default function Settings({
     settings: s,
@@ -21,10 +20,9 @@ export default function Settings({
         holder: s?.holder ?? '',
         currency: s?.currency ?? 'BOB',
         enabled: s?.enabled ?? false,
-        exclusive_account: s?.exclusive_account ?? false,
     });
     return (
-        <AdminLayout title="QR y cuenta de JAKAWI Digital">
+        <AdminLayout title="Cuenta autorizada para JAKAWI Digital">
             <Head title="Cobro digital" />
             <p
                 role="status"
@@ -35,7 +33,7 @@ export default function Settings({
                     : 'Cobro pendiente de configurar'}
             </p>
             <p className="mb-5 text-muted-foreground">
-                La cuenta debe ser exclusiva de JAKAWI Digital. Cada producto tiene sus QR público y miembro de importe fijo en su editor. Esta
+                La cuenta puede compartirse con membresías y otros cobros autorizados de JAKAWI. Cada producto tiene sus QR público y miembro de importe fijo en su editor. Esta
                 configuración permite autorizar la venta de Glúteo Perfecto desde su editor. PRELAUNCH permanece activo para el resto de COM.
             </p>
             <form
@@ -48,7 +46,7 @@ export default function Settings({
                 {(
                     [
                         ['bank', 'Banco'],
-                        ['account', 'Cuenta receptora exclusiva'],
+                        ['account', 'Cuenta receptora'],
                         ['holder', 'Titular'],
                     ] as const
                 ).map(([key, label]) => (
@@ -77,10 +75,6 @@ export default function Settings({
                 </label>
                 {(
                     [
-                        [
-                            'exclusive_account',
-                            'Confirmo que esta cuenta es exclusiva de JAKAWI Digital y no recibe pagos de membresías.',
-                        ],
                         [
                             'enabled',
                             'Autorizar esta cuenta para cobros de JAKAWI Digital.',

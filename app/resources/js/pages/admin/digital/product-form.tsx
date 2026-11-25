@@ -170,7 +170,7 @@ export default function ProductForm({
                     <p role="status">{p?.qrs?.[tier].verified ? 'Verificado para el precio, moneda y cuenta actuales' : 'Pendiente de cargar o volver a confirmar'}</p>
                     <p>Importe fijo: {tier === 'public' ? form.data.public_price || 'Pendiente' : form.data.member_price || 'Pendiente'} {form.data.currency}. Cuenta compartida: <a className="text-brand underline" href="/admin/digital/cobro">Cobro digital</a>.</p>
                     {p?.qrs?.[tier].has_file && <a className="text-brand underline" href={`/admin/productos-digitales/${p.slug}/qr/${tier}`} target="_blank" rel="noreferrer">Revisar QR {tier === 'public' ? 'público' : 'miembro'} actual</a>}
-                    <label className="flex items-start gap-3"><input type="checkbox" checked={form.data[`${tier}_qr_confirmed`]} onChange={e=>form.setData(`${tier}_qr_confirmed`,e.target.checked)}/>Confirmo que el QR {tier === 'public' ? 'público' : 'miembro'} pertenece a la cuenta exclusiva de JAKAWI Digital, es reutilizable y cobra el importe fijo y la moneda indicados.</label>
+                    <label className="flex items-start gap-3"><input type="checkbox" checked={form.data[`${tier}_qr_confirmed`]} onChange={e=>form.setData(`${tier}_qr_confirmed`,e.target.checked)}/>Confirmo que el QR {tier === 'public' ? 'público' : 'miembro'} pertenece a la cuenta autorizada de JAKAWI Digital, es reutilizable y cobra el importe fijo y la moneda indicados.</label>
                     {error(`${tier}_qr_confirmed`)}
                 </section>)}
                 <label className="grid gap-2">
