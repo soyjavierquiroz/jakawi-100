@@ -66,7 +66,7 @@ class AdminDigitalProductController extends Controller
         unset($data['public_qr'], $data['member_qr'], $data['public_qr_confirmed'], $data['member_qr_confirmed'], $data['pdf_final'], $data['sale_enabled'], $data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
         DB::transaction(function () use ($request, $data, $files, $catalog, $keep, &$product) {
             $product ??= new DigitalProduct;
-            $deliveryChanged = ($data['delivery_type'] ?? $product->delivery_type) !== $product->delivery_type || ($data['app_key'] ?? $product->app_key) !== $product->app_key;
+            $deliveryChanged = $product->exists && (($data['delivery_type'] ?? $product->delivery_type) !== $product->delivery_type || ($data['app_key'] ?? $product->app_key) !== $product->app_key);
             $product->fill($data);
             $hosted = $product->delivery_type === 'hosted_app';
             if ($hosted && ! app(\App\Services\HostedApps::class)->ready($product)) throw ValidationException::withMessages(['app_key' => 'La APP debe estar registrada, funcional y protegida.']);

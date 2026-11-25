@@ -255,7 +255,7 @@ class DigitalCheckoutTest extends TestCase
     public function test_admin_product_publication_and_private_pdf_upload(): void
     {
         $this->actingAs($this->admin)->post('/admin/productos-digitales', [
-            'name'=>'Nuevo PDF QA','slug'=>'nuevo-gluteo-perfecto','status'=>'published','currency'=>'BOB',
+            'name'=>'Nuevo PDF QA','slug'=>'nuevo-gluteo-perfecto','status'=>'published','currency'=>'BOB','delivery_type'=>'pdf',
             'public_price'=>'15.00','member_price'=>'10.00','description'=>'Solo QA',
             'support_information'=>'QA','access_terms'=>'Solo pruebas','pdf'=>$this->pdf('new-product'),'cover'=>UploadedFile::fake()->image('cover.jpg'),
         ])->assertRedirect('/admin/productos-digitales');

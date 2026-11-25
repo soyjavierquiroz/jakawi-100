@@ -21,7 +21,9 @@ def inspect():return json.loads(run(['docker','inspect',*['jakawi-'+s+'-1' for s
 def guard_source():
  assert not git('status','--porcelain')
  assert git('merge-base',BASE,'HEAD')==BASE
- assert git('ls-remote','origin','refs/heads/main').split()[0]==BASE
+ remote=git('ls-remote','origin','refs/heads/main').split()[0]
+ prior=read('release-metadata.json') if (W/'release-metadata.json').exists() else {}
+ assert remote in {BASE,prior.get('canonical_base'),prior.get('revision')} and git('merge-base',remote,'HEAD')==remote
  assert read('validation.json')['result']=='PASS'
  assert read('validation.json')['revision']==git('rev-parse','HEAD')
  assert read('browser.json')['result']=='PASS'
@@ -60,7 +62,7 @@ def prepare():
  run(compose(W/'compose.candidate.private.json')+['config','--quiet'])
  env=(P/'release.env').read_text().replace(state[0]['Image'],images['app']).replace(state[1]['Image'],images['web'])
  (W/'release.env').write_text(env)
- save('release-metadata.json',{'revision':git('rev-parse','HEAD'),'backup':str(backup),'base':BASE,'images':images})
+ save('release-metadata.json',{'revision':git('rev-parse','HEAD'),'backup':str(backup),'base':BASE,'images':images,'canonical_base':git('ls-remote','origin','refs/heads/main').split()[0]})
  rollback_plan();print('Backup and rollback validation PASS: '+str(backup))
 def rollback_plan():
  m=read('release-metadata.json');b=pathlib.Path(m['backup'])
