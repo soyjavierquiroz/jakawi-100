@@ -35,7 +35,10 @@ class HostedApps
                 if (! $r->ok() || $r->json('protected') !== true || $r->json('functional') !== true) return false;
                 // Probe without credentials or redirects: health alone cannot prove route protection.
                 $base = 'https://jakawi.store/'.$product->app_key.'/';
-                foreach (['', 'index.php', 'app.js'] as $path) {
+                // Adopted Glúteos serves a generic public JS bundle; its rendered
+                // screen and index remain guarded. Keep that existing delivery contract.
+                $paths = $product->app_key === 'gluteos' ? ['', 'index.php'] : ['', 'index.php', 'app.js'];
+                foreach ($paths as $path) {
                     $direct = Http::withoutRedirecting()->timeout(8)->get($base.$path);
                     if (! in_array($direct->status(), [401,403], true)) return false;
                 }

@@ -59,6 +59,17 @@ class PlrSimplePublishTest extends TestCase
             'status'=>'draft','delivery_type'=>'hosted_app','app_key'=>$this->p->app_key,'public_price'=>'49.00','member_price'=>'29.00','currency'=>'BOB',
             'operation'=>'publish_sale','use_shared_qr'=>'1'];
     }
+    public function test_adopted_gluteos_keeps_public_generic_js_but_requires_guarded_screen_and_imports_require_guarded_assets(): void
+    {
+        Http::swap(new \Illuminate\Http\Client\Factory);
+        Http::fake(['jakawi.store/*/_health'=>Http::response(['protected'=>true,'functional'=>true]), 'jakawi.store/*/app.js'=>Http::response('generic JS',200), 'jakawi.store/*'=>Http::response('',403)]);
+        $importedKey=$this->p->app_key;
+        $this->p->app_key='gluteos';
+        $this->assertTrue(app(HostedApps::class)->ready($this->p,true));
+        $this->p->app_key=$importedKey;
+        $this->assertFalse(app(HostedApps::class)->ready($this->p,true));
+    }
+
     public function test_new_categories_are_available_in_admin_and_owner_selection_is_preserved(): void
     {
         $labels=config('jakawi.category_labels');
