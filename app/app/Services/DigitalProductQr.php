@@ -76,6 +76,21 @@ class DigitalProductQr
         if (! is_numeric($price) || DigitalCheckout::cents($price) <= 0) {
             throw ValidationException::withMessages([$tier.'_price' => 'Indica el importe fijo del QR antes de confirmarlo.']);
         }
+        $otherTier = $tier === 'public' ? 'member' : 'public';
+        $other = $this->settings($product)[$otherTier] ?? [];
+        $hash = $file ? hash_file('sha256', $file->getRealPath()) : ($this->settings($product)[$tier]['qr_sha256'] ?? null);
+        if ($hash && ($other['qr_sha256'] ?? null) === $hash && ($other['amount'] ?? null) !== null && $other['amount'] !== $price) {
+            throw ValidationException::withMessages([$tier.'_qr' => 'Este mismo QR de importe fijo ya está asociado a otro importe. Sube el QR bancario correspondiente; no hay evidencia de que admita ambos.']);
+        }
+        if ($hash) {
+            foreach (AppSetting::where('key', 'like', 'digital_product_qr_v1.%')->get() as $setting) {
+                foreach ($setting->value as $stored) {
+                    if (($stored['qr_sha256'] ?? null) === $hash && filled($stored['verified_by'] ?? null) && filled($stored['amount'] ?? null) && DigitalCheckout::cents((string)$stored['amount']) !== DigitalCheckout::cents($price)) {
+                        throw ValidationException::withMessages([$tier.'_qr' => 'Este archivo QR ya fue confirmado para otro importe. Se requiere un QR bancario del importe actual.']);
+                    }
+                }
+            }
+        }
         if (! $file && ! $this->intact($this->settings($product)[$tier] ?? [])) {
             throw ValidationException::withMessages([$tier.'_qr' => 'Carga una imagen QR válida antes de confirmar. El archivo actual no está disponible o no supera la verificación de integridad.']);
         }

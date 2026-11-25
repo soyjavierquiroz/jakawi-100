@@ -40,7 +40,7 @@ Extrae nombre, descripción e idioma del paquete. Deriva el slug técnico del id
 jakawi-plr-import --metadata /ruta/propietario/app.json /srv/sites/jakawi.store/incoming/app.zip
 ```
 
-Campos opcionales: slug, name, description, category, cover (ruta local relativa). No incluir precios/licencias/autorizaciones. Categoría debe existir en COM; sin categoría/descripción se guarda null. Sin nombre se detiene. No descarga imágenes remotas: usa portada local o icono original provisional en MinIO, reemplazable antes de publicar.
+Campos opcionales: slug, name, description, category, cover (ruta local relativa). No incluir licencias/autorizaciones. Los valores iniciales editables son BOB 49 público / 29 miembro; no autorizan una venta. Categoría debe existir en COM; sin categoría/descripción se guarda null. Sin nombre se detiene. Usa la portada local o la URL original indicada por EvaFunnels (HTTPS, dominios de assets conocidos y máximo 10 MiB) y la almacena en MinIO. Si no está disponible, conserva el icono original provisional con aviso. No genera imágenes comerciales. Deriva la descripción corta del tagline o descripción real y asigna fitness/wellness solo ante indicios claros; las categorías ambiguas quedan vacías. No reutiliza soporte de otro producto: solo podría usarse una configuración global confirmada; no existe actualmente.
 
 ## Resultado y reintento
 
@@ -56,22 +56,34 @@ Mismo paquete y metadatos: devuelve el producto existente sin modificar precios/
 
 ## COM y publicación
 
-Aparecen en **Administración → Productos digitales**, `https://jakawi.com/admin/productos-digitales`: Borrador, hosted_app, app_key vinculado al slug, partner JAKAWI Digital, precios público/miembro vacíos y regalos desactivados. La moneda inicial es el valor por defecto existente; revisarla junto con precios. No crea pedidos, grants ni usuarios. El registro AppSetting hosted_app_catalog deriva URLs exclusivamente de STORE.
+Aparecen en **Administración → Productos digitales**, `https://jakawi.com/admin/productos-digitales`: Borrador, hosted_app, app_key vinculado al slug, partner JAKAWI Digital, moneda BOB, precios público/miembro 49/29 editables, venta y regalos desactivados. La moneda inicial es el valor por defecto existente; revisarla junto con precios. No crea pedidos, grants ni usuarios. El registro AppSetting hosted_app_catalog deriva URLs exclusivamente de STORE.
 
-Para publicar: registrar legítimamente jakawi.store en EvaFunnels; comprobar salud y acceso protegido real desde COM; editar borrador; revisar portada/contenido/categoría/soporte/términos; configurar moneda y precios público/miembro; guardar QR y validación bancaria; confirmar entrega definitiva; habilitar venta mediante el flujo existente y publicar solo al completar requisitos. El único Explorador conserva sus reglas actuales. No se concede autorización comercial al importar.
+Para publicar: registrar legítimamente jakawi.store en EvaFunnels; comprobar salud y acceso protegido real desde COM; editar borrador; revisar portada/contenido/categoría/soporte/términos; configurar moneda y precios público/miembro; guardar QR y validación bancaria; confirmar entrega definitiva; habilitar venta mediante el flujo existente y publicar solo al completar requisitos. El único Explorador conserva sus reglas actuales. No se concede autorización comercial al importar. Guardar producto omite la autorización de venta y envía booleanos multipart como 1/0. Habilitar venta es una operación separada y exige los requisitos comerciales. Cada APP nueva tiene configuración comercial individual; Glúteos conserva la configuración anterior.
 
-Pagos intactos: QR estáticos y validación bancaria actuales. Coincidir en importe no demuestra reutilización: solo usar un QR ya verificado si el banco permite reutilizarlo y corresponden moneda, importe y cuenta; conservar confirmación por producto. Esta etapa no aplica reutilización ni cambia cobros.
+Pagos intactos: QR estáticos y validación bancaria actuales. Coincidir en importe no demuestra reutilización: solo usar un QR ya verificado si el banco permite reutilizarlo y corresponden moneda, importe y cuenta; conservar confirmación por producto. No se copian ni confirman QR automáticamente. El modo existente es de importe fijo: una nueva confirmación no admite el mismo archivo para 49 y 29, sin evidencia bancaria de un modo compatible; no existe autorización automática para ello.
 
-## Segunda app
+## Completar importados y Pilates #2
 
-No se recibió/encontró otro paquete español real en los directorios revisados. **Validación con segunda app real pendiente de entrega**. No se duplicó Glúteos ni se crearon productos ficticios LIVE. Fixtures temporales aisladas comprueban idioma, archivos, ZIP seguro, manifest, rutas, instalación, reintento, bloqueo de reemplazo y borrador sin precios, además de las pruebas existentes del puente.
+Pilates en casa ya está instalado como producto #2 y slug pilates-app-es. Para completar únicamente campos vacíos usando el mismo importador:
 
-Al recibirlo: validar/importar una app; comprobar 403 directo, manifest/rutas, salud autenticada y biblioteca con derecho explícitamente autorizado, borrador COM, reimportación sin duplicados y hashes de Glúteos intactos. No conceder regalos/accesos automáticos para probar. Sin 36 pruebas de navegador.
+```bash
+jakawi-plr-import --fill-missing /srv/sites/jakawi.store/incoming/Pilates.zip
+```
+
+No sobrescribe nombre, slug, descripciones, precios, moneda, portada, categoría ni permisos ya guardados. Si un precio editado es incompatible con el otro valor predeterminado, no lo reemplaza ni instala un par inválido. La portada ya existente también se conserva. No modifica estado editorial ni permisos comerciales/regalos. Una reimportación normal sigue siendo idempotente y no vuelve a aplicar valores iniciales.
+
+La verificación focalizada de esta corrección incluye guardado multipart de Pilates en Admin, borrador con 49/29 sin QR, venta incompleta bloqueada, importación/reimportación, conservación de ediciones y Glúteos intacto. No se conceden derechos de prueba ni se repite la implementación STORE/puente.
 
 ## Releases y rollback
 
-COM/STORE independientes; sin migración nueva ni cambios CLUB/CRM/pagos. Evidencia e imágenes previas: `/srv/workspaces/jakawi/com/plr-catalog-evidence/`; backup exacto indicado en LIVE.json.
+COM se publica exclusivamente mediante `/opt/sites/jakawi.com/release-control.py`, con las acciones build, prepare, deploy, enrich, verify y promote. Sin migración nueva ni cambios CLUB/CRM. El procedimiento STORE actualiza solo catalog-tools/import-plr.py, con copia anterior en el backup; no recrea Nginx/PHP ni modifica archivos instalados o el puente.
 
-STORE: `bash /var/backups/jakawi.store/plr-catalog-FECHA/rollback.sh`. Restaura compose/nginx/php.ini protegidos; conserva cargas/catálogo/apps y deshabilita rutas nuevas. Glúteos permanece protegido.
+Evidencia: `/srv/workspaces/jakawi/com/plr-admin-defaults-evidence/`. LIVE.json contiene SHA y backup exactos. Rollback:
 
-COM: ejecutar rollback-com.py desde evidencia. Restaura imágenes previas app/web/worker/scheduler sin restaurar DB ni borrar derechos/borradores posteriores. Si ya hay apps nuevas, revertir primero STORE para deshabilitar sus rutas: COM anterior solo conoce Glúteos. Nunca restaurar la configuración pública anterior a la protección.
+```bash
+JAKAWI_REPOSITORY=/srv/workspaces/jakawi/com/plr-admin-defaults \
+JAKAWI_RELEASE_EVIDENCE=/srv/workspaces/jakawi/com/plr-admin-defaults-evidence \
+python3 /opt/sites/jakawi.com/release-control.py rollback
+```
+
+Restaura imágenes y configuración COM anteriores y el importador anterior. Conserva datos editoriales, precios, derechos y compras actuales; no restaura DB. El dump validado se conserva para recuperación manual. Para la infraestructura inicial STORE permanece disponible el rollback protegido documentado en el backup de la release anterior; no se necesita ejecutarlo en esta corrección.

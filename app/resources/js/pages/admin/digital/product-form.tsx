@@ -38,7 +38,7 @@ export default function ProductForm({
     const form = useForm({
         delivery_type: p?.delivery_type ?? 'pdf',
         app_key: p?.app_key ?? '',
-        ...(p?.sale?.eligible ? {pdf_final: p.sale.pdf_final, sale_enabled: p.sale.enabled} : {}),
+        ...(p?.sale?.eligible ? {pdf_final: p.sale.pdf_final} : {}),
         welcome_gift_enabled: p?.welcome_gift_enabled ?? false,
         promotional_gift_enabled: p?.promotional_gift_enabled ?? false,
         gift_pdf_final: p?.gift_pdf_final ?? false,
@@ -46,7 +46,7 @@ export default function ProductForm({
         member_qr: null as File | null,
         public_qr_confirmed: p?.qrs?.public.verified ?? false,
         member_qr_confirmed: p?.qrs?.member.verified ?? false,
-        category: p?.category ?? 'fitness',
+        category: p?.category ?? '',
         gallery: [] as File[],
         gallery_keep: p?.gallery_paths ?? [],
         gallery_clear: false,
@@ -77,7 +77,13 @@ export default function ProductForm({
     ] as const;
     const error = (field: string) => Object.entries(form.errors).filter(([key]) => key === field || key.startsWith(field + '.')).map(([key, message]) => <span key={key} data-field-error role="alert" className="block text-sm font-normal text-destructive">{message}</span>);
     const save = (operation: 'save' | 'authorize_sale') => {
-        form.transform(data => ({...data, operation, sale_enabled: operation === 'authorize_sale' ? true : data.sale_enabled}));
+        form.transform(data => Object.fromEntries(Object.entries({
+            ...data, operation,
+            // Optional fields must be omitted, never serialized as empty multipart values.
+            sale_enabled: operation === 'authorize_sale' ? true : undefined,
+        }).filter(([, value]) => value !== undefined).map(([key, value]) =>
+            [key, typeof value === 'boolean' ? (value ? '1' : '0') : value],
+        )));
         form.post('/admin/productos-digitales' + (p ? `/${p.slug}` : ''), {
             forceFormData: true,
             preserveScroll: true,
@@ -92,7 +98,7 @@ export default function ProductForm({
         >
             <Head title="Producto digital" />
             <p className="mb-5 text-muted-foreground">
-                {partner.name} · PDF privado · administrado por JAKAWI
+                {partner.name} · {form.data.delivery_type === 'hosted_app' ? 'APP alojada en JAKAWI.STORE' : 'PDF privado'} · administrado por JAKAWI
             </p>
             {p && <nav aria-label="Edición y vistas previas" className="mb-6 flex flex-wrap gap-3"><Link className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/landings`}>Editar Landings</Link><a className="min-h-11 rounded border border-border p-3 font-bold" href={`/admin/productos-digitales/${p.slug}/preview`} target="_blank" rel="noreferrer">Preview de ficha</a></nav>}
             {p?.coming_soon && <p className="mb-5 rounded border border-border p-4">Disponible próximamente · visible al público, sin compras. Puedes guardar cambios editoriales sin precio ni PDF.</p>}
@@ -100,7 +106,7 @@ export default function ProductForm({
             <form onSubmit={submit} className="grid max-w-3xl gap-5">
                 {p?.sale?.eligible && <section className="grid gap-4 rounded-xl border border-border p-5">
                     <p role="status" className="font-bold">Disponibilidad comercial: {p.sale.available ? 'Disponible' : 'Venta desactivada'}</p>
-                    <p>{form.data.delivery_type === 'hosted_app' ? 'Respaldo PDF archivado: ' : 'PDF: '}{p.sale.pdf_verified ? 'Archivo privado verificado' : 'Pendiente de subir o verificar'}</p>
+                    {form.data.delivery_type !== 'hosted_app' && <p>PDF: {p.sale.pdf_verified ? 'Archivo privado verificado' : 'Pendiente de subir o verificar'}</p>}
                     {p.sale.missing.map(item => <p key={item}>{item}</p>)}
                     <a className="text-brand underline" href="/admin/digital/cobro">Configurar QR y cuenta digital</a>
                     <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>{form.data.delivery_type === 'hosted_app' ? 'Autorizo esta APP protegida como entrega definitiva a compradores.' : 'Confirmo que el PDF es definitivo y está preparado para entrega a compradores.'}</label>
@@ -111,8 +117,8 @@ export default function ProductForm({
                     {error('sale_enabled')}
                 </section>}
                 <section className="grid gap-3 rounded-xl border border-border p-5">
-                    <label>Método de entrega<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.delivery_type} onChange={e => {form.setData('delivery_type', e.target.value as 'pdf' | 'hosted_app'); form.setData('pdf_final', false); form.setData('sale_enabled', false);}}><option value="pdf">PDF privado</option><option value="hosted_app">APP alojada en JAKAWI.STORE</option></select></label>
-                    {form.data.delivery_type === 'hosted_app' && <label>Aplicación autorizada<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.app_key} onChange={e => {form.setData('app_key', e.target.value); form.setData('pdf_final', false); form.setData('sale_enabled', false);}}><option value="">Elegir aplicación</option>{hostedApps.map(slug => <option key={slug} value={slug}>{slug} · jakawi.store/{slug}/</option>)}</select><p>Requiere APP funcional y protegida, cuenta bancaria, precios, QR y autorización comercial individual. El PDF anterior se conserva como archivo privado.</p></label>}
+                    <label>Método de entrega<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.delivery_type} onChange={e => {form.setData('delivery_type', e.target.value as 'pdf' | 'hosted_app'); form.setData('pdf_final', false); }}><option value="pdf">PDF privado</option><option value="hosted_app">APP alojada en JAKAWI.STORE</option></select></label>
+                    {form.data.delivery_type === 'hosted_app' && <label>Aplicación autorizada<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.app_key} onChange={e => {form.setData('app_key', e.target.value); form.setData('pdf_final', false); }}><option value="">Elegir aplicación</option>{hostedApps.map(slug => <option key={slug} value={slug}>{slug} · jakawi.store/{slug}/</option>)}</select><p>Requiere APP funcional y protegida, cuenta bancaria, precios, QR y autorización comercial individual. El PDF anterior se conserva como archivo privado.</p></label>}
                     {error('delivery_type')}{error('app_key')}
                 </section>
                 <section className="grid gap-4 rounded-xl border border-border p-5"><h2 className="text-xl font-bold">Regalos digitales</h2><label className="flex gap-3"><input type="checkbox" checked={form.data.welcome_gift_enabled} onChange={e => form.setData('welcome_gift_enabled', e.target.checked)}/>Disponible como regalo de bienvenida</label><label className="flex gap-3"><input type="checkbox" checked={form.data.promotional_gift_enabled} onChange={e => form.setData('promotional_gift_enabled', e.target.checked)}/>Disponible para regalo promocional</label><label className="flex gap-3"><input type="checkbox" checked={form.data.gift_pdf_final} onChange={e => form.setData('gift_pdf_final', e.target.checked)}/>{form.data.delivery_type === 'hosted_app' ? 'Autorizo la APP protegida para regalos.' : 'Confirmo que el PDF privado actual es definitivo para regalos.'}</label></section>
@@ -156,7 +162,7 @@ export default function ProductForm({
                         {error(key)}
                     </label>
                 ))}
-                <label className="grid gap-2">Categoría<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.category} onChange={e=>form.setData('category',e.target.value)}>{['food','cafe','fitness','wellness','beauty','entertainment','nightlife','shopping','services','experiences'].map(c=><option key={c} value={c}>{c}</option>)}</select>{error('category')}</label>
+                <label className="grid gap-2">Categoría<select className="min-h-12 rounded-xl border border-border bg-surface px-3" value={form.data.category} onChange={e=>form.setData('category',e.target.value)}><option value="">Sin categoría</option>{['food','cafe','fitness','wellness','beauty','entertainment','nightlife','shopping','services','experiences'].map(c=><option key={c} value={c}>{c}</option>)}</select>{error('category')}</label>
                 <label className="grid gap-2">Galería (hasta 8 imágenes)<input type="file" multiple accept="image/png,image/jpeg,image/webp" onChange={e=>form.setData('gallery',Array.from(e.target.files||[]))}/>{error('gallery')}{error('gallery_keep')}</label>
                 {!!p?.gallery_paths?.length && <div className="grid grid-cols-2 gap-3">{p.gallery_paths.map((path,i)=><label key={path} className="text-sm"><img src={p.gallery_urls?.[i]} alt="Imagen de galería" className="mb-2 w-full rounded-xl"/><input type="checkbox" checked={form.data.gallery_keep.includes(path)} onChange={e=>{const keep=e.target.checked?[...form.data.gallery_keep,path]:form.data.gallery_keep.filter(k=>k!==path);form.setData('gallery_keep',keep);form.setData('gallery_clear',keep.length===0);}}/> Conservar</label>)}</div>}
                 <label className="grid gap-2">
@@ -213,7 +219,7 @@ export default function ProductForm({
                         type="file"
                         accept="application/pdf"
                         onChange={(e) =>
-                            { form.setData('pdf', e.target.files?.[0] ?? null); form.setData('gift_pdf_final', false); form.setData('welcome_gift_enabled', false); form.setData('promotional_gift_enabled', false); if (p?.sale?.eligible) { form.setData('pdf_final', false); form.setData('sale_enabled', false); } }
+                            { form.setData('pdf', e.target.files?.[0] ?? null); form.setData('gift_pdf_final', false); form.setData('welcome_gift_enabled', false); form.setData('promotional_gift_enabled', false); if (p?.sale?.eligible) { form.setData('pdf_final', false);  } }
                         }
                     />
                     {error('pdf')}{error('file')}

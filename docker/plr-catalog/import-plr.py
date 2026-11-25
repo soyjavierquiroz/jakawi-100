@@ -15,6 +15,8 @@ import sys
 import tempfile
 import unicodedata
 import zipfile
+import urllib.request
+import urllib.parse
 
 ROOT = Path('/srv/sites/jakawi.store')
 OPS = Path('/opt/sites/jakawi.store')
@@ -75,6 +77,34 @@ def local_file(root, name):
     return p
 
 
+def original_cover(url):
+    # Only the vendor's published asset domains; no arbitrary internal destinations.
+    def allowed(value):
+        u=urllib.parse.urlsplit(value)
+        host=u.hostname or ''
+        if u.scheme != 'https' or u.username or u.password or u.port not in (None,443) or not (host.endswith('.r2.dev') or host == 'eva.igorstorm.com' or host == 'apps.igorstorm.com'):
+            raise ValueError('Dominio de portada no reconocido; usar --metadata cover con archivo local.')
+    class Redirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self,req,fp,code,msg,headers,newurl):
+            allowed(newurl)
+            return super().redirect_request(req,fp,code,msg,headers,newurl)
+    allowed(url)
+    with urllib.request.build_opener(Redirect()).open(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Referer':'https://jakawi.store/'}),timeout=12) as response:
+        data=response.read(10*1024*1024+1)
+        if len(data)>10*1024*1024 or not response.headers.get('Content-Type','').startswith('image/'):
+            raise ValueError('Portada remota inválida o mayor de 10 MiB.')
+        return data
+
+
+def category_from_metadata(name, description):
+    text=unicodedata.normalize('NFKD',name+' '+(description or '')).encode('ascii','ignore').decode().lower()
+    if re.search(r'\b(pilates|yoga|fitness|cardio|gluteos|entrenamiento|ejercicios)\b',text):
+        return 'fitness'
+    if re.search(r'\b(meditacion|mindfulness|relajacion)\b',text):
+        return 'wellness'
+    return None
+
+
 def inspect(root, override=None):
     candidates = [p.parent for p in root.rglob('index.php') if '__MACOSX' not in p.parts]
     if len(candidates) != 1:
@@ -121,19 +151,32 @@ def inspect(root, override=None):
         logo = meta.get('logoUrl','')
         if logo and not logo.startswith(('https:', 'http:', 'data:', '/')):
             cover = local_file(app, logo)
-    # Icono local como portada provisional, sin inventar una imagen comercial.
-    cover = cover or icons[-1]
-    if cover.stat().st_size > 10*1024*1024:
+    cover_source=cover.relative_to(app).as_posix() if cover else None
+    cover_bytes=cover.read_bytes() if cover else None
+    logo=meta.get('logoUrl','')
+    if cover_bytes is None and logo.startswith('https:'):
+        try:
+            cover_bytes=original_cover(logo)
+            cover_source=logo
+        except Exception as e:
+            print(f'AVISO {slug}: portada remota no disponible ({type(e).__name__}); se conserva icono original como provisional.',file=sys.stderr)
+    if cover_bytes is None:
+        cover_bytes=icons[-1].read_bytes()
+        cover_source=icons[-1].relative_to(app).as_posix()
+    if len(cover_bytes)>10*1024*1024:
         raise ValueError('Imagen supera 10 MiB.')
+    description=extra.get('description',meta.get('description') or manifest.get('description'))
+    short=meta.get('tagline') or manifest.get('description') or description
+    short=re.sub(r'<[^>]+>','',short).strip()[:1000] if short else None
     h = hashlib.sha256()
     for p in sorted(app.rglob('*')):
         if p.is_file() and not p.name.startswith('.afp_cache'):
             h.update(p.relative_to(app).as_posix().encode()+b'\0'+p.read_bytes()+b'\0')
     h.update(json.dumps(extra,sort_keys=True).encode())
     data = dict(slug=slug, name=name, language=language, vendor_id=vendor, package_sha256=h.hexdigest(),
-                description=extra.get('description',meta.get('description') or manifest.get('description')),
-                category=extra.get('category'), cover_source=cover.relative_to(app).as_posix(),
-                cover_base64=base64.b64encode(cover.read_bytes()).decode())
+                description=description, short_description=short,
+                category=extra.get('category') or category_from_metadata(name,description), cover_source=cover_source,
+                cover_base64=base64.b64encode(cover_bytes).decode())
     return app, manifest, data
 
 
@@ -225,7 +268,8 @@ def import_one(source, args):
         extracted.mkdir()
         unpack(source,extracted)
         app, manifest, data = inspect(extracted,args.metadata)
-        safe = {k:v for k,v in data.items() if k != 'cover_base64'}
+        data['fill_missing']=getattr(args,'fill_missing',False)
+        safe = {k:v for k,v in data.items() if k not in {'cover_base64','fill_missing'}}
         slug=data['slug']
         if args.check:
             print(json.dumps(dict(result='validated_only',**safe),ensure_ascii=False))
@@ -278,6 +322,9 @@ def import_one(source, args):
         except json.JSONDecodeError:
             raise ValueError('COM no devolvió JSON válido; instalación conservada para reintentar.')
         old=json.loads(record.read_text())
+        if old.get('cover_source') and com.get('result') != 'created' and 'cover_path' not in com.get('filled',[]):
+            safe.pop('cover_source',None)
+        old.update(safe)
         old.update(com=com,state='draft')
         write_json(record,old)
         (catalog/'routes').mkdir(exist_ok=True)
@@ -297,6 +344,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('sources',nargs='+',type=Path,help='Uno o varios ZIP/carpetas; permite glob de shell.')
     p.add_argument('--metadata',type=Path,help='JSON opcional para UNA app: slug/name/description/category/cover; datos reales del propietario.')
+    p.add_argument('--fill-missing',action='store_true',help='Completa solo campos vacíos de productos previamente importados; conserva ediciones, precios existentes y autorizaciones.')
     p.add_argument('--check',action='store_true',help='Valida sin instalar, conectar a COM ni modificar servicios.')
     args=p.parse_args()
     if args.metadata and len(args.sources)!=1:

@@ -70,6 +70,16 @@ class ImportTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,'no se sobrescribe'):
                     m.import_one(source,args)
                 self.assertEqual(before,index.read_bytes())
+    def test_real_metadata_short_description_category_and_original_cover(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);app=self.fixture(root)
+            (app/'config-override.json').write_text(json.dumps({'app':{'name':'Pilates en casa','lang':'es','tagline':'Ejercicios en casa','description':'Descripción original disponible','logoUrl':'https://pub-qa.r2.dev/cover.jpg'}}))
+            with patch.object(m,'original_cover',return_value=b'original-cover'):
+                _,_,data=m.inspect(root)
+            self.assertEqual(data['short_description'],'Ejercicios en casa')
+            self.assertEqual(data['description'],'Descripción original disponible')
+            self.assertEqual(data['category'],'fitness')
+            self.assertEqual(data['cover_source'],'https://pub-qa.r2.dev/cover.jpg')
     def test_real_gluteos_cannot_be_duplicated(self):
         with self.assertRaisesRegex(ValueError,'no se duplicará'):
             m.inspect(Path('/srv/sites/jakawi.store/apps/gluteos/public'))

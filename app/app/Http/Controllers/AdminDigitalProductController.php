@@ -35,6 +35,10 @@ class AdminDigitalProductController extends Controller
         if ($product) {
             $catalog->assertInternal($product);
         }
+        // Older clients serialized optional undefined values as blank multipart fields.
+        foreach (['sale_enabled', 'pdf_final'] as $optional) {
+            if ($request->exists($optional) && ($request->input($optional) === null || $request->input($optional) === '')) $request->request->remove($optional);
+        }
         $data = $request->validate([
             'public_qr' => 'nullable|image|mimes:png,jpg,jpeg|max:10240', 'member_qr' => 'nullable|image|mimes:png,jpg,jpeg|max:10240',
             'public_qr_confirmed' => 'sometimes|boolean', 'member_qr_confirmed' => 'sometimes|boolean',
@@ -54,7 +58,7 @@ class AdminDigitalProductController extends Controller
         ]);
         $hosted = ($data['delivery_type'] ?? $product?->delivery_type) === 'hosted_app';
         if ($hosted && empty($data['app_key'] ?? $product?->app_key)) throw ValidationException::withMessages(['app_key' => 'Elige una APP registrada.']);
-        if ($data['status'] === 'published' && ! $product?->isComingSoon()) {
+        if ($data['status'] === 'published' && ! ($hosted && $product?->status === 'published' && $request->input('operation', 'save') === 'save') && ! $product?->isComingSoon()) {
             Validator::make($data, ['public_price' => 'required', 'description' => 'required', 'support_information' => 'required', 'access_terms' => 'required'])->validate();
             if (! ($request->hasFile('cover') || $product?->cover_path)) throw ValidationException::withMessages(['cover' => 'Sube la portada antes de publicar.']);
             if (! $hosted && ! ($request->hasFile('pdf') || $product?->file_path)) throw ValidationException::withMessages(['pdf' => 'Sube el PDF privado antes de publicar.']);
@@ -65,17 +69,25 @@ class AdminDigitalProductController extends Controller
         unset($data['welcome_gift_enabled'], $data['promotional_gift_enabled'], $data['gift_pdf_final']);
         unset($data['public_qr'], $data['member_qr'], $data['public_qr_confirmed'], $data['member_qr_confirmed'], $data['pdf_final'], $data['sale_enabled'], $data['pdf'],$data['cover'],$data['gallery'],$data['gallery_keep'],$data['gallery_clear']);
         DB::transaction(function () use ($request, $data, $files, $catalog, $keep, &$product) {
+            $wasPublished = $product?->status === 'published';
             $product ??= new DigitalProduct;
             $deliveryChanged = $product->exists && (($data['delivery_type'] ?? $product->delivery_type) !== $product->delivery_type || ($data['app_key'] ?? $product->app_key) !== $product->app_key);
             $product->fill($data);
             $hosted = $product->delivery_type === 'hosted_app';
-            if ($hosted && $product->status === 'published' && ! app(\App\Services\HostedApps::class)->ready($product)) throw ValidationException::withMessages(['app_key' => 'La APP debe estar registrada, funcional y protegida.']);
+            if ($hosted && $product->status === 'published' && (! $wasPublished || $request->input('operation') === 'authorize_sale') && ! app(\App\Services\HostedApps::class)->ready($product)) throw ValidationException::withMessages(['app_key' => 'La APP debe estar registrada, funcional y protegida.']);
             $product->partner_id = $catalog->internalPartner()->id;
             if ($request->input('operation') === 'authorize_sale' && ($request->hasFile('pdf') || $request->hasFile('cover') || $request->hasFile('gallery') || $request->hasFile('public_qr') || $request->hasFile('member_qr'))) throw ValidationException::withMessages(['sale_enabled' => 'Primero guarda los archivos con Guardar producto. Después habilita la venta con las referencias ya guardadas.']);
             // Validate administrative intent before writing any object to MinIO.
             \App\Models\AppSetting::where('key', \App\Services\DigitalCollection::KEY)->lockForUpdate()->first();
             foreach (['public','member'] as $tier) {
-                app(\App\Services\DigitalProductQr::class)->validateSave($product, $tier, $request->file($tier.'_qr'), $request->boolean($tier.'_qr_confirmed'));
+                $qrService = app(\App\Services\DigitalProductQr::class);
+                if ($request->hasFile($tier.'_qr') || ($request->has($tier.'_qr_confirmed') && $request->boolean($tier.'_qr_confirmed') !== $qrService->verified($product, $tier))) {
+                    $qrService->validateSave($product, $tier, $request->file($tier.'_qr'), $request->boolean($tier.'_qr_confirmed'));
+                }
+            }
+            if ($request->boolean('public_qr_confirmed') && $request->boolean('member_qr_confirmed') && $request->hasFile('public_qr') && $request->hasFile('member_qr') && $product->public_price !== $product->member_price
+                && hash_equals(hash_file('sha256', $request->file('public_qr')->getRealPath()), hash_file('sha256', $request->file('member_qr')->getRealPath()))) {
+                throw ValidationException::withMessages(['member_qr' => 'Un mismo QR de importe fijo no puede confirmarse para dos importes diferentes. Sube el QR bancario correspondiente.']);
             }
             $giftFinal = filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256;
             $giftChanged = $request->has('gift_pdf_final') && (
@@ -89,8 +101,8 @@ class AdminDigitalProductController extends Controller
             }
             $sale = app(\App\Services\DigitalSaleAvailability::class);
             $saleSettings = $product->exists ? $sale->settings($product) : [];
-            $saleChanged = $deliveryChanged || ($request->has('sale_enabled') || $request->has('pdf_final')) && (
-                $request->boolean('sale_enabled') !== ($saleSettings['enabled'] ?? false)
+            $saleChanged = $request->input('operation') === 'authorize_sale' || $deliveryChanged || ($request->has('sale_enabled') || $request->has('pdf_final')) && (
+                ($request->has('sale_enabled') && $request->boolean('sale_enabled') !== ($saleSettings['enabled'] ?? false))
                 || $request->boolean('pdf_final') !== ($hosted ? (($saleSettings['app_key'] ?? null) === $product->app_key) : (filled($saleSettings['pdf_sha256'] ?? null) && ($saleSettings['pdf_sha256'] ?? null) === $product->file_sha256))
                 || $request->hasFile('pdf')
             );
@@ -100,7 +112,7 @@ class AdminDigitalProductController extends Controller
             if (! $hosted && ($request->boolean('pdf_final') || ($giftChanged && $request->boolean('gift_pdf_final'))) && ! $request->hasFile('pdf') && ! $sale->pdfVerified($product)) {
                 throw ValidationException::withMessages(['pdf' => 'Sube un PDF privado válido antes de confirmarlo como definitivo.']);
             }
-            if ($request->boolean('sale_enabled')) {
+            if ($request->input('operation') === 'authorize_sale') {
                 if (! $request->boolean('pdf_final')) throw ValidationException::withMessages(['pdf_final' => 'Confirma la entrega definitiva antes de habilitar la venta.']);
                 if (! app(\App\Services\DigitalCollection::class)->readyFor($product->currency)) throw ValidationException::withMessages(['sale_enabled' => 'Configura y autoriza la cuenta para la moneda del producto antes de habilitar la venta.']);
                 foreach (['public','member'] as $tier) {
@@ -123,12 +135,12 @@ class AdminDigitalProductController extends Controller
             $product->gallery_paths = $gallery;
             $product->save();
             foreach (['public','member'] as $tier) {
-                if ($request->hasFile($tier.'_qr') || $request->has($tier.'_qr_confirmed')) {
+                if ($request->hasFile($tier.'_qr') || ($request->has($tier.'_qr_confirmed') && $request->boolean($tier.'_qr_confirmed') !== app(\App\Services\DigitalProductQr::class)->verified($product, $tier))) {
                     app(\App\Services\DigitalProductQr::class)->save($product, $tier, $request->file($tier.'_qr'), $request->boolean($tier.'_qr_confirmed'), $request->user()->id);
                 }
             }
             if ($saleChanged) {
-                app(\App\Services\DigitalSaleAvailability::class)->configure($product, $request->boolean('pdf_final'), $request->boolean('sale_enabled'), $request->user()->id);
+                app(\App\Services\DigitalSaleAvailability::class)->configure($product, $request->boolean('pdf_final'), $request->input('operation') === 'authorize_sale', $request->user()->id);
             }
             if ($giftChanged) {
                 app(\App\Services\DigitalGifts::class)->configure($product, $request->boolean('welcome_gift_enabled'), $request->boolean('promotional_gift_enabled'), $request->boolean('gift_pdf_final'));
