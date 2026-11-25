@@ -14,7 +14,7 @@ final readonly class ChallengeOpportunityAdapter {
             default => $challenge->benefit?->title ?? 'Beneficio',
         };
         if ($challenge->selection_type === 'FIRST_N') {
-            $taken = $challenge->participations()->whereIn('selection_status',['candidate','selected'])->count();
+            $taken = $challenge->getAttribute('discovery_taken_count') ?? $challenge->participations()->whereIn('selection_status',['candidate','selected'])->count();
             $reward = 'Quedan '.max(0,$challenge->winner_limit-$taken).' de '.$challenge->winner_limit.' premios';
         } elseif ($challenge->selection_type === 'TOP_N') $reward = 'Top '.$challenge->winner_limit.' al cierre · '.$reward;
         return new DiscoveryOpportunity(type: OpportunityType::CHALLENGE,sourceId:$challenge->id,title:$challenge->title,

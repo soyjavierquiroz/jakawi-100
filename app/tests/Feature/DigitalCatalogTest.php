@@ -18,8 +18,8 @@ class DigitalCatalogTest extends TestCase
         $p = Partner::where('slug', 'jakawi-digital')->firstOrFail();
         $this->assertSame(0, $p->locations()->count());
         $digital = DigitalProduct::create(['partner_id' => $p->id, 'name' => 'Manual QA', 'slug' => 'manual-qa', 'description' => 'Contenido buscable remoto', 'public_price' => '9.90', 'status' => 'published', 'currency' => 'BOB']);
-        $this->get('/productos-digitales?q=remoto')->assertOk()->assertInertia(fn (Assert $a) => $a->component('explore')->where('type', 'digital')->has('digitalProducts', 1)->where('opportunities', [])->where('places', [])->where('categories', []));
-        $this->get('/explorar?q=remoto')->assertOk()->assertInertia(fn (Assert $a) => $a->has('digitalProducts', 1)->where('digitalProducts.0.name', 'Manual QA'));
+        $this->get('/productos-digitales?q=remoto')->assertOk()->assertInertia(fn (Assert $a) => $a->component('explore')->where('type', 'digital')->has('results', 1)->where('categories', []));
+        $this->get('/explorar?q=remoto')->assertOk()->assertInertia(fn (Assert $a) => $a->has('results', 1)->where('results.0.product.name', 'Manual QA'));
         $this->get('/productos-digitales/manual-qa')->assertOk()->assertInertia(fn (Assert $a) => $a->component('digital/show')->missing('product.file_path'));
         $this->get('/productos-digitales/manual-qa')->assertOk();
         $digital->update(['status' => 'draft']);
@@ -39,15 +39,15 @@ class DigitalCatalogTest extends TestCase
         foreach (['/explorar?type=digital', '/productos-digitales?type=places'] as $url) {
             $this->withCookie('selected_city', 'la-paz')->get($url.'&category=cafe&q=remoto&sort=name')->assertOk()->assertInertia(fn (Assert $a) => $a
                 ->component('explore')->where('type', 'digital')->where('category', null)->where('categories', [])
-                ->where('places', [])->where('opportunities', [])->has('digitalProducts', 18)
-                ->where('digitalProducts.0.name', 'Manual 01')->where('pagination.total', 20)->where('pagination.last_page', 2)
-                ->where('sort', 'name')->missing('digitalProducts.0.file_path'));
+                ->has('results', 18)
+                ->where('results.0.product.name', 'Manual 01')->where('pagination.total', 20)->where('pagination.last_page', 2)
+                ->where('sort', 'name')->missing('results.0.product.file_path'));
         }
-        $this->get('/explorar?type=digital&sort=name&page=2')->assertInertia(fn (Assert $a) => $a->has('digitalProducts', 2)->where('digitalProducts.0.name', 'Manual 19'));
-        $this->get('/productos-digitales?sort=newest')->assertInertia(fn (Assert $a) => $a->where('digitalProducts.0.name', 'Manual 20'));
-        $this->get('/explorar?type=digital&q=Manual%2003')->assertInertia(fn (Assert $a) => $a->has('digitalProducts', 1)->where('pagination.total', 1));
-        $this->get('/productos-digitales?q=ausente')->assertInertia(fn (Assert $a) => $a->has('digitalProducts', 0)->where('pagination.total', 0));
-        $this->get('/explorar?type=benefits')->assertInertia(fn (Assert $a) => $a->has('digitalProducts', 0));
+        $this->get('/explorar?type=digital&sort=name&page=2')->assertInertia(fn (Assert $a) => $a->has('results', 2)->where('results.0.product.name', 'Manual 19'));
+        $this->get('/productos-digitales?sort=newest')->assertInertia(fn (Assert $a) => $a->where('results.0.product.name', 'Manual 20'));
+        $this->get('/explorar?type=digital&q=Manual%2003')->assertInertia(fn (Assert $a) => $a->has('results', 1)->where('pagination.total', 1));
+        $this->get('/productos-digitales?q=ausente')->assertInertia(fn (Assert $a) => $a->has('results', 0)->where('pagination.total', 0));
+        $this->get('/explorar?type=benefits')->assertInertia(fn (Assert $a) => $a->has('results', 0));
         $this->get('/productos-digitales?sort=invalid')->assertSessionHasErrors('sort');
     }
 

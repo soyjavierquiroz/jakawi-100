@@ -23,12 +23,12 @@ class DigitalComingSoonTest extends TestCase
     {
         $p=$this->visible();
         foreach (['/explorar?q=Glúteo%20Perfecto','/explorar?type=digital&q=Glúteo%20Perfecto','/productos-digitales?q=Glúteo%20Perfecto'] as $path) {
-            $this->get($path)->assertOk()->assertInertia(fn (Assert $a) => $a->has('digitalProducts',1)->where('digitalProducts.0.id',$p->id)->where('digitalProducts.0.coming_soon',true)->where('digitalProducts.0.public_price',null));
+            $this->get($path)->assertOk()->assertInertia(fn (Assert $a) => $a->has('results',1)->where('results.0.product.id',$p->id)->where('results.0.product.coming_soon',true)->where('results.0.product.public_price',null));
         }
         $this->get('/productos-digitales/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('product.coming_soon',true)->where('canCollect',false)->where('prelaunch',true));
         $this->get('/l/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('preview',false)->where('product.coming_soon',true)->where('canBuy',false)->where('copy.eyebrow','Disponible próximamente')->has('blocks',11)->has('blocks.5.items',3)->has('blocks.8.items',5)->where('blocks.1.verified',false)->missing('blocks.1.source'));
         DigitalProduct::create(['partner_id'=>$p->partner_id,'name'=>'Otro borrador','slug'=>'otro-borrador']);
-        $this->get('/explorar?type=digital')->assertInertia(fn (Assert $a) => $a->has('digitalProducts',1));
+        $this->get('/explorar?type=digital')->assertInertia(fn (Assert $a) => $a->has('results',1));
         $this->get('/productos-digitales/otro-borrador')->assertNotFound();
     }
 

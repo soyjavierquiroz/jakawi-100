@@ -128,60 +128,36 @@ class PublicController extends Controller
         $gifts = app(\App\Services\DigitalGifts::class);
         $hasWelcomeGift = $gifts->pending($request->user()) !== null;
         $giftFilter = $hasWelcomeGift && $request->boolean('gifts');
-        if ($request->query('type') === 'digital') {
-            $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
-            $catalog = app(\App\Services\DigitalCatalog::class);
-            $digitalQuery = $catalog->query($term, $sort);
-            if ($giftFilter) $gifts->catalogQuery($digitalQuery);
-            $page = $digitalQuery->paginate(18)->withQueryString();
-
-            return Inertia::render('explore', [
-                'hasWelcomeGift' => $hasWelcomeGift, 'giftFilter' => $giftFilter,
-                'query' => $term, 'category' => null, 'type' => 'digital', 'categories' => [], 'sort' => $sort,
-                'pagination' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'next_page_url' => $page->nextPageUrl()],
-                'opportunities' => Inertia::merge([])->matchOn('identity'),
-                'places' => Inertia::merge([])->matchOn('id'),
-                'digitalProducts' => Inertia::merge($page->getCollection()->map(fn ($product) => $catalog->present($product))->all())->matchOn('id'),
-            ]);
-        }
         $city = $selectedCity->resolve($request);
         $term = preg_replace('/\s+/', ' ', trim((string) $request->query('q', ''))) ?? '';
         $category = $request->query('category');
         $category = in_array($category, config('jakawi.categories'), true) ? $category : null;
-        $type = in_array($request->query('type'), ['benefits', 'experiences', 'challenges', 'unlocks', 'places'], true) ? $request->query('type') : null;
-        $partners = Partner::query()->published()->whereHas('locations', fn (Builder $query) => $query->published()->where('city_id', $city->id));
-
-        if ($category !== null) {
-            $partners->where('category', $category);
-        }
-        if ($term !== '') {
-            $like = '%'.addcslashes($term, '\\%_').'%';
-            $partners->where(fn ($query) => $query->where('name', 'ilike', $like)->orWhere('description', 'ilike', $like));
-        }
-
+        $type = in_array($request->query('type'), ['benefits', 'experiences', 'challenges', 'unlocks', 'places', 'digital'], true) ? $request->query('type') : null;
         $opportunityType = match ($type) {
             'benefits' => OpportunityType::BENEFIT,
             'experiences' => OpportunityType::EXPERIENCE,
             'unlocks' => OpportunityType::UNLOCK,
             'challenges' => OpportunityType::CHALLENGE,
+            'digital' => 'DIGITAL',
+            'places' => 'PLACE',
             default => null,
         };
-        $page = $type === 'places'
-            ? \App\Support\ListingPage::make($partners->when($sort === 'featured', fn ($q) => $q->orderByDesc('featured')->orderBy('sort_order'))
-                ->when($sort === 'newest', fn ($q) => $q->orderByRaw('published_at DESC NULLS LAST')->orderByDesc('id'), fn ($q) => $q->orderByRaw('lower(name)')->orderBy('id')), 18)
-            : $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, max(1, $request->integer('page', 1)));
+        if ($type === 'digital') $category = null;
+        $giftFilter = $type === 'digital' && $giftFilter;
+        $page = $discovery->explorePage(new DiscoveryContext(city: $city, user: $request->user(), surface: 'explore'), $opportunityType, $category, $term, $sort, max(1, $request->integer('page', 1)), catalog: true, giftFilter: $giftFilter);
 
         return Inertia::render('explore', [
-            'hasWelcomeGift' => $hasWelcomeGift, 'giftFilter' => false,
+            'hasWelcomeGift' => $hasWelcomeGift, 'giftFilter' => $giftFilter,
             'query' => $term,
             'category' => $category,
             'type' => $type,
-            'categories' => config('jakawi.categories'),
+            'categories' => $type === 'digital' ? [] : config('jakawi.categories'),
             'sort' => $sort,
             'pagination' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'next_page_url' => $page->nextPageUrl()],
-            'opportunities' => Inertia::merge($type === 'places' ? [] : array_map(fn ($item) => $item->toArray() + ['identity' => $item->type->value.':'.$item->sourceId], $page->items()))->matchOn('identity'),
-            'digitalProducts' => app(\App\Services\DigitalCatalog::class)->explore($request),
-            'places' => Inertia::merge($type === 'places' ? $page->getCollection()->map(fn ($partner) => $this->partner($partner))->all() : [])->matchOn('id'),
+            'results' => Inertia::merge(array_map(function ($item) {
+                if ($item['kind'] === 'PLACE') $item['place'] = $this->partner($item['place']);
+                return $item;
+            }, $page->items()))->matchOn('identity'),
         ]);
     }
 

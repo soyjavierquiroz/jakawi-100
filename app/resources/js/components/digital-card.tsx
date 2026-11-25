@@ -67,6 +67,7 @@ export function DigitalCard({ product: p, giftContext = false }: { product: Digi
                 <p className="mt-3 text-base font-extrabold">
                     {giftContext ? 'Sin costo adicional' : p.coming_soon ? 'Disponible próximamente' : digitalMoney(p.public_price, p.currency)}
                 </p>
+                {giftContext && p.coming_soon ? <p className="mt-1 text-sm text-muted-foreground">Disponible próximamente</p> : null}
                 {!giftContext && p.member_price ? (
                     <p className="mt-1 text-xs font-semibold text-muted-foreground">
                         Con membresía activa:{' '}

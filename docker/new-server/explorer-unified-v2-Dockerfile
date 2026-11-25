@@ -1,0 +1,14 @@
+FROM sha256:1b1aa80de578ab266c3e002ad7000e7f5e52bde48d29d4de4a5e17f8af1af2d2 AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/Discovery/DiscoveryService.php /var/www/html/app/Discovery/DiscoveryService.php
+COPY --chown=www-data:www-data app/app/Discovery/ChallengeOpportunityAdapter.php /var/www/html/app/Discovery/ChallengeOpportunityAdapter.php
+COPY --chown=www-data:www-data app/app/Http/Controllers/PublicController.php /var/www/html/app/Http/Controllers/PublicController.php
+COPY --chown=www-data:www-data app/app/Services/DigitalCatalog.php /var/www/html/app/Services/DigitalCatalog.php
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+FROM sha256:f99dd5dcaf6a96a66ff46bae9db2c3435f54b94c58617d381949ad5733b503f2 AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

@@ -2,14 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Benefit;
-use App\Models\City;
-use App\Models\Experience;
-use App\Models\ExperienceSession;
-use App\Models\Location;
-use App\Models\Partner;
-use App\Models\Unlock;
+use App\Models\{Benefit, Challenge, City, DigitalGift, DigitalProduct, Experience, ExperienceSession, LandingPresentation, Location, Membership, Partner, Unlock, User};
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -17,111 +12,75 @@ class ExploreDiscoveryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_explore_keeps_opportunity_types_categories_search_city_and_places_separate(): void
+    private function digital(array $attributes = []): DigitalProduct
     {
-        $city = City::query()->where('slug', 'cochabamba')->sole();
-        $other = City::query()->where('slug', 'la-paz')->sole();
-        $other->update(['status' => City::ACTIVE]);
-        $partner = Partner::factory()->published()->create(['name' => 'Café Central', 'category' => 'cafe']);
-        $place = Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
-        $benefit = Benefit::factory()->published()->forPartner($partner)->create(['title' => 'Beneficio café', 'category' => 'cafe', 'applies_to_all_locations' => true]);
-        $experience = Experience::factory()->published()->create(['title' => 'Experiencia café', 'category' => 'cafe']);
-        ExperienceSession::factory()->for($experience)->upcoming()->withLocation($place)->create();
-        $unlock = Unlock::create(['title' => 'Desbloqueo café', 'slug' => 'desbloqueo-cafe', 'origin' => 'JAKAWI', 'type' => 'BENEFIT', 'minimum_commitments' => 2, 'free_user_eligible' => true, 'member_eligible' => true, 'status' => Unlock::ACTIVE]);
-        $unlock->locations()->attach($place);
-        $otherPartner = Partner::factory()->published()->create(['name' => 'Otra ciudad']);
-        $otherPlace = Location::factory()->published()->withPartner($otherPartner)->create(['city_id' => $other->id]);
-        $otherBenefit = Benefit::factory()->published()->forPartner($otherPartner)->create(['title' => 'Beneficio otra ciudad', 'category' => 'cafe', 'applies_to_all_locations' => true]);
-        $otherUnlock = Unlock::create(['title' => 'Desbloqueo otra ciudad', 'slug' => 'desbloqueo-otra-ciudad', 'origin' => 'JAKAWI', 'type' => 'BENEFIT', 'minimum_commitments' => 2, 'free_user_eligible' => true, 'member_eligible' => true, 'status' => Unlock::ACTIVE]);
-        $otherUnlock->locations()->attach($otherPlace);
-
-        $this->withCookie('selected_city', $city->slug)->get('/explorar')->assertInertia(fn (Assert $page) => $page
-            ->has('opportunities', 3)
-            ->where('opportunities.0.city.id', $city->id)
-            ->where('places', [])
-        );
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=benefits')->assertInertia(fn (Assert $page) => $page->has('opportunities', 1)->where('opportunities.0.type', 'BENEFIT')->where('opportunities.0.source_id', $benefit->id));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=experiences')->assertInertia(fn (Assert $page) => $page->has('opportunities', 1)->where('opportunities.0.type', 'EXPERIENCE')->where('opportunities.0.source_id', $experience->id));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=unlocks')->assertInertia(fn (Assert $page) => $page->has('opportunities', 1)->where('opportunities.0.type', 'UNLOCK')->where('opportunities.0.source_id', $unlock->id));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=places&q=central')->assertInertia(fn (Assert $page) => $page->has('places', 1)->where('places.0.id', $partner->id)->has('opportunities', 0));
-
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?category=cafe')->assertInertia(fn (Assert $page) => $page->has('opportunities', 2)->where('opportunities.0.categories.0', 'cafe'));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=unlocks&category=cafe')->assertInertia(fn (Assert $page) => $page->has('opportunities', 0));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?q=beneficio&type=benefits')->assertInertia(fn (Assert $page) => $page->has('opportunities', 1)->where('opportunities.0.source_id', $benefit->id));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?q=experiencia&category=cafe')->assertInertia(fn (Assert $page) => $page->has('opportunities', 1)->where('opportunities.0.source_id', $experience->id));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?q=desbloqueo')->assertInertia(fn (Assert $page) => $page->has('opportunities', 1)->where('opportunities.0.source_id', $unlock->id));
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?q=otra%20ciudad')->assertInertia(fn (Assert $page) => $page->has('opportunities', 0));
-
-        $this->assertNotSame($benefit->id, $otherBenefit->id);
-        $this->assertNotSame($unlock->id, $otherUnlock->id);
+        return DigitalProduct::create($attributes + ['partner_id' => Partner::where('slug', 'jakawi-digital')->value('id'), 'name' => 'Entrenamiento digital', 'slug' => 'entrenamiento-digital', 'status' => 'published', 'currency' => 'BOB', 'public_price' => 49, 'member_price' => 29]);
     }
 
-    public function test_explore_paginates_each_explicit_result_set_at_eighteen(): void
+    public function test_one_search_and_each_type_preserve_eligibility_and_city(): void
     {
-        $city = City::query()->where('slug', 'cochabamba')->sole();
-        $partner = Partner::factory()->published()->create();
+        $city = City::where('slug', 'cochabamba')->sole();
+        $partner = Partner::factory()->published()->create(['name' => 'Entrenamiento lugar', 'category' => 'fitness']);
+        $place = Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
+        $benefit = Benefit::factory()->published()->forPartner($partner)->create(['title' => 'Entrenamiento beneficio', 'category' => 'fitness', 'applies_to_all_locations' => true, 'featured' => true]);
+        $experience = Experience::factory()->published()->create(['title' => 'Entrenamiento experiencia', 'category' => 'fitness']);
+        ExperienceSession::factory()->for($experience)->upcoming()->withLocation($place)->create();
+        $unlock = Unlock::create(['title' => 'Entrenamiento desbloqueo', 'slug' => 'entrenamiento-desbloqueo', 'origin' => 'JAKAWI', 'type' => 'BENEFIT', 'minimum_commitments' => 2, 'free_user_eligible' => true, 'member_eligible' => true, 'status' => Unlock::ACTIVE]);
+        $unlock->locations()->attach($place);
+        $challenge = Challenge::create(['title' => 'Entrenamiento reto', 'slug' => 'entrenamiento-reto', 'review_status' => 'APPROVED', 'status' => 'open', 'city_id' => $city->id, 'reward_type' => 'JP', 'reward_jp_amount' => 25]);
+        $digital = $this->digital();
+        $this->digital(['slug' => 'borrador', 'status' => 'draft']);
+        $get = fn ($q = '') => $this->withCookie('selected_city', 'cochabamba')->get('/explorar?q=entrenamiento'.$q);
+        $get()->assertOk()->assertInertia(fn (Assert $p) => $p->has('results', 6)->where('pagination.total', 6)->where('results.0.identity', 'BENEFIT:'.$benefit->id)->missing('digitalProducts')->missing('opportunities')->missing('places'));
+        foreach (['benefits' => 'BENEFIT:'.$benefit->id, 'experiences' => 'EXPERIENCE:'.$experience->id, 'challenges' => 'CHALLENGE:'.$challenge->id, 'unlocks' => 'UNLOCK:'.$unlock->id, 'places' => 'PLACE:'.$partner->id, 'digital' => 'DIGITAL:'.$digital->id] as $filter => $identity) {
+            $get('&type='.$filter)->assertInertia(fn (Assert $p) => $p->has('results', 1)->where('results.0.identity', $identity)->where('pagination.total', 1));
+        }
+        $get('&category=fitness')->assertInertia(fn (Assert $p) => $p->has('results', 3));
+        $get('&type=unlocks&category=fitness')->assertInertia(fn (Assert $p) => $p->has('results', 0));
+        $other = City::where('slug', 'la-paz')->sole(); $other->update(['status' => City::ACTIVE]);
+        $this->withCookie('selected_city', 'la-paz')->get('/explorar?q=entrenamiento')->assertInertia(fn (Assert $p) => $p->has('results', 1)->where('results.0.identity', 'DIGITAL:'.$digital->id));
+    }
+
+    public function test_combined_pagination_and_global_order_with_a_thousand_products_have_bounded_queries(): void
+    {
+        $city = City::where('slug', 'cochabamba')->sole();
+        $partner = Partner::factory()->published()->create(['name' => 'Volume place']);
         Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
-        Benefit::factory()->count(25)->published()->forPartner($partner)->create(['applies_to_all_locations' => true]);
-
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?type=benefits')->assertInertia(fn (Assert $page) => $page->has('opportunities', 18)->where('pagination.total', 25)->where('pagination.last_page', 2));
+        $benefit = Benefit::factory()->published()->forPartner($partner)->create(['title' => 'Volume 0002 B', 'featured' => true, 'applies_to_all_locations' => true, 'published_at' => now()->addMinute()]);
+        $rows = [];
+        $digitalPartnerId = Partner::where('slug', 'jakawi-digital')->value('id');
+        for ($n = 1; $n <= 1000; $n++) $rows[] = ['partner_id' => $digitalPartnerId, 'name' => sprintf('Volume %04d A', $n), 'slug' => 'volume-'.$n, 'status' => 'published', 'currency' => 'BOB', 'created_at' => now()->subDay()];
+        DigitalProduct::insert($rows);
+        $read = function ($query) {
+            return $this->withCookie('selected_city', 'cochabamba')->get('/explorar?q=Volume&'.$query)->assertOk()->inertiaProps();
+        };
+        $featured = $read(''); $this->assertSame('BENEFIT:'.$benefit->id, $featured['results'][0]['identity']);
+        $this->assertSame('BENEFIT:'.$benefit->id, $read('sort=newest')['results'][0]['identity']);
+        DB::enableQueryLog(); $first = $read('sort=name'); $queries = count(DB::getQueryLog()); DB::disableQueryLog();
+        $second = $read('sort=name&page=2'); $last = $read('sort=name&page=56');
+        $this->assertSame(1002, $first['pagination']['total']);
+        $this->assertCount(18, $first['results']); $this->assertCount(18, $second['results']); $this->assertCount(12, $last['results']);
+        $this->assertSame('Volume 0001 A', $first['results'][0]['product']['name']);
+        $this->assertSame('BENEFIT:'.$benefit->id, $first['results'][2]['identity']);
+        $this->assertEmpty(array_intersect(array_column($first['results'], 'identity'), array_column($second['results'], 'identity')));
+        $this->assertNull($last['pagination']['next_page_url']);
+        $this->assertLessThan(45, $queries, 'Card queries must be bounded, not per product');
+        $this->assertStringContainsString('sort=name', $first['pagination']['next_page_url']);
+        $this->assertSame(1, $read('type=digital&q=Volume%200999')['pagination']['total']);
     }
 
-    public function test_search_matches_the_supported_fields_without_crossing_domains_or_cities(): void
+    public function test_welcome_context_and_coming_soon_are_preserved_without_claims(): void
     {
-        $city = City::query()->where('slug', 'cochabamba')->sole();
-        $other = City::query()->where('slug', 'la-paz')->sole();
-        $other->update(['status' => City::ACTIVE]);
-
-        $partner = Partner::factory()->published()->create(['name' => 'Socio Brújula', 'description' => 'Café de especialidad']);
-        $place = Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
-        $benefit = Benefit::factory()->published()->forPartner($partner)->create(['title' => 'Ahorro matinal', 'category' => 'cafe', 'applies_to_all_locations' => true]);
-        $experience = Experience::factory()->published()->create(['title' => 'Taller de barismo', 'category' => 'cafe']);
-        $experience->partners()->attach($partner, ['role' => 'host', 'sort_order' => 0]);
-        ExperienceSession::factory()->for($experience)->upcoming()->withLocation($place)->create();
-        $unlock = Unlock::create(['title' => 'Club secreto', 'short_description' => 'Una cata nocturna', 'slug' => 'club-secreto', 'origin' => 'JAKAWI', 'type' => 'BENEFIT', 'minimum_commitments' => 2, 'free_user_eligible' => true, 'member_eligible' => true, 'status' => Unlock::ACTIVE]);
-        $unlock->locations()->attach($place);
-
-        $otherPartner = Partner::factory()->published()->create(['name' => 'Socio Ajeno', 'description' => 'Café ajeno']);
-        $otherPlace = Location::factory()->published()->withPartner($otherPartner)->create(['city_id' => $other->id]);
-        $otherExperience = Experience::factory()->published()->create(['title' => 'Taller ajeno', 'category' => 'cafe']);
-        ExperienceSession::factory()->for($otherExperience)->upcoming()->withLocation($otherPlace)->create();
-        $otherUnlock = Unlock::create(['title' => 'Club ajeno', 'short_description' => 'Cata ajena', 'slug' => 'club-ajeno', 'origin' => 'JAKAWI', 'type' => 'BENEFIT', 'minimum_commitments' => 2, 'free_user_eligible' => true, 'member_eligible' => true, 'status' => Unlock::ACTIVE]);
-        $otherUnlock->locations()->attach($otherPlace);
-
-        $request = fn (string $query) => $this->withCookie('selected_city', $city->slug)->get('/explorar?'.$query);
-
-        $request('q=ahorro&type=benefits')->assertInertia(fn (Assert $page) => $page->where('opportunities.0.source_id', $benefit->id));
-        $request('q=br%C3%BAjula&type=benefits')->assertInertia(fn (Assert $page) => $page->where('opportunities.0.source_id', $benefit->id));
-        $request('q=barismo&type=experiences')->assertInertia(fn (Assert $page) => $page->where('opportunities.0.source_id', $experience->id));
-        $request('q=br%C3%BAjula&type=experiences')->assertInertia(fn (Assert $page) => $page->where('opportunities.0.source_id', $experience->id));
-        $request('q=club&type=unlocks')->assertInertia(fn (Assert $page) => $page->where('opportunities.0.source_id', $unlock->id));
-        $request('q=nocturna&type=unlocks')->assertInertia(fn (Assert $page) => $page->where('opportunities.0.source_id', $unlock->id));
-        $request('q=br%C3%BAjula&type=places')->assertInertia(fn (Assert $page) => $page->where('places.0.id', $partner->id)->has('opportunities', 0));
-        $request('q=especialidad&type=places')->assertInertia(fn (Assert $page) => $page->where('places.0.id', $partner->id)->has('opportunities', 0));
-        $request('q=ajeno')->assertInertia(fn (Assert $page) => $page->has('opportunities', 0));
-    }
-
-    public function test_search_composes_category_with_todo_and_normalizes_blank_whitespace(): void
-    {
-        $city = City::query()->where('slug', 'cochabamba')->sole();
-        $partner = Partner::factory()->published()->create(['name' => 'Café Brújula', 'category' => 'cafe']);
-        $place = Location::factory()->published()->withPartner($partner)->create(['city_id' => $city->id]);
-        $benefit = Benefit::factory()->published()->forPartner($partner)->create(['title' => 'Café diario', 'category' => 'cafe', 'applies_to_all_locations' => true]);
-        $experience = Experience::factory()->published()->create(['title' => 'Café guiado', 'category' => 'cafe']);
-        ExperienceSession::factory()->for($experience)->upcoming()->withLocation($place)->create();
-        $unlock = Unlock::create(['title' => 'Café oculto', 'slug' => 'cafe-oculto', 'origin' => 'JAKAWI', 'type' => 'BENEFIT', 'minimum_commitments' => 2, 'free_user_eligible' => true, 'member_eligible' => true, 'status' => Unlock::ACTIVE]);
-        $unlock->locations()->attach($place);
-
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?q=%20%20%20')->assertInertia(fn (Assert $page) => $page
-            ->where('query', '')
-            ->has('opportunities', 3)
-        );
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?q=caf%C3%A9&category=cafe')->assertInertia(fn (Assert $page) => $page
-            ->has('opportunities', 2)
-            ->where('opportunities', fn ($opportunities): bool => collect($opportunities)
-                ->map(fn ($item) => $item['type'].':'.$item['source_id'])->sort()->values()->all()
-                === collect(['BENEFIT:'.$benefit->id, 'EXPERIENCE:'.$experience->id])->sort()->values()->all())
-        );
-        $this->withCookie('selected_city', $city->slug)->get('/explorar?q=caf%C3%A9&type=unlocks&category=cafe')->assertInertia(fn (Assert $page) => $page->has('opportunities', 0));
+        config(['jakawi.prelaunch_mode' => true, 'digital_gifts.welcome_prelaunch_enabled' => true]);
+        $user = User::factory()->create();
+        $membership = Membership::withoutEvents(fn () => Membership::create(['user_id' => $user->id, 'type' => 'pioneer', 'status' => 'active', 'starts_at' => now(), 'ends_at' => now()->addYear(), 'amount_paid' => 100]));
+        $gift = DigitalGift::firstOrCreate(['kind' => 'welcome', 'user_id' => $user->id], ['membership_id' => $membership->id, 'granted_at' => now()]);
+        $product = $this->digital(['welcome_gift_enabled' => true, 'file_path' => 'products/fixture.pdf', 'file_sha256' => str_repeat('a', 64), 'gift_pdf_sha256' => str_repeat('a', 64)]);
+        $this->digital(['slug' => 'not-eligible']);
+        LandingPresentation::create(['subject_type' => DigitalProduct::class, 'subject_id' => $product->id, 'name' => 'Digital', 'slug' => 'digital-coming', 'status' => 'PUBLISHED', 'default_scope' => 'ALL', 'editorial_blocks' => [['type' => 'hero', 'availability' => 'COMING_SOON']]]);
+        $this->actingAs($user)->get('/mi-jakawi')->assertInertia(fn (Assert $p) => $p->where('hasWelcomeGift', true));
+        $this->get('/explorar?type=digital&gifts=1')->assertInertia(fn (Assert $p) => $p->component('explore')->where('giftFilter', true)->where('type', 'digital')->has('results', 1)->where('results.0.product.id', $product->id)->where('results.0.product.coming_soon', true)->where('results.0.product.public_price', '49.00')->where('results.0.product.member_price', '29.00'));
+        $this->assertSame('pending', $gift->fresh()->status);
+        $this->assertDatabaseCount('digital_access_grants', 0); $this->assertDatabaseCount('digital_orders', 0);
     }
 }

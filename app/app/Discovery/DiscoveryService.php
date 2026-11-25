@@ -108,7 +108,7 @@ final readonly class DiscoveryService
     }
 
     /** Filter and order one eligible SQL union before loading only the selected models. */
-    public function explorePage(DiscoveryContext $context, ?OpportunityType $type = null, ?string $category = null, ?string $term = null, string $sort = 'featured', int $page = 1, int $perPage = 18): \Illuminate\Pagination\LengthAwarePaginator
+    public function explorePage(DiscoveryContext $context, OpportunityType|string|null $type = null, ?string $category = null, ?string $term = null, string $sort = 'featured', int $page = 1, int $perPage = 18, bool $catalog = false, bool $giftFilter = false): \Illuminate\Pagination\LengthAwarePaginator
     {
         $queries = [
             'BENEFIT' => [$this->benefits->forCity($context->city), 'featured', 'sort_order', 'published_at', 'partner'],
@@ -116,16 +116,26 @@ final readonly class DiscoveryService
             'UNLOCK' => [$this->unlocks->forCity($context->city), 'featured', '0', 'NULL::timestamp', null],
             'CHALLENGE' => [$this->challengesForCity($context->city), 'false', '0', 'published_from', null],
         ];
+        if ($catalog) {
+            $digital = app(\App\Services\DigitalCatalog::class)->query($term ?? '', $sort);
+            if ($giftFilter) app(\App\Services\DigitalGifts::class)->catalogQuery($digital);
+            $queries['DIGITAL'] = [$digital, 'false', '0', 'created_at', null];
+            $queries['PLACE'] = [\App\Models\Partner::published()->whereHas('locations', fn ($q) => $q->published()->where('city_id', $context->city->id)), 'featured', 'sort_order', 'published_at', null];
+        }
+        $kindFilter = $type instanceof OpportunityType ? $type->value : $type;
         $union = null;
         $like = $term ? '%'.addcslashes($term, '\\%_').'%' : null;
         foreach ($queries as $kind => [$query, $featured, $priority, $published, $partner]) {
-            if (($type && $type->value !== $kind) || ($category && in_array($kind, ['UNLOCK', 'CHALLENGE']))) {
+            if (($kindFilter && $kindFilter !== $kind) || ($category && in_array($kind, ['UNLOCK', 'CHALLENGE']))) {
                 continue;
             }
             if ($category) {
                 $query->where('category', $category);
             }
-            if ($like) {
+            if ($like && $kind === 'PLACE') {
+                $query->where(fn ($q) => $q->where('name', 'ilike', $like)->orWhere('description', 'ilike', $like));
+            }
+            if ($like && ! in_array($kind, ['DIGITAL', 'PLACE'])) {
                 $query->where(function (Builder $q) use ($like, $partner, $kind) {
                     $q->where('title', 'ilike', $like);
                     if ($partner) {
@@ -135,7 +145,8 @@ final readonly class DiscoveryService
                     }
                 });
             }
-            $part = $query->reorder()->selectRaw("id, '$kind'::text as kind, title, $featured as editorial_featured, $priority as editorial_order, $published as publication_date")->toBase();
+            $title = in_array($kind, ['DIGITAL', 'PLACE']) ? 'name' : 'title';
+            $part = $query->reorder()->selectRaw("id, '$kind'::text as kind, $title as title, $featured as editorial_featured, $priority as editorial_order, $published as publication_date")->toBase();
             $union = $union ? $union->unionAll($part) : $part;
         }
         $query = \Illuminate\Support\Facades\DB::query()->fromSub($union ?? \Illuminate\Support\Facades\DB::query()->selectRaw("NULL::bigint as id, ''::text as kind, ''::text as title, false as editorial_featured, 0 as editorial_order, NULL::timestamp as publication_date")->whereRaw('false'), 'eligible');
@@ -144,7 +155,8 @@ final readonly class DiscoveryService
             'name' => $query->orderByRaw('lower(title) ASC'),
             default => $query->orderByDesc('editorial_featured')->orderBy('editorial_order'),
         };
-        $query->orderBy('kind')->orderBy('id');
+        // Type is only the final identity tie-breaker; it never groups a domain first.
+        $query->orderBy('id', $sort === 'newest' ? 'desc' : 'asc')->orderBy('kind');
         $result = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
         if ($page > $result->lastPage()) {
             $result = $query->paginate($perPage, ['*'], 'page', $result->lastPage(), total: $result->total())->withQueryString();
@@ -206,7 +218,7 @@ final readonly class DiscoveryService
             }
         }
         if (($type === null || $type === OpportunityType::CHALLENGE) && $category === null) {
-            $challenges = $this->challengesForCity($context->city)->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'partner:id,name,slug,logo_path', 'benefit:id,title']);
+            $challenges = $this->challengesForCity($context->city)->with(['landingPresentations:id,subject_type,subject_id,slug,status,default_scope', 'partner:id,name,slug,logo_path', 'benefit:id,title'])->withCount(['participations as discovery_taken_count' => fn ($q) => $q->whereIn('selection_status', ['candidate', 'selected'])]);
             if ($like !== null) {
                 $challenges->where(fn (Builder $q) => $q->where('title', 'ilike', $like)->orWhere('description', 'ilike', $like));
             }
@@ -217,7 +229,25 @@ final readonly class DiscoveryService
 
 
         $adapted = collect($items)->keyBy(fn ($item) => $item->type->value.':'.$item->sourceId);
-        $result->setCollection($keys->map(fn ($key) => $adapted->get($key->kind.':'.$key->id))->filter()->values());
+        if ($catalog) {
+            $adapted = $adapted->map(fn ($item) => ['kind' => 'OPPORTUNITY', 'opportunity' => $item->toArray()]);
+            $products = \App\Models\DigitalProduct::published()->whereKey($ids('DIGITAL'))
+                ->with(['partner:id,name,slug', 'landingPresentations'])
+                ->withExists(['landingPresentations as editorial_coming_soon' => fn ($q) => $q->where('status', 'PUBLISHED')->whereJsonContains('editorial_blocks', [['type' => 'hero', 'availability' => 'COMING_SOON']])])->get();
+            // Evaluate the existing sale exception at most once, never once per card.
+            $sale = $products->isEmpty() ? [] : (\App\Models\AppSetting::where('key', \App\Services\DigitalSaleAvailability::KEY)->first()?->value ?? []);
+            $exception = $products->firstWhere('id', $sale['product_id'] ?? 0);
+            $allowedId = ($sale['enabled'] ?? false) && $exception && app(\App\Services\DigitalSaleAvailability::class)->exceptionAllowed($exception) ? $exception->id : null;
+            foreach ($products as $product) {
+                $adapted->put('DIGITAL:'.$product->id, ['kind' => 'DIGITAL', 'product' => app(\App\Services\DigitalCatalog::class)->present($product, (bool) $product->editorial_coming_soon && $product->id !== $allowedId)]);
+            }
+            foreach (\App\Models\Partner::whereKey($ids('PLACE'))->get() as $partner) {
+                $adapted->put('PLACE:'.$partner->id, ['kind' => 'PLACE', 'place' => $partner]);
+            }
+            $result->setCollection($keys->map(fn ($key) => $adapted->get($key->kind.':'.$key->id) + ['identity' => $key->kind.':'.$key->id]));
+        } else {
+            $result->setCollection($keys->map(fn ($key) => $adapted->get($key->kind.':'.$key->id))->filter()->values());
+        }
 
         return $result;
     }

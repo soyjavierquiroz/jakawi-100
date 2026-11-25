@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\DigitalProduct;
 use App\Models\Partner;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 class DigitalCatalog
 {
@@ -30,24 +29,15 @@ class DigitalCatalog
         return $sort === 'name' ? $q->orderBy('name')->orderBy('id') : $q->orderByDesc('id');
     }
 
-    public function present(DigitalProduct $p): array
+    public function present(DigitalProduct $p, ?bool $comingSoon = null): array
     {
         return $p->only(['id', 'name', 'slug', 'short_description', 'description', 'commercial_content', 'public_price', 'member_price', 'currency', 'delivery_type', 'support_information', 'access_terms']) + [
             'partner' => $p->partner->only(['id', 'name', 'slug']), 'cover_url' => app(MediaUrl::class)->url($p->cover_path, 'hero'),
             'gallery_urls' => array_map(fn ($path) => app(MediaUrl::class)->url($path, 'hero'), $p->gallery_paths ?? []),
             'category' => $p->category,
-            'coming_soon' => $p->isComingSoon(),
+            'coming_soon' => $comingSoon ?? $p->isComingSoon(),
             'url' => app(ProductLandingResolver::class)->navigationUrl($p, request()->user() !== null),
         ];
     }
 
-    public function explore(Request $request): array
-    {
-        if ($request->filled('type') && $request->query('type') !== 'digital') {
-            return [];
-        }
-        $q = $this->query(trim((string) $request->query('q', '')), (string) $request->query('sort', 'featured'));
-
-        return $q->limit(60)->get()->map(fn ($p) => $this->present($p))->all();
-    }
 }

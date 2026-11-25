@@ -28,6 +28,10 @@ type ExploreType =
     | 'unlocks'
     | 'places'
     | 'digital';
+type ExplorerResult =
+    | { identity: string; kind: 'DIGITAL'; product: DigitalProductData }
+    | { identity: string; kind: 'PLACE'; place: Partner }
+    | { identity: string; kind: 'OPPORTUNITY'; opportunity: DiscoveryOpportunity };
 const labels: Record<string, string> = {
     food: 'Comer',
     cafe: 'Café',
@@ -109,7 +113,7 @@ function emptyCopy(type?: string | null) {
     if (type === 'challenges') return 'No encontramos retos para esto ahora.';
     if (type === 'unlocks')
         return 'No encontramos desbloqueos para esto ahora.';
-    if (type === 'places') return 'No encontramos lugares para esto ahora.';
+    if (type) return 'No encontramos lugares para esto ahora.';
     return 'Prueba otra búsqueda o cambia los filtros.';
 }
 
@@ -118,10 +122,8 @@ export default function Explore({
     category,
     type,
     categories = [],
-    opportunities = [],
-    places = [],
+    results = [],
     sort = 'featured',
-    digitalProducts = [],
     hasWelcomeGift = false,
     giftFilter = false,
     pagination,
@@ -130,10 +132,8 @@ export default function Explore({
     category?: string | null;
     type?: ExploreType | null;
     categories?: string[];
-    opportunities?: DiscoveryOpportunity[];
-    places?: Partner[];
+    results?: ExplorerResult[];
     sort?: string;
-    digitalProducts?: DigitalProductData[];
     hasWelcomeGift?: boolean;
     giftFilter?: boolean;
     pagination: {
@@ -158,10 +158,8 @@ export default function Explore({
             {},
             {
                 only: [
-                    'opportunities',
-                    'places',
+                    'results',
                     'hasWelcomeGift', 'giftFilter',
-                    'digitalProducts',
                     'pagination',
                 ],
                 preserveState: true,
@@ -201,13 +199,13 @@ export default function Explore({
                 sort,
                 gifts: giftFilter ? '1' : '',
                 ...next,
+                ...(next.type !== undefined && next.type !== 'digital' ? { gifts: '' } : {}),
             },
             {
                 preserveState: true,
-                reset: ['opportunities', 'places', 'digitalProducts'],
+                reset: ['results'],
                 only: [
-                    'opportunities',
-                    'places',
+                    'results',
                     'pagination',
                     'query',
                     'category',
@@ -215,28 +213,21 @@ export default function Explore({
                     'type',
                     'sort',
                     'hasWelcomeGift', 'giftFilter',
-                    'digitalProducts',
                 ],
             },
         );
     const hasFilters = value !== '' || Boolean(category) || type;
-    const isPlaces = type === 'places';
-    const results = isDigital
-        ? digitalProducts
-        : isPlaces
-          ? places
-          : opportunities;
     const opportunitySurface = query.trim() === '' ? 'EXPLORE' : 'SEARCH';
     useEffect(() => {
         setValue(query);
     }, [query]);
     useEffect(() => {
-        if (!isDigital || value === query) return;
+        if (value === query) return;
         const timer = window.setTimeout(() => visit({ q: value }), 300);
         return () => window.clearTimeout(timer);
-    }, [value, query, isDigital, sort]);
+    }, [value, query, sort]);
     useEffect(() => {
-        if (type === 'places')
+        if (type)
             activeTypeRef.current?.scrollIntoView({
                 block: 'nearest',
                 inline: 'nearest',
@@ -305,20 +296,10 @@ export default function Explore({
                     >
                         <button
                             type="button"
-                            onClick={() => visit({ type: '' })}
+                            onClick={() => visit({ type: '', gifts: '' })}
                             className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type ? 'border-border bg-surface text-muted-foreground hover:bg-surface-muted' : 'border-brand bg-brand text-brand-foreground'}`}
                         >
-                            TODO
-                        </button>
-                        <button
-                            type="button"
-                            aria-pressed={isDigital}
-                            onClick={() =>
-                                visit({ type: 'digital', category: '' })
-                            }
-                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${isDigital ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
-                        >
-                            PRODUCTOS DIGITALES
+                            TODOS
                         </button>
                         <button
                             type="button"
@@ -343,13 +324,24 @@ export default function Explore({
                         </button>
                         <button
                             type="button"
+                            ref={isDigital ? activeTypeRef : undefined}
+                            aria-pressed={isDigital}
+                            onClick={() =>
+                                visit({ type: 'digital', category: '' })
+                            }
+                            className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${isDigital ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
+                        >
+                            PRODUCTOS DIGITALES
+                        </button>
+                        <button
+                            type="button"
                             onClick={() => visit({ type: 'unlocks' })}
                             className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'unlocks' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
                         >
                             DESBLOQUEOS
                         </button>
                         <button
-                            ref={activeTypeRef}
+                            ref={type === 'places' ? activeTypeRef : undefined}
                             type="button"
                             onClick={() => visit({ type: 'places' })}
                             className={`min-h-11 shrink-0 rounded-[var(--radius-chip)] border px-4 text-sm font-extrabold transition ${type === 'places' ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-surface text-muted-foreground hover:bg-surface-muted'}`}
@@ -404,36 +396,6 @@ export default function Explore({
                             Los retos y desbloqueos no tienen categoría todavía.
                         </p>
                     ) : null}
-                    {!isDigital && digitalProducts.length > 0 ? (
-                        <section
-                            className="mt-8"
-                            aria-label="Productos digitales"
-                        >
-                            <div className="flex items-center justify-between gap-3">
-                                <h2 className="text-xl font-extrabold">
-                                    Productos digitales
-                                </h2>
-                                <Link
-                                    className="text-sm font-semibold text-brand underline"
-                                    href="/productos-digitales"
-                                >
-                                    Ver todos
-                                </Link>
-                            </div>
-                            <p className="mt-2 text-sm text-muted-foreground">
-                                Digital · disponible online
-                            </p>
-                            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                {digitalProducts.map((product) => (
-                                    <DigitalCard
-                                        key={product.id}
-                                        product={product}
-                                        giftContext={isDigital && hasWelcomeGift && giftFilter}
-                                    />
-                                ))}
-                            </div>
-                        </section>
-                    ) : null}
                     {isDigital || results.length ? (
                         <section className="mt-8">
                             <div className="flex min-h-5 items-center">
@@ -449,7 +411,7 @@ export default function Explore({
                                     )}
                                 </p>
                             </div>
-                            {isDigital && !digitalProducts.length ? (
+                            {isDigital && !results.length ? (
                                 <EmptyState
                                     className="mt-6"
                                     title={
@@ -479,34 +441,15 @@ export default function Explore({
                                 />
                             ) : null}
                             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-                                {isDigital
-                                    ? digitalProducts.map((product) => (
-                                          <DigitalCard
-                                              key={product.id}
-                                              product={product}
-                                        giftContext={isDigital && hasWelcomeGift && giftFilter}
-                                          />
-                                      ))
-                                    : isPlaces
-                                      ? places.map((place, index) => (
-                                            <PartnerResult
-                                                key={place.id}
-                                                partner={place}
-                                                priority={index < 3}
-                                            />
-                                        ))
-                                      : opportunities.map(
-                                            (opportunity, position) => (
-                                                <OpportunityCard
-                                                    key={`${opportunity.type}-${opportunity.source_id}`}
-                                                    opportunity={opportunity}
-                                                    surface={opportunitySurface}
-                                                    section="RESULTS"
-                                                    position={position}
-                                                    variant="explore-grid"
-                                                />
-                                            ),
-                                        )}
+                                {results.map((result, position) =>
+                                    result.kind === 'DIGITAL' ? (
+                                        <DigitalCard key={result.identity} product={result.product} giftContext={isDigital && hasWelcomeGift && giftFilter} />
+                                    ) : result.kind === 'PLACE' ? (
+                                        <PartnerResult key={result.identity} partner={result.place} priority={position < 3} />
+                                    ) : (
+                                        <OpportunityCard key={result.identity} opportunity={result.opportunity} surface={opportunitySurface} section="RESULTS" position={position} variant="explore-grid" />
+                                    ),
+                                )}
                             </div>
                             {pagination.next_page_url ? (
                                 <div className="mt-8 flex justify-center">
@@ -526,7 +469,7 @@ export default function Explore({
                                     : `${results.length} resultados cargados`}
                             </span>
                         </section>
-                    ) : digitalProducts.length ? null : (
+                    ) : (
                         <EmptyState
                             className="mt-12"
                             title="NO ENCONTRAMOS ESO"
