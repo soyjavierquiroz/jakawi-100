@@ -39,8 +39,14 @@ function MyChallenges({ challenges }: { challenges: MyChallenge[] }) {
                 )}
             </div>
             {challenges.length ? (
-                <div className="mt-3 space-y-3">
-                    {challenges.slice(0, 3).map((c) => (
+                <details className="mi-panel space-y-3">
+                    <summary className="cursor-pointer text-sm font-bold">
+                        {challenges.length}{' '}
+                        {challenges.length === 1
+                            ? 'reto en seguimiento'
+                            : 'retos en seguimiento'}
+                    </summary>
+                    {challenges.map((c) => (
                         <Link
                             key={c.slug}
                             href={`/retos/${c.slug}`}
@@ -74,7 +80,7 @@ function MyChallenges({ challenges }: { challenges: MyChallenge[] }) {
                             )}
                         </Link>
                     ))}
-                </div>
+                </details>
             ) : (
                 <div className="mt-3 rounded-2xl border border-border bg-surface p-5">
                     <p className="text-sm leading-6 text-muted-foreground">
@@ -411,9 +417,13 @@ export default function MiJakawi({
                                     primeras membresías de pago elegibles y
                                     verificadas.
                                 </p>
-                                {memberReferral.eligible && (
-                                    <InviteAndEarn referral={memberReferral} />
-                                )}
+                                {memberReferral.eligible &&
+                                    memberReferral.code &&
+                                    memberReferral.link && (
+                                        <InviteAndEarn
+                                            referral={memberReferral}
+                                        />
+                                    )}
                                 <a
                                     href="https://jakawi.club/afiliados"
                                     className="mi-text-link mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-bold"
