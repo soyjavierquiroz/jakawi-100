@@ -33,7 +33,7 @@ type Props = {
 };
 
 export default function UnlockLanding({ vsl, preview, copy }: Props) {
-    const { prelaunchPublic } = usePage().props;
+
     const acquire = useAcquisition();
     const continueAction = useLandingAction();
     const landingId = (usePage().props.presentation as { id: number }).id;

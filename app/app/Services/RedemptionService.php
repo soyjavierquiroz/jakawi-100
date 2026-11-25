@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\Benefit;
 use App\Models\Location;
 use App\Models\Membership;
@@ -21,8 +20,6 @@ class RedemptionService
 
     public function start(User $user, Benefit $benefit, Location $location, ?ChallengeRewardGrant $grant = null): Redemption
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         // The user lock serializes both pending idempotency and per-member limits.
         $result = DB::transaction(function () use ($user, $benefit, $location, $grant): array {
             $lockedUser = User::query()->lockForUpdate()->findOrFail($user->getKey());
@@ -73,8 +70,6 @@ class RedemptionService
 
     public function confirmWithOutcome(string $code, string $pin): RedemptionConfirmation
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         $result = DB::transaction(function () use ($code, $pin): ?array {
             $redemption = Redemption::query()->where('code', $code)->lockForUpdate()->first();
             if ($redemption === null) {

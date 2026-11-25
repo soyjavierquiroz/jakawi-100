@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\ExperienceReservation;
 use App\Models\ExperienceSession;
 use App\Models\User;
@@ -26,8 +25,6 @@ class ExperienceCheckInService
 
     public function checkIn(User $actor, ExperienceReservation $reservation): ExperienceReservation
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($actor, $reservation): ExperienceReservation {
             ExperienceSession::query()->lockForUpdate()->findOrFail($reservation->experience_session_id);
             $reservation = ExperienceReservation::query()->with('session.experience')->lockForUpdate()->findOrFail($reservation->id);

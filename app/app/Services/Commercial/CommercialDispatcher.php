@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services\Commercial;
-
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -9,23 +8,19 @@ final class CommercialDispatcher
 {
     public function run(int $limit = 100): int
     {
-
         if (! app(CommercialClient::class)->ready()) {
             return 0;
         }
         if (DB::transactionLevel() !== 0) {
             throw new \LogicException('Commercial dispatch requires committed domain data.');
         }
-        if (! \App\Support\PrelaunchOperations::blocked()) {
-            app(CommercialOutbox::class)->collect($limit);
-        }
+        app(CommercialOutbox::class)->collect($limit);
         $processed = 0;
         $deadline = microtime(true) + 40;
         while ($processed < min(100, max(0, $limit)) && microtime(true) < $deadline) {
             $found = DB::transaction(function (): bool {
                 DB::statement("SET LOCAL lock_timeout = '2s'");
                 $row = DB::table('commercial_outbox')->whereIn('status', ['PENDING', 'RETRY'])
-                    ->when(\App\Support\PrelaunchOperations::blocked(), fn ($q) => $q->whereRaw("CASE WHEN raw_body IS JSON THEN raw_body::jsonb->>'event_type' END IN (?, ?, ?, ?)", \App\Support\PrelaunchOperations::ACCOUNT_EVENTS))
                     ->where(fn ($q) => $q->whereNull('next_attempt_at')->orWhere('next_attempt_at', '<=', now()))
                     ->orderBy('id')->lock('FOR UPDATE SKIP LOCKED')->first();
                 if (! $row) {

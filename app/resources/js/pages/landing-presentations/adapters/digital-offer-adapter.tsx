@@ -7,7 +7,7 @@ import { digitalMoney, type DigitalProductData } from '@/components/digital-card
 import type { LandingVideoConfig } from '@/components/media/jakawi-vsl-player/LandingVideo';
 import { useRef, useEffect, useState } from 'react';
 
-type Props = {giftAction?: GiftAction; product: DigitalProductData; presentation: {hero_alt?: string; hero_layout?: 'OFFER_FIRST'|'MEDIA_LED'; density?: 'STANDARD'|'COMPACT'; marketing_theme?: 'LIGHT_CONVERSION'|'DARK_CONVERSION'; media_mode?: string}; copy: {eyebrow:string; headline:string; subheadline:string; finalHeadline:string}; blocks: EditorialBlock[]; heroUrl:string|null; vsl?: LandingVideoConfig|null; preview:boolean; noindex:boolean; prelaunch:boolean; authenticated:boolean; memberActive:boolean; canBuy:boolean; checkoutUrl:string; notice:string};
+type Props = {giftAction?: GiftAction; product: DigitalProductData; presentation: {hero_alt?: string; hero_layout?: 'OFFER_FIRST'|'MEDIA_LED'; density?: 'STANDARD'|'COMPACT'; marketing_theme?: 'LIGHT_CONVERSION'|'DARK_CONVERSION'; media_mode?: string}; copy: {eyebrow:string; headline:string; subheadline:string; finalHeadline:string}; blocks: EditorialBlock[]; heroUrl:string|null; vsl?: LandingVideoConfig|null; preview:boolean; noindex:boolean; authenticated:boolean; memberActive:boolean; canBuy:boolean; checkoutUrl:string; notice:string};
 export default function DigitalOfferAdapter({product, presentation, copy, blocks, heroUrl, vsl, preview, noindex, authenticated, memberActive, canBuy, checkoutUrl, notice, giftAction}:Props) {
  const gift=useDigitalGiftAction(giftAction);
  const welcome=giftAction?.kind === 'welcome' && !preview;

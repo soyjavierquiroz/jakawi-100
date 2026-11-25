@@ -1,6 +1,5 @@
 <?php
 namespace Tests\Feature;
-
 use App\Models\{AppSetting,DigitalProduct,MembershipBankPayment,Partner,User};
 use App\Services\{DigitalCheckout,DigitalCollection,DigitalProductQr,MembershipBankCheckout};
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -37,6 +36,7 @@ class SharedDigitalAccountTest extends TestCase
     {
         $this->actingAs($this->admin)->post('/admin/digital/cobro',$this->settings())->assertSessionHasNoErrors();
         foreach(['public','member'] as $tier)app(DigitalProductQr::class)->save($this->product,$tier,UploadedFile::fake()->image('QA-'.$tier.'.png'),true,$this->admin->id);
+        app(\App\Services\DigitalSaleAvailability::class)->configure($this->product,true,true,$this->admin->id);
     }
     private function digital(): array
     {

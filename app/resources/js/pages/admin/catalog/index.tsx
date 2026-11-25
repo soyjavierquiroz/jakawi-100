@@ -36,7 +36,7 @@ type Props = {
     resource: string;
     baseUrl: string;
     createUrl: string;
-    prelaunch: boolean;
+
     filters: Filters;
     partners: Partner[];
     statuses: string[];
@@ -115,7 +115,7 @@ export default function Catalog({
     resource,
     baseUrl,
     createUrl,
-    prelaunch,
+
     filters,
     partners,
     statuses,
@@ -149,12 +149,7 @@ export default function Catalog({
                     <p className="text-sm text-muted-foreground">
                         {items.total} propuestas · Más recientes primero
                     </p>
-                    {prelaunch && (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            Pre-lanzamiento activo. Publicado no implica
-                            disponibilidad comercial.
-                        </p>
-                    )}
+
                 </div>
                 <Link
                     href={createUrl}

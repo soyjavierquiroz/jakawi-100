@@ -89,7 +89,7 @@ export default function ExperienceOfferAdapter({
     preview,
     copy,
 }: ExperienceOfferProps) {
-    const { prelaunchPublic } = usePage().props;
+
     const externalReservation = Boolean(
         copy.reservationMethod && copy.reservationMethod !== 'jakawi',
     );

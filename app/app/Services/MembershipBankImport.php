@@ -1,6 +1,5 @@
 <?php
 namespace App\Services;
-
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -14,8 +13,6 @@ class MembershipBankImport
     /** Mobile upload uses only metadata read by the already verified GanaMóvil parser. */
     public function uploadPdf(UploadedFile $file, User $admin): array
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         abort_unless($admin->is_admin, 403);
         $hash = hash_file('sha256', $file->getRealPath());
         $prior = DB::table('membership_bank_imports')->where('sha256', $hash)->first();
@@ -45,8 +42,6 @@ class MembershipBankImport
 
     public function preview(UploadedFile $file, string $account, User $admin, string $bank, string $start, string $end, ?array $document = null): string
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         abort_unless($admin->is_admin,403);
         $hash=hash_file('sha256',$file->getRealPath());
         $path='statements/'.$hash.'.'.strtolower($file->getClientOriginalExtension());
@@ -67,8 +62,6 @@ class MembershipBankImport
 
     public function confirm(string $id, User $admin): array
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         abort_unless($admin->is_admin,403);
         return DB::transaction(function() use($id,$admin) {
             $p=DB::table('bank_statement_previews')->where('id',$id)->lockForUpdate()->first();
@@ -124,8 +117,6 @@ class MembershipBankImport
     /** Existing internal callers retain the validated deterministic CSV entry point. */
     public function import(UploadedFile $file, string $account, User $admin): array
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         abort_unless($admin->is_admin,403);
         $rows=app(BankStatementParser::class)->parse($file);
         $dates=array_column($rows,'paid_date');

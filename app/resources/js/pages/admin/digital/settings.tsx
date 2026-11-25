@@ -34,7 +34,7 @@ export default function Settings({
             </p>
             <p className="mb-5 text-muted-foreground">
                 La cuenta puede compartirse con membresías y otros cobros autorizados de JAKAWI. Cada producto tiene sus QR público y miembro de importe fijo en su editor. Esta
-                configuración permite autorizar la venta de Glúteo Perfecto desde su editor. PRELAUNCH permanece activo para el resto de COM.
+                configuración permite autorizar la venta de Glúteo Perfecto desde su editor. La venta requiere autorización individual, PDF definitivo y QR verificados.
             </p>
             <form
                 className="grid max-w-2xl gap-5"

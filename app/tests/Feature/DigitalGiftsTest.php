@@ -1,7 +1,6 @@
 <?php
 
 namespace Tests\Feature;
-
 use App\Models\{DigitalAccessGrant, DigitalGift, DigitalProduct, Membership, Partner, User};
 use App\Services\{DigitalGifts, MembershipService};
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -144,16 +143,12 @@ class DigitalGiftsTest extends TestCase
         $this->assertDatabaseCount('digital_access_grants', 0);
     }
 
-    public function test_disabled_switch_and_prelaunch_preserve_operational_blocks(): void
+    public function test_individual_disabled_gifts_remain_blocked(): void
     {
         config(['digital_gifts.enabled' => false]);
         $this->activate();
         $this->assertDatabaseCount('digital_gifts', 0);
         $this->actingAs($this->member)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertForbidden();
-        config(['digital_gifts.enabled' => true, 'jakawi.prelaunch_mode' => true]);
-        $this->actingAs($this->admin)->post('/admin/productos-digitales/regalo-qa/regalar', ['issuance_key' => (string) Str::uuid()])->assertForbidden();
-        $this->postJson('/productos-digitales/regalo-qa/comprar')->assertStatus(423);
-        $this->postJson('/admin/memberships')->assertStatus(423);
         $this->assertDatabaseCount('digital_gifts', 0);
         $this->assertDatabaseCount('digital_access_grants', 0);
     }
@@ -183,7 +178,7 @@ class DigitalGiftsTest extends TestCase
             foreach ($disk->allFiles() as $key) $disk->delete($key);
         }
     }
-    private function preparePrelaunchCourtesy(): void
+    private function prepareCourtesy(): void
     {
         config(['digital_gifts.enabled' => false]);
         $this->activate(); // Existing member, without an automatic gift.
@@ -194,9 +189,9 @@ class DigitalGiftsTest extends TestCase
         ]]);
     }
 
-    public function test_prelaunch_backfill_only_active_paid_members_and_pioneers_is_idempotent(): void
+    public function test_authorized_backfill_only_active_paid_members_and_pioneers_is_idempotent(): void
     {
-        $this->preparePrelaunchCourtesy();
+        $this->prepareCourtesy();
         $free = User::factory()->create();
         $pioneer = User::factory()->create();
         $unpaid = User::factory()->create();
@@ -215,20 +210,20 @@ class DigitalGiftsTest extends TestCase
         $this->assertDatabaseCount('digital_access_grants', 0);
     }
 
-    public function test_prelaunch_courtesy_full_claim_and_download_without_sales_or_promotional_gifts(): void
+    public function test_authorized_courtesy_full_claim_and_download_without_sales_or_promotional_gifts(): void
     {
-        $this->preparePrelaunchCourtesy();
+        $this->prepareCourtesy();
         app(DigitalGifts::class)->backfillWelcome($this->member);
         $this->actingAs($this->member)->get('/mi-jakawi')->assertInertia(fn (Assert $p) => $p
             ->where('membershipStatus.is_active', true)->where('membership.is_active', true)->where('hasWelcomeGift', true)->etc());
         $this->get('/explorar?type=digital&gifts=1')->assertInertia(fn (Assert $p) => $p->where('giftFilter', true)->where('pagination.total', 1)->etc());
         $this->get('/productos-digitales/regalo-qa')->assertInertia(fn (Assert $p) => $p->where('giftAction.kind', 'welcome')->where('canCollect', false)->etc());
-        $this->postJson('/productos-digitales/regalo-qa/comprar')->assertStatus(423);
+        $this->postJson('/productos-digitales/regalo-qa/comprar')->assertUnprocessable()->assertJsonValidationErrors('product');
         $this->post('/productos-digitales/regalo-qa/regalo-promocional', ['confirm' => true])->assertForbidden();
         $this->actingAs($this->admin)->post('/admin/productos-digitales/regalo-qa/regalar', ['issuance_key' => (string) Str::uuid()])->assertForbidden();
         $this->actingAs($this->member)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertRedirect('/mi-jakawi/productos-digitales');
         $access = DigitalAccessGrant::sole();
-        $this->get('/mi-jakawi/productos-digitales')->assertInertia(fn (Assert $p) => $p->where('giftAccess.data.0.digital_allowed', true)->where('giftAccess.data.0.id', $access->id)->etc());
+        $this->get('/mi-jakawi/productos-digitales')->assertInertia(fn (Assert $p) => $p->missing('giftAccess.data.0.digital_allowed')->where('giftAccess.data.0.id', $access->id)->etc());
         $this->get('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/pdf')->assertOk()->assertContent($this->pdf);
         $this->get('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/pdf')->assertOk();
         $this->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertStatus(409);
@@ -242,15 +237,15 @@ class DigitalGiftsTest extends TestCase
         $this->assertFalse(app(\App\Services\DigitalSaleAvailability::class)->settings($this->product)['enabled'] ?? false);
     }
 
-    public function test_prelaunch_welcome_exception_fails_closed_without_right_approval_or_switch(): void
+    public function test_authorized_welcome_exception_fails_closed_without_right_approval_or_switch(): void
     {
-        $this->preparePrelaunchCourtesy();
+        $this->prepareCourtesy();
         $free = User::factory()->create();
         $this->actingAs($free)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertStatus(409);
         app(DigitalGifts::class)->backfillWelcome($this->member);
         $this->product->update(['file_sha256' => hash('sha256', 'changed')]);
         $this->actingAs($this->member)->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertStatus(422);
-        config(['digital_gifts.welcome_prelaunch_enabled' => false]);
+        \App\Models\AppSetting::where('key', DigitalGifts::COURTESY_KEY)->update(['value'=>json_encode(['enabled'=>false])]);
         $this->post('/productos-digitales/regalo-qa/regalo-bienvenida', ['confirm' => true])->assertForbidden();
         $this->assertDatabaseCount('digital_access_grants', 0);
         $this->assertDatabaseHas('digital_gifts', ['user_id' => $this->member->id, 'status' => 'pending']);

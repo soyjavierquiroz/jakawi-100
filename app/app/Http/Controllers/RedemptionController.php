@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Benefit;
 use App\Models\Location;
 use App\Models\Partner;
@@ -61,12 +60,8 @@ class RedemptionController extends Controller
         abort_unless($redemption->user_id === $r->user()->id, 403);
 
         if ($redemption->isExpired()) {
-            if (\App\Support\PrelaunchOperations::blocked()) {
-                $redemption->setAttribute('status', Redemption::STATUS_EXPIRED);
-            } else {
-                $redemption->update(['status' => Redemption::STATUS_EXPIRED]);
-                $redemption->refresh();
-            }
+            $redemption->update(['status' => Redemption::STATUS_EXPIRED]);
+            $redemption->refresh();
         }
 
         $membership = $redemption->membership;

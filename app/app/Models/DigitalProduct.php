@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,7 +39,7 @@ class DigitalProduct extends Model
     /** Editorial availability is separate from catalog publication and prices. */
     public function isComingSoon(): bool
     {
-        if (app(\App\Services\DigitalSaleAvailability::class)->exceptionAllowed($this)) return false;
+        if (app(\App\Services\DigitalSaleAvailability::class)->canSell($this)) return false;
         return $this->landingPresentations()->where('status', 'PUBLISHED')
             ->whereJsonContains('editorial_blocks', [['type' => 'hero', 'availability' => 'COMING_SOON']])->exists();
     }

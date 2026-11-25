@@ -2,13 +2,11 @@ import { usePage } from '@inertiajs/react';
 
 export type Partner = { name: string; slug: string };
 export function useOperationalAccess() {
-    const { prelaunchMode, partnerAccess } = usePage<{
-        prelaunchMode: boolean;
+    const { partnerAccess } = usePage<{
         partnerAccess?: { can_operate: boolean } | null;
     }>().props;
     return {
-        blocked: prelaunchMode || partnerAccess?.can_operate === false,
-        prelaunch: prelaunchMode,
+        blocked: partnerAccess?.can_operate === false,
     };
 }
 
@@ -19,7 +17,7 @@ export function OperationFeedback({
     error?: string | null;
     success?: string | null;
 }) {
-    const { blocked, prelaunch } = useOperationalAccess();
+    const { blocked } = useOperationalAccess();
     return (
         <div className="space-y-3">
             {blocked && (
@@ -27,9 +25,7 @@ export function OperationFeedback({
                     role="note"
                     className="rounded-md border border-border bg-muted p-4 text-sm"
                 >
-                    {prelaunch
-                        ? 'PRELAUNCH activo: las operaciones reales están bloqueadas. Puedes consultar reservas, códigos e historial; no se registrarán confirmaciones, asistencias ni canjes.'
-                        : 'Este establecimiento no está habilitado para operar. Puedes consultar su historial.'}
+                    Este establecimiento no está habilitado para operar. Puedes consultar su historial.
                 </p>
             )}
             {error && (

@@ -72,7 +72,7 @@ export default function ChallengeOfferAdapter({
     copy,
     ...challengeProps
 }: ChallengeOfferProps) {
-    const { prelaunchPublic } = usePage().props;
+
     const { auth } = usePage().props as {
         auth: { user?: { id: number } | null };
     };

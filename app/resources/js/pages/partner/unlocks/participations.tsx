@@ -45,11 +45,11 @@ const date = (value: string) =>
 function Row({
     p,
     base,
-    prelaunch,
+
 }: {
     p: Participation;
     base: string;
-    prelaunch: boolean;
+
 }) {
     const [review, setReview] = useState(false);
     const form = useForm({ note: '' });
@@ -101,7 +101,7 @@ function Row({
             {p.status === 'CONFIRMED' && (
                 <button
                     className={secondaryAction}
-                    disabled={prelaunch || !p.can_fulfill || form.processing}
+                    disabled={!p.can_fulfill || form.processing}
                     onClick={() => setReview(true)}
                 >
                     Revisar cumplimiento
@@ -153,7 +153,7 @@ function Row({
                         <button
                             className={primaryAction}
                             disabled={
-                                prelaunch || !p.can_fulfill || form.processing
+                                !p.can_fulfill || form.processing
                             }
                         >
                             Confirmar cumplimiento
@@ -187,7 +187,7 @@ export default function Participations({
     };
     participations: ListPage & { data: Participation[] };
 }) {
-    const { prelaunchMode } = usePage<{ prelaunchMode: boolean }>().props;
+
     const base = `/partner/${partner.slug}/desbloqueos/${unlock.slug}/participaciones`;
     return (
         <PartnerHeading
@@ -227,16 +227,7 @@ export default function Participations({
                         </p>
                     )}
                 </div>
-                {prelaunchMode && (
-                    <p
-                        role="note"
-                        className="rounded-md border border-border bg-muted p-4 text-sm"
-                    >
-                        PRELAUNCH activo: puedes consultar participaciones e
-                        historial. El cumplimiento está temporalmente
-                        deshabilitado también en el servidor.
-                    </p>
-                )}
+
                 {partner.status !== 'published' && (
                     <p role="note" className="text-sm">
                         El establecimiento no está habilitado para operar; su
@@ -249,7 +240,7 @@ export default function Participations({
                             key={p.id}
                             p={p}
                             base={base}
-                            prelaunch={prelaunchMode}
+
                         />
                     ))
                 ) : (

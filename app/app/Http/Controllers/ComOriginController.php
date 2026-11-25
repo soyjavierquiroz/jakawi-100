@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\MembershipBankPayment;
 use App\Models\Partner;
 use App\Services\ClubPurchaseIdentity;
@@ -15,7 +14,6 @@ class ComOriginController extends Controller
 {
     public function redirect(Request $request, Partner $partner, string $destination, MembershipAcquisition $origins, ComOriginProof $proof)
     {
-        if ($destination === 'checkout') { \App\Support\PrelaunchOperations::assertAllowed(); }
         abort_unless($partner->isPublished() && PartnerSlug::valid($partner->slug), 404);
         $origins->capture($request, $partner);
         $candidate = $origins->candidate($request, $request->user());

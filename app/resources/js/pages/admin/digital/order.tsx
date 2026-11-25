@@ -33,11 +33,9 @@ type Order = {
 function Review({
     payment: p,
     order: o,
-    blocked,
 }: {
     payment: Payment;
     order: Order;
-    blocked: boolean;
 }) {
     const confirm = useForm({
         bank_reference: '',
@@ -174,7 +172,7 @@ function Review({
                             </p>
                         ))}
                         <button
-                            disabled={blocked || confirm.processing}
+                            disabled={confirm.processing}
                             className="min-h-12 rounded-xl bg-brand px-4 font-bold text-brand-foreground disabled:opacity-50"
                         >
                             Confirmar ingreso y conceder acceso
@@ -201,7 +199,7 @@ function Review({
                             />
                         </label>
                         <button
-                            disabled={blocked || reject.processing}
+                            disabled={reject.processing}
                             className="min-h-12 rounded-xl border border-border px-4 disabled:opacity-50"
                         >
                             Rechazar comprobante
@@ -220,8 +218,8 @@ function Review({
 export default function Order({
     order: o,
     audit,
-    prelaunch,
-    refundBlocked,
+
+
 }: {
     order: Order;
     audit: {
@@ -230,8 +228,8 @@ export default function Order({
         created_at: string;
         metadata: Record<string, unknown>;
     }[];
-    prelaunch: boolean;
-    refundBlocked: boolean;
+
+
 }) {
     const refund = useForm({
         reference: '',
@@ -252,17 +250,9 @@ export default function Order({
                 {digitalMoney(o.amount, o.currency)} · {digitalState(o.status)}{' '}
                 · {o.member_at_purchase ? 'Con membresía' : 'Sin membresía'}
             </p>
-            {prelaunch ? (
-                <p
-                    role="status"
-                    className="mt-4 rounded-xl border border-border p-4"
-                >
-                    PRELAUNCH: confirmaciones, entregas y devoluciones
-                    bloqueadas.
-                </p>
-            ) : null}
+
             {o.payments.map((p) => (
-                <Review key={p.id} payment={p} order={o} blocked={prelaunch} />
+                <Review key={p.id} payment={p} order={o}  />
             ))}
             {o.access ? (
                 <section className="mt-6 rounded-xl border border-border p-5">
@@ -276,7 +266,7 @@ export default function Order({
                     {o.access.delivery_status === 'failed' &&
                     o.access.status === 'active' ? (
                         <button
-                            disabled={prelaunch}
+
                             className="mt-3 min-h-11 rounded-xl border border-border px-4"
                             onClick={() =>
                                 router.post(
@@ -337,7 +327,7 @@ export default function Order({
                         descargas.
                     </label>
                     <button
-                        disabled={refundBlocked || refund.processing}
+                        disabled={refund.processing}
                         className="min-h-12 rounded-xl border border-border"
                     >
                         Registrar y revocar acceso

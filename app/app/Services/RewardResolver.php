@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\Conversion;
 use App\Models\Partner;
 use App\Models\RewardRule;
@@ -13,8 +12,6 @@ class RewardResolver
 {
     public function createFor(Conversion $conversion, User|Partner $beneficiary, string $participantType): ?RewardTransaction
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         if ($beneficiary instanceof Partner && $conversion->type === 'membership_purchased') {
             return null;
         }

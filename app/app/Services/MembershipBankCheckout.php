@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\AnalyticsEvent;
 use App\Models\AuditLog;
 use App\Models\Membership;
@@ -29,8 +28,6 @@ class MembershipBankCheckout
 
     public function start(User $user): MembershipBankPayment
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($user) {
             $user = User::lockForUpdate()->findOrFail($user->id);
             $payment = MembershipBankPayment::where('user_id', $user->id)->whereIn('status', ['awaiting_payment', 'PAYMENT_REPORTED', 'under_review', 'rejected'])->first();
@@ -63,8 +60,6 @@ class MembershipBankCheckout
 
     public function report(MembershipBankPayment $payment, User|null $actor = null, bool $confirmed = false): MembershipBankPayment
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($payment, $actor, $confirmed) {
             $p = MembershipBankPayment::lockForUpdate()->findOrFail($payment->id);
             if ($confirmed && in_array($p->status, ['awaiting_payment', 'rejected', 'PAYMENT_REPORTED'], true) && $p->payment_confirmed_at === null) {
@@ -81,8 +76,6 @@ class MembershipBankCheckout
 
     public function approve(int $id, int $movementId, User $admin, bool $strongOnly = false, bool $automatic = false): MembershipBankPayment
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         abort_unless($admin->is_admin, 403);
 
         return DB::transaction(function () use ($id, $movementId, $admin, $strongOnly, $automatic) {

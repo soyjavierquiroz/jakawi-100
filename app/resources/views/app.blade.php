@@ -7,17 +7,6 @@
             @include('partials.landing-seo', ['seo' => $page['props']['landingSeo']])
         @elseif ($page['props']['landingSeoPrivate'] ?? false)
             <meta data-inertia="robots" name="robots" content="noindex,nofollow">
-        @elseif (($page['props']['prelaunchMode'] ?? false) && $page['component'] === 'coming-soon')
-            <title data-inertia="">JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba</title>
-            <meta data-inertia="robots" name="robots" content="index,follow">
-            <link data-inertia="canonical" rel="canonical" href="https://jakawi.com/">
-            <meta data-inertia="description" name="description" content="Beneficios, experiencias, retos y nuevos planes para vivir más Cochabamba. JAKAWI llega pronto.">
-            <meta data-inertia="og:title" property="og:title" content="JAKAWI — Vive más tu ciudad | Próximamente en Cochabamba">
-            <meta data-inertia="og:description" property="og:description" content="Beneficios, experiencias, retos y nuevos planes para vivir más Cochabamba. JAKAWI llega pronto.">
-            <meta data-inertia="og:type" property="og:type" content="website">
-            <meta data-inertia="og:url" property="og:url" content="https://jakawi.com/">
-        @elseif ($page['props']['prelaunchPublic'] ?? false)
-            <meta data-inertia="robots" name="robots" content="noindex,nofollow">
         @endif
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="mobile-web-app-capable" content="yes">

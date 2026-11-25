@@ -182,7 +182,7 @@ export default function UnlockForm({
                         </ProposalSection>
                         <ProposalSection
                             title="2. Compromisos, capacidad y plazo"
-                            description="Estos datos se proponen para revisión. No se aceptan compromisos reales durante PRELAUNCH."
+                            description="Estos datos se proponen para revisión. La operación requiere aprobación, vigencia y capacidad disponible."
                         >
                             {field(
                                 'minimum_commitments',

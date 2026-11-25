@@ -18,7 +18,6 @@ Artisan::command('inspire', function () {
 Schedule::command('unlocks:expire')->everyMinute()->withoutOverlapping();
 
 Artisan::command('challenges:refresh-rankings', function () {
-    if (\App\Support\PrelaunchOperations::blocked()) { $this->info('Operación suspendida durante PRELAUNCH.'); return; }
     $queued = 0;
     Challenge::query()->where('review_status', 'APPROVED')->where('status', 'open')
         ->where('evidence_type', 'SOCIAL_POST')->where('selection_type', 'TOP_N')->where('ranking_visibility', '!=', 'NONE')
@@ -46,7 +45,6 @@ Artisan::command('challenges:refresh-rankings', function () {
 Schedule::command('challenges:refresh-rankings')->everyMinute()->withoutOverlapping();
 
 Artisan::command('challenges:close-expired', function () {
-    if (\App\Support\PrelaunchOperations::blocked()) { $this->info('Operación suspendida durante PRELAUNCH.'); return; }
     $closed = 0;
     Challenge::query()->where('review_status', 'APPROVED')->where('status', 'open')
         ->whereNotNull('ends_at')->where('ends_at', '<=', now())->orderBy('id')

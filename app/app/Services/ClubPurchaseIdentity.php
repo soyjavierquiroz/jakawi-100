@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\Membership;
 use App\Models\MembershipBankPayment;
 use App\Models\User;
@@ -33,8 +32,6 @@ class ClubPurchaseIdentity
 
     public function attach(MembershipBankPayment $p): bool
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         $target = $this->resolve($p);
         if (! $target) {
             $p->update(['identity_status' => 'pending']);
@@ -69,8 +66,6 @@ class ClubPurchaseIdentity
 
     public function activationOwner(MembershipBankPayment $p): User
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         $this->attach($p);
         if ($p->identity_status === 'linked') {
             $user = $this->resolve($p);

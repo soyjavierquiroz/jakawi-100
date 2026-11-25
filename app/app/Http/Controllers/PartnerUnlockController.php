@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\{Partner, Unlock, UnlockParticipation, User};
 use App\Services\{UnlockParticipationService, UnlockStatusService};
-use App\Support\{ListingPage, PrelaunchOperations};
+use App\Support\{ListingPage};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -123,7 +122,7 @@ class PartnerUnlockController extends Controller
             $reason = $service->fulfillmentBlocker($p, $unlock);
             return $p->only(['id', 'status', 'created_at', 'interested_at', 'committed_at', 'confirmation_requested_at', 'confirmed_at', 'fulfilled_at', 'expired_at', 'no_show_at', 'cancelled_at']) + [
                 'member_display_name' => $display, 'fulfillment_blocker' => $reason,
-                'can_fulfill' => ! PrelaunchOperations::blocked() && $partner->isPublished() && $reason === null,
+                'can_fulfill' => $partner->isPublished() && $reason === null,
             ];
         }));
         return Inertia::render('partner/unlocks/participations', ['partner' => $partner->only('name', 'slug', 'status'), 'unlock' => $unlock->only(['title', 'slug', 'status', 'fulfillment_starts_at', 'fulfillment_ends_at']), 'participations' => $page]);

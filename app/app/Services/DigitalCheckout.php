@@ -1,14 +1,12 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\AuditLog;
 use App\Models\DigitalAccessGrant;
 use App\Models\DigitalOrder;
 use App\Models\DigitalPayment;
 use App\Models\DigitalProduct;
 use App\Models\User;
-use App\Support\PrelaunchOperations;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -44,21 +42,21 @@ class DigitalCheckout
 
     public function start(User $user, DigitalProduct $product): DigitalOrder
     {
-        PrelaunchOperations::assertDigitalAllowed($product);
-
         return $this->transaction(function () use ($user, $product) {
             $user = User::lockForUpdate()->findOrFail($user->id);
             $product = DigitalProduct::published()->lockForUpdate()->findOrFail($product->id);
             app(DigitalCatalog::class)->assertInternal($product);
-            abort_if($product->isComingSoon(), 423, 'Disponible próximamente. Las compras de este producto están desactivadas.');
             \App\Models\AppSetting::where('key', DigitalCollection::KEY)->lockForUpdate()->first();
-            abort_unless(app(DigitalCollection::class)->readyFor($product->currency), 422, 'Cobro pendiente de configurar');
             $existing = DigitalOrder::where('user_id', $user->id)->where('digital_product_id', $product->id)->where('status', 'pending')->lockForUpdate()->first();
             if ($existing && ($existing->expires_at->isFuture() || $existing->payments()->where('status', 'under_review')->exists())) {
                 return $existing;
             }
             if ($existing) {
                 $existing->update(['status' => 'expired']);
+            }
+            $sale = app(DigitalSaleAvailability::class);
+            if (! $sale->canSell($product)) {
+                throw ValidationException::withMessages(['product' => implode(' ', $sale->missing($product)) ?: 'El propietario todavía no ha autorizado la venta de este producto.']);
             }
             abort_if(DigitalAccessGrant::where('user_id', $user->id)->where('digital_product_id', $product->id)->where('status', 'active')->exists(), 422, 'Ya tienes este producto en tu biblioteca.');
             abort_unless($product->public_price && $product->file_path && Storage::disk('digital-private')->exists($product->file_path), 422, 'Producto pendiente de preparar.');
@@ -76,8 +74,6 @@ class DigitalCheckout
 
     public function report(DigitalOrder $order, User $user, UploadedFile $receipt): DigitalPayment
     {
-        PrelaunchOperations::assertDigitalAllowed($order);
-
         return $this->transaction(function () use ($order, $user, $receipt) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($order->id);
             abort_unless($order->user_id === $user->id, 403);
@@ -102,7 +98,6 @@ class DigitalCheckout
 
     public function confirm(DigitalPayment $payment, User $admin, array $evidence): DigitalOrder
     {
-        PrelaunchOperations::assertDigitalAllowed($payment);
         abort_unless($admin->is_admin, 403);
 
         return $this->transaction(function () use ($payment, $admin, $evidence) {
@@ -134,7 +129,6 @@ class DigitalCheckout
 
     public function deliver(DigitalAccessGrant $grant, User $admin): void
     {
-        PrelaunchOperations::assertDigitalAllowed($grant);
         abort_unless($admin->is_admin, 403);
         $this->transaction(function () use ($grant, $admin) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($grant->digital_order_id);
@@ -159,7 +153,6 @@ class DigitalCheckout
 
     public function reject(DigitalPayment $payment, User $admin, string $reason): void
     {
-        PrelaunchOperations::assertDigitalAllowed($payment);
         abort_unless($admin->is_admin, 403);
         $this->transaction(function () use ($payment, $admin, $reason) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($payment->digital_order_id);
@@ -175,7 +168,6 @@ class DigitalCheckout
 
     public function refund(DigitalOrder $order, User $admin, string $reference, string $reason): void
     {
-        PrelaunchOperations::assertAllowed();
         abort_unless($admin->is_admin, 403);
         $this->transaction(function () use ($order, $admin, $reference, $reason) {
             $order = DigitalOrder::lockForUpdate()->findOrFail($order->id);

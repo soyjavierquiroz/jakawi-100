@@ -1,6 +1,5 @@
 <?php
 namespace App\Services;
-
 use App\Models\AuditLog;
 use App\Models\MembershipBankPayment;
 use App\Models\User;
@@ -182,8 +181,6 @@ class JakawiBankReconciliation
 
     public function run(): int
     {
-        if (\App\Support\PrelaunchOperations::blocked()) { return 0; }
-
         $count=0;
         $this->movements()->orderBy('id')->chunkById(100, function($rows) use (&$count) {
             foreach ($rows as $row) {

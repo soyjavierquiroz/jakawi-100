@@ -4,7 +4,7 @@ import { digitalState } from '@/components/digital-state';
 type Order = {
     id: number;
     reference: string;
-    digital_allowed: boolean;
+
     product_name: string;
     amount: string;
     currency: string;
@@ -15,14 +15,14 @@ export default function Library({
     orders,
     giftAccess = {data: [], next_page_url: null, prev_page_url: null},
 }: {
-    giftAccess?: {data: {id: number; gift_product_name: string; digital_allowed: boolean; status: string; delivery_status: string}[]; next_page_url: string | null; prev_page_url: string | null};
+    giftAccess?: {data: {id: number; gift_product_name: string;  status: string; delivery_status: string}[]; next_page_url: string | null; prev_page_url: string | null};
     orders: {
         data: Order[];
         next_page_url: string | null;
         prev_page_url: string | null;
     };
 }) {
-    const { prelaunchMode, flash } = usePage<{ prelaunchMode: boolean; flash?: { success?: string } }>().props;
+    const { flash } = usePage<{ flash?: { success?: string } }>().props;
     return (
         <>
             <Head title="Mis productos digitales" />
@@ -38,7 +38,7 @@ export default function Library({
                 </p>
                 {flash?.success === '¡Tu regalo está listo!' && <section role="status" className="mt-6 rounded-2xl border border-brand/30 bg-brand-subtle p-5"><h2 className="text-2xl font-extrabold">¡Tu regalo está listo!</h2><p className="mt-2 text-muted-foreground">Ya puedes disfrutarlo desde Mis productos digitales.</p><a href="#mis-productos" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-brand px-5 font-bold text-brand-foreground">ABRIR MI BIBLIOTECA</a></section>}
                 <div id="mis-productos" className="mt-7 scroll-mt-24 space-y-4">
-                    {giftAccess.data.map(access => <article key={`gift-${access.id}`} className="rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-bold">{access.gift_product_name}</h2><p className="mt-2">Regalo · {digitalState(access.status)}</p>{access.status === 'active' && access.delivery_status === 'ready' && access.digital_allowed && <a className="mt-3 inline-flex min-h-12 items-center font-bold text-brand underline" href={`/mi-jakawi/productos-digitales/accesos/${access.id}/pdf`}>Descargar PDF</a>}</article>)}
+                    {giftAccess.data.map(access => <article key={`gift-${access.id}`} className="rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-bold">{access.gift_product_name}</h2><p className="mt-2">Regalo · {digitalState(access.status)}</p>{access.status === 'active' && access.delivery_status === 'ready' && <a className="mt-3 inline-flex min-h-12 items-center font-bold text-brand underline" href={`/mi-jakawi/productos-digitales/accesos/${access.id}/pdf`}>Descargar PDF</a>}</article>)}
                     {orders.data.map((o) => (
                         <article
                             key={o.id}
@@ -65,8 +65,7 @@ export default function Library({
                                     Ver pedido
                                 </Link>
                                 {o.access?.status === 'active' &&
-                                o.access.delivery_status === 'ready' &&
-                                (!prelaunchMode || o.digital_allowed) ? (
+                                o.access.delivery_status === 'ready' ? (
                                     <a
                                         className="inline-flex min-h-11 items-center font-bold text-brand underline"
                                         href={`/mi-jakawi/productos-digitales/accesos/${o.access.id}/pdf`}

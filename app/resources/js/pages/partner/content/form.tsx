@@ -265,9 +265,8 @@ export default function ContentForm({ partner, kind, item, locations }: any) {
                                         </select>
                                     </label>
                                     <p className="text-sm text-muted-foreground">
-                                        Este dato prepara la propuesta. Las
-                                        reservas están deshabilitadas durante el
-                                        prelanzamiento.
+                                        La reserva requiere aprobación y disponibilidad
+                                        de la experiencia.
                                     </p>
                                     {input('reservation_whatsapp', 'WhatsApp')}
                                     {input(

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\Benefit;
 use App\Models\Challenge;
 use App\Models\Experience;
@@ -44,7 +43,6 @@ class AdminCatalog
             'items' => $items, 'filters' => (object) $filters,
             'partners' => Partner::orderBy('name')->get(['id', 'name']),
             'statuses' => $model::query()->distinct()->orderBy('status')->pluck('status'),
-            'prelaunch' => (bool) config('jakawi.prelaunch_mode'),
         ];
     }
 

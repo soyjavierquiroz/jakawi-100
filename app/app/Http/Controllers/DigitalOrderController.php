@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\DigitalAccessGrant;
 use App\Models\DigitalOrder;
 use App\Models\DigitalProduct;
@@ -9,7 +8,6 @@ use App\Services\DigitalCheckout;
 use App\Services\DigitalCollection;
 use App\Services\DigitalFiles;
 use App\Services\DigitalMeasurement;
-use App\Support\PrelaunchOperations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -29,12 +27,11 @@ class DigitalOrderController extends Controller
     {
         abort_unless($order->user_id === $request->user()->id, 404);
 
-        return Inertia::render('digital/order', ['order' => $order->toArray() + ['cover_url' => app(\App\Services\MediaUrl::class)->url($order->product?->cover_path, 'hero'), 'collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency'])), 'payments' => $order->payments()->orderByDesc('id')->get(['id', 'status', 'review_note', 'created_at']), 'access' => $order->access?->only(['id', 'status', 'delivery_status'])], 'prelaunch' => ! PrelaunchOperations::digitalAllowed($order), 'canCollect' => app(\App\Services\DigitalProductQr::class)->orderReady($order)]);
+        return Inertia::render('digital/order', ['order' => $order->toArray() + ['cover_url' => app(\App\Services\MediaUrl::class)->url($order->product?->cover_path, 'hero'), 'collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency'])), 'payments' => $order->payments()->orderByDesc('id')->get(['id', 'status', 'review_note', 'created_at']), 'access' => $order->access?->only(['id', 'status', 'delivery_status'])], 'canCollect' => app(\App\Services\DigitalProductQr::class)->orderReady($order)]);
     }
 
     public function qr(Request $request, DigitalOrder $order, DigitalFiles $files)
     {
-        PrelaunchOperations::assertDigitalAllowed($order);
         abort_unless($order->user_id === $request->user()->id, 404);
         abort_unless($order->status === 'pending' && $order->expires_at->isFuture() && app(\App\Services\DigitalProductQr::class)->orderReady($order), 422);
 
@@ -43,7 +40,6 @@ class DigitalOrderController extends Controller
 
     public function report(Request $request, DigitalOrder $order, DigitalCheckout $checkout)
     {
-        PrelaunchOperations::assertDigitalAllowed($order);
         $request->validate(['receipt' => 'required|file|mimes:pdf,png,jpg,jpeg|max:25600']);
         $checkout->report($order, $request->user(), $request->file('receipt'));
 
@@ -53,18 +49,14 @@ class DigitalOrderController extends Controller
     public function library(Request $request)
     {
         $orders = DigitalOrder::where('user_id', $request->user()->id)->with('access')->latest('id')->paginate(25);
-        $orders->getCollection()->each(fn ($order) => $order->setAttribute('digital_allowed', PrelaunchOperations::digitalAllowed($order)));
 
         $gifts = DigitalAccessGrant::where('user_id', $request->user()->id)->where('source', 'gift')->latest('id')->paginate(25, ['id','user_id','source','digital_order_id','digital_product_id','gift_product_name','status','delivery_status'], 'gifts_page');
-        $gifts->getCollection()->each(fn ($access) => $access->setAttribute('digital_allowed', PrelaunchOperations::digitalAllowed($access)));
 
         return Inertia::render('digital/library', ['orders' => $orders, 'giftAccess' => $gifts]);
     }
 
     public function download(Request $request, DigitalAccessGrant $access, DigitalFiles $files)
     {
-        PrelaunchOperations::assertDigitalAllowed($access);
-
         if ($access->source === 'gift') {
             abort_unless($access->user_id === $request->user()->id && $access->status === 'active' && $access->delivery_status === 'ready', 403);
             $bytes = Storage::disk('digital-private')->get($access->gift_file_path);

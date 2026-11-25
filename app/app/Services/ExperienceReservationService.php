@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\Experience;
 use App\Models\ExperienceReservation;
 use App\Models\ExperienceSession;
@@ -15,8 +14,6 @@ class ExperienceReservationService
 
     public function request(User $user, Experience $experience, int $sessionId, int $partySize = 1): ExperienceReservation
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($user, $experience, $sessionId, $partySize): ExperienceReservation {
             $session = ExperienceSession::query()->lockForUpdate()->with('reservationPartner')->findOrFail($sessionId);
             if (($experience->catalog_visibility !== 'legacy' && ! app(ExperiencePublication::class)->canOperate($experience)) || ! $user->hasActiveMembership() || ! $experience->isPublished() || $experience->reservation_method !== 'jakawi'
@@ -46,8 +43,6 @@ class ExperienceReservationService
 
     public function respond(User $actor, ExperienceReservation $reservation, string $status): void
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         abort_unless(in_array($status, [ExperienceReservation::STATUS_CONFIRMED, ExperienceReservation::STATUS_REJECTED], true), 404);
         DB::transaction(function () use ($actor, $reservation, $status): void {
             $session = ExperienceSession::query()->lockForUpdate()->findOrFail($reservation->experience_session_id);
@@ -71,8 +66,6 @@ class ExperienceReservationService
 
     public function cancel(User $actor, ExperienceReservation $reservation): void
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         DB::transaction(function () use ($actor, $reservation): void {
             $session = ExperienceSession::query()->lockForUpdate()->findOrFail($reservation->experience_session_id);
             $current = ExperienceReservation::query()->lockForUpdate()->findOrFail($reservation->id);

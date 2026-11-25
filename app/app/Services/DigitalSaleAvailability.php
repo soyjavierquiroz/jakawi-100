@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\{AppSetting, DigitalProduct};
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
-/** Explicit, fail-closed exception for the first authorized digital product only. */
+/** Individual commercial authorization and verified product requirements. */
 class DigitalSaleAvailability
 {
     public const KEY = 'gluteo_perfecto_sale_v1';
@@ -39,7 +38,7 @@ class DigitalSaleAvailability
     {
         $settings ??= $this->settings($product);
         $missing = [];
-        if (! $this->eligible($product)) $missing[] = 'Solo Glúteo Perfecto de JAKAWI Digital está autorizado para esta excepción.';
+        if (! $this->eligible($product)) $missing[] = 'La autorización comercial está disponible para Glúteo Perfecto de JAKAWI Digital.';
         if (! DigitalProduct::published()->whereKey($product->id)->exists()) $missing[] = 'Publicar el producto y su Partner.';
         if (! is_numeric($product->public_price) || DigitalCheckout::cents((string) $product->public_price) <= 0) $missing[] = 'Configurar el precio público definitivo.';
         if (! is_numeric($product->member_price) || (float) $product->member_price <= 0 || (float) $product->member_price > (float) $product->public_price) $missing[] = 'Configurar el precio miembro definitivo, menor o igual al público.';
@@ -49,23 +48,15 @@ class DigitalSaleAvailability
         return array_merge($missing, app(DigitalProductQr::class)->missing($product));
     }
 
-    public function exceptionAllowed(DigitalProduct $product): bool
+    public function canSell(DigitalProduct $product): bool
     {
         $settings = $this->settings($product);
         return ($settings['enabled'] ?? false) === true && $this->missing($product, $settings) === [];
     }
 
-    public function canSell(DigitalProduct $product): bool
-    {
-        if (config('jakawi.prelaunch_mode')) return $this->exceptionAllowed($product);
-        return ! $product->isComingSoon() && DigitalProduct::published()->whereKey($product->id)->exists()
-            && (float) $product->public_price > 0 && $this->pdfVerified($product)
-            && app(DigitalCollection::class)->readyFor($product->currency) && app(DigitalProductQr::class)->missing($product) === [];
-    }
-
     public function configure(DigitalProduct $product, bool $final, bool $enabled, int $adminId): void
     {
-        abort_unless($this->eligible($product), 422, 'Excepción exclusiva de Glúteo Perfecto.');
+        abort_unless($this->eligible($product), 422, 'Autorización comercial disponible para Glúteo Perfecto.');
         $settings = ['product_id' => $product->id, 'pdf_sha256' => $final && $this->pdfVerified($product) ? $product->file_sha256 : null,
             'enabled' => $enabled, 'authorized_by' => $adminId, 'authorized_at' => now()->toIso8601String()];
         if ($enabled && ($missing = $this->missing($product, $settings))) {
@@ -78,7 +69,7 @@ class DigitalSaleAvailability
     {
         $settings = $this->settings($product);
         return ['eligible' => $this->eligible($product), 'enabled' => $settings['enabled'] ?? false,
-            'available' => $this->exceptionAllowed($product), 'pdf_verified' => $this->pdfVerified($product),
+            'available' => $this->canSell($product), 'pdf_verified' => $this->pdfVerified($product),
             'pdf_final' => filled($settings['pdf_sha256'] ?? null) && $settings['pdf_sha256'] === $product->file_sha256,
             'missing' => $this->missing($product)];
     }

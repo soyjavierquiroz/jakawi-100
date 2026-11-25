@@ -1,10 +1,8 @@
 <?php
 
 namespace Tests\Feature;
-
 use App\Models\{AppSetting, DigitalAccessGrant, DigitalOrder, DigitalProduct, LandingPresentation, Membership, User};
 use App\Services\{DigitalCollection, DigitalFiles, DigitalSaleAvailability, GluteoPerfectoDraft, GluteoPerfectoVisibility};
-use App\Support\PrelaunchOperations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -32,14 +30,14 @@ class DigitalSaleActivationTest extends TestCase
     private function prepare(DigitalProduct $p, User $admin): void
     {
         $pdf = app(DigitalFiles::class)->store($this->pdf('DELIVERY-QA'), 'products');
-        $p->update(['public_price'=>'20.00', 'member_price'=>'12.50', 'file_path'=>$pdf['path'], 'file_sha256'=>$pdf['sha256']]);
+        $p->update(['public_price'=>'49.00', 'member_price'=>'29.00', 'file_path'=>$pdf['path'], 'file_sha256'=>$pdf['sha256']]);
         Storage::disk('digital-private')->put('qr/qa.png', 'QA ONLY');
         AppSetting::updateOrCreate(['key'=>DigitalCollection::KEY], ['value'=>['enabled'=>true,'exclusive_account'=>true,'variable_amount_qr'=>true,'bank'=>'QA BANK SIMULATED','holder'=>'QA ONLY','account'=>'QA-NOT-REAL','currency'=>'BOB','version'=>'qa-1','account_key'=>hash('sha256','qa-only'),'qr_path'=>'qr/qa.png','qr_sha256'=>hash('sha256','QA ONLY')]]);
         foreach (['public','member'] as $tier) app(\App\Services\DigitalProductQr::class)->save($p, $tier, UploadedFile::fake()->image('QA-ONLY-'.$tier.'.png'), true, $admin->id);
         app(DigitalSaleAvailability::class)->configure($p, true, true, $admin->id);
     }
 
-    public function test_prelaunch_purchase_approval_library_and_repeat_download_for_free_and_active_member(): void
+    public function test_authorized_purchase_approval_library_and_repeat_download_for_free_and_active_member(): void
     {
         $p=$this->product(); $admin=User::factory()->create(['is_admin'=>true]);
         $this->prepare($p,$admin);
@@ -59,23 +57,24 @@ class DigitalSaleActivationTest extends TestCase
             $this->actingAs($buyer)->get('/productos-digitales/gluteo-perfecto/comprar')->assertOk()->assertInertia(fn(Assert $a)=>$a->where('canCollect',true)->where('memberActive',$member));
             $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect();
             $o=DigitalOrder::where('user_id',$buyer->id)->sole(); $base='/mi-jakawi/productos-digitales/pedidos/'.$o->reference;
-            $this->assertSame($member?'12.50':'20.00',$o->amount);
-            if ($member) { $this->travel(2)->minutes(); $this->assertFalse($buyer->hasActiveMembership()); $this->assertSame('12.50',$o->fresh()->amount); }
-            $this->get($base)->assertInertia(fn(Assert $a)=>$a->where('prelaunch',false));
+            $this->assertSame($member?'29.00':'49.00',$o->amount);
+            if ($member) { $this->travel(2)->minutes(); $this->assertFalse($buyer->hasActiveMembership()); $this->assertSame('29.00',$o->fresh()->amount); }
+            $this->get($base)->assertInertia(fn(Assert $a)=>$a->missing('prelaunch'));
             $this->get($base.'/qr')->assertOk();
+            $this->assertSame($o->id, app(\App\Services\DigitalCheckout::class)->start($buyer,$p)->id);
             $this->post($base.'/comprobante',['receipt'=>$this->pdf('receipt-'.$buyer->id)])->assertRedirect();
             $this->post($base.'/comprobante',['receipt'=>$this->pdf('receipt-'.$buyer->id)])->assertRedirect();
             $this->assertSame(1,$o->payments()->count());
             $this->assertSame(0,$o->access()->count());
             $payment=$o->payments()->sole();
             $e=['bank_verified'=>true,'bank_reference'=>'QA-SIMULATED-'.$buyer->id,'bank_date'=>now()->timezone('America/La_Paz')->toDateString(),'received_amount'=>$o->amount,'currency'=>'BOB','account_key'=>hash('sha256','qa-only'),'statement'=>$this->pdf('BANK-STATEMENT-SIMULATED')];
-            $this->actingAs($admin)->get('/admin/digital/pedidos/'.$o->reference)->assertInertia(fn(Assert $a)=>$a->where('prelaunch',false)->where('refundBlocked',true));
+            $this->actingAs($admin)->get('/admin/digital/pedidos/'.$o->reference)->assertInertia(fn(Assert $a)=>$a->missing('prelaunch')->missing('refundBlocked'));
             $this->post('/admin/digital/pagos/'.$payment->id.'/confirmar',array_replace($e,['bank_verified'=>false]))->assertSessionHasErrors('bank_verified');
             $this->assertSame(0,$o->access()->count());
             $this->post('/admin/digital/pagos/'.$payment->id.'/confirmar',$e)->assertRedirect();
             $this->post('/admin/digital/pagos/'.$payment->id.'/confirmar',$e)->assertRedirect();
             $grant=$o->access()->sole();$this->assertSame('ready',$grant->delivery_status);
-            $this->actingAs($buyer)->get('/mi-jakawi/productos-digitales')->assertInertia(fn(Assert $a)=>$a->where('orders.data.0.digital_allowed',true)->where('orders.data.0.access.id',$grant->id));
+            $this->actingAs($buyer)->get('/mi-jakawi/productos-digitales')->assertInertia(fn(Assert $a)=>$a->missing('orders.data.0.digital_allowed')->where('orders.data.0.access.id',$grant->id));
             $url='/mi-jakawi/productos-digitales/accesos/'.$grant->id.'/pdf';
             foreach ([1,2] as $_) $this->get($url)->assertOk()->assertHeader('Content-Type','application/pdf')->assertSee('QA ONLY - NOT FOR SALE',false);
             $this->actingAs(User::factory()->create())->get($url)->assertForbidden();
@@ -83,20 +82,18 @@ class DigitalSaleActivationTest extends TestCase
         }
         $this->assertDatabaseCount('digital_access_grants',2);
         $this->assertEquals($blocks,LandingPresentation::where('slug','gluteo-perfecto')->value('editorial_blocks'));
-        $this->assertTrue(PrelaunchOperations::blocked());
-        $this->expectException(\App\Exceptions\PrelaunchOperationBlocked::class);
-        Membership::create(['user_id'=>$admin->id,'status'=>'active','type'=>'standard','starts_at'=>now(),'ends_at'=>now()->addDay()]);
+        Membership::create(['user_id'=>$admin->id,'status'=>'active','type'=>'standard','starts_at'=>now(),'ends_at'=>now()->addDay(),'amount_paid'=>'100.00']);
     }
 
     public function test_activation_is_default_off_requires_every_prerequisite_and_is_product_specific(): void
     {
         $p=$this->product();$admin=User::factory()->create(['is_admin'=>true]);$buyer=User::factory()->create();$sale=app(DigitalSaleAvailability::class);
-        $this->assertFalse($sale->exceptionAllowed($p));
-        $this->actingAs($admin)->post('/admin/productos-digitales/gluteo-perfecto',['name'=>$p->name,'slug'=>$p->slug,'status'=>'published','currency'=>'BOB','pdf_final'=>true,'sale_enabled'=>true])->assertSessionHasErrors('sale_enabled');
+        $this->assertFalse($sale->canSell($p));
+        $this->actingAs($admin)->post('/admin/productos-digitales/gluteo-perfecto',['name'=>$p->name,'slug'=>$p->slug,'status'=>'published','currency'=>'BOB','pdf_final'=>true,'sale_enabled'=>true,'operation'=>'authorize_sale'])->assertSessionHasErrors('pdf');
         $this->assertDatabaseMissing('app_settings',['key'=>DigitalSaleAvailability::KEY]);
         $this->prepare($p,$admin);
-        $other=DigitalProduct::create(['partner_id'=>$p->partner_id,'slug'=>'other-pdf','name'=>'Other QA','status'=>'published','public_price'=>'20.00','currency'=>'BOB','file_path'=>$p->file_path,'file_sha256'=>$p->file_sha256]);
-        $this->actingAs($buyer)->post('/productos-digitales/other-pdf/comprar')->assertStatus(423);
+        $other=DigitalProduct::create(['partner_id'=>$p->partner_id,'slug'=>'other-pdf','name'=>'Other QA','status'=>'published','public_price'=>'49.00','currency'=>'BOB','file_path'=>$p->file_path,'file_sha256'=>$p->file_sha256]);
+        $this->actingAs($buyer)->post('/productos-digitales/other-pdf/comprar')->assertSessionHasErrors('product');
         foreach (['price','pdf','final','collection','publication','authorization'] as $missing) {
             $this->prepare($p,$admin);
             match ($missing) {
@@ -107,8 +104,9 @@ class DigitalSaleActivationTest extends TestCase
                 'publication'=>$p->update(['status'=>'draft']),
                 'authorization'=>AppSetting::where('key',DigitalSaleAvailability::KEY)->delete(),
             };
-            $this->assertFalse($sale->exceptionAllowed($p->fresh()),$missing);
-            $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(423);
+            $this->assertFalse($sale->canSell($p->fresh()),$missing);
+            $response = $this->post('/productos-digitales/gluteo-perfecto/comprar');
+            $missing === 'publication' ? $response->assertNotFound() : $response->assertSessionHasErrors('product');
             $p->update(['status'=>'published']);
         }
         $this->assertDatabaseCount('digital_orders',0);

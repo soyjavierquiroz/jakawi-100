@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\AuditLog;
 use App\Models\MembershipPurchase;
 use App\Models\MembershipPurchaseRequest;
@@ -15,8 +14,6 @@ class MembershipPurchaseService
 {
     public function confirmManualCash(User $beneficiary, User $recordedBy, ?User $collector, string $manualReference, string $idempotencyKey, ?int $purchaseRequestId = null): MembershipPurchase
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($beneficiary, $recordedBy, $collector, $manualReference, $idempotencyKey, $purchaseRequestId): MembershipPurchase {
             $existing = MembershipPurchase::query()->where('idempotency_key', $idempotencyKey)->lockForUpdate()->first();
             if ($existing) {
@@ -75,8 +72,6 @@ class MembershipPurchaseService
 
     public function refund(MembershipPurchase $purchase, User $admin, string $reason): MembershipPurchase
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($purchase, $admin, $reason): MembershipPurchase {
             $purchase = MembershipPurchase::query()->lockForUpdate()->findOrFail($purchase->id);
             if ($purchase->status === MembershipPurchase::STATUS_REFUNDED) {

@@ -1,7 +1,6 @@
 <?php
 
 namespace Tests\Feature;
-
 use App\Models\{DigitalProduct, LandingPresentation, Partner, User};
 use App\Services\{GluteoPerfectoDraft, ProductLandingResolver};
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -120,7 +119,7 @@ class DigitalLandingTest extends TestCase
         $this->assertDatabaseCount('digital_orders', 0);
     }
 
-    public function test_published_projection_has_one_price_and_uses_existing_checkout_and_prelaunch_block(): void
+    public function test_published_projection_has_one_price_and_requires_commercial_authorization(): void
     {
         [$p,$l]=$this->draft();
         $p->update(['status'=>'published','public_price'=>'40.00','member_price'=>'30.00']);
@@ -132,7 +131,7 @@ class DigitalLandingTest extends TestCase
         $this->assertSame(route('landing-presentations.show',$l),app(ProductLandingResolver::class)->navigationUrl($p,false));
         $this->get('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect('/login');
         $this->assertSame(url('/productos-digitales/gluteo-perfecto/comprar'),session('url.intended'));
-        $this->actingAs(User::factory()->create())->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(423);
+        $this->actingAs(User::factory()->create())->post('/productos-digitales/gluteo-perfecto/comprar')->assertSessionHasErrors('product');
         $this->assertDatabaseCount('digital_orders',0);
         $p->update(['status'=>'draft']);
         $this->get('/l/gluteo-perfecto')->assertNotFound();

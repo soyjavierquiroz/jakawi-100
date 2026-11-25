@@ -1,6 +1,5 @@
 <?php
 namespace Tests\Feature;
-
 use App\Models\{DigitalProduct, LandingPresentation, Partner, User};
 use App\Services\{GluteoPerfectoDraft, GluteoPerfectoVisibility, DigitalCheckout};
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,19 +24,19 @@ class DigitalComingSoonTest extends TestCase
         foreach (['/explorar?q=Glúteo%20Perfecto','/explorar?type=digital&q=Glúteo%20Perfecto','/productos-digitales?q=Glúteo%20Perfecto'] as $path) {
             $this->get($path)->assertOk()->assertInertia(fn (Assert $a) => $a->has('results',1)->where('results.0.product.id',$p->id)->where('results.0.product.coming_soon',true)->where('results.0.product.public_price',null));
         }
-        $this->get('/productos-digitales/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('product.coming_soon',true)->where('canCollect',false)->where('prelaunch',true));
+        $this->get('/productos-digitales/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('product.coming_soon',true)->where('canCollect',false)->missing('prelaunch'));
         $this->get('/l/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('preview',false)->where('product.coming_soon',true)->where('canBuy',false)->where('copy.eyebrow','Disponible próximamente')->has('blocks',11)->has('blocks.5.items',3)->has('blocks.8.items',5)->where('blocks.1.verified',false)->missing('blocks.1.source'));
         DigitalProduct::create(['partner_id'=>$p->partner_id,'name'=>'Otro borrador','slug'=>'otro-borrador']);
         $this->get('/explorar?type=digital')->assertInertia(fn (Assert $a) => $a->has('results',1));
         $this->get('/productos-digitales/otro-borrador')->assertNotFound();
     }
 
-    public function test_editorial_mode_blocks_checkout_even_if_prelaunch_is_later_disabled(): void
+    public function test_editorial_product_stays_unavailable_without_authorization(): void
     {
         $p=$this->visible();$user=User::factory()->create();
-        $this->actingAs($user)->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(423);
+        $this->actingAs($user)->post('/productos-digitales/gluteo-perfecto/comprar')->assertSessionHasErrors('product');
         config(['jakawi.prelaunch_mode'=>false]);
-        $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(423);
+        $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertSessionHasErrors('product');
         foreach(['digital_orders','digital_payments','digital_access_grants'] as $table) $this->assertDatabaseCount($table,0);
         $this->get('/l/gluteo-perfecto')->assertInertia(fn (Assert $a) => $a->where('canBuy',false));
     }

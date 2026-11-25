@@ -92,20 +92,10 @@ return Application::configure(basePath: dirname(__DIR__))
             CaptureMembershipOrigin::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
-            \App\Http\Middleware\ProtectPrelaunchOperations::class,
             AddLinkHeadersForPreloadedAssets::using(limit: 10),
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\App\Exceptions\PrelaunchOperationBlocked $exception, Request $request) {
-            if ($request->expectsJson() || $request->is('internal/*', 'api/*')) {
-                return response()->json(['code' => 'PRELAUNCH_OPERATION_BLOCKED', 'message' => $exception->getMessage()], 423);
-            }
-            if ($request->header('X-Inertia') && ! $request->isMethodSafe()) {
-                return back(303)->withErrors(['prelaunch' => $exception->getMessage()]);
-            }
-            return \Inertia\Inertia::render('prelaunch-blocked', ['message' => $exception->getMessage()])->toResponse($request)->setStatusCode(423);
-        });
         $exceptions->dontFlash(['claim_secret', 'ticket', 'code']);
         $exceptions->render(function (\Illuminate\Database\QueryException $exception, Request $request) {
             if ($exception->getCode() === '25006' && $request->attributes->has('support_session')) {

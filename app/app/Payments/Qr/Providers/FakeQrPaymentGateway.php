@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Payments\Qr\Providers;
-
 use App\Payments\Qr\Contracts\QrPaymentGateway;
 use App\Payments\Qr\DTOs\QrPaymentCreationResult;
 use App\Payments\Qr\DTOs\QrPaymentRequest;
@@ -25,8 +24,6 @@ final class FakeQrPaymentGateway implements QrPaymentGateway
 
     public function createPayment(QrPaymentRequest $request): QrPaymentCreationResult
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         $providerReference = 'fake-'.Str::uuid();
         $this->statuses[$providerReference] = QrPaymentStatus::PENDING;
 

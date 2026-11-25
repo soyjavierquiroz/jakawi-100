@@ -9,7 +9,6 @@ import { useState, type PropsWithChildren } from 'react';
 type Partner = { name: string; slug: string; status?: string };
 export default function PartnerLayout({ children }: PropsWithChildren) {
     const { url, props } = usePage<{
-        prelaunchMode?: boolean;
         flash?: { success?: string; error?: string };
         errors?: Record<string, string>;
         supportMode?: { mode: string };
@@ -22,7 +21,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
         supportMode,
         flash,
         errors,
-        prelaunchMode,
+
     } = props;
     const [menuOpen, setMenuOpen] = useState(false);
     const base = `/partner/${partner?.slug}`;
@@ -142,13 +141,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                                     </div>
                                 </div>
                                 {access?.can_operate &&
-                                    (prelaunchMode ? (
-                                        <p className="px-3 text-xs leading-relaxed text-muted-foreground">
-                                            Validación de canjes y registro de
-                                            asistencias: deshabilitados durante
-                                            el prelanzamiento.
-                                        </p>
-                                    ) : (
+                                    (
                                         <div className="grid grid-cols-2 gap-1 md:grid-cols-1">
                                             {navLink(
                                                 'Validar canje',
@@ -159,7 +152,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                                                 `${base}/asistencias`,
                                             )}
                                         </div>
-                                    ))}
+                                    )}
                                 {access?.can_view_economics && (
                                     <a
                                         className="block px-3 py-2 text-sm underline"
@@ -206,25 +199,7 @@ export default function PartnerLayout({ children }: PropsWithChildren) {
                             )}
                         </header>
                     )}
-                    {prelaunchMode && (
-                        <aside
-                            role="status"
-                            className="mb-6 rounded-2xl border border-brand/30 bg-brand-subtle p-4 text-sm leading-relaxed"
-                        >
-                            <p className="font-semibold">
-                                Prelanzamiento · piloto editorial
-                            </p>
-                            <p className="mt-1">
-                                Puedes consultar información y preparar
-                                contenido para revisión. Reservas, asistencias,
-                                canjes, participaciones, premios y pagos están
-                                deshabilitados.
-                            </p>
-                            <p className="mt-2 font-medium">
-                                Publicado no significa habilitado para operar.
-                            </p>
-                        </aside>
-                    )}
+
                     {supportMode?.mode === 'manage' && (
                         <p className="mb-5 rounded-lg border border-border bg-surface p-4 text-sm">
                             Gestión editorial y rendimiento operativo. Las

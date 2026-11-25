@@ -127,7 +127,7 @@ export default function BenefitForm({ item, partners = [], locations = [] }: Pro
                             {Object.keys(form.errors).filter(key => key.startsWith('location_ids.')).map(key => <div key={key}>{error(key)}</div>)}
                         </div>
                     </Section>
-                    <Section id="publicacion" title="E. Imagen y publicación" description="Durante prelaunch, publicar el beneficio no garantiza su disponibilidad comercial. La vigencia, el acceso y las sedes mantienen sus propias reglas.">
+                    <Section id="publicacion" title="E. Imagen y publicación" description="La vigencia, el acceso y las sedes mantienen sus propias reglas.">
                         <div className="min-w-0 space-y-3 [&_img]:h-auto [&_img]:max-h-96 [&_img]:w-full [&_img]:object-contain">
                             <ImageUpload name="image" label="Imagen del beneficio" currentUrl={item?.imageUrl} error={form.errors.image || form.errors.image_upload || form.errors.image_remove} disabled={form.processing} onBusy={setUploading} onChange={(token, remove) => form.setData((data: any) => ({ ...data, image_upload: token, image_remove: remove }))} />
                             <p className="text-sm text-muted-foreground">Guarda el formulario para aplicar los cambios de imagen.</p>

@@ -1,8 +1,6 @@
 <?php
 
 namespace Tests\Feature;
-
-use App\Exceptions\PrelaunchOperationBlocked;
 use App\Models\{AuditLog, Challenge, JpHold, Location, Partner, RewardTransaction, Unlock, UnlockParticipation, User};
 use App\Services\UnlockParticipationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,19 +34,6 @@ class PartnerUnlockChallengeV3bTest extends TestCase
     private function challengeData(array $fields = []): array
     {
         return $fields + ['title' => 'Reto editorial', 'evidence_type' => 'SOCIAL_POST', 'qualification_type' => 'VALID_EVIDENCE', 'selection_type' => 'ALL_QUALIFIED', 'evaluation_mode' => 'CONTINUOUS', 'review_mode' => 'AUTOMATIC', 'participation_eligibility' => 'ALL_USERS', 'reward_eligibility' => 'ALL_USERS', 'reward_type' => 'MANUAL_PRIZE', 'manual_prize_description' => 'Premio propuesto', 'allowed_platforms' => ['instagram'], 'required_hashtags' => [], 'required_mentions' => []];
-    }
-
-    public function test_unlock_create_edit_preserve_omitted_locations_and_clear_only_when_explicit_during_prelaunch(): void
-    {
-        [$partner, $user, $location] = $this->business(); config(['jakawi.prelaunch_mode' => true]);
-        $base = '/partner/'.$partner->slug.'/desbloqueos'; $this->actingAs($user);
-        $this->post($base, $this->unlockData(['location_ids' => [$location->id], 'status' => 'ACTIVE', 'jp_deposit' => 900, 'partner_id' => 999]))->assertRedirect();
-        $unlock = Unlock::sole(); $this->assertSame(Unlock::DRAFT, $unlock->status); $this->assertSame(0, $unlock->jp_deposit); $this->assertSame($partner->id, $unlock->partner_id);
-        $this->get($base.'/'.$unlock->slug.'/editar')->assertInertia(fn (Assert $p) => $p->where('editable', true)->where('locationIds.0', $location->id));
-        $this->put($base.'/'.$unlock->slug, $this->unlockData(['title' => 'Sedes conservadas']))->assertSessionHasNoErrors();
-        $this->assertSame([$location->id], $unlock->locations()->pluck('locations.id')->all());
-        $this->put($base.'/'.$unlock->slug, $this->unlockData(['location_ids' => []]))->assertSessionHasNoErrors();
-        $this->assertSame([], $unlock->locations()->pluck('locations.id')->all());
     }
 
     public function test_foreign_locations_are_field_errors_and_do_not_partially_save(): void
@@ -116,19 +101,6 @@ class PartnerUnlockChallengeV3bTest extends TestCase
         }
     }
 
-    public function test_participation_whitelist_is_scoped_private_and_read_only_during_prelaunch(): void
-    {
-        [$partner, $actor] = $this->business(); $u = $this->proposal($partner, ['status' => Unlock::UNLOCKED]);
-        $member = User::factory()->create(['name' => 'Ana Pérez Privada']);
-        $p = UnlockParticipation::create(['unlock_id' => $u->id, 'user_id' => $member->id, 'status' => UnlockParticipation::CONFIRMED, 'confirmed_at' => now()]);
-        config(['jakawi.prelaunch_mode' => true]); $before = $p->fresh()->getAttributes();
-        $base = '/partner/'.$partner->slug.'/desbloqueos/'.$u->slug.'/participaciones';
-        $this->actingAs($actor)->get($base)->assertInertia(fn (Assert $page) => $page->component('partner/unlocks/participations')->where('participations.data.0.member_display_name', 'Ana P.')->where('participations.data.0.can_fulfill', false)->missing('participations.data.0.user_id')->missing('participations.data.0.user')->missing('participations.data.0.email')->missing('participations.data.0.fulfilled_by_user_id'));
-        $this->postJson($base.'/'.$p->id.'/cumplir')->assertStatus(423)->assertJsonPath('code', 'PRELAUNCH_OPERATION_BLOCKED');
-        try { app(UnlockParticipationService::class)->fulfill($p, $actor); $this->fail('PRELAUNCH service bypass'); } catch (PrelaunchOperationBlocked) {}
-        $this->assertSame($before, $p->fresh()->getAttributes()); $this->assertDatabaseCount('reward_transactions', 0);
-    }
-
     public function test_staff_cannot_access_editorial_or_participations_even_when_directly_invoked(): void
     {
         [$partner, $actor] = $this->business('staff'); $u = $this->proposal($partner, ['status' => Unlock::UNLOCKED]);
@@ -167,21 +139,6 @@ class PartnerUnlockChallengeV3bTest extends TestCase
             $this->assertSame($state, $p->fresh()->status);
         }
         $this->assertDatabaseCount('reward_transactions', 0);
-    }
-
-    public function test_challenge_editorial_creation_image_preview_and_submit_work_during_prelaunch(): void
-    {
-        [$partner, $actor] = $this->business('manager'); config(['jakawi.prelaunch_mode' => true]); Storage::fake('public'); config(['media.disk' => 'public']);
-        $base = '/partner/'.$partner->slug.'/retos'; $this->actingAs($actor)->post($base, $this->challengeData(['status' => 'open', 'review_status' => 'APPROVED']))->assertSessionHasNoErrors();
-        $c = Challenge::sole(); $this->assertSame('draft', $c->status); $this->assertSame('DRAFT', $c->review_status);
-        $this->get($base.'/'.$c->slug.'/editar')->assertInertia(fn (Assert $p) => $p->where('editable', true));
-        $this->post($base.'/'.$c->slug.'/imagen', ['image' => UploadedFile::fake()->image('reto.png')])->assertSessionHasNoErrors();
-        $this->assertNotNull($c->fresh()->hero_path);
-        $this->get($base.'/'.$c->slug.'/preview')->assertInertia(fn (Assert $p) => $p->where('preview', true)->where('canParticipate', false)->where('canSubmit', false));
-        $this->post($base.'/'.$c->slug.'/enviar')->assertSessionHasNoErrors(); $this->assertSame('SUBMITTED', $c->fresh()->review_status);
-        $this->put($base.'/'.$c->slug, $this->challengeData())->assertForbidden();
-        $this->post($base.'/'.$c->slug.'/imagen', ['image_remove' => true])->assertForbidden();
-        $this->assertNotNull($c->fresh()->hero_path);
     }
 
     public function test_challenge_states_and_requested_changes_match_backend_editability(): void

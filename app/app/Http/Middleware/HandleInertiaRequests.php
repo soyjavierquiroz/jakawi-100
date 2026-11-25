@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Middleware;
-
 use App\Services\SelectedCity;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -48,17 +47,7 @@ class HandleInertiaRequests extends Middleware
                 return $support ? ['id' => $support->id, 'label' => $request->user()->name.($support->partner_id ? ' / '.\App\Models\Partner::find($support->partner_id)?->name : ''), 'expiresAt' => $support->expires_at->toIso8601String(), 'mode' => $support->mode, 'actor' => \App\Models\User::find($support->actor_user_id)?->name, 'partner' => \App\Models\Partner::find($support->partner_id)?->name] : null;
             }),
             'partnerAccess' => fn () => $request->attributes->get('partner_access'),
-            'prelaunchMode' => \Inertia\Inertia::always((bool) config('jakawi.prelaunch_mode')),
             'showDemoBanner' => \Inertia\Inertia::always(fn () => \App\Models\AppSetting::showDemoBanner()),
-            'prelaunchPublic' => \Inertia\Inertia::always(
-                (bool) config('jakawi.prelaunch_mode') && $request->routeIs(
-                    'explore', 'benefits.*', 'experiences.*', 'social-challenges.*',
-                    'unlocks.*', 'landing-presentations.*', 'public-landings.*',
-                    'partners.*', 'locations.*', 'cities.*', 'programs.*',
-                    'membership.*', 'mi-jakawi', 'consumer.profile', 'member.profile.*',
-                    'redemptions.intent', 'redemptions.show',
-                ) && ! $request->routeIs('membership.register'),
-            ),
             'newAcquisitionAccount' => $request->user() && $request->session()->get('acquisition_new_user_id') === $request->user()->id,
             'accessEmailQueued' => (bool) $request->session()->get('acquisition_access_email_queued', false),
             'communityBubble' => \Inertia\Inertia::always(fn () => $request->routeIs(

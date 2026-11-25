@@ -1,0 +1,15 @@
+FROM sha256:7c6e9e9c5fa3a15bb5c8f905c277ea0b98310646b21741a91565ebe088a1dc1c AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/ /var/www/html/app/
+COPY --chown=www-data:www-data app/bootstrap/ /var/www/html/bootstrap/
+COPY --chown=www-data:www-data app/config/ /var/www/html/config/
+COPY --chown=www-data:www-data app/routes/ /var/www/html/routes/
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+RUN rm -f /var/www/html/app/Support/PrelaunchOperations.php /var/www/html/app/Exceptions/PrelaunchOperationBlocked.php /var/www/html/app/Http/Middleware/ProtectPrelaunchOperations.php /var/www/html/resources/js/pages/prelaunch-blocked.tsx /var/www/html/resources/js/pages/coming-soon.tsx /var/www/html/resources/js/components/prelaunch-notice.tsx /var/www/html/bootstrap/cache/config.php /var/www/html/bootstrap/cache/routes-*.php && find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;
+FROM sha256:3b8e24174bd6c9c7cd88bd0e2c3a1aaf8d09792bbbeab94aa81dac8f459bc288 AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\AuditLog;
 use App\Models\JpHold;
 use App\Models\OperationalAdjustment;
@@ -15,8 +14,6 @@ class JpLedgerService
 {
     public function socialChallengeCredit(ChallengeRewardGrant $grant): RewardTransaction
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         if ($grant->reward_type !== 'JP' || (int) $grant->jp_amount <= 0) {
             throw ValidationException::withMessages(['grant' => 'El premio JP requiere una cantidad positiva.']);
         }
@@ -34,8 +31,6 @@ class JpLedgerService
 
     public function adminAdjustment(User $actor, User $beneficiary, string $type, int $amount, string $reason, string $key): OperationalAdjustment
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         if (! in_array($type, ['ledger_credit', 'ledger_debit'], true) || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => 'El ajuste JP requiere un monto entero positivo.']);
         }
@@ -73,8 +68,6 @@ class JpLedgerService
 
     public function forfeit(JpHold $hold, ?int $actorId = null): ?RewardTransaction
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($hold, $actorId): ?RewardTransaction {
             User::query()->lockForUpdate()->findOrFail($hold->user_id);
             $hold = JpHold::query()->lockForUpdate()->findOrFail($hold->id);
@@ -91,8 +84,6 @@ class JpLedgerService
 
     public function reverse(RewardTransaction $original, ?int $actorId = null, ?string $reason = null): RewardTransaction
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($original, $actorId, $reason): RewardTransaction {
             User::query()->lockForUpdate()->findOrFail($original->beneficiary_user_id);
             $original = RewardTransaction::query()->lockForUpdate()->findOrFail($original->id);

@@ -71,7 +71,7 @@ export default function BenefitOfferAdapter({
     heroDesktopSrcset,
     preview,
 }: BenefitOfferProps) {
-    const { prelaunchPublic } = usePage().props;
+
     const acquire = useAcquisition();
     const continueAction = useLandingAction();
     const sent = useRef(false);

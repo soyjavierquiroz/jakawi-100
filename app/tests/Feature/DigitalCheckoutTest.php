@@ -1,8 +1,6 @@
 <?php
 
 namespace Tests\Feature;
-
-use App\Exceptions\PrelaunchOperationBlocked;
 use App\Models\AnalyticsEvent;
 use App\Models\AppSetting;
 use App\Models\DigitalOrder;
@@ -39,8 +37,9 @@ class DigitalCheckoutTest extends TestCase
         $this->buyer = User::factory()->create();
         $this->admin = User::factory()->create(['is_admin' => true]);
         $pdf = app(DigitalFiles::class)->store($this->pdf('product'), 'products');
-        $this->product = DigitalProduct::create(['partner_id' => Partner::where('slug', 'jakawi-digital')->value('id'), 'name' => 'PDF QA', 'slug' => 'pdf-qa', 'status' => 'published', 'public_price' => '20.00', 'member_price' => '12.50', 'currency' => 'BOB', 'file_path' => $pdf['path'], 'file_sha256' => $pdf['sha256']]);
+        $this->product = DigitalProduct::create(['partner_id' => Partner::where('slug', 'jakawi-digital')->value('id'), 'name' => 'PDF QA', 'slug' => 'gluteo-perfecto', 'status' => 'published', 'public_price' => '20.00', 'member_price' => '12.50', 'currency' => 'BOB', 'file_path' => $pdf['path'], 'file_sha256' => $pdf['sha256']]);
         $this->collection();
+        app(\App\Services\DigitalSaleAvailability::class)->configure($this->product,true,true,$this->admin->id);
     }
 
     private function pdf(string $text = 'statement'): UploadedFile
@@ -77,7 +76,7 @@ class DigitalCheckoutTest extends TestCase
         $this->product->update(['public_price' => '30.00']);
         $this->assertSame($order->id, $this->order()->id);
         $this->assertSame('20.00', $order->fresh()->amount);
-        $this->actingAs($this->buyer)->post('/productos-digitales/pdf-qa/comprar', ['amount' => '0.01'])->assertSessionHasErrors('amount');
+        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar', ['amount' => '0.01'])->assertSessionHasErrors('amount');
     }
 
     public function test_active_and_expired_membership_prices_use_real_policy(): void
@@ -111,7 +110,7 @@ class DigitalCheckoutTest extends TestCase
     public function test_unconfigured_qr_prevents_order_without_writes(): void
     {
         AppSetting::where('key', DigitalCollection::KEY)->delete();
-        $this->actingAs($this->buyer)->post('/productos-digitales/pdf-qa/comprar')->assertStatus(422);
+        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(422);
         $this->assertDatabaseCount('digital_orders', 0);
         $this->actingAs($this->admin)->get('/admin/digital/cobro')->assertOk();
     }
@@ -119,7 +118,7 @@ class DigitalCheckoutTest extends TestCase
     public function test_account_and_currency_must_match(): void
     {
         $this->product->update(['currency' => 'USD']);
-        $this->actingAs($this->buyer)->post('/productos-digitales/pdf-qa/comprar')->assertStatus(422);
+        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(422);
     }
 
     public function test_pending_has_no_access_then_confirm_creates_one_grant_and_download_survives_expiry(): void
@@ -242,36 +241,9 @@ class DigitalCheckoutTest extends TestCase
         $this->assertSame($old, $order->fresh()->file_path);
     }
 
-    public function test_prelaunch_blocks_routes_services_direct_models_and_downloads(): void
-    {
-        $order = $this->order();
-        $p = $this->payment($order);
-        app(DigitalCheckout::class)->confirm($p, $this->admin, $this->evidence());
-        $grant = $order->access()->first();
-        config(['jakawi.prelaunch_mode' => true]);
-        $this->actingAs($this->buyer)->postJson('/productos-digitales/pdf-qa/comprar')->assertStatus(423);
-        $this->get('/mi-jakawi/productos-digitales/accesos/'.$grant->id.'/pdf')->assertStatus(423);
-        $this->actingAs($this->admin)->postJson('/admin/digital/pagos/'.$p->id.'/confirmar')->assertStatus(423);
-        $this->postJson('/admin/digital/accesos/'.$grant->id.'/reintentar')->assertStatus(423);
-        try {
-            app(DigitalCheckout::class)->deliver($grant, $this->admin);
-            $this->fail();
-        } catch (PrelaunchOperationBlocked) {
-            $this->assertTrue(true);
-        }
-        try {
-            $order->update(['amount' => '1.00']);
-            $this->fail();
-        } catch (PrelaunchOperationBlocked) {
-            $this->assertTrue(true);
-        }
-        $this->get('/admin/productos-digitales')->assertOk();
-        $this->get('/productos-digitales/pdf-qa')->assertOk();
-    }
-
     public function test_admin_staff_permissions_and_unauthenticated_buy(): void
     {
-        $this->post('/productos-digitales/pdf-qa/comprar')->assertRedirect(route('login'));
+        $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect(route('login'));
         $staff = User::factory()->create();
         $staff->partners()->attach($this->product->partner_id,['role' => 'staff']);
         foreach (['/admin/digital/cobro', '/admin/digital/pedidos', '/admin/productos-digitales'] as $url) {
@@ -283,13 +255,13 @@ class DigitalCheckoutTest extends TestCase
     public function test_admin_product_publication_and_private_pdf_upload(): void
     {
         $this->actingAs($this->admin)->post('/admin/productos-digitales', [
-            'name'=>'Nuevo PDF QA','slug'=>'nuevo-pdf-qa','status'=>'published','currency'=>'BOB',
+            'name'=>'Nuevo PDF QA','slug'=>'nuevo-gluteo-perfecto','status'=>'published','currency'=>'BOB',
             'public_price'=>'15.00','member_price'=>'10.00','description'=>'Solo QA',
             'support_information'=>'QA','access_terms'=>'Solo pruebas','pdf'=>$this->pdf('new-product'),'cover'=>UploadedFile::fake()->image('cover.jpg'),
         ])->assertRedirect('/admin/productos-digitales');
-        $p=DigitalProduct::where('slug','nuevo-pdf-qa')->firstOrFail();
+        $p=DigitalProduct::where('slug','nuevo-gluteo-perfecto')->firstOrFail();
         Storage::disk('digital-private')->assertExists($p->file_path);
-        $this->get('/admin/productos-digitales/nuevo-pdf-qa/pdf')->assertOk();
+        $this->get('/admin/productos-digitales/nuevo-gluteo-perfecto/pdf')->assertOk();
     }
     public function test_admin_qr_configuration_accepts_shared_account_and_preserves_membership_settings(): void
     {
@@ -330,7 +302,7 @@ class DigitalCheckoutTest extends TestCase
             $this->assertSame($qrs->settings($this->product)[$active?'member':'public']['qr_path'],$order->collection_snapshot['qr_path']);
             $this->assertArrayNotHasKey($active?'public':'member',$order->collection_snapshot);
             $this->actingAs($buyer)->get('/mi-jakawi/productos-digitales/pedidos/'.$order->reference.'/qr')->assertOk()->assertStreamedContent(Storage::disk('digital-private')->get($order->collection_snapshot['qr_path']));
-            $this->post('/productos-digitales/pdf-qa/comprar',['qr_tier'=>'member','member_at_purchase'=>true,'amount'=>'0.01'])->assertSessionHasErrors(['qr_tier','member_at_purchase','amount']);
+            $this->post('/productos-digitales/gluteo-perfecto/comprar',['qr_tier'=>'member','member_at_purchase'=>true,'amount'=>'0.01'])->assertSessionHasErrors(['qr_tier','member_at_purchase','amount']);
             if ($kind==='standard') {
                 $this->travel(2)->minutes();
                 $this->assertFalse($buyer->hasActiveMembership());
@@ -365,7 +337,7 @@ class DigitalCheckoutTest extends TestCase
         foreach(['public','member'] as $tier) $qrs->save($this->product,$tier,null,true,$this->admin->id);
         $this->product->update(['currency'=>'USD']);$this->product->update(['currency'=>'BOB']);
         foreach(['public','member'] as $tier) $this->assertFalse($qrs->verified($this->product,$tier));
-        $this->actingAs($this->buyer)->post('/productos-digitales/pdf-qa/comprar')->assertStatus(422);
+        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(422);
         $this->assertDatabaseCount('digital_orders',0);
         $this->actingAs($this->admin)->post('/admin/digital/cobro',$data+['qr'=>UploadedFile::fake()->image('LEGACY-NOT-ALLOWED.png')])->assertSessionHasErrors('qr');
     }
@@ -382,7 +354,7 @@ class DigitalCheckoutTest extends TestCase
         Membership::create(['user_id'=>$this->buyer->id,'status'=>'active','type'=>'pioneer','starts_at'=>now()->subDay(),'ends_at'=>now()->subHour(),'amount_paid'=>'100.00']);
         config(['jakawi.membership.official_launch_date'=>null]);
         $gift = app(\App\Services\DigitalGifts::class)->backfillWelcome($this->buyer);
-        $this->actingAs($this->buyer)->get('/productos-digitales/pdf-qa')->assertInertia(fn ($p) => $p->where('giftAction.kind','welcome')->where('canCollect',true)->etc());
+        $this->actingAs($this->buyer)->get('/productos-digitales/gluteo-perfecto')->assertInertia(fn ($p) => $p->where('giftAction.kind','welcome')->where('canCollect',true)->etc());
         $order = $this->order();
         $this->assertSame('29.00',$order->amount);
         $this->assertSame('member',$order->collection_snapshot['qr_tier']);

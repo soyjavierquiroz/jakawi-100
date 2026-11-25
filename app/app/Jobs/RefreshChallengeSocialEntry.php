@@ -1,6 +1,5 @@
 <?php
 namespace App\Jobs;
-
 use App\Integrations\ShareContest\InspectionException;
 use App\Integrations\ShareContest\Inspector;
 use App\Models\ChallengeSocialEntry;
@@ -21,8 +20,6 @@ class RefreshChallengeSocialEntry implements ShouldQueue {
     public function backoff(): array { return [15,30,60,120,240]; }
     public function __construct(public int $entryId, public bool $final = false, public bool $interactive = false) { $this->onConnection('database')->onQueue($interactive ? 'social-interactive' : 'social'); }
     public function handle(Inspector $inspector, ChallengeService $service, ?SocialEntryRules $rules = null): void {
-        if (\App\Support\PrelaunchOperations::blocked()) { return; }
-
         $rules ??= app(SocialEntryRules::class);
         $entry = ChallengeSocialEntry::find($this->entryId);
         if (!$entry) return;

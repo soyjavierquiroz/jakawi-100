@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\{AuditLog, AppSetting, DigitalAccessGrant, DigitalGift, DigitalProduct, Membership, User};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -11,14 +10,14 @@ class DigitalGifts
 {
     public function enabled(): bool
     {
-        return config('digital_gifts.enabled') && ! config('jakawi.prelaunch_mode');
+        return (bool) config('digital_gifts.enabled');
     }
 
     public const COURTESY_KEY = 'digital_welcome_courtesy_v1';
 
     public function welcomeEnabled(): bool
     {
-        return $this->enabled() || (config('jakawi.prelaunch_mode') && config('digital_gifts.welcome_prelaunch_enabled'));
+        return $this->enabled() || (($this->courtesy()['enabled'] ?? false) === true);
     }
 
     public function assertKindEnabled(string $kind): void
@@ -52,20 +51,6 @@ class DigitalGifts
                 'membership_id' => $membership->id, 'granted_at' => now(),
             ]);
         });
-    }
-
-    public function welcomeAccessAllowed(DigitalAccessGrant $access): bool
-    {
-        if (! $this->welcomeEnabled() || $access->source !== 'gift' || $access->digital_order_id !== null) return false;
-        if ($access->exists) {
-            return DigitalGift::where('kind', 'welcome')->where('status', 'claimed')->where('user_id', $access->user_id)
-                ->where('digital_product_id', $access->digital_product_id)->where('digital_access_grant_id', $access->id)->exists();
-        }
-        $product = DigitalProduct::find($access->digital_product_id);
-        return $product && $this->eligible($product, 'welcome')
-            && $access->gift_file_path === $product->file_path && $access->gift_file_sha256 === $product->file_sha256
-            && User::find($access->user_id)?->hasActiveMembership()
-            && DigitalGift::where('kind', 'welcome')->where('status', 'pending')->where('user_id', $access->user_id)->exists();
     }
 
     public function assertEnabled(): void

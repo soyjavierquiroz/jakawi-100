@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\{DigitalProduct, LandingPresentation, Partner};
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +15,7 @@ class GluteoPerfectoVisibility
             $landing = LandingPresentation::where('slug', 'gluteo-perfecto')->lockForUpdate()->sole();
             abort_unless($partner->name === 'JAKAWI Digital' && $product->partner_id === $partner->id && $product->name === 'Glúteo Perfecto' && $landing->subject_type === $product->getMorphClass() && $landing->subject_id === $product->id, 409);
             abort_unless(! $requireLiveIds || [$partner->id, $product->id, $landing->id] === [29, 1, 24], 409);
-            abort_unless(config('jakawi.prelaunch_mode') && $product->public_price === null && $product->member_price === null && ! $product->file_path && count($landing->editorial_blocks ?? []) === 11, 409);
+            abort_unless($product->public_price === null && $product->member_price === null && ! $product->file_path && count($landing->editorial_blocks ?? []) === 11, 409);
             $blocks = $landing->editorial_blocks;
             foreach ($blocks as &$block) {
                 if ($block['type'] === 'hero') {

@@ -1,8 +1,6 @@
 <?php
 
 namespace Tests\Feature;
-
-use App\Exceptions\PrelaunchOperationBlocked;
 use App\Models\{Benefit, Experience, ExperienceReservation, ExperienceSession, Location, Partner, Redemption, User};
 use App\Services\{ExperienceCheckInService, ExperiencePublication, ExperienceReservationService, RedemptionService};
 use DomainException;
@@ -212,18 +210,6 @@ class PartnerOperationsV3aTest extends TestCase
         $this->post($url, ['pin' => '123456'])->assertInertia(fn (Assert $p) => $p->where('message', 'Canje confirmado correctamente.'));
         $other = Partner::factory()->published()->create(); $actor->partners()->attach($other, ['role' => 'staff']);
         $this->post('/partner/'.$other->slug.'/validar', ['code' => $r->code, 'pin' => '123456'])->assertForbidden()->assertInertia(fn (Assert $p) => $p->missing('result'));
-    }
-
-    public function test_prelaunch_blocks_new_outcome_service_and_preserves_read_only_lookup(): void
-    {
-        [$r, $partner, $actor] = $this->redemption();
-        $before = $r->fresh()->getAttributes(); config(['jakawi.prelaunch_mode' => true]);
-        try { app(RedemptionService::class)->confirmWithOutcome($r->code, '123456'); $this->fail('PRELAUNCH bypass'); } catch (PrelaunchOperationBlocked) {}
-        $this->assertSame($before, $r->fresh()->getAttributes());
-        $this->actingAs($actor)->get('/partner/'.$partner->slug.'/validar')->assertOk();
-        $this->get('/partner/'.$partner->slug.'/reservas')->assertOk();
-        $this->withHeaders(['X-Inertia' => 'true'])->post('/partner/'.$partner->slug.'/validar', ['code' => $r->code, 'pin' => '123456'])->assertRedirect()->assertSessionHasErrors('prelaunch');
-        $this->assertSame($before, $r->fresh()->getAttributes());
     }
 
     public function test_finite_capacity_no_longer_has_obsolete_technical_blocker_but_operational_confirmation_still_required(): void

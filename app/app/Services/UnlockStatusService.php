@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\AuditLog;
 use App\Models\Unlock;
 use App\Models\UnlockStatusHistory;
@@ -13,12 +12,9 @@ class UnlockStatusService
 {
     public function transition(Unlock $unlock, string $to, ?User $actor = null, ?string $reason = null, array $allowed = []): Unlock
     {
-        if (! in_array($to, [Unlock::DRAFT, Unlock::PENDING_REVIEW, Unlock::APPROVED, Unlock::REJECTED], true)) { \App\Support\PrelaunchOperations::assertAllowed(); }
-
         return DB::transaction(function () use ($unlock, $to, $actor, $reason, $allowed) {
             $locked = Unlock::lockForUpdate()->findOrFail($unlock->id);
             $from = $locked->status;
-            if (! in_array($from, [Unlock::DRAFT, Unlock::PENDING_REVIEW, Unlock::APPROVED, Unlock::REJECTED], true)) { \App\Support\PrelaunchOperations::assertAllowed(); }
 
             if ($from === $to) {
                 return $locked;
@@ -69,8 +65,6 @@ class UnlockStatusService
 
     public function activateDueScheduled(): int
     {
-        if (\App\Support\PrelaunchOperations::blocked()) { return 0; }
-
         $count = 0;
 
         Unlock::query()
@@ -106,8 +100,6 @@ class UnlockStatusService
 
     public function expireMissedGoals(): int
     {
-        if (\App\Support\PrelaunchOperations::blocked()) { return 0; }
-
         $count = 0;
 
         Unlock::whereIn('status', [Unlock::ACTIVE, Unlock::SCHEDULED])

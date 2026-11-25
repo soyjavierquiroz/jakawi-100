@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services\Commercial;
-
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
@@ -15,8 +14,6 @@ final class CommercialClient
 
     public function send(string $raw, string $eventId): array
     {
-        \App\Support\PrelaunchOperations::assertEventAllowed($raw);
-
         if (! $this->ready()) {
             return ['sent' => false, 'retry' => true, 'http' => null, 'code' => 'CONFIG_UNAVAILABLE'];
         }

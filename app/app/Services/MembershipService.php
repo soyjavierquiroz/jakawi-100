@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\Membership;
 use App\Models\ChallengeParticipation;
 use App\Models\User;
@@ -13,8 +12,6 @@ class MembershipService
 {
     public function activate(User $user, User $activatedBy, ?CarbonInterface $startsAt = null, ?string $paymentMethod = null, ?string $paymentReference = null, ?string $notes = null, ?string $amountPaid = null): Membership
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         $membership = DB::transaction(function () use ($user, $activatedBy, $startsAt, $paymentMethod, $paymentReference, $notes, $amountPaid): Membership {
             $lockedUser = User::query()->lockForUpdate()->findOrFail($user->getKey());
 
@@ -49,8 +46,6 @@ class MembershipService
 
     public function cancel(Membership $membership): Membership
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
-
         return DB::transaction(function () use ($membership): Membership {
             $locked = Membership::query()->lockForUpdate()->findOrFail($membership->getKey());
             User::query()->lockForUpdate()->findOrFail($locked->user_id);

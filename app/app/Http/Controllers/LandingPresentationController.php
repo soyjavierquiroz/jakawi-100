@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Enums\LandingTemplate;
 use App\Models\DigitalProduct;
 use App\Models\Benefit;
@@ -170,7 +169,7 @@ class LandingPresentationController extends Controller
             'noindex' => $presentation->default_scope !== 'ALL' || $preview,
         ];
         $shared['landingSeo'] = ! $preview && ! $stage && $presentation->status === 'PUBLISHED'
-            ? app(\App\Services\LandingSeo::class)->metadata($presentation, $subject, $shared['canonical'], $shared['noindex'] || (bool) config('jakawi.prelaunch_mode')) : null;
+            ? app(\App\Services\LandingSeo::class)->metadata($presentation, $subject, $shared['canonical'], $shared['noindex']) : null;
         $shared['landingSeoPrivate'] = $preview || (bool) $stage;
         if ($subject instanceof Unlock) {
             $copy = app(UnlockMarketingLandingPresenter::class)->present($subject, $presentation, $request);

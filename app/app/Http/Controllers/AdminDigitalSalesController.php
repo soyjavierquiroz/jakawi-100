@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\AppSetting;
 use App\Models\AuditLog;
 use App\Models\DigitalAccessGrant;
@@ -10,7 +9,6 @@ use App\Models\DigitalPayment;
 use App\Services\DigitalCheckout;
 use App\Services\DigitalCollection;
 use App\Services\DigitalFiles;
-use App\Support\PrelaunchOperations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -42,7 +40,7 @@ class AdminDigitalSalesController extends Controller
             AuditLog::create(['actor_user_id' => $request->user()->id, 'action' => 'digital_collection_configured', 'subject_type' => AppSetting::class, 'subject_id' => AppSetting::where('key', DigitalCollection::KEY)->value('id'), 'metadata' => ['version' => $v['version'], 'enabled' => $v['enabled']]]);
         });
 
-        return back()->with('success', 'Configuración digital guardada. PRELAUNCH sigue aplicándose.');
+        return back()->with('success', 'Configuración digital guardada.');
     }
 
     public function index(Request $request)
@@ -62,7 +60,7 @@ class AdminDigitalSalesController extends Controller
 
     public function show(DigitalOrder $order)
     {
-        return Inertia::render('admin/digital/order', ['order' => $order->toArray() + ['collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency', 'account_key'])), 'buyer' => $order->user->only('name', 'email'), 'payments' => $order->payments()->orderByDesc('id')->get(), 'access' => $order->access], 'audit' => AuditLog::where('subject_type', DigitalOrder::class)->where('subject_id', $order->id)->latest('id')->get(['id', 'action', 'metadata', 'created_at']), 'prelaunch' => ! PrelaunchOperations::digitalAllowed($order), 'refundBlocked' => PrelaunchOperations::blocked()]);
+        return Inertia::render('admin/digital/order', ['order' => $order->toArray() + ['collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency', 'account_key'])), 'buyer' => $order->user->only('name', 'email'), 'payments' => $order->payments()->orderByDesc('id')->get(), 'access' => $order->access], 'audit' => AuditLog::where('subject_type', DigitalOrder::class)->where('subject_id', $order->id)->latest('id')->get(['id', 'action', 'metadata', 'created_at'])]);
     }
 
     public function file(DigitalPayment $payment, string $kind, DigitalFiles $files)
@@ -76,7 +74,6 @@ class AdminDigitalSalesController extends Controller
 
     public function confirm(Request $request, DigitalPayment $payment, DigitalCheckout $checkout)
     {
-        PrelaunchOperations::assertDigitalAllowed($payment);
         $data = $request->validate(['bank_reference' => 'required|string|max:150|regex:/^[A-Za-z0-9][A-Za-z0-9._-]{3,149}$/', 'bank_date' => 'required|date_format:Y-m-d|before_or_equal:today', 'received_amount' => 'required|decimal:0,2|gt:0', 'currency' => 'required|in:BOB,USD', 'account_key' => 'required|string|size:64', 'bank_verified' => 'accepted', 'statement' => 'required|file|mimes:pdf|max:25600']);
         $data['statement'] = $request->file('statement');
         $checkout->confirm($payment, $request->user(), $data);
@@ -86,7 +83,6 @@ class AdminDigitalSalesController extends Controller
 
     public function reject(Request $request, DigitalPayment $payment, DigitalCheckout $checkout)
     {
-        PrelaunchOperations::assertDigitalAllowed($payment);
         $data = $request->validate(['reason' => 'required|string|max:3000']);
         $checkout->reject($payment, $request->user(), $data['reason']);
 
@@ -102,7 +98,6 @@ class AdminDigitalSalesController extends Controller
 
     public function refund(Request $request, DigitalOrder $order, DigitalCheckout $checkout)
     {
-        PrelaunchOperations::assertAllowed();
         $data = $request->validate(['reference' => 'required|string|max:150', 'reason' => 'required|string|max:3000', 'refund_completed' => 'accepted']);
         $checkout->refund($order, $request->user(), $data['reference'], $data['reason']);
 

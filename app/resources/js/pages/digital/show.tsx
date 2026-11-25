@@ -6,7 +6,7 @@ import {
 } from '@/components/digital-card';
 export default function DigitalShow({
     product: p,
-    prelaunch,
+
     canCollect,
     authenticated,
     memberActive,
@@ -14,7 +14,7 @@ export default function DigitalShow({
     giftAction,
 }: {
     product: DigitalProductData;
-    prelaunch: boolean;
+
     canCollect: boolean;
     authenticated: boolean;
     memberActive: boolean;
@@ -107,8 +107,7 @@ export default function DigitalShow({
                             </p>
                         ))}
                         {giftAction?.kind !== 'welcome' && <p className="mt-6 rounded-xl border border-border bg-surface p-4">
-                            {giftAction?.kind === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : giftAction?.kind ? 'Confirma tu regalo para guardarlo en Mis productos digitales.' : p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.' : prelaunch && !canCollect
-                                ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.'
+                            {giftAction?.kind === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : giftAction?.kind ? 'Confirma tu regalo para guardarlo en Mis productos digitales.' : p.coming_soon ? 'Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.'
                                 : canCollect
                                   ? 'Pago por QR con verificación bancaria.'
                                   : 'Cobro pendiente de configurar'}

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\DigitalProduct;
 use App\Models\LandingPresentation;
 use Illuminate\Http\Request;
@@ -22,7 +21,6 @@ class DigitalProductLandingPresenter
     {
         $giftAction = $preview ? ['kind' => null] : app(DigitalGifts::class)->context($request, $product);
         $comingSoon = $product->isComingSoon();
-        $prelaunch = (bool) config('jakawi.prelaunch_mode');
         $canBuy = ! $preview && app(DigitalSaleAvailability::class)->canSell($product);
         return [
             'giftAction' => $giftAction,
@@ -32,11 +30,11 @@ class DigitalProductLandingPresenter
             'blocks' => app(LandingEditorialBlocks::class)->present($presentation->editorial_blocks ?? [], $preview, $product->landingPresentations()->where('status', 'PUBLISHED')->whereJsonContains('editorial_blocks', [['type' => 'hero', 'availability' => 'COMING_SOON']])->exists()),
             'heroUrl' => app(MediaUrl::class)->url($presentation->hero_path ?: $product->cover_path, 'hero'),
             'vsl' => app(LandingVideoConfiguration::class)->forPresentation($presentation),
-            'preview' => $preview, 'noindex' => $preview || $prelaunch, 'prelaunch' => $prelaunch,
+            'preview' => $preview, 'noindex' => $preview,
             'authenticated' => $request->user() !== null, 'canBuy' => (bool) $canBuy,
             'memberActive' => $request->user()?->hasActiveMembership() ?? false,
             'checkoutUrl' => route('digital.orders.start', $product, false),
-            'notice' => $giftAction['kind'] ? ($giftAction['kind'] === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : 'Confirma tu regalo para guardarlo en Mis productos digitales.') : ($comingSoon ? 'Disponible próximamente. Presentación editorial en revisión; las compras y la entrega todavía no están habilitadas.' : ($preview ? 'Vista previa editorial. Las compras están desactivadas.' : ($prelaunch && ! $canBuy ? 'Estamos en prelanzamiento. Las compras todavía no están habilitadas.' : ($canBuy ? 'Pago por QR de JAKAWI Digital, con verificación bancaria. Descarga privada después de confirmar el pago.' : 'La compra todavía no está disponible.')))),
+            'notice' => $giftAction['kind'] ? ($giftAction['kind'] === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : 'Confirma tu regalo para guardarlo en Mis productos digitales.') : ($comingSoon ? 'Disponible próximamente. Presentación editorial en revisión; las compras y la entrega todavía no están habilitadas.' : ($preview ? 'Vista previa editorial. Las compras están desactivadas.' : ($canBuy ? 'Pago por QR de JAKAWI Digital, con verificación bancaria. Descarga privada después de confirmar el pago.' : 'La compra todavía no está disponible.'))),
         ];
     }
 }

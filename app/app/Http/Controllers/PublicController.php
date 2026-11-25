@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Discovery\DiscoveryContext;
 use App\Discovery\DiscoveryService;
 use App\Discovery\OpportunityType;
@@ -32,12 +31,6 @@ class PublicController extends Controller
 {
     public function home(Request $request, AnalyticsTracker $analytics, DiscoveryService $discovery, SelectedCity $selectedCity): Response
     {
-        if (config('jakawi.prelaunch_mode')) {
-            return Inertia::render('coming-soon', [
-                'community' => app(\App\Services\CityCommunity::class)->data($request, 'home'),
-            ]);
-        }
-
         $analytics->homeViewed();
         $city = $selectedCity->resolve($request);
         $membership = $request->user()?->activeMembership()->first();
@@ -268,7 +261,6 @@ class PublicController extends Controller
 
     public function reserve(Request $request, Experience $experience, AnalyticsTracker $analytics): RedirectResponse
     {
-        \App\Support\PrelaunchOperations::assertAllowed();
         abort_unless(app(ExperiencePublication::class)->canOperate($experience), 404);
         $method = $request->query('method', $experience->reservation_method);
         abort_unless($experience->catalog_visibility === 'legacy' || $method === $experience->reservation_method, 404);
