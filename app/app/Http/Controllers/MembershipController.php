@@ -60,6 +60,7 @@ class MembershipController extends Controller
         $challengePage = ListingPage::make(ChallengeParticipation::where('user_id', $user->id)->with(['challenge:id,slug,title,qualification_type,qualification_metric,qualification_target,reward_type,reward_jp_amount,manual_prize_description,selection_type', 'socialEntries:id,participation_id,likes,views,comments,validation_status', 'grant:id,participation_id,status,reward_type,jp_amount,benefit_id', 'grant.benefit:id,title'])->latest(), 50);
 
         return Inertia::render('mi-jakawi', [
+            'digitalProductCount' => \App\Models\DigitalAccessGrant::where('user_id', $user->id)->where('status', 'active')->whereNull('revoked_at')->distinct()->count('digital_product_id'),
             'hasWelcomeGift' => app(\App\Services\DigitalGifts::class)->pending($user) !== null,
             'community' => app(CityCommunity::class)->data($request, 'mi-jakawi'),
             'challengePagination' => array_diff_key($challengePage->toArray(), ['data' => true]),
@@ -110,7 +111,7 @@ class MembershipController extends Controller
                         'availability' => $props['availability'],
                         'access_label' => $benefit->requiresMembership()
                             ? ($props['hasActiveMembership'] ? 'Con tu membresía · Revisa las condiciones' : 'Requiere membresía activa')
-                            : 'Con tu cuenta gratuita · Revisa las condiciones',
+                            : 'Disponible con tu cuenta JAKAWI · Revisa las condiciones',
                     ];
                 }),
         ]);

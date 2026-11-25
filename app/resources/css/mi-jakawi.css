@@ -1,5 +1,7 @@
 /* Personal account only; preserve the shared consumer palette elsewhere. */
-.mi-jakawi { font-family: var(--font-discovery); }
+.mi-jakawi {
+    font-family: var(--font-discovery);
+}
 .mi-jakawi .mi-action,
 .mi-jakawi button.bg-brand {
     background: var(--action-solid);
@@ -46,5 +48,97 @@
         padding-inline: 12px;
     }
 }
-.mi-jakawi .text-success { color: var(--success-text); }
-.dark .mi-jakawi .text-success { color: var(--success-text); }
+.mi-jakawi .text-success {
+    color: var(--success-text);
+}
+.dark .mi-jakawi .text-success {
+    color: var(--success-text);
+}
+
+.mi-dashboard {
+    display: grid;
+    gap: 24px;
+}
+.mi-section {
+    margin-top: 24px;
+}
+.mi-primary > .mi-section:first-child,
+.mi-benefits > .mi-section,
+.mi-referral,
+.mi-secondary > .mi-section:first-child {
+    margin-top: 0;
+}
+.mi-section-title {
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.mi-panel {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface);
+}
+.mi-library {
+    display: grid;
+    gap: 16px;
+}
+.mi-library-icon {
+    display: grid;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--surface-muted);
+    color: var(--action-text);
+}
+.mi-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-align: center;
+}
+.mi-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+.mi-community {
+    margin-top: 24px;
+}
+.mi-jakawi .mi-community > section {
+    max-width: none;
+    border-radius: 20px;
+}
+@media (min-width: 1024px) {
+    .mi-dashboard {
+        grid-template-columns: minmax(0, 1fr) 340px;
+        column-gap: 28px;
+    }
+    .mi-primary {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .mi-benefits {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    .mi-referral {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    .mi-secondary {
+        grid-column: 2;
+        grid-row: 2;
+    }
+    .mi-secondary .mi-community {
+        margin-top: 24px;
+    }
+}
