@@ -8,7 +8,9 @@ grant existentes se conservan. El PDF y sus hashes permanecen privados.
 Desde la biblioteca, COM autentica y autoriza el DigitalAccessGrant. Genera un
 pase aleatorio de 256 bits, guarda solo su SHA256 en la caché de base de datos
 existente, TTL 60 segundos; consumo con lock atómico. La página de transferencia
-no-store envía el pase por POST a STORE con Referrer-Policy no-referrer. STORE
+no-store envía el pase por POST a STORE con Referrer-Policy strict-origin,
+sin ruta ni pase en el referer. Esto conserva Origin COM para validar el POST
+entre dominios (no-referrer lo convertiría en null en navegadores). STORE
 solo acepta Origin COM y consume por HTTPS autenticado con secreto compartido.
 La credencial cifrada de sesión nunca se envía al navegador: vive en la sesión
 PHP de STORE, cookie HttpOnly Secure SameSite=Lax, solo /gluteos/, máximo 8 h.

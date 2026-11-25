@@ -12,7 +12,7 @@ class HostedAppController extends Controller
         $token = $apps->issue($access);
         $entry = config('hosted_apps.apps.'.DigitalProduct::findOrFail($access->digital_product_id)->app_key.'.entry');
         return response()->view('digital-app-pass', compact('entry', 'token'))->withHeaders([
-            'Cache-Control' => 'private, no-store', 'Referrer-Policy' => 'no-referrer',
+            'Cache-Control' => 'private, no-store', 'Referrer-Policy' => 'strict-origin',
             'Content-Security-Policy' => "default-src 'none'; script-src 'unsafe-inline'; form-action https://jakawi.store; frame-ancestors 'none'; base-uri 'none'",
         ]);
     }

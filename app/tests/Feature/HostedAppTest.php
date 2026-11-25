@@ -96,7 +96,7 @@ class HostedAppTest extends TestCase
             $this->assertSame('ready',$grant->delivery_status);
             $url='/mi-jakawi/productos-digitales/accesos/'.$grant->id.'/app';
             $this->actingAs(User::factory()->create())->get($url)->assertForbidden();
-            $this->actingAs($this->buyer)->get($url)->assertOk()->assertHeader('Referrer-Policy','no-referrer')->assertSee('method="post"',false);
+            $this->actingAs($this->buyer)->get($url)->assertOk()->assertHeader('Referrer-Policy','strict-origin')->assertSee('method="post"',false);
             $token=$apps->issue($grant);
             $credential=$apps->consume($token,'gluteos')['credential'];
             $this->assertTrue($apps->check($credential,'gluteos'));
