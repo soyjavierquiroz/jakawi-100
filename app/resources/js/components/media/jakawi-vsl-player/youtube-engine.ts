@@ -118,6 +118,7 @@ export function createYoutubeEngine(
         source: { type: 'youtube'; url: string };
         origin: string;
         autoplay: boolean;
+        loop?: boolean;
         presentation?: unknown;
         onState(state: PlaybackState): void;
         onEvent?(event: VslEvent): void;
@@ -128,6 +129,7 @@ export function createYoutubeEngine(
     let alive = true;
     let player: YoutubePlayer | undefined;
     let audioPending = false;
+    let looping = false;
     let autoplayCancelled = false;
     let intent: 'autoplay' | 'manual' | null = null;
     let progress: ReturnType<typeof setInterval> | undefined;
@@ -260,7 +262,8 @@ export function createYoutubeEngine(
                                 hasPlayed: true,
                                 error: null,
                             });
-                            emit('playing');
+                            if (!looping) emit('playing');
+                            looping = false;
                             if (
                                 audioPending &&
                                 !state.muted &&
@@ -285,6 +288,12 @@ export function createYoutubeEngine(
                             update({ status: 'paused' });
                             emit('paused');
                         } else if (data === 0) {
+                            if (options.loop !== false) {
+                                looping = true;
+                                seek(0);
+                                play();
+                                return;
+                            }
                             clearPending();
                             intent = null;
                             audioPending = false;

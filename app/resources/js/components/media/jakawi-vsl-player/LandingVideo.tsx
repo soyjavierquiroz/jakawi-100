@@ -1,7 +1,7 @@
 import { JakawiVslPlayer } from './JakawiVslPlayer';
 import type { JakawiVslPlayerProps } from './types';
 
-export type LandingVideoConfig = Pick<JakawiVslPlayerProps, 'poster' | 'theme' | 'colors'> & {
+export type LandingVideoConfig = Pick<JakawiVslPlayerProps, 'poster' | 'theme' | 'colors' | 'loop'> & {
     source: Exclude<JakawiVslPlayerProps['source'], { type: 'development-fixture' }>;
     autoplay?: 'muted' | 'off';
     mode?: 'vsl';

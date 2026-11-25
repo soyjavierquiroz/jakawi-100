@@ -6,7 +6,7 @@ const { createYoutubeEngine, parseYoutubeId } = await import(
 );
 globalThis.document = { createElement: () => ({}) };
 const id = 'M7lc1UVf-VE';
-function setup(autoplay = true) {
+function setup(autoplay = true, loop = false) {
     let callbacks;
     let instances = 0;
     let actualPlayer;
@@ -67,6 +67,7 @@ function setup(autoplay = true) {
         source: { type: 'youtube', url: id },
         origin: 'http://localhost:8094',
         autoplay,
+        loop,
         onState() {},
         onEvent: (e) => events.push(e),
         loadApi: async () => ({ Player }),
@@ -289,4 +290,26 @@ test('course API navigation, mute and volume preserve position and readiness gat
         mute: false,
         volume: false,
     });
+});
+
+test('YouTube loop preserves audio and avoids repeated start/end measurements', async () => {
+    for (const muted of [true, false]) {
+        const f = setup(true, true);
+        const { player, callbacks } = await f.ready();
+        callbacks.onStateChange({ data: 1 });
+        f.engine.setMuted(muted);
+        f.engine.setVolume(0.6);
+        for (let i = 0; i < 2; i++) {
+            player.time = 20;
+            callbacks.onStateChange({ data: 0 });
+            assert.equal(player.time, 0);
+            assert.notEqual(f.engine.getState().status, 'ended');
+            callbacks.onStateChange({ data: 1 });
+            assert.equal(player.muted, muted);
+            assert.equal(player.volume, 60);
+        }
+        assert.equal(f.events.filter(e => e.type === 'playing').length, 1);
+        assert.equal(f.events.filter(e => e.type === 'ended').length, 0);
+        f.engine.dispose();
+    }
 });

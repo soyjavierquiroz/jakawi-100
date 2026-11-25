@@ -13,6 +13,7 @@ export function useVslPlayback({
     source,
     autoplay,
     mode = 'vsl',
+    loop = mode !== 'course',
     onEvent,
     framing,
 }: JakawiVslPlayerProps) {
@@ -46,6 +47,7 @@ export function useVslPlayback({
         const options = {
             origin: window.location.origin,
             autoplay: permitted,
+            loop,
             onState: setState,
             onEvent: (event: import('./types').VslEvent) =>
                 callbackRef.current?.(event),
@@ -82,7 +84,7 @@ export function useVslPlayback({
             engineRef.current = null;
             engine.dispose();
         };
-    }, [source.type, source.url, autoplay, mode]);
+    }, [source.type, source.url, autoplay, mode, loop]);
 
     return { state, videoRef, youtubeRef, engineRef };
 }

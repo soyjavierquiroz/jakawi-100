@@ -61,6 +61,7 @@ export function createHtml5Engine(
         development: boolean;
         autoplay: boolean;
         resetOnEnd?: boolean;
+        loop?: boolean;
         onState: (state: PlaybackState) => void;
         onEvent?: (event: VslEvent) => void;
     },
@@ -70,6 +71,7 @@ export function createHtml5Engine(
     let request = 0;
     let intent: 'autoplay' | 'manual' | 'audio' | null = null;
     let audioPending = false;
+    let looping = false;
     let autoplayAttempted = false;
     let expectedSource = '';
     let sourceUrl = '';
@@ -213,13 +215,15 @@ export function createHtml5Engine(
     });
     listen('playing', () => {
         if (video.paused || video.ended || !intent) return;
+        const resumed = state.status !== 'playing';
         update({
             status: 'playing',
             hasPlayed: true,
             muted: video.muted,
             error: null,
         });
-        emit('playing');
+        if (resumed && !looping) emit('playing');
+        looping = false;
         if (audioPending && !video.muted && video.volume > 0) {
             audioPending = false;
             emit('audio-activated');
@@ -248,6 +252,13 @@ export function createHtml5Engine(
     });
     listen('ended', () => {
         if (!video.ended) return;
+        // Native loop normally bypasses ended; retain a fallback for HLS/providers.
+        if (options.loop !== false) {
+            looping = true;
+            seek(0);
+            play();
+            return;
+        }
         ++request;
         intent = null;
         audioPending = false;
@@ -295,7 +306,7 @@ export function createHtml5Engine(
         );
         video.muted = true;
         video.defaultMuted = true;
-        video.loop = false;
+        video.loop = options.loop !== false;
         loadSource();
     } catch {
         fail({

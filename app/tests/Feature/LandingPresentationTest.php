@@ -35,7 +35,7 @@ class LandingPresentationTest extends TestCase
         $challenge = $this->challenge();
         $landing = $this->landing($challenge, 'video-config', ['status'=>'PUBLISHED']);
         $this->get('/l/video-config')->assertInertia(fn (Assert $page) => $page->where('vsl', null));
-        $config = ['source'=>['type'=>'youtube', 'url'=>'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing'=>'embedded-vertical'];
+        $config = ['source'=>['type'=>'youtube', 'url'=>'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing'=>'embedded-vertical', 'loop'=>false];
         $landing->update(['vsl'=>$config]);
         $this->get('/l/video-config')->assertInertia(fn (Assert $page) => $page->where('vsl', $config));
         $unlock = Unlock::create(['title'=>'Private video', 'slug'=>'private-video', 'origin'=>'JAKAWI', 'type'=>'BENEFIT', 'minimum_commitments'=>2, 'free_user_eligible'=>true, 'status'=>Unlock::ACTIVE]);
@@ -69,10 +69,13 @@ class LandingPresentationTest extends TestCase
         $challenge = $this->challenge();
         $admin = User::factory()->create(['is_admin'=>true]);
         $base = "/admin/retos/{$challenge->slug}/landings";
-        $config = ['source'=>['type'=>'youtube', 'url'=>'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing'=>'embedded-vertical'];
+        $config = ['source'=>['type'=>'youtube', 'url'=>'https://www.youtube.com/watch?v=hI-Ecy2D8pg'], 'framing'=>'embedded-vertical', 'loop'=>false];
         $this->actingAs($admin)->post($base, ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>$config])->assertRedirect();
         $landing = LandingPresentation::where('slug', 'admin-video')->firstOrFail();
         $this->assertSame($config, $landing->vsl);
+        $config['loop'] = true;
+        $this->put($base.'/admin-video', ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>$config])->assertRedirect();
+        $this->assertSame($config, $landing->fresh()->vsl);
         $this->put($base.'/admin-video', ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>['source'=>['type'=>'html', 'url'=>'javascript:alert(1)']]])->assertSessionHasErrors('vsl.source.type');
         $this->assertSame($config, $landing->fresh()->vsl);
         $this->put($base.'/admin-video', ['name'=>'Video', 'slug'=>'admin-video', 'vsl'=>null])->assertRedirect();

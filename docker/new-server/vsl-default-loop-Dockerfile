@@ -1,0 +1,11 @@
+FROM sha256:47bffb4d7df038b9203fe8fc66869f1dfc35a0814a7e2b3a5f80e6ced36819bc AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/Services/LandingVideoConfiguration.php /var/www/html/app/Services/LandingVideoConfiguration.php
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+FROM sha256:4dec01166fecc4e11a06cac10e41d20c51f654f85b6396ef854898d32ff87e3c AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

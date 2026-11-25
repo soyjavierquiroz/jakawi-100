@@ -31,7 +31,7 @@ class LandingVideoConfiguration
     {
         $url = ['nullable', 'string', 'url:https', 'max:2048', 'regex:~^https://[^\s<>"\x27]+$~i'];
         return [
-            'vsl' => ['nullable', 'min:1', 'array:source,mode,framing,autoplay,poster,theme,colors'],
+            'vsl' => ['nullable', 'min:1', 'array:source,mode,framing,autoplay,poster,theme,colors,loop'],
             'vsl.source' => ['required_with:vsl', 'array:type,url', function ($attribute, $source, $fail) {
                 if (!is_array($source) || !is_string($source['url'] ?? null)) return;
                 $url = parse_url($source['url']);
@@ -53,6 +53,7 @@ class LandingVideoConfiguration
             }],
             'vsl.source.type' => ['required_with:vsl', Rule::in(['youtube', 'mp4', 'bunny'])],
             'vsl.source.url' => ['required_with:vsl', ...$url],
+            'vsl.loop' => ['sometimes', 'boolean'],
             'vsl.mode' => ['sometimes', Rule::in(['vsl'])],
             'vsl.framing' => ['sometimes', Rule::in(['embedded-vertical', 'native-vertical', 'horizontal'])],
             'vsl.autoplay' => ['sometimes', Rule::in(['muted', 'off'])],

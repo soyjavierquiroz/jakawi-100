@@ -30,6 +30,11 @@ export function LandingVideoFields({ value, onChange, errors }: {
                     <option value="muted">Silenciada</option><option value="off">Desactivada</option>
                 </select>
             </label>
+            <label className="flex flex-col gap-1 text-sm font-bold">Al finalizar
+                <select className={control} value={value.loop === false ? 'replay' : 'loop'} onChange={event => onChange({ ...value, loop: event.target.value === 'loop' })}>
+                    <option value="loop">Bucle continuo (predeterminado)</option><option value="replay">Finalizar y mostrar «Volver a ver»</option>
+                </select>
+            </label>
         </>}
         {Object.entries(errors).filter(([key]) => key === 'vsl' || key.startsWith('vsl.')).map(([key, message]) => <p key={key} role="alert" className="text-sm text-danger">{message}</p>)}
     </fieldset>;

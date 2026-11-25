@@ -79,6 +79,7 @@ function setup(extra = {}, video = new Video()) {
         origin: 'http://127.0.0.1:8094',
         development: false,
         autoplay: true,
+        loop: false,
         onState: (state) => states.push(state),
         onEvent: (event) => events.push(event),
         ...extra,
@@ -577,4 +578,23 @@ void test('course keeps the actual completed time until replay seeks to zero', (
     video.confirm();
     assert.equal(video.currentTime, 0);
     engine.dispose();
+});
+
+void test('continuous playback uses native loop and preserves selected audio in ended fallback', () => {
+    for (const muted of [true, false]) {
+        const { video, engine, events, states } = setup({ loop: undefined });
+        assert.equal(video.loop, true);
+        video.ready(); video.confirm();
+        engine.setMuted(muted); engine.setVolume(0.6);
+        const before = states.length;
+        video.time = video.duration; video.ended = true; video.paused = true;
+        video.fire('ended'); video.confirm();
+        assert.equal(video.currentTime, 0);
+        assert.equal(video.muted, muted);
+        assert.equal(video.volume, 0.6);
+        assert.equal(engine.getState().status, 'playing');
+        assert.equal(events.filter(e => e.type === 'ended').length, 0);
+        assert(!states.slice(before).some(s => s.status === 'ended'));
+        engine.dispose();
+    }
 });

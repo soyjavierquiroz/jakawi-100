@@ -57,6 +57,8 @@ export interface JakawiVslPlayerProps {
     source: VslSource;
     /** VSL marketing by default; course uses manual playback and real navigation. */
     mode?: 'vsl' | 'course';
+    /** Continuous playback for VSL; courses retain manual completion. */
+    loop?: boolean;
     poster?: string;
     title?: string;
     autoplay?: 'muted' | 'off' | boolean;
