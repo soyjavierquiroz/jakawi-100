@@ -25,7 +25,7 @@ def guard_source():
  assert git('merge-base',BASE,'HEAD')==BASE
  remote=git('ls-remote','origin','refs/heads/main').split()[0]
  assert git('merge-base',remote,'HEAD')==remote
- allowed={'app/routes/digital.php', 'app/tests/Feature/PlrSimplePublishTest.php', 'docker/plr-catalog/test-importer.py', 'app/resources/js/pages/admin/digital/products.tsx', 'app/tests/Feature/HostedAppTest.php', 'docker/new-server/plr-simple-publish-release-control.py', 'app/resources/js/pages/admin/digital/settings.tsx', 'docs/operations/plr-catalog.md', 'app/app/Http/Controllers/AdminDigitalProductController.php', 'app/resources/js/pages/admin/digital/product-form.tsx', 'docker/plr-catalog/import-plr.py', 'app/routes/console.php', 'app/app/Http/Controllers/AdminDigitalSalesController.php', 'app/app/Services/DigitalAssetCleanup.php', 'app/app/Services/DigitalSaleAvailability.php', 'app/app/Services/DigitalProductQr.php', 'app/config/jakawi.php', 'app/app/Services/HostedApps.php'}
+ allowed={'app/tests/Feature/SharedDigitalAccountTest.php', 'app/tests/Feature/PlrCategoriesTest.php', 'app/routes/digital.php', 'app/tests/Feature/PlrSimplePublishTest.php', 'docker/plr-catalog/test-importer.py', 'app/resources/js/pages/admin/digital/products.tsx', 'app/tests/Feature/HostedAppTest.php', 'docker/new-server/plr-simple-publish-release-control.py', 'app/resources/js/pages/admin/digital/settings.tsx', 'docs/operations/plr-catalog.md', 'app/app/Http/Controllers/AdminDigitalProductController.php', 'app/resources/js/pages/admin/digital/product-form.tsx', 'docker/plr-catalog/import-plr.py', 'app/routes/console.php', 'app/app/Http/Controllers/AdminDigitalSalesController.php', 'app/app/Services/DigitalAssetCleanup.php', 'app/app/Services/DigitalSaleAvailability.php', 'app/app/Services/DigitalProductQr.php', 'app/config/jakawi.php', 'app/app/Services/HostedApps.php'}
  assert set(git('diff','--name-only',SOURCE_BASE,'HEAD').splitlines())<=allowed
  v=read('validation.json');assert v['result']=='PASS' and v['revision']==git('rev-parse','HEAD')
  assert v['manifest_sha256']==hashlib.sha256((R/'app/public/build/manifest.json').read_bytes()).hexdigest()
@@ -88,7 +88,7 @@ def verify():
  with urllib.request.urlopen('https://jakawi.com/up',timeout=20) as r:assert r.status==200
  before=read('protected-before.private.json');after=snapshot()
  products_before=before.pop('products');products_after=after.pop('products')
- allowed={row['product_id']:row['category'] for row in read('enrichment.json') if row['result']=='filled'}
+ allowed={'app/tests/Feature/SharedDigitalAccountTest.php', 'app/tests/Feature/PlrCategoriesTest.php', row['product_id']:row['category'] for row in read('enrichment.json') if row['result']=='filled'}
  for product in products_before:
   if product['id'] in allowed:
    assert product['category'] is None or product['category'].strip()=='', 'Owner category must be preserved'

@@ -35,7 +35,7 @@ class SharedDigitalAccountTest extends TestCase
     private function prepare(): void
     {
         $this->actingAs($this->admin)->post('/admin/digital/cobro',$this->settings())->assertSessionHasNoErrors();
-        foreach(['public','member'] as $tier)app(DigitalProductQr::class)->save($this->product,$tier,UploadedFile::fake()->image('QA-'.$tier.'.png'),true,$this->admin->id);
+        foreach(['public','member'] as $tier)app(DigitalProductQr::class)->save($this->product,$tier,UploadedFile::fake()->image('QA-'.$tier.'.png', $tier === 'public' ? 49 : 29, 10),true,$this->admin->id);
         app(\App\Services\DigitalSaleAvailability::class)->configure($this->product,true,true,$this->admin->id);
     }
     private function digital(): array

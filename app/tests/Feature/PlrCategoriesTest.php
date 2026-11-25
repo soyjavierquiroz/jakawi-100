@@ -35,7 +35,7 @@ class PlrCategoriesTest extends TestCase
         $p->update(['category'=>null]);
         app(HostedAppCatalogImport::class)->run($data+['fill_missing'=>true]);
         $this->assertSame('cocina-recetas',$p->fresh()->category);
-        $this->assertSame('fitness',DigitalProduct::findOrFail(1)->category);
+        $this->assertSame('fitness',DigitalProduct::where('app_key','gluteos')->sole()->category);
     }
 
     public function test_digital_categories_filter_unified_explore_and_are_not_physical_filters(): void
