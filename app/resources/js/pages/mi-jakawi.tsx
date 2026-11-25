@@ -4,7 +4,7 @@ import {
     CityCommunityCard,
     type CityCommunityData,
 } from '@/components/city-community-card';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     ChevronRight,
     BookOpen,
@@ -452,16 +452,21 @@ export default function MiJakawi({
 }
 
 function InviteAndEarn({ referral }: { referral: MemberReferral }) {
-    const share = () => {
-        router.post(
-            '/mi-jakawi/referral-shared',
-            {},
-            {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: () => undefined,
+    const recordShare = () => {
+        void fetch('/mi-jakawi/referral-shared', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'X-CSRF-TOKEN':
+                    document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]',
+                    )?.content ?? '',
             },
-        );
+        }).catch(() => undefined);
+    };
+    const share = () => {
+        recordShare();
         const text = 'Invita a tus amigos a vivir más la ciudad.';
         if (navigator.share)
             void navigator
@@ -475,18 +480,10 @@ function InviteAndEarn({ referral }: { referral: MemberReferral }) {
     };
     const copy = () => {
         void navigator.clipboard?.writeText(referral.link ?? '');
-        router.post(
-            '/mi-jakawi/referral-shared',
-            {},
-            { preserveState: true, preserveScroll: true },
-        );
+        recordShare();
     };
     const whatsapp = () => {
-        router.post(
-            '/mi-jakawi/referral-shared',
-            {},
-            { preserveState: true, preserveScroll: true },
-        );
+        recordShare();
         window.open(
             `https://wa.me/?text=${encodeURIComponent(`Invita a tus amigos a vivir más la ciudad. ${referral.link ?? ''}`)}`,
             '_blank',
