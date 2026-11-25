@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Importador PLR EvaFunnels. Solo stdlib; requiere operador con Docker/root."""
 import argparse
+import datetime
 import base64
 import fcntl
 import hashlib
@@ -20,6 +21,7 @@ import urllib.parse
 
 ROOT = Path('/srv/sites/jakawi.store')
 OPS = Path('/opt/sites/jakawi.store')
+BACKUPS = Path('/var/backups/jakawi.store')
 HERE = Path(__file__).resolve().parent
 MAX_BYTES = 512 * 1024 * 1024
 SLUG = r'[a-z0-9]+(?:-[a-z0-9]+)*'
@@ -138,6 +140,8 @@ def inspect(root, override=None):
     if set(extra) - {'slug','name','description','category','cover'}:
         raise ValueError('Metadatos auxiliares admitidos: slug, name, description, category, cover.')
     slug = extra.get('slug') or re.sub(r'[^a-z0-9]+','-',unicodedata.normalize('NFKD',vendor).encode('ascii','ignore').decode().lower()).strip('-')
+    if vendor == 'gluteo_perfeito_es' and (ROOT/'catalog/records/gluteos.json').is_file():
+        raise ValueError('Glúteos ya está adoptado en el catálogo: producto COM #1, /gluteos/. No se duplica ni sobrescribe; use --adopt-existing gluteos para comprobarlo.')
     if not re.fullmatch(SLUG, slug) or len(slug)>180 or slug in {'gluteos','gluteo-perfecto','healthz','apps','admin','api'} or vendor == 'gluteo_perfeito_es':
         raise ValueError('Slug reservado/inválido o Glúteos existente; no se duplicará.')
     name = extra.get('name') or meta.get('name') or manifest.get('name')
@@ -340,13 +344,131 @@ def import_one(source, args):
         print(json.dumps(dict(slug=slug,**com,url=old['url']),ensure_ascii=False))
 
 
+def adopt_existing(slug):
+    """One-time adoption of the manually installed first app; never calls a COM writer."""
+    if slug != 'gluteos':
+        raise ValueError('La adopción puntual solo corresponde a Glúteos existente.')
+    catalog=ROOT/'catalog'
+    record=catalog/'records/gluteos.json'
+    target=catalog/'apps/gluteos'
+    public=ROOT/'apps/gluteos/public'
+    route=catalog/'routes/gluteos.conf'
+    if record.exists():
+        data=json.loads(record.read_text())
+        if data.get('origin') != 'adopted_existing' or data.get('com',{}).get('product_id') != 1:
+            raise ValueError('Registro Glúteos inesperado; no se reemplaza.')
+        if data['installed_sha256'] != installed_hash(public):
+            raise ValueError('Archivos de Glúteos modificados desde la adopción; revisar explícitamente.')
+        for name,digest in data['protection_sha256'].items():
+            if hashlib.sha256((target/'access'/name).read_bytes()).hexdigest() != digest:
+                raise ValueError('Protección modificada; revisar antes de adoptar otra vez.')
+        if route.read_bytes() != (target/'route.conf').read_bytes():
+            raise ValueError('Ruta del catálogo modificada; revisar.')
+        print(json.dumps(dict(result='unchanged',slug=slug,product_id=1,url=data['url'])))
+        return
+    if target.exists() or route.exists():
+        raise ValueError('Hay preparación previa sin registro; revisar sin sobrescribir.')
+    config=json.loads((public/'config-override.json').read_text())['app']
+    index=(public/'index.php').read_text()
+    vendor=re.search(r"\$AFP_APP_SLUG\s*=\s*['\"]([^'\"]+)['\"]",index)
+    if not vendor or vendor[1] != 'gluteo_perfeito_es' or config.get('lang') != 'es':
+        raise ValueError('Identificador/idioma de la instalación no coincide con Glúteos español.')
+    php="<?php require 'vendor/autoload.php';$a=require 'bootstrap/app.php';$a->make(Illuminate\\Contracts\\Console\\Kernel::class)->bootstrap();echo json_encode((array)Illuminate\\Support\\Facades\\DB::table('digital_products')->find(1));"
+    product=json.loads(run(['docker','exec','-i','jakawi-app-1','php'],input=php))
+    if product.get('id') != 1 or product.get('app_key') != slug or product.get('delivery_type') != 'hosted_app':
+        raise ValueError('COM #1 no coincide; no se modifica ni crea ningún producto.')
+    nginx=(OPS/'nginx.conf').read_text()
+    # Extract the existing location blocks verbatim; do not invent new protection rules.
+    blocks=[]
+    for match in re.finditer(r'^    location [^\n]*gluteos[^\n]*\{',nginx,re.M):
+        start=match.start();depth=0;end=None
+        for i in range(nginx.index('{',start),len(nginx)):
+            if nginx[i]=='{':depth+=1
+            if nginx[i]=='}':
+                depth-=1
+                if depth==0:end=i+1;break
+        if end is None:raise ValueError('Bloque Nginx incompleto.')
+        blocks.append((start,end,nginx[start:end]))
+    if len(blocks)!=7 or 'include /opt/store/catalog/routes/*.conf;' not in nginx:
+        raise ValueError('Rutas base diferentes: revisar antes de mover protección.')
+    canonical='\n'.join(b[2].strip() for b in blocks)+'\n'
+    canonical=canonical.replace('/opt/store/access/gateway.php','/opt/store/catalog/apps/gluteos/access/gateway.php').replace('/opt/store/access/protected-sw.js','/opt/store/catalog/apps/gluteos/access/sw.js').replace('/opt/store/access/access-guard.js','/opt/store/catalog/apps/gluteos/access/access-guard.js')
+    for start,end,_ in reversed(blocks):nginx=nginx[:start]+nginx[end:]
+    pointer=OPS/'catalog'
+    if pointer.exists() or pointer.is_symlink():
+        raise ValueError('Alias operativo catalog ya existe; revisar antes de adoptar.')
+    stamp=datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    backup=BACKUPS/('adopt-gluteos-'+stamp)
+    backup.mkdir(parents=True,mode=0o700)
+    shutil.copy2(OPS/'nginx.conf',backup/'nginx.conf')
+    shutil.copytree(OPS/'access',backup/'access')
+    before=installed_hash(public)
+    old_names={'gateway.php':'gateway.php','access-guard.js':'access-guard.js','protected-sw.js':'sw.js'}
+    rollback="""#!/usr/bin/env python3
+from pathlib import Path
+import shutil,subprocess
+ops=Path(OPS_PATH);root=Path(ROOT_PATH);backup=Path(BACKUP_PATH)
+# Keep canonical files while Nginx's old workers finish in-flight requests.
+for name in ['gateway.php','access-guard.js','protected-sw.js']:
+ p=ops/'access'/name
+ if p.is_symlink():p.unlink()
+ shutil.copy2(backup/'access'/name,p)
+(ops/'nginx.conf').write_bytes((backup/'nginx.conf').read_bytes())
+p=root/'catalog/routes/gluteos.conf'
+if p.exists():shutil.move(str(p),str(backup/'reverted-route.conf'))
+subprocess.run(['docker','exec','jakawi-store-web-1','nginx','-t'],check=True)
+subprocess.run(['docker','exec','jakawi-store-web-1','nginx','-s','reload'],check=True)
+p=root/'catalog/records/gluteos.json'
+if p.exists():shutil.move(str(p),str(backup/'reverted-record.json'))
+# Protection files remain inactive for in-flight requests; public app files are untouched.
+p=ops/'catalog'
+if p.is_symlink():p.unlink()
+print('Rollback protegido PASS; COM, app pública y sesiones PHP conservados.')
+""".replace('OPS_PATH',repr(str(OPS))).replace('ROOT_PATH',repr(str(ROOT))).replace('BACKUP_PATH',repr(str(backup)))
+    (backup/'rollback.py').write_text(rollback)
+    try:
+        (target/'access').mkdir(parents=True)
+        for old,new in old_names.items():shutil.copy2(OPS/'access'/old,target/'access'/new)
+        (target/'route.conf').write_text(canonical)
+        permissions(target)
+        route.write_text(canonical);os.chmod(route,0o644)
+        (OPS/'nginx.conf').write_text(nginx)
+        run(['docker','exec','jakawi-store-web-1','nginx','-t'])
+        run(['docker','exec','jakawi-store-web-1','nginx','-s','reload'])
+        # Compatibility pointers for in-flight workers; one physical canonical source.
+        pointer.symlink_to(catalog,target_is_directory=True)
+        for old,new in old_names.items():
+            legacy=OPS/'access'/old
+            legacy.unlink()
+            legacy.symlink_to('../catalog/apps/gluteos/access/'+new)
+        assert installed_hash(public)==before,'Archivos públicos cambiaron durante adopción'
+        data=dict(slug=slug,name=product['name'],language=config['lang'],vendor_id=vendor[1],
+                  description=product.get('description'),short_description=product.get('short_description'),
+                  category=product.get('category'),cover_path=product.get('cover_path'),
+                  origin='adopted_existing',package_sha256=None,installed_sha256=before,
+                  state=product['status'],url='https://jakawi.store/gluteos/',
+                  com=dict(product_id=1,slug=product['slug'],status=product['status'],result='adopted_read_only'),
+                  protection_sha256={name:hashlib.sha256((target/'access'/name).read_bytes()).hexdigest() for name in old_names.values()},
+                  adoption_backup=str(backup))
+        write_json(record,data)
+    except BaseException:
+        run(['python3',str(backup/'rollback.py')])
+        raise
+    print(json.dumps(dict(result='adopted_existing',slug=slug,product_id=1,backup=str(backup),url=data['url']),ensure_ascii=False))
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('sources',nargs='+',type=Path,help='Uno o varios ZIP/carpetas; permite glob de shell.')
+    p.add_argument('sources',nargs='*',type=Path,help='Uno o varios ZIP/carpetas; permite glob de shell.')
+    p.add_argument('--adopt-existing',choices=['gluteos'],help='Adopta la instalación manual existente sin reinstalar ni escribir en COM.')
     p.add_argument('--metadata',type=Path,help='JSON opcional para UNA app: slug/name/description/category/cover; datos reales del propietario.')
     p.add_argument('--fill-missing',action='store_true',help='Completa solo campos vacíos de productos previamente importados; conserva ediciones, precios existentes y autorizaciones.')
     p.add_argument('--check',action='store_true',help='Valida sin instalar, conectar a COM ni modificar servicios.')
     args=p.parse_args()
+    if args.adopt_existing and (args.sources or args.metadata or args.fill_missing or args.check):
+        p.error('--adopt-existing se usa solo, sin paquetes ni otras operaciones.')
+    if not args.sources and not args.adopt_existing:
+        p.error('Indique paquetes o --adopt-existing gluteos.')
     if args.metadata and len(args.sources)!=1:
         p.error('--metadata requiere un solo paquete.')
     if not args.check and os.geteuid()!=0:
@@ -354,6 +476,13 @@ def main():
     ROOT.mkdir(exist_ok=True)
     with open('/tmp/jakawi-plr-import.lock','a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX)
+        if args.adopt_existing:
+            try:
+                adopt_existing(args.adopt_existing)
+                return 0
+            except Exception as e:
+                print('ERROR adopción: '+str(e),file=sys.stderr)
+                return 1
         errors=0
         for source in args.sources:
             try:

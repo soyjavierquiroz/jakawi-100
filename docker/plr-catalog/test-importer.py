@@ -80,8 +80,46 @@ class ImportTest(unittest.TestCase):
             self.assertEqual(data['description'],'Descripción original disponible')
             self.assertEqual(data['category'],'fitness')
             self.assertEqual(data['cover_source'],'https://pub-qa.r2.dev/cover.jpg')
+    def test_adopt_existing_is_read_only_idempotent_and_keeps_protection_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);persistent=root/'store';ops=root/'ops';ops.mkdir()
+            parent=persistent/'apps/gluteos';parent.mkdir(parents=True)
+            self.fixture(parent).rename(parent/'public')
+            public=parent/'public'
+            (public/'index.php').write_text((public/'index.php').read_text().replace('qa_es','gluteo_perfeito_es'))
+            (ops/'access').mkdir()
+            for old,new in [('gateway.php','gateway.php'),('access-guard.js','access-guard.js')]:
+                (ops/'access'/old).write_bytes((m.HERE/'templates'/new).read_bytes())
+            (ops/'access/protected-sw.js').write_text('existing protected worker')
+            (ops/'nginx.conf').write_text('''server {
+    location = /gluteos { return 308 https://jakawi.store/gluteos/; }
+    location = /gluteos/sw.js { alias /opt/store/access/protected-sw.js; }
+    location = /gluteos/manifest.json { try_files $uri =404; }
+    location = /gluteos/access-guard.js { alias /opt/store/access/access-guard.js; }
+    location ~ ^/gluteos/(?:index\\.php|_entry|_check|_health)?$ { fastcgi_param SCRIPT_FILENAME /opt/store/access/gateway.php; }
+    include /opt/store/catalog/routes/*.conf;
+    location /gluteos/ { return 404; }
+    location ~ ^/gluteos/(?:app\\.js|icon-(?:192|512)\\.png)$ { try_files $uri =404; }
+}''')
+            for d in ['records','routes','apps']:(persistent/'catalog'/d).mkdir(parents=True)
+            calls=[]
+            def stub(command,**kwargs):
+                calls.append((command,kwargs.get('input','')))
+                if command[-1]=='php':return json.dumps(dict(id=1,app_key='gluteos',delivery_type='hosted_app',name='Glúteos Perfectos',slug='gluteos-perfectos',status='published'))
+                return ''
+            before=m.installed_hash(public)
+            with patch.object(m,'ROOT',persistent),patch.object(m,'OPS',ops),patch.object(m,'BACKUPS',root/'backups'),patch.object(m,'run',stub):
+                m.adopt_existing('gluteos')
+                m.adopt_existing('gluteos')
+                with self.assertRaisesRegex(ValueError,'ya está adoptado'):m.inspect(public)
+            self.assertEqual(m.installed_hash(public),before)
+            self.assertEqual(len(list((root/'backups').iterdir())),1)
+            self.assertIn('/opt/store/catalog/apps/gluteos/access/gateway.php',(persistent/'catalog/routes/gluteos.conf').read_text())
+            self.assertNotIn('location = /gluteos',(ops/'nginx.conf').read_text())
+            self.assertEqual((ops/'access/gateway.php').resolve(),persistent/'catalog/apps/gluteos/access/gateway.php')
+            self.assertTrue(all('hosted-app:import' not in command for command,_ in calls))
     def test_real_gluteos_cannot_be_duplicated(self):
-        with self.assertRaisesRegex(ValueError,'no se duplicará'):
+        with self.assertRaisesRegex(ValueError,'no se duplicará|ya está adoptado'):
             m.inspect(Path('/srv/sites/jakawi.store/apps/gluteos/public'))
 
 if __name__=='__main__': unittest.main()

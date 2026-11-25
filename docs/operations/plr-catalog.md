@@ -62,6 +62,36 @@ Para publicar: registrar legítimamente jakawi.store en EvaFunnels; comprobar sa
 
 Pagos intactos: QR estáticos y validación bancaria actuales. Coincidir en importe no demuestra reutilización: solo usar un QR ya verificado si el banco permite reutilizarlo y corresponden moneda, importe y cuenta; conservar confirmación por producto. No se copian ni confirman QR automáticamente. El modo existente es de importe fijo: una nueva confirmación no admite el mismo archivo para 49 y 29, sin evidencia bancaria de un modo compatible; no existe autorización automática para ello.
 
+## Glúteos adoptado como instalación existente
+
+La operación puntual reutiliza COM #1, app_key/URL `gluteos`, identificador EvaFunnels original y archivos existentes. No ejecuta el escritor COM ni reinstala o completa datos comerciales:
+
+```bash
+jakawi-plr-import --adopt-existing gluteos
+```
+
+Repetirla comprueba el registro y huellas y devuelve unchanged. Una importación ordinaria de ese identificador reconoce que está adoptado y bloquea duplicación/reemplazo; no modifica COM ni usa los valores iniciales de productos nuevos.
+
+Glúteos y Pilates comparten el mismo patrón:
+
+```text
+apps/{slug}/public/
+catalog/apps/{slug}/access/{gateway.php,access-guard.js,sw.js}
+catalog/apps/{slug}/route.conf
+catalog/records/{slug}.json
+catalog/routes/{slug}.conf
+```
+
+Slugs: `gluteos` y `pilates-app-es`. El registro de Glúteos indica origin=adopted_existing, COM #1 y huella instalada; package_sha256 es null porque no se inventa un ZIP original. Los archivos de protección se copian byte por byte y Nginx usa un solo include canónico. Las ubicaciones antiguas en `/opt/sites/jakawi.store/access/` quedan como enlaces de compatibilidad, sin copias ni rutas activas contradictorias; `/opt/sites/jakawi.store/catalog` apunta al catálogo persistente. Los archivos públicos, manifest, licencia y cachés del worker existente no se reescriben. Solo se recarga Nginx; PHP y sus sesiones permanecen.
+
+Antes de cambiar rutas se guardan nginx.conf y access en `/var/backups/jakawi.store/adopt-gluteos-FECHA/`. El registro gluteos.json contiene adoption_backup con la ruta exacta. Rollback de esta adopción:
+
+```bash
+python3 /var/backups/jakawi.store/adopt-gluteos-FECHA/rollback.py
+```
+
+Restaura las rutas y protección anteriores, retira el registro/include adoptados y conserva COM, archivos públicos y sesiones. Los protectores canónicos quedan inactivos temporalmente para solicitudes en curso; no se crea otra instalación. Evidencia de comparación comercial, Javier/Janny, sesión anterior y Pilates: `/srv/workspaces/jakawi/com/adopt-gluteos-catalog-evidence/`.
+
 ## Completar importados y Pilates #2
 
 Pilates en casa ya está instalado como producto #2 y slug pilates-app-es. Para completar únicamente campos vacíos usando el mismo importador:
