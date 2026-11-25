@@ -16,7 +16,14 @@ class LandingEditorialBlocks
     {
         $data = Validator::make(['blocks' => $blocks], [
             'blocks' => 'array|max:11',
-            'blocks.*' => 'array:type,enabled,title,subtitle,primary_label,secondary_label,note,source,verified,items,availability',
+            'blocks.*' => 'array:type,enabled,title,subtitle,primary_label,secondary_label,note,source,verified,items,availability,background,variant,image_path,image_upload,image_remove,image_alt,image_position',
+            'blocks.*.background' => ['sometimes', Rule::in(['light', 'soft', 'dark'])],
+            'blocks.*.variant' => ['sometimes', Rule::in(['cards', 'minimal'])],
+            'blocks.*.image_position' => ['sometimes', Rule::in(['left', 'right'])],
+            'blocks.*.image_path' => 'nullable|string|max:2048',
+            'blocks.*.image_upload' => 'nullable|string|max:5000',
+            'blocks.*.image_remove' => 'sometimes|boolean',
+            'blocks.*.image_alt' => 'nullable|string|max:320',
             'blocks.*.type' => ['required', 'distinct', Rule::in(self::TYPES)],
             'blocks.*.availability' => ['sometimes', Rule::in(['COMING_SOON'])],
             'blocks.*.enabled' => 'required|boolean', 'blocks.*.verified' => 'sometimes|boolean',
@@ -35,6 +42,14 @@ class LandingEditorialBlocks
         ])->validate()['blocks'];
         foreach ($data as $i => &$block) {
             $old = collect($previous)->firstWhere('type', $block['type']);
+            $path = $block['image_path'] ?? null;
+            if ($path && $path !== ($old['image_path'] ?? null)) {
+                throw ValidationException::withMessages(["editorial_blocks.$i.image_path" => 'Sube una imagen desde tu dispositivo.']);
+            }
+            $input = new Request(['image_upload' => $block['image_upload'] ?? null, 'image_remove' => $block['image_remove'] ?? false]);
+            $input->setUserResolver(fn () => $request->user());
+            $block['image_path'] = app(MediaUploadService::class)->fromRequest($input, 'image', 'landings', $id ?? 1, 'image', $path);
+            unset($block['image_upload'], $block['image_remove']);
             foreach ($block['items'] ?? [] as $j => $item) {
                 if (filled($item['href'] ?? null) && $block['type'] !== 'footer') {
                     throw ValidationException::withMessages(["editorial_blocks.$i.items.$j.href" => 'Los enlaces se editan únicamente en el pie de página.']);
@@ -59,6 +74,8 @@ class LandingEditorialBlocks
         return collect($blocks)->filter(fn ($b) => ($b['enabled'] ?? false) && ($preview || $editorialReview || ! in_array($b['type'], ['trust', 'testimonials', 'guarantee'], true) || (($b['verified'] ?? false) && filled($b['source'] ?? null))))
             ->map(function ($block) use ($preview) {
                 if (! $preview) unset($block['source']);
+                $block['image_url'] = app(MediaUrl::class)->url($block['image_path'] ?? null, 'hero');
+                unset($block['image_path']);
                 $block['items'] = array_map(function ($item) {
                     $item['image_url'] = app(MediaUrl::class)->url($item['image_path'] ?? null, 'thumbnail');
                     unset($item['image_path']);

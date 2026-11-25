@@ -373,16 +373,19 @@ export function MarketingFinalCTA({
     action,
     treatment,
     sectionRef,
+    preset,
 }: {
     finalCta: OfferPresentationV1['finalCta'];
     action: MarketingAction;
     treatment: OfferTreatment;
     sectionRef?: Ref<HTMLElement>;
+    preset?: 'light'|'soft'|'dark';
 }) {
     const compact = treatment === 'compact';
     return (
         <section
-            data-marketing-surface="dark"
+            data-marketing-surface={preset === 'light' || preset === 'soft' ? 'light' : 'dark'}
+            data-section-preset={preset}
             ref={sectionRef}
             data-offer-chapter="final"
             aria-label="CTA final"

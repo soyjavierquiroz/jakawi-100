@@ -1,0 +1,13 @@
+{
+  "hero": {"background": "soft"},
+  "trust": {"background": "light", "variant": "minimal"},
+  "problem": {"background": "dark", "variant": "minimal", "image_position": "left"},
+  "benefits": {"background": "light", "variant": "cards", "image_position": "right"},
+  "steps": {"background": "soft", "variant": "minimal"},
+  "testimonials": {"background": "light", "variant": "cards"},
+  "offer": {"background": "dark", "variant": "minimal", "image_position": "left"},
+  "guarantee": {"background": "soft"},
+  "faq": {"background": "light"},
+  "final": {"background": "dark"},
+  "footer": {"background": "soft"}
+}

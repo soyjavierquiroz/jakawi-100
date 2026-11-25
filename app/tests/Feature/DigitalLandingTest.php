@@ -43,7 +43,7 @@ class DigitalLandingTest extends TestCase
         [$p, $l] = $this->draft();
         $this->get('/l/gluteo-perfecto')->assertNotFound();
         $this->get('/productos-digitales/gluteo-perfecto')->assertNotFound();
-        $this->get('/explorar?type=digital&q=Glúteo')->assertInertia(fn (Assert $a) => $a->has('digitalProducts',0));
+        $this->get('/explorar?type=digital&q=Glúteo')->assertInertia(fn (Assert $a) => $a->has('results',0));
         $preview = '/admin/productos-digitales/gluteo-perfecto/landings/gluteo-perfecto/preview';
         $this->get($preview)->assertRedirect('/login');
         $this->actingAs(User::factory()->create())->get($preview)->assertForbidden();
@@ -82,6 +82,42 @@ class DigitalLandingTest extends TestCase
         $this->assertSame('DRAFT',$clone->status);
     }
 
+    public function test_visual_presets_survive_save_publish_and_preview_without_changing_copy_or_commerce(): void
+    {
+        [$p, $l] = $this->draft();
+        $p->update(['status' => 'published']);
+        $initial = $l->editorial_blocks;
+        $initial[0]['availability'] = 'COMING_SOON';
+        $l->update(['status' => 'PUBLISHED', 'editorial_blocks' => $initial]);
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        $blocks = $l->editorial_blocks;
+        $blocks[2] += ['background' => 'dark', 'variant' => 'minimal', 'image_position' => 'left', 'image_alt' => 'Entrenamiento'];
+        $url = '/admin/productos-digitales/gluteo-perfecto/landings/gluteo-perfecto';
+        $this->put($url, ['name' => $l->name, 'slug' => $l->slug, 'editorial_blocks' => $blocks])->assertRedirect()->assertSessionHasNoErrors();
+        $saved = $l->fresh()->editorial_blocks[2];
+        $this->assertSame('dark', $saved['background']);
+        $this->assertSame('minimal', $saved['variant']);
+        $this->assertSame('left', $saved['image_position']);
+        $this->assertSame($blocks[2]['subtitle'], $saved['subtitle']);
+        $this->post($url.'/publish', ['publish_scope' => 'ALL'])->assertRedirect()->assertSessionHasNoErrors();
+        $this->get('/l/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('blocks.2.background', 'dark')->where('canBuy', false));
+        $blocks[2]['background'] = '#badcss';
+        $this->put($url, ['name' => $l->name, 'slug' => $l->slug, 'editorial_blocks' => $blocks])->assertSessionHasErrors('blocks.2.background');
+        $blocks[2]['background'] = 'light';
+        $blocks[2]['image_path'] = 'digital-private/secret.pdf';
+        $this->put($url, ['name' => $l->name, 'slug' => $l->slug, 'editorial_blocks' => $blocks])->assertSessionHasErrors('editorial_blocks.2.image_path');
+        \Illuminate\Support\Facades\Storage::fake(config('media.disk'));
+        $blocks = $l->fresh()->editorial_blocks;
+        $blocks[2]['image_upload'] = app(\App\Services\MediaUploadService::class)->temporary(\Illuminate\Http\UploadedFile::fake()->image('editorial.png', 800, 600), auth()->id());
+        $this->put($url, ['name'=>$l->name, 'slug'=>$l->slug, 'editorial_blocks'=>$blocks])->assertRedirect()->assertSessionHasNoErrors();
+        $blocks = $l->fresh()->editorial_blocks;
+        $this->assertStringStartsWith('landings/', $blocks[2]['image_path']);
+        $blocks[2]['image_remove'] = true;
+        $this->put($url, ['name'=>$l->name, 'slug'=>$l->slug, 'editorial_blocks'=>$blocks])->assertRedirect()->assertSessionHasNoErrors();
+        $this->assertNull($l->fresh()->editorial_blocks[2]['image_path']);
+        $this->assertDatabaseCount('digital_orders', 0);
+    }
+
     public function test_published_projection_has_one_price_and_uses_existing_checkout_and_prelaunch_block(): void
     {
         [$p,$l]=$this->draft();
@@ -90,7 +126,7 @@ class DigitalLandingTest extends TestCase
         config(['jakawi.prelaunch_mode'=>true]);
         $this->get('/l/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('product.public_price','40.00')->where('product.member_price','30.00')->where('canBuy',false)->where('checkoutUrl','/productos-digitales/gluteo-perfecto/comprar')->has('blocks',8));
         $this->get('/productos-digitales/gluteo-perfecto')->assertInertia(fn (Assert $a) => $a->where('product.public_price','40.00'));
-        $this->get('/explorar?type=digital&q=Glúteo')->assertInertia(fn (Assert $a) => $a->has('digitalProducts',1)->where('digitalProducts.0.url','https://jakawi.com/l/gluteo-perfecto'));
+        $this->get('/explorar?type=digital&q=Glúteo')->assertInertia(fn (Assert $a) => $a->has('results',1)->where('results.0.product.url','https://jakawi.com/l/gluteo-perfecto'));
         $this->assertSame(route('landing-presentations.show',$l),app(ProductLandingResolver::class)->navigationUrl($p,false));
         $this->get('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect('/login');
         $this->assertSame(url('/productos-digitales/gluteo-perfecto/comprar'),session('url.intended'));
