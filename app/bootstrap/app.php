@@ -96,7 +96,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->dontFlash(['claim_secret', 'ticket', 'code']);
+        $exceptions->dontFlash(['claim_secret', 'ticket', 'code', 'token', 'credential', 'pass']);
         $exceptions->render(function (\Illuminate\Database\QueryException $exception, Request $request) {
             if ($exception->getCode() === '25006' && $request->attributes->has('support_session')) {
                 return response()->view('support-limited', ['support' => $request->attributes->get('support_session')], 403)->header('Cache-Control', 'private, no-store');

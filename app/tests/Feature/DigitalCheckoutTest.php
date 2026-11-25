@@ -98,7 +98,7 @@ class DigitalCheckoutTest extends TestCase
         Membership::create(['user_id' => $this->buyer->id, 'status' => 'active', 'type' => 'pioneer', 'starts_at' => now()->subDays(5), 'ends_at' => now()->subDay(), 'amount_paid' => '100.00']);
         $this->product->update(['member_price' => null]);
         try { $this->order(); $this->fail('Member price is required for fixed QR sales'); }
-        catch (HttpException $e) { $this->assertSame(422, $e->getStatusCode()); }
+        catch (\Illuminate\Validation\ValidationException $e) { $this->assertArrayHasKey('product', $e->errors()); }
         $this->product->update(['member_price'=>'12.50']);
         $this->collection();
         $order = $this->order();
@@ -110,7 +110,7 @@ class DigitalCheckoutTest extends TestCase
     public function test_unconfigured_qr_prevents_order_without_writes(): void
     {
         AppSetting::where('key', DigitalCollection::KEY)->delete();
-        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(422);
+        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertSessionHasErrors('product');
         $this->assertDatabaseCount('digital_orders', 0);
         $this->actingAs($this->admin)->get('/admin/digital/cobro')->assertOk();
     }
@@ -118,7 +118,7 @@ class DigitalCheckoutTest extends TestCase
     public function test_account_and_currency_must_match(): void
     {
         $this->product->update(['currency' => 'USD']);
-        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(422);
+        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertSessionHasErrors('product');
     }
 
     public function test_pending_has_no_access_then_confirm_creates_one_grant_and_download_survives_expiry(): void
@@ -337,7 +337,7 @@ class DigitalCheckoutTest extends TestCase
         foreach(['public','member'] as $tier) $qrs->save($this->product,$tier,null,true,$this->admin->id);
         $this->product->update(['currency'=>'USD']);$this->product->update(['currency'=>'BOB']);
         foreach(['public','member'] as $tier) $this->assertFalse($qrs->verified($this->product,$tier));
-        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(422);
+        $this->actingAs($this->buyer)->post('/productos-digitales/gluteo-perfecto/comprar')->assertSessionHasErrors('product');
         $this->assertDatabaseCount('digital_orders',0);
         $this->actingAs($this->admin)->post('/admin/digital/cobro',$data+['qr'=>UploadedFile::fake()->image('LEGACY-NOT-ALLOWED.png')])->assertSessionHasErrors('qr');
     }

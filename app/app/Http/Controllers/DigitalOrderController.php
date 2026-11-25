@@ -27,7 +27,7 @@ class DigitalOrderController extends Controller
     {
         abort_unless($order->user_id === $request->user()->id, 404);
 
-        return Inertia::render('digital/order', ['order' => $order->toArray() + ['cover_url' => app(\App\Services\MediaUrl::class)->url($order->product?->cover_path, 'hero'), 'collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency'])), 'payments' => $order->payments()->orderByDesc('id')->get(['id', 'status', 'review_note', 'created_at']), 'access' => $order->access?->only(['id', 'status', 'delivery_status'])], 'canCollect' => app(\App\Services\DigitalProductQr::class)->orderReady($order)]);
+        return Inertia::render('digital/order', ['order' => $order->toArray() + ['cover_url' => app(\App\Services\MediaUrl::class)->url($order->product?->cover_path, 'hero'), 'collection' => array_intersect_key($order->collection_snapshot, array_flip(['bank', 'account', 'holder', 'currency'])), 'payments' => $order->payments()->orderByDesc('id')->get(['id', 'status', 'review_note', 'created_at']), 'delivery_type' => $order->product?->delivery_type ?? 'pdf', 'access' => $order->access?->only(['id', 'status', 'delivery_status'])], 'canCollect' => app(\App\Services\DigitalProductQr::class)->orderReady($order)]);
     }
 
     public function qr(Request $request, DigitalOrder $order, DigitalFiles $files)
@@ -48,15 +48,21 @@ class DigitalOrderController extends Controller
 
     public function library(Request $request)
     {
-        $orders = DigitalOrder::where('user_id', $request->user()->id)->with('access')->latest('id')->paginate(25);
+        $orders = DigitalOrder::where('user_id', $request->user()->id)->with(['access', 'product'])->latest('id')->paginate(25);
 
+        $orders->through(function ($order) { $order->setAttribute('delivery_type', $order->product?->delivery_type ?? 'pdf'); $order->setAttribute('cover_url', app(\App\Services\MediaUrl::class)->url($order->product?->cover_path, 'thumbnail')); return $order; });
         $gifts = DigitalAccessGrant::where('user_id', $request->user()->id)->where('source', 'gift')->latest('id')->paginate(25, ['id','user_id','source','digital_order_id','digital_product_id','gift_product_name','status','delivery_status'], 'gifts_page');
 
+        $gifts->through(function ($grant) { $p = DigitalProduct::find($grant->digital_product_id); $grant->setAttribute('delivery_type', $p?->delivery_type ?? 'pdf'); $grant->setAttribute('cover_url', app(\App\Services\MediaUrl::class)->url($p?->cover_path, 'thumbnail')); return $grant; });
         return Inertia::render('digital/library', ['orders' => $orders, 'giftAccess' => $gifts]);
     }
 
     public function download(Request $request, DigitalAccessGrant $access, DigitalFiles $files)
     {
+        if (DigitalProduct::find($access->digital_product_id)?->delivery_type === 'hosted_app') {
+            abort_unless($access->user_id === $request->user()->id, 403);
+            return redirect('/mi-jakawi/productos-digitales/accesos/'.$access->id.'/app');
+        }
         if ($access->source === 'gift') {
             abort_unless($access->user_id === $request->user()->id && $access->status === 'active' && $access->delivery_status === 'ready', 403);
             $bytes = Storage::disk('digital-private')->get($access->gift_file_path);

@@ -12,8 +12,8 @@ class DigitalProductLandingPresenter
     public function assertPublishable(DigitalProduct $product): void
     {
         if ($product->isComingSoon() && DigitalProduct::published()->whereKey($product->id)->exists() && filled($product->description)) return;
-        if (! DigitalProduct::published()->whereKey($product->id)->exists() || ! $product->public_price || ! $product->description || ! $product->support_information || ! $product->access_terms || ! $product->cover_path || ! $product->file_path || ! Storage::disk('digital-private')->exists($product->file_path)) {
-            throw ValidationException::withMessages(['presentation' => 'Completa y publica el producto: precio aprobado, portada, PDF privado, descripción, soporte y condiciones.']);
+        if (! DigitalProduct::published()->whereKey($product->id)->exists() || ! $product->public_price || ! $product->description || ! $product->support_information || ! $product->access_terms || ! $product->cover_path || ($product->delivery_type === 'hosted_app' ? ! app(HostedApps::class)->ready($product) : (! $product->file_path || ! Storage::disk('digital-private')->exists($product->file_path)))) {
+            throw ValidationException::withMessages(['presentation' => 'Completa y publica el producto: precio aprobado, portada, entrega privada, descripción, soporte y condiciones.']);
         }
     }
 
@@ -34,7 +34,7 @@ class DigitalProductLandingPresenter
             'authenticated' => $request->user() !== null, 'canBuy' => (bool) $canBuy,
             'memberActive' => $request->user()?->hasActiveMembership() ?? false,
             'checkoutUrl' => route('digital.orders.start', $product, false),
-            'notice' => $giftAction['kind'] ? ($giftAction['kind'] === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : 'Confirma tu regalo para guardarlo en Mis productos digitales.') : ($comingSoon ? 'Disponible próximamente. Presentación editorial en revisión; las compras y la entrega todavía no están habilitadas.' : ($preview ? 'Vista previa editorial. Las compras están desactivadas.' : ($canBuy ? 'Pago por QR de JAKAWI Digital, con verificación bancaria. Descarga privada después de confirmar el pago.' : 'La compra todavía no está disponible.'))),
+            'notice' => $giftAction['kind'] ? ($giftAction['kind'] === 'owned' ? 'Este producto ya está en tu biblioteca digital.' : 'Confirma tu regalo para guardarlo en Mis productos digitales.') : ($comingSoon ? 'Disponible próximamente. Presentación editorial en revisión; las compras y la entrega todavía no están habilitadas.' : ($preview ? 'Vista previa editorial. Las compras están desactivadas.' : ($canBuy ? ($product->delivery_type === 'hosted_app' ? 'Pago por QR de JAKAWI Digital, con verificación bancaria. Abre la aplicación desde tu biblioteca después de confirmar el pago.' : 'Pago por QR de JAKAWI Digital, con verificación bancaria. Descarga privada después de confirmar el pago.') : 'La compra todavía no está disponible.'))),
         ];
     }
 }

@@ -2,6 +2,8 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { digitalMoney } from '@/components/digital-card';
 import { digitalState } from '@/components/digital-state';
 type Order = {
+    delivery_type?: string;
+    cover_url?: string | null;
     id: number;
     reference: string;
 
@@ -15,7 +17,7 @@ export default function Library({
     orders,
     giftAccess = {data: [], next_page_url: null, prev_page_url: null},
 }: {
-    giftAccess?: {data: {id: number; gift_product_name: string;  status: string; delivery_status: string}[]; next_page_url: string | null; prev_page_url: string | null};
+    giftAccess?: {data: {id: number; gift_product_name: string; delivery_type?: string; cover_url?: string | null;  status: string; delivery_status: string}[]; next_page_url: string | null; prev_page_url: string | null};
     orders: {
         data: Order[];
         next_page_url: string | null;
@@ -34,16 +36,17 @@ export default function Library({
                     Mis productos digitales
                 </h1>
                 <p className="mt-3 text-muted-foreground">
-                    Tus pedidos y PDF adquiridos, siempre en tu cuenta.
+                    Tus productos y aplicaciones, siempre en tu cuenta.
                 </p>
                 {flash?.success === '¡Tu regalo está listo!' && <section role="status" className="mt-6 rounded-2xl border border-brand/30 bg-brand-subtle p-5"><h2 className="text-2xl font-extrabold">¡Tu regalo está listo!</h2><p className="mt-2 text-muted-foreground">Ya puedes disfrutarlo desde Mis productos digitales.</p><a href="#mis-productos" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-brand px-5 font-bold text-brand-foreground">ABRIR MI BIBLIOTECA</a></section>}
                 <div id="mis-productos" className="mt-7 scroll-mt-24 space-y-4">
-                    {giftAccess.data.map(access => <article key={`gift-${access.id}`} className="rounded-2xl border border-border bg-surface p-5"><h2 className="text-xl font-bold">{access.gift_product_name}</h2><p className="mt-2">Regalo · {digitalState(access.status)}</p>{access.status === 'active' && access.delivery_status === 'ready' && <a className="mt-3 inline-flex min-h-12 items-center font-bold text-brand underline" href={`/mi-jakawi/productos-digitales/accesos/${access.id}/pdf`}>Descargar PDF</a>}</article>)}
+                    {giftAccess.data.map(access => <article key={`gift-${access.id}`} className="rounded-2xl border border-border bg-surface p-5">{access.cover_url && <img src={access.cover_url} alt="" className="mb-4 h-40 w-32 rounded-xl object-cover"/>}<h2 className="text-xl font-bold">{access.gift_product_name}</h2><p className="mt-2">Regalo · {digitalState(access.status)}{access.status === 'active' && access.delivery_status === 'ready' ? ' · Acceso disponible' : ''}</p>{access.status === 'active' && access.delivery_status === 'ready' && <a className="mt-3 inline-flex min-h-12 items-center font-bold text-brand underline" href={`/mi-jakawi/productos-digitales/accesos/${access.id}/${access.delivery_type === 'hosted_app' ? 'app' : 'pdf'}`}>{access.delivery_type === 'hosted_app' ? 'ABRIR APLICACIÓN' : 'Descargar PDF'}</a>}</article>)}
                     {orders.data.map((o) => (
                         <article
                             key={o.id}
                             className="rounded-2xl border border-border bg-surface p-5"
                         >
+                            {o.cover_url && <img src={o.cover_url} alt="" className="mb-4 h-40 w-32 rounded-xl object-cover"/>}
                             <h2 className="text-xl font-bold">
                                 {o.product_name}
                             </h2>
@@ -54,7 +57,7 @@ export default function Library({
                             {o.access ? (
                                 <p className="mt-2 text-sm">
                                     Acceso: {digitalState(o.access.status)} ·{' '}
-                                    {o.access.status === 'active' ? digitalState(o.access.delivery_status) : 'Descarga no disponible'}
+                                    {o.access.status === 'active' ? digitalState(o.access.delivery_status) : 'Acceso no disponible'}
                                 </p>
                             ) : null}
                             <div className="mt-3 flex flex-wrap gap-4">
@@ -68,9 +71,9 @@ export default function Library({
                                 o.access.delivery_status === 'ready' ? (
                                     <a
                                         className="inline-flex min-h-11 items-center font-bold text-brand underline"
-                                        href={`/mi-jakawi/productos-digitales/accesos/${o.access.id}/pdf`}
+                                        href={`/mi-jakawi/productos-digitales/accesos/${o.access.id}/${o.delivery_type === 'hosted_app' ? 'app' : 'pdf'}`}
                                     >
-                                        Descargar PDF
+                                        {o.delivery_type === 'hosted_app' ? 'ABRIR APLICACIÓN' : 'Descargar PDF'}
                                     </a>
                                 ) : null}
                             </div>

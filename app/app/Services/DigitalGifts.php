@@ -78,11 +78,14 @@ class DigitalGifts
     {
         // Final hash is captured separately from commercial sale authorization.
         $approval = $this->courtesy();
-        return $query->where('welcome_gift_enabled', true)->whereNotNull('file_path')->where(function ($q) use ($approval) {
+        return $query->where('welcome_gift_enabled', true)->where(function ($all) use ($approval) {
+            $all->where(fn ($app) => $app->where('delivery_type', 'hosted_app')->whereIn('app_key', array_keys(config('hosted_apps.apps', []))));
+            $all->orWhere(fn ($pdf) => $pdf->whereNotNull('file_path')->where(function ($q) use ($approval) {
             $q->where(fn ($final) => $final->whereNotNull('gift_pdf_sha256')->whereColumn('gift_pdf_sha256', 'file_sha256'));
             if (($approval['enabled'] ?? false) === true && filled($approval['pdf_sha256'] ?? null)) {
                 $q->orWhere(fn ($courtesy) => $courtesy->where('digital_products.id', $approval['product_id'] ?? 0)->where('file_sha256', $approval['pdf_sha256']));
             }
+        }));
         });
     }
 
@@ -91,13 +94,18 @@ class DigitalGifts
         return (bool) $product->getAttribute($kind === 'welcome' ? 'welcome_gift_enabled' : 'promotional_gift_enabled')
             && $product->partner?->slug === 'jakawi-digital'
             && DigitalProduct::published()->whereKey($product->id)->exists()
-            && (($kind === 'welcome' && $this->courtesyApproved($product))
+            && ($product->delivery_type === 'hosted_app' ? app(HostedApps::class)->ready($product) : (($kind === 'welcome' && $this->courtesyApproved($product))
                 || (filled($product->gift_pdf_sha256) && $product->gift_pdf_sha256 === $product->file_sha256))
-            && app(DigitalSaleAvailability::class)->pdfVerified($product);
+            && app(DigitalSaleAvailability::class)->pdfVerified($product));
     }
 
     public function configure(DigitalProduct $product, bool $welcome, bool $promotional, bool $final): void
     {
+        if ($product->delivery_type === 'hosted_app') {
+            if (($welcome || $promotional) && ! app(HostedApps::class)->ready($product)) throw \Illuminate\Validation\ValidationException::withMessages(['app_key' => 'La APP debe estar registrada, funcional y protegida.']);
+            $product->update(['welcome_gift_enabled' => $welcome, 'promotional_gift_enabled' => $promotional]);
+            return;
+        }
         if ($final && ! app(DigitalSaleAvailability::class)->pdfVerified($product)) throw \Illuminate\Validation\ValidationException::withMessages(['gift_pdf_final' => 'Sube y verifica el PDF privado definitivo antes de autorizar regalos.']);
         if (($welcome || $promotional) && ! $final) throw \Illuminate\Validation\ValidationException::withMessages(['gift_pdf_final' => 'Confirma el PDF definitivo para habilitar nuevos regalos. La cortesía de bienvenida existente no necesita esta confirmación si no cambias su autorización.']);
         $product->update(['welcome_gift_enabled' => $welcome, 'promotional_gift_enabled' => $promotional,
@@ -113,7 +121,7 @@ class DigitalGifts
     public function context(Request $request, DigitalProduct $product): array
     {
         $owned = $this->owned($request->user(), $product);
-        if ($owned) return ['kind' => 'owned', 'url' => '/mi-jakawi/productos-digitales/accesos/'.$owned->id.'/pdf'];
+        if ($owned) return ['kind' => 'owned', 'url' => '/mi-jakawi/productos-digitales/accesos/'.$owned->id.($product->delivery_type === 'hosted_app' ? '/app' : '/pdf')];
         $invitation = $this->invitation($request);
         if ($invitation && $invitation->digital_product_id === $product->id && $this->eligible($product, 'promotional')) {
             return ['kind' => 'promotional', 'authenticated' => $request->user() !== null, 'url' => $request->user() ? '/productos-digitales/'.$product->slug.'/regalo-promocional' : '/regalos-digitales/continuar'];
@@ -168,7 +176,7 @@ class DigitalGifts
             abort_if($this->owned($user, $product), 422, 'Ya tienes este producto en tu biblioteca.');
             $grant = DigitalAccessGrant::create([
                 'user_id' => $user->id, 'digital_product_id' => $product->id, 'source' => 'gift', 'status' => 'active',
-                'delivery_type' => 'pdf', 'delivery_status' => 'ready', 'granted_at' => now(), 'delivered_at' => now(),
+                'delivery_type' => $product->delivery_type, 'delivery_status' => 'ready', 'granted_at' => now(), 'delivered_at' => now(),
                 'gift_file_path' => $product->file_path, 'gift_file_sha256' => $product->file_sha256,
                 'gift_product_slug' => $product->slug, 'gift_product_name' => $product->name,
             ]);

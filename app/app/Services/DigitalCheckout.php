@@ -59,7 +59,7 @@ class DigitalCheckout
                 throw ValidationException::withMessages(['product' => implode(' ', $sale->missing($product)) ?: 'El propietario todavía no ha autorizado la venta de este producto.']);
             }
             abort_if(DigitalAccessGrant::where('user_id', $user->id)->where('digital_product_id', $product->id)->where('status', 'active')->exists(), 422, 'Ya tienes este producto en tu biblioteca.');
-            abort_unless($product->public_price && $product->file_path && Storage::disk('digital-private')->exists($product->file_path), 422, 'Producto pendiente de preparar.');
+            abort_unless($product->public_price && ($product->delivery_type === 'hosted_app' ? app(HostedApps::class)->ready($product) : ($product->file_path && Storage::disk('digital-private')->exists($product->file_path))), 422, 'Producto pendiente de preparar.');
             \App\Models\AppSetting::where('key', app(DigitalProductQr::class)->key($product))->lockForUpdate()->first();
             abort_unless(app(DigitalProductQr::class)->missing($product) === [], 422, 'Completa ambos precios y QR del producto.');
             $membership = $user->activeMembership()->lockForUpdate()->first();
@@ -137,13 +137,15 @@ class DigitalCheckout
             if ($grant->delivery_status === 'ready') {
                 return;
             }
-            $valid = false;
+            $product = DigitalProduct::findOrFail($grant->digital_product_id);
+            $hosted = $product->delivery_type === 'hosted_app';
+            $valid = $hosted && app(HostedApps::class)->ready($product);
             try {
                 $disk = Storage::disk('digital-private');
-                $valid = $disk->exists($order->file_path) && hash_equals($order->file_sha256, hash('sha256', $disk->get($order->file_path)));
+                $valid = $hosted ? $valid : ($disk->exists($order->file_path) && hash_equals($order->file_sha256, hash('sha256', $disk->get($order->file_path))));
             } catch (\Throwable) {
             }
-            $grant->update(['delivery_attempts' => $grant->delivery_attempts + 1, 'delivery_status' => $valid ? 'ready' : 'failed', 'delivery_error' => $valid ? null : 'PDF_UNAVAILABLE', 'delivered_at' => $valid ? now() : null]);
+            $grant->update(['delivery_type' => $hosted ? 'hosted_app' : 'pdf', 'delivery_attempts' => $grant->delivery_attempts + 1, 'delivery_status' => $valid ? 'ready' : 'failed', 'delivery_error' => $valid ? null : ($hosted ? 'APP_UNAVAILABLE' : 'PDF_UNAVAILABLE'), 'delivered_at' => $valid ? now() : null]);
             $this->audit($admin, $valid ? 'digital_access_granted' : 'digital_delivery_failed', $order, ['grant_id' => $grant->id]);
             if ($valid) {
                 app(DigitalMeasurement::class)->record('digital_access_granted', $grant, $order);

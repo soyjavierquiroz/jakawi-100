@@ -42,8 +42,13 @@ class DigitalSaleAvailability
         if (! DigitalProduct::published()->whereKey($product->id)->exists()) $missing[] = 'Publicar el producto y su Partner.';
         if (! is_numeric($product->public_price) || DigitalCheckout::cents((string) $product->public_price) <= 0) $missing[] = 'Configurar el precio público definitivo.';
         if (! is_numeric($product->member_price) || (float) $product->member_price <= 0 || (float) $product->member_price > (float) $product->public_price) $missing[] = 'Configurar el precio miembro definitivo, menor o igual al público.';
-        if (! $this->pdfVerified($product)) $missing[] = 'Subir y verificar el PDF privado.';
-        if (empty($settings['pdf_sha256']) || $settings['pdf_sha256'] !== $product->file_sha256) $missing[] = 'Confirmar que el PDF actual es el definitivo para compradores.';
+        if ($product->delivery_type === 'hosted_app') {
+            if (! app(HostedApps::class)->ready($product)) $missing[] = 'Registrar y verificar la APP protegida en JAKAWI.STORE.';
+            if (($settings['app_key'] ?? null) !== $product->app_key) $missing[] = 'Autorizar individualmente esta APP para compradores.';
+        } else {
+            if (! $this->pdfVerified($product)) $missing[] = 'Subir y verificar el PDF privado.';
+            if (empty($settings['pdf_sha256']) || $settings['pdf_sha256'] !== $product->file_sha256) $missing[] = 'Confirmar que el PDF actual es el definitivo para compradores.';
+        }
         if (! app(DigitalCollection::class)->readyFor($product->currency)) $missing[] = 'Configurar y autorizar la cuenta en Cobro digital.';
         return array_merge($missing, app(DigitalProductQr::class)->missing($product));
     }
@@ -58,6 +63,7 @@ class DigitalSaleAvailability
     {
         abort_unless($this->eligible($product), 422, 'Autorización comercial disponible para Glúteo Perfecto.');
         $settings = ['product_id' => $product->id, 'pdf_sha256' => $final && $this->pdfVerified($product) ? $product->file_sha256 : null,
+            'app_key' => $final && $product->delivery_type === 'hosted_app' ? $product->app_key : null,
             'enabled' => $enabled, 'authorized_by' => $adminId, 'authorized_at' => now()->toIso8601String()];
         if ($enabled && ($missing = $this->missing($product, $settings))) {
             throw ValidationException::withMessages(['sale_enabled' => implode(' ', $missing)]);
@@ -70,7 +76,7 @@ class DigitalSaleAvailability
         $settings = $this->settings($product);
         return ['eligible' => $this->eligible($product), 'enabled' => $settings['enabled'] ?? false,
             'available' => $this->canSell($product), 'pdf_verified' => $this->pdfVerified($product),
-            'pdf_final' => filled($settings['pdf_sha256'] ?? null) && $settings['pdf_sha256'] === $product->file_sha256,
+            'pdf_final' => $product->delivery_type === 'hosted_app' ? (($settings['app_key'] ?? null) === $product->app_key) : (filled($settings['pdf_sha256'] ?? null) && $settings['pdf_sha256'] === $product->file_sha256),
             'missing' => $this->missing($product)];
     }
 }

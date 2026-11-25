@@ -1,0 +1,16 @@
+FROM sha256:fd422a856d4d711120964c716b87c150a2f177e932b2accb92a4b082e3e7873e AS app
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY --chown=www-data:www-data app/app/ /var/www/html/app/
+COPY --chown=www-data:www-data app/bootstrap/ /var/www/html/bootstrap/
+COPY --chown=www-data:www-data app/config/ /var/www/html/config/
+COPY --chown=www-data:www-data app/routes/ /var/www/html/routes/
+COPY --chown=www-data:www-data app/resources/ /var/www/html/resources/
+COPY --chown=www-data:www-data app/database/migrations/ /var/www/html/database/migrations/
+COPY --chown=www-data:www-data app/public/build/ /var/www/html/public/build/
+RUN rm -f /var/www/html/bootstrap/cache/config.php /var/www/html/bootstrap/cache/routes-*.php && find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;
+FROM sha256:797385762419676e5d7fc09746cc4e2051c26deb29352f6ec682c93f9a00683a AS web
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+COPY app/public/build/ /var/www/html/public/build/
+RUN find /var/www/html/public/build -type d -exec chmod 755 {} \; && find /var/www/html/public/build -type f -exec chmod 644 {} \;

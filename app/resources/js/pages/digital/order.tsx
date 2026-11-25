@@ -20,6 +20,7 @@ export default function Order({
         member_at_purchase: boolean;
         collection: { bank: string; account: string; holder: string };
         payments: { id: number; status: string; review_note: string | null }[];
+        delivery_type?: string;
         access: { id: number; status: string; delivery_status: string } | null;
     };
 
@@ -156,9 +157,9 @@ export default function Order({
                         {o.access.delivery_status === 'ready' ? (
                             <a
                                 className="mt-3 inline-flex min-h-12 items-center rounded-xl bg-brand px-5 font-bold text-brand-foreground"
-                                href={`/mi-jakawi/productos-digitales/accesos/${o.access.id}/pdf`}
+                                href={`/mi-jakawi/productos-digitales/accesos/${o.access.id}/${o.delivery_type === 'hosted_app' ? 'app' : 'pdf'}`}
                             >
-                                Descargar PDF privado
+                                {o.delivery_type === 'hosted_app' ? 'ABRIR APLICACIÓN' : 'Descargar PDF privado'}
                             </a>
                         ) : (
                             <p className="mt-3">

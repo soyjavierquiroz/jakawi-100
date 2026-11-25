@@ -2,6 +2,8 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AdminLayout from '../layout';
 type Product = {
+    delivery_type?: 'pdf' | 'hosted_app';
+    app_key?: string | null;
     name: string;
     slug: string;
     short_description: string | null;
@@ -32,6 +34,8 @@ export default function ProductForm({
     partner: { name: string };
 }) {
     const form = useForm({
+        delivery_type: p?.delivery_type ?? 'pdf',
+        app_key: p?.app_key ?? '',
         ...(p?.sale?.eligible ? {pdf_final: p.sale.pdf_final, sale_enabled: p.sale.enabled} : {}),
         welcome_gift_enabled: p?.welcome_gift_enabled ?? false,
         promotional_gift_enabled: p?.promotional_gift_enabled ?? false,
@@ -94,17 +98,22 @@ export default function ProductForm({
             <form onSubmit={submit} className="grid max-w-3xl gap-5">
                 {p?.sale?.eligible && <section className="grid gap-4 rounded-xl border border-border p-5">
                     <p role="status" className="font-bold">Disponibilidad comercial: {p.sale.available ? 'Disponible' : 'Venta desactivada'}</p>
-                    <p>PDF: {p.sale.pdf_verified ? 'Archivo privado verificado' : 'Pendiente de subir o verificar'}</p>
+                    <p>{form.data.delivery_type === 'hosted_app' ? 'Respaldo PDF archivado: ' : 'PDF: '}{p.sale.pdf_verified ? 'Archivo privado verificado' : 'Pendiente de subir o verificar'}</p>
                     {p.sale.missing.map(item => <p key={item}>{item}</p>)}
                     <a className="text-brand underline" href="/admin/digital/cobro">Configurar QR y cuenta digital</a>
-                    <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>Confirmo que el PDF es definitivo y está preparado para entrega a compradores.</label>
+                    <label className="flex gap-3"><input type="checkbox" checked={form.data.pdf_final ?? false} onChange={e=>form.setData('pdf_final',e.target.checked)}/>{form.data.delivery_type === 'hosted_app' ? 'Autorizo esta APP protegida como entrega definitiva a compradores.' : 'Confirmo que el PDF es definitivo y está preparado para entrega a compradores.'}</label>
                     {error('pdf_final')}
-                    <p>Guardar producto conserva los datos y archivos sin habilitar ventas. Habilitar venta requiere cuenta autorizada, ambos QR confirmados y PDF comercial definitivo.</p>
+                    <p>Guardar producto conserva los datos y archivos sin habilitar ventas. Habilitar venta requiere cuenta autorizada, ambos QR confirmados y entrega definitiva autorizada.</p>
                     <button type="button" onClick={() => save('authorize_sale')} disabled={form.processing || !!(form.data.pdf || form.data.cover || form.data.public_qr || form.data.member_qr || form.data.gallery.length)} className="min-h-12 rounded-xl border border-border px-4 font-bold disabled:opacity-50">Habilitar venta</button>
                     <p className="text-sm text-muted-foreground">Si seleccionaste archivos, utiliza primero Guardar producto y después vuelve al editor para habilitar la venta.</p>
                     {error('sale_enabled')}
                 </section>}
-                <section className="grid gap-4 rounded-xl border border-border p-5"><h2 className="text-xl font-bold">Regalos digitales</h2><label className="flex gap-3"><input type="checkbox" checked={form.data.welcome_gift_enabled} onChange={e => form.setData('welcome_gift_enabled', e.target.checked)}/>Disponible como regalo de bienvenida</label><label className="flex gap-3"><input type="checkbox" checked={form.data.promotional_gift_enabled} onChange={e => form.setData('promotional_gift_enabled', e.target.checked)}/>Disponible para regalo promocional</label><label className="flex gap-3"><input type="checkbox" checked={form.data.gift_pdf_final} onChange={e => form.setData('gift_pdf_final', e.target.checked)}/>Confirmo que el PDF privado actual es definitivo para regalos.</label></section>
+                <section className="grid gap-3 rounded-xl border border-border p-5">
+                    <label>Método de entrega<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.delivery_type} onChange={e => {form.setData('delivery_type', e.target.value as 'pdf' | 'hosted_app'); form.setData('pdf_final', false); form.setData('sale_enabled', false);}}><option value="pdf">PDF privado</option><option value="hosted_app">APP alojada en JAKAWI.STORE</option></select></label>
+                    {form.data.delivery_type === 'hosted_app' && <label>Aplicación autorizada<select className="mt-2 block min-h-12 w-full rounded border bg-background p-2" value={form.data.app_key} onChange={e => {form.setData('app_key', e.target.value); form.setData('pdf_final', false); form.setData('sale_enabled', false);}}><option value="">Elegir aplicación</option><option value="gluteos">Glúteos · jakawi.store/gluteos/</option></select><p>Requiere APP funcional y protegida, cuenta bancaria, precios, QR y autorización comercial individual. El PDF anterior se conserva como archivo privado.</p></label>}
+                    {error('delivery_type')}{error('app_key')}
+                </section>
+                <section className="grid gap-4 rounded-xl border border-border p-5"><h2 className="text-xl font-bold">Regalos digitales</h2><label className="flex gap-3"><input type="checkbox" checked={form.data.welcome_gift_enabled} onChange={e => form.setData('welcome_gift_enabled', e.target.checked)}/>Disponible como regalo de bienvenida</label><label className="flex gap-3"><input type="checkbox" checked={form.data.promotional_gift_enabled} onChange={e => form.setData('promotional_gift_enabled', e.target.checked)}/>Disponible para regalo promocional</label><label className="flex gap-3"><input type="checkbox" checked={form.data.gift_pdf_final} onChange={e => form.setData('gift_pdf_final', e.target.checked)}/>{form.data.delivery_type === 'hosted_app' ? 'Autorizo la APP protegida para regalos.' : 'Confirmo que el PDF privado actual es definitivo para regalos.'}</label></section>
                 {error('gift_pdf_final')}{error('welcome_gift_enabled')}{error('promotional_gift_enabled')}
                 {Object.keys(form.errors).length > 0 && <p role="status" className="rounded-xl border border-destructive p-4">No se guardaron los cambios. Corrige los campos indicados. Los datos escritos se conservan; si recargas el editor, vuelve a seleccionar los archivos.</p>}
                 {fields.map(([key, label]) => (
@@ -197,7 +206,7 @@ export default function ProductForm({
                     {error('cover')}
                 </label>
                 <label className="grid gap-2">
-                    PDF privado (máximo 25 MB)
+                    {form.data.delivery_type === 'hosted_app' ? 'Respaldo PDF privado opcional (máximo 25 MB)' : 'PDF privado (máximo 25 MB)'}
                     <input
                         type="file"
                         accept="application/pdf"
@@ -211,11 +220,11 @@ export default function ProductForm({
                             className="text-brand underline"
                             href={`/admin/productos-digitales/${p.slug}/pdf`}
                         >
-                            Revisar PDF actual
+                            {form.data.delivery_type === 'hosted_app' ? 'Revisar PDF archivado' : 'Revisar PDF actual'}
                         </a>
                     ) : (
                         <span className="text-sm text-muted-foreground">
-                            Archivo pendiente. Puedes guardar un borrador.
+                            {form.data.delivery_type === 'hosted_app' ? 'La APP no requiere PDF.' : 'Archivo pendiente. Puedes guardar un borrador.'}
                         </span>
                     )}
                 </label>

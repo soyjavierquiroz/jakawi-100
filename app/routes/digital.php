@@ -6,6 +6,8 @@ use App\Http\Controllers\DigitalOrderController;
 use App\Http\Controllers\DigitalProductController;
 use Illuminate\Support\Facades\Route;
 
+Route::post('/internal/hosted-app/exchange', [\App\Http\Controllers\HostedAppController::class, 'exchange'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])->middleware('throttle:600,1');
+
 Route::middleware('web')->group(function () {
     Route::get('/regalos-digitales/invitacion/{token}', [\App\Http\Controllers\DigitalGiftController::class, 'invitation'])->middleware('throttle:20,1');
     Route::get('/regalos-digitales/continuar', [\App\Http\Controllers\DigitalGiftController::class, 'continue'])->middleware('auth');
@@ -20,6 +22,7 @@ Route::middleware('web')->group(function () {
         Route::get('/mi-jakawi/productos-digitales/pedidos/{order:reference}', [DigitalOrderController::class, 'show'])->name('digital.orders.show');
         Route::get('/mi-jakawi/productos-digitales/pedidos/{order:reference}/qr', [DigitalOrderController::class, 'qr'])->name('digital.orders.qr');
         Route::post('/mi-jakawi/productos-digitales/pedidos/{order:reference}/comprobante', [DigitalOrderController::class, 'report'])->name('digital.orders.report');
+        Route::get('/mi-jakawi/productos-digitales/accesos/{access}/app', [\App\Http\Controllers\HostedAppController::class, 'open'])->name('digital.app');
         Route::get('/mi-jakawi/productos-digitales/accesos/{access}/pdf', [DigitalOrderController::class, 'download'])->name('digital.download');
     });
     Route::middleware(['auth', 'admin', 'throttle:60,1'])->prefix('admin/digital')->group(function () {
