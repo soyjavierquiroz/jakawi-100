@@ -6,7 +6,7 @@ use App\Http\Controllers\DigitalOrderController;
 use App\Http\Controllers\DigitalProductController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/internal/hosted-app/exchange', [\App\Http\Controllers\HostedAppController::class, 'exchange'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])->middleware('throttle:600,1');
+Route::post('/internal/hosted-app/exchange', [\App\Http\Controllers\HostedAppController::class, 'exchange'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class])->middleware('throttle:600,1');
 
 Route::middleware('web')->group(function () {
     Route::get('/regalos-digitales/invitacion/{token}', [\App\Http\Controllers\DigitalGiftController::class, 'invitation'])->middleware('throttle:20,1');

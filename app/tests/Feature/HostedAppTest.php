@@ -148,6 +148,15 @@ class HostedAppTest extends TestCase
         $this->post('/admin/productos-digitales/gluteo-perfecto',$data)->assertSessionHasErrors('app_key');
     }
 
+    public function test_server_bridge_works_with_real_csrf_enforcement_and_checkout_stays_protected(): void
+    {
+        $this->app->bind(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class, fn ($app) => new class($app,$app['encrypter']) extends \Illuminate\Foundation\Http\Middleware\PreventRequestForgery {
+            protected function runningUnitTests() { return false; }
+        });
+        $this->withToken(config('hosted_apps.secret'))->postJson('/internal/hosted-app/exchange',['action'=>'check','app'=>'gluteos','credential'=>'invalid-qa'])->assertOk()->assertJson(['authorized'=>false]);
+        $this->postJson('/productos-digitales/gluteo-perfecto/comprar')->assertStatus(419);
+    }
+
     public function test_bridge_rejects_bad_server_credentials_and_unhealthy_delivery(): void
     {
         $this->postJson('/internal/hosted-app/exchange',['action'=>'check','app'=>'gluteos','credential'=>'bad'])->assertUnauthorized();

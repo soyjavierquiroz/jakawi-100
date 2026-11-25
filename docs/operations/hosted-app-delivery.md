@@ -14,7 +14,10 @@ entre dominios (no-referrer lo convertiría en null en navegadores). STORE
 solo acepta Origin COM y consume por HTTPS autenticado con secreto compartido.
 La credencial cifrada de sesión nunca se envía al navegador: vive en la sesión
 PHP de STORE, cookie HttpOnly Secure SameSite=Lax, solo /gluteos/, máximo 8 h.
-No hay cuentas, contraseñas ni cookies compartidas. COM verifica estado activo,
+No hay cuentas, contraseñas ni cookies compartidas. El endpoint interno
+excluye únicamente PreventRequestForgery y exige el secreto servidor; checkout
+conserva CSRF. La salud de STORE verifica renderizado y conexión de regreso a COM
+antes de habilitar comercialmente. Su resultado breve usa la caché DB existente. COM verifica estado activo,
 revoked_at, entrega ready y pedido confirmado (o regalo) en cada consulta.
 
 STORE revalida cada petición de contenido. Una pestaña abierta consulta cada
