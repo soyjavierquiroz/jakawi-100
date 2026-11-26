@@ -4,3 +4,5 @@
 .admin-shell .admin-content .digital-admin table :is(button, summary, a.inline-flex) { padding: 8px; }
 .admin-shell .admin-content .digital-admin table td:first-child { vertical-align: middle; text-align: center; }
 .digital-admin table img { max-width: none; }
+.admin-shell .admin-content .digital-admin table span.inline-flex { white-space: nowrap; letter-spacing: normal; padding: 4px 6px; }
+.admin-shell .admin-content .digital-admin select:is([aria-label="Estado"], [aria-label="Categoría"]) { flex: 1 1 14rem; min-width: min(100%, 14rem); }

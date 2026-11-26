@@ -4,8 +4,8 @@ import base64,datetime,fcntl,hashlib,json,os,pathlib,shutil,subprocess,sys,urlli
 os.umask(0o077)
 R=pathlib.Path(os.environ.get('JAKAWI_REPOSITORY','/srv/workspaces/jakawi/com/digital-admin-premium'))
 P=pathlib.Path('/opt/sites/jakawi.com')
-W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/digital-admin-premium-r2-evidence'))
-BASE=os.environ.get('JAKAWI_RUNTIME_BASE','0c553f2234c0b82c6cf332b56b6e4a55fe956696')
+W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/digital-admin-premium-r3-evidence'))
+BASE=os.environ.get('JAKAWI_RUNTIME_BASE','6df9a5b5f40afa7d15f708ebbeb5457f016fef88')
 SOURCE_BASE=os.environ.get('JAKAWI_SOURCE_BASE','0c553f2234c0b82c6cf332b56b6e4a55fe956696')
 SERVICES=['app','web','worker','scheduler']
 IMPORTER=pathlib.Path('/opt/sites/jakawi.store/catalog-tools/import-plr.py')
