@@ -42,6 +42,7 @@ Route::middleware('web')->group(function () {
     });
     Route::middleware(['auth', 'admin'])->prefix('admin/productos-digitales')->group(function () {
         Route::get('/', [AdminDigitalProductController::class, 'index'])->name('admin.digital.index');
+        Route::post('/lote', \App\Http\Controllers\AdminDigitalBulkController::class)->middleware('throttle:20,1');
         Route::get('/crear', [AdminDigitalProductController::class, 'edit'])->name('admin.digital.create');
         Route::post('/', [AdminDigitalProductController::class, 'save'])->name('admin.digital.store');
         Route::get('/{product:slug}/preview', [DigitalProductController::class, 'preview'])->name('admin.digital.preview');

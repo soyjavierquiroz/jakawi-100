@@ -23,7 +23,7 @@ class DigitalSaleAvailability
 
     public function settings(DigitalProduct $product): array
     {
-        $value = AppSetting::where('key', $this->key($product))->first()?->value ?? [];
+        $value = app(DigitalAdminSnapshot::class)->setting($this->key($product));
         return ($value['product_id'] ?? null) === $product->id ? $value : [];
     }
 
@@ -45,7 +45,10 @@ class DigitalSaleAvailability
         $settings ??= $this->settings($product);
         $missing = [];
         if (! $this->eligible($product)) $missing[] = 'La autorización comercial requiere un producto compatible de JAKAWI Digital.';
-        if (! ($publishing ? $product->partner()->published()->exists() : DigitalProduct::published()->whereKey($product->id)->exists())) $missing[] = 'Publicar el producto y su Partner.';
+        $published = app(DigitalAdminSnapshot::class)->active
+            ? ($product->partner?->status === 'published' && ($publishing || $product->status === 'published'))
+            : ($publishing ? $product->partner()->published()->exists() : DigitalProduct::published()->whereKey($product->id)->exists());
+        if (! $published) $missing[] = 'Publicar el producto y su Partner.';
         if (! is_numeric($product->public_price) || DigitalCheckout::cents((string) $product->public_price) <= 0) $missing[] = 'Configurar el precio público definitivo.';
         if (! is_numeric($product->member_price) || (float) $product->member_price <= 0 || (float) $product->member_price > (float) $product->public_price) $missing[] = 'Configurar el precio miembro definitivo, menor o igual al público.';
         if ($product->delivery_type === 'hosted_app') {

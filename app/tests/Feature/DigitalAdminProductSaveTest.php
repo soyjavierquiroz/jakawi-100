@@ -47,7 +47,7 @@ class DigitalAdminProductSaveTest extends TestCase
     }
     public function test_two_qrs_can_be_stored_without_confirming_or_enabling_sales_and_retry_does_not_duplicate(): void
     {
-        $this->post($this->url,$this->data(['public_qr'=>UploadedFile::fake()->image('public.png'),'member_qr'=>UploadedFile::fake()->image('member.png')]))->assertSessionHasNoErrors()->assertRedirect('/admin/productos-digitales');
+        $this->post($this->url,$this->data(['public_qr'=>UploadedFile::fake()->image('public.png',49,10),'member_qr'=>UploadedFile::fake()->image('member.png',29,10)]))->assertSessionHasNoErrors()->assertRedirect('/admin/productos-digitales');
         $qrs=app(DigitalProductQr::class)->settings($this->product);
         foreach(['public','member'] as $tier){Storage::disk('digital-private')->assertExists($qrs[$tier]['qr_path']);$this->assertNull($qrs[$tier]['verified_by']);}
         $before=Storage::disk('digital-private')->allFiles();
@@ -58,14 +58,14 @@ class DigitalAdminProductSaveTest extends TestCase
     public function test_confirmation_without_authorized_account_returns_field_error_before_any_upload(): void
     {
         $before=$this->product->fresh()->getAttributes();$files=Storage::disk('digital-private')->allFiles();
-        $this->from($this->url.'/editar')->post($this->url,$this->data(['name'=>'Sin guardar','cover'=>UploadedFile::fake()->image('cover.png'),'public_qr'=>UploadedFile::fake()->image('public.png'),'member_qr'=>UploadedFile::fake()->image('member.png'),'public_qr_confirmed'=>true,'member_qr_confirmed'=>true]))->assertRedirect($this->url.'/editar')->assertSessionHasErrors(['public_qr_confirmed']);
+        $this->from($this->url.'/editar')->post($this->url,$this->data(['name'=>'Sin guardar','cover'=>UploadedFile::fake()->image('cover.png'),'public_qr'=>UploadedFile::fake()->image('public.png',49,10),'member_qr'=>UploadedFile::fake()->image('member.png',29,10),'public_qr_confirmed'=>true,'member_qr_confirmed'=>true]))->assertRedirect($this->url.'/editar')->assertSessionHasErrors(['public_qr_confirmed']);
         $this->assertSame($before,$this->product->fresh()->getAttributes());$this->assertSame($files,Storage::disk('digital-private')->allFiles());$this->assertSame([],Storage::disk('minio-media')->allFiles());
         $this->assertStringContainsString('cuenta en Cobro digital',session('errors')->first('public_qr_confirmed'));
     }
     public function test_confirmation_keeps_amount_and_currency_checks_and_does_not_enable_sales(): void
     {
         $this->account();
-        $this->post($this->url,$this->data(['public_qr'=>UploadedFile::fake()->image('public.png'),'member_qr'=>UploadedFile::fake()->image('member.png'),'public_qr_confirmed'=>true,'member_qr_confirmed'=>true]))->assertSessionHasNoErrors();
+        $this->post($this->url,$this->data(['public_qr'=>UploadedFile::fake()->image('public.png',49,10),'member_qr'=>UploadedFile::fake()->image('member.png',29,10),'public_qr_confirmed'=>true,'member_qr_confirmed'=>true]))->assertSessionHasNoErrors();
         $qrs=app(DigitalProductQr::class)->settings($this->product);
         $this->assertSame('49.00',$qrs['public']['amount']);$this->assertSame('29.00',$qrs['member']['amount']);
         $this->assertTrue(app(DigitalProductQr::class)->verified($this->product,'public'));$this->assertTrue(app(DigitalProductQr::class)->verified($this->product,'member'));
@@ -85,7 +85,7 @@ class DigitalAdminProductSaveTest extends TestCase
         foreach(['digital-private','minio-media'] as $disk){config(['filesystems.disks.'.$disk=>$cfg['disks'][$disk]]);config(['filesystems.disks.'.$disk.'.root'=>$prefix.'/'.$disk]);Storage::forgetDisk($disk);}
         $private=Storage::disk('digital-private');$media=Storage::disk('minio-media');
         try {
-            $this->post($this->url,$this->data(['pdf'=>UploadedFile::fake()->createWithContent('qa.pdf',"%PDF-1.4\n% QA ONLY\n%%EOF"),'cover'=>UploadedFile::fake()->image('cover.png'),'gallery'=>[UploadedFile::fake()->image('gallery.png')],'public_qr'=>UploadedFile::fake()->image('public.png'),'member_qr'=>UploadedFile::fake()->image('member.png')]))->assertSessionHasNoErrors()->assertRedirect('/admin/productos-digitales');
+            $this->post($this->url,$this->data(['pdf'=>UploadedFile::fake()->createWithContent('qa.pdf',"%PDF-1.4\n% QA ONLY\n%%EOF"),'cover'=>UploadedFile::fake()->image('cover.png'),'gallery'=>[UploadedFile::fake()->image('gallery.png')],'public_qr'=>UploadedFile::fake()->image('public.png',49,10),'member_qr'=>UploadedFile::fake()->image('member.png',29,10)]))->assertSessionHasNoErrors()->assertRedirect('/admin/productos-digitales');
             $p=$this->product->fresh();$this->assertTrue($media->exists($p->cover_path));$this->assertTrue($media->exists($p->gallery_paths[0]));$this->assertTrue($private->exists($p->file_path));$this->assertSame($p->file_sha256,hash('sha256',$private->get($p->file_path)));
             foreach(app(DigitalProductQr::class)->settings($p) as $qr){$this->assertTrue($private->exists($qr['qr_path']));$this->assertSame($qr['qr_sha256'],hash('sha256',$private->get($qr['qr_path'])));$this->assertNull($qr['verified_by']);}
             $this->assertFalse(app(\App\Services\DigitalSaleAvailability::class)->canSell($p));

@@ -10,7 +10,7 @@ class DigitalCollection
 
     public function current(): ?array
     {
-        $v = AppSetting::where('key', self::KEY)->first()?->value;
+        $v = app(DigitalAdminSnapshot::class)->setting(self::KEY);
         if (! is_array($v) || ! ($v['enabled'] ?? false)) {
             return null;
         }
@@ -31,6 +31,6 @@ class DigitalCollection
 
     public function settings(): ?array
     {
-        return AppSetting::where('key', self::KEY)->first()?->value;
+        return app(DigitalAdminSnapshot::class)->setting(self::KEY) ?: null;
     }
 }

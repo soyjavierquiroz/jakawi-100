@@ -10,7 +10,7 @@ class HostedApps
     public function registry(): array
     {
         $apps = config('hosted_apps.apps', []);
-        $slugs = \App\Models\AppSetting::where('key', 'hosted_app_catalog')->first()?->value['slugs'] ?? [];
+        $slugs = app(DigitalAdminSnapshot::class)->setting('hosted_app_catalog')['slugs'] ?? [];
         foreach ($slugs as $slug) {
             if (is_string($slug) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug)) {
                 $apps[$slug] = ['entry' => "https://jakawi.store/$slug/_entry", 'health' => "https://jakawi.store/$slug/_health"];
@@ -28,11 +28,13 @@ class HostedApps
     public function ready(DigitalProduct $product, bool $fresh = false): bool
     {
         if (! $this->registered($product)) return false;
+        $snapshot = app(DigitalAdminSnapshot::class);
+        if ($snapshot->active && ! $fresh) return ($snapshot->health['hosted-app-health:'.$product->app_key] ?? false) === true;
         if ($fresh) Cache::store('database')->forget('hosted-app-health:'.$product->app_key);
         return Cache::store('database')->remember('hosted-app-health:'.$product->app_key, 30, function () use ($product) {
             try {
                 $r = Http::withToken(config('hosted_apps.secret'))->timeout(20)->get($this->registry()[$product->app_key]['health']);
-                if (! $r->ok() || $r->json('protected') !== true || $r->json('functional') !== true) return false;
+                if (! $this->healthyResponse($r)) return false;
                 // Probe without credentials or redirects: health alone cannot prove route protection.
                 $base = 'https://jakawi.store/'.$product->app_key.'/';
                 // Adopted Glúteos serves a generic public JS bundle; its rendered
@@ -40,11 +42,57 @@ class HostedApps
                 $paths = $product->app_key === 'gluteos' ? ['', 'index.php'] : ['', 'index.php', 'app.js'];
                 foreach ($paths as $path) {
                     $direct = Http::withoutRedirecting()->timeout(8)->get($base.$path);
-                    if (! in_array($direct->status(), [401,403], true)) return false;
+                    if (! $this->guardedResponse($direct)) return false;
                 }
                 return true;
             } catch (\Throwable) { return false; }
         });
+    }
+
+    private function healthyResponse(mixed $response): bool
+    {
+        return $response instanceof \Illuminate\Http\Client\Response && $response->ok()
+            && $response->json('protected') === true && $response->json('functional') === true;
+    }
+
+    private function guardedResponse(mixed $response): bool
+    {
+        return $response instanceof \Illuminate\Http\Client\Response && in_array($response->status(), [401,403], true);
+    }
+
+    /** Batch health reads for the admin; authorization still checks fresh before publishing. */
+    public function adminHealth(array $keys): array
+    {
+        $keys = array_values(array_unique(array_filter($keys)));
+        $cache = Cache::store('database');
+        $health = $cache->many(array_map(fn ($key) => 'hosted-app-health:'.$key, $keys));
+        $registry = $this->registry();
+        $missing = array_values(array_filter($keys, fn ($key) => !isset($health['hosted-app-health:'.$key]) && isset($registry[$key]) && filled(config('hosted_apps.secret'))));
+        foreach (array_chunk($missing, 20) as $chunk) {
+            $responses = Http::pool(function ($pool) use ($chunk, $registry) {
+                $requests = [];
+                foreach ($chunk as $key) {
+                    $requests[] = $pool->as($key.':health')->withToken(config('hosted_apps.secret'))->timeout(20)->get($registry[$key]['health']);
+                    foreach ($key === 'gluteos' ? ['', 'index.php'] : ['', 'index.php', 'app.js'] as $path) {
+                        $requests[] = $pool->as($key.':'.$path)->withoutRedirecting()->timeout(8)->get('https://jakawi.store/'.$key.'/'.$path);
+                    }
+                }
+                return $requests;
+            });
+            $values = [];
+            foreach ($chunk as $key) {
+                $r = $responses[$key.':health'] ?? null;
+                $valid = $this->healthyResponse($r);
+                foreach ($key === 'gluteos' ? ['', 'index.php'] : ['', 'index.php', 'app.js'] as $path) {
+                    $r = $responses[$key.':'.$path] ?? null;
+                    $valid = $valid && $this->guardedResponse($r);
+                }
+                $values['hosted-app-health:'.$key] = $valid;
+            }
+            $cache->putMany($values,30);
+            $health = array_replace($health,$values);
+        }
+        return $health;
     }
 
     public function authorized(DigitalAccessGrant $grant): bool

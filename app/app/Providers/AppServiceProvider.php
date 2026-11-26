@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->scoped(\App\Services\DigitalAdminSnapshot::class);
         $this->app->bind(Inspector::class, ShareContestClient::class);
         $this->app->singleton(QrPaymentGateway::class, function (): QrPaymentGateway {
             $driver = config('payments.qr.driver', 'disabled');

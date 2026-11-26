@@ -1,0 +1,6 @@
+/* Scoped catalog density within the existing administrative shell. */
+.admin-shell .admin-content .digital-admin [data-catalog-search] { padding-left: 2.5rem; }
+.admin-shell .admin-content .digital-admin table :is(th, td) { padding: 12px 8px; overflow-wrap: anywhere; }
+.admin-shell .admin-content .digital-admin table :is(button, summary, a.inline-flex) { padding: 8px; }
+.admin-shell .admin-content .digital-admin table td:first-child { vertical-align: middle; text-align: center; }
+.digital-admin table img { max-width: none; }

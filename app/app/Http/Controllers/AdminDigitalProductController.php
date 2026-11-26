@@ -16,9 +16,9 @@ use Inertia\Inertia;
 
 class AdminDigitalProductController extends Controller
 {
-    public function index(DigitalCatalog $catalog)
+    public function index(Request $request, DigitalCatalog $catalog)
     {
-        return Inertia::render('admin/digital/products', ['products' => DigitalProduct::with('partner')->where('partner_id', $catalog->internalPartner()->id)->latest('id')->paginate(25)->through(fn ($p) => $p->toArray() + ['sale'=>app(\App\Services\DigitalSaleAvailability::class)->adminState($p)]), 'partner' => $catalog->internalPartner()->only('id', 'name'), 'categoryLabels' => config('jakawi.category_labels'), 'hostedApps' => array_keys(app(\App\Services\HostedApps::class)->registry())]);
+        return Inertia::render('admin/digital/products', app(\App\Services\DigitalAdminCatalog::class)->listing($request, $catalog));
     }
 
     public function edit(DigitalCatalog $catalog, ?DigitalProduct $product = null)

@@ -17,7 +17,7 @@ class DigitalProductQr
 
     public function settings(DigitalProduct $product): array
     {
-        return AppSetting::where('key', $this->key($product))->first()?->value ?? [];
+        return app(DigitalAdminSnapshot::class)->setting($this->key($product));
     }
 
     public const SHARED_PREFIX = 'digital_shared_qr_v1.';
@@ -41,14 +41,14 @@ class DigitalProductQr
         $price = $this->price($product, $tier);
         if (! $account || ! is_numeric($price)) return [];
         $key = $this->sharedKey($price, $product->currency, $account);
-        $qr = AppSetting::where('key', $key)->first()?->value ?? [];
+        $qr = app(DigitalAdminSnapshot::class)->setting($key);
         return $qr ? $qr + ['shared_key'=>$key] : [];
     }
 
     private function sharedValid(array $qr): bool
     {
         if (empty($qr['shared_key'])) return true;
-        $current = AppSetting::where('key', $qr['shared_key'])->first()?->value ?? [];
+        $current = app(DigitalAdminSnapshot::class)->setting($qr['shared_key']);
         if (empty($current['revision']) || ($current['revision'] ?? null) !== ($qr['revision'] ?? null) || empty($current['enabled']) || empty($current['bank_reuse_confirmed'])) return false;
         if (! empty($current['valid_until']) && now()->gte(\Carbon\Carbon::parse($current['valid_until']))) return false;
         // Owner confirmation declares reuse; the software verifies binding and integrity, not bank policy.
@@ -110,12 +110,38 @@ class DigitalProductQr
         app(DigitalAssetCleanup::class)->afterCommit('digital-private', $oldPaths);
     }
 
+    public function sharedMissing(DigitalProduct $product): array
+    {
+        $probe = clone $product;
+        $snapshot = app(DigitalAdminSnapshot::class);
+        // Resolve the actual shared resources without changing product settings or files.
+        $account = app(DigitalCollection::class)->current();
+        $missing = [];
+        foreach (['public', 'member'] as $tier) {
+            $price = $this->price($probe, $tier);
+            $qr = $account && is_numeric($price) ? $snapshot->setting($key = $this->sharedKey($price, $product->currency, $account)) : [];
+            if ($qr) $qr['shared_key'] = $key;
+            if (! $this->verified($probe, $tier, $qr)) $missing[] = "QR compartido $tier incompatible con importe, moneda o cuenta actual.";
+        }
+        return $missing;
+    }
+
     private function price(DigitalProduct $product, string $tier): ?string
     {
         return $tier === 'public' ? $product->public_price : $product->member_price;
     }
 
     private function intact(array $qr): bool
+    {
+        $snapshot = app(DigitalAdminSnapshot::class);
+        if ($snapshot->active) {
+            $key = hash('sha256', json_encode($qr));
+            return $snapshot->integrity[$key] ??= $this->checkIntact($qr);
+        }
+        return $this->checkIntact($qr);
+    }
+
+    private function checkIntact(array $qr): bool
     {
         try {
             $disk = Storage::disk('digital-private');

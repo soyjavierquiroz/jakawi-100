@@ -33,7 +33,7 @@ class DigitalSaleActivationTest extends TestCase
         $p->update(['public_price'=>'49.00', 'member_price'=>'29.00', 'file_path'=>$pdf['path'], 'file_sha256'=>$pdf['sha256']]);
         Storage::disk('digital-private')->put('qr/qa.png', 'QA ONLY');
         AppSetting::updateOrCreate(['key'=>DigitalCollection::KEY], ['value'=>['enabled'=>true,'exclusive_account'=>true,'variable_amount_qr'=>true,'bank'=>'QA BANK SIMULATED','holder'=>'QA ONLY','account'=>'QA-NOT-REAL','currency'=>'BOB','version'=>'qa-1','account_key'=>hash('sha256','qa-only'),'qr_path'=>'qr/qa.png','qr_sha256'=>hash('sha256','QA ONLY')]]);
-        foreach (['public','member'] as $tier) app(\App\Services\DigitalProductQr::class)->save($p, $tier, UploadedFile::fake()->image('QA-ONLY-'.$tier.'.png'), true, $admin->id);
+        foreach (['public','member'] as $tier) app(\App\Services\DigitalProductQr::class)->save($p, $tier, UploadedFile::fake()->image('QA-ONLY-'.$tier.'.png', $tier === 'public' ? 49 : 29, 10), true, $admin->id);
         app(DigitalSaleAvailability::class)->configure($p, true, true, $admin->id);
     }
 
