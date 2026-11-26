@@ -27,7 +27,7 @@ function ProductGallery({ product: p }: { product: DigitalProductData }) {
         const element = track.current;
         const slide = element?.children[Math.max(0, Math.min(images.length - 1, index))] as HTMLElement | undefined;
         if (!element || !slide) return;
-        element.scrollTo({ left: slide.offsetLeft - element.offsetLeft, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+        element.scrollTo({ left: slide.offsetLeft, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     };
     return (
         <section aria-labelledby="gallery-heading" className="mt-14 border-t border-border pt-10 sm:mt-20">
