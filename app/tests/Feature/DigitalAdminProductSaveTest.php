@@ -78,6 +78,22 @@ class DigitalAdminProductSaveTest extends TestCase
         $this->from($this->url.'/editar')->post($this->url,$this->data(['sale_enabled'=>true,'pdf_final'=>true,'operation'=>'authorize_sale']))->assertRedirect($this->url.'/editar')->assertSessionHasErrors('sale_enabled');
         $this->assertFalse(app(\App\Services\DigitalSaleAvailability::class)->canSell($this->product->fresh()));$this->assertSame('29.00',$this->product->fresh()->member_price);
     }
+    public function test_app_editor_restores_gift_authorization_without_a_pdf(): void
+    {
+        $this->mock(\App\Services\HostedApps::class, function ($mock) {
+            $mock->shouldReceive('ready')->andReturn(true);
+            $mock->shouldReceive('registry')->andReturn(['gluteos'=>[]]);
+        });
+        $this->product->update(['delivery_type'=>'hosted_app','app_key'=>'gluteos','file_path'=>null,'file_sha256'=>null,'gift_pdf_sha256'=>null,'welcome_gift_enabled'=>true,'promotional_gift_enabled'=>true]);
+        $this->get($this->url.'/editar')->assertOk()->assertInertia(fn ($page) => $page
+            ->where('product.welcome_gift_enabled',true)
+            ->where('product.promotional_gift_enabled',true)
+            ->where('product.gift_pdf_final',true));
+        $this->product->update(['welcome_gift_enabled'=>false,'promotional_gift_enabled'=>false]);
+        $this->get($this->url.'/editar')->assertOk()->assertInertia(fn ($page) => $page->where('product.gift_pdf_final',false));
+        $this->assertDatabaseCount('digital_gifts',0);
+        $this->assertDatabaseCount('digital_access_grants',0);
+    }
     public function test_uploaded_files_have_valid_private_minio_references(): void
     {
         if(getenv('MINIO_INTEGRATION')!=='1')$this->markTestSkipped('Explicit isolated MinIO integration required.');
