@@ -107,6 +107,38 @@ class DigitalCheckoutTest extends TestCase
         $this->assertSame('member', $order->collection_snapshot['qr_tier']);
     }
 
+    public function test_premium_detail_preserves_both_fields_and_admin_preview_cannot_collect(): void
+    {
+        $this->product->update(['short_description'=>'Promesa breve', 'description'=>"Descripción completa.\n\nSegundo párrafo.", 'commercial_content'=>"Beneficios prácticos.\n\nInvitación comercial.", 'gallery_paths'=>[], 'cover_path'=>'digital-products/22/image/00000000-0000-4000-8000-000000000002.webp']);
+        config(['media.imgproxy_url'=>'https://images.example.test', 'media.imgproxy_key'=>str_repeat('ab',32), 'media.imgproxy_salt'=>str_repeat('cd',32)]);
+        $before = $this->product->fresh()->getAttributes();
+        $this->get('/productos-digitales/gluteo-perfecto')->assertOk()->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('digital/show')->where('memberActive',false)->where('canCollect',true)
+            ->where('pendingOrderPrice',null)->where('product.description',$this->product->description)
+            ->where('product.commercial_content',$this->product->commercial_content)->has('product.gallery_urls',0)
+            ->where('product.cover_url',fn ($url) => str_contains($url,'/rs:fit:1200:1500/'))
+            ->has('product.cover_srcset',4));
+        $this->actingAs($this->admin)->get('/admin/productos-digitales/gluteo-perfecto/preview')->assertOk()
+            ->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page->component('digital/show')->where('preview',true)->where('canCollect',false));
+        $this->assertSame($before,$this->product->fresh()->getAttributes());
+        $this->assertDatabaseCount('digital_orders',0);
+    }
+
+    public function test_premium_purchase_rechecks_membership_after_view_and_continues_pending_amount(): void
+    {
+        $this->actingAs($this->buyer)->get('/productos-digitales/gluteo-perfecto')->assertOk()
+            ->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page->where('memberActive',false)->where('pendingOrderPrice',null));
+        Membership::create(['user_id'=>$this->buyer->id,'status'=>'active','type'=>'standard','starts_at'=>now()->subDay(),'ends_at'=>now()->addDay(),'amount_paid'=>'100.00']);
+        $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect();
+        $order = DigitalOrder::sole();
+        $this->assertSame('12.50',$order->amount);
+        $this->assertTrue($order->member_at_purchase);
+        $this->get('/productos-digitales/gluteo-perfecto')->assertOk()
+            ->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page->where('memberActive',true)->where('pendingOrderPrice','12.50'));
+        $this->post('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect();
+        $this->assertDatabaseCount('digital_orders',1);
+    }
+
     public function test_unconfigured_qr_prevents_order_without_writes(): void
     {
         AppSetting::where('key', DigitalCollection::KEY)->delete();

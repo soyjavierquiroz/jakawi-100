@@ -11,7 +11,10 @@ export type DigitalProductData = {
     public_price: string | null;
     member_price: string | null;
     currency: string;
+    delivery_type?: string;
     cover_url?: string | null;
+    cover_srcset?: { src: string; width: number }[];
+    gallery_srcsets?: { src: string; width: number }[][];
     partner: { id: number; name: string };
     support_information: string | null;
     access_terms: string | null;

@@ -10,6 +10,7 @@ return [
     'max_pixels' => 24_000_000,
     'social_fallback' => 'landings/1/image/00000000-0000-4000-8000-000000000001.webp',
     'presets' => [
+        'digital_artwork' => ['width' => 1200, 'height' => 1500, 'quality' => 82, 'fit' => 'fit'],
         'social' => ['width' => 1200, 'height' => 630, 'quality' => 85, 'fit' => 'fill', 'format' => 'jpg'],
         'hero' => ['width' => 1600, 'height' => 1000, 'quality' => 82, 'fit' => 'fill'],
         'benefit_card' => ['width' => 640, 'height' => 480, 'quality' => 80, 'fit' => 'fill'],

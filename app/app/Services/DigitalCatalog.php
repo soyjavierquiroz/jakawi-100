@@ -29,11 +29,13 @@ class DigitalCatalog
         return $sort === 'name' ? $q->orderBy('name')->orderBy('id') : $q->orderByDesc('id');
     }
 
-    public function present(DigitalProduct $p, ?bool $comingSoon = null): array
+    public function present(DigitalProduct $p, ?bool $comingSoon = null, string $imagePreset = 'hero'): array
     {
         return $p->only(['id', 'name', 'slug', 'short_description', 'description', 'commercial_content', 'public_price', 'member_price', 'currency', 'delivery_type', 'support_information', 'access_terms']) + [
-            'partner' => $p->partner->only(['id', 'name', 'slug']), 'cover_url' => app(MediaUrl::class)->url($p->cover_path, 'hero'),
-            'gallery_urls' => array_map(fn ($path) => app(MediaUrl::class)->url($path, 'hero'), $p->gallery_paths ?? []),
+            'partner' => $p->partner->only(['id', 'name', 'slug']), 'cover_url' => app(MediaUrl::class)->url($p->cover_path, $imagePreset),
+            'gallery_urls' => array_map(fn ($path) => app(MediaUrl::class)->url($path, $imagePreset), $p->gallery_paths ?? []),
+            'cover_srcset' => $imagePreset === 'digital_artwork' ? app(MediaUrl::class)->srcset($p->cover_path, $imagePreset) : [],
+            'gallery_srcsets' => $imagePreset === 'digital_artwork' ? array_map(fn ($path) => app(MediaUrl::class)->srcset($path, $imagePreset), $p->gallery_paths ?? []) : [],
             'category' => $p->category,
             'coming_soon' => $comingSoon ?? $p->isComingSoon(),
             'url' => app(ProductLandingResolver::class)->navigationUrl($p, request()->user() !== null),
