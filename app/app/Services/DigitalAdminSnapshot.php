@@ -18,7 +18,13 @@ class DigitalAdminSnapshot
             $q->where('key', 'like', 'digital_%')->orWhereIn('key', [DigitalSaleAvailability::KEY, 'hosted_app_catalog']);
         })->pluck('value', 'key')->all();
         $this->active = true;
-        $this->health = app(HostedApps::class)->adminHealth($appKeys);
+        $cache = Cache::store('database');
+        $keys = array_values(array_unique(array_filter($appKeys)));
+        $this->health = $cache->many(array_map(fn ($key) => 'hosted-app-health:'.$key, $keys));
+        $last = $cache->many(array_map(fn ($key) => 'hosted-app-admin-health:'.$key, $keys));
+        foreach ($keys as $key) {
+            if (!isset($this->health['hosted-app-health:'.$key])) $this->health['hosted-app-health:'.$key] = $last['hosted-app-admin-health:'.$key]['ready'] ?? false;
+        }
     }
 
     public function setting(string $key): array

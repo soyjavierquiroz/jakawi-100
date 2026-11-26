@@ -67,9 +67,9 @@ class DigitalSaleAvailability
         return array_merge($missing, app(DigitalProductQr::class)->missing($product));
     }
 
-    public function publishAndSell(DigitalProduct $product, int $adminId, bool $pdfFinal = false): array
+    public function publishAndSell(DigitalProduct $product, int $adminId, bool $pdfFinal = false, bool $verifyFresh = true): array
     {
-        if ($product->delivery_type === 'hosted_app') app(HostedApps::class)->ready($product, true);
+        if ($product->delivery_type === 'hosted_app') app(HostedApps::class)->ready($product, $verifyFresh);
         $prospective = $this->settings($product);
         if ($pdfFinal && $this->pdfVerified($product)) $prospective['pdf_sha256'] = $product->file_sha256;
         $missing = $this->missing($product, $prospective, true);

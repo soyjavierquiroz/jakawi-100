@@ -4,7 +4,7 @@ import base64,datetime,fcntl,hashlib,json,os,pathlib,shutil,subprocess,sys,urlli
 os.umask(0o077)
 R=pathlib.Path(os.environ.get('JAKAWI_REPOSITORY','/srv/workspaces/jakawi/com/digital-admin-premium'))
 P=pathlib.Path('/opt/sites/jakawi.com')
-W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/digital-admin-premium-evidence'))
+W=pathlib.Path(os.environ.get('JAKAWI_RELEASE_EVIDENCE','/srv/workspaces/jakawi/com/digital-admin-premium-r2-evidence'))
 BASE=os.environ.get('JAKAWI_RUNTIME_BASE','0c553f2234c0b82c6cf332b56b6e4a55fe956696')
 SOURCE_BASE=os.environ.get('JAKAWI_SOURCE_BASE','0c553f2234c0b82c6cf332b56b6e4a55fe956696')
 SERVICES=['app','web','worker','scheduler']
@@ -25,7 +25,7 @@ def guard_source():
  assert git('merge-base',BASE,'HEAD')==BASE
  remote=git('ls-remote','origin','refs/heads/main').split()[0]
  assert git('merge-base',remote,'HEAD')==remote
- allowed={'app/resources/js/pages/admin/digital/products.css', 'app/tests/Feature/DigitalAdminProductSaveTest.php', 'app/tests/Feature/DigitalSaleActivationTest.php', 'app/app/Http/Controllers/AdminDigitalBulkController.php', 'app/routes/digital.php', 'docs/operations/digital-admin-premium.md', 'app/app/Services/DigitalCollection.php', 'app/app/Services/HostedApps.php', 'app/resources/js/pages/admin/digital/products.tsx', 'app/tests/Feature/DigitalAdminCatalogTest.php', 'docker/new-server/digital-admin-premium-release-control.py', 'app/app/Providers/AppServiceProvider.php', 'app/app/Http/Controllers/AdminDigitalProductController.php', 'app/app/Services/DigitalSaleAvailability.php', 'app/app/Services/DigitalAdminCatalog.php', 'app/app/Services/DigitalAdminSnapshot.php', 'app/app/Services/DigitalProductQr.php'}
+ allowed={'app/routes/console.php', 'app/app/Console/Commands/RefreshDigitalAdminHealth.php', 'app/resources/js/pages/admin/digital/products.css', 'app/tests/Feature/DigitalAdminProductSaveTest.php', 'app/tests/Feature/DigitalSaleActivationTest.php', 'app/app/Http/Controllers/AdminDigitalBulkController.php', 'app/routes/digital.php', 'docs/operations/digital-admin-premium.md', 'app/app/Services/DigitalCollection.php', 'app/app/Services/HostedApps.php', 'app/resources/js/pages/admin/digital/products.tsx', 'app/tests/Feature/DigitalAdminCatalogTest.php', 'docker/new-server/digital-admin-premium-release-control.py', 'app/app/Providers/AppServiceProvider.php', 'app/app/Http/Controllers/AdminDigitalProductController.php', 'app/app/Services/DigitalSaleAvailability.php', 'app/app/Services/DigitalAdminCatalog.php', 'app/app/Services/DigitalAdminSnapshot.php', 'app/app/Services/DigitalProductQr.php'}
  assert set(git('diff','--name-only',SOURCE_BASE,'HEAD').splitlines())<=allowed
  v=read('validation.json');assert v['result']=='PASS' and v['revision']==git('rev-parse','HEAD')
  assert v['manifest_sha256']==hashlib.sha256((R/'app/public/build/manifest.json').read_bytes()).hexdigest()

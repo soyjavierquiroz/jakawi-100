@@ -45,8 +45,10 @@ class DigitalAdminCatalogTest extends TestCase
     {
         $partner=app(DigitalCatalog::class)->internalPartner();
         for($i=0;$i<55;$i++) DigitalProduct::create(['partner_id'=>$partner->id,'name'=>sprintf('Producto %02d',$i),'slug'=>'producto-'.$i,'category'=>'cocina-recetas','delivery_type'=>'pdf','status'=>'draft','currency'=>'BOB','public_price'=>49,'member_price'=>29]);
+        Http::fake();
         DB::flushQueryLog();DB::enableQueryLog();
         $this->actingAs($this->admin)->get('/admin/productos-digitales?q=Producto&state=draft&category=cocina-recetas&type=pdf&sort=name_desc&per_page=25&page=2')->assertOk()->assertInertia(fn(Assert $page)=>$page->has('products.data',25)->where('products.total',55)->where('products.data.0.name','Producto 29')->where('filters.q','Producto')->where('counts.total',56)->where('products.current_page',2)->where('products.next_page_url',fn($url)=>str_contains($url,'q=Producto')&&str_contains($url,'sort=name_desc')));
+        Http::assertNothingSent();
         $this->assertLessThan(35,count(DB::getQueryLog()));DB::disableQueryLog();
         $this->get('/admin/productos-digitales?q=Mascotas%20y%20animales')->assertOk()->assertInertia(fn(Assert $page)=>$page->where('products.total',1));
         $this->get('/admin/productos-digitales?qr=pending&state=missing')->assertOk()->assertInertia(fn(Assert $page)=>$page->where('products.total',56));
@@ -103,4 +105,34 @@ class DigitalAdminCatalogTest extends TestCase
         $this->postJson('/admin/productos-digitales/lote',['ids'=>[$this->product->id],'changes'=>['category'=>'fitness'],'phase'=>'preview'])->assertForbidden();
         $this->actingAs($this->admin)->postJson('/admin/productos-digitales/lote',['ids'=>[99999999],'changes'=>['category'=>'fitness'],'phase'=>'preview'])->assertForbidden();
     }
+    public function test_bounded_requests_share_one_confirmation_and_reject_ids_outside_selection(): void
+    {
+        $ids=[$this->product->id];
+        for ($i=0;$i<4;$i++) { $p=$this->product->replicate(); $p->slug='batch-'.$i; $p->save(); $ids[]=$p->id; }
+        $this->actingAs($this->admin);
+        $changes=['category'=>'familia-crianza']; $confirmation=null;
+        foreach (array_chunk($ids,4) as $chunk) {
+            $result=$this->postJson('/admin/productos-digitales/lote',['ids'=>$ids,'batch_ids'=>$chunk,'changes'=>$changes,'phase'=>'preview'])->assertOk()->json();
+            $this->assertCount(count($chunk),$result['results']); $confirmation=$result['confirmation'];
+        }
+        $this->assertSame(0,DigitalProduct::whereIn('id',$ids)->where('category','familia-crianza')->count());
+        $this->postJson('/admin/productos-digitales/lote',['ids'=>$ids,'batch_ids'=>[9999999],'changes'=>$changes,'phase'=>'apply','confirmation'=>$confirmation])->assertUnprocessable();
+        foreach (array_chunk($ids,4) as $chunk) {
+            $this->postJson('/admin/productos-digitales/lote',['ids'=>$ids,'batch_ids'=>$chunk,'changes'=>$changes,'phase'=>'apply','confirmation'=>$confirmation])->assertOk()->assertJsonPath('ready',count($chunk));
+        }
+        $this->assertSame(5,DigitalProduct::whereIn('id',$ids)->where('category','familia-crianza')->count());
+    }
+
+    public function test_bulk_rechecks_app_protection_after_preview_and_catalog_reads_never_probe_network(): void
+    {
+        $this->qrs(); $ids=[$this->product->id]; $changes=['operation'=>'publish_sale'];
+        $preview=$this->actingAs($this->admin)->postJson('/admin/productos-digitales/lote',compact('ids','changes')+['phase'=>'preview'])->assertOk()->assertJsonPath('ready',1)->json();
+        Http::swap(new \Illuminate\Http\Client\Factory);
+        Http::fake(['jakawi.store/*/_health'=>Http::response(['protected'=>true,'functional'=>true]),'jakawi.store/*'=>Http::response('',200)]);
+        $this->postJson('/admin/productos-digitales/lote',compact('ids','changes')+['phase'=>'apply','confirmation'=>$preview['confirmation']])->assertOk()->assertJsonPath('blocked',1);
+        $this->assertSame('draft',$this->product->fresh()->status);
+        Http::swap(new \Illuminate\Http\Client\Factory);Http::fake();
+        $this->get('/admin/productos-digitales?state=missing')->assertOk();Http::assertNothingSent();
+    }
+
 }

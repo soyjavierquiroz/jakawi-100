@@ -31,7 +31,7 @@ class HostedApps
         $snapshot = app(DigitalAdminSnapshot::class);
         if ($snapshot->active && ! $fresh) return ($snapshot->health['hosted-app-health:'.$product->app_key] ?? false) === true;
         if ($fresh) Cache::store('database')->forget('hosted-app-health:'.$product->app_key);
-        return Cache::store('database')->remember('hosted-app-health:'.$product->app_key, 30, function () use ($product) {
+        $ready = Cache::store('database')->remember('hosted-app-health:'.$product->app_key, 30, function () use ($product) {
             try {
                 $r = Http::withToken(config('hosted_apps.secret'))->timeout(20)->get($this->registry()[$product->app_key]['health']);
                 if (! $this->healthyResponse($r)) return false;
@@ -47,6 +47,8 @@ class HostedApps
                 return true;
             } catch (\Throwable) { return false; }
         });
+        if ($fresh) Cache::store('database')->put('hosted-app-admin-health:'.$product->app_key, ['ready'=>$ready,'checked_at'=>now()->toIso8601String()],900);
+        return $ready;
     }
 
     private function healthyResponse(mixed $response): bool
@@ -61,14 +63,14 @@ class HostedApps
     }
 
     /** Batch health reads for the admin; authorization still checks fresh before publishing. */
-    public function adminHealth(array $keys): array
+    public function adminHealth(array $keys, bool $fresh = false): array
     {
         $keys = array_values(array_unique(array_filter($keys)));
         $cache = Cache::store('database');
         $health = $cache->many(array_map(fn ($key) => 'hosted-app-health:'.$key, $keys));
         $registry = $this->registry();
-        $missing = array_values(array_filter($keys, fn ($key) => !isset($health['hosted-app-health:'.$key]) && isset($registry[$key]) && filled(config('hosted_apps.secret'))));
-        foreach (array_chunk($missing, 20) as $chunk) {
+        $missing = array_values(array_filter($keys, fn ($key) => ($fresh || !isset($health['hosted-app-health:'.$key])) && isset($registry[$key]) && filled(config('hosted_apps.secret'))));
+        foreach (array_chunk($missing, 4) as $chunk) {
             $responses = Http::pool(function ($pool) use ($chunk, $registry) {
                 $requests = [];
                 foreach ($chunk as $key) {
@@ -90,6 +92,9 @@ class HostedApps
                 $values['hosted-app-health:'.$key] = $valid;
             }
             $cache->putMany($values,30);
+            $admin = [];
+            foreach ($values as $key=>$value) $admin[str_replace('hosted-app-health:', 'hosted-app-admin-health:', $key)] = ['ready'=>$value,'checked_at'=>now()->toIso8601String()];
+            $cache->putMany($admin,900);
             $health = array_replace($health,$values);
         }
         return $health;

@@ -107,3 +107,6 @@ Illuminate\Support\Facades\Artisan::command('digital:cleanup-assets {--apply}', 
 })->purpose('Review or reclaim unreferenced module QR and editorial images older than 24 hours');
 
 Illuminate\Support\Facades\Schedule::command('digital:cleanup-assets --apply')->dailyAt('03:20')->timezone('America/La_Paz')->withoutOverlapping();
+
+// Read-only catalog indicators; network checks never block catalog HTTP reads.
+\Illuminate\Support\Facades\Schedule::command('digital:refresh-admin-health')->everyFiveMinutes()->withoutOverlapping(15)->runInBackground();

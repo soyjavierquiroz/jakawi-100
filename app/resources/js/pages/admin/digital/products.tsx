@@ -116,6 +116,7 @@ export default function Products({
     const [error, setError] = useState('');
     const [notice, setNotice] = useState('');
     const [working, setWorking] = useState(false);
+    const [completed, setCompleted] = useState(0);
     const checkAll = useRef<HTMLInputElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const latestFilters = useRef(filters);
@@ -193,35 +194,51 @@ export default function Products({
     };
     const submit = async (phase: 'preview' | 'apply') => {
         setWorking(true);
+        setCompleted(0);
         setError('');
         try {
             const csrf = document.cookie
                 .split('; ')
                 .find((c) => c.startsWith('XSRF-TOKEN='))
                 ?.slice(11);
-            const response = await fetch(base + '/lote', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                    'X-XSRF-TOKEN': decodeURIComponent(csrf ?? ''),
-                },
-                body: JSON.stringify({
-                    ids: selected,
-                    changes,
-                    phase,
-                    confirmation: preview?.confirmation,
-                }),
-            });
-            const data = await response.json();
-            if (!response.ok)
-                throw new Error(
-                    data.errors
-                        ? Object.values(data.errors).flat().join(' ')
-                        : (data.message ??
-                              'No se pudo completar la operación.'),
-                );
+            const data: Preview = {
+                results: [],
+                ready: 0,
+                blocked: 0,
+                confirmation: null,
+            };
+            for (let offset = 0; offset < selected.length; offset += 4) {
+                setCompleted(offset);
+                const response = await fetch(base + '/lote', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-XSRF-TOKEN': decodeURIComponent(csrf ?? ''),
+                    },
+                    body: JSON.stringify({
+                        ids: selected,
+                        batch_ids: selected.slice(offset, offset + 4),
+                        changes,
+                        phase,
+                        confirmation: preview?.confirmation,
+                    }),
+                });
+                const result = await response.json();
+                if (!response.ok)
+                    throw new Error(
+                        result.errors
+                            ? Object.values(result.errors).flat().join(' ')
+                            : (result.message ??
+                                  'No se pudo completar la operación.'),
+                    );
+                data.results.push(...result.results);
+                data.ready += result.ready;
+                data.blocked += result.blocked;
+                data.confirmation = result.confirmation;
+            }
+            data.message = `${data.ready} ${changes.operation === 'publish_sale' ? 'publicados' : 'actualizados'}; ${data.blocked} omitidos por requisitos pendientes.`;
             setPreview(data);
             if (phase === 'apply') {
                 setNotice(data.message);
@@ -235,7 +252,10 @@ export default function Products({
         } catch (e) {
             setError(
                 e instanceof Error
-                    ? e.message
+                    ? e.message +
+                          (phase === 'apply'
+                              ? ' Algunas solicitudes podrían haberse guardado. Recarga el catálogo antes de repetir.'
+                              : '')
                     : 'Error de conexión. Inténtalo nuevamente.',
             );
         } finally {
@@ -436,6 +456,11 @@ export default function Products({
                         </button>
                     </div>
                 )}
+                <p className="mb-3 text-xs text-muted-foreground">
+                    Los indicadores usan la última verificación de APP (hasta 15
+                    minutos). Al publicar se comprueban nuevamente. Una APP sin
+                    verificar aparece pendiente.
+                </p>
                 <section
                     className="rounded-2xl border border-border bg-surface"
                     aria-label="Catálogo digital"
@@ -1329,7 +1354,8 @@ export default function Products({
                                                 size={17}
                                                 className="animate-spin"
                                             />
-                                            Verificando productos…
+                                            Procesando {completed} /{' '}
+                                            {selected.length}…
                                         </>
                                     ) : preview ? (
                                         'APLICAR A SELECCIONADOS'
