@@ -17,6 +17,9 @@ class HostedAppCatalogImport
             'vendor_id' => 'required|string|max:180|not_in:gluteo_perfeito_es', 'package_sha256' => 'required|regex:/^[a-f0-9]{64}$/D',
             'fill_missing' => 'sometimes|boolean', 'short_description' => 'nullable|string|max:1000', 'description' => 'nullable|string|max:30000', 'category' => ['nullable',Rule::in(config('jakawi.digital_categories'))],
             'cover_base64' => 'nullable|string|max:14000000',
+            'commercial_content' => 'nullable|string|max:30000',
+            'content_topics' => 'sometimes|array|max:12', 'content_topics.*' => 'string|max:240',
+            'activity_topics' => 'sometimes|array|max:12', 'activity_topics.*' => 'string|max:240',
         ])->validate();
         AppSetting::firstOrCreate(['key'=>'hosted_app_catalog'], ['value'=>['slugs'=>[]]]);
         return DB::transaction(function () use ($data) {
@@ -52,6 +55,7 @@ class HostedAppCatalogImport
         return [
             'short_description'=>$data['short_description'] ?? (filled($data['description'] ?? null) ? \Illuminate\Support\Str::limit(strip_tags($data['description']), 997) : null),
             'description'=>$data['description'] ?? null, 'category'=>$data['category'] ?? null,
+            'commercial_content'=>app(PlrCommercialContent::class)->generate($data),
             'currency'=>'BOB', 'public_price'=>'49.00', 'member_price'=>'29.00',
             ...config('jakawi-digital.plr_defaults'),
         ];
@@ -61,6 +65,8 @@ class HostedAppCatalogImport
     {
         if ($product->id === 1 || $product->app_key === 'gluteos') throw new \RuntimeException('Glúteos está excluido del completado automático.');
         $filled=[];
+        // Existing editorial fields are the source of truth when filling only blanks.
+        $data = array_merge($data, array_filter($product->only('name', 'short_description', 'description', 'category'), fn ($value) => filled($value)));
         foreach ($this->defaults($data) as $field=>$value) {
             if (!blank($product->$field) || blank($value)) continue;
             // Never violate an owner-edited price to install the other default.

@@ -117,10 +117,7 @@ export default function DigitalShow({
                 {!!p.gallery_urls?.length && <div className="mt-8 grid gap-4 sm:grid-cols-3">{p.gallery_urls.map((url,i)=><img key={i} src={url} alt={`${p.name} · Imagen ${i+1}`} loading="lazy" className="w-full rounded-xl" />)}</div>}
                 <section className="mt-10 space-y-6">
                     <div className="leading-7 whitespace-pre-wrap">
-                        {p.description}
-                    </div>
-                    <div className="leading-7 whitespace-pre-wrap">
-                        {p.commercial_content}
+                        {p.commercial_content?.trim() || p.description}
                     </div>
                     <h2 className="text-xl font-bold">Acceso y soporte</h2>
                     <p className="whitespace-pre-wrap">{p.access_terms}</p>

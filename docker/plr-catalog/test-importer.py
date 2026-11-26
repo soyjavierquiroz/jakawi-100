@@ -51,6 +51,17 @@ class ImportTest(unittest.TestCase):
             _,_,data=m.inspect(root,override)
             self.assertEqual(data['category'],'cocina-recetas')
 
+    def test_commercial_metadata_contains_only_learning_content(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);app=self.fixture(root)
+            (app/'config-override.json').write_text(json.dumps({'app':{'name':'Cocina QA','lang':'es'},'articles':[{'title':'Cocción al horno'}],'exerciseDetails':{'Pan integral':{}},'premiumProducts':[{'name':'Una compra adicional'}]}))
+            override=root/'metadata.json';override.write_text(json.dumps({'commercial_content':'Texto propio del propietario'}))
+            _,_,data=m.inspect(root,override)
+            self.assertEqual(data['commercial_content'],'Texto propio del propietario')
+            self.assertEqual(data['content_topics'],['Cocción al horno'])
+            self.assertEqual(data['activity_topics'],['Pan integral'])
+            self.assertNotIn('Una compra adicional',json.dumps(data))
+
     def test_detection_manifest_and_protected_routes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)

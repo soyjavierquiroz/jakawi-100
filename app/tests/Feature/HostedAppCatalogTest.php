@@ -39,6 +39,24 @@ class HostedAppCatalogTest extends TestCase
         $this->assertArrayHasKey('gluteos',app(HostedApps::class)->registry());
         $this->assertDatabaseMissing('app_settings',['key'=>'digital_sale:'.$p->id]);
     }
+    public function test_commercial_content_is_generated_from_package_topics_and_owner_copy_is_preserved(): void
+    {
+        $data = $this->data() + ['category'=>'cocina-recetas', 'content_topics'=>['Técnicas de horneado', 'Conservación de ingredientes'], 'activity_topics'=>['Pan integral', 'Masa de pizza']];
+        $id = app(HostedAppCatalogImport::class)->run($data)['product_id'];
+        $p = DigitalProduct::findOrFail($id);
+        $this->assertStringContainsString('Técnicas de horneado', $p->commercial_content);
+        $this->assertStringContainsString('Pan integral', $p->commercial_content);
+        $p->update(['commercial_content'=>"Mi texto personalizado.\n\nSe conserva íntegro."]);
+        $before = $p->fresh()->getAttributes();
+        app(HostedAppCatalogImport::class)->run($data + ['fill_missing'=>true, 'commercial_content'=>'Texto distinto del importador']);
+        $this->assertSame($before, $p->fresh()->getAttributes());
+        $p->update(['commercial_content'=>null, 'name'=>'Nombre del propietario']);
+        app(HostedAppCatalogImport::class)->run($data + ['fill_missing'=>true]);
+        $this->assertStringContainsString('Nombre del propietario', $p->fresh()->commercial_content);
+        $this->assertFalse($p->fresh()->welcome_gift_enabled);
+        $this->assertSame('draft', $p->fresh()->status);
+    }
+
     public function test_changed_package_and_duplicate_vendor_are_rejected(): void
     {
         $import=app(HostedAppCatalogImport::class);

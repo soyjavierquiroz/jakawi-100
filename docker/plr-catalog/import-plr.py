@@ -180,8 +180,8 @@ def inspect(root, override=None):
     if not re.search(r'CURLOPT_SSL_VERIFYPEER\s*,\s*(?:true|false)',php):
         raise ValueError('No se encontró configuración TLS conocida; revisar paquete.')
     extra = json.loads(override.read_text()) if override else {}
-    if set(extra) - {'slug','name','description','category','cover'}:
-        raise ValueError('Metadatos auxiliares admitidos: slug, name, description, category, cover.')
+    if set(extra) - {'slug','name','description','category','cover','commercial_content'}:
+        raise ValueError('Metadatos auxiliares admitidos: slug, name, description, category, cover, commercial_content.')
     slug = extra.get('slug') or re.sub(r'[^a-z0-9]+','-',unicodedata.normalize('NFKD',vendor).encode('ascii','ignore').decode().lower()).strip('-')
     if vendor == 'gluteo_perfeito_es' and (ROOT/'catalog/records/gluteos.json').is_file():
         raise ValueError('Glúteos ya está adoptado en el catálogo: producto COM #1, /gluteos/. No se duplica ni sobrescribe; use --adopt-existing gluteos para comprobarlo.')
@@ -222,6 +222,9 @@ def inspect(root, override=None):
     h.update(json.dumps(extra,sort_keys=True).encode())
     data = dict(slug=slug, name=name, language=language, vendor_id=vendor, package_sha256=h.hexdigest(),
                 description=description, short_description=short,
+                commercial_content=extra.get('commercial_content'),
+                content_topics=[re.sub(r'<[^>]+>', '', item['title']).strip()[:240] for item in config.get('articles', []) if isinstance(item, dict) and isinstance(item.get('title'), str)][:12],
+                activity_topics=[re.sub(r'<[^>]+>', '', title).strip()[:240] for title in config.get('exerciseDetails', {}) if isinstance(title, str)][:12],
                 category=extra.get('category') or category_from_metadata(meta.get('name') or manifest.get('name') or '', vendor_id=vendor), cover_source=cover_source,
                 cover_base64=base64.b64encode(cover_bytes).decode())
     return app, manifest, data
@@ -504,7 +507,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('sources',nargs='*',type=Path,help='Uno o varios ZIP/carpetas; permite glob de shell.')
     p.add_argument('--adopt-existing',choices=['gluteos'],help='Adopta la instalación manual existente sin reinstalar ni escribir en COM.')
-    p.add_argument('--metadata',type=Path,help='JSON opcional para UNA app: slug/name/description/category/cover; datos reales del propietario.')
+    p.add_argument('--metadata',type=Path,help='JSON opcional para UNA app: slug/name/description/category/cover/commercial_content; datos reales del propietario.')
     p.add_argument('--fill-missing',action='store_true',help='Completa solo campos vacíos de productos previamente importados; conserva ediciones, precios existentes y autorizaciones.')
     p.add_argument('--check',action='store_true',help='Valida sin instalar, conectar a COM ni modificar servicios.')
     args=p.parse_args()
