@@ -40,17 +40,15 @@ class PlrSimplePublishTest extends TestCase
         Http::swap(new \Illuminate\Http\Client\Factory);
         Http::fake(['jakawi.store/*/_health'=>Http::response(['protected'=>true,'functional'=>true]), 'jakawi.store/*'=>Http::response('', $protected ? 403 : 200)]);
     }
-    private function proof(): UploadedFile
-    {
-        return UploadedFile::fake()->createWithContent('bank-QA.pdf', "%PDF-1.4\n% QA BANK EVIDENCE ONLY\n%%EOF");
-    }
     private function shared(string $amount): void
     {
-        $this->actingAs($this->admin)->post('/admin/digital/cobro/qr-compartido',[
-            'amount'=>$amount,'currency'=>'BOB','shared_qr'=>UploadedFile::fake()->image('QA-'.$amount.'.png',(int)$amount,10),
-            'bank_document'=>$this->proof(),'bank_evidence'=>'QA ONLY banco confirma reutilización entre productos y clientes, importe fijo y vigencia.',
-            'bank_reuse_confirmed'=>'1','no_expiry'=>'1',
-        ])->assertSessionHasNoErrors();
+        $service=app(DigitalProductQr::class);
+        $data=['reuse_confirmed'=>'1'];
+        $saved=collect($service->sharedAdminState())->keyBy('tier');
+        foreach (['public'=>'49', 'member'=>'29'] as $tier=>$value) {
+            if ($value === $amount || ! ($saved[$tier]['current'] ?? false)) $data[$tier.'_qr']=UploadedFile::fake()->image('QA-'.$value.'.png',(int)$value,10);
+        }
+        $this->actingAs($this->admin)->post('/admin/digital/cobro/qr-compartido',$data)->assertSessionHasNoErrors();
     }
     private function payload(): array
     {
@@ -79,10 +77,11 @@ class PlrSimplePublishTest extends TestCase
         $this->assertSame('familia-crianza',$this->p->fresh()->category);
     }
 
-    public function test_shared_upload_requires_bank_confirmation_and_real_evidence_and_exact_amount_currency_account_validity(): void
+    public function test_two_qrs_need_only_owner_confirmation_and_keep_exact_amount_currency_account_validity(): void
     {
         $url='/admin/digital/cobro/qr-compartido';
-        $this->actingAs($this->admin)->post($url,['amount'=>'49','currency'=>'BOB'])->assertSessionHasErrors(['shared_qr','bank_document','bank_evidence','bank_reuse_confirmed']);
+        $this->actingAs($this->admin)->post($url,[])->assertSessionHasErrors(['reuse_confirmed']);
+        $this->post($url,['reuse_confirmed'=>'1'])->assertSessionHasErrors(['public_qr','member_qr']);
         $this->shared('49');$this->shared('29');
         $qr=app(DigitalProductQr::class);
         $this->assertTrue($qr->verified($this->p,'public')); $this->assertTrue($qr->verified($this->p,'member'));
@@ -91,6 +90,13 @@ class PlrSimplePublishTest extends TestCase
         $other=$this->p->replicate();$other->slug='otra-app';$other->save();
         $this->assertSame($public['qr_path'],$qr->resolved($other,'public')['qr_path']);
         $this->assertCount(2,Storage::disk('digital-private')->allFiles('qr'));
+        $this->assertCount(0,Storage::disk('digital-private')->allFiles('statements'));
+        foreach ($qr->sharedAdminState() as $state) {
+            $this->assertTrue($state['current']);
+            $this->actingAs($this->admin)->get($state['preview_url'])->assertOk()->assertHeader('Cache-Control','no-store, private');
+        }
+        $this->assertNull($public['valid_until']);
+        $this->assertSame('owner',$public['confirmation_mode']);
         $this->p->public_price='59.00';$this->assertFalse($qr->verified($this->p,'public'));
         $this->p->public_price='49.00';$this->p->currency='USD';$this->assertFalse($qr->verified($this->p,'public'));$this->p->currency='BOB';
         $s=AppSetting::where('key',DigitalCollection::KEY)->sole();$old=$s->value;$s->update(['value'=>array_replace($old,['version'=>'changed'])]);
@@ -129,6 +135,8 @@ class PlrSimplePublishTest extends TestCase
         Storage::disk('digital-private')->assertExists($public);Storage::disk('digital-private')->assertMissing($member);
         $replacement=$qr->settings($this->p);
         $this->shared('49');$this->shared('29');
+        $this->assertFalse($qr->usesShared($this->p));
+        $this->assertSame($replacement['public']['qr_path'],$qr->resolved($this->p,'public')['qr_path']);
         DB::transaction(fn()=> $qr->setShared($this->p,true));
         foreach (['public','member'] as $tier) Storage::disk('digital-private')->assertMissing($replacement[$tier]['qr_path']);
         $this->assertArrayNotHasKey('public',$qr->settings($this->p));
@@ -147,4 +155,44 @@ class PlrSimplePublishTest extends TestCase
         $this->assertSame(1,$cleanup->clean('digital-private',['products/archived.pdf'])['retained_uncertain']);
         Storage::disk('digital-private')->assertExists('products/archived.pdf');
     }
+    public function test_checkout_selects_each_shared_qr_and_replacement_keeps_order_history_and_cleans_only_unused_images(): void
+    {
+        config(['jakawi.prelaunch_mode'=>false]);
+        $this->shared('49');
+        $qr=app(DigitalProductQr::class);
+        $this->p->update(['status'=>'published']);
+        app(DigitalSaleAvailability::class)->configure($this->p,true,true,$this->admin->id);
+        $checkout=app(\App\Services\DigitalCheckout::class);
+        $buyer=User::factory()->create();
+        $member=User::factory()->create();
+        \App\Models\Membership::create(['user_id'=>$member->id,'status'=>'active','type'=>'standard','starts_at'=>now()->subDay(),'ends_at'=>now()->addDay(),'amount_paid'=>'100.00']);
+        $public=$checkout->start($buyer,$this->p);$private=$checkout->start($member,$this->p);
+        foreach ([[$public,'public','49.00'],[$private,'member','29.00']] as [$order,$tier,$amount]) {
+            $this->assertSame($amount,$order->amount);
+            $this->assertSame($tier,$order->collection_snapshot['qr_tier']);
+            $this->assertSame($qr->resolved($this->p,$tier)['qr_path'],$order->collection_snapshot['qr_path']);
+            $this->assertSame('pending',$order->status);
+        }
+        $before=DigitalOrder::orderBy('id')->get()->toJson();
+        $this->actingAs($this->admin)->post('/admin/digital/cobro/qr-compartido',[
+            'public_qr'=>UploadedFile::fake()->image('public-new.png',50,10),
+            'member_qr'=>UploadedFile::fake()->image('member-new.png',30,10),'reuse_confirmed'=>'1',
+        ])->assertSessionHasNoErrors();
+        foreach ([$public,$private] as $order) Storage::disk('digital-private')->assertExists($order->collection_snapshot['qr_path']);
+        $this->assertSame($before,DigitalOrder::orderBy('id')->get()->toJson());
+        $unused=$qr->resolved($this->p,'member')['qr_path'];
+        $this->post('/admin/digital/cobro/qr-compartido',[
+            'member_qr'=>UploadedFile::fake()->image('member-next.png',31,10),'reuse_confirmed'=>'1',
+        ])->assertSessionHasNoErrors();
+        Storage::disk('digital-private')->assertMissing($unused);
+        $this->assertDatabaseCount('digital_access_grants',0);
+        // A mismatched image cannot be confirmed as both fixed amounts; no partial save.
+        $state=AppSetting::where('key','like',DigitalProductQr::SHARED_PREFIX.'%')->get()->toJson();
+        $this->post('/admin/digital/cobro/qr-compartido',[
+            'public_qr'=>UploadedFile::fake()->image('same.png',40,10),
+            'member_qr'=>UploadedFile::fake()->image('same.png',40,10),'reuse_confirmed'=>'1',
+        ])->assertSessionHasErrors('member_qr');
+        $this->assertSame($state,AppSetting::where('key','like',DigitalProductQr::SHARED_PREFIX.'%')->get()->toJson());
+    }
+
 }

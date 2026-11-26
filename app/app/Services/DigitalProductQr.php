@@ -49,16 +49,18 @@ class DigitalProductQr
     {
         if (empty($qr['shared_key'])) return true;
         $current = AppSetting::where('key', $qr['shared_key'])->first()?->value ?? [];
-        if (empty($current['revision']) || ($current['revision'] ?? null) !== ($qr['revision'] ?? null) || empty($current['enabled']) || empty($current['bank_reuse_confirmed']) || blank($current['bank_evidence'] ?? null)) return false;
+        if (empty($current['revision']) || ($current['revision'] ?? null) !== ($qr['revision'] ?? null) || empty($current['enabled']) || empty($current['bank_reuse_confirmed'])) return false;
         if (! empty($current['valid_until']) && now()->gte(\Carbon\Carbon::parse($current['valid_until']))) return false;
+        // Owner confirmation declares reuse; the software verifies binding and integrity, not bank policy.
+        if (($current['confirmation_mode'] ?? null) === 'owner') return filled($current['verified_by'] ?? null) && filled($current['verified_at'] ?? null);
         try {
             return hash_equals($current['evidence_sha256'], hash('sha256', Storage::disk('digital-private')->get($current['evidence_path'])));
         } catch (\Throwable) { return false; }
     }
 
-    public function saveShared(array $data, UploadedFile $file, UploadedFile $evidence, int $adminId): void
+    public function saveShared(array $data, UploadedFile $file, int $adminId): void
     {
-        DB::transaction(function () use ($data, $file, $evidence, $adminId) {
+        DB::transaction(function () use ($data, $file, $adminId) {
             AppSetting::where('key', DigitalCollection::KEY)->lockForUpdate()->first();
             $account = app(DigitalCollection::class)->current();
             if (! $account || $account['currency'] !== $data['currency']) throw ValidationException::withMessages(['shared_qr'=>'Autoriza primero la cuenta receptora para esta moneda.']);
@@ -67,30 +69,33 @@ class DigitalProductQr
             $probe = new DigitalProduct(['currency'=>$data['currency'], 'public_price'=>$amount]);
             $this->validateSave($probe, 'public', $file, true);
             $stored = app(DigitalFiles::class)->store($file, 'qr');
-            $proof = app(DigitalFiles::class)->store($evidence, 'statements');
             $key = $this->sharedKey($amount, $data['currency'], $account);
             $value = ['amount'=>$amount, 'currency'=>$data['currency'], 'account_key'=>$account['account_key'], 'version'=>$account['version'],
-                'qr_path'=>$stored['path'], 'qr_sha256'=>$stored['sha256'], 'evidence_path'=>$proof['path'], 'evidence_sha256'=>$proof['sha256'],
-                'bank_evidence'=>$data['bank_evidence'], 'bank_reuse_confirmed'=>true, 'enabled'=>true,
-                'valid_until'=>empty($data['valid_until']) ? null : \Carbon\Carbon::parse($data['valid_until'], 'America/La_Paz')->toIso8601String(),
+                'qr_path'=>$stored['path'], 'qr_sha256'=>$stored['sha256'],
+                'confirmation_mode'=>'owner', 'bank_reuse_confirmed'=>true, 'enabled'=>true, 'valid_until'=>null,
                 'revision'=>(string)\Illuminate\Support\Str::uuid(), 'verified_by'=>$adminId, 'verified_at'=>now()->toIso8601String()];
             $oldPath = AppSetting::where('key',$key)->first()?->value['qr_path'] ?? null;
             AppSetting::updateOrCreate(['key'=>$key], ['value'=>$value]);
             if ($oldPath) app(DigitalAssetCleanup::class)->afterCommit('digital-private', [$oldPath]);
-            \App\Models\AuditLog::create(['actor_user_id'=>$adminId, 'action'=>'digital_shared_qr_verified', 'subject_type'=>AppSetting::class,
+            \App\Models\AuditLog::create(['actor_user_id'=>$adminId, 'action'=>'digital_shared_qr_owner_confirmed', 'subject_type'=>AppSetting::class,
                 'subject_id'=>AppSetting::where('key',$key)->value('id'), 'metadata'=>['amount'=>$amount,'currency'=>$data['currency'],'revision'=>$value['revision']]]);
         });
     }
 
     public function sharedAdminState(): array
     {
-        return AppSetting::where('key','like',self::SHARED_PREFIX.'%')->get()->map(fn ($s) => [
-            'id'=>$s->id, 'amount'=>$s->value['amount'], 'currency'=>$s->value['currency'], 'bank_evidence'=>$s->value['bank_evidence'],
-            'valid_until'=>$s->value['valid_until'], 'enabled'=>$s->value['enabled'],
-            'current'=>($s->value['account_key'] ?? null) === (app(DigitalCollection::class)->current()['account_key'] ?? null)
-                && ($s->value['version'] ?? null) === (app(DigitalCollection::class)->current()['version'] ?? null)
-                && $this->sharedValid($s->value + ['shared_key'=>$s->key]) && $this->intact($s->value),
-        ])->all();
+        $account = app(DigitalCollection::class)->current();
+        if (! $account || $account['currency'] !== 'BOB') return [];
+        $state = [];
+        foreach (['public'=>'49.00', 'member'=>'29.00'] as $tier=>$amount) {
+            $setting = AppSetting::where('key', $this->sharedKey($amount, 'BOB', $account))->first();
+            if (! $setting) continue;
+            $qr = $setting->value + ['shared_key'=>$setting->key];
+            $state[] = ['id'=>$setting->id, 'tier'=>$tier, 'amount'=>$amount, 'currency'=>'BOB',
+                'enabled'=>$qr['enabled'] ?? false, 'current'=>$this->sharedValid($qr) && $this->intact($qr),
+                'preview_url'=>url('/admin/digital/cobro/qr-compartido/'.$setting->id.'/qr').'?v='.($qr['revision'] ?? '')];
+        }
+        return $state;
     }
 
     public function setShared(DigitalProduct $product, bool $enabled): void

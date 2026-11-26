@@ -180,3 +180,30 @@ php artisan digital:cleanup-assets --apply  # elimina únicamente sin referencia
 El scheduler existente ejecuta esa limpieza diaria a las 03:20 de Bolivia. No añade servicios ni almacenes. Las rutas recientes o desconocidas se conservan y cuentan en el informe.
 
 Release: `/opt/sites/jakawi.com/release-control.py` parametrizado para esta fase. COM: build/prepare/deploy/enrich/verify/promote; STORE, independiente: store-prepare/store-deploy/store-verify. Evidencias en `/srv/workspaces/jakawi/com/plr-simple-publish-evidence/`, con `LIVE.json`, `STORE-LIVE.json` y los informes de limpieza. `rollback` restaura COM; `store-rollback` restaura solo importador/documentación STORE. Ambos conservan compras, permisos y ediciones actuales; no restauran automáticamente DB. No se activan productos reales durante la release.
+
+
+## Ajuste QR compartidos: dos imágenes y un guardado
+
+`/admin/digital/cobro` muestra siempre QR PÚBLICO — Bs 49 y QR MIEMBRO — Bs 29.
+Seleccionar PNG/JPG, revisar las vistas previas, confirmar una vez que son reutilizables
+y corresponden a esos importes/cuenta y pulsar GUARDAR QR COMPARTIDOS.
+No requiere constancia PDF, texto de condiciones ni vencimiento. La confirmación
+registra la declaración del propietario, su usuario y fecha; el software no verifica
+la política bancaria. Los QR nuevos siguen vigentes hasta reemplazo/desactivación
+o cambio de cuenta autorizada. Esta sección sustituye los requisitos anteriores de carga.
+
+Los importes y BOB los fija el backend. Puede reemplazarse una sola imagen conservando
+la otra; para el primer guardado deben estar las dos. Las vistas previas guardadas
+se sirven desde el endpoint privado del Admin. Productos compatibles sin QR específicos
+usan la misma referencia automáticamente. Se conservan los QR específicos existentes
+hasta selección expresa del modo compartido. No se publican productos al guardar QR.
+
+El reemplazo utiliza el escritor y la limpieza existentes: guardar archivo, confirmar
+referencia en BD y después eliminar solo imágenes gestionadas sin referencias persistidas.
+Órdenes históricas y sus imágenes se conservan, así como comprobantes y PDFs. Los
+recursos anteriores con constancia siguen admitidos bajo su validación original; no
+se migran ni alteran órdenes, derechos o ajustes durante el despliegue.
+
+Release COM: `/opt/sites/jakawi.com/release-control.py` (build, prepare, deploy, verify,
+promote; rollback independiente de datos). Evidencia y backup exacto registrados en
+`/srv/workspaces/jakawi/com/shared-qr-simple-evidence/LIVE.json`. STORE no cambia.

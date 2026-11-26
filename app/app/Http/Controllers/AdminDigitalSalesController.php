@@ -45,18 +45,47 @@ class AdminDigitalSalesController extends Controller
 
     public function saveSharedQr(Request $request)
     {
-        if ($request->filled('valid_until')) {
-            try { $request->merge(['valid_until'=>\Carbon\Carbon::parse($request->input('valid_until'), 'America/La_Paz')->toIso8601String()]); } catch (\Throwable) {}
-        }
-        $data = $request->validate([
-            'amount'=>'required|decimal:0,2|gt:0|max:99999999.99', 'currency'=>'required|in:BOB,USD',
-            'shared_qr'=>'required|image|mimes:png,jpg,jpeg|max:10240',
-            'bank_document'=>'required|file|mimes:pdf|max:25600', 'bank_evidence'=>'required|string|min:20|max:3000',
-            'bank_reuse_confirmed'=>'accepted', 'no_expiry'=>'sometimes|boolean',
-            'valid_until'=>'nullable|required_unless:no_expiry,1|date|after:now',
+        $request->validate([
+            'public_qr'=>'nullable|image|mimes:png,jpg,jpeg|max:10240',
+            'member_qr'=>'nullable|image|mimes:png,jpg,jpeg|max:10240',
+            'reuse_confirmed'=>'accepted',
         ]);
-        app(\App\Services\DigitalProductQr::class)->saveShared($data, $request->file('shared_qr'), $request->file('bank_document'), $request->user()->id);
-        return back()->with('success', 'QR compartido verificado para la cuenta, moneda e importe indicados.');
+        DB::transaction(function () use ($request) {
+            AppSetting::where('key', DigitalCollection::KEY)->lockForUpdate()->first();
+            $account = app(DigitalCollection::class)->current();
+            if (! $account || $account['currency'] !== 'BOB') {
+                throw \Illuminate\Validation\ValidationException::withMessages(['public_qr'=>'Autoriza primero la cuenta receptora en BOB.', 'member_qr'=>'Autoriza primero la cuenta receptora en BOB.']);
+            }
+            $service = app(\App\Services\DigitalProductQr::class);
+            $saved = collect($service->sharedAdminState())->keyBy('tier');
+            $errors = [];
+            foreach (['public'=>'49.00', 'member'=>'29.00'] as $tier=>$amount) {
+                if (! $request->hasFile($tier.'_qr') && ! ($saved[$tier]['current'] ?? false)) $errors[$tier.'_qr'] = 'Sube el QR reutilizable de Bs '.(int)$amount.'.';
+            }
+            if ($errors) throw \Illuminate\Validation\ValidationException::withMessages($errors);
+            if ($request->hasFile('public_qr') && $request->hasFile('member_qr')
+                && hash_file('sha256',$request->file('public_qr')->getRealPath()) === hash_file('sha256',$request->file('member_qr')->getRealPath())) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['member_qr'=>'Los importes son distintos. Sube el QR bancario de Bs 29.']);
+            }
+            // Validate both before writing either image to private storage.
+            foreach (['public'=>'49.00', 'member'=>'29.00'] as $tier=>$amount) {
+                if (! $request->hasFile($tier.'_qr')) continue;
+                try {
+                    $service->validateSave(new \App\Models\DigitalProduct(['currency'=>'BOB','public_price'=>$amount]), 'public', $request->file($tier.'_qr'), true);
+                } catch (\Illuminate\Validation\ValidationException $e) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([$tier.'_qr'=>implode(' ', $e->validator->errors()->all())]);
+                }
+            }
+            foreach (['public'=>'49.00', 'member'=>'29.00'] as $tier=>$amount) {
+                if (! $request->hasFile($tier.'_qr')) continue;
+                try {
+                    $service->saveShared(['amount'=>$amount, 'currency'=>'BOB'], $request->file($tier.'_qr'), $request->user()->id);
+                } catch (\Illuminate\Validation\ValidationException $e) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([$tier.'_qr'=>implode(' ', $e->validator->errors()->all())]);
+                }
+            }
+        });
+        return back()->with('success', 'QR compartidos guardados.')->with('shared_qr_saved', true);
     }
 
     public function sharedQrFile(\App\Models\AppSetting $setting, string $kind, DigitalFiles $files)
