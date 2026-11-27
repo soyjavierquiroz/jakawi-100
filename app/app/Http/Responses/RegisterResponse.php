@@ -67,6 +67,7 @@ class RegisterResponse implements RegisterResponseContract
         if ($parts['path'] === '/regalos-digitales/continuar' && app(\App\Services\DigitalGifts::class)->invitation($request)) return true;
 
         return in_array($parts['path'], ['/mi-jakawi', '/membresia', '/productos-digitales/gluteo-perfecto/comprar'], true)
+            || preg_match('#^/productos-digitales/[a-zA-Z0-9_-]+/comprar$#D', $parts['path']) === 1
             || preg_match('#^/experiencias/[a-zA-Z0-9_-]+$#D', $parts['path']) === 1
             || preg_match('#^/d/[a-zA-Z0-9_-]+$#D', $parts['path']) === 1;
     }

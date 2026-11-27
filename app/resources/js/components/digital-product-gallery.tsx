@@ -103,7 +103,7 @@ export function DigitalProductGallery({ product: p }: { product: DigitalProductD
             onFocusCapture={event => setFocused(event.target.matches(':focus-visible'))}
             onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) { setFocused(false); interact(); } }}>
             <div className="mb-6 flex items-center justify-between gap-4">
-                <h2 id="gallery-heading" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Un vistazo a la experiencia</h2>
+                <h2 id="gallery-heading" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Imágenes referenciales</h2>
                 {loop && <div className="hidden shrink-0 gap-2 md:flex">
                     <button type="button" aria-label="Imagen anterior" aria-controls="product-gallery" onClick={() => move(active.current - 1)} className={controlClass}><ChevronLeft aria-hidden="true" size={20} /></button>
                     <button type="button" aria-label="Imagen siguiente" aria-controls="product-gallery" onClick={() => move(active.current + 1)} className={controlClass}><ChevronRight aria-hidden="true" size={20} /></button>
@@ -140,12 +140,12 @@ export function DigitalProductGallery({ product: p }: { product: DigitalProductD
                         }
                     }, 180);
                 }}
-                className={`relative grid snap-x snap-mandatory grid-flow-col gap-4 overflow-x-auto overscroll-x-contain rounded-2xl pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand ${!loop ? 'auto-cols-[100%] md:auto-cols-[minmax(0,400px)]' : count === 2 ? 'auto-cols-[86%] md:auto-cols-[calc((100%-16px)/2)]' : 'auto-cols-[86%] md:auto-cols-[calc((100%-16px)/2)] lg:auto-cols-[calc((100%-32px)/3)]'}`}>
+                className={`relative grid snap-x snap-mandatory grid-flow-col gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand ${!loop ? 'auto-cols-[100%] md:auto-cols-[minmax(0,400px)]' : count === 2 ? 'auto-cols-[86%] md:auto-cols-[calc((100%-16px)/2)]' : 'auto-cols-[86%] md:auto-cols-[calc((100%-16px)/2)] lg:auto-cols-[calc((100%-32px)/3)]'}`}>
                 {slides.map((url, physical) => {
                     const logical = loop ? mod(physical) : physical;
                     const clone = loop && (physical < count || physical >= count * 2);
-                    return <figure key={physical} role={clone ? undefined : 'group'} aria-hidden={clone || undefined} aria-label={clone ? undefined : `${logical + 1} de ${count}`} className="min-w-0 snap-start rounded-2xl border border-border/60 bg-surface-muted p-1.5 shadow-sm">
-                        <JakawiImage src={url} srcset={p.gallery_srcsets?.[logical]} sizes="(min-width: 1024px) 340px, (min-width: 768px) 45vw, 78vw" alt={clone ? '' : `${p.name} · Imagen de apoyo ${logical + 1}`} loading="lazy" className="h-[min(110vw,420px)] w-full rounded-xl object-contain md:h-[400px]" />
+                    return <figure key={physical} role={clone ? undefined : 'group'} aria-hidden={clone || undefined} aria-label={clone ? undefined : `${logical + 1} de ${count}`} className="flex h-[min(110vw,420px)] min-w-0 snap-start items-center justify-center md:h-[400px]">
+                        <JakawiImage src={url} srcset={p.gallery_srcsets?.[logical]} sizes="(min-width: 1024px) 360px, (min-width: 768px) 45vw, 86vw" alt={clone ? '' : `${p.name} · Imagen de apoyo ${logical + 1}`} loading="lazy" className="h-auto max-h-full w-auto max-w-full rounded-2xl object-contain" />
                     </figure>;
                 })}
             </div>

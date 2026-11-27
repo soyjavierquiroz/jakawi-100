@@ -2,6 +2,7 @@ import { useDigitalGiftAction, type GiftAction } from '@/components/digital-gift
 import { digitalMoney, type DigitalProductData } from '@/components/digital-card';
 import { JakawiImage } from '@/components/jakawi-image';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { digitalPurchaseClass } from '@/components/digital-purchase-style';
 import { DigitalProductGallery } from '@/components/digital-product-gallery';
 
 // Some legacy editorial fields contain escaped CRLF from import/editor entry.
@@ -25,7 +26,7 @@ export default function DigitalShow({ product: p, canCollect, authenticated, mem
     const authorizedPrice = pendingOrderPrice ?? (memberActive && p.member_price ? p.member_price : p.public_price);
     const canBuy = !preview && !p.coming_soon && canCollect && publicCents > 0;
     const hosted = p.delivery_type === 'hosted_app';
-    const buyClass = 'inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-brand px-8 py-4 text-center text-base font-extrabold tracking-[0.015em] text-brand-foreground shadow-lg shadow-brand/20 transition-[transform,filter,box-shadow] duration-150 hover:brightness-105 hover:shadow-xl hover:shadow-brand/25 active:translate-y-px active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:pointer-events-none disabled:shadow-none motion-reduce:transform-none motion-reduce:transition-none sm:w-auto sm:min-w-72';
+    const buyClass = digitalPurchaseClass;
     const buyLabel = `${pendingOrderPrice ? 'CONTINUAR PEDIDO ·' : 'COMPRAR AHORA ·'} ${digitalMoney(authorizedPrice, p.currency)}`;
     const buy = authenticated ? <button type="button" onClick={() => router.post(`/productos-digitales/${p.slug}/comprar`)} className={buyClass}>{buyLabel}</button> : <Link href={`/productos-digitales/${p.slug}/comprar`} className={buyClass}>{buyLabel}</Link>;
     const fullDescription = editorialText(p.description).trim();
@@ -58,7 +59,7 @@ export default function DigitalShow({ product: p, canCollect, authenticated, mem
                     {!preview && giftAction?.kind === 'welcome' && <div className="mt-5"><h2 className="font-bold">Tu membresía incluye este regalo</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Puedes activar este producto sin costo adicional y guardarlo en tu biblioteca digital.</p></div>}
                     <div className="mt-5 flex flex-col items-start gap-3">
                         {!preview && giftAction?.kind ? <button type="button" onClick={gift.click} className={buyClass}>{gift.label}</button> : canBuy ? buy : null}
-                        {preview && <button type="button" disabled className={`${buyClass} opacity-50`}>{buyLabel} · Vista previa</button>}
+                        {preview && <button type="button" disabled className={buyClass}>{buyLabel} · Vista previa</button>}
                     </div>
                     {!preview && giftAction?.kind === 'welcome' && canBuy && <div className="mt-4">
                         <button type="button" onClick={() => router.post(`/productos-digitales/${p.slug}/comprar`)} className="min-h-12 rounded-xl border border-border px-5 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">{buyLabel}</button>
@@ -68,7 +69,6 @@ export default function DigitalShow({ product: p, canCollect, authenticated, mem
                     <div className="mt-5 space-y-2 text-sm leading-relaxed text-muted-foreground">
                         {p.coming_soon ? <p>Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.</p> : <>
                             <p className="font-semibold text-foreground">Pago con QR. Acceso inmediato.</p>
-                            <p className="text-xs">Tras confirmarse el pago.</p>
                             {pendingOrderPrice && !preview && <p>Tu pedido pendiente conserva el importe confirmado al crearlo.</p>}
                             {!canBuy && !preview && !giftAction?.kind && <p>La compra todavía no está disponible.</p>}
                         </>}

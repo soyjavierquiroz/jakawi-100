@@ -127,9 +127,9 @@ class DigitalLandingTest extends TestCase
         config(['jakawi.prelaunch_mode'=>true]);
         $this->get('/l/gluteo-perfecto')->assertOk()->assertInertia(fn (Assert $a) => $a->where('product.public_price','40.00')->where('product.member_price','30.00')->where('canBuy',false)->where('checkoutUrl','/productos-digitales/gluteo-perfecto/comprar')->has('blocks',8));
         $this->get('/productos-digitales/gluteo-perfecto')->assertInertia(fn (Assert $a) => $a->where('product.public_price','40.00'));
-        $this->get('/explorar?type=digital&q=Glúteo')->assertInertia(fn (Assert $a) => $a->has('results',1)->where('results.0.product.url','https://jakawi.com/l/gluteo-perfecto'));
+        $this->get('/explorar?type=digital&q=Glúteo')->assertInertia(fn (Assert $a) => $a->has('results',1)->where('results.0.product.url',route('landing-presentations.show', $l)));
         $this->assertSame(route('landing-presentations.show',$l),app(ProductLandingResolver::class)->navigationUrl($p,false));
-        $this->get('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect('/login');
+        $this->get('/productos-digitales/gluteo-perfecto/comprar')->assertOk()->assertInertia(fn ($page) => $page->component('digital/purchase')->where('authenticated', false));
         $this->assertSame(url('/productos-digitales/gluteo-perfecto/comprar'),session('url.intended'));
         $this->actingAs(User::factory()->create())->post('/productos-digitales/gluteo-perfecto/comprar')->assertSessionHasErrors('product');
         $this->assertDatabaseCount('digital_orders',0);

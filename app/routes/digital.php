@@ -13,10 +13,10 @@ Route::middleware('web')->group(function () {
     Route::get('/regalos-digitales/continuar', [\App\Http\Controllers\DigitalGiftController::class, 'continue'])->middleware('auth');
     Route::get('/productos-digitales', [DigitalProductController::class, 'index'])->name('digital.index');
     Route::get('/productos-digitales/{product:slug}', [DigitalProductController::class, 'show'])->name('digital.show');
+    Route::get('/productos-digitales/{product:slug}/comprar', [DigitalProductController::class, 'show'])->middleware('throttle:30,1')->name('digital.buy');
     Route::middleware(['auth', 'throttle:30,1'])->group(function () {
         Route::post('/productos-digitales/{product:slug}/regalo-bienvenida', [\App\Http\Controllers\DigitalGiftController::class, 'welcome']);
         Route::post('/productos-digitales/{product:slug}/regalo-promocional', [\App\Http\Controllers\DigitalGiftController::class, 'promotional']);
-        Route::get('/productos-digitales/{product:slug}/comprar', [DigitalProductController::class, 'show'])->name('digital.buy');
         Route::post('/productos-digitales/{product:slug}/comprar', [DigitalOrderController::class, 'start'])->name('digital.orders.start');
         Route::get('/mi-jakawi/productos-digitales', [DigitalOrderController::class, 'library'])->name('digital.library');
         Route::get('/mi-jakawi/productos-digitales/pedidos/{order:reference}', [DigitalOrderController::class, 'show'])->name('digital.orders.show');

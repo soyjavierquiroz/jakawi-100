@@ -419,18 +419,44 @@ class DigitalCheckoutTest extends TestCase
         $this->assertSame('pending',$gift->fresh()->status);
     }
 
-    public function test_guest_login_and_registration_return_to_gluteo_purchase(): void
+    public function test_guest_login_and_registration_return_to_any_product_purchase(): void
     {
-        $this->product->update(['slug'=>'gluteo-perfecto']);
-        $url='/productos-digitales/gluteo-perfecto/comprar';
-        $this->get($url)->assertRedirect('/login');
+        $this->product->update(['slug'=>'otra-app-qa']);
+        $url='/productos-digitales/otra-app-qa/comprar';
+        $this->get($url)->assertOk()->assertSessionHas('url.intended', url($url))
+            ->assertInertia(fn ($page) => $page->component('digital/purchase')->where('authenticated', false));
         $this->post('/login',['email'=>$this->buyer->email,'password'=>'password'])->assertRedirect(url($url));
-        $this->get($url)->assertOk();
+        $this->get($url)->assertOk()->assertInertia(fn ($page) => $page->component('digital/purchase')->where('authenticated', true));
         $this->post('/logout');
-        $this->get($url)->assertRedirect('/login');
+        $this->get($url)->assertOk()->assertSessionHas('url.intended', url($url))
+            ->assertInertia(fn ($page) => $page->component('digital/purchase')->where('authenticated', false));
         $this->post('/register',['name'=>'Compra QA','email'=>'checkout-register@qa.invalid','whatsapp'=>'71234567'])->assertRedirect(url($url));
-        $this->get($url)->assertOk();
+        $this->get($url)->assertOk()->assertInertia(fn ($page) => $page->component('digital/purchase')->where('authenticated', true));
         $this->assertDatabaseCount('digital_orders',0);
+    }
+
+    public function test_purchase_screen_never_creates_orders_and_keeps_write_routes_protected(): void
+    {
+        $before = $this->product->fresh()->getAttributes();
+        $url = '/productos-digitales/gluteo-perfecto/comprar';
+        $this->get($url)->assertOk()->assertInertia(fn ($page) => $page->component('digital/purchase')->where('canCollect', true));
+        $this->post($url)->assertRedirect(route('login'));
+        $this->actingAs($this->buyer)->get($url)->assertOk();
+        $this->assertDatabaseCount('digital_orders', 0);
+        $this->assertSame($before, $this->product->fresh()->getAttributes());
+        $this->product->update(['status' => 'draft']);
+        $this->get($url)->assertNotFound();
+    }
+
+    public function test_purchase_return_rejects_external_destinations(): void
+    {
+        $this->withSession(['url.intended' => 'https://other.example/productos-digitales/otra-app/comprar'])
+            ->post('/login', ['email' => $this->buyer->email, 'password' => 'password'])
+            ->assertRedirect('/mi-jakawi');
+        $this->post('/logout');
+        $this->withSession(['url.intended' => 'https://other.example/productos-digitales/otra-app/comprar'])
+            ->post('/register', ['name' => 'Compra QA', 'email' => 'external-return@qa.invalid', 'whatsapp' => '71234567'])
+            ->assertRedirect(config('fortify.home'));
     }
 
 }

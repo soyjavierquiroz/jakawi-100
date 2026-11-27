@@ -95,7 +95,7 @@ class LoginResponse implements LoginResponseContract
             && (! parse_url($intended, PHP_URL_HOST) || parse_url($intended, PHP_URL_HOST) === $request->getHost())
             && app(\App\Services\DigitalGifts::class)->invitation($request)) return true;
 
-        if ($path === '/productos-digitales/gluteo-perfecto/comprar'
+        if (preg_match('#^/productos-digitales/[a-zA-Z0-9_-]+/comprar$#D', $path) === 1
             && (! parse_url($intended, PHP_URL_HOST) || parse_url($intended, PHP_URL_HOST) === $request->getHost())) {
             return true;
         }

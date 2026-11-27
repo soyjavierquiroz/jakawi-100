@@ -36,6 +36,12 @@ class DigitalProductController extends Controller
             ->where(fn ($query) => $query->where('expires_at', '>', now())->orWhereHas('payments', fn ($payments) => $payments->where('status', 'under_review')))
             ->value('amount') : null;
 
-        return Inertia::render('digital/show', ['pendingOrderPrice' => $pendingOrderPrice, 'giftAction' => app(\App\Services\DigitalGifts::class)->context($request, $product), 'product' => $catalog->present($product, imagePreset: 'digital_artwork'), 'canCollect' => app(\App\Services\DigitalSaleAvailability::class)->canSell($product), 'authenticated' => $request->user() !== null, 'memberActive' => $request->user()?->hasActiveMembership() ?? false]);
+        $purchasing = $request->routeIs('digital.buy');
+        if ($purchasing && ! $request->user()) {
+            // Fixed same-origin destination; no order or payment is created by this GET.
+            $request->session()->put('url.intended', route('digital.buy', $product));
+        }
+
+        return Inertia::render($purchasing ? 'digital/purchase' : 'digital/show', ['pendingOrderPrice' => $pendingOrderPrice, 'giftAction' => app(\App\Services\DigitalGifts::class)->context($request, $product), 'product' => $catalog->present($product, imagePreset: 'digital_artwork'), 'canCollect' => app(\App\Services\DigitalSaleAvailability::class)->canSell($product), 'authenticated' => $request->user() !== null, 'memberActive' => $request->user()?->hasActiveMembership() ?? false]);
     }
 }

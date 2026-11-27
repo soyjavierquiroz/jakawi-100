@@ -43,7 +43,7 @@ class DigitalSaleActivationTest extends TestCase
         $this->prepare($p,$admin);
         $blocks=LandingPresentation::where('slug','gluteo-perfecto')->value('editorial_blocks');
         $this->get('/l/gluteo-perfecto')->assertOk()->assertInertia(fn(Assert $a)=>$a->where('canBuy',true)->where('product.coming_soon',false)->where('copy.eyebrow','Disponible')->has('blocks',11));
-        $this->get('/productos-digitales/gluteo-perfecto/comprar')->assertRedirect('/login');
+        $this->get('/productos-digitales/gluteo-perfecto/comprar')->assertOk()->assertInertia(fn ($page) => $page->component('digital/purchase')->where('authenticated', false));
         $this->assertStringEndsWith('/productos-digitales/gluteo-perfecto/comprar',session('url.intended'));
         $loginBuyer=User::factory()->create();
         $this->post('/login',['email'=>$loginBuyer->email,'password'=>'password'])->assertRedirect('/productos-digitales/gluteo-perfecto/comprar');
