@@ -3,6 +3,11 @@ import { JakawiImage } from '@/components/jakawi-image';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+const slideStep = (element: HTMLDivElement) => {
+    const [first, second] = element.children;
+    return first && second ? second.getBoundingClientRect().left - first.getBoundingClientRect().left : 0;
+};
+
 export function DigitalProductGallery({ product: p }: { product: DigitalProductData }) {
     const images = (p.gallery_urls ?? []).filter(Boolean);
     const count = images.length;
@@ -25,7 +30,7 @@ export function DigitalProductGallery({ product: p }: { product: DigitalProductD
     const stepWidth = () => {
         const el = track.current;
         if (!el || el.children.length < 2) return 0;
-        return (el.children[1] as HTMLElement).offsetLeft - (el.children[0] as HTMLElement).offsetLeft;
+        return slideStep(el);
     };
     const interact = () => { resumeAfter.current = Date.now() + 6000; };
     const move = (next: number, manual = true) => {
@@ -43,7 +48,7 @@ export function DigitalProductGallery({ product: p }: { product: DigitalProductD
         const el = track.current;
         if (!el || !loop) return;
         const reset = () => {
-            const step = (el.children[1] as HTMLElement).offsetLeft - (el.children[0] as HTMLElement).offsetLeft;
+            const step = slideStep(el);
             el.scrollTo({ left: (count + active.current) * step, behavior: 'instant' });
         };
         reset();
@@ -83,7 +88,7 @@ export function DigitalProductGallery({ product: p }: { product: DigitalProductD
             if (pointerDown.current || Date.now() < resumeAfter.current) return;
             const el = track.current;
             if (!el) return;
-            const step = (el.children[1] as HTMLElement).offsetLeft - (el.children[0] as HTMLElement).offsetLeft;
+            const step = slideStep(el);
             el.scrollTo({ left: (Math.round(el.scrollLeft / step) + 1) * step, behavior: 'smooth' });
         }, 2000);
         return () => clearInterval(timer);
