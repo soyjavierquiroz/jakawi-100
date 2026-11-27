@@ -31,7 +31,16 @@ class DigitalCatalog
 
     public function present(DigitalProduct $p, ?bool $comingSoon = null, string $imagePreset = 'hero'): array
     {
+        // Display-only savings from saved prices. Checkout remains the pricing authority.
+        $public = is_numeric($p->public_price) ? DigitalCheckout::cents((string) $p->public_price) : 0;
+        $member = is_numeric($p->member_price) ? DigitalCheckout::cents((string) $p->member_price) : 0;
+        $saving = $member > 0 && $public > $member ? [
+            'amount' => number_format(($public - $member) / 100, 2, '.', ''),
+            'percent' => (int) round(($public - $member) / $public * 100),
+        ] : null;
+
         return $p->only(['id', 'name', 'slug', 'short_description', 'description', 'commercial_content', 'public_price', 'member_price', 'currency', 'delivery_type', 'support_information', 'access_terms']) + [
+            'member_saving' => $saving,
             'partner' => $p->partner->only(['id', 'name', 'slug']), 'cover_url' => app(MediaUrl::class)->url($p->cover_path, $imagePreset),
             'gallery_urls' => array_map(fn ($path) => app(MediaUrl::class)->url($path, $imagePreset), $p->gallery_paths ?? []),
             'cover_srcset' => $imagePreset === 'digital_artwork' ? app(MediaUrl::class)->srcset($p->cover_path, $imagePreset) : [],

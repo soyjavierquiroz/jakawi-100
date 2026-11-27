@@ -10,6 +10,7 @@ export type DigitalProductData = {
     commercial_content: string | null;
     public_price: string | null;
     member_price: string | null;
+    member_saving?: { amount: string; percent: number } | null;
     currency: string;
     delivery_type?: string;
     cover_url?: string | null;

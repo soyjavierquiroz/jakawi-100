@@ -114,12 +114,29 @@ class DigitalCheckoutTest extends TestCase
         $before = $this->product->fresh()->getAttributes();
         $this->get('/productos-digitales/gluteo-perfecto')->assertOk()->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
             ->component('digital/show')->where('memberActive',false)->where('canCollect',true)
-            ->where('pendingOrderPrice',null)->where('product.description',$this->product->description)
+            ->where('pendingOrderPrice',null)->where('product.member_saving',['amount'=>'7.50','percent'=>38])->where('product.description',$this->product->description)
             ->where('product.commercial_content',$this->product->commercial_content)->has('product.gallery_urls',0)
             ->where('product.cover_url',fn ($url) => str_contains($url,'/rs:fit:1200:1500/'))
             ->has('product.cover_srcset',4));
         $this->actingAs($this->admin)->get('/admin/productos-digitales/gluteo-perfecto/preview')->assertOk()
-            ->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page->component('digital/show')->where('preview',true)->where('canCollect',false));
+            ->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page->component('digital/show')->where('preview',true)->where('canCollect',false)->where('product.member_saving',['amount'=>'7.50','percent'=>38]));
+        $this->assertSame($before,$this->product->fresh()->getAttributes());
+        $this->assertDatabaseCount('digital_orders',0);
+    }
+
+    public function test_member_saving_is_a_display_projection_without_catalog_writes(): void
+    {
+        $before = $this->product->fresh()->getAttributes();
+        foreach ([
+            ['49.00','29.00',['amount'=>'20.00','percent'=>41]],
+            ['59.90','39.50',['amount'=>'20.40','percent'=>34]],
+            ['49.00','49.00',null],
+            ['49.00',null,null],
+            ['49.00','59.00',null],
+        ] as [$public,$member,$expected]) {
+            $this->product->forceFill(['public_price'=>$public,'member_price'=>$member]);
+            $this->assertSame($expected,app(\App\Services\DigitalCatalog::class)->present($this->product)['member_saving']);
+        }
         $this->assertSame($before,$this->product->fresh()->getAttributes());
         $this->assertDatabaseCount('digital_orders',0);
     }

@@ -2,65 +2,11 @@ import { useDigitalGiftAction, type GiftAction } from '@/components/digital-gift
 import { digitalMoney, type DigitalProductData } from '@/components/digital-card';
 import { JakawiImage } from '@/components/jakawi-image';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { DigitalProductGallery } from '@/components/digital-product-gallery';
 
 // Some legacy editorial fields contain escaped CRLF from import/editor entry.
 // Normalize only line separators for display; retain saved plain text and React escaping.
 const editorialText = (text: string | null) => text?.replace(/\\r\\n|\\n|\\r/g, '\n') ?? '';
-
-function ProductGallery({ product: p }: { product: DigitalProductData }) {
-    const track = useRef<HTMLDivElement>(null);
-    const [position, setPosition] = useState({ index: 0, end: false });
-    const images = (p.gallery_urls ?? []).filter(Boolean);
-    useEffect(() => {
-        const el = track.current;
-        if (!el) return;
-        const update = () => setPosition(previous => ({ ...previous, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 2 }));
-        const observer = new ResizeObserver(update);
-        observer.observe(el);
-        update();
-        return () => observer.disconnect();
-    }, [images.length]);
-    if (!images.length) return null;
-    const moveTo = (index: number) => {
-        const element = track.current;
-        const slide = element?.children[Math.max(0, Math.min(images.length - 1, index))] as HTMLElement | undefined;
-        if (!element || !slide) return;
-        element.scrollTo({ left: slide.offsetLeft, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-    };
-    return (
-        <section aria-labelledby="gallery-heading" className="mt-14 border-t border-border pt-10 sm:mt-20">
-            <div className="mb-6 flex items-center justify-between gap-4">
-                <h2 id="gallery-heading" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Galería</h2>
-                {images.length > 1 && <div className="hidden gap-2 md:flex">
-                    <button type="button" aria-label="Imagen anterior" aria-controls="product-gallery" disabled={position.index === 0} onClick={() => moveTo(position.index - 1)} className="grid size-11 place-items-center rounded-full border border-border focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:opacity-30"><ChevronLeft aria-hidden="true" size={20} /></button>
-                    <button type="button" aria-label="Imagen siguiente" aria-controls="product-gallery" disabled={position.end} onClick={() => moveTo(position.index + 1)} className="grid size-11 place-items-center rounded-full border border-border focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:opacity-30"><ChevronRight aria-hidden="true" size={20} /></button>
-                </div>}
-            </div>
-            <div id="product-gallery" ref={track} role="region" aria-label={`Imágenes de ${p.name}`} aria-roledescription={images.length > 1 ? 'carrusel' : undefined} tabIndex={images.length > 1 ? 0 : undefined}
-                onKeyDown={event => {
-                    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-                    event.preventDefault();
-                    moveTo(event.key === 'Home' ? 0 : event.key === 'End' ? images.length - 1 : position.index + (event.key === 'ArrowRight' ? 1 : -1));
-                }}
-                onScroll={() => {
-                    const el = track.current;
-                    if (!el) return;
-                    const width = (el.children[0] as HTMLElement)?.getBoundingClientRect().width + 20;
-                    setPosition({ index: Math.round(el.scrollLeft / width), end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 2 });
-                }}
-                className={`relative grid snap-x snap-mandatory grid-flow-col gap-5 overflow-x-auto overscroll-x-contain rounded-2xl pb-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand ${images.length === 1 ? 'auto-cols-[100%] md:auto-cols-[minmax(0,400px)]' : 'auto-cols-[100%] md:auto-cols-[calc((100%-20px)/2)] lg:auto-cols-[calc((100%-40px)/3)]'}`}>
-                {images.map((url, index) => <figure key={`${url}-${index}`} role="group" aria-label={`${index + 1} de ${images.length}`} className="min-w-0 snap-start rounded-2xl border border-border/60 bg-surface-muted p-2">
-                    <JakawiImage src={url} srcset={p.gallery_srcsets?.[index]} sizes="(min-width: 1024px) 340px, (min-width: 768px) 45vw, 90vw" alt={`${p.name} · Imagen de apoyo ${index + 1}`} loading="lazy" className="h-[min(110vw,420px)] w-full rounded-xl object-contain md:h-[400px]" />
-                </figure>)}
-            </div>
-            {images.length > 1 && <div className="mt-2 flex flex-wrap items-center justify-center gap-1 md:hidden" aria-label="Elegir imagen">
-                {images.map((_, index) => <button type="button" key={index} aria-label={`Ver imagen ${index + 1}`} aria-current={position.index === index ? 'true' : undefined} aria-controls="product-gallery" onClick={() => moveTo(index)} className="grid size-11 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-brand"><span className={`h-1.5 rounded-full ${position.index === index ? 'w-5 bg-brand' : 'w-1.5 bg-foreground/25'}`} /></button>)}
-            </div>}
-        </section>
-    );
-}
 
 export default function DigitalShow({ product: p, canCollect, authenticated, memberActive, preview = false, giftAction, pendingOrderPrice = null }: {
     product: DigitalProductData;
@@ -74,15 +20,13 @@ export default function DigitalShow({ product: p, canCollect, authenticated, mem
     const gift = useDigitalGiftAction(giftAction);
     const { errors } = usePage().props;
     const publicCents = Math.round(Number(p.public_price) * 100);
-    const memberCents = Math.round(Number(p.member_price) * 100);
-    const hasDiscount = memberCents > 0 && publicCents > memberCents;
-    const saving = publicCents - memberCents;
+    const saving = p.member_saving;
+    const hasDiscount = !!saving;
     const authorizedPrice = pendingOrderPrice ?? (memberActive && p.member_price ? p.member_price : p.public_price);
     const canBuy = !preview && !p.coming_soon && canCollect && publicCents > 0;
     const hosted = p.delivery_type === 'hosted_app';
-    const delivery = hosted ? 'Accede a tu aplicación desde Mi JAKAWI una vez confirmado el pago.' : 'Un producto por pedido. Descarga privada tras verificar el pago.';
-    const buyClass = 'inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-brand px-6 py-3 text-center font-bold text-brand-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:w-auto';
-    const buyLabel = `${pendingOrderPrice ? 'CONTINUAR PEDIDO ·' : 'COMPRAR POR'} ${digitalMoney(authorizedPrice, p.currency)}`;
+    const buyClass = 'inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-brand px-8 py-4 text-center text-base font-extrabold tracking-[0.015em] text-brand-foreground shadow-lg shadow-brand/20 transition-[transform,filter,box-shadow] duration-150 hover:brightness-105 hover:shadow-xl hover:shadow-brand/25 active:translate-y-px active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:pointer-events-none disabled:shadow-none motion-reduce:transform-none motion-reduce:transition-none sm:w-auto sm:min-w-72';
+    const buyLabel = `${pendingOrderPrice ? 'CONTINUAR PEDIDO ·' : 'COMPRAR AHORA ·'} ${digitalMoney(authorizedPrice, p.currency)}`;
     const buy = authenticated ? <button type="button" onClick={() => router.post(`/productos-digitales/${p.slug}/comprar`)} className={buyClass}>{buyLabel}</button> : <Link href={`/productos-digitales/${p.slug}/comprar`} className={buyClass}>{buyLabel}</Link>;
     const fullDescription = editorialText(p.description).trim();
     const commercial = editorialText(p.commercial_content).trim();
@@ -102,18 +46,18 @@ export default function DigitalShow({ product: p, canCollect, authenticated, mem
                     <p className="discovery-eyebrow text-brand">PRODUCTO DIGITAL{p.coming_soon ? ' · PRÓXIMAMENTE' : ''}</p>
                     <h1 id="product-name" className="mt-3 text-[1.875rem] leading-[1.08] font-extrabold tracking-[-0.04em] break-words sm:text-4xl lg:text-5xl">{p.name}</h1>
                     {p.short_description?.trim() && <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">{p.short_description}</p>}
-                    <div data-testid="product-prices" className="mt-6 border-t border-border pt-5">
+                    <div data-testid="product-prices" className="mt-6 rounded-2xl border border-brand/15 bg-surface p-5 shadow-sm sm:p-6">
                         {hasDiscount && <p className="text-xs font-bold tracking-[0.1em] text-brand">PRECIO ESPECIAL PARA MIEMBROS</p>}
-                        <p className="mt-2 text-[2.75rem] leading-none font-extrabold tracking-tight text-foreground sm:text-5xl">{digitalMoney(hasDiscount ? p.member_price : p.public_price, p.currency)}</p>
+                        <p className="mt-2 text-5xl leading-none font-extrabold tracking-tight text-foreground sm:text-[3.5rem]">{digitalMoney(hasDiscount ? p.member_price : p.public_price, p.currency)}</p>
                         {hasDiscount && <>
-                            <p className="mt-3 text-sm text-muted-foreground">Precio público: {memberActive ? <s>{digitalMoney(p.public_price, p.currency)}</s> : digitalMoney(p.public_price, p.currency)}</p>
-                            <p className="mt-3 text-sm leading-relaxed font-bold text-brand">AHORRA {digitalMoney((saving / 100).toFixed(2), p.currency)} ({Math.round(saving / publicCents * 100)}%) CON TU MEMBRESÍA.</p>
+                            <p className="mt-4 flex flex-wrap items-baseline gap-x-2 text-sm font-medium text-muted-foreground">Precio regular: <span className="text-[1.375rem] font-bold text-foreground">{memberActive ? <s className="decoration-foreground/40">{digitalMoney(p.public_price, p.currency)}</s> : digitalMoney(p.public_price, p.currency)}</span></p>
+                            <p className="mt-3 text-base leading-relaxed font-extrabold text-brand">Ahorras {digitalMoney(saving!.amount, p.currency)} ({saving!.percent}%)</p>
+                            {!memberActive && <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Disfruta este precio con tu membresía activa.</p>}
                         </>}
                     </div>
                     {!preview && giftAction?.kind === 'welcome' && <div className="mt-5"><h2 className="font-bold">Tu membresía incluye este regalo</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Puedes activar este producto sin costo adicional y guardarlo en tu biblioteca digital.</p></div>}
                     <div className="mt-5 flex flex-col items-start gap-3">
                         {!preview && giftAction?.kind ? <button type="button" onClick={gift.click} className={buyClass}>{gift.label}</button> : canBuy ? buy : null}
-                        {!memberActive && hasDiscount && !preview && <Link href="/membresia" className="inline-flex min-h-11 items-center text-xs font-bold text-brand underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">CONOCE EL PRECIO DE MIEMBRO</Link>}
                         {preview && <button type="button" disabled className={`${buyClass} opacity-50`}>{buyLabel} · Vista previa</button>}
                     </div>
                     {!preview && giftAction?.kind === 'welcome' && canBuy && <div className="mt-4">
@@ -123,9 +67,10 @@ export default function DigitalShow({ product: p, canCollect, authenticated, mem
                     {Object.values(errors ?? {}).map((error, index) => <p key={index} role="alert" className="mt-3 text-destructive">{String(error)}</p>)}
                     <div className="mt-5 space-y-2 text-sm leading-relaxed text-muted-foreground">
                         {p.coming_soon ? <p>Presentación editorial en revisión. Las compras y la entrega todavía no están habilitadas.</p> : <>
-                            <p>{delivery}</p>
+                            <p className="font-semibold text-foreground">Pago con QR. Acceso inmediato.</p>
+                            <p className="text-xs">Tras confirmarse el pago.</p>
                             {pendingOrderPrice && !preview && <p>Tu pedido pendiente conserva el importe confirmado al crearlo.</p>}
-                            {canBuy ? <p>Pago por QR con verificación bancaria.</p> : !preview && !giftAction?.kind ? <p>La compra todavía no está disponible.</p> : null}
+                            {!canBuy && !preview && !giftAction?.kind && <p>La compra todavía no está disponible.</p>}
                         </>}
                         {!preview && giftAction?.kind === 'owned' && <p>Este producto ya está en tu biblioteca digital.</p>}
                         {!preview && giftAction?.kind && !['owned', 'welcome'].includes(giftAction.kind) && <p>Confirma tu regalo para guardarlo en Mis productos digitales.</p>}
@@ -133,18 +78,18 @@ export default function DigitalShow({ product: p, canCollect, authenticated, mem
                 </section>
             </div>
             {fullDescription && <section aria-labelledby="description-heading" className="mt-14 max-w-3xl sm:mt-20">
-                <h2 id="description-heading" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Conoce la aplicación</h2>
+                <h2 id="description-heading" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Esto es lo que incluye</h2>
                 <div className="mt-5 text-base leading-8 whitespace-pre-wrap break-words text-muted-foreground">{editorialText(p.description)}</div>
             </section>}
             {showCommercial && <section aria-labelledby="commercial-heading" className="mt-12 max-w-3xl sm:mt-16">
-                <h2 id="commercial-heading" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Descubre lo que puedes hacer</h2>
+                <h2 id="commercial-heading" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Cómo te ayuda en la práctica</h2>
                 <div className="mt-5 text-base leading-8 whitespace-pre-wrap break-words text-muted-foreground">{editorialText(p.commercial_content)}</div>
             </section>}
-            <ProductGallery key={p.id} product={p} />
+            <DigitalProductGallery key={p.id} product={p} />
             <section aria-labelledby="access-heading" className="mt-14 border-t border-border pt-8 sm:mt-20">
-                <h2 id="access-heading" className="text-lg font-bold">Acceso, condiciones y soporte</h2>
+                <h2 id="access-heading" className="text-lg font-bold">Tu acceso y soporte</h2>
                 <div className="mt-6 grid gap-7 text-sm leading-7 text-muted-foreground md:grid-cols-3">
-                    <div><h3 className="mb-2 font-semibold text-foreground">Cómo recibirás tu producto</h3><p>{hosted ? 'Una vez verificado el pago, encontrarás el acceso en tu biblioteca de Mi JAKAWI.' : 'Recibirás acceso a la descarga privada de tu producto al confirmarse el pago.'}</p>{hosted && <p className="mt-2">Disponible desde JAKAWI.STORE. Necesitas conexión a Internet para utilizar la aplicación.</p>}</div>
+                    <div><h3 className="mb-2 font-semibold text-foreground">Cómo recibirás tu producto</h3><p>Pago con QR y verificación bancaria.</p><p className="mt-2">{hosted ? 'Una vez verificado el pago, encontrarás el acceso en tu biblioteca de Mi JAKAWI.' : 'Recibirás acceso a la descarga privada de tu producto al confirmarse el pago.'}</p>{hosted && <p className="mt-2">Disponible desde JAKAWI.STORE. Necesitas conexión a Internet para utilizar la aplicación.</p>}</div>
                     {p.access_terms?.trim() && <div><h3 className="mb-2 font-semibold text-foreground">Condiciones de acceso</h3><p className="whitespace-pre-wrap break-words">{p.access_terms}</p></div>}
                     {p.support_information?.trim() && <div><h3 className="mb-2 font-semibold text-foreground">¿Necesitas ayuda?</h3><p className="whitespace-pre-wrap break-words">{p.support_information}</p></div>}
                 </div>
